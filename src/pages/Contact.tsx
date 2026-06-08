@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import PageShell from "../components/PageShell";
-import AccentScene from "../components/AccentScene";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { Reveal } from "../components/ui/Reveal";
 import { useLanguage } from "../i18n/LanguageContext";
