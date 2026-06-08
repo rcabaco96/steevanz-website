@@ -29,27 +29,3 @@ export function ScrollMask({
     </motion.div>
   );
 }
-
-/**
- * Pins its children to the viewport while the section scrolls past, then
- * cross-fades them against a scroll-driven progress value (0 → 1).
- * Use the render-prop to drive transforms from `progress`.
- */
-export function StickyScene({
-  children,
-  className = "",
-  height = "220vh",
-}: {
-  children: (progress: import("motion/react").MotionValue<number>) => ReactNode;
-  className?: string;
-  height?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-
-  return (
-    <div ref={ref} style={{ height }} className={`relative ${className}`}>
-      <div className="sticky top-0 h-[100svh] overflow-hidden">{children(scrollYProgress)}</div>
-    </div>
-  );
-}

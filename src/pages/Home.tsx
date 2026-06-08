@@ -1,11 +1,14 @@
-import { motion } from "motion/react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { Link } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import HeroScene from "../components/HeroScene";
+import Manifesto from "../components/Manifesto";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { MagneticButton } from "../components/ui/MagneticButton";
 import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
 import { Marquee } from "../components/ui/Marquee";
+import { ScrollMask } from "../components/ui/ScrollMask";
 
 const STACK = [
   "Software à Medida",
@@ -64,10 +67,16 @@ const HIGHLIGHTS = [
 ];
 
 export default function Home() {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroOpacity = useTransform(heroProgress, [0, 0.7], [1, 0]);
+  const heroScale = useTransform(heroProgress, [0, 1], [1, 0.92]);
+  const heroY = useTransform(heroProgress, [0, 1], [0, 120]);
+
   return (
     <PageShell>
       {/* HERO */}
-      <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-32 pb-20">
+      <section ref={heroRef} className="relative flex min-h-[100svh] items-center overflow-hidden pt-32 pb-20">
         <HeroScene className="absolute inset-0 -z-10 [&>div]:h-full [&_canvas]:!h-full" />
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -77,7 +86,10 @@ export default function Home() {
           }}
         />
 
-        <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+        <motion.div
+          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+          className="mx-auto w-full max-w-7xl px-6 sm:px-10"
+        >
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -121,7 +133,7 @@ export default function Home() {
               Vamos conversar
             </MagneticButton>
           </motion.div>
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -152,9 +164,11 @@ export default function Home() {
         </Marquee>
       </section>
 
+      <Manifesto />
+
       {/* PURPOSE */}
       <section className="mx-auto max-w-7xl px-6 py-32 sm:px-10">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+        <ScrollMask className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center" from={18}>
           <Reveal>
             <Eyebrow>A maneira Steevanz de trabalhar</Eyebrow>
             <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.1] tracking-tight text-(--color-bone) sm:text-5xl">
@@ -195,7 +209,7 @@ export default function Home() {
               </div>
             </div>
           </Reveal>
-        </div>
+        </ScrollMask>
       </section>
 
       {/* HIGHLIGHTS — the rest of the house */}
