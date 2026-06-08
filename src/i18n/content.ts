@@ -1,8 +1,3 @@
-// Site copy in Portuguese (source) and English (translation).
-// Brand-specific names (Steevanz, Silky Software, Neighbourhood, Networking,
-// Reach Out, Mingle with the Steevanz…) are kept identical across languages —
-// they're identity, not vocabulary.
-
 const pt = {
   nav: {
     links: {
@@ -90,10 +85,10 @@ const pt = {
         },
         {
           n: "02",
-          to: "/silky-software",
-          title: "Silky Software with Human Touch",
-          body: "Software à medida, e-commerce e aplicações — React, Angular, Vue, .NET, Python e mais. A tecnologia corre nas nossas veias, e temos a mania de a simplificar.",
-          cta: "Ver a tecnologia",
+          to: "/pricing",
+          title: "Sem truques. Só clareza.",
+          body: "Valores de referência, sem truques nem letras miudinhas — cada projeto é orçamentado à medida do que precisas.",
+          cta: "Ver preços",
         },
         {
           n: "03",
@@ -237,7 +232,6 @@ const pt = {
       {
         title: "BMW — Plataforma Frontend Modular",
         category: "BMW",
-        year: "2023",
         blurb:
           "Serviços Angular para consumir múltiplas APIs RESTful, com adaptadores que transformam respostas em modelos de dados, NgRx para estado, módulos lazy-loaded, diretivas próprias, route guards e testes com Jest e Cypress.",
         tags: ["Angular", "NgRx", "Testing"],
@@ -245,7 +239,6 @@ const pt = {
       {
         title: "Crédito Agrícola — Plataformas Frontend à Medida",
         category: "Crédito Agrícola",
-        year: "2025",
         blurb:
           "Voz técnica na tradução de requisitos de negócio e design para soluções frontend escaláveis — projetos construídos de raiz em Angular 20, com migração de Vue 2 para Vue 3 e adoção de Pinia e @ngrx/signals para uma gestão de estado moderna.",
         tags: ["Angular", "Vue 3", "Design Systems"],
@@ -253,7 +246,6 @@ const pt = {
       {
         title: "Sporting CP — Bilhética & Loja Verde",
         category: "Sporting CP",
-        year: "2023",
         blurb:
           "Sistema de bilhética, loja online (lojaverde.sporting.pt) com backoffice, analytics e SEO, e Corporate Matchday com distribuição de bilhetes por QR code.",
         tags: ["E-commerce", "Backoffice", "QR Code"],
@@ -261,7 +253,6 @@ const pt = {
       {
         title: "Sporting CP — Gamebox & App Interna",
         category: "Sporting CP",
-        year: "2023",
         blurb:
           "Plataforma Gamebox (gamebox.sporting.pt) e aplicação interna do clube — duas faces de uma só casa tecnológica.",
         tags: ["Plataforma Web", "Aplicação Interna"],
@@ -269,7 +260,7 @@ const pt = {
       {
         title: "Aubay Portugal — Timesheet App",
         category: "Aubay",
-        year: "2024",
+
         blurb:
           "Aplicação de registo de horas pensada para equipas grandes — simples de usar, fácil de gerir, sem fricção no dia a dia.",
         tags: ["App Interna", ".NET", "React"],
@@ -277,7 +268,7 @@ const pt = {
       {
         title: "Aubay Portugal — Resource Manager",
         category: "Aubay",
-        year: "2024",
+
         blurb:
           "Plataforma de gestão de recrutamento e recursos, com formulário internacional para candidaturas além-fronteiras.",
         tags: ["Recrutamento", "Plataforma Web"],
@@ -285,7 +276,7 @@ const pt = {
       {
         title: "Mesh — Rebranding & Loja Online",
         category: "Mesh",
-        year: "2023",
+
         blurb:
           "Rebranding completo, nova loja online e backoffice com integrações à medida — uma marca renovada de raiz à frente da loja.",
         tags: ["Rebranding", "E-commerce", "Integrações"],
@@ -293,7 +284,7 @@ const pt = {
       {
         title: "Efficient Safe — App & Backoffice",
         category: "Efficient Safe",
-        year: "2024",
+
         blurb:
           "App mobile de acesso a documentos de seguros com plugin de gestão de acessos Steevanz, e backoffice de suporte completo.",
         tags: ["Mobile", "Plugin de Acessos", "Backoffice"],
@@ -428,10 +419,10 @@ const en: typeof pt = {
         },
         {
           n: "02",
-          to: "/silky-software",
-          title: "Silky Software with Human Touch",
-          body: "Bespoke software, e-commerce and applications — React, Angular, Vue, .NET, Python and more. Technology runs in our veins, and we have a thing for simplifying it.",
-          cta: "See the tech",
+          to: "/pricing",
+          title: "No tricks. Just clarity.",
+          body: "Reference values, with no tricks or fine print — every project is quoted to fit what you need.",
+          cta: "See the prices",
         },
         {
           n: "03",
@@ -575,7 +566,6 @@ const en: typeof pt = {
       {
         title: "Sporting CP — Ticketing & Loja Verde",
         category: "Sporting CP",
-        year: "2023",
         blurb:
           "Ticketing system, online store (lojaverde.sporting.pt) with backoffice, analytics and SEO, and Corporate Matchday with QR-code ticket distribution.",
         tags: ["E-commerce", "Backoffice", "QR Code"],
@@ -583,7 +573,6 @@ const en: typeof pt = {
       {
         title: "Sporting CP — Gamebox & Internal App",
         category: "Sporting CP",
-        year: "2023",
         blurb:
           "Gamebox platform (gamebox.sporting.pt) and the club's internal app — two faces of a single technological house.",
         tags: ["Web Platform", "Internal App"],
@@ -591,7 +580,6 @@ const en: typeof pt = {
       {
         title: "Vinha — Rebrand & Online Store",
         category: "Vinha",
-        year: "2023",
         blurb:
           "Full rebrand, new online store and backoffice with bespoke integrations — a brand renewed from the ground up, store front and all.",
         tags: ["Rebrand", "E-commerce", "Integrations"],
@@ -599,7 +587,6 @@ const en: typeof pt = {
       {
         title: "Aubay Portugal — Timesheet App",
         category: "Aubay",
-        year: "2024",
         blurb:
           "A time-tracking app built for large teams — simple to use, easy to manage, with zero day-to-day friction.",
         tags: ["Internal App", ".NET", "React"],
@@ -607,7 +594,6 @@ const en: typeof pt = {
       {
         title: "Aubay Portugal — Resource Manager",
         category: "Aubay",
-        year: "2024",
         blurb:
           "A recruitment and resource management platform, with an international form for cross-border applications.",
         tags: ["Recruitment", "Web Platform"],
@@ -615,7 +601,6 @@ const en: typeof pt = {
       {
         title: "Efficient Safe — App & Backoffice",
         category: "Efficient Safe",
-        year: "2024",
         blurb:
           "A mobile app for accessing insurance documents with a Steevanz access-management plugin, plus a full support backoffice.",
         tags: ["Mobile", "Access Plugin", "Backoffice"],
@@ -623,7 +608,6 @@ const en: typeof pt = {
       {
         title: "Crédito Agrícola — Bespoke Frontend Platforms",
         category: "Crédito Agrícola",
-        year: "2025",
         blurb:
           "Key technical voice translating business and design requirements into scalable frontend solutions — projects built from scratch in Angular 20, with a Vue 2 to Vue 3 migration and Pinia and @ngrx/signals adopted for modern state management.",
         tags: ["Angular", "Vue 3", "Design Systems"],
@@ -631,7 +615,6 @@ const en: typeof pt = {
       {
         title: "BMW — Modular Frontend Platform",
         category: "BMW",
-        year: "2023",
         blurb:
           "Angular services consuming multiple RESTful APIs, with adapters transforming responses into data models, NgRx for state, lazy-loaded modules, custom directives, route guards, and tests written with Jest and Cypress.",
         tags: ["Angular", "NgRx", "Testing"],

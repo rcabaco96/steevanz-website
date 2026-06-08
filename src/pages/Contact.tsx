@@ -92,14 +92,6 @@ export default function Contact() {
               </p>
             </Reveal>
 
-            <Reveal delay={0.1} className="relative mt-10 hidden h-72 sm:block">
-              <AccentScene
-                variant="field"
-                color="#cfa563"
-                className="h-full [&_canvas]:!h-full"
-              />
-            </Reveal>
-
             <Reveal
               delay={0.15}
               className="mt-10 space-y-4 font-mono text-sm text-(--color-fog)"

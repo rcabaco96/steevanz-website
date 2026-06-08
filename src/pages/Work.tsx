@@ -137,7 +137,7 @@ export default function Work() {
                     }}
                   />
                   <span className="relative font-mono text-[11px] uppercase tracking-[0.18em] text-(--color-bone)/70">
-                    {p.category} · {p.year}
+                    {p.category}
                   </span>
                   <span className="absolute right-6 top-6 grid h-9 w-9 place-items-center rounded-full border border-(--color-bone)/25 text-(--color-bone) opacity-0 transition-all duration-400 group-hover:translate-x-0 group-hover:opacity-100 -translate-x-2">
                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none">

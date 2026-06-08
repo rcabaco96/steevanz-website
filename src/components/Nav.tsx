@@ -13,7 +13,7 @@ export default function Nav() {
   const PRIMARY = [
     { to: "/", label: c.nav.links.home, num: "01" },
     { to: "/neighbourhood", label: c.nav.links.neighbourhood, num: "02" },
-    { to: "/silky-software", label: c.nav.links.silkySoftware, num: "03" },
+    { to: "/pricing", label: c.nav.links.silkySoftware, num: "03" },
   ];
 
   const ALL_LINKS = [
