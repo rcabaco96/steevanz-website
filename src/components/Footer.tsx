@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Footer() {
+  const { c } = useLanguage();
+
   return (
     <footer className="relative border-t border-(--color-line)/60 bg-(--color-ink)">
       <div className="mx-auto max-w-7xl px-6 py-20 sm:px-10">
@@ -10,35 +13,32 @@ export default function Footer() {
               Steevanz<span className="text-(--color-gold)">.</span>
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-(--color-fog)">
-              Uma família alentejana de nerds, geeks, genuínos e de carne e osso —
-              a fazer tecnologia à medida, com os modos do antigamente.
+              {c.footer.blurb}
             </p>
             <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-(--color-gold)">
-              #ITRUNSINTHEFAMILY
+              {c.footer.hashtag}
             </p>
           </div>
 
           <FooterCol
-            title="O Mapa da Casa"
+            title={c.footer.mapTitle}
             links={[
-              { label: "Casa / Home", to: "/" },
-              { label: "Quem Somos", to: "/quem-somos" },
-              { label: "Silky Software", to: "/silky-software" },
-              { label: "Networking", to: "/networking" },
+              { label: c.nav.links.home, to: "/" },
+              { label: c.nav.links.silkySoftware, to: "/silky-software" },
+              { label: c.nav.links.networking, to: "/networking" },
+              { label: c.nav.links.neighbourhood, to: "/neighbourhood" },
             ]}
           />
 
           <FooterCol
-            title="Mais família"
+            title={c.footer.familyTitle}
             links={[
-              { label: "Neighbourhood", to: "/neighbourhood" },
-              { label: "Steevanz Fashion", to: "/fashion" },
-              { label: "Reach Out", to: "/reach-out" },
+              { label: c.nav.links.reachOut, to: "/reach-out" },
             ]}
           />
 
           <div>
-            <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-(--color-gold)">Reach us</h4>
+            <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-(--color-gold)">{c.footer.reachTitle}</h4>
             <ul className="mt-5 space-y-3 text-sm text-(--color-fog)">
               <li>
                 <a href="mailto:mouth2mouth@steevanz.com" className="transition-colors hover:text-(--color-bone)">
@@ -51,7 +51,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <span>Herdade alentejana de IT, CBD Lisboeta</span>
+                <span>{c.footer.address}</span>
               </li>
               <li>
                 <a href="https://www.instagram.com/steevanz_" target="_blank" rel="noreferrer" className="transition-colors hover:text-(--color-bone)">
@@ -63,10 +63,10 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 flex flex-col items-start justify-between gap-4 border-t border-(--color-line)/60 pt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-(--color-fog)/70 sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} Steevanz — tecnologia do amanhã, com os bons modos do antigamente</span>
+          <span>© {new Date().getFullYear()} Steevanz — {c.footer.rights}</span>
           <span className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-(--color-gold)" />
-            Família desde 04.02.2021
+            {c.footer.since}
           </span>
         </div>
       </div>

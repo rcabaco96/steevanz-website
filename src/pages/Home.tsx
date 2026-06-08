@@ -1,6 +1,7 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef } from "react";
+import { motion } from "motion/react";
 import { Link } from "react-router-dom";
+import { gsap } from "../lib/gsap";
 import PageShell from "../components/PageShell";
 import HeroScene from "../components/HeroScene";
 import Manifesto from "../components/Manifesto";
@@ -8,70 +9,32 @@ import { Eyebrow } from "../components/ui/Eyebrow";
 import { MagneticButton } from "../components/ui/MagneticButton";
 import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
 import { Marquee } from "../components/ui/Marquee";
-import { ScrollMask } from "../components/ui/ScrollMask";
-
-const STACK = [
-  "Software à Medida",
-  "E-Commerce",
-  "Aplicações",
-  "Networking",
-  "Infraestruturas",
-  "Cloud",
-  "Silky Software",
-  "Bom Tinto",
-];
-
-const HIGHLIGHTS = [
-  {
-    n: "02",
-    to: "/quem-somos",
-    title: "Quem Somos",
-    body: "Uma equipa de nerds, geeks, genuínos e de carne e osso. Leais, revolucionários, criativos e empáticos — só assim faz sentido haver negócio.",
-    cta: "Saber mais",
-  },
-  {
-    n: "03",
-    to: "/silky-software",
-    title: "Silky Software with Human Touch",
-    body: "Software à medida, e-commerce e aplicações — React, Angular, Vue, .NET, Python e mais. A tecnologia corre nas nossas veias, e temos a mania de a simplificar.",
-    cta: "Ver a tecnologia",
-  },
-  {
-    n: "04",
-    to: "/networking",
-    title: "Mingle with the Steevanz",
-    body: "O networking é o nosso principal impulsionador de negócio. Não temos concorrentes, temos parceiros. Queres juntar-te à família?",
-    cta: "Vamos conversar",
-  },
-  {
-    n: "05",
-    to: "/neighbourhood",
-    title: "The Neighbourhood",
-    body: "Sporting Clube de Portugal, Vinha, Aubay, Efficient Safe — alguns dos vizinhos com quem já adubámos negócio.",
-    cta: "Ver o bairro",
-  },
-  {
-    n: "06",
-    to: "/fashion",
-    title: "Steevanz Fashion",
-    body: "“It is better to fail in originality than to succeed in imitation.” Moda, estilo e merch à boa maneira Steevanz.",
-    cta: "Ver a coleção",
-  },
-  {
-    n: "07",
-    to: "/reach-out",
-    title: "Reach Out",
-    body: "“Skill is fine, and genius is splendid, but the right contacts are more valuable than either.” Diz-nos olá.",
-    cta: "Falar com a família",
-  },
-];
+import { ScrollReveal } from "../components/ui/ScrollReveal";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Home() {
+  const { c } = useLanguage();
   const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroOpacity = useTransform(heroProgress, [0, 0.7], [1, 0]);
-  const heroScale = useTransform(heroProgress, [0, 1], [1, 0.92]);
-  const heroY = useTransform(heroProgress, [0, 1], [0, 120]);
+  const heroContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to(heroContentRef.current, {
+        opacity: 0,
+        scale: 0.92,
+        y: 120,
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.4,
+        },
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <PageShell>
@@ -86,16 +49,13 @@ export default function Home() {
           }}
         />
 
-        <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
-          className="mx-auto w-full max-w-7xl px-6 sm:px-10"
-        >
+        <div ref={heroContentRef} className="mx-auto w-full max-w-7xl px-6 sm:px-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Eyebrow>Herdade alentejana de IT · CBD Lisboeta · Família desde 04.02.2021</Eyebrow>
+            <Eyebrow>{c.home.hero.eyebrow}</Eyebrow>
           </motion.div>
 
           <motion.h1
@@ -104,9 +64,9 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="mt-7 max-w-4xl font-display text-[13vw] leading-[0.96] tracking-tight text-(--color-bone) sm:text-7xl lg:text-[6.4rem]"
           >
-            Steevanz.
+            {c.home.hero.titleLine1}
             <br />
-            <span className="italic text-(--color-gold)">It runs in the family.</span>
+            <span className="italic text-(--color-gold)">{c.home.hero.titleLine2}</span>
           </motion.h1>
 
           <motion.p
@@ -115,9 +75,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-(--color-fog)"
           >
-            Uma equipa de nerds, geeks, genuínos e de carne e osso. Leais,
-            revolucionários, criativos e empáticos — aqui entregamos a tecnologia
-            do amanhã, com os bons modos do antigamente.
+            {c.home.hero.body}
           </motion.p>
 
           <motion.div
@@ -126,14 +84,14 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.34, ease: [0.16, 1, 0.3, 1] }}
             className="mt-11 flex flex-wrap items-center gap-4"
           >
-            <MagneticButton to="/quem-somos" variant="solid">
-              Conhecer a família
+            <MagneticButton to="/silky-software" variant="solid">
+              {c.home.hero.ctaPrimary}
             </MagneticButton>
             <MagneticButton to="/reach-out" variant="ghost">
-              Vamos conversar
+              {c.home.hero.ctaSecondary}
             </MagneticButton>
           </motion.div>
-        </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -141,7 +99,7 @@ export default function Home() {
           transition={{ delay: 1, duration: 1 }}
           className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 sm:flex"
         >
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-(--color-fog)/70">Scroll</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-(--color-fog)/70">{c.home.hero.scroll}</span>
           <motion.span
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
@@ -153,7 +111,7 @@ export default function Home() {
       {/* MARQUEE */}
       <section className="border-y border-(--color-line)/60 bg-(--color-ink) py-7">
         <Marquee duration={32}>
-          {STACK.map((s, i) => (
+          {c.home.stack.map((s, i) => (
             <span key={i} className="flex items-center gap-12">
               <span className="font-display text-3xl italic tracking-tight text-(--color-fog)/60 transition-colors hover:text-(--color-gold-bright)">
                 {s}
@@ -168,22 +126,18 @@ export default function Home() {
 
       {/* PURPOSE */}
       <section className="mx-auto max-w-7xl px-6 py-32 sm:px-10">
-        <ScrollMask className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center" from={18}>
+        <ScrollReveal className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center" from={18}>
           <Reveal>
-            <Eyebrow>A maneira Steevanz de trabalhar</Eyebrow>
+            <Eyebrow>{c.home.purpose.eyebrow}</Eyebrow>
             <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.1] tracking-tight text-(--color-bone) sm:text-5xl">
-              É nosso propósito tornar a tecnologia <span className="italic text-(--color-gold)">empática</span> e realmente acessível a todos.
+              {c.home.purpose.title} <span className="italic text-(--color-gold)">{c.home.purpose.titleEm}</span> {c.home.purpose.titleRest}
             </h2>
             <div className="mt-7 max-w-lg space-y-4 text-balance leading-relaxed text-(--color-fog)">
-              <p>Da avó ao neto. Com carácter humano, enquanto produto e serviço.</p>
-              <p>
-                Aqui não tem de fingir saber o que é um front end. É a tecnologia
-                que se adapta a si e ao seu negócio — com leveza, naturalidade e
-                um sorriso nos lábios.
-              </p>
+              <p>{c.home.purpose.p1}</p>
+              <p>{c.home.purpose.p2}</p>
             </div>
             <p className="mt-8 max-w-md text-balance font-display text-2xl italic leading-snug text-(--color-bone)">
-              "Vamos simplificar a tecnologia e adaptá-la às necessidades da sua empresa."
+              {c.home.purpose.quote}
             </p>
           </Reveal>
 
@@ -194,9 +148,9 @@ export default function Home() {
                 style={{ background: "radial-gradient(60% 60% at 80% 10%, rgba(214,168,92,0.14), transparent 70%)" }}
               />
               <div className="relative">
-                <Eyebrow>Ser Steevanz é ser</Eyebrow>
+                <Eyebrow>{c.home.purpose.valuesEyebrow}</Eyebrow>
                 <RevealGroup className="mt-6 flex flex-wrap gap-2.5">
-                  {["Excelente", "Relevante", "Eficiente", "Conectado", "Fácil", "Empático", "Cordial", "Leal"].map((v) => (
+                  {c.home.purpose.values.map((v) => (
                     <motion.span
                       key={v}
                       variants={revealItem}
@@ -209,7 +163,7 @@ export default function Home() {
               </div>
             </div>
           </Reveal>
-        </ScrollMask>
+        </ScrollReveal>
       </section>
 
       {/* HIGHLIGHTS — the rest of the house */}
@@ -220,14 +174,14 @@ export default function Home() {
         />
         <div className="relative mx-auto max-w-7xl px-6 sm:px-10">
           <Reveal>
-            <Eyebrow>O resto da casa</Eyebrow>
+            <Eyebrow>{c.home.highlights.eyebrow}</Eyebrow>
             <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
-              Seis portas. <span className="italic text-(--color-gold)">Uma</span> casa de software.
+              {c.home.highlights.titlePre} <span className="italic text-(--color-gold)">{c.home.highlights.titleEm}</span> {c.home.highlights.titlePost}
             </h2>
           </Reveal>
 
           <RevealGroup className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {HIGHLIGHTS.map((h) => (
+            {c.home.highlights.cards.map((h) => (
               <motion.div key={h.n} variants={revealItem}>
                 <Link
                   to={h.to}
@@ -257,17 +211,16 @@ export default function Home() {
               style={{ background: "radial-gradient(50% 70% at 50% 0%, rgba(214,168,92,0.22), transparent 70%)" }}
             />
             <div className="relative">
-              <Eyebrow>Reach Out</Eyebrow>
+              <Eyebrow>{c.home.cta.eyebrow}</Eyebrow>
               <h2 className="mx-auto mt-7 max-w-2xl text-balance font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
-                Tens um negócio para levar do ponto A ao <span className="italic text-(--color-gold)">B, C ou Z</span>?
+                {c.home.cta.titlePre} <span className="italic text-(--color-gold)">{c.home.cta.titleEm}</span>{c.home.cta.titlePost}
               </h2>
               <p className="mx-auto mt-6 max-w-md text-(--color-fog)">
-                Deixa-nos os teus contactos — temos todo o gosto em chegar até ti.
-                Sem fingir, sem pop-ups, sem amadorismo. Prometido por um Steevanz.
+                {c.home.cta.body}
               </p>
               <div className="mt-10 flex justify-center">
                 <MagneticButton to="/reach-out" variant="solid">
-                  Vamos conversar
+                  {c.home.cta.cta}
                 </MagneticButton>
               </div>
             </div>

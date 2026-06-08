@@ -1,27 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-
-const PRIMARY = [
-  { to: "/", label: "Casa", num: "01" },
-  { to: "/quem-somos", label: "Quem Somos", num: "02" },
-  { to: "/silky-software", label: "Silky Software", num: "03" },
-];
-
-const MORE = [
-  { to: "/networking", label: "Networking", num: "04" },
-  { to: "/neighbourhood", label: "Neighbourhood", num: "05" },
-  { to: "/fashion", label: "Fashion", num: "06" },
-];
-
-const ALL_LINKS = [...PRIMARY, ...MORE, { to: "/reach-out", label: "Reach Out", num: "07" }];
+import { useLanguage } from "../i18n/LanguageContext";
+import { LanguageSwitch } from "./ui/LanguageSwitch";
 
 export default function Nav() {
   const { pathname } = useLocation();
+  const { c } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const moreRef = useRef<HTMLDivElement>(null);
+
+  const PRIMARY = [
+    { to: "/", label: c.nav.links.home, num: "01" },
+    { to: "/silky-software", label: c.nav.links.silkySoftware, num: "02" },
+    { to: "/neighbourhood", label: c.nav.links.neighbourhood, num: "03" },
+    { to: "/networking", label: c.nav.links.networking, num: "04" },
+  ];
+
+  const ALL_LINKS = [...PRIMARY, { to: "/reach-out", label: c.nav.links.reachOut, num: "05" }];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -32,18 +28,7 @@ export default function Nav() {
 
   useEffect(() => {
     setOpen(false);
-    setMoreOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
-
-  const moreActive = MORE.some((l) => l.to === pathname);
 
   return (
     <>
@@ -73,68 +58,21 @@ export default function Nav() {
             {PRIMARY.map((link) => (
               <NavLink key={link.to} link={link} active={pathname === link.to} />
             ))}
-
-            <div className="relative" ref={moreRef}>
-              <button
-                onClick={() => setMoreOpen((v) => !v)}
-                className="group relative flex items-center gap-1.5 rounded-full px-4 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-(--color-fog) transition-colors duration-300 hover:text-(--color-bone)"
-              >
-                {moreActive && (
-                  <motion.span
-                    layoutId="nav-pill"
-                    className="absolute inset-0 rounded-full bg-(--color-surface-2)"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                <span className={`relative ${moreActive ? "text-(--color-gold)" : "text-(--color-line) group-hover:text-(--color-gold)"}`}>
-                  ··
-                </span>
-                <span className="relative">Mais</span>
-                <motion.span
-                  animate={{ rotate: moreOpen ? 180 : 0 }}
-                  className="relative text-[9px] text-(--color-fog)"
-                >
-                  ▾
-                </motion.span>
-              </button>
-
-              <AnimatePresence>
-                {moreOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                    transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 overflow-hidden rounded-2xl border border-(--color-line) bg-(--color-ink)/95 p-2 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.6)] backdrop-blur-xl"
-                  >
-                    {MORE.map((link) => (
-                      <Link
-                        key={link.to}
-                        to={link.to}
-                        className={`flex items-center gap-3 rounded-xl px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors duration-200 ${
-                          pathname === link.to
-                            ? "bg-(--color-surface-2) text-(--color-bone)"
-                            : "text-(--color-fog) hover:bg-(--color-surface-2)/60 hover:text-(--color-bone)"
-                        }`}
-                      >
-                        <span className="text-(--color-gold)">{link.num}</span>
-                        {link.label}
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </nav>
 
-          <Link
-            to="/reach-out"
-            className="hidden rounded-full border border-(--color-gold)/40 bg-(--color-gold)/10 px-5 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-(--color-gold-bright) transition-all duration-300 hover:border-(--color-gold) hover:bg-(--color-gold)/20 hover:text-(--color-bone) lg:inline-flex"
-          >
-            Vamos conversar
-          </Link>
+          <div className="hidden items-center gap-3 lg:flex">
+            <LanguageSwitch />
+            <Link
+              to="/reach-out"
+              className="rounded-full border border-(--color-gold)/40 bg-(--color-gold)/10 px-5 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-(--color-gold-bright) transition-all duration-300 hover:border-(--color-gold) hover:bg-(--color-gold)/20 hover:text-(--color-bone)"
+            >
+              {c.nav.talk}
+            </Link>
+          </div>
 
-          <button
+          <div className="flex items-center gap-2 lg:hidden">
+            <LanguageSwitch compact />
+            <button
             onClick={() => setOpen((v) => !v)}
             className="relative flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-full border border-(--color-line) lg:hidden"
             aria-label="Toggle menu"
@@ -151,7 +89,8 @@ export default function Nav() {
               animate={open ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
               className="h-px w-4 bg-(--color-bone)"
             />
-          </button>
+            </button>
+          </div>
         </div>
       </header>
 

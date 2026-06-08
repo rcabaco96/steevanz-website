@@ -4,15 +4,12 @@ import AccentScene from "../components/AccentScene";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { MagneticButton } from "../components/ui/MagneticButton";
 import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
-
-const CHARACTERS = [
-  { name: "Mr. Robot", role: "O hacker que muda o mundo de fora para dentro" },
-  { name: "Iron Man", role: "O génio que constrói o futuro com as próprias mãos" },
-  { name: "Sr. João", role: "Do café Orquídea — conhece toda a gente da rua" },
-  { name: "Donatello", role: "Das Tartarugas Ninja — o cérebro por trás da equipa" },
-];
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Networking() {
+  const { c } = useLanguage();
+  const n = c.networking;
+
   return (
     <PageShell>
       {/* INTRO */}
@@ -23,21 +20,13 @@ export default function Networking() {
         />
         <div className="mx-auto grid max-w-7xl gap-12 px-6 sm:px-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
           <Reveal>
-            <Eyebrow>Mingle with the Steevanz · Networking</Eyebrow>
+            <Eyebrow>{n.hero.eyebrow}</Eyebrow>
             <h1 className="mt-7 max-w-2xl font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-6xl">
-              O networking é o nosso <span className="italic text-(--color-gold)">principal impulsionador</span> de negócio.
+              {n.hero.titlePre} <span className="italic text-(--color-gold)">{n.hero.titleEm}</span> {n.hero.titlePost}
             </h1>
             <div className="mt-8 max-w-xl space-y-5 text-balance leading-relaxed text-(--color-fog)">
-              <p>
-                Competimos connosco próprios. Não temos concorrentes, temos
-                parceiros. E faltas-nos tu.
-              </p>
-              <p>
-                Pensa em quem admiras: o Mr. Robot, o Iron Man, o senhor João do
-                café Orquídea, o Donatello das Tartarugas Ninja. Génios, hackers,
-                heróis e gente da terra — todos têm uma coisa em comum: sabem que
-                ninguém faz nada sozinho.
-              </p>
+              <p>{n.hero.p1}</p>
+              <p>{n.hero.p2}</p>
             </div>
           </Reveal>
           <Reveal delay={0.15}>
@@ -51,22 +40,22 @@ export default function Networking() {
       {/* CHARACTERS */}
       <section className="mx-auto max-w-7xl px-6 py-28 sm:px-10">
         <Reveal>
-          <Eyebrow>Génios precisam de tribo</Eyebrow>
+          <Eyebrow>{n.characters.eyebrow}</Eyebrow>
           <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
-            Até os <span className="italic text-(--color-gold)">maiores</span> heróis têm quem lhes bata à porta.
+            {n.characters.titlePre} <span className="italic text-(--color-gold)">{n.characters.titleEm}</span> {n.characters.titlePost}
           </h2>
         </Reveal>
 
         <RevealGroup className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-(--color-line) bg-(--color-line) sm:grid-cols-2 lg:grid-cols-4">
-          {CHARACTERS.map((c, i) => (
+          {n.characters.list.map((char, i) => (
             <motion.div
-              key={c.name}
+              key={char.name}
               variants={revealItem}
               className="group relative bg-(--color-surface)/60 p-8 transition-colors duration-500 hover:bg-(--color-surface-2)"
             >
               <span className="font-mono text-xs text-(--color-gold)">0{i + 1}</span>
-              <h3 className="mt-5 font-display text-xl tracking-tight text-(--color-bone)">{c.name}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-(--color-fog)">{c.role}</p>
+              <h3 className="mt-5 font-display text-xl tracking-tight text-(--color-bone)">{char.name}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-(--color-fog)">{char.role}</p>
             </motion.div>
           ))}
         </RevealGroup>
@@ -77,38 +66,25 @@ export default function Networking() {
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <div className="grid gap-12 lg:grid-cols-2">
             <Reveal>
-              <Eyebrow>Somos a nossa própria apólice de seguros</Eyebrow>
+              <Eyebrow>{n.philosophy.col1.eyebrow}</Eyebrow>
               <h2 className="mt-6 font-display text-3xl leading-[1.15] tracking-tight text-(--color-bone) sm:text-4xl">
-                Quanto mais gente <span className="italic text-(--color-gold)">conhecemos</span>, mais forte é a casa.
+                {n.philosophy.col1.titlePre} <span className="italic text-(--color-gold)">{n.philosophy.col1.titleEm}</span>{n.philosophy.col1.titlePost}
               </h2>
               <div className="mt-6 space-y-4 text-sm leading-relaxed text-(--color-fog)">
-                <p>
-                  Não acreditamos em redes que só puxam para um lado. O networking
-                  Steevanz é recíproco: ajudamos quem nos ajuda, recomendamos quem
-                  recomendamos, abrimos portas que esperamos ver abertas também
-                  para nós.
-                </p>
-                <p>
-                  É essa reciprocidade — mais do que qualquer contrato — que nos
-                  protege e nos faz crescer. Por isso dizemos que somos a nossa
-                  própria apólice de seguros.
-                </p>
+                <p>{n.philosophy.col1.p1}</p>
+                <p>{n.philosophy.col1.p2}</p>
               </div>
             </Reveal>
 
             <Reveal delay={0.1}>
-              <Eyebrow>Faltas-nos tu</Eyebrow>
+              <Eyebrow>{n.philosophy.col2.eyebrow}</Eyebrow>
               <h2 className="mt-6 font-display text-3xl leading-[1.15] tracking-tight text-(--color-bone) sm:text-4xl">
-                Vem fazer parte da <span className="italic text-(--color-gold)">conversa.</span>
+                {n.philosophy.col2.titlePre} <span className="italic text-(--color-gold)">{n.philosophy.col2.titleEm}</span>{n.philosophy.col2.titlePost}
               </h2>
               <div className="mt-6 space-y-4 text-sm leading-relaxed text-(--color-fog)">
-                <p>
-                  Seja num evento, num café ou numa videochamada — gostamos de
-                  conhecer gente nova, trocar ideias, e perceber como podemos ser
-                  úteis um ao outro.
-                </p>
+                <p>{n.philosophy.col2.p1}</p>
                 <p className="font-display text-xl italic leading-snug text-(--color-bone)">
-                  Não temos concorrentes. Temos parceiros à espera de conhecer.
+                  {n.philosophy.col2.quote}
                 </p>
               </div>
             </Reveal>
@@ -125,16 +101,16 @@ export default function Networking() {
               style={{ background: "radial-gradient(50% 70% at 50% 0%, rgba(232,146,196,0.18), transparent 70%)" }}
             />
             <div className="relative">
-              <Eyebrow>Vamos conhecer-nos</Eyebrow>
+              <Eyebrow>{n.cta.eyebrow}</Eyebrow>
               <h2 className="mx-auto mt-7 max-w-2xl text-balance font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
-                Achas que podemos ser <span className="italic text-(--color-gold)">bons parceiros</span>?
+                {n.cta.titlePre} <span className="italic text-(--color-gold)">{n.cta.titleEm}</span>{n.cta.titlePost}
               </h2>
               <p className="mx-auto mt-6 max-w-md text-(--color-fog)">
-                Deixa-nos os teus contactos — temos todo o gosto em chegar até ti.
+                {n.cta.body}
               </p>
               <div className="mt-10 flex justify-center">
                 <MagneticButton to="/reach-out" variant="solid">
-                  Vamos conversar
+                  {n.cta.cta}
                 </MagneticButton>
               </div>
             </div>

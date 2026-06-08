@@ -4,8 +4,7 @@ import PageShell from "../components/PageShell";
 import AccentScene from "../components/AccentScene";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { Reveal } from "../components/ui/Reveal";
-
-const TOPICS = ["Software à Medida", "E-Commerce", "Aplicações", "Networking", "Outro"];
+import { useLanguage } from "../i18n/LanguageContext";
 
 function FieldLabel({ children, htmlFor }: { children: React.ReactNode; htmlFor: string }) {
   return (
@@ -19,6 +18,8 @@ const inputClass =
   "w-full rounded-xl border border-(--color-line) bg-(--color-surface)/60 px-4 py-3.5 text-(--color-bone) outline-none transition-colors duration-300 placeholder:text-(--color-fog)/50 focus:border-(--color-gold) focus:bg-(--color-surface-2)";
 
 export default function Contact() {
+  const { c } = useLanguage();
+  const ct = c.contact;
   const [topic, setTopic] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "sent">("idle");
 
@@ -40,17 +41,15 @@ export default function Contact() {
           {/* LEFT — copy + 3D accent */}
           <div>
             <Reveal>
-              <Eyebrow>Reach Out · Contacto</Eyebrow>
+              <Eyebrow>{ct.hero.eyebrow}</Eyebrow>
               <h1 className="mt-7 max-w-md font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-6xl">
-                "Skill is fine, and <span className="italic text-(--color-gold)">genius</span> is splendid…"
+                {ct.hero.titlePre} <span className="italic text-(--color-gold)">{ct.hero.titleEm}</span> {ct.hero.titlePost}
               </h1>
               <p className="mt-4 max-w-sm font-mono text-xs uppercase tracking-[0.18em] text-(--color-fog)">
-                "...but the right contacts are more valuable than either." — Arthur Conan Doyle, Sherlock Holmes
+                {ct.hero.quoteAttr}
               </p>
               <p className="mt-7 max-w-sm text-balance leading-relaxed text-(--color-fog)">
-                Conta-nos um pouco sobre o teu negócio e o que tens em mente.
-                Um Steevanz de carne e osso — nunca um robô — responde-te o
-                mais depressa possível.
+                {ct.hero.body}
               </p>
             </Reveal>
 
@@ -69,7 +68,7 @@ export default function Contact() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="h-px w-6 bg-(--color-gold)" />
-                <span>Herdade alentejana de IT · CBD Lisboeta</span>
+                <span>{ct.info.address}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="h-px w-6 bg-(--color-gold)" />
@@ -98,10 +97,9 @@ export default function Contact() {
                     >
                       ✓
                     </motion.span>
-                    <h3 className="mt-7 font-display text-3xl tracking-tight text-(--color-bone)">Mensagem recebida</h3>
+                    <h3 className="mt-7 font-display text-3xl tracking-tight text-(--color-bone)">{ct.form.sentTitle}</h3>
                     <p className="mt-3 max-w-xs text-sm leading-relaxed text-(--color-fog)">
-                      Obrigado por nos contactares — entramos em contigo em
-                      breve. Sem fingir, sem pop-ups, sem amadorismo.
+                      {ct.form.sentBody}
                     </p>
                   </motion.div>
                 ) : (
@@ -114,26 +112,26 @@ export default function Contact() {
                   >
                     <div className="grid gap-6 sm:grid-cols-2">
                       <div>
-                        <FieldLabel htmlFor="name">Nome</FieldLabel>
-                        <input id="name" name="name" required placeholder="O teu nome" className={inputClass} />
+                        <FieldLabel htmlFor="name">{ct.form.nameLabel}</FieldLabel>
+                        <input id="name" name="name" required placeholder={ct.form.namePlaceholder} className={inputClass} />
                       </div>
                       <div>
-                        <FieldLabel htmlFor="email">Email</FieldLabel>
-                        <input id="email" name="email" type="email" required placeholder="tu@empresa.com" className={inputClass} />
+                        <FieldLabel htmlFor="email">{ct.form.emailLabel}</FieldLabel>
+                        <input id="email" name="email" type="email" required placeholder={ct.form.emailPlaceholder} className={inputClass} />
                       </div>
                     </div>
 
                     <div>
-                      <FieldLabel htmlFor="company">Empresa</FieldLabel>
-                      <input id="company" name="company" placeholder="Nome da empresa ou projeto" className={inputClass} />
+                      <FieldLabel htmlFor="company">{ct.form.companyLabel}</FieldLabel>
+                      <input id="company" name="company" placeholder={ct.form.companyPlaceholder} className={inputClass} />
                     </div>
 
                     <fieldset>
                       <legend className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-(--color-fog)">
-                        Sobre o que queres falar?
+                        {ct.form.topicsLegend}
                       </legend>
                       <div className="flex flex-wrap gap-2.5">
-                        {TOPICS.map((t) => (
+                        {ct.form.topics.map((t) => (
                           <button
                             type="button"
                             key={t}
@@ -158,13 +156,13 @@ export default function Contact() {
                     </fieldset>
 
                     <div>
-                      <FieldLabel htmlFor="message">Conta-nos mais</FieldLabel>
+                      <FieldLabel htmlFor="message">{ct.form.messageLabel}</FieldLabel>
                       <textarea
                         id="message"
                         name="message"
                         required
                         rows={4}
-                        placeholder="O que tens em mente, e como podemos ajudar?"
+                        placeholder={ct.form.messagePlaceholder}
                         className={`${inputClass} resize-none`}
                       />
                     </div>
@@ -190,7 +188,7 @@ export default function Contact() {
                               transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
                               className="h-3.5 w-3.5 rounded-full border-2 border-(--color-void)/30 border-t-(--color-void)"
                             />
-                            A enviar
+                            {ct.form.submitLoading}
                           </motion.span>
                         ) : (
                           <motion.span
@@ -199,13 +197,13 @@ export default function Contact() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -8 }}
                           >
-                            Vamos conversar
+                            {ct.form.submitIdle}
                           </motion.span>
                         )}
                       </AnimatePresence>
                     </motion.button>
                     <p className="text-center font-mono text-[10px] uppercase tracking-[0.16em] text-(--color-fog)/60">
-                      Sem spam — só uma resposta a sério, de gente a sério.
+                      {ct.form.disclaimer}
                     </p>
                   </motion.form>
                 )}

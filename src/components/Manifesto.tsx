@@ -1,28 +1,68 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef } from "react";
+import { gsap } from "../lib/gsap";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Manifesto() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const { c } = useLanguage();
+  const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
 
-  const inset = useTransform(scrollYProgress, [0, 0.32], [44, 0]);
-  const clipPath = useTransform(inset, (v) => `inset(${v}% round ${v * 1.4}px)`);
-  const scale = useTransform(scrollYProgress, [0.66, 1], [1, 1.1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.72, 1], [0, 1, 1, 0]);
-  const glow = useTransform(scrollYProgress, [0, 0.5, 1], [0.06, 0.22, 0.06]);
-  const glowBg = useTransform(glow, (g) => `radial-gradient(46% 46% at 50% 52%, rgba(207,165,99,${g}), transparent 72%)`);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, scale: 0.86, filter: "blur(16px)", clipPath: "inset(30% round 32px)" },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          clipPath: "inset(0% round 0px)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 88%",
+            end: "top 28%",
+            scrub: 0.45,
+          },
+        }
+      );
+
+      gsap.fromTo(
+        glowRef.current,
+        { opacity: 0.05 },
+        {
+          opacity: 0.28,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "center center",
+            scrub: 0.6,
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div ref={ref} className="relative h-[220vh] border-y border-(--color-line)/60 bg-(--color-ink)">
-      <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
-        <motion.div className="pointer-events-none absolute inset-0" style={{ background: glowBg }} />
-        <motion.div style={{ clipPath, scale, opacity }} className="relative mx-auto max-w-4xl px-6 text-center sm:px-10">
-          <span className="font-mono text-xs uppercase tracking-[0.3em] text-(--color-gold)">A nossa promessa</span>
-          <p className="mt-8 text-balance font-display text-[9vw] leading-[1.08] tracking-tight text-(--color-bone) sm:text-6xl lg:text-7xl">
-            Entregamos a tecnologia <span className="italic text-(--color-gold)">do amanhã</span>, com as boas maneiras <span className="italic text-(--color-gold)">do passado.</span>
-          </p>
-        </motion.div>
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden border-y border-(--color-line)/60 bg-(--color-ink)"
+    >
+      <div
+        ref={glowRef}
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(46% 46% at 50% 52%, rgba(207,165,99,1), transparent 72%)" }}
+      />
+      <div ref={contentRef} className="relative mx-auto max-w-4xl px-6 text-center sm:px-10">
+        <span className="font-mono text-xs uppercase tracking-[0.3em] text-(--color-gold)">{c.home.manifesto.eyebrow}</span>
+        <p className="mt-8 text-balance font-display text-[9vw] leading-[1.08] tracking-tight text-(--color-bone) sm:text-6xl lg:text-7xl">
+          {c.home.manifesto.line1} <span className="italic text-(--color-gold)">{c.home.manifesto.em1}</span>{c.home.manifesto.mid} <span className="italic text-(--color-gold)">{c.home.manifesto.em2}</span>
+        </p>
       </div>
-    </div>
+    </section>
   );
 }
