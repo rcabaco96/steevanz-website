@@ -9,10 +9,9 @@ const pt = {
       home: "Casa",
       silkySoftware: "Preços",
       neighbourhood: "Vizinhança",
-      networking: "Rede",
-      reachOut: "Reach Out",
+      reachOut: "Bate à Porta",
     },
-    talk: "Vamos conversar",
+    talk: "Bate à Porta",
   },
 
   footer: {
@@ -21,7 +20,7 @@ const pt = {
     hashtag: "#ITRUNSINTHEFAMILY",
     mapTitle: "O Mapa da Casa",
     familyTitle: "Mais família",
-    reachTitle: "Reach us",
+    reachTitle: "Fala connosco",
     address: "Herdade alentejana de IT, CBD Lisboeta",
     rights: "tecnologia do amanhã, com os bons modos do antigamente",
     since: "Família desde 04.02.2021",
@@ -39,14 +38,14 @@ const pt = {
       "Bom Tinto",
     ],
     hero: {
-      eyebrow: "Herdade alentejana de IT · CBD Lisboeta · Família desde 04.02.2021",
+      eyebrow:
+        "Herdade alentejana de IT · CBD Lisboeta · Família desde 04.02.2021",
       titleLine1: "Steevanz.",
       titleLine2: "It runs in the family.",
-      body:
-        "Uma equipa de nerds, geeks, genuínos e de carne e osso. Leais, revolucionários, criativos e empáticos — aqui entregamos a tecnologia do amanhã, com os bons modos do antigamente.",
+      body: "Uma equipa de nerds, geeks, genuínos e de carne e osso. Leais, revolucionários, criativos e empáticos — aqui entregamos a tecnologia do amanhã, com os bons modos do antigamente.",
       ctaPrimary: "Conhecer a família",
       ctaSecondary: "Vamos conversar",
-      scroll: "Scroll",
+      scroll: "Desce",
     },
     manifesto: {
       eyebrow: "A nossa promessa",
@@ -62,48 +61,51 @@ const pt = {
       titleRest: "e realmente acessível a todos.",
       p1: "Da avó ao neto. Com carácter humano, enquanto produto e serviço.",
       p2: "Aqui não tem de fingir saber o que é um front end. É a tecnologia que se adapta a si e ao seu negócio — com leveza, naturalidade e um sorriso nos lábios.",
-      quote: "“Vamos simplificar a tecnologia e adaptá-la às necessidades da sua empresa.”",
+      quote:
+        "“Vamos simplificar a tecnologia e adaptá-la às necessidades da sua empresa.”",
       valuesEyebrow: "Ser Steevanz é ser",
-      values: ["Excelente", "Relevante", "Eficiente", "Conectado", "Fácil", "Empático", "Cordial", "Leal"],
+      values: [
+        "Excelente",
+        "Relevante",
+        "Eficiente",
+        "Conectado",
+        "Fácil",
+        "Empático",
+        "Cordial",
+        "Leal",
+      ],
     },
     highlights: {
       eyebrow: "O resto da casa",
-      titlePre: "Quatro portas.",
+      titlePre: "Três portas.",
       titleEm: "Uma",
       titlePost: "casa de software.",
       cards: [
         {
           n: "01",
-          to: "/silky-software",
-          title: "Silky Software with Human Touch",
-          body: "Software à medida, e-commerce e aplicações — React, Angular, Vue, .NET, Python e mais. A tecnologia corre nas nossas veias, e temos a mania de a simplificar.",
-          cta: "Ver a tecnologia",
-        },
-        {
-          n: "02",
-          to: "/networking",
-          title: "Mingle with the Steevanz",
-          body: "A rede é a nossa principal impulsionadora de negócio. Não temos concorrentes, temos parceiros. Queres juntar-te à família?",
-          cta: "Vamos conversar",
-        },
-        {
-          n: "03",
           to: "/neighbourhood",
           title: "A Vizinhança",
           body: "Sporting Clube de Portugal, Vinha, Aubay, Efficient Safe — alguns dos vizinhos com quem já adubámos negócio.",
           cta: "Ver o bairro",
         },
         {
-          n: "04",
+          n: "02",
+          to: "/silky-software",
+          title: "Silky Software with Human Touch",
+          body: "Software à medida, e-commerce e aplicações — React, Angular, Vue, .NET, Python e mais. A tecnologia corre nas nossas veias, e temos a mania de a simplificar.",
+          cta: "Ver a tecnologia",
+        },
+        {
+          n: "03",
           to: "/reach-out",
-          title: "Reach Out",
+          title: "Bate à Porta",
           body: "“Skill is fine, and genius is splendid, but the right contacts are more valuable than either.” Diz-nos olá.",
           cta: "Falar com a família",
         },
       ],
     },
     cta: {
-      eyebrow: "Reach Out",
+      eyebrow: "Bate à Porta",
       titlePre: "Tens um negócio para levar do ponto A ao",
       titleEm: "B, C ou Z",
       titlePost: "?",
@@ -181,67 +183,36 @@ const pt = {
       titleEm: "se adapta",
       titlePost: "a ti — não o contrário.",
       items: [
-        { title: "Software à medida", body: "Cada projeto é único e não repetível, ímpar e não perecível." },
-        { title: "Rede ativa", body: "Um braço tecnológico, outro de rede — negócio que puxa negócio." },
-        { title: "Infraestrutura & Cloud", body: "Azure, AWS, redes e suporte — a casa toda em ordem, por trás do ecrã." },
-        { title: "Devs com mania da simplicidade", body: "Traduzimos termos escanifobéticos para linguagem de gente." },
-        { title: "Backoffices que dão gosto usar", body: "Gestão, analytics e SEO — sem amadorismo, sem pop-ups, sem fingimento." },
-        { title: "Acompanhamento contínuo", body: "Não desaparecemos depois do deploy. Ficamos à mesa." },
+        {
+          title: "Software à medida",
+          body: "Cada projeto é único e não repetível, ímpar e não perecível.",
+        },
+        {
+          title: "Rede ativa",
+          body: "Um braço tecnológico, outro de rede — negócio que puxa negócio.",
+        },
+        {
+          title: "Infraestrutura & Cloud",
+          body: "Azure, AWS, redes e suporte — a casa toda em ordem, por trás do ecrã.",
+        },
+        {
+          title: "Devs com mania da simplicidade",
+          body: "Traduzimos termos escanifobéticos para linguagem de gente.",
+        },
+        {
+          title: "Backoffices que dão gosto usar",
+          body: "Gestão, analytics e SEO — sem amadorismo, sem pop-ups, sem fingimento.",
+        },
+        {
+          title: "Acompanhamento contínuo",
+          body: "Não desaparecemos depois do deploy. Ficamos à mesa.",
+        },
       ],
     },
     cta: {
       title: "Não sabes bem por onde começar?",
       body: "Conta-nos o que tens em mente — recomendamos o âmbito certo, a equipa certa e a tecnologia certa para o trabalho.",
       cta: "Falar com a família",
-    },
-  },
-
-  networking: {
-    hero: {
-      eyebrow: "Mingle with the Steevanz · Rede",
-      titlePre: "A rede é a nossa",
-      titleEm: "principal impulsionadora",
-      titlePost: "de negócio.",
-      p1: "Competimos connosco próprios. Não temos concorrentes, temos parceiros. E faltas-nos tu.",
-      p2: "Pensa em quem admiras: o Mr. Robot, o Iron Man, o senhor João do café Orquídea, o Donatello das Tartarugas Ninja. Génios, hackers, heróis e gente da terra — todos têm uma coisa em comum: sabem que ninguém faz nada sozinho.",
-    },
-    characters: {
-      eyebrow: "Génios precisam de tribo",
-      titlePre: "Até os",
-      titleEm: "maiores",
-      titlePost: "heróis têm quem lhes bata à porta.",
-      list: [
-        { name: "Mr. Robot", role: "O hacker que muda o mundo de fora para dentro" },
-        { name: "Iron Man", role: "O génio que constrói o futuro com as próprias mãos" },
-        { name: "Sr. João", role: "Do café Orquídea — conhece toda a gente da rua" },
-        { name: "Donatello", role: "Das Tartarugas Ninja — o cérebro por trás da equipa" },
-      ],
-    },
-    philosophy: {
-      col1: {
-        eyebrow: "Somos a nossa própria apólice de seguros",
-        titlePre: "Quanto mais gente",
-        titleEm: "conhecemos",
-        titlePost: ", mais forte é a casa.",
-        p1: "Não acreditamos em redes que só puxam para um lado. A rede Steevanz é recíproca: ajudamos quem nos ajuda, recomendamos quem recomendamos, abrimos portas que esperamos ver abertas também para nós.",
-        p2: "É essa reciprocidade — mais do que qualquer contrato — que nos protege e nos faz crescer. Por isso dizemos que somos a nossa própria apólice de seguros.",
-      },
-      col2: {
-        eyebrow: "Faltas-nos tu",
-        titlePre: "Vem fazer parte da",
-        titleEm: "conversa.",
-        titlePost: "",
-        p1: "Seja num evento, num café ou numa videochamada — gostamos de conhecer gente nova, trocar ideias, e perceber como podemos ser úteis um ao outro.",
-        quote: "Não temos concorrentes. Temos parceiros à espera de conhecer.",
-      },
-    },
-    cta: {
-      eyebrow: "Vamos conhecer-nos",
-      titlePre: "Achas que podemos ser",
-      titleEm: "bons parceiros",
-      titlePost: "?",
-      body: "Deixa-nos os teus contactos — temos todo o gosto em chegar até ti.",
-      cta: "Vamos conversar",
     },
   },
 
@@ -253,48 +224,78 @@ const pt = {
       titlePost: "valoriza a propriedade.",
       body: "Alguns dos vizinhos com quem já adubámos negócio — Sporting Clube de Portugal, Vinha, Aubay Portugal e Efficient Safe. Cada projeto, uma história à parte. Juntos, o nosso bairro.",
     },
-    filters: ["Todos", "Sporting CP", "Vinha", "Aubay", "Efficient Safe"],
+    filters: [
+      "Todos",
+      "BMW",
+      "Crédito Agrícola",
+      "Sporting CP",
+      "Aubay",
+      "Mesh",
+      "Efficient Safe",
+    ],
     projects: [
+      {
+        title: "BMW — Plataforma Frontend Modular",
+        category: "BMW",
+        year: "2023",
+        blurb:
+          "Serviços Angular para consumir múltiplas APIs RESTful, com adaptadores que transformam respostas em modelos de dados, NgRx para estado, módulos lazy-loaded, diretivas próprias, route guards e testes com Jest e Cypress.",
+        tags: ["Angular", "NgRx", "Testing"],
+      },
+      {
+        title: "Crédito Agrícola — Plataformas Frontend à Medida",
+        category: "Crédito Agrícola",
+        year: "2025",
+        blurb:
+          "Voz técnica na tradução de requisitos de negócio e design para soluções frontend escaláveis — projetos construídos de raiz em Angular 20, com migração de Vue 2 para Vue 3 e adoção de Pinia e @ngrx/signals para uma gestão de estado moderna.",
+        tags: ["Angular", "Vue 3", "Design Systems"],
+      },
       {
         title: "Sporting CP — Bilhética & Loja Verde",
         category: "Sporting CP",
         year: "2023",
-        blurb: "Sistema de bilhética, loja online (lojaverde.sporting.pt) com backoffice, analytics e SEO, e Corporate Matchday com distribuição de bilhetes por QR code.",
+        blurb:
+          "Sistema de bilhética, loja online (lojaverde.sporting.pt) com backoffice, analytics e SEO, e Corporate Matchday com distribuição de bilhetes por QR code.",
         tags: ["E-commerce", "Backoffice", "QR Code"],
       },
       {
         title: "Sporting CP — Gamebox & App Interna",
         category: "Sporting CP",
         year: "2023",
-        blurb: "Plataforma Gamebox (gamebox.sporting.pt) e aplicação interna do clube — duas faces de uma só casa tecnológica.",
+        blurb:
+          "Plataforma Gamebox (gamebox.sporting.pt) e aplicação interna do clube — duas faces de uma só casa tecnológica.",
         tags: ["Plataforma Web", "Aplicação Interna"],
-      },
-      {
-        title: "Vinha — Rebranding & Loja Online",
-        category: "Vinha",
-        year: "2023",
-        blurb: "Rebranding completo, nova loja online e backoffice com integrações à medida — uma marca renovada de raiz à frente da loja.",
-        tags: ["Rebranding", "E-commerce", "Integrações"],
       },
       {
         title: "Aubay Portugal — Timesheet App",
         category: "Aubay",
         year: "2024",
-        blurb: "Aplicação de registo de horas pensada para equipas grandes — simples de usar, fácil de gerir, sem fricção no dia a dia.",
+        blurb:
+          "Aplicação de registo de horas pensada para equipas grandes — simples de usar, fácil de gerir, sem fricção no dia a dia.",
         tags: ["App Interna", ".NET", "React"],
       },
       {
         title: "Aubay Portugal — Resource Manager",
         category: "Aubay",
         year: "2024",
-        blurb: "Plataforma de gestão de recrutamento e recursos, com formulário internacional para candidaturas além-fronteiras.",
+        blurb:
+          "Plataforma de gestão de recrutamento e recursos, com formulário internacional para candidaturas além-fronteiras.",
         tags: ["Recrutamento", "Plataforma Web"],
+      },
+      {
+        title: "Mesh — Rebranding & Loja Online",
+        category: "Mesh",
+        year: "2023",
+        blurb:
+          "Rebranding completo, nova loja online e backoffice com integrações à medida — uma marca renovada de raiz à frente da loja.",
+        tags: ["Rebranding", "E-commerce", "Integrações"],
       },
       {
         title: "Efficient Safe — App & Backoffice",
         category: "Efficient Safe",
         year: "2024",
-        blurb: "App mobile de acesso a documentos de seguros com plugin de gestão de acessos Steevanz, e backoffice de suporte completo.",
+        blurb:
+          "App mobile de acesso a documentos de seguros com plugin de gestão de acessos Steevanz, e backoffice de suporte completo.",
         tags: ["Mobile", "Plugin de Acessos", "Backoffice"],
       },
     ],
@@ -307,11 +308,12 @@ const pt = {
 
   contact: {
     hero: {
-      eyebrow: "Reach Out · Contacto",
+      eyebrow: "Bate à Porta · Contacto",
       titlePre: "“Skill is fine, and",
       titleEm: "genius",
       titlePost: "is splendid…”",
-      quoteAttr: "“...but the right contacts are more valuable than either.” — Arthur Conan Doyle, Sherlock Holmes",
+      quoteAttr:
+        "“...but the right contacts are more valuable than either.” — Arthur Conan Doyle, Sherlock Holmes",
       body: "Conta-nos um pouco sobre o teu negócio e o que tens em mente. Um Steevanz de carne e osso — nunca um robô — responde-te o mais depressa possível.",
     },
     info: {
@@ -319,7 +321,7 @@ const pt = {
     },
     form: {
       topicsLegend: "Sobre o que queres falar?",
-      topics: ["Software à Medida", "E-Commerce", "Aplicações", "Rede", "Outro"],
+      topics: ["Software à Medida", "E-Commerce", "Aplicações", "Outro"],
       nameLabel: "Nome",
       namePlaceholder: "O teu nome",
       emailLabel: "Email",
@@ -332,7 +334,8 @@ const pt = {
       submitLoading: "A enviar",
       disclaimer: "Sem spam — só uma resposta a sério, de gente a sério.",
       sentTitle: "Mensagem recebida",
-      sentBody: "Obrigado por nos contactares — entramos em contigo em breve. Sem fingir, sem pop-ups, sem amadorismo.",
+      sentBody:
+        "Obrigado por nos contactares — entramos em contigo em breve. Sem fingir, sem pop-ups, sem amadorismo.",
     },
   },
 };
@@ -343,7 +346,6 @@ const en: typeof pt = {
       home: "Home",
       silkySoftware: "Pricing",
       neighbourhood: "Neighbourhood",
-      networking: "Networking",
       reachOut: "Reach Out",
     },
     talk: "Let's talk",
@@ -376,8 +378,7 @@ const en: typeof pt = {
       eyebrow: "Alentejo IT estate · CBD Lisbon · Family since 04.02.2021",
       titleLine1: "Steevanz.",
       titleLine2: "It runs in the family.",
-      body:
-        "A team of nerds, geeks, genuine and flesh-and-bone people. Loyal, revolutionary, creative and empathetic — here we deliver tomorrow's technology, with yesterday's good manners.",
+      body: "A team of nerds, geeks, genuine and flesh-and-bone people. Loyal, revolutionary, creative and empathetic — here we deliver tomorrow's technology, with yesterday's good manners.",
       ctaPrimary: "Meet the family",
       ctaSecondary: "Let's talk",
       scroll: "Scroll",
@@ -396,39 +397,42 @@ const en: typeof pt = {
       titleRest: "and truly accessible to everyone.",
       p1: "From grandma to grandkid. With a human character, as both product and service.",
       p2: "Here you don't have to pretend you know what a front end is. It's the technology that adapts to you and your business — with lightness, ease, and a smile on its face.",
-      quote: "“Let's simplify technology and adapt it to your company's needs.”",
+      quote:
+        "“Let's simplify technology and adapt it to your company's needs.”",
       valuesEyebrow: "To be Steevanz is to be",
-      values: ["Great", "Relevant", "Efficient", "Connected", "Easy", "Empathetic", "Friendly", "Loyal"],
+      values: [
+        "Great",
+        "Relevant",
+        "Efficient",
+        "Connected",
+        "Easy",
+        "Empathetic",
+        "Friendly",
+        "Loyal",
+      ],
     },
     highlights: {
       eyebrow: "The rest of the house",
-      titlePre: "Four doors.",
+      titlePre: "Three doors.",
       titleEm: "One",
       titlePost: "house of software.",
       cards: [
         {
           n: "01",
-          to: "/silky-software",
-          title: "Silky Software with Human Touch",
-          body: "Bespoke software, e-commerce and applications — React, Angular, Vue, .NET, Python and more. Technology runs in our veins, and we have a thing for simplifying it.",
-          cta: "See the tech",
-        },
-        {
-          n: "02",
-          to: "/networking",
-          title: "Mingle with the Steevanz",
-          body: "Networking is our main business driver. We don't have competitors, we have partners. Want to join the family?",
-          cta: "Let's talk",
-        },
-        {
-          n: "03",
           to: "/neighbourhood",
           title: "The Neighbourhood",
           body: "Sporting Clube de Portugal, Vinha, Aubay, Efficient Safe — some of the neighbours we've already done business with.",
           cta: "See the neighbourhood",
         },
         {
-          n: "04",
+          n: "02",
+          to: "/silky-software",
+          title: "Silky Software with Human Touch",
+          body: "Bespoke software, e-commerce and applications — React, Angular, Vue, .NET, Python and more. Technology runs in our veins, and we have a thing for simplifying it.",
+          cta: "See the tech",
+        },
+        {
+          n: "03",
           to: "/reach-out",
           title: "Reach Out",
           body: "“Skill is fine, and genius is splendid, but the right contacts are more valuable than either.” Say hi.",
@@ -515,67 +519,36 @@ const en: typeof pt = {
       titleEm: "adapts",
       titlePost: "to you — not the other way around.",
       items: [
-        { title: "Bespoke software", body: "Every project is unique and unrepeatable, one of a kind and built to last." },
-        { title: "Active networking", body: "One technology arm, one networking arm — business that draws in business." },
-        { title: "Infrastructure & Cloud", body: "Azure, AWS, networks and support — the whole house in order, behind the screen." },
-        { title: "Devs with a thing for simplicity", body: "We translate jargon into people-language." },
-        { title: "Backoffices people enjoy using", body: "Management, analytics and SEO — no amateur hour, no pop-ups, no pretending." },
-        { title: "Ongoing support", body: "We don't disappear after deploy. We stay at the table." },
+        {
+          title: "Bespoke software",
+          body: "Every project is unique and unrepeatable, one of a kind and built to last.",
+        },
+        {
+          title: "Active networking",
+          body: "One technology arm, one networking arm — business that draws in business.",
+        },
+        {
+          title: "Infrastructure & Cloud",
+          body: "Azure, AWS, networks and support — the whole house in order, behind the screen.",
+        },
+        {
+          title: "Devs with a thing for simplicity",
+          body: "We translate jargon into people-language.",
+        },
+        {
+          title: "Backoffices people enjoy using",
+          body: "Management, analytics and SEO — no amateur hour, no pop-ups, no pretending.",
+        },
+        {
+          title: "Ongoing support",
+          body: "We don't disappear after deploy. We stay at the table.",
+        },
       ],
     },
     cta: {
       title: "Not sure where to start?",
       body: "Tell us what you have in mind — we'll recommend the right scope, the right team and the right technology for the job.",
       cta: "Talk to the family",
-    },
-  },
-
-  networking: {
-    hero: {
-      eyebrow: "Mingle with the Steevanz · Networking",
-      titlePre: "Networking is our",
-      titleEm: "main business driver.",
-      titlePost: "",
-      p1: "We compete with ourselves. We don't have competitors, we have partners. And we're missing you.",
-      p2: "Think of who you admire: Mr. Robot, Iron Man, Mr. João from Café Orquídea, Donatello from the Ninja Turtles. Geniuses, hackers, heroes and down-to-earth people — they all have one thing in common: they know nobody does anything alone.",
-    },
-    characters: {
-      eyebrow: "Geniuses need a tribe",
-      titlePre: "Even the",
-      titleEm: "greatest",
-      titlePost: "heroes have someone knocking on their door.",
-      list: [
-        { name: "Mr. Robot", role: "The hacker who changes the world from the outside in" },
-        { name: "Iron Man", role: "The genius who builds the future with his own hands" },
-        { name: "Mr. João", role: "From Café Orquídea — knows everyone on the street" },
-        { name: "Donatello", role: "From the Ninja Turtles — the brains behind the team" },
-      ],
-    },
-    philosophy: {
-      col1: {
-        eyebrow: "We're our own insurance policy",
-        titlePre: "The more people we",
-        titleEm: "know",
-        titlePost: ", the stronger the house.",
-        p1: "We don't believe in networks that only pull one way. Steevanz networking is reciprocal: we help those who help us, we recommend those we recommend, we open doors we hope to see opened for us too.",
-        p2: "It's that reciprocity — more than any contract — that protects us and helps us grow. That's why we say we're our own insurance policy.",
-      },
-      col2: {
-        eyebrow: "We're missing you",
-        titlePre: "Come be part of the",
-        titleEm: "conversation.",
-        titlePost: "",
-        p1: "Whether at an event, over coffee, or on a video call — we like meeting new people, swapping ideas, and figuring out how we can be useful to one another.",
-        quote: "We don't have competitors. We have partners waiting to be met.",
-      },
-    },
-    cta: {
-      eyebrow: "Let's get to know each other",
-      titlePre: "Think we could be",
-      titleEm: "good partners",
-      titlePost: "?",
-      body: "Leave us your details — we'd be glad to reach out.",
-      cta: "Let's talk",
     },
   },
 
@@ -587,49 +560,79 @@ const en: typeof pt = {
       titlePost: "raises property value.",
       body: "Some of the neighbours we've already done business with — Sporting Clube de Portugal, Vinha, Aubay Portugal and Efficient Safe. Every project, a story of its own. Together, our neighbourhood.",
     },
-    filters: ["All", "Sporting CP", "Vinha", "Aubay", "Efficient Safe"],
+    filters: [
+      "All",
+      "Sporting CP",
+      "Vinha",
+      "Aubay",
+      "Efficient Safe",
+      "Crédito Agrícola",
+      "BMW",
+    ],
     projects: [
       {
         title: "Sporting CP — Ticketing & Loja Verde",
         category: "Sporting CP",
         year: "2023",
-        blurb: "Ticketing system, online store (lojaverde.sporting.pt) with backoffice, analytics and SEO, and Corporate Matchday with QR-code ticket distribution.",
+        blurb:
+          "Ticketing system, online store (lojaverde.sporting.pt) with backoffice, analytics and SEO, and Corporate Matchday with QR-code ticket distribution.",
         tags: ["E-commerce", "Backoffice", "QR Code"],
       },
       {
         title: "Sporting CP — Gamebox & Internal App",
         category: "Sporting CP",
         year: "2023",
-        blurb: "Gamebox platform (gamebox.sporting.pt) and the club's internal app — two faces of a single technological house.",
+        blurb:
+          "Gamebox platform (gamebox.sporting.pt) and the club's internal app — two faces of a single technological house.",
         tags: ["Web Platform", "Internal App"],
       },
       {
         title: "Vinha — Rebrand & Online Store",
         category: "Vinha",
         year: "2023",
-        blurb: "Full rebrand, new online store and backoffice with bespoke integrations — a brand renewed from the ground up, store front and all.",
+        blurb:
+          "Full rebrand, new online store and backoffice with bespoke integrations — a brand renewed from the ground up, store front and all.",
         tags: ["Rebrand", "E-commerce", "Integrations"],
       },
       {
         title: "Aubay Portugal — Timesheet App",
         category: "Aubay",
         year: "2024",
-        blurb: "A time-tracking app built for large teams — simple to use, easy to manage, with zero day-to-day friction.",
+        blurb:
+          "A time-tracking app built for large teams — simple to use, easy to manage, with zero day-to-day friction.",
         tags: ["Internal App", ".NET", "React"],
       },
       {
         title: "Aubay Portugal — Resource Manager",
         category: "Aubay",
         year: "2024",
-        blurb: "A recruitment and resource management platform, with an international form for cross-border applications.",
+        blurb:
+          "A recruitment and resource management platform, with an international form for cross-border applications.",
         tags: ["Recruitment", "Web Platform"],
       },
       {
         title: "Efficient Safe — App & Backoffice",
         category: "Efficient Safe",
         year: "2024",
-        blurb: "A mobile app for accessing insurance documents with a Steevanz access-management plugin, plus a full support backoffice.",
+        blurb:
+          "A mobile app for accessing insurance documents with a Steevanz access-management plugin, plus a full support backoffice.",
         tags: ["Mobile", "Access Plugin", "Backoffice"],
+      },
+      {
+        title: "Crédito Agrícola — Bespoke Frontend Platforms",
+        category: "Crédito Agrícola",
+        year: "2025",
+        blurb:
+          "Key technical voice translating business and design requirements into scalable frontend solutions — projects built from scratch in Angular 20, with a Vue 2 to Vue 3 migration and Pinia and @ngrx/signals adopted for modern state management.",
+        tags: ["Angular", "Vue 3", "Design Systems"],
+      },
+      {
+        title: "BMW — Modular Frontend Platform",
+        category: "BMW",
+        year: "2023",
+        blurb:
+          "Angular services consuming multiple RESTful APIs, with adapters transforming responses into data models, NgRx for state, lazy-loaded modules, custom directives, route guards, and tests written with Jest and Cypress.",
+        tags: ["Angular", "NgRx", "Testing"],
       },
     ],
     cta: {
@@ -645,7 +648,8 @@ const en: typeof pt = {
       titlePre: "“Skill is fine, and",
       titleEm: "genius",
       titlePost: "is splendid…”",
-      quoteAttr: "“...but the right contacts are more valuable than either.” — Arthur Conan Doyle, Sherlock Holmes",
+      quoteAttr:
+        "“...but the right contacts are more valuable than either.” — Arthur Conan Doyle, Sherlock Holmes",
       body: "Tell us a little about your business and what you have in mind. A flesh-and-bone Steevanz — never a robot — will get back to you as soon as possible.",
     },
     info: {
@@ -653,7 +657,7 @@ const en: typeof pt = {
     },
     form: {
       topicsLegend: "What do you want to talk about?",
-      topics: ["Bespoke Software", "E-Commerce", "Applications", "Networking", "Other"],
+      topics: ["Bespoke Software", "E-Commerce", "Applications", "Other"],
       nameLabel: "Name",
       namePlaceholder: "Your name",
       emailLabel: "Email",
@@ -666,7 +670,8 @@ const en: typeof pt = {
       submitLoading: "Sending",
       disclaimer: "No spam — just a real reply, from real people.",
       sentTitle: "Message received",
-      sentBody: "Thanks for reaching out — we'll get back to you soon. No pretending, no pop-ups, no amateur hour.",
+      sentBody:
+        "Thanks for reaching out — we'll get back to you soon. No pretending, no pop-ups, no amateur hour.",
     },
   },
 };

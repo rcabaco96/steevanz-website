@@ -6,7 +6,6 @@ import Footer from "./components/Footer";
 import { WhatsAppButton } from "./components/ui/WhatsAppButton";
 import Home from "./pages/Home";
 import Services from "./pages/Services";
-import Networking from "./pages/Networking";
 import Work from "./pages/Work";
 import Contact from "./pages/Contact";
 
@@ -25,7 +24,6 @@ function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Home />} />
           <Route path="/silky-software" element={<Services />} />
-          <Route path="/networking" element={<Networking />} />
           <Route path="/neighbourhood" element={<Work />} />
           <Route path="/reach-out" element={<Contact />} />
         </Routes>

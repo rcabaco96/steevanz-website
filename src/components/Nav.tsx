@@ -12,12 +12,14 @@ export default function Nav() {
 
   const PRIMARY = [
     { to: "/", label: c.nav.links.home, num: "01" },
-    { to: "/silky-software", label: c.nav.links.silkySoftware, num: "02" },
-    { to: "/neighbourhood", label: c.nav.links.neighbourhood, num: "03" },
-    { to: "/networking", label: c.nav.links.networking, num: "04" },
+    { to: "/neighbourhood", label: c.nav.links.neighbourhood, num: "02" },
+    { to: "/silky-software", label: c.nav.links.silkySoftware, num: "03" },
   ];
 
-  const ALL_LINKS = [...PRIMARY, { to: "/reach-out", label: c.nav.links.reachOut, num: "05" }];
+  const ALL_LINKS = [
+    ...PRIMARY,
+    { to: "/reach-out", label: c.nav.links.reachOut, num: "04" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -45,10 +47,6 @@ export default function Nav() {
           }`}
         >
           <Link to="/" className="group flex items-center gap-2.5">
-            <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-(--color-violet-900) shadow-[0_0_24px_-4px_rgba(214,168,92,0.55)] transition-transform duration-500 group-hover:rotate-[18deg]">
-              <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(214,168,92,0.55),transparent_65%)]" />
-              <span className="relative font-display text-lg font-semibold text-(--color-cream)">S</span>
-            </span>
             <span className="font-display text-xl tracking-tight text-(--color-bone)">
               Steevanz<span className="text-(--color-gold)">.</span>
             </span>
@@ -56,7 +54,11 @@ export default function Nav() {
 
           <nav className="hidden items-center gap-1 lg:flex">
             {PRIMARY.map((link) => (
-              <NavLink key={link.to} link={link} active={pathname === link.to} />
+              <NavLink
+                key={link.to}
+                link={link}
+                active={pathname === link.to}
+              />
             ))}
           </nav>
 
@@ -73,22 +75,22 @@ export default function Nav() {
           <div className="flex items-center gap-2 lg:hidden">
             <LanguageSwitch compact />
             <button
-            onClick={() => setOpen((v) => !v)}
-            className="relative flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-full border border-(--color-line) lg:hidden"
-            aria-label="Toggle menu"
-          >
-            <motion.span
-              animate={open ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-              className="h-px w-4 bg-(--color-bone)"
-            />
-            <motion.span
-              animate={open ? { opacity: 0 } : { opacity: 1 }}
-              className="h-px w-4 bg-(--color-bone)"
-            />
-            <motion.span
-              animate={open ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-              className="h-px w-4 bg-(--color-bone)"
-            />
+              onClick={() => setOpen((v) => !v)}
+              className="relative flex h-10 w-10 flex-col items-center justify-center gap-[5px] rounded-full border border-(--color-line) lg:hidden"
+              aria-label="Toggle menu"
+            >
+              <motion.span
+                animate={open ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                className="h-px w-4 bg-(--color-bone)"
+              />
+              <motion.span
+                animate={open ? { opacity: 0 } : { opacity: 1 }}
+                className="h-px w-4 bg-(--color-bone)"
+              />
+              <motion.span
+                animate={open ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+                className="h-px w-4 bg-(--color-bone)"
+              />
             </button>
           </div>
         </div>
@@ -105,7 +107,11 @@ export default function Nav() {
             <motion.nav
               initial="hidden"
               animate="show"
-              variants={{ show: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } } }}
+              variants={{
+                show: {
+                  transition: { staggerChildren: 0.05, delayChildren: 0.15 },
+                },
+              }}
               className="flex h-full flex-col items-start justify-center gap-1.5 overflow-y-auto px-10 py-28"
             >
               {ALL_LINKS.map((link) => (
@@ -113,14 +119,20 @@ export default function Nav() {
                   key={link.to}
                   variants={{
                     hidden: { opacity: 0, y: 24 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                    },
                   }}
                 >
                   <Link
                     to={link.to}
                     className="flex items-baseline gap-4 py-1.5 font-display text-3xl tracking-tight text-(--color-bone) transition-colors hover:text-(--color-gold) sm:text-4xl"
                   >
-                    <span className="font-mono text-xs text-(--color-gold)">{link.num}</span>
+                    <span className="font-mono text-xs text-(--color-gold)">
+                      {link.num}
+                    </span>
                     {link.label}
                   </Link>
                 </motion.div>
@@ -133,7 +145,13 @@ export default function Nav() {
   );
 }
 
-function NavLink({ link, active }: { link: { to: string; label: string; num: string }; active: boolean }) {
+function NavLink({
+  link,
+  active,
+}: {
+  link: { to: string; label: string; num: string };
+  active: boolean;
+}) {
   return (
     <Link
       to={link.to}
@@ -147,7 +165,13 @@ function NavLink({ link, active }: { link: { to: string; label: string; num: str
         />
       )}
       <span className="relative flex items-center gap-1.5">
-        <span className={active ? "text-(--color-gold)" : "text-(--color-line) group-hover:text-(--color-gold)"}>
+        <span
+          className={
+            active
+              ? "text-(--color-gold)"
+              : "text-(--color-line) group-hover:text-(--color-gold)"
+          }
+        >
           {link.num}
         </span>
         {link.label}

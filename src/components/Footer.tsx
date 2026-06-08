@@ -24,9 +24,8 @@ export default function Footer() {
             title={c.footer.mapTitle}
             links={[
               { label: c.nav.links.home, to: "/" },
-              { label: c.nav.links.silkySoftware, to: "/silky-software" },
-              { label: c.nav.links.networking, to: "/networking" },
               { label: c.nav.links.neighbourhood, to: "/neighbourhood" },
+              { label: c.nav.links.silkySoftware, to: "/silky-software" },
             ]}
           />
 

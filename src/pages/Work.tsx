@@ -8,13 +8,27 @@ import { useLanguage } from "../i18n/LanguageContext";
 import scpLogo from "../assets/scp.png";
 import aubayLogo from "../assets/aubay.jpg";
 import efficientSafeLogo from "../assets/efficient_safe.jpg";
+import creditoAgricolaLogo from "../assets/credito_agricola.png";
+import bmwLogo from "../assets/bmw.png";
+import vinhaLogo from "../assets/vinha.jpg";
 
-const FILTER_KEYS = ["all", "Sporting CP", "Vinha", "Aubay", "Efficient Safe"] as const;
+const FILTER_KEYS = [
+  "all",
+  "BMW",
+  "Crédito Agrícola",
+  "Sporting CP",
+  "Aubay",
+  "Mesh",
+  "Efficient Safe",
+] as const;
 
 const LOGOS: Record<string, string> = {
   "Sporting CP": scpLogo,
   Aubay: aubayLogo,
   "Efficient Safe": efficientSafeLogo,
+  "Crédito Agrícola": creditoAgricolaLogo,
+  BMW: bmwLogo,
+  Mesh: vinhaLogo,
 };
 
 const ACCENTS = [
@@ -24,26 +38,38 @@ const ACCENTS = [
   "from-(--color-violet-500)/30 to-(--color-gold)/15",
   "from-(--color-gold)/20 to-(--color-violet-400)/15",
   "from-(--color-violet-600)/25 to-(--color-violet-900)/15",
+  "from-(--color-violet-500)/25 to-(--color-violet-400)/10",
+  "from-(--color-gold)/20 to-(--color-violet-900)/15",
 ];
 
 export default function Work() {
   const { c } = useLanguage();
   const w = c.work;
   const [filter, setFilter] = useState<(typeof FILTER_KEYS)[number]>("all");
-  const visible = filter === "all" ? w.projects : w.projects.filter((p) => p.category === filter);
+  const visible =
+    filter === "all"
+      ? w.projects
+      : w.projects.filter((p) => p.category === filter);
 
   return (
     <PageShell>
       <section className="relative overflow-hidden pt-44 pb-16">
         <div
           className="pointer-events-none absolute inset-0 -z-10"
-          style={{ background: "radial-gradient(50% 40% at 80% 0%, rgba(214,168,92,0.14), transparent 70%)" }}
+          style={{
+            background:
+              "radial-gradient(50% 40% at 80% 0%, rgba(214,168,92,0.14), transparent 70%)",
+          }}
         />
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Reveal>
             <Eyebrow>{w.hero.eyebrow}</Eyebrow>
             <h1 className="mt-7 max-w-3xl font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-7xl">
-              {w.hero.titlePre} <span className="italic text-(--color-gold)">{w.hero.titleEm}</span> {w.hero.titlePost}
+              {w.hero.titlePre}{" "}
+              <span className="italic text-(--color-gold)">
+                {w.hero.titleEm}
+              </span>{" "}
+              {w.hero.titlePost}
             </h1>
             <p className="mt-7 max-w-xl text-balance text-lg leading-relaxed text-(--color-fog)">
               {w.hero.body}
@@ -76,7 +102,10 @@ export default function Work() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pb-32 sm:px-10">
-        <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" key={filter}>
+        <RevealGroup
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          key={filter}
+        >
           {visible.map((p) => {
             const idx = w.projects.indexOf(p);
             return (
@@ -97,7 +126,9 @@ export default function Work() {
                     />
                   </span>
                 )}
-                <div className={`relative flex h-52 items-end overflow-hidden rounded-t-3xl bg-gradient-to-br ${ACCENTS[idx]} p-6`}>
+                <div
+                  className={`relative flex h-52 items-end overflow-hidden rounded-t-3xl bg-gradient-to-br ${ACCENTS[idx]} p-6`}
+                >
                   <div
                     className="absolute inset-0 opacity-40 transition-transform duration-700 group-hover:scale-110"
                     style={{
@@ -110,16 +141,29 @@ export default function Work() {
                   </span>
                   <span className="absolute right-6 top-6 grid h-9 w-9 place-items-center rounded-full border border-(--color-bone)/25 text-(--color-bone) opacity-0 transition-all duration-400 group-hover:translate-x-0 group-hover:opacity-100 -translate-x-2">
                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                      <path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      <path
+                        d="M3 13L13 3M13 3H5M13 3V11"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </span>
                 </div>
                 <div className="p-7">
-                  <h3 className="font-display text-2xl tracking-tight text-(--color-bone)">{p.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-(--color-fog)">{p.blurb}</p>
+                  <h3 className="font-display text-2xl tracking-tight text-(--color-bone)">
+                    {p.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-(--color-fog)">
+                    {p.blurb}
+                  </p>
                   <div className="mt-6 flex flex-wrap gap-2">
                     {p.tags.map((t) => (
-                      <span key={t} className="rounded-full border border-(--color-line) px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-(--color-fog)">
+                      <span
+                        key={t}
+                        className="rounded-full border border-(--color-line) px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-(--color-fog)"
+                      >
                         {t}
                       </span>
                     ))}
@@ -142,7 +186,11 @@ export default function Work() {
                 {w.cta.body}
               </p>
             </div>
-            <MagneticButton to="/reach-out" variant="solid" className="shrink-0">
+            <MagneticButton
+              to="/reach-out"
+              variant="solid"
+              className="shrink-0"
+            >
               {w.cta.cta}
             </MagneticButton>
           </div>
