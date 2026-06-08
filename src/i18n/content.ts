@@ -333,6 +333,8 @@ const pt = {
       submitIdle: "Vamos conversar",
       submitLoading: "A enviar",
       disclaimer: "Sem spam — só uma resposta a sério, de gente a sério.",
+      errorMessage:
+        "Algo correu mal a enviar a tua mensagem. Tenta novamente ou escreve-nos para rcabaco@steevanz.com.",
       sentTitle: "Mensagem recebida",
       sentBody:
         "Obrigado por nos contactares — entramos em contigo em breve. Sem fingir, sem pop-ups, sem amadorismo.",
@@ -669,6 +671,8 @@ const en: typeof pt = {
       submitIdle: "Let's talk",
       submitLoading: "Sending",
       disclaimer: "No spam — just a real reply, from real people.",
+      errorMessage:
+        "Something went wrong sending your message. Please try again or email us at rcabaco@steevanz.com.",
       sentTitle: "Message received",
       sentBody:
         "Thanks for reaching out — we'll get back to you soon. No pretending, no pop-ups, no amateur hour.",
