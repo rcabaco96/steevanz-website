@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@import "@fontsource-variable/fraunces/standard.css";
+@import "@fontsource-variable/hanken-grotesk";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
+@theme {
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-sans: "Hanken Grotesk Variable", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Steevanz palette — sampled straight from the official flower mark:
+     wine-magenta "Pantone purple" ground, cream petals, gold circuitry,
+     and deep plum seed pods at the centre. Hues shifted from cool blue-violet
+     toward this warmer magenta-purple family to match the real logo. */
+  --color-void: #190d1c;
+  --color-ink: #211226;
+  --color-surface: #2b1830;
+  --color-surface-2: #38203d;
+  --color-line: #4c2e4e;
+
+  --color-violet-50: #f9eef6;
+  --color-violet-200: #e2c0db;
+  --color-violet-400: #c987c9;
+  --color-violet-500: #ad5fb0;
+  --color-violet-600: #8a4690;
+  --color-violet-900: #3f1f3f;
+
+  /* the deep plum seed pods at the flower's centre */
+  --color-plum: #4f1f44;
+  /* the wine-magenta "Pantone purple" of the logo ground */
+  --color-bloom: #6e2a57;
+
+  --color-lilac: #d6b9d6;
+  --color-magenta: #d97bb0;
+  --color-ember: #ffb37a;
+
+  /* gold circuitry from the logo mark */
+  --color-gold: #cfa563;
+  --color-gold-bright: #e9c685;
+  /* cream petals from the logo mark */
+  --color-cream: #f1e6d4;
+
+  --color-fog: #c2b3cf;
+  --color-bone: #f6efe6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-void);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-violet-500);
+  color: var(--color-void);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-2);
+  border-radius: 999px;
+  border: 2px solid var(--color-void);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-violet-600);
+}
+
+/* Grain overlay — adds tactile depth to the dark ground */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.font-feature-tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
