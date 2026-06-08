@@ -1,7 +1,7 @@
 export const config = { runtime: "edge" };
 
 const TO_EMAIL = "rcabaco@steevanz.com";
-const FROM_EMAIL = "Steevanz Site <onboarding@resend.dev>";
+const FROM_EMAIL = "Steevanz <mail@steevanz.com>";
 
 function escapeHtml(value: string) {
   return value
