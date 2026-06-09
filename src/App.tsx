@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
+import { Analytics } from "@vercel/analytics/react";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import { WhatsAppButton } from "./components/ui/WhatsAppButton";
@@ -30,6 +31,7 @@ function App() {
       </AnimatePresence>
       <Footer />
       <WhatsAppButton />
+      <Analytics />
     </div>
   );
 }
