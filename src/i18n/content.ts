@@ -2,7 +2,7 @@ const pt = {
   nav: {
     links: {
       home: "Casa",
-      silkySoftware: "Preços",
+      silkySoftware: "Sites",
       neighbourhood: "Vizinhança",
       reachOut: "Bate à Porta",
     },
@@ -85,7 +85,7 @@ const pt = {
         },
         {
           n: "02",
-          to: "/pricing",
+          to: "/sites",
           title: "Sem truques. Só clareza.",
           body: "Valores de referência, sem truques nem letras miudinhas — cada projeto é orçamentado à medida do que precisas.",
           cta: "Ver preços",
@@ -112,9 +112,8 @@ const pt = {
   services: {
     pricing: {
       eyebrow: "Tabela de preços",
-      titlePre: "Soluções",
-      titleEm: "à medida",
-      titlePost: "do teu negócio.",
+      titlePre: "Sites",
+      titleEm: "em 24h.",
       body: "Da primeira presença online à plataforma corporate — três pontos de partida, sempre adaptáveis ao que precisas.",
       featuredBadge: "Mais escolhido",
       note: "Valores de referência, sem IVA incluído — cada projeto é orçamentado à medida do que precisas.",
@@ -337,7 +336,7 @@ const en: typeof pt = {
   nav: {
     links: {
       home: "Home",
-      silkySoftware: "Pricing",
+      silkySoftware: "Websites",
       neighbourhood: "Neighbourhood",
       reachOut: "Reach Out",
     },
@@ -419,7 +418,7 @@ const en: typeof pt = {
         },
         {
           n: "02",
-          to: "/pricing",
+          to: "/sites",
           title: "No tricks. Just clarity.",
           body: "Reference values, with no tricks or fine print — every project is quoted to fit what you need.",
           cta: "See the prices",
@@ -446,9 +445,8 @@ const en: typeof pt = {
   services: {
     pricing: {
       eyebrow: "Pricing table",
-      titlePre: "Solutions",
-      titleEm: "tailored",
-      titlePost: "to your business.",
+      titlePre: "Websites",
+      titleEm: "in 24h.",
       body: "From your first online presence to a full corporate platform — three starting points, always adaptable to what you need.",
       featuredBadge: "Most chosen",
       note: "Reference values, VAT not included — every project is quoted around what you actually need.",

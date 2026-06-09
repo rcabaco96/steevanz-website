@@ -2,8 +2,10 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import PageShell from "../components/PageShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
+import { HeadlineReveal } from "../components/ui/HeadlineReveal";
 import { MagneticButton } from "../components/ui/MagneticButton";
 import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
+import { TiltCard } from "../components/ui/TiltCard";
 import { useLanguage } from "../i18n/LanguageContext";
 import scpLogo from "../assets/scp.png";
 import aubayLogo from "../assets/aubay.jpg";
@@ -64,13 +66,13 @@ export default function Work() {
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Reveal>
             <Eyebrow>{w.hero.eyebrow}</Eyebrow>
-            <h1 className="mt-7 max-w-3xl font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-7xl">
+            <HeadlineReveal as="h1" delay={0.05} className="mt-7 max-w-3xl font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-7xl">
               {w.hero.titlePre}{" "}
               <span className="italic text-(--color-gold)">
                 {w.hero.titleEm}
               </span>{" "}
               {w.hero.titlePost}
-            </h1>
+            </HeadlineReveal>
             <p className="mt-7 max-w-xl text-balance text-lg leading-relaxed text-(--color-fog)">
               {w.hero.body}
             </p>
@@ -109,14 +111,9 @@ export default function Work() {
           {visible.map((p) => {
             const idx = w.projects.indexOf(p);
             return (
-              <motion.article
-                key={p.title}
-                variants={revealItem}
-                layout
-                whileHover={{ y: -8 }}
-                transition={{ type: "spring", stiffness: 260, damping: 22 }}
-                className="group relative rounded-3xl border border-(--color-line) bg-(--color-surface)/50"
-              >
+              <motion.div key={p.title} variants={revealItem} layout>
+              <TiltCard className="rounded-3xl border border-(--color-line) bg-(--color-surface)/50">
+              <article className="group relative">
                 {LOGOS[p.category] && (
                   <span className="absolute -top-8 left-1/2 z-10 grid h-16 w-16 -translate-x-1/2 place-items-center overflow-hidden rounded-full border border-(--color-line) bg-(--color-bone) shadow-[0_8px_28px_-8px_rgba(0,0,0,0.5)]">
                     <img
@@ -169,7 +166,9 @@ export default function Work() {
                     ))}
                   </div>
                 </div>
-              </motion.article>
+              </article>
+              </TiltCard>
+              </motion.div>
             );
           })}
         </RevealGroup>

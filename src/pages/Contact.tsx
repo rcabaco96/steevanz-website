@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import PageShell from "../components/PageShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
+import { HeadlineReveal } from "../components/ui/HeadlineReveal";
 import { Reveal } from "../components/ui/Reveal";
 import { useLanguage } from "../i18n/LanguageContext";
 
@@ -76,13 +77,13 @@ export default function Contact() {
           <div>
             <Reveal>
               <Eyebrow>{ct.hero.eyebrow}</Eyebrow>
-              <h1 className="mt-7 max-w-md font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-6xl">
+              <HeadlineReveal as="h1" delay={0.05} className="mt-7 max-w-md font-display text-5xl leading-[1.04] tracking-tight text-(--color-bone) sm:text-6xl">
                 {ct.hero.titlePre}{" "}
                 <span className="italic text-(--color-gold)">
                   {ct.hero.titleEm}
                 </span>{" "}
                 {ct.hero.titlePost}
-              </h1>
+              </HeadlineReveal>
               <p className="mt-4 max-w-sm font-mono text-xs uppercase tracking-[0.18em] text-(--color-fog)">
                 {ct.hero.quoteAttr}
               </p>

@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { Reveal, RevealGroup, revealItem } from "./ui/Reveal";
 
 export default function Footer() {
   const { c } = useLanguage();
@@ -7,8 +9,11 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-(--color-line)/60 bg-(--color-ink)">
       <div className="mx-auto max-w-7xl px-6 py-20 sm:px-10">
-        <div className="grid gap-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
-          <div>
+        <RevealGroup
+          className="grid gap-16 md:grid-cols-[1.4fr_1fr_1fr_1fr]"
+          stagger={0.1}
+        >
+          <motion.div variants={revealItem}>
             <Link
               to="/"
               className="font-display text-3xl tracking-tight text-(--color-bone)"
@@ -21,14 +26,14 @@ export default function Footer() {
             <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-(--color-gold)">
               {c.footer.hashtag}
             </p>
-          </div>
+          </motion.div>
 
           <FooterCol
             title={c.footer.mapTitle}
             links={[
               { label: c.nav.links.home, to: "/" },
               { label: c.nav.links.neighbourhood, to: "/neighbourhood" },
-              { label: c.nav.links.silkySoftware, to: "/pricing" },
+              { label: c.nav.links.silkySoftware, to: "/sites" },
             ]}
           />
 
@@ -37,7 +42,7 @@ export default function Footer() {
             links={[{ label: c.nav.links.reachOut, to: "/reach-out" }]}
           />
 
-          <div>
+          <motion.div variants={revealItem}>
             <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-(--color-gold)">
               {c.footer.reachTitle}
             </h4>
@@ -72,10 +77,13 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-          </div>
-        </div>
+          </motion.div>
+        </RevealGroup>
 
-        <div className="mt-20 flex flex-col items-start justify-between gap-4 border-t border-(--color-line)/60 pt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-(--color-fog)/70 sm:flex-row sm:items-center">
+        <Reveal
+          delay={0.1}
+          className="mt-20 flex flex-col items-start justify-between gap-4 border-t border-(--color-line)/60 pt-8 font-mono text-[11px] uppercase tracking-[0.16em] text-(--color-fog)/70 sm:flex-row sm:items-center"
+        >
           <span>
             © {new Date().getFullYear()} Steevanz — {c.footer.rights}
           </span>
@@ -83,7 +91,7 @@ export default function Footer() {
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-(--color-gold)" />
             {c.footer.since}
           </span>
-        </div>
+        </Reveal>
       </div>
     </footer>
   );
@@ -97,7 +105,7 @@ function FooterCol({
   links: { label: string; to: string }[];
 }) {
   return (
-    <div>
+    <motion.div variants={revealItem}>
       <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-(--color-gold)">
         {title}
       </h4>
@@ -113,6 +121,6 @@ function FooterCol({
           </li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 }

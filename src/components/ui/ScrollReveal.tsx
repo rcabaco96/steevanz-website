@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "../../lib/gsap";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useMotionTemplate } from "motion/react";
 import type { ReactNode } from "react";
 
 /**
@@ -18,39 +18,20 @@ export function ScrollReveal({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 92%", "start 48%"],
+  });
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        el,
-        {
-          clipPath: `inset(${from}% round ${from * 0.9}px)`,
-          scale: 0.96,
-          opacity: 0.25,
-        },
-        {
-          clipPath: "inset(0% round 0px)",
-          scale: 1,
-          opacity: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 92%",
-            end: "top 48%",
-            scrub: 0.5,
-          },
-        }
-      );
-    }, ref);
-
-    return () => ctx.revert();
-  }, [from]);
+  const inset = useTransform(scrollYProgress, [0, 1], [from, 0]);
+  const radius = useTransform(scrollYProgress, [0, 1], [from * 0.9, 0]);
+  const clipPath = useMotionTemplate`inset(${inset}% round ${radius}px)`;
+  const scale = useTransform(scrollYProgress, [0, 1], [0.96, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0.25, 1]);
 
   return (
-    <div ref={ref} className={className}>
+    <motion.div ref={ref} className={className} style={{ clipPath, scale, opacity }}>
       {children}
-    </div>
+    </motion.div>
   );
 }

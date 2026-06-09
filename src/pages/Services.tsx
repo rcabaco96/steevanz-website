@@ -1,8 +1,10 @@
 import { motion } from "motion/react";
 import PageShell from "../components/PageShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
+import { HeadlineReveal } from "../components/ui/HeadlineReveal";
 import { MagneticButton } from "../components/ui/MagneticButton";
 import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
+import { TiltCard } from "../components/ui/TiltCard";
 import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Services() {
@@ -20,9 +22,9 @@ export default function Services() {
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
         <Reveal className="text-center">
           <Eyebrow className="justify-center">{s.pricing.eyebrow}</Eyebrow>
-          <h1 className="mx-auto mt-6 max-w-2xl text-balance font-display text-5xl leading-[1.06] tracking-tight text-(--color-bone) sm:text-6xl">
+          <HeadlineReveal as="h1" className="mx-auto mt-6 max-w-2xl text-balance font-display text-5xl leading-[1.06] tracking-tight text-(--color-bone) sm:text-6xl">
             {s.pricing.titlePre} <span className="italic text-(--color-gold)">{s.pricing.titleEm}</span> {s.pricing.titlePost}
-          </h1>
+          </HeadlineReveal>
           <p className="mx-auto mt-6 max-w-xl text-balance text-lg leading-relaxed text-(--color-fog)">
             {s.pricing.body}
           </p>
@@ -30,12 +32,9 @@ export default function Services() {
 
         <RevealGroup className="mt-16 grid gap-6 lg:grid-cols-3 lg:items-center">
           {s.pricing.plans.map((plan) => (
-            <motion.div
-              key={plan.n}
-              variants={revealItem}
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              className={`relative flex h-full flex-col rounded-[2rem] border p-8 sm:p-10 ${
+            <motion.div key={plan.n} variants={revealItem} className="h-full">
+            <TiltCard
+              className={`flex h-full flex-col rounded-[2rem] border p-8 sm:p-10 ${
                 plan.featured
                   ? "border-(--color-gold) bg-(--color-surface-2) shadow-[0_24px_60px_-20px_rgba(214,168,92,0.35)] lg:scale-105"
                   : "border-(--color-line) bg-(--color-surface)/50"
@@ -85,6 +84,7 @@ export default function Services() {
               >
                 {plan.cta}
               </MagneticButton>
+            </TiltCard>
             </motion.div>
           ))}
         </RevealGroup>
@@ -99,9 +99,9 @@ export default function Services() {
       <section className="mx-auto max-w-7xl px-6 py-32 sm:px-10">
         <Reveal>
           <Eyebrow>{s.usp.eyebrow}</Eyebrow>
-          <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
+          <HeadlineReveal as="h2" className="mt-6 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
             {s.usp.titlePre} <span className="italic text-(--color-gold)">{s.usp.titleEm}</span> {s.usp.titlePost}
-          </h2>
+          </HeadlineReveal>
         </Reveal>
 
         <RevealGroup className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-(--color-line) bg-(--color-line) sm:grid-cols-2 lg:grid-cols-3">

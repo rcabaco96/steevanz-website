@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
-import { motion } from "motion/react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { Link } from "react-router-dom";
-import { gsap } from "../lib/gsap";
 import PageShell from "../components/PageShell";
 import HeroScene from "../components/HeroScene";
 import Manifesto from "../components/Manifesto";
 import { Eyebrow } from "../components/ui/Eyebrow";
+import { HeadlineReveal } from "../components/ui/HeadlineReveal";
 import { MagneticButton } from "../components/ui/MagneticButton";
 import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
 import { Marquee } from "../components/ui/Marquee";
@@ -15,26 +15,14 @@ import { useLanguage } from "../i18n/LanguageContext";
 export default function Home() {
   const { c } = useLanguage();
   const heroRef = useRef<HTMLElement>(null);
-  const heroContentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(heroContentRef.current, {
-        opacity: 0,
-        scale: 0.92,
-        y: 120,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.4,
-        },
-      });
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, []);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroOpacity = useTransform(heroProgress, [0, 1], [1, 0]);
+  const heroScale = useTransform(heroProgress, [0, 1], [1, 0.92]);
+  const heroY = useTransform(heroProgress, [0, 1], [0, 120]);
 
   return (
     <PageShell>
@@ -52,8 +40,8 @@ export default function Home() {
           }}
         />
 
-        <div
-          ref={heroContentRef}
+        <motion.div
+          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
           className="mx-auto w-full max-w-7xl px-6 sm:px-10"
         >
           <motion.div
@@ -64,18 +52,14 @@ export default function Home() {
             <Eyebrow>{c.home.hero.eyebrow}</Eyebrow>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 36 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-7 max-w-4xl font-display text-[13vw] leading-[0.96] tracking-tight text-(--color-bone) sm:text-7xl lg:text-[6.4rem]"
-          >
-            {c.home.hero.titleLine1}
-            <br />
-            <span className="italic text-(--color-gold)">
+          <h1 className="mt-7 max-w-4xl font-display text-[13vw] leading-[0.96] tracking-tight text-(--color-bone) sm:text-7xl lg:text-[6.4rem]">
+            <HeadlineReveal delay={0.1}>
+              {c.home.hero.titleLine1}
+            </HeadlineReveal>
+            <HeadlineReveal delay={0.2} className="italic text-(--color-gold)">
               {c.home.hero.titleLine2}
-            </span>
-          </motion.h1>
+            </HeadlineReveal>
+          </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 28 }}
@@ -92,14 +76,14 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.34, ease: [0.16, 1, 0.3, 1] }}
             className="mt-11 flex flex-wrap items-center gap-4"
           >
-            <MagneticButton to="/pricing" variant="solid">
+            <MagneticButton to="/sites" variant="solid">
               {c.home.hero.ctaPrimary}
             </MagneticButton>
             <MagneticButton to="/reach-out" variant="ghost">
               {c.home.hero.ctaSecondary}
             </MagneticButton>
           </motion.div>
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
