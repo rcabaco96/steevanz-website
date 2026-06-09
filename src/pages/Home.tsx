@@ -126,13 +126,13 @@ export default function Home() {
         >
           <Reveal>
             <Eyebrow>{c.home.purpose.eyebrow}</Eyebrow>
-            <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.1] tracking-tight text-(--color-bone) sm:text-5xl">
+            <HeadlineReveal as="h2" delay={0.08} className="mt-6 max-w-xl font-display text-4xl leading-[1.1] tracking-tight text-(--color-bone) sm:text-5xl">
               {c.home.purpose.title}{" "}
               <span className="italic text-(--color-gold)">
                 {c.home.purpose.titleEm}
               </span>{" "}
               {c.home.purpose.titleRest}
-            </h2>
+            </HeadlineReveal>
             <div className="mt-7 max-w-lg space-y-4 text-balance leading-relaxed text-(--color-fog)">
               <p>{c.home.purpose.p1}</p>
               <p>{c.home.purpose.p2}</p>
@@ -182,13 +182,13 @@ export default function Home() {
         <div className="relative mx-auto max-w-7xl px-6 sm:px-10">
           <Reveal>
             <Eyebrow>{c.home.highlights.eyebrow}</Eyebrow>
-            <h2 className="mt-6 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
+            <HeadlineReveal as="h2" delay={0.08} className="mt-6 max-w-xl font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
               {c.home.highlights.titlePre}{" "}
               <span className="italic text-(--color-gold)">
                 {c.home.highlights.titleEm}
               </span>{" "}
               {c.home.highlights.titlePost}
-            </h2>
+            </HeadlineReveal>
           </Reveal>
 
           <RevealGroup className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -234,13 +234,13 @@ export default function Home() {
             />
             <div className="relative">
               <Eyebrow>{c.home.cta.eyebrow}</Eyebrow>
-              <h2 className="mx-auto mt-7 max-w-2xl text-balance font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
+              <HeadlineReveal as="h2" delay={0.08} className="mx-auto mt-7 max-w-2xl text-balance font-display text-4xl leading-[1.08] tracking-tight text-(--color-bone) sm:text-5xl">
                 {c.home.cta.titlePre}{" "}
                 <span className="italic text-(--color-gold)">
                   {c.home.cta.titleEm}
                 </span>
                 {c.home.cta.titlePost}
-              </h2>
+              </HeadlineReveal>
               <p className="mx-auto mt-6 max-w-md text-(--color-fog)">
                 {c.home.cta.body}
               </p>

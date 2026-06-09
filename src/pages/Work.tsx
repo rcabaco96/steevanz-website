@@ -78,28 +78,29 @@ export default function Work() {
             </p>
           </Reveal>
 
-          <Reveal delay={0.1} className="mt-12 flex flex-wrap gap-3">
+          <RevealGroup className="mt-12 flex flex-wrap gap-3" stagger={0.05}>
             {FILTER_KEYS.map((key, i) => (
-              <button
-                key={key}
-                onClick={() => setFilter(key)}
-                className={`relative rounded-full border px-5 py-2 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-300 ${
-                  filter === key
-                    ? "border-(--color-gold) text-(--color-bone)"
-                    : "border-(--color-line) text-(--color-fog) hover:text-(--color-bone)"
-                }`}
-              >
-                {filter === key && (
-                  <motion.span
-                    layoutId="work-filter"
-                    className="absolute inset-0 -z-10 rounded-full bg-(--color-gold)/15"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                {w.filters[i]}
-              </button>
+              <motion.div key={key} variants={revealItem}>
+                <button
+                  onClick={() => setFilter(key)}
+                  className={`relative rounded-full border px-5 py-2 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors duration-300 ${
+                    filter === key
+                      ? "border-(--color-gold) text-(--color-bone)"
+                      : "border-(--color-line) text-(--color-fog) hover:text-(--color-bone)"
+                  }`}
+                >
+                  {filter === key && (
+                    <motion.span
+                      layoutId="work-filter"
+                      className="absolute inset-0 -z-10 rounded-full bg-(--color-gold)/15"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  {w.filters[i]}
+                </button>
+              </motion.div>
             ))}
-          </Reveal>
+          </RevealGroup>
         </div>
       </section>
 
@@ -178,9 +179,9 @@ export default function Work() {
         <Reveal>
           <div className="flex flex-col items-start justify-between gap-8 rounded-[2rem] border border-(--color-line) bg-gradient-to-br from-(--color-surface) to-(--color-violet-900)/30 p-10 sm:flex-row sm:items-center sm:p-14">
             <div>
-              <h2 className="font-display text-3xl tracking-tight text-(--color-bone) sm:text-4xl">
+              <HeadlineReveal as="h2" className="font-display text-3xl tracking-tight text-(--color-bone) sm:text-4xl">
                 {w.cta.title}
-              </h2>
+              </HeadlineReveal>
               <p className="mt-3 max-w-md text-sm text-(--color-fog)">
                 {w.cta.body}
               </p>

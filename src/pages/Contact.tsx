@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import PageShell from "../components/PageShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { HeadlineReveal } from "../components/ui/HeadlineReveal";
-import { Reveal } from "../components/ui/Reveal";
+import { Reveal, RevealGroup, revealItem } from "../components/ui/Reveal";
 import { useLanguage } from "../i18n/LanguageContext";
 
 function FieldLabel({
@@ -92,11 +92,8 @@ export default function Contact() {
               </p>
             </Reveal>
 
-            <Reveal
-              delay={0.15}
-              className="mt-10 space-y-4 font-mono text-sm text-(--color-fog)"
-            >
-              <div className="flex items-center gap-3">
+            <RevealGroup className="mt-10 space-y-4 font-mono text-sm text-(--color-fog)" stagger={0.08}>
+              <motion.div variants={revealItem} className="flex items-center gap-3">
                 <span className="h-px w-6 bg-(--color-gold)" />
                 <a
                   href="mailto:rcabaco@steevanz.com"
@@ -104,8 +101,8 @@ export default function Contact() {
                 >
                   rcabaco@steevanz.com
                 </a>
-              </div>
-              <div className="flex items-center gap-3">
+              </motion.div>
+              <motion.div variants={revealItem} className="flex items-center gap-3">
                 <span className="h-px w-6 bg-(--color-gold)" />
                 <a
                   href="tel:+351928069072"
@@ -113,12 +110,12 @@ export default function Contact() {
                 >
                   +351 928 069 072
                 </a>
-              </div>
-              <div className="flex items-center gap-3">
+              </motion.div>
+              <motion.div variants={revealItem} className="flex items-center gap-3">
                 <span className="h-px w-6 bg-(--color-gold)" />
                 <span>{ct.info.address}</span>
-              </div>
-              <div className="flex items-center gap-3">
+              </motion.div>
+              <motion.div variants={revealItem} className="flex items-center gap-3">
                 <span className="h-px w-6 bg-(--color-gold)" />
                 <a
                   href="https://www.instagram.com/steevanz_"
@@ -128,8 +125,8 @@ export default function Contact() {
                 >
                   @Steevanz_
                 </a>
-              </div>
-            </Reveal>
+              </motion.div>
+            </RevealGroup>
           </div>
 
           {/* RIGHT — form */}
@@ -172,7 +169,12 @@ export default function Contact() {
                     exit={{ opacity: 0 }}
                     className="space-y-6"
                   >
-                    <div className="grid gap-6 sm:grid-cols-2">
+                    <motion.div
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.12, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      className="grid gap-6 sm:grid-cols-2"
+                    >
                       <div>
                         <FieldLabel htmlFor="name">
                           {ct.form.nameLabel}
@@ -198,9 +200,13 @@ export default function Contact() {
                           className={inputClass}
                         />
                       </div>
-                    </div>
+                    </motion.div>
 
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    >
                       <FieldLabel htmlFor="company">
                         {ct.form.companyLabel}
                       </FieldLabel>
@@ -210,9 +216,13 @@ export default function Contact() {
                         placeholder={ct.form.companyPlaceholder}
                         className={inputClass}
                       />
-                    </div>
+                    </motion.div>
 
-                    <fieldset>
+                    <motion.fieldset
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.28, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    >
                       <legend className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-(--color-fog)">
                         {ct.form.topicsLegend}
                       </legend>
@@ -243,9 +253,13 @@ export default function Contact() {
                           </button>
                         ))}
                       </div>
-                    </fieldset>
+                    </motion.fieldset>
 
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.36, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    >
                       <FieldLabel htmlFor="message">
                         {ct.form.messageLabel}
                       </FieldLabel>
@@ -257,7 +271,7 @@ export default function Contact() {
                         placeholder={ct.form.messagePlaceholder}
                         className={`${inputClass} resize-none`}
                       />
-                    </div>
+                    </motion.div>
 
                     <motion.button
                       type="submit"

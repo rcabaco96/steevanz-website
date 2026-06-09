@@ -156,9 +156,9 @@ export default function Services() {
         <Reveal>
           <div className="flex flex-col items-start justify-between gap-8 rounded-[2rem] border border-(--color-line) bg-(--color-surface)/50 p-10 sm:flex-row sm:items-center sm:p-14">
             <div>
-              <h2 className="font-display text-3xl tracking-tight text-(--color-bone) sm:text-4xl">
+              <HeadlineReveal as="h2" className="font-display text-3xl tracking-tight text-(--color-bone) sm:text-4xl">
                 {s.cta.title}
-              </h2>
+              </HeadlineReveal>
               <p className="mt-3 max-w-md text-sm text-(--color-fog)">
                 {s.cta.body}
               </p>

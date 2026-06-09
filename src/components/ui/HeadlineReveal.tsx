@@ -1,4 +1,5 @@
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 import type { ReactNode } from "react";
 
 const TAGS = {
@@ -20,10 +21,6 @@ const variants = {
   },
 };
 
-/**
- * Masked slide-up reveal for headlines: the line rises out of an overflow-hidden
- * frame with a blur-to-sharp settle, like a curtain lifting off the type.
- */
 export function HeadlineReveal({
   children,
   className = "",
@@ -35,13 +32,14 @@ export function HeadlineReveal({
   delay?: number;
   as?: keyof typeof TAGS;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
   const MotionTag = TAGS[Tag];
   return (
-    <div className={`overflow-hidden ${className}`}>
+    <div ref={ref} className={`overflow-hidden ${className}`}>
       <MotionTag
         initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-80px" }}
+        animate={isInView ? "show" : "hidden"}
         variants={variants}
         transition={{ delay }}
       >
