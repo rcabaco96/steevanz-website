@@ -7,6 +7,7 @@ export const site = {
   phoneDisplay: "+351 928 069 072",
   phoneHref: "tel:+351928069072",
   whatsappNumber: "351961292679",
+  whatsappDisplay: "+351 961 292 679",
   instagramUrl: "https://www.instagram.com/steevanz_",
   instagramHandle: "@steevanz_",
   country: "PT",

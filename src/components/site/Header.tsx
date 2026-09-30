@@ -207,9 +207,11 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
           <div className="flex items-center gap-1">
             <LanguageSwitch locale={locale} label={labels.languageSwitch} short={labels.languageShort} />
             <ThemeToggle label={labels.themeToggle} />
-            <Link href={links.book} className={buttonClasses("primary", "sm", "ml-2 hidden sm:inline-flex")}>
-              {labels.bookDemo}
-            </Link>
+            <span className="ml-2 hidden sm:block">
+              <Link href={links.book} className={buttonClasses("primary", "sm")}>
+                {labels.bookDemo}
+              </Link>
+            </span>
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
