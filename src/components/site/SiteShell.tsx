@@ -14,6 +14,8 @@ import { RevealObserver } from "./RevealObserver";
 import { ThemeScript } from "./ThemeScript";
 import { WhatsAppButton } from "./WhatsAppButton";
 
+const isVercelDeployment = Boolean(process.env.VERCEL);
+
 export function SiteShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   const t = ui[locale];
   const navProducts: NavProduct[] = products.map((product) => {
@@ -73,8 +75,12 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
         <Footer locale={locale} />
         <WhatsAppButton href={whatsappUrl(t.common.whatsappMessage)} label={t.common.whatsapp} />
         <RevealObserver />
-        <Analytics />
-        <SpeedInsights />
+        {isVercelDeployment ? (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        ) : null}
       </body>
     </html>
   );
