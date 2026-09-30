@@ -215,7 +215,7 @@ export function BookingFlow({
                             {copy.timeLabel}
                           </h2>
                           {selectedDay ? (
-                            <p className="text-sm capitalize text-muted">{formatSlotDate(selectedDay.slots[0]?.start ?? `${selectedDay.date}T12:00:00Z`, locale, timeZone)}</p>
+                            <p className="text-sm first-letter:uppercase text-muted">{formatSlotDate(selectedDay.slots[0]?.start ?? `${selectedDay.date}T12:00:00Z`, locale, timeZone)}</p>
                           ) : null}
                         </div>
                         {selectedDay && selectedDay.slots.length > 0 ? (

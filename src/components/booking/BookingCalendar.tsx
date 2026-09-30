@@ -71,7 +71,7 @@ export function BookingCalendar({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-base font-semibold capitalize text-text" aria-live="polite">
+        <p className="text-base font-semibold first-letter:uppercase text-text" aria-live="polite">
           {formatMonth(`${month}-01`, locale)}
         </p>
         <div className="flex gap-1.5">
