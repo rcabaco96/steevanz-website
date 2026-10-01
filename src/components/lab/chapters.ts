@@ -152,7 +152,7 @@ export const portfolio = {
 };
 
 /** Timeline steps: hero, about, one per module (one petal each), contact. */
-export const STEPS = ["Início", ...modules.map((m) => (m.id === "ia" ? "IA" : m.label)), about.kicker, finale.kicker];
+export const STEPS = ["Início", "O que fazemos", ...modules.map((m) => (m.id === "ia" ? "IA" : m.label)), about.kicker, finale.kicker];
 
 /** Scroll progress runs from 0 (hero) to CHAPTER_SPAN (contact). */
 export const CHAPTER_SPAN = STEPS.length - 1;

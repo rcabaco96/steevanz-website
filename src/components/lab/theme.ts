@@ -64,3 +64,4 @@ function applyTheme(next: Theme) {
     // Not persisted in private mode; the toggle still works for this visit.
   }
 }
+

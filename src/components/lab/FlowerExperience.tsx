@@ -50,7 +50,8 @@ function setVar(el: HTMLElement, name: string, value: string) {
 }
 
 // Hero, then straight into the products; who we are comes after them.
-const FIRST_MODULE_STEP = 1;
+const INTRO_STEP = 1;
+const FIRST_MODULE_STEP = 2;
 const ABOUT_STEP = FIRST_MODULE_STEP + modules.length;
 const FINALE_STEP = CHAPTER_SPAN;
 
@@ -61,6 +62,7 @@ export function FlowerExperience() {
     pointer: { x: 0, y: 0 },
     revealed: false,
     revealAt: -1,
+    touch: typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches,
     flowerPos: { x: 0, y: 0 },
   });
   const [sceneReady, setSceneReady] = useState(false);
@@ -70,14 +72,15 @@ export function FlowerExperience() {
   // Lighter 3D on phones and small/weak devices; drops further if frames suffer.
   // (Only affects the canvas internals, never the server-rendered markup.)
   const [lite] = useState(
-    () => typeof window !== "undefined" && (window.matchMedia("(max-width: 760px)").matches || (navigator.hardwareConcurrency ?? 8) <= 4),
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 760px)").matches,
   );
-  const [dpr, setDpr] = useState(lite ? 1.25 : 1.5);
+  const [dpr, setDpr] = useState(lite ? 1 : 1.5);
   const lenis = useRef<Lenis | null>(null);
   const section = useRef<HTMLElement>(null);
   const stepEls = useRef<(HTMLElement | null)[][]>([]);
   const heroEl = useRef<HTMLDivElement>(null);
   const hintEl = useRef<HTMLDivElement>(null);
+  const introProductsEl = useRef<HTMLDivElement>(null);
   const overlayEl = useRef<HTMLDivElement>(null);
   const indexEls = useRef<(HTMLButtonElement | null)[]>([]);
   const timelineEl = useRef<HTMLElement>(null);
@@ -121,10 +124,13 @@ export function FlowerExperience() {
   }, [goTo]);
 
   useEffect(() => {
+    // Smooth wheel scrolling on desktop; phones keep their own native touch scroll.
     const instance = new Lenis({
       lerp: 0.13,
       wheelMultiplier: 1,
       anchors: true,
+      syncTouch: false,
+      smoothWheel: !state.current.touch,
     });
     lenis.current = instance;
     instance.stop();
@@ -162,9 +168,10 @@ export function FlowerExperience() {
       const p = state.current.progress;
       stepEls.current.forEach((els, step) => {
         if (!els || step === 0) return;
-        const inP = smoothstep(step - 0.55, step - 0.05, p);
+        // Strict sequence: a step is fully gone (by +0.45) before the next starts (-0.28).
+        const inP = smoothstep(step - 0.28, step - 0.02, p);
         const outP =
-          step === FINALE_STEP ? 1 : 1 - smoothstep(step + 0.3, step + 0.62, p);
+          step === FINALE_STEP ? 1 : 1 - smoothstep(step + 0.2, step + 0.45, p);
         const active = inP * outP > 0.5 ? "true" : "false";
         const inS = inP.toFixed(3);
         const outS = outP.toFixed(3);
@@ -175,9 +182,12 @@ export function FlowerExperience() {
           if (el.dataset.active !== active) el.dataset.active = active;
         });
       });
-      const heroOut = (1 - smoothstep(0.03, 0.4, p)).toFixed(3);
+      const heroOut = (1 - smoothstep(0.03, 0.24, p)).toFixed(3);
       if (heroEl.current) setVar(heroEl.current, "--out", heroOut);
       if (hintEl.current) setVar(hintEl.current, "--out", heroOut);
+      // Interlude: rises after the hero leaves, hands over to the first product.
+      if (introProductsEl.current)
+        setVar(introProductsEl.current, "--mid", (smoothstep(INTRO_STEP - 0.28, INTRO_STEP - 0.02, p) * (1 - smoothstep(INTRO_STEP + 0.2, INTRO_STEP + 0.45, p))).toFixed(3));
       if (overlayEl.current)
         setVar(overlayEl.current, "--haze", (smoothstep(0.3, 0.9, p) *
           (1 - smoothstep(FINALE_STEP - 0.6, FINALE_STEP - 0.1, p))).toFixed(3));
@@ -217,7 +227,7 @@ export function FlowerExperience() {
           <div className="lab-canvas" aria-hidden="true">
             <Canvas
               dpr={dpr}
-              shadows="percentage"
+              shadows={lite ? false : "percentage"}
               camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
               gl={{ antialias: true, powerPreference: "high-performance", toneMapping: NeutralToneMapping }}
             >
@@ -227,6 +237,19 @@ export function FlowerExperience() {
           </div>
 
           <div ref={overlayEl} className="lab-overlay">
+            {/* Interlude between the hero and the products: what we do, in one line. */}
+            <div ref={introProductsEl} className="lab-products-intro" aria-hidden="true">
+              <p className="lab-products-label">O que fazemos</p>
+              <p className="lab-products-title">Cinco áreas, uma só equipa.</p>
+              <ol className="lab-products-pills">
+                {modules.map((m, i) => (
+                  <li key={m.id} style={{ "--i": i } as CSSProperties}>
+                    <span>{m.index}</span>
+                    {m.label}
+                  </li>
+                ))}
+              </ol>
+            </div>
             <div ref={heroEl} className="lab-hero-title">
               <p className="lab-hero-kicker">{intro.line}</p>
               <h1 className="lab-wordmark" aria-label={intro.wordmark}>
@@ -299,8 +322,7 @@ export function FlowerExperience() {
                     data-active="false"
                   >
                     <p className="lab-kicker">
-                      {module.index} / {String(modules.length).padStart(2, "0")}{" "}
-                      — {module.label}
+                      Produto {module.index} / {String(modules.length).padStart(2, "0")} — {module.label}
                     </p>
                     <h2 className="lab-title home-open-title">
                       <Words lines={module.title} />

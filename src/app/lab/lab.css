@@ -1946,29 +1946,29 @@ html.site-menu-locked {
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --wall: #1d0b1c;
-  --paper: #241022;
-  --paper-hi: #2e1630;
-  --glass: color-mix(in oklab, #2e1630 82%, transparent);
-  --ink: #f2e8dc;
-  --ink-dark: #120611;
+  --wall: #1a0f24;
+  --paper: #22142e;
+  --paper-hi: #2c1c3a;
+  --glass: color-mix(in oklab, #2c1c3a 82%, transparent);
+  --ink: #f3ecf4;
+  --ink-dark: #120a1a;
   --ink-soft: color-mix(in oklab, #f2e8dc 70%, transparent);
   --line: color-mix(in oklab, #f2e8dc 14%, transparent);
-  --plum: #c792be;
-  --accent: #c792be;
+  --plum: #c9a2e4;
+  --accent: #c9a2e4;
   --ochre: #e3ad4a;
 }
 
 :root[data-theme="dark"] .site-cta,
 :root[data-theme="dark"] .home-cta,
 :root[data-theme="dark"] .lab-button {
-  color: #1d0b1c;
+  color: #1a0f24;
 }
 
 :root[data-theme="dark"] .site-cta:hover,
 :root[data-theme="dark"] .home-cta:hover,
 :root[data-theme="dark"] .lab-button:hover {
-  background: #d9acd1;
+  background: #dbbdf0;
 }
 
 :root[data-theme="dark"] .lab-wordmark {
@@ -1976,13 +1976,13 @@ html.site-menu-locked {
 }
 
 :root[data-theme="dark"] .home-stage::after {
-  background: radial-gradient(120% 90% at 55% 50%, transparent 50%, rgba(0, 0, 0, 0.35));
+  background: radial-gradient(120% 90% at 55% 50%, transparent 50%, rgba(8, 2, 16, 0.35));
 }
 
 :root[data-theme="dark"] .pd-final .home-cta,
 :root[data-theme="dark"] .pd-cta-light {
   background: var(--ink-light);
-  color: #1d0b1c;
+  color: #1a0f24;
 }
 
 /* ---------- NFC formats spiral (Grail-style) ---------- */
@@ -3517,5 +3517,114 @@ html {
     gap: 0.1rem;
     justify-items: start;
     min-width: 0;
+  }
+}
+
+/* ---------- Interlude: "O que fazemos" ---------- */
+
+.lab-products-intro {
+  --mid: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 1.2rem;
+  width: min(60rem, 90vw);
+  translate: -50% -50%;
+  text-align: center;
+  opacity: var(--mid);
+  transform: translateY(calc((1 - var(--mid)) * 24px));
+  pointer-events: none;
+}
+
+.lab-products-label {
+  margin: 0;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--paper-hi) 70%, transparent);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--plum);
+}
+
+
+.lab-products-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 5vw, 4.6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.lab-products-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lab-products-pills li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--paper-hi) 72%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+  opacity: clamp(0, calc(var(--mid) * 2.4 - var(--i) * 0.25), 1);
+  transform: translateY(calc((1 - clamp(0, calc(var(--mid) * 2.4 - var(--i) * 0.25), 1)) * 8px));
+}
+
+.lab-products-pills li span {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--ochre);
+}
+
+@media (max-width: 760px) {
+  .lab-products-intro {
+    width: calc(100vw - 2.5rem);
+    top: 56%;
+  }
+
+  .lab-products-title {
+    font-size: clamp(2.2rem, 11vw, 3rem);
+  }
+
+  .lab-products-pills li {
+    font-size: 0.82rem;
+    padding: 0.5rem 0.85rem;
+  }
+
+  /* Phones: text only fades (no sliding), so it stays perfectly steady while
+     the finger scrolls. */
+  .lab-chapter,
+  .lab-hero-title,
+  .lab-products-intro,
+  .lab-products-pills li,
+  .home-offers {
+    transform: none !important;
+  }
+
+  .lab-word-inner {
+    transform: none;
+  }
+}
+
+/* Desktop: centre each step in the space below the header. */
+@media (min-width: 761px) {
+  .lab-chapter.home-about,
+  .lab-chapter.home-module {
+    top: calc(50% + 2.6rem);
   }
 }

@@ -26,6 +26,8 @@ export interface ExperienceState {
   revealed: boolean;
   /** Clock time (s) at which the reveal happened, -1 until then. */
   revealAt: number;
+  /** Touch device: follow the finger exactly, no speed-driven sway. */
+  touch: boolean;
   /** Flower position in world space (x, y), for the sun to follow. */
   flowerPos: { x: number; y: number };
 }
@@ -50,12 +52,13 @@ const camTarget = new THREE.Vector3();
 const camLook = new THREE.Vector3();
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const nfcWeight = (p: number) => smoothstep(0.3, 0.85, p) * (1 - smoothstep(1.25, 1.7, p));
-const finaleWeight = (p: number) => smoothstep(6.35, 6.95, p);
+const nfcWeight = (p: number) => smoothstep(1.3, 1.85, p) * (1 - smoothstep(2.25, 2.7, p));
+const finaleWeight = (p: number) => smoothstep(7.35, 7.95, p);
 
 /** Camera keyframes per step: the hero shot, then one calm framing; the flower moves instead. */
 const SHOTS: { pos: [number, number, number]; look: [number, number, number]; frame?: number }[] = [
   { pos: [0, 0.35, 6.4], look: [0, 0.55, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
   { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
   { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
   { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
@@ -72,6 +75,7 @@ const SHOTS: { pos: [number, number, number]; look: [number, number, number]; fr
  */
 const WIND_STOPS: { x: number; y: number; s: number }[] = [
   { x: 0.5, y: 0.6, s: 0.95 },
+  { x: 0.85, y: 0.52, s: 0.78 },
   { x: 0.85, y: 0.52, s: 0.78 },
   { x: 0.86, y: 0.6, s: 0.74 },
   { x: 0.84, y: 0.46, s: 0.74 },
@@ -202,7 +206,7 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
     );
     camLook.set(
       THREE.MathUtils.lerp(lookX(a), lookX(b), f),
-      THREE.MathUtils.lerp(a.look[1], b.look[1], f) - (portrait && p > 0.4 && p < 6.4 ? 0.75 : 0),
+      THREE.MathUtils.lerp(a.look[1], b.look[1], f) - (portrait && p > 0.4 && p < 7.4 ? 0.75 : 0),
       0,
     );
     const k = Math.min(1, delta * 5);
@@ -356,7 +360,8 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
     cameraRef.current = camera;
     const dt = Math.min(delta, 0.05);
     const time = clock.elapsedTime;
-    stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 9);
+    if (stateRef.current.touch) stateRef.current.progress = stateRef.current.target;
+    else stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 9);
     const p = stateRef.current.progress;
     // Compile every shader up front (petals, shadows, trail) before the loader opens.
     if (frames.current === 2) gl.compile(scene, camera);
@@ -373,7 +378,9 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       const portrait = size.width < size.height;
       const q = Math.min(WIND_STOPS.length - 1, Math.max(0, p));
       const k = Math.min(WIND_STOPS.length - 2, Math.floor(q));
-      const f = smoothstep(0, 1, q - k);
+      // Leaving the hero, the flower reaches the side before the "O que fazemos" interlude.
+      // Hero -> "O que fazemos" takes a whole step: an unhurried drift to the side.
+      const f = k === 0 ? smoothstep(0.05, 0.95, q) : smoothstep(0, 1, q - k);
       const stop = (n: number, out: THREE.Vector3) => {
         const w = WIND_STOPS[n];
         if (n === 0) return out.set(0, 0, 0);
@@ -381,11 +388,12 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       };
       stop(k, stopA);
       stop(k + 1, stopB);
-      const travel = Math.sin(Math.PI * f);
+      // Phones: once past the hero the flower rests in its corner (no arc between steps).
+      const travel = stateRef.current.touch && k > 0 ? 0 : Math.sin(Math.PI * f);
       d.base.lerpVectors(stopA, stopB, f);
       // Wind comes from scroll speed: a gust pushes the flower a little to the side
       // and up, then it drifts back. Still when the page is still.
-      const speed = stateRef.current.target - stateRef.current.progress;
+      const speed = stateRef.current.touch ? 0 : stateRef.current.target - stateRef.current.progress;
       d.gust += (Math.min(1, Math.abs(speed) * 2.2) - d.gust) * Math.min(1, dt * 3);
       const gx = Math.sin(time * 1.3) * 0.12 + Math.sin(time * 2.1 + 1.7) * 0.05;
       d.base.x += (gx + 0.1 * Math.sign(speed)) * d.gust + Math.sin(time * 0.4) * 0.03;
@@ -621,10 +629,10 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
  * Small life in the air: a few tiny cream petals drifting and turning in the
  * breeze, and fine golden pollen. Few, small and slow, so the scene stays clean.
  */
-function Floaters() {
+function Floaters({ lite }: { lite: boolean }) {
   const petalsRef = useRef<THREE.InstancedMesh>(null);
   const pollenMat = useRef<THREE.ShaderMaterial>(null);
-  const PETALS = 9;
+  const PETALS = lite ? 4 : 9;
   const seeds = useMemo(() => {
     const rand = seeded(91);
     return Array.from({ length: PETALS }, (_, k) => ({
@@ -637,7 +645,7 @@ function Floaters() {
       phase: rand() * Math.PI * 2,
       size: 0.04 + rand() * 0.035,
     }));
-  }, []);
+  }, [PETALS]);
   const petalGeo = useMemo(() => {
     const shape = new THREE.Shape();
     shape.moveTo(0, -0.5);
@@ -647,7 +655,7 @@ function Floaters() {
   }, []);
   const pollen = useMemo(() => {
     const rand = seeded(17);
-    const n = 70;
+    const n = lite ? 30 : 70;
     const pos = new Float32Array(n * 3);
     const sd = new Float32Array(n);
     for (let k = 0; k < n; k++) {
@@ -660,7 +668,7 @@ function Floaters() {
     g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     g.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
     return g;
-  }, []);
+  }, [lite]);
   const pollenUniforms = useMemo(() => ({ uTime: { value: 0 }, uPixelRatio: { value: 1 } }), []);
   const m = useMemo(() => new THREE.Matrix4(), []);
   const q = useMemo(() => new THREE.Quaternion(), []);
@@ -760,7 +768,7 @@ export function FlowerScene({ stateRef, onAdvance, onReady, lite = false }: Scen
   return (
     <>
       <CameraRig stateRef={stateRef} />
-      <color attach="background" args={[dark ? "#1d0b1c" : "#e9e3dc"]} />
+      <color attach="background" args={[dark ? "#1a0f24" : "#e9e3dc"]} />
       <Wall />
 
       <hemisphereLight args={dark ? ["#e9d6ec", "#3a1636", 0.4] : ["#efe6f4", "#8b72a8", 0.5]} />
@@ -773,7 +781,7 @@ export function FlowerScene({ stateRef, onAdvance, onReady, lite = false }: Scen
         <Lightformer form="rect" intensity={0.6} color="#e7c98f" position={[0, -4, 2]} scale={[8, 1, 1]} />
       </Environment>
 
-      <Floaters />
+      <Floaters lite={lite} />
       <Flower stateRef={stateRef} onAdvance={onAdvance} onReady={onReady} />
 
     </>

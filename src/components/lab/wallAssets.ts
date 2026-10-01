@@ -93,7 +93,7 @@ void main() {
 /** Light: fresh lime wash, as on a real Alentejo house. Dark: deep aubergine wash (brand plum). Both with the ochre barra. */
 const WALL_COLORS = {
   light: { wash: [0.91, 0.86, 0.79] as const, ochre: [0.86, 0.63, 0.21] as const, grit: 0.82 },
-  dark: { wash: [0.23, 0.1, 0.22] as const, ochre: [0.72, 0.5, 0.15] as const, grit: 0.7 },
+  dark: { wash: [0.2, 0.11, 0.27] as const, ochre: [0.72, 0.5, 0.15] as const, grit: 0.7 },
 };
 
 export function bakeWall(gl: THREE.WebGLRenderer, theme: "light" | "dark") {

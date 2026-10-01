@@ -54,21 +54,21 @@
 }
 
 :root[data-theme="dark"] .lab-compat {
-  --bg: #241022;
-  --bg-soft: #1d0b1c;
-  --surface: #2e1630;
-  --surface-2: #361b38;
+  --bg: #22142e;
+  --bg-soft: #1a0f24;
+  --surface: #2c1c3a;
+  --surface-2: #352444;
   --line: #4a2b4a;
   --line-strong: #5e3a5d;
   --text: #f2e8dc;
   --text-muted: #d4c3cf;
   --text-subtle: #b29fae;
-  --accent: #c792be;
-  --accent-hover: #d9acd1;
+  --accent: #c9a2e4;
+  --accent-hover: #dbbdf0;
   --accent-soft: #3d1f3c;
-  --accent-contrast: #1d0b1c;
-  --accent-text: #d9acd1;
+  --accent-contrast: #1a0f24;
+  --accent-text: #dbbdf0;
   --gold-soft: #3a2c19;
   --gold-text: #e3ad4a;
-  background: #241022;
+  background: #22142e;
 }
