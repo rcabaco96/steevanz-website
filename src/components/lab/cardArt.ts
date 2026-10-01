@@ -20,7 +20,7 @@ export const CARD_SPECS: Record<CardKind, CardSpec> = {
 };
 
 const DEPTH = 0.016;
-const PX = 1024;
+const PX = 2048;
 
 function roundedShape(w: number, h: number, r: number) {
   const shape = new THREE.Shape();
@@ -259,6 +259,24 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
     f.fillText(business ? "SIGA-NOS · TOQUE AQUI" : "EMPRESA PORTUGUESA", W * 0.08, H * 0.78);
     f.globalAlpha = 1;
     drawContactless(f, W * 0.86, H * 0.24, W * 0.09, spec.accent);
+  }
+
+  // Acrylic finish on the front: soft gloss from the top-left, a fine inner edge
+  // highlight and a light print grain.
+  const gloss = f.createLinearGradient(0, 0, W * 0.8, H);
+  gloss.addColorStop(0, "rgba(255,255,255,0.14)");
+  gloss.addColorStop(0.35, "rgba(255,255,255,0.03)");
+  gloss.addColorStop(1, "rgba(255,255,255,0)");
+  f.fillStyle = gloss;
+  f.fillRect(0, 0, W, H);
+  f.strokeStyle = "rgba(255,255,255,0.18)";
+  f.lineWidth = W * 0.004;
+  f.beginPath();
+  f.roundRect(W * 0.012, H * 0.012, W * 0.976, H * 0.976, (spec.radius / spec.width) * W * 0.9);
+  f.stroke();
+  for (let k = 0; k < 9000; k++) {
+    f.fillStyle = k % 2 ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.03)";
+    f.fillRect((k * 7919) % W, (k * 104729) % H, 2, 2);
   }
 
   // Back: brand colour with a centred flower mark.

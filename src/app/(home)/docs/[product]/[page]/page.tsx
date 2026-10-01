@@ -1,3 +1,4 @@
+import { CompatShell } from "@/components/lab/CompatShell";
 import { notFound } from "next/navigation";
 import { DocPage, docMetadata } from "@/components/pages/DocPage";
 import { docPages } from "@/content/doc-pages";
@@ -26,5 +27,9 @@ export async function generateMetadata({ params }: { params: Params }) {
 export default async function Page({ params }: { params: Params }) {
   const resolved = await resolve(params);
   if (!resolved) notFound();
-  return <DocPage locale="pt" productId={resolved.productId} pageId={resolved.pageId} />;
+  return (
+    <CompatShell>
+      <DocPage locale="pt" productId={resolved.productId} pageId={resolved.pageId} />
+    </CompatShell>
+  );
 }

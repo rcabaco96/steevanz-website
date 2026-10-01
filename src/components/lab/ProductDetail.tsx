@@ -4,6 +4,8 @@ import type { ProductId } from "@/content/types";
 import { bookingHref, href } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import type { ModuleVisual } from "./chapters";
+import { HeroTapScene } from "@/components/visuals/HeroTapScene";
+import { homeCopy } from "@/content/home";
 import { LineArt } from "./LineArt";
 import { NfcShowcase } from "./NfcShowcase";
 
@@ -46,9 +48,15 @@ export function ProductDetail({ productId, headingLevel = 1 }: { productId: Prod
   return (
     <article className="pd">
       <header className="pd-hero">
-        <div className="pd-hero-visual" aria-hidden="true">
-          <LineArt visual={VISUALS[productId]} />
-        </div>
+        {productId === "nfc-google-reviews" ? (
+          <div className="pd-hero-visual pd-hero-tap legacy-tap">
+            <HeroTapScene copy={homeCopy.pt.scene} />
+          </div>
+        ) : (
+          <div className="pd-hero-visual" aria-hidden="true">
+            <LineArt visual={VISUALS[productId]} />
+          </div>
+        )}
         <p className="pd-kicker">{copy.shortName}</p>
         <Title className="pd-title">{copy.heroTitle}</Title>
         <p className="pd-lead">{copy.heroSubtitle}</p>

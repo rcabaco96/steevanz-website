@@ -1,5 +1,6 @@
 "use client";
 
+import { PerformanceMonitor } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Lenis from "lenis";
 import { NeutralToneMapping } from "three";
@@ -63,6 +64,12 @@ export function FlowerExperience() {
   const [fontsReady, setFontsReady] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  // Lighter 3D on phones and small/weak devices; drops further if frames suffer.
+  // (Only affects the canvas internals, never the server-rendered markup.)
+  const [lite] = useState(
+    () => typeof window !== "undefined" && (window.matchMedia("(max-width: 760px)").matches || (navigator.hardwareConcurrency ?? 8) <= 4),
+  );
+  const [dpr, setDpr] = useState(lite ? 1.25 : 1.5);
   const lenis = useRef<Lenis | null>(null);
   const section = useRef<HTMLElement>(null);
   const stepEls = useRef<(HTMLElement | null)[][]>([]);
@@ -206,12 +213,13 @@ export function FlowerExperience() {
         <div className="home-stage">
           <div className="lab-canvas" aria-hidden="true">
             <Canvas
-              dpr={[1, 1.5]}
+              dpr={dpr}
               shadows="percentage"
               camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
               gl={{ antialias: true, powerPreference: "high-performance", toneMapping: NeutralToneMapping }}
             >
-              <FlowerScene stateRef={state} onAdvance={advance} onReady={onSceneReady} />
+              <PerformanceMonitor onDecline={() => setDpr((d) => Math.max(1, d - 0.25))} flipflops={3} onFallback={() => setDpr(1)} />
+              <FlowerScene stateRef={state} onAdvance={advance} onReady={onSceneReady} lite={lite} />
             </Canvas>
           </div>
 

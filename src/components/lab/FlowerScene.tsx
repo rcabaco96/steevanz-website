@@ -31,6 +31,8 @@ export interface ExperienceState {
 
 interface SceneProps {
   stateRef: RefObject<ExperienceState>;
+  /** Phones and weak devices: smaller shadow map, no pointer parallax. */
+  lite?: boolean;
   /** Called once the scene has compiled and drawn its first frames. */
   onReady: () => void;
   onAdvance: () => void;
@@ -59,12 +61,12 @@ const finaleWeight = (p: number) => smoothstep(6.35, 6.95, p);
  */
 const SHOTS: { pos: [number, number, number]; look: [number, number, number]; frame?: number }[] = [
   { pos: [0, 0.35, 6.4], look: [0, 0.55, 0] },
-  { pos: [-0.6, 0.2, 5.2], look: [-1.05, 0.1, 0], frame: 0.72 },
-  { pos: [-1.3, -0.9, 5.9], look: [-1.85, 0.15, 0], frame: 0.79 },
-  { pos: [1.2, 0.8, 6.1], look: [-1.85, 0.1, 0], frame: 0.79 },
-  { pos: [-1.1, 0.55, 5.7], look: [-1.8, 0.1, 0], frame: 0.79 },
-  { pos: [1.1, -1.0, 5.9], look: [-1.85, 0.15, 0], frame: 0.79 },
-  { pos: [-0.8, 0.4, 6.1], look: [-1.85, 0.1, 0], frame: 0.79 },
+  { pos: [-0.6, 0.2, 7.6], look: [-1.05, 0.1, 0], frame: 0.91 },
+  { pos: [-1.3, -0.9, 8.2], look: [-1.85, 0.15, 0], frame: 0.93 },
+  { pos: [1.2, 0.8, 8.4], look: [-1.85, 0.1, 0], frame: 0.93 },
+  { pos: [-1.1, 0.55, 8.0], look: [-1.8, 0.1, 0], frame: 0.93 },
+  { pos: [1.1, -1.0, 8.2], look: [-1.85, 0.15, 0], frame: 0.93 },
+  { pos: [-0.8, 0.4, 8.4], look: [-1.85, 0.1, 0], frame: 0.93 },
   { pos: [0, -0.25, 5.6], look: [0, -0.95, 0] },
 ];
 
@@ -76,14 +78,14 @@ function posePetal(mesh: THREE.Object3D, angle: number, i: number, t: number, ho
   // Every petal leaves the frame the same way, whatever its place on the flower:
   // it lifts off, then drifts down-right on the breeze and towards the camera.
   // (World direction converted into the petal's rotated pivot.)
-  const wx = 1.6 * fall;
-  const wy = -4.6 * fall;
+  const wx = 2.6 * fall;
+  const wy = -9 * fall;
   const c = Math.cos(angle);
   const sn = Math.sin(angle);
   mesh.position.set(
     Math.sin(t * Math.PI * 2) * 0.3 * t + c * wx + sn * wy,
     0.12 * lift + e * 0.7 - sn * wx + c * wy + hover * 0.07,
-    0.026 * i + lift * 0.3 + fall * 3.4,
+    0.036 * i + lift * 0.3 + fall * 5.6,
   );
   mesh.rotation.set(
     0.9 * lift + bud - hover * 0.05,
@@ -104,8 +106,8 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     bumpScale: 0.55,
     metalness: 0,
     roughness: 0.62,
-    sheen: 0.85,
-    sheenColor: new THREE.Color("#f3e6d2"),
+    sheen: 0.7,
+    sheenColor: new THREE.Color("#ffffff"),
     sheenRoughness: 0.45,
     envMapIntensity: 0.4,
     side: THREE.DoubleSide,
@@ -115,7 +117,7 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     uVein: { value: textures.veinMap },
     uPulse: { value: 0 },
     uTime: { value: 0 },
-    uRim: { value: 0.32 },
+    uRim: { value: 0.22 },
   };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, material.userData.uniforms);
@@ -154,19 +156,27 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
     const a = SHOTS[i];
     const b = SHOTS[i + 1];
     const portrait = size.width < size.height;
-    camTarget.set(
-      THREE.MathUtils.lerp(a.pos[0], b.pos[0], f) * (portrait ? 0.4 : 1) + state.pointer.x * 0.18,
-      THREE.MathUtils.lerp(a.pos[1], b.pos[1], f) + state.pointer.y * 0.12,
-      THREE.MathUtils.lerp(a.pos[2], b.pos[2], f) * (portrait ? 1.55 : 1),
-    );
-    // Shots with a `frame` keep the flower at that fraction of the screen width on any
-    // aspect ratio, so text (left), drawing (middle) and flower (right) never collide.
     const aspect = size.width / size.height;
     const halfFov = Math.tan(THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov / 2));
-    const lookX = (shot: (typeof SHOTS)[number]) =>
-      shot.frame ? -(shot.frame - 0.5) * 2 * halfFov * Math.abs(shot.pos[2]) * aspect : shot.look[0] * Math.min(1, 1.6 / aspect);
+    // Framed shots slide the camera sideways (it keeps looking straight at the wall)
+    // so the flower sits at `frame` of the screen width. Sliding instead of turning
+    // means the wall always fills the view and the ochre band stays level.
+    const camX = (shot: (typeof SHOTS)[number]) => {
+      if (!shot.frame || portrait) return shot.pos[0] * (portrait ? 0.4 : 1);
+      return -(2 * shot.frame - 1) * halfFov * aspect * Math.abs(shot.pos[2] - WALL.z) * 0.74;
+    };
+    const lookX = (shot: (typeof SHOTS)[number]) => {
+      if (portrait) return 0;
+      return shot.frame ? camX(shot) : shot.look[0] * Math.min(1, 1.6 / aspect);
+    };
+    const flat = (shot: (typeof SHOTS)[number]) => (shot.frame && !portrait ? 0.25 : 1);
+    camTarget.set(
+      THREE.MathUtils.lerp(camX(a), camX(b), f) + state.pointer.x * 0.18,
+      THREE.MathUtils.lerp(a.pos[1] * flat(a), b.pos[1] * flat(b), f) + state.pointer.y * 0.12,
+      THREE.MathUtils.lerp(a.pos[2], b.pos[2], f) * (portrait ? 1.55 : 1),
+    );
     camLook.set(
-      THREE.MathUtils.lerp(lookX(a), lookX(b), f) * (portrait ? 0 : 1),
+      THREE.MathUtils.lerp(lookX(a), lookX(b), f),
       THREE.MathUtils.lerp(a.look[1], b.look[1], f) - (portrait && p > 0.4 && p < 6.4 ? 0.75 : 0),
       0,
     );
@@ -196,33 +206,33 @@ function Wall() {
  * The Alentejo sun as a warm spotlight: a pool of light around the flower, the
  * shadow of an olive branch drifting gently on the wall, and golden hour in the finale.
  */
-function Sun({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
+function Sun({ stateRef, lite }: { stateRef: RefObject<ExperienceState>; lite: boolean }) {
   const light = useRef<THREE.SpotLight>(null);
   const gobo = useMemo(() => createOliveGobo(), []);
-  const day = useMemo(() => new THREE.Color("#ffefd8"), []);
-  const dusk = useMemo(() => new THREE.Color("#ffb76a"), []);
+  // Soft golden hour across the whole page (the "Vamos falar?" light, gentler and brighter).
+  const golden = useMemo(() => new THREE.Color("#ffd6a6"), []);
   useFrame(({ clock }) => {
     const l = light.current;
     if (!l) return;
     const f = finaleWeight(stateRef.current.progress);
     const t = clock.elapsedTime;
-    l.position.set(-3.3 - f * 0.6, 2.3 - f * 1.0, 4.4);
+    l.position.set(-3.7 - f * 0.2, 1.7 - f * 0.3, 4.4);
     l.target.position.set(0.25 + Math.sin(t * 0.35) * 0.05, -0.1 + Math.sin(t * 0.27 + 1.3) * 0.035, WALL.z);
     l.target.updateMatrixWorld();
-    l.color.copy(day).lerp(dusk, f);
-    l.intensity = 4.2 + f * 0.6;
+    l.color.copy(golden);
+    l.intensity = 4.7 + f * 0.2;
   });
   return (
     <spotLight
       ref={light}
-      position={[-3.3, 2.3, 4.4]}
+      position={[-3.7, 1.7, 4.4]}
       angle={0.62}
       penumbra={0.9}
       decay={0}
       intensity={4.2}
       map={gobo}
       castShadow
-      shadow-mapSize={[2048, 2048]}
+      shadow-mapSize={lite ? [1024, 1024] : [2048, 2048]}
       shadow-bias={-0.0006}
       shadow-normalBias={0.045}
       shadow-radius={5}
@@ -248,7 +258,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   const geometries = useMemo(() => Array.from({ length: PETAL_COUNT }, (_, i) => createPetalGeometry(11 + i * 7)), []);
   const textures = useMemo(() => createPetalTextures(), []);
   const materials = useMemo(() => {
-    const tints = ["#fffaf2", "#fdf4ea", "#fff8f0", "#fbf2e8", "#fffbf5"];
+    const tints = ["#ffffff", "#fdfbf8", "#fffefb", "#fbf9f6", "#ffffff"];
     return geometries.map((_, i) => createPetalMaterial(textures, tints[i]));
   }, [geometries, textures]);
   const filaments = useMemo(() => createFilaments(), []);
@@ -281,9 +291,16 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   useEffect(() => {
     const mesh = anthers.current;
     if (!mesh) return;
+    // Anthers: small oblong pollen sacs, oriented along each filament's tip.
     const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const up = new THREE.Vector3(0, 1, 0);
+    const scale = new THREE.Vector3();
     filaments.tips.forEach((tip, k) => {
-      m.makeTranslation(tip.x, tip.y, tip.z);
+      q.setFromUnitVectors(up, filaments.dirs[k]);
+      const sz = 0.85 + ((k * 37) % 10) / 25;
+      scale.set(sz, sz, sz);
+      m.compose(tip, q, scale);
       mesh.setMatrixAt(k, m);
     });
     mesh.instanceMatrix.needsUpdate = true;
@@ -336,7 +353,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       // Petals grow out from the centre (their base sits at the flower's heart), both
       // when the flower first opens and when it re-blooms for the contact step.
       const growOut = (k: number) => 1 - Math.pow(1 - k, 3);
-      const scale = regrow > 0 ? growOut(regrow) : 1 - 0.5 * smoothstep(0.88, 1, t);
+      const scale = regrow > 0 ? growOut(regrow) : 1;
       mesh.scale.setScalar(Math.max(0.001, scale * growOut(openI)));
       const material = mesh.material as THREE.MeshPhysicalMaterial;
       const u = material.userData.uniforms;
@@ -386,7 +403,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
     }
 
     const glow = 1 + nfc * 0.5 + finale * 1.2 + Math.sin(time * 1.6) * 0.05;
-    if (core.current) core.current.color.setRGB(1.1 * glow, 0.85 * glow, 0.4 * glow);
+    if (core.current) core.current.color.setRGB(0.92 * glow, 0.86 * glow, 0.5 * glow);
   });
 
   const onOver = (i: number) => (event: ThreeEvent<PointerEvent>) => {
@@ -429,19 +446,26 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
         ))}
 
 
+        {/* Filaments: fine, pale gold, matte. */}
         <mesh geometry={filaments.geometry} castShadow receiveShadow>
-          <meshStandardMaterial color="#e3b23c" emissive="#6b3d08" emissiveIntensity={0.35} metalness={0.25} roughness={0.42} />
+          <meshStandardMaterial color="#e8c35a" emissive="#5a3a06" emissiveIntensity={0.18} metalness={0} roughness={0.7} />
         </mesh>
+        {/* Anthers: oblong pollen sacs, deeper gold with a powdery finish. */}
         <instancedMesh ref={anthers} args={[undefined, undefined, filaments.tips.length]} castShadow>
-          <icosahedronGeometry args={[0.0062, 2]} />
-          <meshStandardMaterial color="#f3be2e" emissive="#a8650c" emissiveIntensity={0.55} roughness={0.55} />
+          <capsuleGeometry args={[0.0032, 0.0075, 3, 8]} />
+          <meshStandardMaterial color="#e9a91f" emissive="#7a4806" emissiveIntensity={0.25} roughness={0.92} />
         </instancedMesh>
-        <mesh position={[0, 0, 0.095]} scale={[1, 1, 0.75]} castShadow>
-          <sphereGeometry args={[0.024, 32, 32]} />
-          <meshStandardMaterial color="#c3bd6a" roughness={0.85} envMapIntensity={0.2} />
+        {/* Pistil: pale green ovary, short style, round stigma. */}
+        <mesh position={[0, 0, 0.1]} scale={[1, 1, 0.8]} castShadow>
+          <sphereGeometry args={[0.034, 32, 32]} />
+          <meshStandardMaterial color="#cdd087" roughness={0.75} envMapIntensity={0.35} />
         </mesh>
-        <mesh position={[0, 0, 0.122]}>
-          <sphereGeometry args={[0.012, 24, 24]} />
+        <mesh position={[0, 0, 0.135]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.0028, 0.0035, 0.05, 10]} />
+          <meshStandardMaterial color="#d2cf86" roughness={0.7} />
+        </mesh>
+        <mesh position={[0, 0, 0.162]}>
+          <sphereGeometry args={[0.008, 20, 20]} />
           <meshBasicMaterial ref={core} toneMapped={false} />
         </mesh>
 
@@ -478,7 +502,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   );
 }
 
-export function FlowerScene({ stateRef, onAdvance, onReady }: SceneProps) {
+export function FlowerScene({ stateRef, onAdvance, onReady, lite = false }: SceneProps) {
   const dark = useTheme() === "dark";
   return (
     <>
@@ -488,7 +512,7 @@ export function FlowerScene({ stateRef, onAdvance, onReady }: SceneProps) {
 
       <hemisphereLight args={dark ? ["#e9d6ec", "#3a1636", 0.4] : ["#efe6f4", "#8b72a8", 0.5]} />
       <ambientLight intensity={0.1} color="#d9cbe8" />
-      <Sun stateRef={stateRef} />
+      <Sun stateRef={stateRef} lite={lite} />
       <directionalLight position={[3.5, 1, 3]} intensity={0.35} color="#e9eefc" />
       <Environment resolution={512} frames={1}>
         <Lightformer form="rect" intensity={2} color="#fff3e2" position={[-4, 3, 4]} scale={[5, 2.5, 1]} />

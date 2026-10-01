@@ -35,18 +35,23 @@ const FRAGMENT = /* glsl */ `
   uniform sampler2D uFront;
   uniform sampler2D uBack;
   uniform float uDim;
+  uniform float uSweep;
   varying vec2 vUv;
   void main() {
     vec4 c = gl_FrontFacing ? texture2D(uFront, vUv) : texture2D(uBack, vec2(1.0 - vUv.x, vUv.y));
     if (c.a < 0.02) discard;
-    gl_FragColor = vec4(c.rgb * (gl_FrontFacing ? uDim : max(uDim, 0.7)), c.a);
+    vec3 col = c.rgb * (gl_FrontFacing ? uDim : max(uDim, 0.7));
+    // A soft reflection band glides across the acrylic as the card turns.
+    float band = smoothstep(0.16, 0.0, abs(vUv.x * 0.8 + vUv.y * 0.6 - uSweep));
+    col += vec3(1.0, 0.97, 0.92) * band * 0.16;
+    gl_FragColor = vec4(col, c.a);
     #include <colorspace_fragment>
   }
 `;
 
 function cardMaterialParams(): THREE.ShaderMaterialParameters {
   return {
-    uniforms: { uFront: { value: null }, uBack: { value: null }, uDim: { value: 1 }, uBend: { value: LAYOUT.bend } },
+    uniforms: { uFront: { value: null }, uBack: { value: null }, uDim: { value: 1 }, uSweep: { value: 0 }, uBend: { value: LAYOUT.bend } },
     vertexShader: VERTEX,
     fragmentShader: FRAGMENT,
     transparent: true,
@@ -118,6 +123,7 @@ function Spiral({ pointerRef, captionRef }: { pointerRef: React.RefObject<{ x: n
       u.uFront.value = tex.front;
       u.uBack.value = tex.back;
       u.uDim.value = Math.max(0.32, 0.5 + 0.5 * Math.cos(angle));
+      u.uSweep.value = 0.7 - Math.sin(angle) * 1.1;
     });
 
     const front = ((Math.round(b) % DESIGNS.length) + DESIGNS.length) % DESIGNS.length;

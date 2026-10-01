@@ -180,7 +180,7 @@ interface Vein {
 function createVeins(size: number) {
   const rand = seeded(7);
   const veins: Vein[] = [];
-  const count = 96;
+  const count = 150;
   for (let k = 0; k < count; k++) {
     const sx = size * (0.5 + (rand() - 0.5) * 0.06);
     const ex = size * (0.01 + (k / count) * 0.98 + (rand() - 0.5) * 0.015);
@@ -219,64 +219,64 @@ function strokeVeins(ctx: CanvasRenderingContext2D, veins: Vein[], size: number,
 }
 
 /**
- * The aubergine blotch at the base of each petal (the logo's purple drop):
- * a feathered teardrop with fine velvet streaks, painted into the petal itself.
+ * The aubergine blotch of the rockrose: a rounded spot low on the petal, just above
+ * the yellow base, with a dark core and an upper edge that feathers out into fine
+ * streaks running along the veins — painted into the petal, never a hard shape.
  */
 function paintBlotch(c: CanvasRenderingContext2D, b: CanvasRenderingContext2D, size: number) {
   const rand = seeded(23);
   const cx = size * 0.5;
-  const base = size * 0.9;
-  const tip = size * 0.56;
-  const half = size * 0.27;
-  const shape = (ctx: CanvasRenderingContext2D) => {
-    ctx.beginPath();
-    ctx.moveTo(cx, tip);
-    ctx.bezierCurveTo(cx + half * 0.55, tip + (base - tip) * 0.35, cx + half, base - half * 0.5, cx, base + half * 0.25);
-    ctx.bezierCurveTo(cx - half, base - half * 0.5, cx - half * 0.55, tip + (base - tip) * 0.35, cx, tip);
-    ctx.closePath();
-  };
+  const cy = size * 0.79;
+  const rx = size * 0.17;
+  const ry = size * 0.1;
 
-  // Soft halo of colour bleeding into the cream.
+  // Wide, soft colour bleed.
   c.save();
-  c.filter = "blur(26px)";
-  shape(c);
-  c.fillStyle = "rgba(92,28,82,0.45)";
+  c.filter = `blur(${size * 0.02}px)`;
+  c.fillStyle = "rgba(96,24,80,0.35)";
+  c.beginPath();
+  c.ellipse(cx, cy, rx * 1.25, ry * 1.35, 0, 0, Math.PI * 2);
   c.fill();
   c.restore();
 
+  // Core: deep aubergine, darkest towards the base.
   c.save();
-  c.filter = "blur(8px)";
-  shape(c);
-  const fill = c.createLinearGradient(0, base, 0, tip);
-  fill.addColorStop(0, "#2a0626");
-  fill.addColorStop(0.55, "#3f0c3a");
-  fill.addColorStop(1, "#5c1a54");
-  c.fillStyle = fill;
+  c.filter = `blur(${size * 0.008}px)`;
+  const core = c.createRadialGradient(cx, cy + ry * 0.4, 0, cx, cy, rx);
+  core.addColorStop(0, "#2b0626");
+  core.addColorStop(0.55, "#45103f");
+  core.addColorStop(1, "rgba(92,26,82,0.75)");
+  c.fillStyle = core;
+  c.beginPath();
+  c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
   c.fill();
   c.restore();
 
-  // Velvet streaks running outward, clipped to the blotch.
+  // Feathered streaks running up the veins from the blotch's upper edge.
   c.save();
-  shape(c);
-  c.clip();
-  for (let k = 0; k < 520; k++) {
-    const x = cx + (rand() - 0.5) * half * 2;
-    const y = tip + rand() * (base - tip + half * 0.3);
-    const len = size * (0.01 + rand() * 0.035);
-    c.strokeStyle = rand() > 0.55 ? `rgba(140,60,128,${0.12 + rand() * 0.2})` : `rgba(18,2,16,${0.15 + rand() * 0.25})`;
-    c.lineWidth = 0.8 + rand() * 1.8;
+  c.lineCap = "round";
+  for (let k = 0; k < 260; k++) {
+    const a = -Math.PI / 2 + (rand() - 0.5) * 1.7;
+    const sx = cx + Math.cos(a) * rx * 0.8 * rand();
+    const sy = cy + Math.sin(a) * ry * 0.6;
+    const len = size * (0.02 + rand() * 0.07);
+    const ex = sx + Math.cos(a) * len * 0.35 + (sx - cx) * 0.25;
+    const ey = sy - len;
+    c.strokeStyle = `rgba(${70 + rand() * 40},${14 + rand() * 16},${62 + rand() * 30},${0.12 + rand() * 0.35})`;
+    c.lineWidth = 0.8 + rand() * 2.2;
     c.beginPath();
-    c.moveTo(x, y);
-    c.lineTo(x + (x - cx) * 0.05, y - len);
+    c.moveTo(sx, sy);
+    c.quadraticCurveTo((sx + ex) / 2 + (rand() - 0.5) * 6, (sy + ey) / 2, ex, ey);
     c.stroke();
   }
   c.restore();
 
-  // Slightly raised, finely ridged velvet in the bump map.
+  // Velvet: very slight raised texture inside the blotch.
   b.save();
-  b.filter = "blur(6px)";
-  shape(b);
-  b.fillStyle = "rgba(255,255,255,0.22)";
+  b.filter = `blur(${size * 0.006}px)`;
+  b.fillStyle = "rgba(255,255,255,0.12)";
+  b.beginPath();
+  b.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
   b.fill();
   b.restore();
 }
@@ -301,20 +301,22 @@ export function createPetalTextures() {
   const [veinCanvas, v] = make();
 
   const base = c.createLinearGradient(0, size, 0, 0);
-  base.addColorStop(0, "#efc24a");
-  base.addColorStop(0.06, "#f6e2a0");
-  base.addColorStop(0.14, "#fcf8f0");
-  base.addColorStop(0.4, "#ffffff");
-  base.addColorStop(1, "#ffffff");
+  base.addColorStop(0, "#e8b52e");
+  base.addColorStop(0.07, "#f3d77c");
+  base.addColorStop(0.13, "#fdf7ec");
+  base.addColorStop(0.35, "#ffffff");
+  base.addColorStop(1, "#fefdfb");
   c.fillStyle = base;
   c.fillRect(0, 0, size, size);
 
   // Edges a touch lighter, as thin tissue lets more light through.
   const sides = c.createLinearGradient(0, 0, size, 0);
-  sides.addColorStop(0, "rgba(255,253,249,0.55)");
-  sides.addColorStop(0.08, "rgba(255,253,249,0)");
-  sides.addColorStop(0.92, "rgba(255,253,249,0)");
-  sides.addColorStop(1, "rgba(255,253,249,0.55)");
+  // Soft, wide shading towards the side edges (the petal curves away from the light),
+  // so overlapping petals read as separate sheets. No hard line at the very edge.
+  sides.addColorStop(0, "rgba(176,160,168,0.2)");
+  sides.addColorStop(0.16, "rgba(176,160,168,0)");
+  sides.addColorStop(0.84, "rgba(176,160,168,0)");
+  sides.addColorStop(1, "rgba(176,160,168,0.2)");
   c.fillStyle = sides;
   c.fillRect(0, 0, size, size);
   const tip = c.createLinearGradient(0, 0, 0, size * 0.1);
@@ -323,7 +325,7 @@ export function createPetalTextures() {
   c.fillStyle = tip;
   c.fillRect(0, 0, size, size);
 
-  strokeVeins(c, veins, size, (vein) => `rgba(196,178,150,${0.1 + vein.alpha * 0.18})`);
+  strokeVeins(c, veins, size, (vein) => `rgba(206,196,184,${0.16 + vein.alpha * 0.22})`);
 
   // Bump: neutral grey, crinkled tissue strokes following the veins, raised veins on top.
   b.fillStyle = "#7a7a7a";
@@ -333,14 +335,14 @@ export function createPetalTextures() {
     const y = rand() * size;
     const len = size * (0.03 + rand() * 0.08);
     const angle = Math.atan2(-size, x - size / 2) + (rand() - 0.5) * 0.2;
-    b.strokeStyle = rand() > 0.5 ? `rgba(255,255,255,${0.02 + rand() * 0.03})` : `rgba(0,0,0,${0.02 + rand() * 0.03})`;
+    b.strokeStyle = rand() > 0.5 ? `rgba(255,255,255,${0.012 + rand() * 0.018})` : `rgba(0,0,0,${0.012 + rand() * 0.018})`;
     b.lineWidth = 8 + rand() * 14;
     b.beginPath();
     b.moveTo(x, y);
     b.lineTo(x + Math.cos(angle) * len, y + Math.sin(angle) * len);
     b.stroke();
   }
-  b.filter = "blur(10px)";
+  b.filter = "blur(16px)";
   b.drawImage(bump, 0, 0);
   b.filter = "none";
   strokeVeins(b, veins, size, (vein) => `rgba(0,0,0,${0.35 + vein.alpha * 0.35})`, 1.8);
@@ -363,25 +365,32 @@ export function createPetalTextures() {
  * The stamen pom: a dense dome of fine golden filaments, longer and more upright
  * towards the middle, like a real rockrose (esteva).
  */
-export function createFilaments(count = 230) {
+export function createFilaments(count = 260) {
   const rand = seeded(42);
   const tubes: THREE.BufferGeometry[] = [];
   const tips: THREE.Vector3[] = [];
+  const dirs: THREE.Vector3[] = [];
   for (let k = 0; k < count; k++) {
-    const angle = k * 2.39996 + (rand() - 0.5) * 0.3;
+    // Dense, irregular tuft: golden-angle spread with jitter, varied lengths,
+    // each filament arching outward with its own bend and a little droop.
+    const angle = k * 2.39996 + (rand() - 0.5) * 0.6;
     const ring = Math.sqrt((k + 0.5) / count);
-    const startR = 0.018 + ring * 0.07;
-    const len = 0.07 + (1 - ring) * 0.08 + rand() * 0.05;
-    const rise = 0.06 + (1 - ring) * 0.09 + rand() * 0.03;
+    const startR = 0.02 + ring * 0.065 + (rand() - 0.5) * 0.01;
+    const len = 0.06 + (1 - ring) * 0.07 + rand() * 0.07;
+    const rise = 0.05 + (1 - ring) * 0.1 + rand() * 0.05;
     const dir = new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0);
+    const side = new THREE.Vector3(-dir.y, dir.x, 0).multiplyScalar((rand() - 0.5) * 0.04);
     const base = dir.clone().multiplyScalar(startR).setZ(0.085);
+    const droop = rand() * 0.025;
     const curve = new THREE.CatmullRomCurve3([
       base,
-      base.clone().add(dir.clone().multiplyScalar(len * 0.45)).setZ(0.085 + rise * 0.75),
-      base.clone().add(dir.clone().multiplyScalar(len)).setZ(0.085 + rise),
+      base.clone().add(dir.clone().multiplyScalar(len * 0.3)).add(side.clone().multiplyScalar(0.5)).setZ(0.085 + rise * 0.6),
+      base.clone().add(dir.clone().multiplyScalar(len * 0.7)).add(side).setZ(0.085 + rise * 0.98),
+      base.clone().add(dir.clone().multiplyScalar(len)).add(side.clone().multiplyScalar(1.3)).setZ(0.085 + rise - droop),
     ]);
-    tubes.push(new THREE.TubeGeometry(curve, 8, 0.0011 + rand() * 0.0005, 5, false));
+    tubes.push(new THREE.TubeGeometry(curve, 10, 0.0007 + rand() * 0.0005, 4, false));
     tips.push(curve.getPoint(1));
+    dirs.push(curve.getTangent(1));
   }
-  return { geometry: mergeGeometries(tubes), tips };
+  return { geometry: mergeGeometries(tubes), tips, dirs };
 }

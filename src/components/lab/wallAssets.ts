@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 /** The wall plane in world units, and where the ochre band starts. */
-export const WALL = { width: 26, height: 14, centerY: -1, z: -0.5, bandTop: -1.3 };
+export const WALL = { width: 26, height: 14, centerY: -1, z: -0.5, bandTop: -2.05 };
 
 const PX_W = 3584;
 const PX_H = 1930;

@@ -1,7 +1,12 @@
+import { CompatShell } from "@/components/lab/CompatShell";
 import { LegalPage, legalMetadata } from "@/components/pages/InfoPages";
 
 export const metadata = legalMetadata("pt", "terms");
 
 export default function Page() {
-  return <LegalPage locale="pt" documentId="terms" />;
+  return (
+    <CompatShell>
+      <LegalPage locale="pt" documentId="terms" />
+    </CompatShell>
+  );
 }

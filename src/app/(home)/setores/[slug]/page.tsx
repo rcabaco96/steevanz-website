@@ -1,3 +1,4 @@
+import { CompatShell } from "@/components/lab/CompatShell";
 import { notFound } from "next/navigation";
 import { SectorPage, sectorMetadata } from "@/components/pages/SectorPage";
 import { sectors } from "@/content/sectors";
@@ -22,5 +23,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const sector = findSector(slug);
   if (!sector) notFound();
-  return <SectorPage locale="pt" sectorId={sector.id} />;
+  return (
+    <CompatShell>
+      <SectorPage locale="pt" sectorId={sector.id} />
+    </CompatShell>
+  );
 }
