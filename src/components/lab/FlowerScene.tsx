@@ -1,12 +1,10 @@
 "use client";
 
-import { Environment, Lightformer, SoftShadows } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Bloom, EffectComposer, N8AO, Noise, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
-import { BlendFunction, ToneMappingMode } from "postprocessing";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
-import { WALL, bakeWall } from "./wallAssets";
+import { WALL, bakeWall, createOliveGobo } from "./wallAssets";
 import {
   PETAL_COUNT,
   createFilaments,
@@ -15,6 +13,7 @@ import {
   seeded,
   smoothstep,
 } from "./flowerAssets";
+import { PETAL_OFFSET } from "./chapters";
 
 export interface ExperienceState {
   /** Smoothed scroll progress, 0 (intro) to CHAPTER_SPAN (finale). */
@@ -23,14 +22,17 @@ export interface ExperienceState {
   target: number;
   /** Pointer in normalised device coordinates (-1..1). */
   pointer: { x: number; y: number };
+  /** Set by the page when the loader opens; the bud only blooms after this. */
+  revealed: boolean;
+  /** Clock time (s) at which the reveal happened, -1 until then. */
+  revealAt: number;
 }
 
 interface SceneProps {
   stateRef: RefObject<ExperienceState>;
+  /** Called once the scene has compiled and drawn its first frames. */
+  onReady: () => void;
   onAdvance: () => void;
-  wordmark: string;
-  fontFamily: string;
-  sansFamily: string;
 }
 
 const PETAL_ANGLE = (Math.PI * 2) / PETAL_COUNT;
@@ -44,10 +46,10 @@ const camTarget = new THREE.Vector3();
 const camLook = new THREE.Vector3();
 
 /** How far petal `i` has fallen (0 attached, 1 gone) at scroll progress p. Unclamped. */
-const petalTime = (i: number, p: number) => (p - i - 0.05) / 0.85;
+const petalTime = (i: number, p: number) => (p - PETAL_OFFSET - i - 0.05) / 0.85;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const nfcWeight = (p: number) => smoothstep(0.3, 0.85, p) * (1 - smoothstep(1.25, 1.7, p));
-const finaleWeight = (p: number) => smoothstep(5.35, 5.95, p);
+const nfcWeight = (p: number) => smoothstep(1.3, 1.85, p) * (1 - smoothstep(2.25, 2.7, p));
+const finaleWeight = (p: number) => smoothstep(6.35, 6.95, p);
 
 /**
  * Camera keyframes, one per chapter (intro, five petals, finale).
@@ -56,11 +58,12 @@ const finaleWeight = (p: number) => smoothstep(5.35, 5.95, p);
  */
 const SHOTS: { pos: [number, number, number]; look: [number, number, number] }[] = [
   { pos: [0, 0.35, 6.4], look: [0, 0.55, 0] },
-  { pos: [-1.3, -0.9, 4.3], look: [-0.95, 0.05, 0] },
-  { pos: [1.5, 0.9, 4.5], look: [0.95, 0, 0] },
-  { pos: [-1.1, 1.2, 3.9], look: [-0.85, -0.05, 0] },
-  { pos: [1.3, -1.0, 4.2], look: [0.85, 0.05, 0] },
-  { pos: [-0.8, 0.4, 4.6], look: [-0.95, 0, 0] },
+  { pos: [-0.6, 0.2, 5.2], look: [-1.05, 0.1, 0] },
+  { pos: [-1.3, -0.9, 4.4], look: [-1.0, 0.05, 0] },
+  { pos: [1.2, 0.8, 4.7], look: [-1.0, 0, 0] },
+  { pos: [-1.1, 1.2, 4.1], look: [-0.95, -0.05, 0] },
+  { pos: [1.1, -1.0, 4.4], look: [-1.0, 0.05, 0] },
+  { pos: [-0.8, 0.4, 4.7], look: [-1.0, 0, 0] },
   { pos: [0, -0.25, 5.6], look: [0, -0.95, 0] },
 ];
 
@@ -78,7 +81,7 @@ function posePetal(mesh: THREE.Object3D, angle: number, i: number, t: number, ho
   );
   mesh.rotation.set(
     0.9 * lift + bud - hover * 0.05,
-    0.12 + t * Math.PI * 1.3 + Math.sin(t * 11) * 0.25 * t,
+    0.21 + t * Math.PI * 1.3 + Math.sin(t * 11) * 0.25 * t,
     t * 0.9,
   );
 }
@@ -92,16 +95,15 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     color: new THREE.Color(tint),
     map: textures.map,
     bumpMap: textures.bumpMap,
-    bumpScale: 1.5,
-    metalnessMap: textures.veinMap,
-    metalness: 0.35,
+    bumpScale: 0.9,
+    metalness: 0,
     roughness: 0.62,
     sheen: 0.85,
     sheenColor: new THREE.Color("#f3e6d2"),
     sheenRoughness: 0.45,
     envMapIntensity: 0.4,
     side: THREE.DoubleSide,
-    transparent: true,
+    transparent: false,
   });
   material.userData.uniforms = {
     uVein: { value: textures.veinMap },
@@ -153,7 +155,7 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
     );
     camLook.set(
       THREE.MathUtils.lerp(a.look[0], b.look[0], f) * (portrait ? 0 : 1),
-      THREE.MathUtils.lerp(a.look[1], b.look[1], f) - (portrait && p > 0.4 && p < 5.4 ? 0.75 : 0),
+      THREE.MathUtils.lerp(a.look[1], b.look[1], f) - (portrait && p > 0.4 && p < 6.4 ? 0.75 : 0),
       0,
     );
     const k = Math.min(1, delta * 3.2);
@@ -177,107 +179,49 @@ function Wall() {
   );
 }
 
-const WORD_W = 4096;
-const WORD_H = 1100;
-
-/** The STEEVANZ title: crisp brand-plum Bebas lettering floating in front of the flower. */
-function Wordmark({ stateRef, text, fontFamily }: { stateRef: RefObject<ExperienceState>; text: string; fontFamily: string }) {
-  const { camera, viewport } = useThree();
-  const material = useRef<THREE.MeshBasicMaterial>(null);
-  const group = useRef<THREE.Group>(null);
-  const texture = useMemo(() => {
-    const canvas = document.createElement("canvas");
-    canvas.width = WORD_W;
-    canvas.height = WORD_H;
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 16;
-    return tex;
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    const draw = () => {
-      if (cancelled) return;
-      const canvas = texture.image as HTMLCanvasElement;
-      const ctx = canvas.getContext("2d")!;
-      ctx.clearRect(0, 0, WORD_W, WORD_H);
-      let size = 1000;
-      ctx.font = `400 ${size}px ${fontFamily}`;
-      size *= (WORD_W * 0.98) / ctx.measureText(text).width;
-      ctx.font = `400 ${size}px ${fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "alphabetic";
-      const baseline = WORD_H * 0.5 + size * 0.36;
-      const fill = ctx.createLinearGradient(0, baseline - size * 0.72, 0, baseline);
-      fill.addColorStop(0, "#64305e");
-      fill.addColorStop(1, "#4a1d45");
-      ctx.fillStyle = fill;
-      ctx.fillText(text, WORD_W / 2, baseline);
-      texture.needsUpdate = true;
-    };
-    document.fonts.load(`400 200px ${fontFamily}`).then(draw, draw);
-    return () => {
-      cancelled = true;
-    };
-  }, [fontFamily, text, texture]);
-
-  const z = 1.1;
-  const vp = viewport.getCurrentViewport(camera, [0, 0, z]);
-  const width = Math.min(vp.width * 0.86, 6.6);
-
-  useFrame(() => {
-    const out = smoothstep(0.02, 0.42, stateRef.current.progress);
-    if (material.current) material.current.opacity = 1 - out;
-    if (group.current) {
-      group.current.position.y = 1.05 + out * 0.9;
-      group.current.visible = out < 0.999;
-    }
-  });
-
-  return (
-    <group ref={group} position={[0, 1.05, z]}>
-      <mesh scale={[width, width * (WORD_H / WORD_W), 1]} renderOrder={5}>
-        <planeGeometry />
-        <meshBasicMaterial ref={material} map={texture} transparent depthWrite={false} depthTest={false} toneMapped={false} />
-      </mesh>
-    </group>
-  );
-}
-
-/** Low, raking Alentejo sun; it drops and warms towards golden hour in the finale. */
+/**
+ * The Alentejo sun as a warm spotlight: a pool of light around the flower, the
+ * shadow of an olive branch drifting gently on the wall, and golden hour in the finale.
+ */
 function Sun({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
-  const light = useRef<THREE.DirectionalLight>(null);
-  const day = useMemo(() => new THREE.Color("#ffdcaa"), []);
-  const dusk = useMemo(() => new THREE.Color("#ffb766"), []);
-  useFrame(() => {
+  const light = useRef<THREE.SpotLight>(null);
+  const gobo = useMemo(() => createOliveGobo(), []);
+  const day = useMemo(() => new THREE.Color("#ffefd8"), []);
+  const dusk = useMemo(() => new THREE.Color("#ffb76a"), []);
+  useFrame(({ clock }) => {
     const l = light.current;
     if (!l) return;
     const f = finaleWeight(stateRef.current.progress);
-    l.position.set(-4.6 - f * 0.6, 2.5 - f * 1.1, 3.0);
+    const t = clock.elapsedTime;
+    l.position.set(-3.3 - f * 0.6, 2.3 - f * 1.0, 4.4);
+    l.target.position.set(0.25 + Math.sin(t * 0.35) * 0.05, -0.1 + Math.sin(t * 0.27 + 1.3) * 0.035, WALL.z);
+    l.target.updateMatrixWorld();
     l.color.copy(day).lerp(dusk, f);
-    l.intensity = 3.6 + f * 0.4;
+    l.intensity = 4.2 + f * 0.6;
   });
   return (
-    <directionalLight
+    <spotLight
       ref={light}
-      position={[-4.6, 2.5, 3.0]}
-      intensity={3.6}
+      position={[-3.3, 2.3, 4.4]}
+      angle={0.62}
+      penumbra={0.9}
+      decay={0}
+      intensity={4.2}
+      map={gobo}
       castShadow
       shadow-mapSize={[2048, 2048]}
-      shadow-bias={-0.0003}
+      shadow-bias={-0.0004}
       shadow-normalBias={0.02}
-      shadow-camera-left={-3.4}
-      shadow-camera-right={3.4}
-      shadow-camera-top={3.4}
-      shadow-camera-bottom={-3.4}
+      shadow-radius={9}
+      shadow-blurSamples={16}
       shadow-camera-near={0.5}
       shadow-camera-far={16}
     />
   );
 }
 
-function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>; onAdvance: () => void }) {
+function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<ExperienceState>; onAdvance: () => void; onReady: () => void }) {
+  const frames = useRef(0);
   const root = useRef<THREE.Group>(null);
   const spin = useRef<THREE.Group>(null);
   const petals = useRef<(THREE.Mesh | null)[]>([]);
@@ -346,7 +290,10 @@ function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>;
     const time = clock.elapsedTime;
     stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 4.5);
     const p = stateRef.current.progress;
-    const open = smoothstep(0.2, 3.4, time);
+    if (frames.current < 8 && ++frames.current === 8) onReady();
+    if (stateRef.current.revealed && stateRef.current.revealAt < 0) stateRef.current.revealAt = time;
+    const revealAt = stateRef.current.revealAt;
+    const open = revealAt < 0 ? 0 : smoothstep(0.15, 3.0, time - revealAt);
     const finale = finaleWeight(p);
     const nfc = nfcWeight(p);
 
@@ -359,7 +306,7 @@ function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>;
     for (let i = 0; i < PETAL_COUNT; i++) {
       const mesh = petals.current[i];
       if (!mesh) continue;
-      const regrow = smoothstep(5.3 + i * 0.05, 5.85 + i * 0.03, p);
+      const regrow = smoothstep(6.3 + i * 0.05, 6.85 + i * 0.03, p);
       const fallen = Math.min(1, Math.max(0, petalTime(i, p)));
       const t = regrow > 0 ? 0 : fallen;
       const target = hovered.current === i && t < 0.02 && regrow === 0 ? 1 : 0;
@@ -369,6 +316,12 @@ function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>;
       posePetal(mesh, i * PETAL_ANGLE, i, t, hoverAmount.current[i], bud);
       const material = mesh.material as THREE.MeshPhysicalMaterial;
       material.opacity = regrow > 0 ? regrow : 1 - smoothstep(0.72, 1, t);
+      // Only falling (or re-blooming) petals blend; resting petals stay opaque and stable.
+      const fading = material.opacity < 0.999;
+      if (material.transparent !== fading) {
+        material.transparent = fading;
+        material.needsUpdate = true;
+      }
       const u = material.userData.uniforms;
       u.uTime.value = time + i * 0.17;
       u.uPulse.value = Math.max(nfc, hoverAmount.current[i] * 0.6) * (1 - t);
@@ -467,8 +420,8 @@ function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>;
           <meshStandardMaterial color="#f3be2e" emissive="#a8650c" emissiveIntensity={0.55} roughness={0.55} />
         </instancedMesh>
         <mesh position={[0, 0, 0.095]} scale={[1, 1, 0.75]} castShadow>
-          <sphereGeometry args={[0.034, 48, 48]} />
-          <meshStandardMaterial color="#b9a24a" roughness={0.5} envMapIntensity={0.6} />
+          <sphereGeometry args={[0.024, 32, 32]} />
+          <meshStandardMaterial color="#c3bd6a" roughness={0.85} envMapIntensity={0.2} />
         </mesh>
         <mesh position={[0, 0, 0.122]}>
           <sphereGeometry args={[0.012, 24, 24]} />
@@ -508,17 +461,15 @@ function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>;
   );
 }
 
-export function FlowerScene({ stateRef, onAdvance, wordmark, fontFamily }: SceneProps) {
+export function FlowerScene({ stateRef, onAdvance, onReady }: SceneProps) {
   return (
     <>
       <CameraRig stateRef={stateRef} />
-      <color attach="background" args={["#cdb7cb"]} />
-      <SoftShadows size={22} samples={12} focus={0.55} />
+      <color attach="background" args={["#e9e3dc"]} />
       <Wall />
-      <Wordmark stateRef={stateRef} text={wordmark} fontFamily={fontFamily} />
 
-      <hemisphereLight args={["#fff8f2", "#b48fb0", 0.85]} />
-      <ambientLight intensity={0.2} />
+      <hemisphereLight args={["#efe6f4", "#8b72a8", 0.5]} />
+      <ambientLight intensity={0.1} color="#d9cbe8" />
       <Sun stateRef={stateRef} />
       <directionalLight position={[3.5, 1, 3]} intensity={0.35} color="#e9eefc" />
       <Environment resolution={512} frames={1}>
@@ -527,16 +478,8 @@ export function FlowerScene({ stateRef, onAdvance, wordmark, fontFamily }: Scene
         <Lightformer form="rect" intensity={0.6} color="#e7c98f" position={[0, -4, 2]} scale={[8, 1, 1]} />
       </Environment>
 
-      <Flower stateRef={stateRef} onAdvance={onAdvance} />
+      <Flower stateRef={stateRef} onAdvance={onAdvance} onReady={onReady} />
 
-      <EffectComposer multisampling={0}>
-        <N8AO halfRes aoRadius={0.22} intensity={1.6} distanceFalloff={0.5} quality="medium" />
-        <Bloom mipmapBlur luminanceThreshold={1.25} luminanceSmoothing={0.1} intensity={0.25} radius={0.45} />
-        <ToneMapping mode={ToneMappingMode.NEUTRAL} />
-        <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} opacity={0.06} />
-        <Vignette offset={0.38} darkness={0.32} />
-        <SMAA />
-      </EffectComposer>
     </>
   );
 }

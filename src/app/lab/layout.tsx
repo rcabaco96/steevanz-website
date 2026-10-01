@@ -9,14 +9,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#cdb7cb",
+  themeColor: "#e9e3dc",
   colorScheme: "light",
 };
 
 export default function LabRootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-PT" className={`${labDisplay.variable} ${labSans.variable}`}>
-      <body className="lab-page">{children}</body>
+      <body className="lab-page" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

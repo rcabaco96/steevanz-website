@@ -49,9 +49,13 @@ export function createPetalGeometry(seed: number) {
       const y = r * Math.cos(phi);
       const cup = 0.36 * Math.pow(u, 1.8) * L;
       const across = -0.09 * s * s * u * L;
-      const ruffle = 0.045 * Math.sin(phi * 9 + u * 4 + wavePhase) * u * u * L;
-      const crinkle = 0.004 * Math.sin(s * 34 + u * 7) * Math.sin(u * 19 + s * 5) * u * L;
-      positions.push(x, y, cup + across + ruffle + crinkle);
+      const ruffle = 0.058 * Math.sin(phi * 9 + u * 4 + wavePhase) * u * u * L;
+      const pleats = 0.006 * Math.sin(phi * 26 + Math.sin(u * 9 + wavePhase) * 1.4) * smoothstep(0.15, 0.9, u);
+      const crinkle =
+        (0.006 * Math.sin(s * 31 + u * 11 + wavePhase) * Math.sin(u * 23 - s * 7) +
+          0.003 * Math.sin(s * 67 + u * 41) * Math.sin(u * 53 + s * 13)) *
+        u * L;
+      positions.push(x, y, cup + across + ruffle + pleats + crinkle);
       uvs.push(j / segS, u);
     }
   }
@@ -234,7 +238,7 @@ function paintBlotch(c: CanvasRenderingContext2D, b: CanvasRenderingContext2D, s
   c.restore();
 
   c.save();
-  c.filter = "blur(5px)";
+  c.filter = "blur(8px)";
   shape(c);
   const fill = c.createLinearGradient(0, base, 0, tip);
   fill.addColorStop(0, "#2a0626");
@@ -290,11 +294,11 @@ export function createPetalTextures() {
   const [veinCanvas, v] = make();
 
   const base = c.createLinearGradient(0, size, 0, 0);
-  base.addColorStop(0, "#e8b94e");
-  base.addColorStop(0.07, "#f2d995");
-  base.addColorStop(0.2, "#fbf3e2");
-  base.addColorStop(0.55, "#fffcf6");
-  base.addColorStop(1, "#fffdf9");
+  base.addColorStop(0, "#efc24a");
+  base.addColorStop(0.06, "#f6e2a0");
+  base.addColorStop(0.14, "#fcf8f0");
+  base.addColorStop(0.4, "#ffffff");
+  base.addColorStop(1, "#ffffff");
   c.fillStyle = base;
   c.fillRect(0, 0, size, size);
 
@@ -312,7 +316,7 @@ export function createPetalTextures() {
   c.fillStyle = tip;
   c.fillRect(0, 0, size, size);
 
-  strokeVeins(c, veins, size, (vein) => `rgba(206,160,72,${0.3 + vein.alpha * 0.4})`);
+  strokeVeins(c, veins, size, (vein) => `rgba(196,178,150,${0.1 + vein.alpha * 0.18})`);
 
   // Bump: neutral grey, crinkled tissue strokes following the veins, raised veins on top.
   b.fillStyle = "#7a7a7a";
@@ -352,7 +356,7 @@ export function createPetalTextures() {
  * The stamen pom: a dense dome of fine golden filaments, longer and more upright
  * towards the middle, like a real rockrose (esteva).
  */
-export function createFilaments(count = 150) {
+export function createFilaments(count = 230) {
   const rand = seeded(42);
   const tubes: THREE.BufferGeometry[] = [];
   const tips: THREE.Vector3[] = [];
@@ -360,7 +364,7 @@ export function createFilaments(count = 150) {
     const angle = k * 2.39996 + (rand() - 0.5) * 0.3;
     const ring = Math.sqrt((k + 0.5) / count);
     const startR = 0.018 + ring * 0.07;
-    const len = 0.05 + (1 - ring) * 0.07 + rand() * 0.04;
+    const len = 0.07 + (1 - ring) * 0.08 + rand() * 0.05;
     const rise = 0.06 + (1 - ring) * 0.09 + rand() * 0.03;
     const dir = new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0);
     const base = dir.clone().multiplyScalar(startR).setZ(0.085);

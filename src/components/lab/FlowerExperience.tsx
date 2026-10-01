@@ -2,10 +2,22 @@
 
 import { Canvas } from "@react-three/fiber";
 import Lenis from "lenis";
-import { useCallback, useEffect, useRef, type CSSProperties } from "react";
-import { CHAPTER_SPAN, chapters, finale, intro } from "./chapters";
+import { NeutralToneMapping } from "three";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  CHAPTER_SPAN,
+  STEPS,
+  about,
+  finale,
+  intro,
+  modules,
+  portfolio,
+} from "./chapters";
 import { smoothstep } from "./flowerAssets";
 import { FlowerScene, type ExperienceState } from "./FlowerScene";
+import { Loader } from "./Loader";
+import { Mockup } from "./Mockups";
+import { SiteFooter, SiteHeader } from "./SiteChrome";
 
 function Words({ lines }: { lines: string[] }) {
   let index = 0;
@@ -16,7 +28,11 @@ function Words({ lines }: { lines: string[] }) {
           {line.split(" ").map((word) => {
             const i = index++;
             return (
-              <span key={`${word}-${i}`} className="lab-word" style={{ "--i": i } as CSSProperties}>
+              <span
+                key={`${word}-${i}`}
+                className="lab-word"
+                style={{ "--i": i } as CSSProperties}
+              >
                 <span className="lab-word-inner">{word}</span>
               </span>
             );
@@ -27,20 +43,89 @@ function Words({ lines }: { lines: string[] }) {
   );
 }
 
-export function FlowerExperience({ fontFamily, sansFamily }: { fontFamily: string; sansFamily: string }) {
-  const state = useRef<ExperienceState>({ progress: 0, target: 0, pointer: { x: 0, y: 0 } });
+const ABOUT_STEP = 1;
+const FIRST_MODULE_STEP = 2;
+const FINALE_STEP = CHAPTER_SPAN;
+
+export function FlowerExperience() {
+  const state = useRef<ExperienceState>({
+    progress: 0,
+    target: 0,
+    pointer: { x: 0, y: 0 },
+    revealed: false,
+    revealAt: -1,
+  });
+  const [sceneReady, setSceneReady] = useState(false);
+  const [fontsReady, setFontsReady] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const lenis = useRef<Lenis | null>(null);
-  const chapterEls = useRef<(HTMLElement | null)[]>([]);
-  const introEl = useRef<HTMLDivElement>(null);
-  const finaleEl = useRef<HTMLElement>(null);
-  const dots = useRef<(HTMLSpanElement | null)[]>([]);
+  const section = useRef<HTMLElement>(null);
+  const stepEls = useRef<(HTMLElement | null)[][]>([]);
+  const heroEl = useRef<HTMLDivElement>(null);
+  const hintEl = useRef<HTMLDivElement>(null);
+  const overlayEl = useRef<HTMLDivElement>(null);
+  const indexEls = useRef<(HTMLButtonElement | null)[]>([]);
+
+  /** Scroll position (px) of a timeline step inside the pinned section. */
+  const stepScroll = useCallback((step: number) => {
+    const el = section.current;
+    if (!el) return 0;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    return top + (step / CHAPTER_SPAN) * (el.offsetHeight - window.innerHeight);
+  }, []);
+
+  const goTo = useCallback(
+    (step: number) => {
+      lenis.current?.scrollTo(stepScroll(step), {
+        duration: 1.6,
+        easing: (t) => 1 - Math.pow(1 - t, 3),
+      });
+    },
+    [stepScroll],
+  );
+
+  const onSceneReady = useCallback(() => setSceneReady(true), []);
+
+  /** The loader is opening: unlock scrolling and let the bud bloom. */
+  const reveal = useCallback(() => {
+    state.current.revealed = true;
+    setRevealed(true);
+    lenis.current?.start();
+  }, []);
+
+  const advance = useCallback(() => {
+    goTo(Math.min(CHAPTER_SPAN, Math.floor(state.current.target + 0.35) + 1));
+  }, [goTo]);
 
   useEffect(() => {
-    const instance = new Lenis({ lerp: 0.08, wheelMultiplier: 0.9 });
-    lenis.current = instance;
-    instance.on("scroll", ({ scroll, limit }: { scroll: number; limit: number }) => {
-      state.current.target = limit > 0 ? (scroll / limit) * CHAPTER_SPAN : 0;
+    const instance = new Lenis({
+      lerp: 0.085,
+      wheelMultiplier: 0.9,
+      anchors: true,
     });
+    lenis.current = instance;
+    instance.stop();
+    window.scrollTo(0, 0);
+    let fontsCancelled = false;
+    document.fonts.ready.then(() => {
+      if (!fontsCancelled) setFontsReady(true);
+    });
+    const header = document.querySelector<HTMLElement>(".site-header");
+
+    const measure = () => {
+      const el = section.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = el.offsetHeight - window.innerHeight;
+      const t = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
+      state.current.target = t * CHAPTER_SPAN;
+      if (header)
+        header.dataset.solid =
+          rect.bottom < window.innerHeight * 0.6 ? "true" : "false";
+    };
+    instance.on("scroll", measure);
+    window.addEventListener("resize", measure);
+    measure();
 
     const onPointer = (event: PointerEvent) => {
       state.current.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -52,24 +137,32 @@ export function FlowerExperience({ fontFamily, sansFamily }: { fontFamily: strin
     const loop = (time: number) => {
       instance.raf(time);
       const p = state.current.progress;
-      chapterEls.current.forEach((el, k) => {
-        if (!el) return;
-        const c = k + 1;
-        const inP = smoothstep(c - 0.55, c - 0.05, p);
-        const outP = 1 - smoothstep(c + 0.3, c + 0.62, p);
-        el.style.setProperty("--in", inP.toFixed(4));
-        el.style.setProperty("--out", outP.toFixed(4));
-        el.dataset.active = inP * outP > 0.5 ? "true" : "false";
+      stepEls.current.forEach((els, step) => {
+        if (!els || step === 0) return;
+        const inP = smoothstep(step - 0.55, step - 0.05, p);
+        const outP =
+          step === FINALE_STEP ? 1 : 1 - smoothstep(step + 0.3, step + 0.62, p);
+        const active = inP * outP > 0.5 ? "true" : "false";
+        els.forEach((el) => {
+          if (!el) return;
+          el.style.setProperty("--in", inP.toFixed(4));
+          el.style.setProperty("--out", outP.toFixed(4));
+          el.dataset.active = active;
+        });
       });
-      if (introEl.current) introEl.current.style.setProperty("--out", (1 - smoothstep(0.04, 0.38, p)).toFixed(4));
-      if (finaleEl.current) {
-        const inP = smoothstep(5.4, 5.92, p);
-        finaleEl.current.style.setProperty("--in", inP.toFixed(4));
-        finaleEl.current.style.setProperty("--out", "1");
-        finaleEl.current.dataset.active = inP > 0.5 ? "true" : "false";
-      }
-      dots.current.forEach((dot, i) => {
-        if (dot) dot.dataset.gone = p - i - 0.05 > 0.5 ? "true" : "false";
+      const heroOut = (1 - smoothstep(0.03, 0.4, p)).toFixed(4);
+      heroEl.current?.style.setProperty("--out", heroOut);
+      hintEl.current?.style.setProperty("--out", heroOut);
+      overlayEl.current?.style.setProperty(
+        "--haze",
+        (
+          smoothstep(0.3, 0.9, p) *
+          (1 - smoothstep(FINALE_STEP - 0.6, FINALE_STEP - 0.1, p))
+        ).toFixed(4),
+      );
+      const current = Math.round(p);
+      indexEls.current.forEach((el, i) => {
+        if (el) el.dataset.current = i === current ? "true" : "false";
       });
       frame = requestAnimationFrame(loop);
     };
@@ -78,115 +171,193 @@ export function FlowerExperience({ fontFamily, sansFamily }: { fontFamily: strin
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("resize", measure);
+      fontsCancelled = true;
       instance.destroy();
       lenis.current = null;
     };
   }, []);
 
-  const advance = useCallback(() => {
-    const instance = lenis.current;
-    if (!instance) return;
-    const next = Math.min(CHAPTER_SPAN, Math.floor(state.current.target + 0.35) + 1);
-    instance.scrollTo((next / CHAPTER_SPAN) * instance.limit, {
-      duration: 1.9,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
-    });
-  }, []);
-
   return (
-    <>
-      <div className="lab-canvas" aria-hidden="true">
-        <Canvas
-          dpr={[1, 1.75]}
-          shadows="percentage"
-          camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
-          gl={{ antialias: false, powerPreference: "high-performance" }}
-        >
-          <FlowerScene stateRef={state} onAdvance={advance} wordmark={intro.wordmark} fontFamily={fontFamily} sansFamily={sansFamily} />
-        </Canvas>
-      </div>
+    <div className="lab-root" data-ready={revealed} suppressHydrationWarning>
+      <Loader ready={sceneReady && fontsReady} onReveal={reveal} />
+      <SiteHeader onServices={() => goTo(FIRST_MODULE_STEP)} />
 
-      <header className="lab-header">
-        <span className="lab-brand">Steevanz</span>
-        <nav className="lab-nav" aria-label="Principal">
-          <a href="/sobre">Estúdio</a>
-          <a href="/contacto">Contacto</a>
-        </nav>
-      </header>
-
-      <div className="lab-petals" aria-hidden="true">
-        {chapters.map((chapter, i) => (
-          <span
-            key={chapter.kicker}
-            ref={(el) => {
-              dots.current[i] = el;
-            }}
-            className="lab-petal-dot"
-          />
-        ))}
-      </div>
-
-      <main className="lab-overlay">
-        <div ref={introEl} className="lab-intro">
-          <h1 className="sr-only">{intro.wordmark}</h1>
-          <p className="lab-intro-line">{intro.line}</p>
-          <p className="lab-intro-hint">{intro.hint}</p>
-        </div>
-
-        {chapters.map((chapter, k) => (
-          <section
-            key={chapter.kicker}
-            ref={(el) => {
-              chapterEls.current[k] = el;
-            }}
-            className={k % 2 === 1 ? "lab-chapter lab-chapter-right" : "lab-chapter"}
-            data-active="false"
-          >
-            <p className="lab-kicker">{chapter.kicker}</p>
-            <h2 className="lab-title">
-              <Words lines={chapter.title} />
-            </h2>
-            {chapter.body ? <p className="lab-body">{chapter.body}</p> : null}
-            {chapter.specs ? (
-              <ul className="lab-specs">
-                {chapter.specs.map((spec) => (
-                  <li key={spec}>{spec}</li>
-                ))}
-              </ul>
-            ) : null}
-            {chapter.clients ? (
-              <ul className="lab-clients">
-                {chapter.clients.map((client) => (
-                  <li key={client}>{client}</li>
-                ))}
-              </ul>
-            ) : null}
-            {chapter.link ? (
-              <a className="lab-link" href={chapter.link.href}>
-                {chapter.link.label} <span aria-hidden="true">→</span>
-              </a>
-            ) : null}
-          </section>
-        ))}
-
-        <section ref={finaleEl} className="lab-chapter lab-finale" data-active="false">
-          <p className="lab-kicker">{finale.kicker}</p>
-          <h2 className="lab-title">
-            <Words lines={finale.title} />
-          </h2>
-          <p className="lab-body">{finale.line}</p>
-          <div className="lab-actions">
-            <a className="lab-button" href={finale.primary.href}>
-              {finale.primary.label}
-            </a>
-            <a className="lab-button lab-button-ghost" href={finale.secondary.href}>
-              {finale.secondary.label}
-            </a>
+      <section
+        ref={section}
+        className="home-experience"
+        style={{ height: `${(CHAPTER_SPAN + 1) * 100}svh` }}
+        aria-label="Steevanz"
+      >
+        <div className="home-stage">
+          <div className="lab-canvas" aria-hidden="true">
+            <Canvas
+              dpr={[1, 1.75]}
+              shadows="variance"
+              camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
+              gl={{ antialias: true, powerPreference: "high-performance", toneMapping: NeutralToneMapping }}
+            >
+              <FlowerScene stateRef={state} onAdvance={advance} onReady={onSceneReady} />
+            </Canvas>
           </div>
-        </section>
-      </main>
 
-      <div className="lab-scroll-space" style={{ height: `${(CHAPTER_SPAN + 1) * 100}svh` }} />
-    </>
+          <div ref={overlayEl} className="lab-overlay">
+            <div ref={heroEl} className="lab-hero-title">
+              <p className="lab-hero-kicker">{intro.line}</p>
+              <h1 className="lab-wordmark" aria-label={intro.wordmark}>
+                {intro.wordmark.split("").map((letter, i) => (
+                  <span
+                    key={i}
+                    aria-hidden="true"
+                    style={{ "--i": i } as CSSProperties}
+                  >
+                    {letter}
+                  </span>
+                ))}
+              </h1>
+            </div>
+            <div ref={hintEl} className="lab-intro">
+              <p className="lab-intro-hint">{intro.hint}</p>
+            </div>
+
+            <nav className="home-index" aria-label="Secções">
+              {STEPS.map((label, i) => (
+                <button
+                  key={label}
+                  type="button"
+                  ref={(el) => {
+                    indexEls.current[i] = el;
+                  }}
+                  data-current={i === 0}
+                  onClick={() => goTo(i)}
+                >
+                  <span>{String(i).padStart(2, "0")}</span>
+                  {label}
+                </button>
+              ))}
+            </nav>
+
+            <section
+              ref={(el) => {
+                (stepEls.current[ABOUT_STEP] ??= [])[0] = el;
+              }}
+              className="lab-chapter home-about"
+              data-active="false"
+            >
+              <p className="lab-kicker">{about.kicker}</p>
+              <h2 className="lab-title">
+                <Words lines={about.title} />
+              </h2>
+              <p className="lab-body">{about.body}</p>
+              <dl className="home-facts">
+                {about.facts.map((fact) => (
+                  <div key={fact.label}>
+                    <dt>{fact.value}</dt>
+                    <dd>{fact.label}</dd>
+                  </div>
+                ))}
+              </dl>
+              <a className="lab-link" href={about.cta.href}>
+                {about.cta.label} <span aria-hidden="true">→</span>
+              </a>
+            </section>
+
+            {modules.map((module, k) => {
+              const step = FIRST_MODULE_STEP + k;
+              return (
+                <div key={module.id}>
+                  <section
+                    ref={(el) => {
+                      (stepEls.current[step] ??= [])[0] = el;
+                    }}
+                    className="lab-chapter home-module"
+                    data-active="false"
+                  >
+                    <p className="lab-kicker">
+                      {module.index} / {String(modules.length).padStart(2, "0")}{" "}
+                      — {module.label}
+                    </p>
+                    <h2 className="lab-title">
+                      <Words lines={module.title} />
+                    </h2>
+                    <p className="lab-body">{module.lead}</p>
+                    <ul className="home-offers">
+                      {module.offers.map((offer) => (
+                        <li key={offer.name}>
+                          <span>
+                            <b>{offer.name}</b>
+                            {offer.note ? <small>{offer.note}</small> : null}
+                          </span>
+                          {offer.price ? <em>{offer.price}</em> : null}
+                        </li>
+                      ))}
+                    </ul>
+                    <a className="home-cta" href={module.cta.href}>
+                      {module.cta.label} <span aria-hidden="true">→</span>
+                    </a>
+                  </section>
+                  <div
+                    ref={(el) => {
+                      (stepEls.current[step] ??= [])[1] = el;
+                    }}
+                    className="home-visual"
+                    data-active="false"
+                    aria-hidden="true"
+                  >
+                    <Mockup visual={module.visual} />
+                  </div>
+                </div>
+              );
+            })}
+
+            <section
+              ref={(el) => {
+                (stepEls.current[FINALE_STEP] ??= [])[0] = el;
+              }}
+              className="lab-chapter lab-finale"
+              data-active="false"
+            >
+              <p className="lab-kicker">{finale.kicker}</p>
+              <h2 className="lab-title">
+                <Words lines={finale.title} />
+              </h2>
+              <p className="lab-body">{finale.line}</p>
+              <div className="lab-actions">
+                <a className="lab-button" href={finale.primary.href}>
+                  {finale.primary.label}
+                </a>
+                <a
+                  className="lab-button lab-button-ghost"
+                  href={finale.secondary.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {finale.secondary.label}
+                </a>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="trabalho" className="home-work">
+        <div className="home-work-head">
+          <p className="lab-kicker">{portfolio.kicker}</p>
+          <h2>{portfolio.title}</h2>
+          <p>{portfolio.lead}</p>
+        </div>
+        <ul className="home-work-grid">
+          {portfolio.projects.map((project) => (
+            <li key={`${project.client}-${project.title}`}>
+              <strong>{project.client}</strong>
+              <span>{project.title}</span>
+              <small>{project.tags.join(" · ")}</small>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <SiteFooter />
+    </div>
   );
 }
