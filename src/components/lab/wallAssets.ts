@@ -1,10 +1,10 @@
 import * as THREE from "three";
 
 /** The wall plane in world units, and where the ochre band starts. */
-export const WALL = { width: 14, height: 8, centerY: -1, z: -0.5, bandTop: -1.3 };
+export const WALL = { width: 26, height: 14, centerY: -1, z: -0.5, bandTop: -1.3 };
 
-const PX_W = 2048;
-const PX_H = 1170;
+const PX_W = 3584;
+const PX_H = 1930;
 
 const BAKE_FRAGMENT = /* glsl */ `
 precision highp float;
@@ -89,11 +89,14 @@ void main() {
  * Bakes the plaster colour and normal maps on the GPU once (a few milliseconds),
  * so the wall gets real relief without any per-frame cost.
  */
-/** Fresh white lime wash, as on a real Alentejo house, with the ochre barra. */
-const WALL_COLORS = { wash: [0.91, 0.86, 0.79] as const, ochre: [0.86, 0.63, 0.21] as const, grit: 0.82 };
+/** Light: fresh lime wash, as on a real Alentejo house. Dark: deep aubergine wash (brand plum). Both with the ochre barra. */
+const WALL_COLORS = {
+  light: { wash: [0.91, 0.86, 0.79] as const, ochre: [0.86, 0.63, 0.21] as const, grit: 0.82 },
+  dark: { wash: [0.23, 0.1, 0.22] as const, ochre: [0.72, 0.5, 0.15] as const, grit: 0.7 },
+};
 
-export function bakeWall(gl: THREE.WebGLRenderer) {
-  const colors = WALL_COLORS;
+export function bakeWall(gl: THREE.WebGLRenderer, theme: "light" | "dark") {
+  const colors = WALL_COLORS[theme];
   const makeTarget = () =>
     new THREE.WebGLRenderTarget(PX_W, PX_H, {
       generateMipmaps: true,

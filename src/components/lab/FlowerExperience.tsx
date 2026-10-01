@@ -16,7 +16,8 @@ import {
 import { smoothstep } from "./flowerAssets";
 import { FlowerScene, type ExperienceState } from "./FlowerScene";
 import { Loader } from "./Loader";
-import { Mockup } from "./Mockups";
+import { LineArt } from "./LineArt";
+import { ProductSheet } from "./ProductSheet";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
 
 function Words({ lines }: { lines: string[] }) {
@@ -43,6 +44,11 @@ function Words({ lines }: { lines: string[] }) {
   );
 }
 
+/** Writes a CSS variable only when its value actually changed (avoids style recalcs). */
+function setVar(el: HTMLElement, name: string, value: string) {
+  if (el.style.getPropertyValue(name) !== value) el.style.setProperty(name, value);
+}
+
 const ABOUT_STEP = 1;
 const FIRST_MODULE_STEP = 2;
 const FINALE_STEP = CHAPTER_SPAN;
@@ -58,6 +64,7 @@ export function FlowerExperience() {
   const [sceneReady, setSceneReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const lenis = useRef<Lenis | null>(null);
   const section = useRef<HTMLElement>(null);
   const stepEls = useRef<(HTMLElement | null)[][]>([]);
@@ -65,6 +72,7 @@ export function FlowerExperience() {
   const hintEl = useRef<HTMLDivElement>(null);
   const overlayEl = useRef<HTMLDivElement>(null);
   const indexEls = useRef<(HTMLButtonElement | null)[]>([]);
+  const timelineEl = useRef<HTMLElement>(null);
 
   /** Scroll position (px) of a timeline step inside the pinned section. */
   const stepScroll = useCallback((step: number) => {
@@ -86,6 +94,13 @@ export function FlowerExperience() {
 
   const onSceneReady = useCallback(() => setSceneReady(true), []);
 
+  /** A product page opened over the homepage: pause the page scroll underneath. */
+  const onSheetChange = useCallback((open: boolean) => {
+    setSheetOpen(open);
+    if (open) lenis.current?.stop();
+    else lenis.current?.start();
+  }, []);
+
   /** The loader is opening: unlock scrolling and let the bud bloom. */
   const reveal = useCallback(() => {
     state.current.revealed = true;
@@ -99,8 +114,8 @@ export function FlowerExperience() {
 
   useEffect(() => {
     const instance = new Lenis({
-      lerp: 0.085,
-      wheelMultiplier: 0.9,
+      lerp: 0.13,
+      wheelMultiplier: 1,
       anchors: true,
     });
     lenis.current = instance;
@@ -143,27 +158,27 @@ export function FlowerExperience() {
         const outP =
           step === FINALE_STEP ? 1 : 1 - smoothstep(step + 0.3, step + 0.62, p);
         const active = inP * outP > 0.5 ? "true" : "false";
+        const inS = inP.toFixed(3);
+        const outS = outP.toFixed(3);
         els.forEach((el) => {
           if (!el) return;
-          el.style.setProperty("--in", inP.toFixed(4));
-          el.style.setProperty("--out", outP.toFixed(4));
-          el.dataset.active = active;
+          setVar(el, "--in", inS);
+          setVar(el, "--out", outS);
+          if (el.dataset.active !== active) el.dataset.active = active;
         });
       });
-      const heroOut = (1 - smoothstep(0.03, 0.4, p)).toFixed(4);
-      heroEl.current?.style.setProperty("--out", heroOut);
-      hintEl.current?.style.setProperty("--out", heroOut);
-      overlayEl.current?.style.setProperty(
-        "--haze",
-        (
-          smoothstep(0.3, 0.9, p) *
-          (1 - smoothstep(FINALE_STEP - 0.6, FINALE_STEP - 0.1, p))
-        ).toFixed(4),
-      );
+      const heroOut = (1 - smoothstep(0.03, 0.4, p)).toFixed(3);
+      if (heroEl.current) setVar(heroEl.current, "--out", heroOut);
+      if (hintEl.current) setVar(hintEl.current, "--out", heroOut);
+      if (overlayEl.current)
+        setVar(overlayEl.current, "--haze", (smoothstep(0.3, 0.9, p) *
+          (1 - smoothstep(FINALE_STEP - 0.6, FINALE_STEP - 0.1, p))).toFixed(3));
       const current = Math.round(p);
       indexEls.current.forEach((el, i) => {
-        if (el) el.dataset.current = i === current ? "true" : "false";
+        const value = i === current ? "true" : "false";
+        if (el && el.dataset.current !== value) el.dataset.current = value;
       });
+      if (timelineEl.current) setVar(timelineEl.current, "--progress", (p / CHAPTER_SPAN).toFixed(4));
       frame = requestAnimationFrame(loop);
     };
     frame = requestAnimationFrame(loop);
@@ -179,9 +194,10 @@ export function FlowerExperience() {
   }, []);
 
   return (
-    <div className="lab-root" data-ready={revealed} suppressHydrationWarning>
+    <div className="lab-root" data-ready={revealed} data-sheet={sheetOpen} suppressHydrationWarning>
       <Loader ready={sceneReady && fontsReady} onReveal={reveal} />
-      <SiteHeader onServices={() => goTo(FIRST_MODULE_STEP)} />
+      <ProductSheet onOpenChange={onSheetChange} />
+      <SiteHeader />
 
       <section
         ref={section}
@@ -192,7 +208,7 @@ export function FlowerExperience() {
         <div className="home-stage">
           <div className="lab-canvas" aria-hidden="true">
             <Canvas
-              dpr={[1, 1.75]}
+              dpr={[1, 1.5]}
               shadows="variance"
               camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
               gl={{ antialias: true, powerPreference: "high-performance", toneMapping: NeutralToneMapping }}
@@ -220,7 +236,7 @@ export function FlowerExperience() {
               <p className="lab-intro-hint">{intro.hint}</p>
             </div>
 
-            <nav className="home-index" aria-label="Secções">
+            <nav ref={timelineEl} className="home-index" aria-label="Secções">
               {STEPS.map((label, i) => (
                 <button
                   key={label}
@@ -281,6 +297,9 @@ export function FlowerExperience() {
                       <Words lines={module.title} />
                     </h2>
                     <p className="lab-body">{module.lead}</p>
+                    <p className="home-ideal">
+                      <span>Ideal para</span> {module.idealFor.join(" · ")}
+                    </p>
                     <ul className="home-offers">
                       {module.offers.map((offer) => (
                         <li key={offer.name}>
@@ -292,11 +311,16 @@ export function FlowerExperience() {
                         </li>
                       ))}
                     </ul>
+                    <div className="home-cta-row">
                     <a className="home-cta" href={module.cta.href}>
                       {module.cta.label} <span aria-hidden="true">→</span>
                     </a>
+                      <a className="home-cta-secondary" href="/contacto">
+                        Falar connosco
+                      </a>
+                    </div>
                   </section>
-                  <div
+                  <figure
                     ref={(el) => {
                       (stepEls.current[step] ??= [])[1] = el;
                     }}
@@ -304,8 +328,11 @@ export function FlowerExperience() {
                     data-active="false"
                     aria-hidden="true"
                   >
-                    <Mockup visual={module.visual} />
-                  </div>
+                    <figcaption>
+                      Fig. {module.index} — {module.figure}
+                    </figcaption>
+                    <LineArt visual={module.visual} />
+                  </figure>
                 </div>
               );
             })}

@@ -3,19 +3,26 @@ import type { ReactNode } from "react";
 import "../lab/lab.css";
 import { labDisplay, labSans } from "../lab/fonts";
 import { rootMetadata } from "@/lib/root-metadata";
+import { themeBootScript } from "@/components/lab/themeScript";
 
 export const metadata: Metadata = rootMetadata("pt");
 
 export const viewport: Viewport = {
-  themeColor: "#e9e3dc",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e9e3dc" },
+    { media: "(prefers-color-scheme: dark)", color: "#1d0b1c" },
+  ],
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function HomeRootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-PT" className={`${labDisplay.variable} ${labSans.variable}`}>
+    <html lang="pt-PT" className={`${labDisplay.variable} ${labSans.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body className="lab-page" suppressHydrationWarning>
         {children}
       </body>

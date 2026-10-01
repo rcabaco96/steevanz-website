@@ -21,11 +21,13 @@ export interface ServiceModule {
   offers: Offer[];
   cta: { label: string; href: string };
   visual: ModuleVisual;
+  figure: string;
+  idealFor: string[];
 }
 
 export const intro = {
   wordmark: "STEEVANZ",
-  line: "Casa de software portuguesa · desde 2021",
+  line: "Empresa portuguesa · desde 2021",
   hint: "Desliza para descobrir",
 };
 
@@ -55,6 +57,8 @@ export const modules: ServiceModule[] = [
     ],
     cta: { label: "Ver placas NFC", href: href("pt", { key: "product", productId: "nfc-google-reviews" }) },
     visual: "plate",
+    figure: "Placa NFC de mesa",
+    idealFor: ["Restaurantes", "Salões", "Clínicas", "Lojas"],
   },
   {
     id: "websites",
@@ -69,6 +73,8 @@ export const modules: ServiceModule[] = [
     ],
     cta: { label: "Pedir proposta", href: href("pt", { key: "requestInfo" }) },
     visual: "browser",
+    figure: "Site à medida",
+    idealFor: ["Negócios locais", "Startups", "Empresas"],
   },
   {
     id: "software",
@@ -84,6 +90,8 @@ export const modules: ServiceModule[] = [
     ],
     cta: { label: "Falar de um projeto", href: href("pt", { key: "contact" }) },
     visual: "dashboard",
+    figure: "Painel de gestão",
+    idealFor: ["Empresas", "Equipas internas", "Marcas"],
   },
   {
     id: "ia",
@@ -99,6 +107,8 @@ export const modules: ServiceModule[] = [
     ],
     cta: { label: "Ver soluções de IA", href: href("pt", { key: "product", productId: "ai-chatbot" }) },
     visual: "chat",
+    figure: "Assistente no WhatsApp",
+    idealFor: ["Restaurantes", "Clínicas", "Serviços"],
   },
   {
     id: "reservas",
@@ -112,6 +122,8 @@ export const modules: ServiceModule[] = [
     ],
     cta: { label: "Ver reservas online", href: href("pt", { key: "product", productId: "bookings" }) },
     visual: "booking",
+    figure: "Reserva online",
+    idealFor: ["Restaurantes", "Salões", "Clínicas"],
   },
 ];
 

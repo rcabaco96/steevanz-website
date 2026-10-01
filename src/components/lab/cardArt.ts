@@ -161,7 +161,7 @@ function canvasFor(spec: CardSpec) {
 }
 
 /** Front and back artwork for each product, drawn with the page's fonts. */
-export function createCardTextures(kind: CardKind, display: string, sans: string) {
+export function createCardTextures(kind: CardKind, display: string, sans: string, business?: string) {
   const spec = CARD_SPECS[kind];
   const [front, f] = canvasFor(spec);
   const [back, b] = canvasFor(spec);
@@ -189,10 +189,21 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
     drawQr(f, W * 0.32, H * 0.64, W * 0.36, "#121012", "#f4ead9", 3);
     f.font = `500 ${W * 0.03}px ${sans}`;
     f.globalAlpha = 0.55;
-    f.fillText("STEEVANZ", W / 2, H * 0.95);
+    f.fillText(business ? "NFC · STEEVANZ" : "STEEVANZ", W / 2, H * 0.95);
     f.globalAlpha = 1;
+    if (business) {
+      f.fillStyle = spec.face;
+      f.fillRect(W * 0.1, H * 0.06, W * 0.8, H * 0.14);
+      f.fillStyle = spec.ink;
+      f.font = `400 ${W * 0.085}px ${display}`;
+      f.fillText(business.toUpperCase(), W / 2, H * 0.13);
+    }
   } else if (kind === "plate") {
-    drawFlower(f, W / 2, H * 0.17, W * 0.08, "#ffffff", "#5a1650", spec.accent);
+    if (business) {
+      f.fillStyle = spec.ink;
+      f.font = `400 ${W * 0.075}px ${display}`;
+      f.fillText(business.toUpperCase(), W / 2, H * 0.17);
+    } else drawFlower(f, W / 2, H * 0.17, W * 0.08, "#ffffff", "#5a1650", spec.accent);
     drawStars(f, W / 2, H * 0.33, W * 0.06, spec.accent);
     f.fillStyle = spec.ink;
     f.font = `400 ${W * 0.13}px ${display}`;
@@ -205,15 +216,21 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
     f.fillStyle = spec.ink;
     f.font = `400 ${W * 0.1}px ${display}`;
     f.fillText("TOQUE AQUI", W / 2, H * 0.76);
+    if (business) {
+      f.font = `600 ${W * 0.042}px ${sans}`;
+      f.globalAlpha = 0.85;
+      f.fillText(business.toUpperCase(), W / 2, H * 0.86);
+      f.globalAlpha = 1;
+    }
   } else {
     drawFlower(f, W * 0.14, H * 0.24, W * 0.06, "#f6ecdc", "#2a0626", spec.accent);
     f.textAlign = "left";
     f.fillStyle = spec.ink;
     f.font = `400 ${W * 0.11}px ${display}`;
-    f.fillText("STEEVANZ", W * 0.08, H * 0.62);
+    f.fillText((business ?? "STEEVANZ").toUpperCase(), W * 0.08, H * 0.62);
     f.font = `500 ${W * 0.032}px ${sans}`;
     f.globalAlpha = 0.7;
-    f.fillText("ESTÚDIO DE SOFTWARE", W * 0.08, H * 0.78);
+    f.fillText(business ? "SIGA-NOS · TOQUE AQUI" : "EMPRESA PORTUGUESA", W * 0.08, H * 0.78);
     f.globalAlpha = 1;
     drawContactless(f, W * 0.86, H * 0.24, W * 0.09, spec.accent);
   }
@@ -225,5 +242,32 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
   return {
     front: fitTexture(new THREE.CanvasTexture(front), spec),
     back: fitTexture(new THREE.CanvasTexture(back), spec),
+    canvases: { front, back },
   };
+}
+
+/**
+ * Card artwork for flat planes (the Grail-style spiral): the same designs, cut to
+ * the card's real outline (rounded corners, or a circle for the sticker) with
+ * transparency, mapped 1:1 onto the plane.
+ */
+export function createPlaneCardTextures(kind: CardKind, display: string, sans: string, business?: string) {
+  const spec = CARD_SPECS[kind];
+  const { canvases } = createCardTextures(kind, display, sans, business);
+  const cut = (canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext("2d")!;
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.globalCompositeOperation = "destination-in";
+    ctx.beginPath();
+    if (kind === "sticker") ctx.arc(w / 2, h / 2, Math.min(w, h) / 2, 0, Math.PI * 2);
+    else ctx.roundRect(0, 0, w, h, (spec.radius / spec.width) * w);
+    ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 8;
+    return texture;
+  };
+  return { front: cut(canvases.front), back: cut(canvases.back), aspect: spec.width / spec.height };
 }

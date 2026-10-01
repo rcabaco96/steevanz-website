@@ -4,6 +4,7 @@ import { Environment, Lightformer } from "@react-three/drei";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
+import { useTheme } from "./theme";
 import { WALL, bakeWall, createOliveGobo } from "./wallAssets";
 import {
   PETAL_COUNT,
@@ -56,14 +57,14 @@ const finaleWeight = (p: number) => smoothstep(6.35, 6.95, p);
  * `look` is where the camera aims; offsetting it pushes the flower to one side
  * of the frame so the chapter text has room on the other.
  */
-const SHOTS: { pos: [number, number, number]; look: [number, number, number] }[] = [
+const SHOTS: { pos: [number, number, number]; look: [number, number, number]; frame?: number }[] = [
   { pos: [0, 0.35, 6.4], look: [0, 0.55, 0] },
-  { pos: [-0.6, 0.2, 5.2], look: [-1.05, 0.1, 0] },
-  { pos: [-1.3, -0.9, 4.4], look: [-1.0, 0.05, 0] },
-  { pos: [1.2, 0.8, 4.7], look: [-1.0, 0, 0] },
-  { pos: [-1.1, 1.2, 4.1], look: [-0.95, -0.05, 0] },
-  { pos: [1.1, -1.0, 4.4], look: [-1.0, 0.05, 0] },
-  { pos: [-0.8, 0.4, 4.7], look: [-1.0, 0, 0] },
+  { pos: [-0.6, 0.2, 5.2], look: [-1.05, 0.1, 0], frame: 0.72 },
+  { pos: [-1.3, -0.9, 5.9], look: [-1.85, 0.15, 0], frame: 0.79 },
+  { pos: [1.2, 0.8, 6.1], look: [-1.85, 0.1, 0], frame: 0.79 },
+  { pos: [-1.1, 0.55, 5.7], look: [-1.8, 0.1, 0], frame: 0.79 },
+  { pos: [1.1, -1.0, 5.9], look: [-1.85, 0.15, 0], frame: 0.79 },
+  { pos: [-0.8, 0.4, 6.1], look: [-1.85, 0.1, 0], frame: 0.79 },
   { pos: [0, -0.25, 5.6], look: [0, -0.95, 0] },
 ];
 
@@ -153,12 +154,18 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
       THREE.MathUtils.lerp(a.pos[1], b.pos[1], f) + state.pointer.y * 0.12,
       THREE.MathUtils.lerp(a.pos[2], b.pos[2], f) * (portrait ? 1.55 : 1),
     );
+    // Shots with a `frame` keep the flower at that fraction of the screen width on any
+    // aspect ratio, so text (left), drawing (middle) and flower (right) never collide.
+    const aspect = size.width / size.height;
+    const halfFov = Math.tan(THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov / 2));
+    const lookX = (shot: (typeof SHOTS)[number]) =>
+      shot.frame ? -(shot.frame - 0.5) * 2 * halfFov * Math.abs(shot.pos[2]) * aspect : shot.look[0] * Math.min(1, 1.6 / aspect);
     camLook.set(
-      THREE.MathUtils.lerp(a.look[0], b.look[0], f) * (portrait ? 0 : 1),
+      THREE.MathUtils.lerp(lookX(a), lookX(b), f) * (portrait ? 0 : 1),
       THREE.MathUtils.lerp(a.look[1], b.look[1], f) - (portrait && p > 0.4 && p < 6.4 ? 0.75 : 0),
       0,
     );
-    const k = Math.min(1, delta * 3.2);
+    const k = Math.min(1, delta * 5);
     camera.position.lerp(camTarget, k);
     look.current.lerp(camLook, k);
     camera.lookAt(look.current);
@@ -169,7 +176,8 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
 /** The lime-washed lilac wall behind the flower; it receives the flower's shadow. */
 function Wall() {
   const gl = useThree((state) => state.gl);
-  const baked = useMemo(() => bakeWall(gl), [gl]);
+  const theme = useTheme();
+  const baked = useMemo(() => bakeWall(gl, theme), [gl, theme]);
   useEffect(() => () => baked.dispose(), [baked]);
   return (
     <mesh position={[0, WALL.centerY, WALL.z]} receiveShadow>
@@ -212,8 +220,8 @@ function Sun({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
       shadow-mapSize={[2048, 2048]}
       shadow-bias={-0.0004}
       shadow-normalBias={0.02}
-      shadow-radius={9}
-      shadow-blurSamples={16}
+      shadow-radius={7}
+      shadow-blurSamples={8}
       shadow-camera-near={0.5}
       shadow-camera-far={16}
     />
@@ -285,11 +293,13 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
     [],
   );
 
-  useFrame(({ clock, gl }, delta) => {
+  useFrame(({ clock, gl, scene, camera }, delta) => {
     const dt = Math.min(delta, 0.05);
     const time = clock.elapsedTime;
-    stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 4.5);
+    stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 9);
     const p = stateRef.current.progress;
+    // Compile every shader up front (petals, shadows, trail) before the loader opens.
+    if (frames.current === 2) gl.compile(scene, camera);
     if (frames.current < 8 && ++frames.current === 8) onReady();
     if (stateRef.current.revealed && stateRef.current.revealAt < 0) stateRef.current.revealAt = time;
     const revealAt = stateRef.current.revealAt;
@@ -314,14 +324,11 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       const reopen = regrow > 0 ? Math.pow(1 - regrow, 2) * 1.5 : 0;
       const bud = Math.pow(1 - open, 2) * 1.4 + reopen + Math.sin(time * 0.7 + i * 1.3) * 0.018;
       posePetal(mesh, i * PETAL_ANGLE, i, t, hoverAmount.current[i], bud);
+      // Petals never change material state (that would recompile the shader mid-scroll):
+      // a falling petal shrinks away as it leaves the frame, and in the finale it grows back.
+      const scale = regrow > 0 ? 0.05 + 0.95 * smoothstep(0, 1, regrow) : 1 - 0.85 * smoothstep(0.7, 1, t);
+      mesh.scale.setScalar(scale);
       const material = mesh.material as THREE.MeshPhysicalMaterial;
-      material.opacity = regrow > 0 ? regrow : 1 - smoothstep(0.72, 1, t);
-      // Only falling (or re-blooming) petals blend; resting petals stay opaque and stable.
-      const fading = material.opacity < 0.999;
-      if (material.transparent !== fading) {
-        material.transparent = fading;
-        material.needsUpdate = true;
-      }
       const u = material.userData.uniforms;
       u.uTime.value = time + i * 0.17;
       u.uPulse.value = Math.max(nfc, hoverAmount.current[i] * 0.6) * (1 - t);
@@ -462,13 +469,14 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
 }
 
 export function FlowerScene({ stateRef, onAdvance, onReady }: SceneProps) {
+  const dark = useTheme() === "dark";
   return (
     <>
       <CameraRig stateRef={stateRef} />
-      <color attach="background" args={["#e9e3dc"]} />
+      <color attach="background" args={[dark ? "#1d0b1c" : "#e9e3dc"]} />
       <Wall />
 
-      <hemisphereLight args={["#efe6f4", "#8b72a8", 0.5]} />
+      <hemisphereLight args={dark ? ["#e9d6ec", "#3a1636", 0.4] : ["#efe6f4", "#8b72a8", 0.5]} />
       <ambientLight intensity={0.1} color="#d9cbe8" />
       <Sun stateRef={stateRef} />
       <directionalLight position={[3.5, 1, 3]} intensity={0.35} color="#e9eefc" />

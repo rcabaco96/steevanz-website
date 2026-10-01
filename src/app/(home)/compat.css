@@ -1,0 +1,74 @@
+/* Re-skins the existing booking and request forms (built on the previous design
+   system) in the new palette and type, without touching their logic. */
+@import "../globals.css";
+
+.lab-compat {
+  --bg: #f2ece4;
+  --bg-soft: #ece4d9;
+  --surface: #fbf8f4;
+  --surface-2: #efe7dc;
+  --surface-inverse: #2a0926;
+  --line: #ddd2c4;
+  --line-strong: #c9bba9;
+  --text: #2a0926;
+  --text-muted: #5b4658;
+  --text-subtle: #7a6677;
+  --text-inverse: #f6ecdc;
+  --accent: #562650;
+  --accent-hover: #6a3163;
+  --accent-soft: #ecdfe9;
+  --accent-contrast: #ffffff;
+  --accent-text: #562650;
+  --gold: #d9a238;
+  --gold-soft: #f5e7c8;
+  --gold-text: #8a5d12;
+  --ring: #562650;
+  --glow: 86 38 80;
+  --font-fraunces: var(--font-lab-display);
+  --font-fraunces-italic: var(--font-lab-display);
+  --font-hanken: var(--font-lab-sans);
+  --font-jetbrains: var(--font-lab-sans);
+  background: #f2ece4;
+  color: var(--text);
+  font-family: var(--font-lab-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.lab-compat .display,
+.lab-compat .font-display {
+  font-family: var(--font-lab-display), "Arial Narrow", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.lab-compat .eyebrow {
+  font-family: var(--font-lab-sans), sans-serif;
+  font-weight: 600;
+  color: #c88a1c;
+}
+
+.lab-compat .glow-backdrop,
+.lab-compat .dot-grid {
+  display: none;
+}
+
+:root[data-theme="dark"] .lab-compat {
+  --bg: #241022;
+  --bg-soft: #1d0b1c;
+  --surface: #2e1630;
+  --surface-2: #361b38;
+  --line: #4a2b4a;
+  --line-strong: #5e3a5d;
+  --text: #f2e8dc;
+  --text-muted: #d4c3cf;
+  --text-subtle: #b29fae;
+  --accent: #c792be;
+  --accent-hover: #d9acd1;
+  --accent-soft: #3d1f3c;
+  --accent-contrast: #1d0b1c;
+  --accent-text: #d9acd1;
+  --gold-soft: #3a2c19;
+  --gold-text: #e3ad4a;
+  background: #241022;
+}
