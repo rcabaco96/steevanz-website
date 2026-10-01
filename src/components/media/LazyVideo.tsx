@@ -20,18 +20,20 @@ export function LazyVideo({ video, label, className = "" }: LazyVideoProps) {
   useEffect(() => {
     const element = videoRef.current;
     if (!element) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          if (!element.getAttribute("src")) element.src = pickSource(element, video);
-          void element.play().catch(() => undefined);
-        } else if (!element.paused) {
-          element.pause();
+        if (!entry.isIntersecting) {
+          if (!element.paused) element.pause();
+          return;
         }
+        if (!element.getAttribute("poster")) element.poster = video.poster;
+        if (prefersReducedMotion) return;
+        if (!element.getAttribute("src")) element.src = pickSource(element, video);
+        void element.play().catch(() => undefined);
       },
-      { rootMargin: "200px 0px" },
+      { rootMargin: "300px 0px" },
     );
     observer.observe(element);
     return () => observer.disconnect();
@@ -40,8 +42,7 @@ export function LazyVideo({ video, label, className = "" }: LazyVideoProps) {
   return (
     <video
       ref={videoRef}
-      className={className}
-      poster={video.poster}
+      className={`bg-surface-2 ${className}`}
       width={video.width}
       height={video.height}
       muted
