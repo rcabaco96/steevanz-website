@@ -19,11 +19,11 @@ export function LanguageSwitch({ locale, label, short }: LanguageSwitchProps) {
       href={targetPath}
       hrefLang={target === "pt" ? "pt-PT" : "en"}
       lang={target === "pt" ? "pt-PT" : "en"}
-      aria-label={label}
       title={label}
-      className="grid h-10 min-w-10 place-items-center rounded-full px-2 font-mono text-xs font-medium tracking-[0.12em] text-muted transition-colors hover:bg-surface-2 hover:text-text"
+      className="grid h-10 min-w-10 place-items-center rounded-full px-2 text-xs font-semibold tracking-[0.12em] text-muted transition-colors hover:bg-surface-2 hover:text-text"
     >
-      {short}
+      <span aria-hidden="true">{short}</span>
+      <span className="sr-only">{label}</span>
     </a>
   );
 }

@@ -1,5 +1,6 @@
 import type { Localized } from "@/lib/i18n";
 import type { PhotoId } from "./media";
+import { sectorSlugs } from "./sector-slugs";
 import type { FaqItem, ProductId, SectorId, TitledText } from "./types";
 
 export interface SectorCopy {
@@ -28,7 +29,7 @@ export interface Sector {
 export const sectors: Sector[] = [
   {
     id: "restaurants",
-    slug: { pt: "restaurantes", en: "restaurants" },
+    slug: sectorSlugs.restaurants,
     photo: "restaurant-table",
     bundle: ["nfc-google-reviews", "bookings", "waitlist", "ai-voice"],
     copy: {
@@ -90,7 +91,7 @@ export const sectors: Sector[] = [
   },
   {
     id: "beauty",
-    slug: { pt: "cabeleireiros-estetica", en: "salons-beauty" },
+    slug: sectorSlugs.beauty,
     photo: "salon-chair",
     bundle: ["bookings", "nfc-google-reviews", "loyalty", "ai-chatbot"],
     copy: {
@@ -152,7 +153,7 @@ export const sectors: Sector[] = [
   },
   {
     id: "clinics",
-    slug: { pt: "clinicas", en: "clinics" },
+    slug: sectorSlugs.clinics,
     photo: "clinic",
     bundle: ["bookings", "ai-voice", "waitlist", "ai-reviews"],
     copy: {
@@ -214,7 +215,7 @@ export const sectors: Sector[] = [
   },
   {
     id: "retail",
-    slug: { pt: "comercio", en: "retail" },
+    slug: sectorSlugs.retail,
     photo: "shop-owner",
     bundle: ["nfc-google-reviews", "nfc-social", "loyalty", "ai-chatbot"],
     copy: {

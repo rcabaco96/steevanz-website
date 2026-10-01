@@ -35,26 +35,15 @@ const qrCells = [
   "1110101011101",
 ];
 
+const qrPath = qrCells
+  .flatMap((row, rowIndex) =>
+    row.split("").flatMap((value, columnIndex) => (value === "1" ? [`M${columnIndex} ${rowIndex}h1v1h-1z`] : [])),
+  )
+  .join("");
+
 function QrMark({ x, y, size, color }: { x: number; y: number; size: number; color: string }) {
-  const cell = size / qrCells.length;
-  return (
-    <g>
-      {qrCells.flatMap((row, rowIndex) =>
-        row.split("").map((value, columnIndex) =>
-          value === "1" ? (
-            <rect
-              key={`${rowIndex}-${columnIndex}`}
-              x={x + columnIndex * cell}
-              y={y + rowIndex * cell}
-              width={cell + 0.2}
-              height={cell + 0.2}
-              fill={color}
-            />
-          ) : null,
-        ),
-      )}
-    </g>
-  );
+  const scale = size / qrCells.length;
+  return <path d={qrPath} fill={color} transform={`translate(${x} ${y}) scale(${scale})`} shapeRendering="crispEdges" />;
 }
 
 function Stars({ cx, y, size, color }: { cx: number; y: number; size: number; color: string }) {

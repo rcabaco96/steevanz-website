@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
   experimental: {
     globalNotFound: true,
     optimizePackageImports: ["motion"],
+    inlineCss: true,
   },
   async headers() {
     return [

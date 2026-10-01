@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, LazyMotion, domAnimation, m } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { ProductFamily, ProductIcon } from "@/content/products";
 import { ArrowRight, ChevronDown, CloseIcon, MenuIcon, ProductGlyph } from "@/components/icons";
@@ -120,7 +119,7 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
   ];
 
   return (
-    <LazyMotion features={domAnimation} strict>
+    <>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
           scrolled || menuOpen
@@ -145,15 +144,12 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
                 {labels.products}
                 <ChevronDown size={16} className={`transition-transform duration-300 ${productsOpen ? "rotate-180" : ""}`} />
               </button>
-              <AnimatePresence>
-                {productsOpen ? (
-                  <m.div
+                  <div
                     id="products-menu"
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    className="card absolute top-[calc(100%+0.75rem)] left-1/2 w-[min(58rem,calc(100vw-4rem))] -translate-x-1/2 origin-top p-3"
+                    inert={!productsOpen}
+                    className={`card absolute top-[calc(100%+0.75rem)] left-1/2 w-[min(58rem,calc(100vw-4rem))] origin-top p-3 transition-[opacity,transform,visibility] duration-200 ease-(--ease-out-expo) ${
+                      productsOpen ? "visible -translate-x-1/2 translate-y-0 scale-100 opacity-100" : "invisible -translate-x-1/2 translate-y-2 scale-[0.98] opacity-0"
+                    }`}
                   >
                     <div className="grid grid-cols-3 gap-2">
                       {families.map((family) => (
@@ -186,9 +182,7 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
                       {labels.allProducts}
                       <ArrowRight size={16} />
                     </Link>
-                  </m.div>
-                ) : null}
-              </AnimatePresence>
+                  </div>
             </div>
             {simpleLinks.map((link) => (
               <Link
@@ -225,15 +219,10 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
           </div>
         </div>
 
-        <AnimatePresence>
           {menuOpen ? (
-            <m.div
+            <div
               id="mobile-menu"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-bg lg:hidden"
+              className="h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-bg motion-safe:animate-[menu-in_0.25s_var(--ease-out-expo)] lg:hidden"
             >
               <nav aria-label={labels.mainNavLabel} className="container-page flex flex-col gap-8 py-8">
                 {families.map((family) => (
@@ -265,10 +254,9 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
                   {labels.bookDemo}
                 </Link>
               </nav>
-            </m.div>
+            </div>
           ) : null}
-        </AnimatePresence>
       </header>
-    </LazyMotion>
+    </>
   );
 }

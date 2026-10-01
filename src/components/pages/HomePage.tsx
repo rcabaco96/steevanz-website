@@ -60,7 +60,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             </p>
             <h1 id="hero-title" className="display text-[2.9rem] sm:text-6xl lg:text-[4.6rem]">
               {copy.hero.titleLead}{" "}
-              <em className="text-accent-text italic">{copy.hero.titleEmphasis}</em>
+              <em className="display-italic text-accent-text">{copy.hero.titleEmphasis}</em>
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted sm:text-xl">{copy.hero.subtitle}</p>
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

@@ -146,6 +146,17 @@
     }
   }
 
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @keyframes marquee {
     from {
       transform: translateX(0);
@@ -217,11 +228,14 @@
 
   .display {
     font-family: var(--font-display);
-    font-optical-sizing: auto;
-    font-variation-settings: "SOFT" 50;
     letter-spacing: -0.025em;
     line-height: 1.04;
     font-weight: 500;
+  }
+
+  .display-italic {
+    font-family: var(--font-fraunces-italic), var(--font-fraunces), ui-serif, Georgia, serif;
+    font-style: italic;
   }
 
   .card {

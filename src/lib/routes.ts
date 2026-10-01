@@ -1,6 +1,6 @@
 import { docPages, getDocPageMeta } from "@/content/doc-pages";
 import { getProduct, products } from "@/content/products";
-import { getSector, sectors } from "@/content/sectors";
+import { sectorSlugs } from "@/content/sector-slugs";
 import type { DocPageId, ProductId, SectorId } from "@/content/types";
 import { defaultLocale, type Locale, type Localized } from "./i18n";
 
@@ -53,7 +53,7 @@ export function href(locale: Locale, route: Route): string {
     case "product":
       return join(locale, [staticSegments.products[locale], getProduct(route.productId).slug[locale]]);
     case "sector":
-      return join(locale, [staticSegments.sectors[locale], getSector(route.sectorId).slug[locale]]);
+      return join(locale, [staticSegments.sectors[locale], sectorSlugs[route.sectorId][locale]]);
     case "doc":
       return join(locale, [
         staticSegments.docs[locale],
@@ -89,8 +89,8 @@ export function routeFromPath(pathname: string): { locale: Locale; route: Route 
     return product ? { locale, route: { key: "product", productId: product.id } } : null;
   }
   if (staticKey === "sectors" && second) {
-    const sector = sectors.find((candidate) => candidate.slug[locale] === second);
-    return sector ? { locale, route: { key: "sector", sectorId: sector.id } } : null;
+    const sectorId = (Object.keys(sectorSlugs) as SectorId[]).find((id) => sectorSlugs[id][locale] === second);
+    return sectorId ? { locale, route: { key: "sector", sectorId } } : null;
   }
   if (staticKey === "docs" && second) {
     const product = products.find((candidate) => candidate.slug[locale] === second);
