@@ -40,7 +40,7 @@ export function SiteFooter() {
               <a href={href("pt", { key: "about" })}>Sobre nós</a>
             </li>
             <li>
-              <Link href="/#trabalho">Trabalho</Link>
+              <a href={href("pt", { key: "about" })}>Trabalho</a>
             </li>
             <li>
               <a href={href("pt", { key: "book" })}>Agendar conversa</a>

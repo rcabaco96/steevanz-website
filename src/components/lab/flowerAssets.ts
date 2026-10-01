@@ -23,37 +23,44 @@ export const PETAL_COUNT = 5;
 
 /**
  * One petal as a parametric surface: u runs from the base (0) to the rim (1),
- * s runs across the petal (-1..1). The outline is a fan that narrows at the base
- * and has a soft, wavy rim like the Steevanz logo; z adds the cup and ruffles.
+ * s runs across the petal (-1..1). The outline is obovate, like a real rockrose
+ * petal: a narrow claw at the base, sides that widen in a curve to rounded
+ * shoulders, and a broad, softly wavy top edge. z adds the cup, ruffles and the
+ * fine tissue-paper crumple.
  */
 export function createPetalGeometry(seed: number) {
   const rand = seeded(seed);
-  const segU = 110;
-  const segS = 72;
+  const segU = 120;
+  const segS = 80;
   const L = PETAL_LENGTH;
-  const thetaMax = 0.67;
   const wavePhase = rand() * Math.PI * 2;
-  const waveAmp = 0.035 + rand() * 0.015;
+  const sidePhase = rand() * Math.PI * 2;
+  const waveAmp = 0.03 + rand() * 0.015;
   const positions: number[] = [];
   const uvs: number[] = [];
 
   for (let i = 0; i <= segU; i++) {
     const u = i / segU;
+    // Half-width along the petal: narrow claw, curved widening, rounded shoulders.
+    const grow = Math.pow(Math.sin(Math.min(1, u / 0.78) * (Math.PI / 2)), 0.85);
+    const shoulder = 1 - 0.1 * smoothstep(0.8, 1, u);
+    const sideWave = 1 + 0.03 * Math.sin(u * 8 + sidePhase) * smoothstep(0.2, 0.7, u);
+    const halfWidth = L * (0.07 + 0.6 * grow) * shoulder * sideWave;
     for (let j = 0; j <= segS; j++) {
       const s = (j / segS) * 2 - 1;
-      const narrow = 0.97 + 0.03 * smoothstep(0, 0.5, u);
-      const phi = s * thetaMax * narrow;
-      const rim = 1 - 0.2 * Math.pow(Math.abs(s), 2.6) + waveAmp * Math.sin(s * Math.PI * 2.6 + wavePhase);
-      const r = (0.035 + 0.965 * u) * L * rim;
-      const x = r * Math.sin(phi);
-      const y = r * Math.cos(phi);
+      const x = s * halfWidth;
+      // Rounded, slightly wavy top edge (only shapes the upper part of the petal).
+      const top = 1 - 0.18 * Math.pow(Math.abs(s), 2.2) * smoothstep(0.5, 1, u);
+      const wave = waveAmp * Math.sin(s * Math.PI * 2.4 + wavePhase) * smoothstep(0.7, 1, u);
+      const y = L * ((0.035 + 0.965 * u) * top + wave);
+      const phi = Math.atan2(x, Math.max(y, 1e-4));
       const cup = 0.36 * Math.pow(u, 1.8) * L;
       const across = -0.09 * s * s * u * L;
-      const ruffle = 0.058 * Math.sin(phi * 9 + u * 4 + wavePhase) * u * u * L;
-      const pleats = 0.006 * Math.sin(phi * 26 + Math.sin(u * 9 + wavePhase) * 1.4) * smoothstep(0.15, 0.9, u);
+      const ruffle = 0.055 * Math.sin(phi * 9 + u * 4 + wavePhase) * u * u * L;
+      const pleats = 0.004 * Math.sin(phi * 26 + Math.sin(u * 9 + wavePhase) * 1.4) * smoothstep(0.15, 0.9, u);
       const crinkle =
-        (0.006 * Math.sin(s * 31 + u * 11 + wavePhase) * Math.sin(u * 23 - s * 7) +
-          0.003 * Math.sin(s * 67 + u * 41) * Math.sin(u * 53 + s * 13)) *
+        (0.005 * Math.sin(s * 31 + u * 11 + wavePhase) * Math.sin(u * 23 - s * 7) +
+          0.0025 * Math.sin(s * 67 + u * 41) * Math.sin(u * 53 + s * 13)) *
         u * L;
       positions.push(x, y, cup + across + ruffle + pleats + crinkle);
       uvs.push(j / segS, u);
@@ -90,7 +97,7 @@ function thickenSurface(positions: number[], uvs: number[], segU: number, segS: 
   const halfThickness = (k: number) => {
     const across = Math.abs(uvs[k * 2] * 2 - 1);
     const along = uvs[k * 2 + 1];
-    return h0 * (0.12 + 0.88 * (1 - smoothstep(0.55, 1, across)) * (1 - smoothstep(0.7, 1, along)));
+    return h0 * (0.03 + 0.97 * (1 - smoothstep(0.5, 1, across)) * (1 - smoothstep(0.65, 1, along)));
   };
   const P = (k: number) => new THREE.Vector3(positions[k * 3], positions[k * 3 + 1], positions[k * 3 + 2]);
   const N = (k: number) => new THREE.Vector3(n.getX(k), n.getY(k), n.getZ(k));

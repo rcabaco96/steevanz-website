@@ -33,6 +33,10 @@ html.lenis body {
   height: auto;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
@@ -278,7 +282,7 @@ html.lenis body {
   --out: 1;
   position: absolute;
   left: 50%;
-  bottom: 5.8rem;
+  bottom: 2.4rem;
   translate: -50% 0;
   opacity: var(--out);
   animation: lab-fade-in 1.6s 1.4s both;
@@ -294,17 +298,17 @@ html.lenis body {
   color: var(--ink);
 }
 
-/* ---------- Timeline (bottom progress bar) ---------- */
+/* ---------- Timeline (vertical, left margin) ---------- */
 
 .home-index {
   --progress: 0;
   position: absolute;
-  left: var(--edge);
-  right: var(--edge);
-  bottom: 2.6rem;
+  top: 50%;
+  left: max(1.5rem, calc(var(--edge) - 12rem));
+  translate: 0 -50%;
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  padding-top: 0.9rem;
+  gap: 0.55rem;
+  padding-left: 1rem;
   pointer-events: auto;
 }
 
@@ -314,26 +318,27 @@ html.lenis body {
   position: absolute;
   top: 0;
   left: 0;
-  height: 2px;
+  width: 2px;
   border-radius: 2px;
 }
 
 .home-index::before {
-  right: 0;
+  bottom: 0;
   background: color-mix(in oklab, var(--ink) 12%, transparent);
 }
 
 .home-index::after {
-  width: 100%;
+  height: 100%;
   background: var(--plum);
-  transform-origin: left;
-  transform: scaleX(var(--progress));
+  transform-origin: top;
+  transform: scaleY(var(--progress));
 }
 
 .home-index button {
   display: flex;
+  justify-content: flex-start;
   align-items: baseline;
-  gap: 0.45rem;
+  gap: 0.5rem;
   padding: 0;
   border: 0;
   background: none;
@@ -344,10 +349,11 @@ html.lenis body {
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.55;
   transition:
     opacity 0.35s,
-    color 0.35s;
+    color 0.35s,
+    transform 0.35s var(--ease);
 }
 
 .home-index button span {
@@ -363,6 +369,12 @@ html.lenis body {
 
 .home-index button[data-current="true"] {
   font-weight: 600;
+  transform: translateX(4px);
+}
+
+/* The text column always starts well clear of the timeline. */
+.lab-chapter:not(.lab-finale) {
+  left: max(var(--edge), 13rem);
 }
 
 /* ---------- Chapters ---------- */
@@ -609,7 +621,7 @@ html.lenis body {
   --in: 0;
   --out: 1;
   position: absolute;
-  top: 50%;
+  top: 17svh;
   left: calc(var(--edge) + min(33rem, 40vw) + clamp(1.5rem, 3vw, 3rem));
   z-index: 3;
   display: grid;
@@ -617,7 +629,7 @@ html.lenis body {
   justify-items: start;
   margin: 0;
   opacity: calc(clamp(0, calc(var(--in) * 2 - 0.7), 1) * var(--out));
-  transform: translateY(calc(-50% + (1 - var(--in)) * 40px + (1 - var(--out)) * -30px));
+  transform: translateY(calc((1 - var(--in)) * 40px + (1 - var(--out)) * -30px));
 }
 
 .home-visual figcaption {
@@ -792,13 +804,6 @@ html.lenis body {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1180px) {
-  .home-index button {
-    font-size: 0;
-  }
-
-  .home-index button span {
-    font-size: 0.66rem;
-  }
 
   .lab-chapter {
     left: var(--gutter);
@@ -1429,7 +1434,7 @@ html.lenis body {
   position: absolute;
   inset: 0;
   border: 0;
-  background: rgba(42, 9, 38, 0.32);
+  background: rgba(42, 9, 38, 0.42);
   cursor: pointer;
   animation: sheet-fade 0.5s ease both;
 }
@@ -1510,17 +1515,7 @@ html.lenis body {
   line-height: 1;
 }
 
-/* The homepage settles back while a product page is open on top. */
-.home-stage {
-  transition:
-    transform 0.75s var(--ease),
-    border-radius 0.75s var(--ease);
-}
 
-.lab-root[data-sheet="true"] .home-stage {
-  transform: scale(0.94);
-  border-radius: 1.4rem;
-}
 
 @media (max-width: 900px) {
   .pd-split,
@@ -1928,15 +1923,14 @@ html.site-menu-locked {
 
 .nfc-show {
   position: relative;
-  height: 260svh;
+  height: min(100svh, 52rem);
   margin-inline: calc(50% - 50vw);
   background: radial-gradient(60% 50% at 50% 55%, color-mix(in oklab, var(--plum) 14%, transparent), transparent 70%), var(--paper);
 }
 
 .nfc-show-stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
+  position: relative;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -2480,4 +2474,14 @@ html.site-menu-locked {
   font-size: 0.74rem;
   color: var(--ink-soft);
   opacity: 0.8;
+}
+
+/* Only one scrollbar while a product page is open over the homepage. */
+html:has(.sheet[data-state="open"]) {
+  overflow: hidden;
+}
+
+.sheet-panel {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--ink) 30%, transparent) transparent;
 }

@@ -72,6 +72,29 @@ function fitTexture(texture: THREE.Texture, spec: CardSpec) {
 }
 
 /** The Steevanz flower mark: five cream petals, aubergine drops, gold heart. */
+/** A simple placeholder logo for the client: their initials in a ring. */
+function drawMonogram(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string, name: string, display: string) {
+  const initials = name
+    .split(" ")
+    .filter((w) => w.length > 2)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = r * 0.09;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.font = `400 ${r * 1.05}px ${display}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(initials, cx, cy + r * 0.06);
+  ctx.restore();
+}
+
 function drawFlower(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, petal: string, drop: string, heart: string) {
   ctx.save();
   ctx.translate(cx, cy);
@@ -176,7 +199,8 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
   f.textAlign = "center";
   f.textBaseline = "middle";
   if (kind === "stand") {
-    drawFlower(f, W / 2, H * 0.13, W * 0.09, "#f4ead9", "#5a1650", spec.accent);
+    if (business) drawMonogram(f, W / 2, H * 0.13, W * 0.09, "#f4ead9", business, display);
+    else drawFlower(f, W / 2, H * 0.13, W * 0.09, "#f4ead9", "#5a1650", spec.accent);
     drawContactless(f, W / 2 + W * 0.05, H * 0.27, W * 0.16, spec.accent);
     drawStars(f, W / 2, H * 0.38, W * 0.075, spec.accent);
     f.fillStyle = spec.ink;
@@ -189,7 +213,7 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
     drawQr(f, W * 0.32, H * 0.64, W * 0.36, "#121012", "#f4ead9", 3);
     f.font = `500 ${W * 0.03}px ${sans}`;
     f.globalAlpha = 0.55;
-    f.fillText(business ? "NFC · STEEVANZ" : "STEEVANZ", W / 2, H * 0.95);
+    f.fillText(business ? "NFC · QR" : "STEEVANZ", W / 2, H * 0.95);
     f.globalAlpha = 1;
     if (business) {
       f.fillStyle = spec.face;
@@ -211,7 +235,8 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
     drawContactless(f, W * 0.3, H * 0.72, W * 0.16, spec.ink);
     drawQr(f, W * 0.55, H * 0.6, W * 0.26, spec.ink, spec.face, 9);
   } else if (kind === "sticker") {
-    drawFlower(f, W / 2, H * 0.3, W * 0.1, "#f6ecdc", "#2a0626", spec.accent);
+    if (business) drawMonogram(f, W / 2, H * 0.3, W * 0.1, "#f6ecdc", business, display);
+    else drawFlower(f, W / 2, H * 0.3, W * 0.1, "#f6ecdc", "#2a0626", spec.accent);
     drawContactless(f, W / 2 + W * 0.05, H * 0.55, W * 0.18, spec.accent);
     f.fillStyle = spec.ink;
     f.font = `400 ${W * 0.1}px ${display}`;
@@ -223,7 +248,8 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
       f.globalAlpha = 1;
     }
   } else {
-    drawFlower(f, W * 0.14, H * 0.24, W * 0.06, "#f6ecdc", "#2a0626", spec.accent);
+    if (business) drawMonogram(f, W * 0.14, H * 0.24, W * 0.06, "#f6ecdc", business, display);
+    else drawFlower(f, W * 0.14, H * 0.24, W * 0.06, "#f6ecdc", "#2a0626", spec.accent);
     f.textAlign = "left";
     f.fillStyle = spec.ink;
     f.font = `400 ${W * 0.11}px ${display}`;
@@ -237,7 +263,8 @@ export function createCardTextures(kind: CardKind, display: string, sans: string
 
   // Back: brand colour with a centred flower mark.
   const markColor = kind === "plate" ? "#2b0a28" : "#f6ecdc";
-  drawFlower(b, W / 2, H / 2, Math.min(W, H) * 0.16, markColor, kind === "plate" ? "#d8c7b0" : "#5a1650", spec.accent);
+  if (business) drawMonogram(b, W / 2, H / 2, Math.min(W, H) * 0.16, markColor, business, display);
+  else drawFlower(b, W / 2, H / 2, Math.min(W, H) * 0.16, markColor, kind === "plate" ? "#d8c7b0" : "#5a1650", spec.accent);
 
   return {
     front: fitTexture(new THREE.CanvasTexture(front), spec),

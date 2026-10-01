@@ -72,13 +72,18 @@ const SHOTS: { pos: [number, number, number]; look: [number, number, number]; fr
 function posePetal(mesh: THREE.Object3D, angle: number, i: number, t: number, hover: number, bud: number) {
   const e = easeInOut(t);
   const lift = smoothstep(0, 0.3, t);
-  const fall = e * e * 2.2;
-  const gx = -Math.sin(angle);
-  const gy = -Math.cos(angle);
+  const fall = e * e;
+  // Every petal leaves the frame the same way, whatever its place on the flower:
+  // it lifts off, then drifts down-right on the breeze and towards the camera.
+  // (World direction converted into the petal's rotated pivot.)
+  const wx = 1.6 * fall;
+  const wy = -4.6 * fall;
+  const c = Math.cos(angle);
+  const sn = Math.sin(angle);
   mesh.position.set(
-    Math.sin(t * Math.PI * 2) * 0.35 * t + gx * fall,
-    0.12 * lift + e * 1.3 + gy * fall + hover * 0.07,
-    0.016 * i + lift * 0.3 + e * e * 2.6,
+    Math.sin(t * Math.PI * 2) * 0.3 * t + c * wx + sn * wy,
+    0.12 * lift + e * 0.7 - sn * wx + c * wy + hover * 0.07,
+    0.026 * i + lift * 0.3 + fall * 3.4,
   );
   mesh.rotation.set(
     0.9 * lift + bud - hover * 0.05,
@@ -96,7 +101,7 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     color: new THREE.Color(tint),
     map: textures.map,
     bumpMap: textures.bumpMap,
-    bumpScale: 0.9,
+    bumpScale: 0.55,
     metalness: 0,
     roughness: 0.62,
     sheen: 0.85,
@@ -218,10 +223,9 @@ function Sun({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
       map={gobo}
       castShadow
       shadow-mapSize={[2048, 2048]}
-      shadow-bias={-0.0004}
-      shadow-normalBias={0.02}
-      shadow-radius={7}
-      shadow-blurSamples={8}
+      shadow-bias={-0.0006}
+      shadow-normalBias={0.045}
+      shadow-radius={5}
       shadow-camera-near={0.5}
       shadow-camera-far={16}
     />
@@ -311,23 +315,29 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       root.current.rotation.x = -0.16;
       root.current.scale.setScalar(0.95 - finale * 0.12);
     }
-    if (spin.current) spin.current.rotation.z = -time * 0.025 - Math.pow(1 - open, 2) * 0.8;
+    if (spin.current) spin.current.rotation.z = -time * 0.025 - Math.pow(1 - open, 3) * 0.45;
 
     for (let i = 0; i < PETAL_COUNT; i++) {
       const mesh = petals.current[i];
       if (!mesh) continue;
-      const regrow = smoothstep(6.3 + i * 0.05, 6.85 + i * 0.03, p);
+      const regrow = smoothstep(6.15 + i * 0.09, 6.75 + i * 0.05, p);
       const fallen = Math.min(1, Math.max(0, petalTime(i, p)));
       const t = regrow > 0 ? 0 : fallen;
       const target = hovered.current === i && t < 0.02 && regrow === 0 ? 1 : 0;
       hoverAmount.current[i] += (target - hoverAmount.current[i]) * Math.min(1, dt * 6);
-      const reopen = regrow > 0 ? Math.pow(1 - regrow, 2) * 1.5 : 0;
-      const bud = Math.pow(1 - open, 2) * 1.4 + reopen + Math.sin(time * 0.7 + i * 1.3) * 0.018;
+      // Re-bloom for the contact step: the same staggered unfolding as the opening.
+      const reopen = regrow > 0 ? Math.pow(1 - regrow, 2) * 0.35 : 0;
+      // Opening after the loader: petals unfold one after another, gently, like a real bloom.
+      const openI = revealAt < 0 ? 0 : smoothstep(0.05 + i * 0.14, 1.9 + i * 0.14, time - revealAt);
+      const bud = Math.pow(1 - openI, 2) * 0.35 + reopen + Math.sin(time * 0.7 + i * 1.3) * 0.018;
       posePetal(mesh, i * PETAL_ANGLE, i, t, hoverAmount.current[i], bud);
       // Petals never change material state (that would recompile the shader mid-scroll):
       // a falling petal shrinks away as it leaves the frame, and in the finale it grows back.
-      const scale = regrow > 0 ? 0.05 + 0.95 * smoothstep(0, 1, regrow) : 1 - 0.85 * smoothstep(0.7, 1, t);
-      mesh.scale.setScalar(scale);
+      // Petals grow out from the centre (their base sits at the flower's heart), both
+      // when the flower first opens and when it re-blooms for the contact step.
+      const growOut = (k: number) => 1 - Math.pow(1 - k, 3);
+      const scale = regrow > 0 ? growOut(regrow) : 1 - 0.5 * smoothstep(0.88, 1, t);
+      mesh.scale.setScalar(Math.max(0.001, scale * growOut(openI)));
       const material = mesh.material as THREE.MeshPhysicalMaterial;
       const u = material.userData.uniforms;
       u.uTime.value = time + i * 0.17;

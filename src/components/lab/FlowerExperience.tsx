@@ -11,12 +11,10 @@ import {
   finale,
   intro,
   modules,
-  portfolio,
 } from "./chapters";
 import { smoothstep } from "./flowerAssets";
 import { FlowerScene, type ExperienceState } from "./FlowerScene";
 import { Loader } from "./Loader";
-import { LineArt } from "./LineArt";
 import { ProductSheet } from "./ProductSheet";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
 
@@ -209,7 +207,7 @@ export function FlowerExperience() {
           <div className="lab-canvas" aria-hidden="true">
             <Canvas
               dpr={[1, 1.5]}
-              shadows="variance"
+              shadows="percentage"
               camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
               gl={{ antialias: true, powerPreference: "high-performance", toneMapping: NeutralToneMapping }}
             >
@@ -320,19 +318,6 @@ export function FlowerExperience() {
                       </a>
                     </div>
                   </section>
-                  <figure
-                    ref={(el) => {
-                      (stepEls.current[step] ??= [])[1] = el;
-                    }}
-                    className="home-visual"
-                    data-active="false"
-                    aria-hidden="true"
-                  >
-                    <figcaption>
-                      Fig. {module.index} — {module.figure}
-                    </figcaption>
-                    <LineArt visual={module.visual} />
-                  </figure>
                 </div>
               );
             })}
@@ -365,23 +350,6 @@ export function FlowerExperience() {
             </section>
           </div>
         </div>
-      </section>
-
-      <section id="trabalho" className="home-work">
-        <div className="home-work-head">
-          <p className="lab-kicker">{portfolio.kicker}</p>
-          <h2>{portfolio.title}</h2>
-          <p>{portfolio.lead}</p>
-        </div>
-        <ul className="home-work-grid">
-          {portfolio.projects.map((project) => (
-            <li key={`${project.client}-${project.title}`}>
-              <strong>{project.client}</strong>
-              <span>{project.title}</span>
-              <small>{project.tags.join(" · ")}</small>
-            </li>
-          ))}
-        </ul>
       </section>
 
       <SiteFooter />

@@ -61,7 +61,7 @@ function cssFont(variable: string, fallback: string) {
   return value || fallback;
 }
 
-function Spiral({ progressRef, pointerRef, captionRef }: { progressRef: React.RefObject<number>; pointerRef: React.RefObject<{ x: number; y: number }>; captionRef: React.RefObject<HTMLParagraphElement | null> }) {
+function Spiral({ pointerRef, captionRef }: { pointerRef: React.RefObject<{ x: number; y: number }>; captionRef: React.RefObject<HTMLParagraphElement | null> }) {
   const group = useRef<THREE.Group>(null);
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
   const position = useRef(0);
@@ -90,7 +90,7 @@ function Spiral({ progressRef, pointerRef, captionRef }: { progressRef: React.Re
     if (!textures) return;
     const dt = Math.min(delta, 0.05);
     // Scroll drives the spiral; a slow auto-turn keeps it alive when idle.
-    const target = progressRef.current * DESIGNS.length * 3 + clock.elapsedTime * 0.15;
+    const target = clock.elapsedTime * 0.32;
     position.current += (target - position.current) * Math.min(1, dt * 6);
     const b = position.current;
     const base = Math.round(b) - Math.floor(LAYOUT.count / 2);
@@ -147,40 +147,27 @@ function Spiral({ progressRef, pointerRef, captionRef }: { progressRef: React.Re
 }
 
 /**
- * The NFC formats as a Grail-style spiral of cards: it turns as you scroll
- * through the section and leans towards the pointer. Renders only while visible.
+ * The NFC formats as a Grail-style spiral of cards: it turns on its own and leans
+ * towards the pointer. Renders only while visible.
  */
 export function NfcShowcase() {
   const section = useRef<HTMLElement>(null);
   const caption = useRef<HTMLParagraphElement>(null);
-  const progress = useRef(0);
   const pointer = useRef({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = section.current;
     if (!el) return;
-    const scroller: HTMLElement | Window = (el.closest(".sheet-panel") as HTMLElement | null) ?? window;
-    const measure = () => {
-      const rect = el.getBoundingClientRect();
-      const view = scroller === window ? window.innerHeight : (scroller as HTMLElement).clientHeight;
-      const total = el.offsetHeight - view;
-      progress.current = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
-    };
     const onPointer = (event: PointerEvent) => {
       pointer.current.x = (event.clientX / window.innerWidth) * 2 - 1;
       pointer.current.y = -((event.clientY / window.innerHeight) * 2 - 1);
     };
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { rootMargin: "200px" });
     observer.observe(el);
-    scroller.addEventListener("scroll", measure, { passive: true });
-    window.addEventListener("resize", measure);
     window.addEventListener("pointermove", onPointer, { passive: true });
-    measure();
     return () => {
       observer.disconnect();
-      scroller.removeEventListener("scroll", measure);
-      window.removeEventListener("resize", measure);
       window.removeEventListener("pointermove", onPointer);
     };
   }, []);
@@ -190,13 +177,13 @@ export function NfcShowcase() {
       <div className="nfc-show-stage">
         <div className="nfc-show-head">
           <p className="pd-label">Os formatos</p>
-          <h2>Uma placa para cada sítio.</h2>
-          <p>Expositores, placas, autocolantes e cartões, com o nome do seu negócio. Todos com NFC e QR code, todos configurados por nós.</p>
+          <h2>Uma placa, o seu negócio.</h2>
+          <p>Um design Steevanz em quatro formatos — expositor, placa de balcão, autocolante e cartão. Personalizamos com o logótipo, o nome e o link de review do seu negócio.</p>
           <p className="nfc-show-note">Negócios fictícios, apenas para ilustração.</p>
         </div>
         <div className="nfc-show-canvas" aria-hidden="true">
           <Canvas frameloop={visible ? "always" : "never"} dpr={[1, 1.5]} camera={{ position: [0, 0, 8.3], fov: 38 }} gl={{ antialias: true, alpha: true }}>
-            <Spiral progressRef={progress} pointerRef={pointer} captionRef={caption} />
+            <Spiral pointerRef={pointer} captionRef={caption} />
           </Canvas>
         </div>
         <p ref={caption} className="nfc-show-caption" aria-live="polite" />

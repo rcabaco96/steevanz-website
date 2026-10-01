@@ -5,11 +5,30 @@ import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
 import type { ProductId } from "@/content/types";
 import { href } from "@/lib/routes";
+import { AboutView, ContactView, ProductsView } from "./InfoViews";
 import { ProductDetail } from "./ProductDetail";
 
-const PATH_TO_PRODUCT = new Map<string, ProductId>(
-  products.map((product) => [href("pt", { key: "product", productId: product.id }), product.id]),
-);
+type SheetPage = { kind: "product"; id: ProductId } | { kind: "about" } | { kind: "contact" } | { kind: "products" };
+
+/** Pages that open over the homepage. Booking and info-request stay full pages (server forms). */
+const PAGES = new Map<string, SheetPage>([
+  ...products.map((product) => [href("pt", { key: "product", productId: product.id }), { kind: "product", id: product.id }] as [string, SheetPage]),
+  [href("pt", { key: "about" }), { kind: "about" }],
+  [href("pt", { key: "contact" }), { kind: "contact" }],
+  [href("pt", { key: "products" }), { kind: "products" }],
+]);
+
+function pageName(page: SheetPage) {
+  if (page.kind === "product") return getProductCopy(page.id, "pt").shortName;
+  return page.kind === "about" ? "Sobre nós" : page.kind === "contact" ? "Contacto" : "Produtos";
+}
+
+function PageBody({ page }: { page: SheetPage }) {
+  if (page.kind === "product") return <ProductDetail productId={page.id} headingLevel={2} />;
+  if (page.kind === "about") return <AboutView />;
+  if (page.kind === "contact") return <ContactView />;
+  return <ProductsView />;
+}
 
 type SheetState = "closed" | "open" | "closing";
 
@@ -20,7 +39,7 @@ type SheetState = "closed" | "open" | "closing";
  * A direct visit to the same URL renders the standalone page instead.
  */
 export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) => void }) {
-  const [productId, setProductId] = useState<ProductId | null>(null);
+  const [page, setPage] = useState<SheetPage | null>(null);
   const [state, setState] = useState<SheetState>("closed");
   const panel = useRef<HTMLDivElement>(null);
   const openChange = useRef(onOpenChange);
@@ -32,9 +51,9 @@ export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) =
   useEffect(() => {
     let closeTimer = 0;
 
-    const show = (id: ProductId) => {
+    const show = (next: SheetPage) => {
       window.clearTimeout(closeTimer);
-      setProductId(id);
+      setPage(next);
       setState("open");
       openChange.current(true);
       panel.current?.scrollTo({ top: 0 });
@@ -44,7 +63,7 @@ export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) =
       openChange.current(false);
       closeTimer = window.setTimeout(() => {
         setState("closed");
-        setProductId(null);
+        setPage(null);
       }, 650);
     };
 
@@ -52,19 +71,19 @@ export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) =
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const link = (event.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
       if (!link || link.target === "_blank" || link.origin !== window.location.origin) return;
-      const id = PATH_TO_PRODUCT.get(link.pathname);
-      if (!id) return;
+      const next = PAGES.get(link.pathname);
+      if (!next) return;
       event.preventDefault();
-      window.history.pushState({ steevanzSheet: id }, "", link.pathname);
-      show(id);
+      window.history.pushState({ steevanzSheet: link.pathname }, "", link.pathname);
+      show(next);
     };
     const onPop = () => {
-      const id = PATH_TO_PRODUCT.get(window.location.pathname);
-      if (id) show(id);
+      const next = PAGES.get(window.location.pathname);
+      if (next) show(next);
       else hide();
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && PATH_TO_PRODUCT.has(window.location.pathname)) window.history.back();
+      if (event.key === "Escape" && PAGES.has(window.location.pathname)) window.history.back();
     };
 
     document.addEventListener("click", onClick);
@@ -86,8 +105,8 @@ export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) =
     }
   };
 
-  if (!productId) return null;
-  const name = getProductCopy(productId, "pt").shortName;
+  if (!page) return null;
+  const name = pageName(page);
 
   return (
     <div className="sheet" data-state={state} role="dialog" aria-modal="true" aria-label={name}>
@@ -102,7 +121,7 @@ export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) =
             ×
           </button>
         </div>
-        <ProductDetail productId={productId} headingLevel={2} />
+        <PageBody page={page} />
       </div>
     </div>
   );
