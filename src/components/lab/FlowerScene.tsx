@@ -2,11 +2,11 @@
 
 import { Environment, Lightformer, SoftShadows } from "@react-three/drei";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Bloom, EffectComposer, N8AO, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, N8AO, Noise, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { BlendFunction, ToneMappingMode } from "postprocessing";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
-import { WALL, createWallTextures } from "./wallAssets";
+import { WALL, bakeWall } from "./wallAssets";
 import {
   PETAL_COUNT,
   createFilaments,
@@ -74,7 +74,7 @@ function posePetal(mesh: THREE.Object3D, angle: number, i: number, t: number, ho
   mesh.position.set(
     Math.sin(t * Math.PI * 2) * 0.35 * t + gx * fall,
     0.12 * lift + e * 1.3 + gy * fall + hover * 0.07,
-    0.005 * i + lift * 0.3 + e * e * 2.6,
+    0.016 * i + lift * 0.3 + e * e * 2.6,
   );
   mesh.rotation.set(
     0.9 * lift + bud - hover * 0.05,
@@ -92,8 +92,10 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     color: new THREE.Color(tint),
     map: textures.map,
     bumpMap: textures.bumpMap,
-    bumpScale: 1.8,
-    roughness: 0.64,
+    bumpScale: 1.5,
+    metalnessMap: textures.veinMap,
+    metalness: 0.35,
+    roughness: 0.62,
     sheen: 0.85,
     sheenColor: new THREE.Color("#f3e6d2"),
     sheenRoughness: 0.45,
@@ -164,11 +166,13 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
 
 /** The lime-washed lilac wall behind the flower; it receives the flower's shadow. */
 function Wall() {
-  const textures = useMemo(() => createWallTextures(), []);
+  const gl = useThree((state) => state.gl);
+  const baked = useMemo(() => bakeWall(gl), [gl]);
+  useEffect(() => () => baked.dispose(), [baked]);
   return (
     <mesh position={[0, WALL.centerY, WALL.z]} receiveShadow>
       <planeGeometry args={[WALL.width, WALL.height]} />
-      <meshStandardMaterial map={textures.map} bumpMap={textures.bumpMap} bumpScale={1.6} roughness={0.96} envMapIntensity={0.3} />
+      <meshStandardMaterial map={baked.map} normalMap={baked.normalMap} roughness={0.97} envMapIntensity={0.25} />
     </mesh>
   );
 }
@@ -244,21 +248,21 @@ function Wordmark({ stateRef, text, fontFamily }: { stateRef: RefObject<Experien
 /** Low, raking Alentejo sun; it drops and warms towards golden hour in the finale. */
 function Sun({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
   const light = useRef<THREE.DirectionalLight>(null);
-  const day = useMemo(() => new THREE.Color("#ffe8c8"), []);
+  const day = useMemo(() => new THREE.Color("#ffdcaa"), []);
   const dusk = useMemo(() => new THREE.Color("#ffb766"), []);
   useFrame(() => {
     const l = light.current;
     if (!l) return;
     const f = finaleWeight(stateRef.current.progress);
-    l.position.set(-4.6 - f * 0.8, 2.7 - f * 1.3, 3.4);
+    l.position.set(-4.6 - f * 0.6, 2.5 - f * 1.1, 3.0);
     l.color.copy(day).lerp(dusk, f);
-    l.intensity = 3.1 + f * 0.4;
+    l.intensity = 3.6 + f * 0.4;
   });
   return (
     <directionalLight
       ref={light}
-      position={[-4.6, 2.7, 3.4]}
-      intensity={3.1}
+      position={[-4.6, 2.5, 3.0]}
+      intensity={3.6}
       castShadow
       shadow-mapSize={[2048, 2048]}
       shadow-bias={-0.0003}
@@ -462,11 +466,11 @@ function Flower({ stateRef, onAdvance }: { stateRef: RefObject<ExperienceState>;
           <icosahedronGeometry args={[0.0062, 2]} />
           <meshStandardMaterial color="#f3be2e" emissive="#a8650c" emissiveIntensity={0.55} roughness={0.55} />
         </instancedMesh>
-        <mesh position={[0, 0, 0.05]} scale={[1, 1, 0.75]} castShadow>
+        <mesh position={[0, 0, 0.095]} scale={[1, 1, 0.75]} castShadow>
           <sphereGeometry args={[0.034, 48, 48]} />
           <meshStandardMaterial color="#b9a24a" roughness={0.5} envMapIntensity={0.6} />
         </mesh>
-        <mesh position={[0, 0, 0.078]}>
+        <mesh position={[0, 0, 0.122]}>
           <sphereGeometry args={[0.012, 24, 24]} />
           <meshBasicMaterial ref={core} toneMapped={false} />
         </mesh>
@@ -531,6 +535,7 @@ export function FlowerScene({ stateRef, onAdvance, wordmark, fontFamily }: Scene
         <ToneMapping mode={ToneMappingMode.NEUTRAL} />
         <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} opacity={0.06} />
         <Vignette offset={0.38} darkness={0.32} />
+        <SMAA />
       </EffectComposer>
     </>
   );

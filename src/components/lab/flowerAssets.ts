@@ -36,7 +36,6 @@ export function createPetalGeometry(seed: number) {
   const waveAmp = 0.035 + rand() * 0.015;
   const positions: number[] = [];
   const uvs: number[] = [];
-  const indices: number[] = [];
 
   for (let i = 0; i <= segU; i++) {
     const u = i / segU;
@@ -56,23 +55,108 @@ export function createPetalGeometry(seed: number) {
       uvs.push(j / segS, u);
     }
   }
+  return thickenSurface(positions, uvs, segU, segS, PETAL_THICKNESS);
+}
+
+const PETAL_THICKNESS = 0.011;
+
+/**
+ * Turns a (segU+1) x (segS+1) surface grid into a solid petal: an upper and lower
+ * skin offset along the surface normal, joined by a rounded rim that catches light.
+ */
+function thickenSurface(positions: number[], uvs: number[], segU: number, segS: number, thickness: number) {
+  const cols = segS + 1;
+  const grid = new THREE.BufferGeometry();
+  grid.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  const gridIndex: number[] = [];
   for (let i = 0; i < segU; i++) {
     for (let j = 0; j < segS; j++) {
-      const a = i * (segS + 1) + j;
-      const b = a + segS + 1;
-      indices.push(a, b, a + 1, b, b + 1, a + 1);
+      const a = i * cols + j;
+      const b = a + cols;
+      gridIndex.push(a, b, a + 1, b, b + 1, a + 1);
     }
   }
+  grid.setIndex(gridIndex);
+  grid.computeVertexNormals();
+  const n = grid.getAttribute("normal") as THREE.BufferAttribute;
+  const count = positions.length / 3;
+  const h0 = thickness / 2;
+  // Real petals thin out towards their edges: full thickness in the middle,
+  // almost paper-thin at the rim, so the edge never reads as a dark band.
+  const halfThickness = (k: number) => {
+    const across = Math.abs(uvs[k * 2] * 2 - 1);
+    const along = uvs[k * 2 + 1];
+    return h0 * (0.12 + 0.88 * (1 - smoothstep(0.55, 1, across)) * (1 - smoothstep(0.7, 1, along)));
+  };
+  const P = (k: number) => new THREE.Vector3(positions[k * 3], positions[k * 3 + 1], positions[k * 3 + 2]);
+  const N = (k: number) => new THREE.Vector3(n.getX(k), n.getY(k), n.getZ(k));
+
+  const outPos: number[] = [];
+  const outNor: number[] = [];
+  const outUv: number[] = [];
+  const outIdx: number[] = [];
+
+  // Upper and lower skins.
+  for (const side of [1, -1]) {
+    for (let k = 0; k < count; k++) {
+      const p = P(k).addScaledVector(N(k), halfThickness(k) * side);
+      const nn = N(k).multiplyScalar(side);
+      outPos.push(p.x, p.y, p.z);
+      outNor.push(nn.x, nn.y, nn.z);
+      outUv.push(uvs[k * 2], uvs[k * 2 + 1]);
+    }
+  }
+  for (let t = 0; t < gridIndex.length; t += 3) {
+    outIdx.push(gridIndex[t], gridIndex[t + 1], gridIndex[t + 2]);
+    outIdx.push(count + gridIndex[t], count + gridIndex[t + 2], count + gridIndex[t + 1]);
+  }
+
+  // Boundary loop: left edge, rim, right edge, base.
+  const loop: { k: number; inward: number }[] = [];
+  for (let i = 0; i <= segU; i++) loop.push({ k: i * cols, inward: i * cols + 1 });
+  for (let j = 1; j <= segS; j++) loop.push({ k: segU * cols + j, inward: (segU - 1) * cols + j });
+  for (let i = segU - 1; i >= 0; i--) loop.push({ k: i * cols + segS, inward: i * cols + segS - 1 });
+  for (let j = segS - 1; j >= 1; j--) loop.push({ k: j, inward: cols + j });
+
+  const ringSteps = 6;
+  const base = outPos.length / 3;
+  for (const { k, inward } of loop) {
+    const p = P(k);
+    const nn = N(k);
+    const out = p.clone().sub(P(inward));
+    out.addScaledVector(nn, -out.dot(nn)).normalize();
+    for (let r = 0; r <= ringSteps; r++) {
+      const a = (r / ringSteps) * Math.PI;
+      const dir = nn.clone().multiplyScalar(Math.cos(a)).addScaledVector(out, Math.sin(a));
+      const q = p.clone().addScaledVector(dir, halfThickness(k));
+      outPos.push(q.x, q.y, q.z);
+      const lit = nn.clone().multiplyScalar(Math.cos(a) >= 0 ? 1 : -1).lerp(dir, 0.3).normalize();
+      outNor.push(lit.x, lit.y, lit.z);
+      outUv.push(uvs[inward * 2], uvs[inward * 2 + 1]);
+    }
+  }
+  const ring = ringSteps + 1;
+  for (let a = 0; a < loop.length; a++) {
+    const b = (a + 1) % loop.length;
+    for (let r = 0; r < ringSteps; r++) {
+      const v0 = base + a * ring + r;
+      const v1 = base + b * ring + r;
+      outIdx.push(v0, v1, v0 + 1, v1, v1 + 1, v0 + 1);
+    }
+  }
+
   const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(outPos, 3));
+  geometry.setAttribute("normal", new THREE.Float32BufferAttribute(outNor, 3));
+  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(outUv, 2));
+  geometry.setIndex(outIdx);
+  grid.dispose();
   return geometry;
 }
 
 interface Vein {
   sx: number;
+  sy: number;
   cx: number;
   cy: number;
   ex: number;
@@ -85,7 +169,7 @@ interface Vein {
 function createVeins(size: number) {
   const rand = seeded(7);
   const veins: Vein[] = [];
-  const count = 130;
+  const count = 96;
   for (let k = 0; k < count; k++) {
     const sx = size * (0.5 + (rand() - 0.5) * 0.06);
     const ex = size * (0.01 + (k / count) * 0.98 + (rand() - 0.5) * 0.015);
@@ -93,7 +177,8 @@ function createVeins(size: number) {
     const ey = size * (1 - reach);
     const cx = (sx + ex) / 2 + (rand() - 0.5) * size * 0.04;
     const cy = size * (1 - reach * 0.5);
-    const vein: Vein = { sx, cx, cy, ex, ey, width: 0.8 + rand() * 1.6, alpha: 0.3 + rand() * 0.5 };
+    const sy = size * (1 - (0.08 + rand() * 0.07));
+    const vein: Vein = { sx, sy, cx, cy, ex, ey, width: 0.8 + rand() * 1.6, alpha: 0.3 + rand() * 0.5 };
     if (rand() > 0.55) {
       const x0 = (cx + ex) / 2;
       const y0 = (cy + ey) / 2;
@@ -109,7 +194,7 @@ function strokeVeins(ctx: CanvasRenderingContext2D, veins: Vein[], size: number,
     ctx.strokeStyle = style(v);
     ctx.lineWidth = v.width + extraWidth;
     ctx.beginPath();
-    ctx.moveTo(v.sx, size);
+    ctx.moveTo(v.sx, v.sy);
     ctx.quadraticCurveTo(v.cx, v.cy, v.ex, v.ey);
     ctx.stroke();
     if (v.branch) {
@@ -213,21 +298,21 @@ export function createPetalTextures() {
   c.fillStyle = base;
   c.fillRect(0, 0, size, size);
 
-  // Darker side edges and rim so overlapping petals separate visually.
+  // Edges a touch lighter, as thin tissue lets more light through.
   const sides = c.createLinearGradient(0, 0, size, 0);
-  sides.addColorStop(0, "rgba(96,58,84,0.26)");
-  sides.addColorStop(0.1, "rgba(120,86,92,0)");
-  sides.addColorStop(0.9, "rgba(120,86,92,0)");
-  sides.addColorStop(1, "rgba(96,58,84,0.26)");
+  sides.addColorStop(0, "rgba(255,253,249,0.55)");
+  sides.addColorStop(0.08, "rgba(255,253,249,0)");
+  sides.addColorStop(0.92, "rgba(255,253,249,0)");
+  sides.addColorStop(1, "rgba(255,253,249,0.55)");
   c.fillStyle = sides;
   c.fillRect(0, 0, size, size);
-  const tip = c.createLinearGradient(0, 0, 0, size * 0.12);
-  tip.addColorStop(0, "rgba(110,72,96,0.16)");
-  tip.addColorStop(1, "rgba(150,110,100,0)");
+  const tip = c.createLinearGradient(0, 0, 0, size * 0.1);
+  tip.addColorStop(0, "rgba(255,253,249,0.5)");
+  tip.addColorStop(1, "rgba(255,253,249,0)");
   c.fillStyle = tip;
   c.fillRect(0, 0, size, size);
 
-  strokeVeins(c, veins, size, (vein) => `rgba(196,150,74,${vein.alpha * 0.55})`);
+  strokeVeins(c, veins, size, (vein) => `rgba(206,160,72,${0.3 + vein.alpha * 0.4})`);
 
   // Bump: neutral grey, crinkled tissue strokes following the veins, raised veins on top.
   b.fillStyle = "#7a7a7a";
@@ -247,7 +332,7 @@ export function createPetalTextures() {
   b.filter = "blur(10px)";
   b.drawImage(bump, 0, 0);
   b.filter = "none";
-  strokeVeins(b, veins, size, (vein) => `rgba(255,255,255,${0.3 + vein.alpha * 0.35})`, 2.2);
+  strokeVeins(b, veins, size, (vein) => `rgba(0,0,0,${0.35 + vein.alpha * 0.35})`, 1.8);
   paintBlotch(c, b, size);
 
   v.fillStyle = "#000";
@@ -278,11 +363,11 @@ export function createFilaments(count = 150) {
     const len = 0.05 + (1 - ring) * 0.07 + rand() * 0.04;
     const rise = 0.06 + (1 - ring) * 0.09 + rand() * 0.03;
     const dir = new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0);
-    const base = dir.clone().multiplyScalar(startR).setZ(0.045);
+    const base = dir.clone().multiplyScalar(startR).setZ(0.085);
     const curve = new THREE.CatmullRomCurve3([
       base,
-      base.clone().add(dir.clone().multiplyScalar(len * 0.45)).setZ(0.045 + rise * 0.75),
-      base.clone().add(dir.clone().multiplyScalar(len)).setZ(0.045 + rise),
+      base.clone().add(dir.clone().multiplyScalar(len * 0.45)).setZ(0.085 + rise * 0.75),
+      base.clone().add(dir.clone().multiplyScalar(len)).setZ(0.085 + rise),
     ]);
     tubes.push(new THREE.TubeGeometry(curve, 8, 0.0011 + rand() * 0.0005, 5, false));
     tips.push(curve.getPoint(1));
