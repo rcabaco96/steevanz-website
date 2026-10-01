@@ -76,9 +76,9 @@ function fitTexture(texture: THREE.Texture, spec: CardSpec) {
 function drawMonogram(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string, name: string, display: string) {
   const initials = name
     .split(" ")
-    .filter((w) => w.length > 2)
+    .filter((w) => w.length > 1)
     .slice(0, 2)
-    .map((w) => w[0])
+    .map((w, _, all) => (all.length === 1 ? w.slice(0, 2) : w[0]))
     .join("")
     .toUpperCase();
   ctx.save();
@@ -304,6 +304,8 @@ export function createPlaneCardTextures(kind: CardKind, display: string, sans: s
     const w = canvas.width;
     const h = canvas.height;
     ctx.globalCompositeOperation = "destination-in";
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#000";
     ctx.beginPath();
     if (kind === "sticker") ctx.arc(w / 2, h / 2, Math.min(w, h) / 2, 0, Math.PI * 2);
     else ctx.roundRect(0, 0, w, h, (spec.radius / spec.width) * w);

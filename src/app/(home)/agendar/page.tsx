@@ -13,11 +13,14 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function BookRoute({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const params = await searchParams;
+  // ?embed=1: shown inside the homepage panel, without header and footer.
+  const embed = params.embed === "1";
   return (
-    <div className="lab-root pd-page">
+    <div className={embed ? "lab-root pd-page embed-page" : "lab-root pd-page"}>
       <SiteHeader solid />
       <main className="lab-compat">
-        <BookingPageView locale="pt" searchParams={await searchParams} />
+        <BookingPageView locale="pt" searchParams={params} />
       </main>
       <SiteFooter />
     </div>

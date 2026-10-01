@@ -158,9 +158,6 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
       </nav>
 
       <div className="site-actions">
-        <a className="site-lang" href="/en" hrefLang="en">
-          EN
-        </a>
         <ThemeToggle />
         <a className="site-cta" href={href("pt", { key: "book" })}>
           Agendar demo

@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 
 export type Theme = "light" | "dark";
 
+import { flowerMarkSvg } from "./FlowerMark";
 import { THEME_STORAGE_KEY as STORAGE_KEY } from "./themeScript";
 
 function read(): Theme {
@@ -21,9 +22,7 @@ export function useTheme(): Theme {
   return useSyncExternalStore(subscribe, read, () => "light");
 }
 
-const VEIL_MARK = `<svg width="46" height="46" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#562650"/><g transform="translate(20 20)">${[0, 72, 144, 216, 288]
-  .map((r) => `<g transform="rotate(${r})"><ellipse cx="0" cy="-7.4" rx="6" ry="7.6" fill="#f3ebde"/><path d="M0 -10.5 Q1.6 -6 0 -3.4 Q-1.6 -6 0 -10.5Z" fill="#562650"/></g>`)
-  .join("")}<circle r="2" fill="#d9a238"/></g></svg>`;
+const VEIL_MARK = flowerMarkSvg(56);
 
 /**
  * Switches theme behind a short veil: the screen eases to the wall colour with the
@@ -40,7 +39,7 @@ export function toggleTheme() {
   const veil = document.createElement("div");
   veil.className = "theme-veil";
   veil.setAttribute("aria-hidden", "true");
-  veil.innerHTML = VEIL_MARK;
+  veil.innerHTML = `<span class="veil-spin"><span class="veil-ring"></span>${VEIL_MARK}</span>`;
   document.body.appendChild(veil);
   requestAnimationFrame(() => (veil.dataset.state = "in"));
   window.setTimeout(() => {
@@ -51,7 +50,7 @@ export function toggleTheme() {
         window.setTimeout(() => {
           veil.dataset.state = "out";
           window.setTimeout(() => veil.remove(), 520);
-        }, 260),
+        }, 520),
       ),
     );
   }, 240);

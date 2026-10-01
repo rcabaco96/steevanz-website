@@ -949,13 +949,9 @@ html {
   }
 }
 
-/* ---------- Intro loader: minimal, on the wall colour ---------- */
-
-@property --hole {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
+/* ---------- Intro loader: compositor-only (transform/opacity on HTML) ----------
+   Every animation here keeps running even while the main thread is busy
+   starting the page and preparing the 3D scene, so it never freezes. */
 
 .loader {
   position: fixed;
@@ -965,97 +961,128 @@ html {
   place-items: center;
   background: var(--wall);
   color: var(--plum);
-  -webkit-mask: radial-gradient(circle at 50% 58%, transparent var(--hole), #000 calc(var(--hole) + 1px));
-  mask: radial-gradient(circle at 50% 58%, transparent var(--hole), #000 calc(var(--hole) + 1px));
+  will-change: opacity, transform;
 }
 
 .loader[data-phase="opening"] {
-  animation: loader-iris 1.25s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation: ld-exit 0.9s cubic-bezier(0.7, 0, 0.2, 1) forwards;
 }
 
-@keyframes loader-iris {
+@keyframes ld-exit {
   to {
-    --hole: 150vmax;
+    opacity: 0;
+    transform: scale(1.08);
   }
 }
 
-.ld-mark {
-  display: inline-grid;
+.ld-stage {
+  display: grid;
   justify-items: center;
-  gap: 0.9rem;
-  transition:
-    transform 0.9s var(--ease),
-    opacity 0.6s;
+  gap: 1.3rem;
 }
 
-.loader[data-phase="opening"] .ld-mark {
-  transform: translateY(-1.5rem);
-  opacity: 0;
+.ld-mark-slot {
+  display: grid;
+  place-items: center;
+  animation:
+    ld-in 0.9s 0.05s var(--ease) both,
+    ld-breathe 2.4s 0.9s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-.ld-word {
-  overflow: hidden;
-  padding-left: 0.42em;
+.ld-name {
+  padding-left: 0.32em;
   font-family: var(--display);
-  font-size: clamp(1.7rem, 2.6vw, 2.3rem);
-  line-height: 1.05;
-  letter-spacing: 0.42em;
+  font-size: clamp(2.4rem, 4.6vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: 0.32em;
+  color: var(--plum);
+  animation: ld-in 1s 0.2s var(--ease) both;
+  will-change: transform, opacity;
 }
 
-.ld-word span {
-  display: block;
-  animation: ld-rise 0.9s 0.15s var(--ease) both;
-}
-
-@keyframes ld-rise {
+@keyframes ld-in {
   from {
-    transform: translateY(105%);
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
   }
 }
 
+@keyframes ld-breathe {
+  50% {
+    transform: scale(1.06) rotate(14deg);
+  }
+}
+
+.ld-foot {
+  position: absolute;
+  inset: auto var(--edge) 2rem;
+  display: grid;
+  gap: 0.8rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  animation: ld-fade 0.8s 0.4s ease both;
+}
+
+@keyframes ld-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Progress line: a soft light that sweeps along it (loops, never stalls). */
 .loader-line {
+  position: relative;
   display: block;
-  justify-self: stretch;
   height: 1px;
-  background: color-mix(in oklab, var(--plum) 18%, transparent);
   overflow: hidden;
+  background: color-mix(in oklab, var(--plum) 20%, transparent);
 }
 
 .loader-line i {
-  display: block;
-  height: 100%;
-  background: var(--plum);
-  transform-origin: left;
-  animation: loader-line 2.4s 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, var(--plum), transparent);
+  animation: ld-sweep 1.3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   will-change: transform;
 }
 
-@keyframes loader-line {
+@keyframes ld-sweep {
   from {
-    transform: scaleX(0);
+    transform: translateX(-100%);
   }
   to {
-    transform: scaleX(0.9);
+    transform: translateX(290%);
   }
 }
 
 .loader[data-phase="complete"] .loader-line i,
 .loader[data-phase="opening"] .loader-line i {
+  width: 100%;
   animation: none;
-  transform: scaleX(1);
-  transition: transform 0.35s var(--ease);
+  transform: none;
+  background: var(--plum);
+  transition: none;
 }
 
-.ld-sub {
-  font-size: 0.64rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  animation: ld-fade 0.8s 0.6s ease both;
+@media (prefers-reduced-motion: reduce) {
+  .ld-mark-slot,
+  .ld-name,
+  .ld-foot,
+  .loader-line i {
+    animation: none;
+  }
+
+  .loader[data-phase="opening"] {
+    animation: ld-fade-out 0.3s forwards;
+  }
 }
 
-@keyframes ld-fade {
-  from {
+@keyframes ld-fade-out {
+  to {
     opacity: 0;
   }
 }
@@ -1065,20 +1092,6 @@ html {
 .lab-root[data-ready="false"] .lab-hero-kicker,
 .lab-root[data-ready="false"] .lab-intro {
   animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .loader[data-phase="opening"] {
-    animation: none;
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-
-  .ld-word span,
-  .ld-sub,
-  .loader-line i {
-    animation: none;
-  }
 }
 
 /* ---------- Product detail (no 3D: clarity first) ---------- */
@@ -2072,8 +2085,41 @@ html.site-menu-locked {
   transition-duration: 0.5s;
 }
 
-.theme-veil svg {
-  animation: veil-breathe 1.4s ease-in-out infinite;
+/* Veil mark: compositor-only motion (the whole mark turns inside a ring), so it
+   stays smooth even while the page re-renders underneath. */
+.veil-spin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+}
+
+.veil-spin .fm {
+  animation: veil-breathe 1.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.veil-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid color-mix(in oklab, var(--plum) 18%, transparent);
+  border-top-color: var(--plum);
+  animation: veil-ring 0.9s linear infinite;
+  will-change: transform;
+}
+
+@keyframes veil-breathe {
+  50% {
+    transform: scale(0.9) rotate(36deg);
+  }
+}
+
+@keyframes veil-ring {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes veil-breathe {
@@ -2783,3 +2829,693 @@ html:has(.sheet[data-state="open"]) {
   }
 }
 
+
+.site-footer .site-footer-base li,
+.site-footer .site-footer-contacts li {
+  margin-top: 0;
+}
+
+/* ---------- "Vamos falar?" above the ochre band, on a soft paper panel ---------- */
+
+.lab-finale {
+  top: 50%;
+  bottom: auto;
+  width: min(44rem, 92vw);
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3.5rem);
+  border-radius: 1.6rem;
+  translate: -50% -50%;
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 30px 70px -40px rgba(42, 9, 38, 0.5);
+}
+
+.lab-finale .lab-title {
+  font-size: clamp(3.2rem, 7vw, 6rem);
+}
+
+.lab-finale .lab-body {
+  max-width: 30rem;
+  opacity: 0.85;
+}
+
+.lab-finale .lab-actions {
+  margin-top: 1.8rem;
+}
+
+.lab-finale .lab-button {
+  padding: 0.95rem 1.6rem;
+}
+
+.lab-chapter.lab-finale {
+  opacity: clamp(0, calc(var(--in) * 2.2 - 0.6), 1);
+}
+
+/* ---------- Booking / info forms embedded in the sliding panel ---------- */
+
+.sheet-frame {
+  display: block;
+  width: 100%;
+  height: calc(96.5svh - 4.2rem);
+  border: 0;
+  background: var(--paper);
+}
+
+.embed-page .site-header,
+.embed-page .site-footer {
+  display: none;
+}
+
+.embed-page .lab-compat > div {
+  padding-top: 2.5rem;
+}
+
+/* ---------- Whole step opens its section ---------- */
+
+.home-open {
+  position: static;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 1.05rem 1.4rem;
+  border-radius: 0.6rem;
+  border-top: 1.5px solid var(--plum);
+  border-bottom: 1.5px solid var(--plum);
+  color: var(--plum);
+  font-family: var(--display);
+  font-size: 1.55rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  opacity: clamp(0, calc(var(--in) * 2.4 - 1.3), 1);
+}
+
+/* Stretched hit area: the whole centred block is clickable. */
+.home-open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.home-open-arrow {
+  display: inline-block;
+  transition: transform 0.45s var(--ease);
+}
+
+.home-open-alt {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  margin-top: 0.9rem;
+  font-size: 0.86rem;
+  opacity: clamp(0, calc(var(--in) * 2.4 - 1.3), 1);
+}
+
+.home-open-title {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.home-open-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.04em;
+  height: 0.06em;
+  background: var(--plum);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.55s var(--ease);
+}
+
+.home-title-arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-left: 0.18em;
+  color: var(--ochre);
+  opacity: 0;
+  transform: translate(-0.3em, -50%);
+  transition:
+    opacity 0.35s,
+    transform 0.55s var(--ease);
+}
+
+.home-module {
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+.home-cta-mobile {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .home-open {
+    margin-top: 1.2rem;
+    font-size: 1.25rem;
+  }
+
+  .home-open-alt,
+  .home-title-arrow {
+    display: none;
+  }
+}
+
+/* Step labels: readable plum on a soft pill. */
+.lab-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.2rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--paper-hi) 70%, transparent);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--plum);
+}
+
+
+
+/* ---------- "Vamos falar?": two-column contact card ---------- */
+
+.lab-chapter.lab-finale {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  width: min(62rem, 92vw);
+  padding: clamp(2rem, 4vw, 3rem);
+  overflow: hidden;
+  text-align: left;
+}
+
+.lab-chapter.lab-finale::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ochre), var(--plum));
+}
+
+.lab-finale .lab-body {
+  margin-inline: 0;
+}
+
+.fin-options {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  opacity: clamp(0, calc(var(--in) * 2.2 - 1.1), 1);
+}
+
+.fin-options a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--paper-hi) 75%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--ink);
+  text-decoration: none;
+  pointer-events: auto;
+  transition:
+    background 0.3s,
+    transform 0.4s var(--ease),
+    box-shadow 0.3s;
+}
+
+.fin-options li:first-child a {
+  background: var(--plum-deep);
+  color: var(--ink-light);
+  box-shadow: none;
+}
+
+.fin-options a:hover {
+  transform: translateX(4px);
+  box-shadow: inset 0 0 0 1px var(--plum);
+}
+
+.fin-n {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  color: var(--ochre);
+}
+
+.fin-text {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.fin-text b {
+  font-size: 1rem;
+}
+
+.fin-text small {
+  font-size: 0.8rem;
+  opacity: 0.72;
+}
+
+.fin-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.4s var(--ease);
+}
+
+.fin-options a:hover .fin-arrow {
+  transform: translateX(4px);
+}
+
+.lab-finale[data-active="false"] .fin-options a {
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .lab-chapter.lab-finale {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .lab-finale .lab-body {
+    margin-inline: auto;
+  }
+}
+
+/* ---------- Custom cursor (mouse only) ---------- */
+
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--plum);
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1.5px solid color-mix(in oklab, var(--plum) 55%, transparent);
+  transition:
+    width 0.35s var(--ease),
+    height 0.35s var(--ease),
+    margin 0.35s var(--ease),
+    background 0.3s,
+    border-color 0.3s;
+}
+
+html:not(.has-cursor) .cursor-dot,
+html:not(.has-cursor) .cursor-ring {
+  display: none;
+}
+
+.cursor-ring[data-hover] {
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  background: color-mix(in oklab, var(--plum) 12%, transparent);
+  border-color: transparent;
+}
+
+.cursor-ring[data-state="grab"] {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  border-style: dashed;
+}
+
+.cursor-ring[data-state="grabbing"],
+.cursor-ring[data-down] {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  background: color-mix(in oklab, var(--plum) 25%, transparent);
+}
+
+/* ---------- Mobile: app-style homepage ---------- */
+
+@media (max-width: 760px) {
+  /* Progress dots under the header, like story progress. */
+  .home-index {
+    display: flex;
+    top: calc(4.4rem + env(safe-area-inset-top));
+    left: 1.25rem;
+    right: 1.25rem;
+    translate: none;
+    gap: 0.35rem;
+    padding: 0;
+  }
+
+  .home-index::before,
+  .home-index::after {
+    display: none;
+  }
+
+  .home-index button,
+  .home-index button span,
+  .home-index button[data-current="true"],
+  .home-index button:hover {
+    font-size: 0;
+  }
+
+  .home-index button {
+    flex: 1;
+    height: 3px;
+    padding: 0;
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--ink) 18%, transparent);
+    opacity: 1;
+    transform: none;
+  }
+
+  .home-index button[data-current="true"] {
+    flex: 2.6;
+    background: var(--plum);
+    transform: none;
+  }
+
+  /* Content straight on the wall, from below the flower to the action bar. */
+  .lab-chapter.home-about,
+  .lab-chapter.home-module {
+    top: calc(26svh + env(safe-area-inset-top));
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    max-height: none;
+    padding: 0 1.25rem calc(6.5rem + env(safe-area-inset-bottom));
+    overflow: visible;
+    border-radius: 0;
+    translate: none;
+    text-align: left;
+    background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--wall) 70%, transparent) 18%);
+    box-shadow: none;
+    opacity: calc(var(--out) * clamp(0, calc(var(--in) * 2.2 - 0.6), 1));
+  }
+
+  .home-module .lab-title,
+  .home-about .lab-title {
+    font-size: clamp(2.9rem, 14vw, 3.8rem);
+  }
+
+  .home-open-title {
+    margin-inline: 0;
+  }
+
+  .home-about .lab-body,
+  .home-module .lab-body {
+    margin-inline: 0;
+    font-size: 1rem;
+  }
+
+  .home-ideal {
+    display: none;
+  }
+
+  /* Offers: a swipeable row of small cards. */
+  .home-module .home-offers {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.4rem -1.25rem 0;
+    padding: 0 1.25rem 0.4rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    border: 0;
+    scrollbar-width: none;
+    pointer-events: auto;
+  }
+
+  .home-module .home-offers::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-module .home-offers li,
+  .home-module .home-offers li:nth-child(n + 3) {
+    display: grid;
+    flex: 0 0 62%;
+    justify-items: start;
+    gap: 0.35rem;
+    padding: 1rem;
+    border: 0;
+    border-radius: 1rem;
+    text-align: left;
+    scroll-snap-align: start;
+    background: color-mix(in oklab, var(--paper-hi) 82%, transparent);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .home-module .home-offers li + li {
+    border-left: 0;
+  }
+
+  .home-module .home-offers small {
+    display: block;
+  }
+
+  .home-about .home-facts {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-inline: 0;
+  }
+
+  .home-about .home-facts dd {
+    display: block;
+    font-size: 0.72rem;
+  }
+
+  .home-about .lab-link {
+    margin-inline: 0;
+  }
+
+  /* Fixed, thumb-reachable action. */
+  .home-open {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: calc(1.2rem + env(safe-area-inset-bottom));
+    margin: 0;
+    padding: 1.05rem 1.3rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--plum-deep);
+    color: var(--ink-light);
+    font-size: 1.2rem;
+    box-shadow: 0 16px 34px -14px rgba(42, 9, 38, 0.6);
+    pointer-events: auto;
+  }
+
+  .home-open::after {
+    display: none;
+  }
+
+  .home-open-alt {
+    display: none;
+  }
+
+  .lab-chapter.lab-finale {
+    top: 54%;
+    bottom: auto;
+    left: 50%;
+    width: calc(100vw - 2rem);
+    padding: 1.6rem 1.2rem;
+    translate: -50% -50%;
+  }
+
+  .lab-intro {
+    bottom: calc(1.6rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Hover effects only where a real hover exists (no sticky states on touch). */
+@media (hover: hover) and (pointer: fine) {
+  .home-module:hover .home-open-title::after {
+    transform: scaleX(1);
+  }
+
+  .home-module:hover .home-title-arrow {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+
+  .home-module:hover .home-open {
+    background: color-mix(in oklab, var(--plum) 8%, transparent);
+  }
+
+  .home-module:hover .home-open-arrow {
+    transform: translateX(0.3rem);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  html {
+    scrollbar-gutter: auto;
+  }
+}
+
+html {
+  background: var(--wall);
+}
+
+@media (max-width: 760px) {
+  .home-module .home-offers {
+    scroll-padding-inline: 1.25rem;
+  }
+
+  .home-module .home-offers li:last-child {
+    margin-right: 1.25rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .fin-options a {
+    text-align: left;
+  }
+}
+
+/* Mobile offers: one soft panel, all rows visible (name + note left, price right). */
+@media (max-width: 760px) {
+  .home-module .home-offers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin: 1.2rem 0 0;
+    padding: 0.2rem 1rem;
+    overflow: visible;
+    scroll-snap-type: none;
+    border-radius: 1.1rem;
+    background: color-mix(in oklab, var(--paper-hi) 78%, transparent);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .home-module .home-offers li,
+  .home-module .home-offers li:nth-child(n + 3) {
+    display: flex;
+    flex: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0.75rem 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    text-align: left;
+  }
+
+  .home-module .home-offers li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .home-module .home-offers li:last-child {
+    margin-right: 0;
+  }
+
+  .home-module .home-offers b {
+    font-size: 0.9rem;
+  }
+
+  .home-module .home-offers small {
+    display: block;
+    font-size: 0.74rem;
+  }
+
+  .home-module .home-offers em {
+    flex: none;
+    font-size: 1.25rem;
+  }
+
+  .home-module .lab-body {
+    font-size: 0.95rem;
+  }
+}
+
+/* Short phones: tighten so the list never runs under the action button. */
+@media (max-width: 760px) and (max-height: 760px) {
+  .lab-chapter.home-module {
+    top: calc(22svh + env(safe-area-inset-top));
+  }
+
+  .home-module .lab-title {
+    font-size: clamp(2.4rem, 12vw, 3rem);
+  }
+
+  .home-module .home-offers small {
+    display: none;
+  }
+
+  .home-module .home-offers li {
+    padding: 0.55rem 0;
+  }
+}
+
+/* Desktop offer columns: content centred in equal cells, name + note as one block. */
+@media (min-width: 761px) {
+  .home-module .home-offers li {
+    align-content: center;
+    min-height: 7.2rem;
+    padding: 1.1rem 1.4rem;
+  }
+
+  .home-module .home-offers li > span {
+    display: grid;
+    gap: 0.3rem;
+    justify-items: center;
+  }
+
+  .home-module .home-offers b {
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  .home-module .home-offers small {
+    margin: 0;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+}
+
+/* Word reveal masks: room above capitals so accents (À, Ã, Ç…) are never clipped. */
+.lab-word {
+  padding-top: 0.22em;
+  margin-top: -0.22em;
+}
+
+@media (max-width: 760px) {
+  .home-module .home-offers li > span {
+    display: grid;
+    gap: 0.1rem;
+    justify-items: start;
+    min-width: 0;
+  }
+}

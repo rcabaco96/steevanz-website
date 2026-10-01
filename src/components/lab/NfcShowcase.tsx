@@ -5,14 +5,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { createPlaneCardTextures, type CardKind } from "./cardArt";
 
-// Fictional businesses, for illustration only (no real brands on the samples).
+// Clients Steevanz has worked with, shown as illustrative plate designs (names only, no logo artwork).
 const DESIGNS: { kind: CardKind; name: string; note: string; business: string }[] = [
-  { kind: "stand", name: "Expositor de mesa", note: "Acrílico, para mesas e balcões", business: "Taberna do Largo" },
-  { kind: "plate", name: "Placa de balcão", note: "Quadrada e discreta, junto à caixa", business: "Salão Flor de Esteva" },
-  { kind: "sticker", name: "Autocolante", note: "Para montras, menus e terminais", business: "Café Central" },
-  { kind: "business", name: "Cartão NFC", note: "Redes sociais e contactos num toque", business: "Padaria Pão Quente" },
-  { kind: "stand", name: "Expositor de mesa", note: "Acrílico, para mesas e balcões", business: "Clínica Sorriso" },
-  { kind: "plate", name: "Placa de balcão", note: "Quadrada e discreta, junto à caixa", business: "Barbearia do Bairro" },
+  { kind: "stand", name: "Expositor de mesa", note: "Acrílico, para mesas e balcões", business: "Sporting CP" },
+  { kind: "plate", name: "Placa de balcão", note: "Quadrada e discreta, junto à caixa", business: "BMW" },
+  { kind: "sticker", name: "Autocolante", note: "Para montras, menus e terminais", business: "Mesh" },
+  { kind: "business", name: "Cartão NFC", note: "Redes sociais e contactos num toque", business: "Aubay" },
+  { kind: "stand", name: "Expositor de mesa", note: "Acrílico, para mesas e balcões", business: "Crédito Agrícola" },
+  { kind: "plate", name: "Placa de balcão", note: "Quadrada e discreta, junto à caixa", business: "Efficient Safe" },
 ];
 
 // Spiral layout (after Grail's hero): cards on a squashed helix, rising as they turn.
@@ -38,9 +38,10 @@ const FRAGMENT = /* glsl */ `
   uniform float uSweep;
   varying vec2 vUv;
   void main() {
-    vec4 c = gl_FrontFacing ? texture2D(uFront, vUv) : texture2D(uBack, vec2(1.0 - vUv.x, vUv.y));
+    // Both faces show the plate design (read correctly from either side).
+    vec4 c = texture2D(uFront, gl_FrontFacing ? vUv : vec2(1.0 - vUv.x, vUv.y));
     if (c.a < 0.02) discard;
-    vec3 col = c.rgb * (gl_FrontFacing ? uDim : max(uDim, 0.7));
+    vec3 col = c.rgb * max(uDim, 0.55);
     // A soft reflection band glides across the acrylic as the card turns.
     float band = smoothstep(0.16, 0.0, abs(vUv.x * 0.8 + vUv.y * 0.6 - uSweep));
     col += vec3(1.0, 0.97, 0.92) * band * 0.16;
@@ -185,7 +186,7 @@ export function NfcShowcase() {
           <p className="pd-label">Os formatos</p>
           <h2>Uma placa, o seu negócio.</h2>
           <p>Um design Steevanz em quatro formatos — expositor, placa de balcão, autocolante e cartão. Personalizamos com o logótipo, o nome e o link de review do seu negócio.</p>
-          <p className="nfc-show-note">Negócios fictícios, apenas para ilustração.</p>
+          <p className="nfc-show-note">Exemplos ilustrativos com marcas com quem já trabalhámos.</p>
         </div>
         <div className="nfc-show-canvas" aria-hidden="true">
           <Canvas frameloop={visible ? "always" : "never"} dpr={[1, 1.5]} camera={{ position: [0, 0, 8.3], fov: 38 }} gl={{ antialias: true, alpha: true }}>

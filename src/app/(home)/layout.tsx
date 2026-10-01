@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import "../lab/lab.css";
 import { labDisplay, labSans } from "../lab/fonts";
 import { rootMetadata } from "@/lib/root-metadata";
+import { Cursor } from "@/components/lab/Cursor";
+import { EmbedFlag } from "@/components/lab/EmbedFlag";
 import { themeBootScript } from "@/components/lab/themeScript";
 
 export const metadata: Metadata = rootMetadata("pt");
@@ -25,6 +27,8 @@ export default function HomeRootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="lab-page" suppressHydrationWarning>
         {children}
+        <Cursor />
+        <EmbedFlag />
       </body>
     </html>
   );

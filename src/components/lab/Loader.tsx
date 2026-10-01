@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { FlowerMark } from "./FlowerMark";
+
 
 const SESSION_KEY = "stz-intro-seen";
+
+// Decided once per page load, even if the component mounts more than once.
+let seenBefore: boolean | null = null;
+let loadStart = 0;
 
 type Phase = "loading" | "complete" | "opening" | "done";
 
@@ -16,6 +22,7 @@ type Phase = "loading" | "complete" | "opening" | "done";
 export function Loader({ ready, onReveal }: { ready: boolean; onReveal: () => void }) {
   const [phase, setPhase] = useState<Phase>("loading");
   const startRef = useRef(0);
+  const root = useRef<HTMLDivElement>(null);
   const minTimeRef = useRef(1700);
   const revealRef = useRef(onReveal);
 
@@ -24,16 +31,25 @@ export function Loader({ ready, onReveal }: { ready: boolean; onReveal: () => vo
   }, [onReveal]);
 
   useEffect(() => {
-    startRef.current = performance.now();
+    if (seenBefore === null) loadStart = performance.now();
+    startRef.current = loadStart;
     let repeat = false;
     try {
-      repeat = sessionStorage.getItem(SESSION_KEY) === "1";
-      sessionStorage.setItem(SESSION_KEY, "1");
+      // Decide once per page load (effects can run twice in development).
+      if (seenBefore === null) {
+        seenBefore = sessionStorage.getItem(SESSION_KEY) === "1";
+        sessionStorage.setItem(SESSION_KEY, "1");
+      }
+      repeat = seenBefore;
     } catch {
       // Storage can be unavailable (private mode); the full intro is fine then.
     }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    minTimeRef.current = repeat || reduced ? 450 : 1700;
+    // The intro lasts ~1.9 s; repeat visits and reduced motion skip it.
+    minTimeRef.current = repeat || reduced ? 400 : 1400;
+    if ((repeat || reduced) && root.current) root.current.dataset.quick = "true";
+    // Start the CSS sequence now that the page is live (not at first HTML paint).
+    if (root.current) root.current.dataset.run = "true";
   }, []);
 
   // Runs once when everything is ready; the phase changes below must not cancel it.
@@ -50,7 +66,7 @@ export function Loader({ ready, onReveal }: { ready: boolean; onReveal: () => vo
         revealRef.current();
       }, wait + 380),
     );
-    timers.push(window.setTimeout(() => setPhase("done"), wait + 380 + 1300));
+    timers.push(window.setTimeout(() => setPhase("done"), wait + 380 + 900));
     return () => {
       finishing.current = false;
       timers.forEach((t) => window.clearTimeout(t));
@@ -60,15 +76,18 @@ export function Loader({ ready, onReveal }: { ready: boolean; onReveal: () => vo
   if (phase === "done") return null;
 
   return (
-    <div className="loader" data-phase={phase} role="status" aria-label="A carregar a Steevanz">
-      <div className="ld-mark">
-        <span className="ld-word">
-          <span>STEEVANZ</span>
+    <div ref={root} className="loader" data-phase={phase} role="status" aria-label="A carregar a Steevanz">
+      <div className="ld-stage" aria-hidden="true">
+        <span className="ld-mark-slot">
+          <FlowerMark size={64} />
         </span>
-        <span className="loader-line" aria-hidden="true">
+        <span className="ld-name">STEEVANZ</span>
+      </div>
+      <div className="ld-foot" aria-hidden="true">
+        <span>Empresa portuguesa · desde 2021</span>
+        <span className="loader-line">
           <i />
         </span>
-        <span className="ld-sub">Empresa portuguesa · desde 2021</span>
       </div>
     </div>
   );

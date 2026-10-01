@@ -13,6 +13,7 @@ import {
   intro,
   modules,
 } from "./chapters";
+import { site } from "@/lib/site";
 import { smoothstep } from "./flowerAssets";
 import { FlowerScene, type ExperienceState } from "./FlowerScene";
 import { Loader } from "./Loader";
@@ -48,8 +49,9 @@ function setVar(el: HTMLElement, name: string, value: string) {
   if (el.style.getPropertyValue(name) !== value) el.style.setProperty(name, value);
 }
 
-const ABOUT_STEP = 1;
-const FIRST_MODULE_STEP = 2;
+// Hero, then straight into the products; who we are comes after them.
+const FIRST_MODULE_STEP = 1;
+const ABOUT_STEP = FIRST_MODULE_STEP + modules.length;
 const FINALE_STEP = CHAPTER_SPAN;
 
 export function FlowerExperience() {
@@ -59,6 +61,7 @@ export function FlowerExperience() {
     pointer: { x: 0, y: 0 },
     revealed: false,
     revealAt: -1,
+    flowerPos: { x: 0, y: 0 },
   });
   const [sceneReady, setSceneReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
@@ -299,8 +302,11 @@ export function FlowerExperience() {
                       {module.index} / {String(modules.length).padStart(2, "0")}{" "}
                       — {module.label}
                     </p>
-                    <h2 className="lab-title">
+                    <h2 className="lab-title home-open-title">
                       <Words lines={module.title} />
+                      <span className="home-title-arrow" aria-hidden="true">
+                        →
+                      </span>
                     </h2>
                     <p className="lab-body">{module.lead}</p>
                     <p className="home-ideal">
@@ -317,14 +323,16 @@ export function FlowerExperience() {
                         </li>
                       ))}
                     </ul>
-                    <div className="home-cta-row">
-                    <a className="home-cta" href={module.cta.href}>
-                      {module.cta.label} <span aria-hidden="true">→</span>
+                    {/* The whole step is one link (the bar's hit area covers the block). */}
+                    <a className="home-open" href={module.cta.href}>
+                      <span>{module.cta.label}</span>
+                      <span className="home-open-arrow" aria-hidden="true">
+                        →
+                      </span>
                     </a>
-                      <a className="home-cta-secondary" href="/contacto">
-                        Falar connosco
-                      </a>
-                    </div>
+                    <a className="home-cta-secondary home-open-alt" href="/contacto">
+                      ou fale connosco
+                    </a>
                   </section>
                 </div>
               );
@@ -337,24 +345,33 @@ export function FlowerExperience() {
               className="lab-chapter lab-finale"
               data-active="false"
             >
-              <p className="lab-kicker">{finale.kicker}</p>
-              <h2 className="lab-title">
-                <Words lines={finale.title} />
-              </h2>
-              <p className="lab-body">{finale.line}</p>
-              <div className="lab-actions">
-                <a className="lab-button" href={finale.primary.href}>
-                  {finale.primary.label}
-                </a>
-                <a
-                  className="lab-button lab-button-ghost"
-                  href={finale.secondary.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {finale.secondary.label}
-                </a>
+              <div className="fin-intro">
+                <p className="lab-kicker">{finale.kicker}</p>
+                <h2 className="lab-title">
+                  <Words lines={finale.title} />
+                </h2>
+                <p className="lab-body">{finale.line}</p>
               </div>
+              <ul className="fin-options">
+                {[
+                  { label: "Agendar conversa", note: "20 minutos, online ou por telefone", href: finale.primary.href, external: false },
+                  { label: "WhatsApp", note: "a forma mais rápida de falar connosco", href: finale.secondary.href, external: true },
+                  { label: "E-mail", note: site.email, href: `mailto:${site.email}`, external: false },
+                ].map((option, i) => (
+                  <li key={option.label}>
+                    <a href={option.href} {...(option.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                      <span className="fin-n">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="fin-text">
+                        <b>{option.label}</b>
+                        <small>{option.note}</small>
+                      </span>
+                      <span className="fin-arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </section>
           </div>
         </div>

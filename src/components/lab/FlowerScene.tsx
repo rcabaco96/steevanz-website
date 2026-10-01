@@ -2,7 +2,7 @@
 
 import { Environment, Lightformer } from "@react-three/drei";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
 import { useTheme } from "./theme";
 import { WALL, bakeWall, createOliveGobo } from "./wallAssets";
@@ -14,7 +14,6 @@ import {
   seeded,
   smoothstep,
 } from "./flowerAssets";
-import { PETAL_OFFSET } from "./chapters";
 
 export interface ExperienceState {
   /** Smoothed scroll progress, 0 (intro) to CHAPTER_SPAN (finale). */
@@ -27,6 +26,8 @@ export interface ExperienceState {
   revealed: boolean;
   /** Clock time (s) at which the reveal happened, -1 until then. */
   revealAt: number;
+  /** Flower position in world space (x, y), for the sun to follow. */
+  flowerPos: { x: number; y: number };
 }
 
 interface SceneProps {
@@ -48,27 +49,51 @@ const trailPoint = new THREE.Vector3();
 const camTarget = new THREE.Vector3();
 const camLook = new THREE.Vector3();
 
-/** How far petal `i` has fallen (0 attached, 1 gone) at scroll progress p. Unclamped. */
-const petalTime = (i: number, p: number) => (p - PETAL_OFFSET - i - 0.05) / 0.85;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const nfcWeight = (p: number) => smoothstep(1.3, 1.85, p) * (1 - smoothstep(2.25, 2.7, p));
+const nfcWeight = (p: number) => smoothstep(0.3, 0.85, p) * (1 - smoothstep(1.25, 1.7, p));
 const finaleWeight = (p: number) => smoothstep(6.35, 6.95, p);
 
-/**
- * Camera keyframes, one per chapter (intro, five petals, finale).
- * `look` is where the camera aims; offsetting it pushes the flower to one side
- * of the frame so the chapter text has room on the other.
- */
+/** Camera keyframes per step: the hero shot, then one calm framing; the flower moves instead. */
 const SHOTS: { pos: [number, number, number]; look: [number, number, number]; frame?: number }[] = [
   { pos: [0, 0.35, 6.4], look: [0, 0.55, 0] },
-  { pos: [-0.6, 0.2, 7.6], look: [-1.05, 0.1, 0], frame: 0.91 },
-  { pos: [-1.3, -0.9, 8.2], look: [-1.85, 0.15, 0], frame: 0.93 },
-  { pos: [1.2, 0.8, 8.4], look: [-1.85, 0.1, 0], frame: 0.93 },
-  { pos: [-1.1, 0.55, 8.0], look: [-1.8, 0.1, 0], frame: 0.93 },
-  { pos: [1.1, -1.0, 8.2], look: [-1.85, 0.15, 0], frame: 0.93 },
-  { pos: [-0.8, 0.4, 8.4], look: [-1.85, 0.1, 0], frame: 0.93 },
-  { pos: [0, -0.25, 5.6], look: [0, -0.95, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
+  { pos: [0, 0.2, 7.6], look: [0, 0.2, 0] },
 ];
+
+/**
+ * Where the wind carries the flower at each step, as screen fractions (x from the
+ * left, y from the top) and a scale. Step 0 is the hero (flower at the world origin).
+ * The stops alternate sides so the flower always sits beside the centred text.
+ */
+const WIND_STOPS: { x: number; y: number; s: number }[] = [
+  { x: 0.5, y: 0.6, s: 0.95 },
+  { x: 0.85, y: 0.52, s: 0.78 },
+  { x: 0.86, y: 0.6, s: 0.74 },
+  { x: 0.84, y: 0.46, s: 0.74 },
+  { x: 0.86, y: 0.58, s: 0.74 },
+  { x: 0.85, y: 0.48, s: 0.74 },
+  { x: 0.86, y: 0.6, s: 0.74 },
+  { x: 0.91, y: 0.5, s: 0.62 },
+];
+
+// Scratch objects for screen -> wall-plane projection and dragging.
+const ndcPoint = new THREE.Vector3();
+const rayDir = new THREE.Vector3();
+const stopA = new THREE.Vector3();
+const stopB = new THREE.Vector3();
+
+/** Projects a screen point (fractions) onto the flower's plane (z = 0). */
+function screenToPlane(fx: number, fy: number, camera: THREE.Camera, out: THREE.Vector3) {
+  ndcPoint.set(fx * 2 - 1, -(fy * 2 - 1), 0.5).unproject(camera);
+  rayDir.copy(ndcPoint).sub(camera.position).normalize();
+  const t = -camera.position.z / rayDir.z;
+  return out.copy(camera.position).addScaledVector(rayDir, t);
+}
 
 /** Places a petal mesh (inside its rotated pivot) at fall time t. */
 function posePetal(mesh: THREE.Object3D, angle: number, i: number, t: number, hover: number, bud: number) {
@@ -192,8 +217,15 @@ function CameraRig({ stateRef }: { stateRef: RefObject<ExperienceState> }) {
 function Wall() {
   const gl = useThree((state) => state.gl);
   const theme = useTheme();
-  const baked = useMemo(() => bakeWall(gl, theme), [gl, theme]);
-  useEffect(() => () => baked.dispose(), [baked]);
+  // Each theme's wall is baked once and kept, so switching themes is instant.
+  // Bake only the current theme at startup (keeps loading light); the other one is
+  // baked the first time it's needed and then kept, so later switches are instant.
+  const [cache] = useState(() => new Map<string, ReturnType<typeof bakeWall>>());
+  const baked = useMemo(() => cache.get(theme) ?? bakeWall(gl, theme), [cache, gl, theme]);
+  useEffect(() => {
+    cache.set(theme, baked);
+  }, [cache, theme, baked]);
+  useEffect(() => () => cache.forEach((b) => b.dispose()), [cache]);
   return (
     <mesh position={[0, WALL.centerY, WALL.z]} receiveShadow>
       <planeGeometry args={[WALL.width, WALL.height]} />
@@ -211,16 +243,19 @@ function Sun({ stateRef, lite }: { stateRef: RefObject<ExperienceState>; lite: b
   const gobo = useMemo(() => createOliveGobo(), []);
   // Soft golden hour across the whole page (the "Vamos falar?" light, gentler and brighter).
   const golden = useMemo(() => new THREE.Color("#ffd6a6"), []);
+  // The dark wall needs a stronger sun for the leaf shadows to read.
+  const dark = useTheme() === "dark";
   useFrame(({ clock }) => {
     const l = light.current;
     if (!l) return;
     const f = finaleWeight(stateRef.current.progress);
     const t = clock.elapsedTime;
     l.position.set(-3.7 - f * 0.2, 1.7 - f * 0.3, 4.4);
-    l.target.position.set(0.25 + Math.sin(t * 0.35) * 0.05, -0.1 + Math.sin(t * 0.27 + 1.3) * 0.035, WALL.z);
+    const fp = stateRef.current.flowerPos;
+    l.target.position.set(fp.x * 0.75 + Math.sin(t * 0.35) * 0.05, fp.y * 0.6 - 0.1 + Math.sin(t * 0.27 + 1.3) * 0.035, WALL.z);
     l.target.updateMatrixWorld();
     l.color.copy(golden);
-    l.intensity = 4.7 + f * 0.2;
+    l.intensity = (dark ? 9 : 4.7) + f * 0.2;
   });
   return (
     <spotLight
@@ -246,6 +281,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   const frames = useRef(0);
   const root = useRef<THREE.Group>(null);
   const spin = useRef<THREE.Group>(null);
+  const cameraRef = useRef<THREE.Camera | null>(null);
   const petals = useRef<(THREE.Mesh | null)[]>([]);
   const core = useRef<THREE.MeshBasicMaterial>(null);
   const trail = useRef<THREE.Points>(null);
@@ -254,6 +290,8 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   const hovered = useRef(-1);
   const hoverTimer = useRef<number | undefined>(undefined);
   const hoverAmount = useRef(new Array(PETAL_COUNT).fill(0));
+  // Dragging: the flower follows the pointer, then springs back onto its wind path.
+  const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, pointer: new THREE.Vector3(), offset: new THREE.Vector3(), vel: new THREE.Vector3(), base: new THREE.Vector3(), last: new THREE.Vector3(), gust: 0 });
 
   const geometries = useMemo(() => Array.from({ length: PETAL_COUNT }, (_, i) => createPetalGeometry(11 + i * 7)), []);
   const textures = useMemo(() => createPetalTextures(), []);
@@ -309,12 +347,13 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   useEffect(
     () => () => {
       window.clearTimeout(hoverTimer.current);
-      document.body.style.cursor = "";
+      document.body.dataset.cursor = "";
     },
     [],
   );
 
-  useFrame(({ clock, gl, scene, camera }, delta) => {
+  useFrame(({ clock, gl, scene, camera, size }, delta) => {
+    cameraRef.current = camera;
     const dt = Math.min(delta, 0.05);
     const time = clock.elapsedTime;
     stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 9);
@@ -329,37 +368,75 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
     const nfc = nfcWeight(p);
 
     if (root.current) {
-      root.current.rotation.x = -0.16;
-      root.current.scale.setScalar(0.95 - finale * 0.12);
+      // Wind path: interpolate between stops along a curved gust.
+      const d = drag.current;
+      const portrait = size.width < size.height;
+      const q = Math.min(WIND_STOPS.length - 1, Math.max(0, p));
+      const k = Math.min(WIND_STOPS.length - 2, Math.floor(q));
+      const f = smoothstep(0, 1, q - k);
+      const stop = (n: number, out: THREE.Vector3) => {
+        const w = WIND_STOPS[n];
+        if (n === 0) return out.set(0, 0, 0);
+        return screenToPlane(portrait ? 0.8 : w.x, portrait ? 0.2 : w.y, camera, out);
+      };
+      stop(k, stopA);
+      stop(k + 1, stopB);
+      const travel = Math.sin(Math.PI * f);
+      d.base.lerpVectors(stopA, stopB, f);
+      // Wind comes from scroll speed: a gust pushes the flower a little to the side
+      // and up, then it drifts back. Still when the page is still.
+      const speed = stateRef.current.target - stateRef.current.progress;
+      d.gust += (Math.min(1, Math.abs(speed) * 2.2) - d.gust) * Math.min(1, dt * 3);
+      const gx = Math.sin(time * 1.3) * 0.12 + Math.sin(time * 2.1 + 1.7) * 0.05;
+      d.base.x += (gx + 0.1 * Math.sign(speed)) * d.gust + Math.sin(time * 0.4) * 0.03;
+      d.base.y += travel * 0.12 + Math.sin(time * 1.7 + 0.6) * 0.08 * d.gust + Math.sin(time * 0.33) * 0.025;
+      d.base.z = travel * 0.25 + d.gust * 0.15;
+
+      if (d.active) {
+        d.offset.lerp(d.vel.copy(d.pointer).sub(d.base).setZ(0.4), Math.min(1, dt * 14));
+        d.vel.set(0, 0, 0);
+      } else {
+        // Damped spring back to the path.
+        d.vel.addScaledVector(d.offset, -dt * 38).multiplyScalar(Math.max(0, 1 - dt * 7));
+        d.offset.addScaledVector(d.vel, dt);
+      }
+      root.current.position.copy(d.base).add(d.offset);
+      // Lean into the gust like a flower in the breeze (smoothed, never snappy).
+      const motion = d.last.subVectors(root.current.position, d.last);
+      const leanX = -0.16 - motion.y * 1.2 + Math.sin(time * 1.1) * 0.08 * d.gust + Math.sin(time * 0.6) * 0.02;
+      const leanY = motion.x * 1.2 + Math.sin(time * 1.4 + 0.8) * 0.12 * d.gust + Math.sin(time * 0.5 + 1) * 0.03;
+      root.current.rotation.x += (leanX - root.current.rotation.x) * Math.min(1, dt * 4);
+      root.current.rotation.y += (leanY - root.current.rotation.y) * Math.min(1, dt * 4);
+      d.last.copy(root.current.position);
+      const sA = WIND_STOPS[k].s;
+      const sB = WIND_STOPS[k + 1].s;
+      const s = (portrait ? (k === 0 ? THREE.MathUtils.lerp(0.62, 0.36, f) : 0.36) : THREE.MathUtils.lerp(sA, sB, f)) * (d.active ? 1.06 : 1);
+      root.current.scale.setScalar(root.current.scale.x + (s - root.current.scale.x) * Math.min(1, dt * 8));
+      stateRef.current.flowerPos.x = root.current.position.x;
+      stateRef.current.flowerPos.y = root.current.position.y;
     }
-    if (spin.current) spin.current.rotation.z = -time * 0.025 - Math.pow(1 - open, 3) * 0.45;
+    if (spin.current) spin.current.rotation.z = -time * 0.025 - Math.pow(1 - open, 3) * 0.45 - p * 0.35;
 
     for (let i = 0; i < PETAL_COUNT; i++) {
       const mesh = petals.current[i];
       if (!mesh) continue;
-      const regrow = smoothstep(6.15 + i * 0.09, 6.75 + i * 0.05, p);
-      const fallen = Math.min(1, Math.max(0, petalTime(i, p)));
-      const t = regrow > 0 ? 0 : fallen;
-      const target = hovered.current === i && t < 0.02 && regrow === 0 ? 1 : 0;
+      const t = 0;
+      const target = hovered.current === i ? 1 : 0;
       hoverAmount.current[i] += (target - hoverAmount.current[i]) * Math.min(1, dt * 6);
-      // Re-bloom for the contact step: the same staggered unfolding as the opening.
-      const reopen = regrow > 0 ? Math.pow(1 - regrow, 2) * 0.35 : 0;
+      // Petals flutter in the wind: stronger while the flower travels or is dragged.
+      const flutter = (Math.sin(time * 6 + i * 1.9) * 0.07 + Math.sin(time * 9.7 + i) * 0.03) * drag.current.gust;
       // Opening after the loader: petals unfold one after another, gently, like a real bloom.
       const openI = revealAt < 0 ? 0 : smoothstep(0.05 + i * 0.14, 1.9 + i * 0.14, time - revealAt);
-      const bud = Math.pow(1 - openI, 2) * 0.35 + reopen + Math.sin(time * 0.7 + i * 1.3) * 0.018;
+      const bud = Math.pow(1 - openI, 2) * 0.35 + flutter + Math.sin(time * 0.7 + i * 1.3) * 0.018;
       posePetal(mesh, i * PETAL_ANGLE, i, t, hoverAmount.current[i], bud);
-      // Petals never change material state (that would recompile the shader mid-scroll):
-      // a falling petal shrinks away as it leaves the frame, and in the finale it grows back.
-      // Petals grow out from the centre (their base sits at the flower's heart), both
-      // when the flower first opens and when it re-blooms for the contact step.
+      // Petals grow out from the centre when the flower first opens.
       const growOut = (k: number) => 1 - Math.pow(1 - k, 3);
-      const scale = regrow > 0 ? growOut(regrow) : 1;
-      mesh.scale.setScalar(Math.max(0.001, scale * growOut(openI)));
+      mesh.scale.setScalar(Math.max(0.001, growOut(openI)));
       const material = mesh.material as THREE.MeshPhysicalMaterial;
       const u = material.userData.uniforms;
       u.uTime.value = time + i * 0.17;
       u.uPulse.value = Math.max(nfc, hoverAmount.current[i] * 0.6) * (1 - t);
-      mesh.visible = regrow > 0.001 || t < 0.999;
+      mesh.visible = true;
     }
 
     // Pollen glints shed by each falling petal.
@@ -370,7 +447,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       const pos = trailGeometry.getAttribute("position") as THREE.BufferAttribute;
       const alpha = trailGeometry.getAttribute("aAlpha") as THREE.BufferAttribute;
       for (let i = 0; i < PETAL_COUNT; i++) {
-        const raw = petalTime(i, p);
+        const raw = -1;
         const active = raw > 0 && raw < 1.6;
         trailPivot.rotation.set(0, 0, i * PETAL_ANGLE);
         trailPivot.updateMatrix();
@@ -409,20 +486,57 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   const onOver = (i: number) => (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
     window.clearTimeout(hoverTimer.current);
-    if (petalTime(i, stateRef.current.progress) > 0.02) return;
     hovered.current = i;
-    document.body.style.cursor = "pointer";
+    if (!drag.current.active) document.body.dataset.cursor = "grab";
+  };
+
+  useEffect(() => {
+    const onMove = (event: PointerEvent) => {
+      const d = drag.current;
+      if (!d.active) return;
+      if (Math.hypot(event.clientX - d.startX, event.clientY - d.startY) > 6) d.moved = true;
+      const cam = cameraRef.current;
+      if (cam) screenToPlane(event.clientX / window.innerWidth, event.clientY / window.innerHeight, cam, d.pointer);
+    };
+    const onUp = () => {
+      const d = drag.current;
+      if (!d.active) return;
+      d.active = false;
+      document.body.dataset.cursor = hovered.current >= 0 ? "grab" : "";
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
+  }, []);
+
+  const onDown = (event: ThreeEvent<PointerEvent>) => {
+    // Touch: let the finger scroll the page; dragging is a mouse feature.
+    if (event.pointerType === "touch") return;
+    event.stopPropagation();
+    const d = drag.current;
+    d.active = true;
+    d.moved = false;
+    d.startX = event.clientX;
+    d.startY = event.clientY;
+    const cam = cameraRef.current;
+    if (cam) screenToPlane(event.clientX / window.innerWidth, event.clientY / window.innerHeight, cam, d.pointer);
+    document.body.dataset.cursor = "grabbing";
   };
   const onOut = () => {
     window.clearTimeout(hoverTimer.current);
     hoverTimer.current = window.setTimeout(() => {
       hovered.current = -1;
-      document.body.style.cursor = "";
+      document.body.dataset.cursor = "";
     }, 160);
   };
   const onClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
-    onAdvance();
+    if (!drag.current.moved) onAdvance();
   };
 
   return (
@@ -439,6 +553,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
               castShadow
               receiveShadow
               onPointerOver={onOver(i)}
+              onPointerDown={onDown}
               onPointerOut={onOut}
               onClick={onClick}
             />
@@ -502,6 +617,144 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
   );
 }
 
+/**
+ * Small life in the air: a few tiny cream petals drifting and turning in the
+ * breeze, and fine golden pollen. Few, small and slow, so the scene stays clean.
+ */
+function Floaters() {
+  const petalsRef = useRef<THREE.InstancedMesh>(null);
+  const pollenMat = useRef<THREE.ShaderMaterial>(null);
+  const PETALS = 9;
+  const seeds = useMemo(() => {
+    const rand = seeded(91);
+    return Array.from({ length: PETALS }, (_, k) => ({
+      // Kept to the left and right thirds, away from the centred text.
+      x: (k % 2 ? 1 : -1) * (2.6 + rand() * 2.2),
+      y: (rand() - 0.5) * 5,
+      z: -0.2 + rand() * 1.6,
+      speed: 0.05 + rand() * 0.07,
+      spin: (rand() - 0.5) * 1.6,
+      phase: rand() * Math.PI * 2,
+      size: 0.04 + rand() * 0.035,
+    }));
+  }, []);
+  const petalGeo = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(0, -0.5);
+    shape.bezierCurveTo(0.55, -0.2, 0.5, 0.45, 0, 0.5);
+    shape.bezierCurveTo(-0.5, 0.45, -0.55, -0.2, 0, -0.5);
+    return new THREE.ShapeGeometry(shape, 12);
+  }, []);
+  const pollen = useMemo(() => {
+    const rand = seeded(17);
+    const n = 70;
+    const pos = new Float32Array(n * 3);
+    const sd = new Float32Array(n);
+    for (let k = 0; k < n; k++) {
+      pos[k * 3] = (rand() - 0.5) * 10;
+      pos[k * 3 + 1] = (rand() - 0.5) * 6;
+      pos[k * 3 + 2] = -0.3 + rand() * 2;
+      sd[k] = rand();
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
+    return g;
+  }, []);
+  const pollenUniforms = useMemo(() => ({ uTime: { value: 0 }, uPixelRatio: { value: 1 } }), []);
+  const m = useMemo(() => new THREE.Matrix4(), []);
+  const q = useMemo(() => new THREE.Quaternion(), []);
+  const e = useMemo(() => new THREE.Euler(), []);
+  const v = useMemo(() => new THREE.Vector3(), []);
+  const sc = useMemo(() => new THREE.Vector3(), []);
+
+  useFrame(({ clock, gl }) => {
+    const t = clock.elapsedTime;
+    const mesh = petalsRef.current;
+    if (mesh) {
+      seeds.forEach((sd, k) => {
+        // Drift right and slightly down on the breeze, wrapping around.
+        const x = sd.x + Math.sin(t * sd.speed * 2 + sd.phase) * 0.5;
+        const y = sd.y + Math.sin(t * 0.4 + sd.phase) * 0.3 + Math.sin(t * 0.17 + sd.phase * 2) * 0.2;
+        v.set(x, y, sd.z);
+        e.set(Math.sin(t * sd.spin + sd.phase) * 1.2, Math.cos(t * sd.spin * 0.7) * 1.2, t * sd.spin * 0.5);
+        q.setFromEuler(e);
+        sc.setScalar(sd.size);
+        m.compose(v, q, sc);
+        mesh.setMatrixAt(k, m);
+      });
+      mesh.instanceMatrix.needsUpdate = true;
+    }
+    if (pollenMat.current) {
+      pollenMat.current.uniforms.uTime.value = t;
+      pollenMat.current.uniforms.uPixelRatio.value = gl.getPixelRatio();
+    }
+  });
+
+  return (
+    <>
+      <instancedMesh ref={petalsRef} args={[petalGeo, undefined, PETALS]} frustumCulled={false}>
+        <shaderMaterial
+          transparent
+          depthWrite={false}
+          side={THREE.DoubleSide}
+          vertexShader={/* glsl */ `
+            varying vec2 vP;
+            varying vec3 vN;
+            void main() {
+              vP = position.xy;
+              vN = normalize(normalMatrix * mat3(instanceMatrix) * normal);
+              gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+            }
+          `}
+          fragmentShader={/* glsl */ `
+            varying vec2 vP;
+            varying vec3 vN;
+            void main() {
+              // Soft translucent edge, faint vein, and a sheen as it turns to the light.
+              float r = length(vP * vec2(1.25, 1.0)) * 2.0;
+              float edge = smoothstep(1.0, 0.55, r);
+              float vein = smoothstep(0.06, 0.0, abs(vP.x)) * 0.12;
+              float sheen = pow(abs(vN.z), 3.0) * 0.25;
+              vec3 col = vec3(0.97, 0.93, 0.87) * (0.82 + sheen) - vein;
+              gl_FragColor = vec4(col, edge * 0.85);
+            }
+          `}
+        />
+      </instancedMesh>
+      <points geometry={pollen} frustumCulled={false}>
+        <shaderMaterial
+          ref={pollenMat}
+          uniforms={pollenUniforms}
+          transparent
+          depthWrite={false}
+          vertexShader={/* glsl */ `
+            attribute float aSeed; uniform float uTime; uniform float uPixelRatio; varying float vA;
+            void main() {
+              vec3 p = position;
+              p.x = mod(p.x + 5.0 + uTime * (0.05 + aSeed * 0.08), 10.0) - 5.0;
+              p.y += sin(uTime * 0.5 + aSeed * 30.0) * 0.25;
+              vec4 mv = modelViewMatrix * vec4(p, 1.0);
+              gl_PointSize = (2.0 + aSeed * 3.0) * uPixelRatio;
+              vA = 0.35 + 0.45 * (0.5 + 0.5 * sin(uTime * (0.6 + aSeed) + aSeed * 20.0));
+              gl_Position = projectionMatrix * mv;
+            }
+          `}
+          fragmentShader={/* glsl */ `
+            varying float vA;
+            void main() {
+              float d = length(gl_PointCoord - 0.5) * 2.0;
+              float core = exp(-d * d * 9.0);
+              float glow = exp(-d * d * 2.2) * 0.35;
+              gl_FragColor = vec4(1.0, 0.82, 0.48, (core + glow) * vA * 0.8);
+            }
+          `}
+        />
+      </points>
+    </>
+  );
+}
+
 export function FlowerScene({ stateRef, onAdvance, onReady, lite = false }: SceneProps) {
   const dark = useTheme() === "dark";
   return (
@@ -520,6 +773,7 @@ export function FlowerScene({ stateRef, onAdvance, onReady, lite = false }: Scen
         <Lightformer form="rect" intensity={0.6} color="#e7c98f" position={[0, -4, 2]} scale={[8, 1, 1]} />
       </Environment>
 
+      <Floaters />
       <Flower stateRef={stateRef} onAdvance={onAdvance} onReady={onReady} />
 
     </>

@@ -48,7 +48,7 @@ export const modules: ServiceModule[] = [
     id: "nfc",
     index: "01",
     label: "Placas NFC",
-    title: ["Um toque.", "Uma review."],
+    title: ["Placas NFC", "para reviews."],
     lead: "Placas NFC que levam o cliente direto à página de review do seu negócio no Google. Sem app, em iPhone e Android.",
     offers: [
       { name: "Placas NFC para reviews no Google", note: "por placa, configuração incluída", price: "desde 29 €" },
@@ -64,7 +64,7 @@ export const modules: ServiceModule[] = [
     id: "websites",
     index: "02",
     label: "Websites",
-    title: ["Sites que", "vendem."],
+    title: ["Websites", "à medida."],
     lead: "Da primeira presença online à plataforma corporate. Design à medida, rápidos e prontos a converter.",
     offers: [
       { name: "Site Startup", note: "landing page, 1 página", price: "350 €" },
@@ -97,7 +97,7 @@ export const modules: ServiceModule[] = [
     id: "ia",
     index: "04",
     label: "Inteligência artificial",
-    title: ["IA que", "nunca fecha."],
+    title: ["Chatbot e receção", "por voz."],
     lead: "Assistentes que atendem, respondem e organizam, 24 horas por dia, em português.",
     offers: [
       { name: "Chatbot IA", note: "site e WhatsApp", price: "49 €/mês" },
@@ -114,7 +114,7 @@ export const modules: ServiceModule[] = [
     id: "reservas",
     index: "05",
     label: "Reservas",
-    title: ["Reservas", "sem telefone."],
+    title: ["Reservas e", "lista de espera."],
     lead: "Marcações e filas online, com lembretes automáticos, para que a agenda se encha sozinha.",
     offers: [
       { name: "Reservas online", note: "mesas, marcações e serviços", price: "29 €/mês" },
@@ -152,10 +152,8 @@ export const portfolio = {
 };
 
 /** Timeline steps: hero, about, one per module (one petal each), contact. */
-export const STEPS = ["Início", about.kicker, ...modules.map((m) => (m.id === "ia" ? "IA" : m.label)), finale.kicker];
+export const STEPS = ["Início", ...modules.map((m) => (m.id === "ia" ? "IA" : m.label)), about.kicker, finale.kicker];
 
 /** Scroll progress runs from 0 (hero) to CHAPTER_SPAN (contact). */
 export const CHAPTER_SPAN = STEPS.length - 1;
 
-/** The first petal falls on the way into the first module. */
-export const PETAL_OFFSET = 1;

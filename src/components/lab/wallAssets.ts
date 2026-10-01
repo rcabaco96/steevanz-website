@@ -79,7 +79,8 @@ void main() {
   float band = 1.0 - smoothstep(edge - 0.003, edge + 0.003, wy);
   vec3 ochre = toLinear(uOchre) * (0.9 + 0.2 * fbm(vec2(p.x * 1.6, p.y * 26.0)));
   ochre *= 1.0 - cavity * 0.14;
-  col = mix(col, ochre, band);
+  // The ochre barra is off for now (kept in the shader for a later return).
+  col = mix(col, ochre, band * 0.0);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -201,6 +202,36 @@ export function createOliveGobo() {
   branch(size * 1.05, size * -0.05, size * 0.66, size * 0.34, -60, 26);
   branch(size * 0.9, size * 0.08, size * 1.02, size * 0.42, 40, 14);
   branch(size * -0.05, size * 0.98, size * 0.22, size * 0.78, 30, 16);
+  branch(size * -0.04, size * 0.04, size * 0.2, size * 0.2, 25, 10);
+  branch(size * 1.04, size * 0.55, size * 0.8, size * 0.7, -30, 16);
+  branch(size * 0.35, size * -0.04, size * 0.46, size * 0.16, 20, 9);
+
+  // Wheat stalks rising from the bottom edge, as from the Alentejo plains.
+  const wheat = (x: number, h: number, lean: number) => {
+    const top = size - h;
+    ctx.strokeStyle = "rgba(40,36,44,0.6)";
+    ctx.fillStyle = "rgba(40,36,44,0.6)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, size);
+    ctx.quadraticCurveTo(x + lean * 0.4, size - h * 0.5, x + lean, top);
+    ctx.stroke();
+    for (let g = 0; g < 9; g++) {
+      const t = g / 9;
+      const gx = x + lean * (1 - t * 0.15);
+      const gy = top + t * h * 0.22;
+      for (const side of [-1, 1]) {
+        ctx.save();
+        ctx.translate(gx, gy);
+        ctx.rotate(side * 0.5 + lean * 0.002);
+        ctx.beginPath();
+        ctx.ellipse(side * 7, 0, 8, 3.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  };
+  [0.58, 0.63, 0.67, 0.72, 0.76, 0.81].forEach((fx, n) => wheat(size * fx, size * (0.16 + ((n * 37) % 10) / 100), 18 + n * 4));
   ctx.filter = "none";
 
   const texture = new THREE.CanvasTexture(canvas);

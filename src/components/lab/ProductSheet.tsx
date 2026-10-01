@@ -3,23 +3,50 @@
 import { useEffect, useRef, useState } from "react";
 import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
+import { sectors } from "@/content/sectors";
 import type { ProductId } from "@/content/types";
 import { href } from "@/lib/routes";
 import { AboutView, ContactView, ProductsView } from "./InfoViews";
 import { ProductDetail } from "./ProductDetail";
 
-type SheetPage = { kind: "product"; id: ProductId } | { kind: "about" } | { kind: "contact" } | { kind: "products" };
+type SheetPage =
+  | { kind: "product"; id: ProductId }
+  | { kind: "about" }
+  | { kind: "contact" }
+  | { kind: "products" }
+  | { kind: "frame"; name: string; src: string };
 
-/** Pages that open over the homepage. Booking and info-request stay full pages (server forms). */
+/** Pages that open over the homepage. Forms (booking, info request) load as an embedded page. */
 const PAGES = new Map<string, SheetPage>([
   ...products.map((product) => [href("pt", { key: "product", productId: product.id }), { kind: "product", id: product.id }] as [string, SheetPage]),
   [href("pt", { key: "about" }), { kind: "about" }],
   [href("pt", { key: "contact" }), { kind: "contact" }],
   [href("pt", { key: "products" }), { kind: "products" }],
+  [href("pt", { key: "book" }), { kind: "frame", name: "Agendar demonstração", src: href("pt", { key: "book" }) }],
+  [href("pt", { key: "requestInfo" }), { kind: "frame", name: "Pedir informação", src: href("pt", { key: "requestInfo" }) }],
+  [href("pt", { key: "sectors" }), { kind: "frame", name: "Setores", src: href("pt", { key: "sectors" }) }],
+  ...sectors.map(
+    (sector) =>
+      [
+        href("pt", { key: "sector", sectorId: sector.id }),
+        { kind: "frame", name: sector.copy.pt.name, src: href("pt", { key: "sector", sectorId: sector.id }) },
+      ] as [string, SheetPage],
+  ),
+  [href("pt", { key: "docs" }), { kind: "frame", name: "Documentação", src: href("pt", { key: "docs" }) }],
 ]);
+
+/** Resolves a link to a sheet page, keeping its query string for embedded forms. */
+function resolvePage(pathname: string, search: string): SheetPage | undefined {
+  const page = PAGES.get(pathname);
+  if (page?.kind !== "frame") return page;
+  const params = new URLSearchParams(search);
+  params.set("embed", "1");
+  return { ...page, src: `${page.src}?${params.toString()}` };
+}
 
 function pageName(page: SheetPage) {
   if (page.kind === "product") return getProductCopy(page.id, "pt").shortName;
+  if (page.kind === "frame") return page.name;
   return page.kind === "about" ? "Sobre nós" : page.kind === "contact" ? "Contacto" : "Produtos";
 }
 
@@ -27,6 +54,7 @@ function PageBody({ page }: { page: SheetPage }) {
   if (page.kind === "product") return <ProductDetail productId={page.id} headingLevel={2} />;
   if (page.kind === "about") return <AboutView />;
   if (page.kind === "contact") return <ContactView />;
+  if (page.kind === "frame") return <iframe className="sheet-frame" src={page.src} title={page.name} />;
   return <ProductsView />;
 }
 
@@ -71,14 +99,14 @@ export function ProductSheet({ onOpenChange }: { onOpenChange: (open: boolean) =
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const link = (event.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
       if (!link || link.target === "_blank" || link.origin !== window.location.origin) return;
-      const next = PAGES.get(link.pathname);
+      const next = resolvePage(link.pathname, link.search);
       if (!next) return;
       event.preventDefault();
-      window.history.pushState({ steevanzSheet: link.pathname }, "", link.pathname);
+      window.history.pushState({ steevanzSheet: link.pathname }, "", link.pathname + link.search);
       show(next);
     };
     const onPop = () => {
-      const next = PAGES.get(window.location.pathname);
+      const next = resolvePage(window.location.pathname, window.location.search);
       if (next) show(next);
       else hide();
     };
