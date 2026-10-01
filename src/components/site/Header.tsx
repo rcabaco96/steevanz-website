@@ -201,7 +201,7 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
           <div className="flex items-center gap-1">
             <LanguageSwitch locale={locale} label={labels.languageSwitch} short={labels.languageShort} />
             <ThemeToggle label={labels.themeToggle} />
-            <span className="ml-2 hidden sm:block">
+            <span className="ml-2 hidden md:block">
               <Link href={links.book} className={buttonClasses("primary", "sm")}>
                 {labels.bookDemo}
               </Link>

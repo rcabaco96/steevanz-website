@@ -31,6 +31,7 @@ export function productMetadata(locale: Locale, productId: ProductId): Metadata 
     route: { key: "product", productId },
     title: copy.metaTitle,
     description: copy.metaDescription,
+    image: `/og/${locale}/${productId}`,
   });
 }
 

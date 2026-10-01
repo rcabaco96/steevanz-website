@@ -27,7 +27,8 @@ export function pageMetadata({
   const paths = localizedHrefs(route);
   const canonical = absoluteUrl(paths[locale]);
   const alternateLocale: Locale = locale === "pt" ? "en" : "pt";
-  const images = image ? [{ url: image, width: 1200, height: 630, alt: title }] : undefined;
+  const ogImage = image ?? `/og/${locale}`;
+  const images = [{ url: ogImage, width: 1200, height: 630, alt: title }];
 
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -48,13 +49,13 @@ export function pageMetadata({
       description,
       locale: ogLocale[locale],
       alternateLocale: [ogLocale[alternateLocale]],
-      ...(images ? { images } : {}),
+      images,
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      ...(image ? { images: [image] } : {}),
+      images: [ogImage],
     },
     ...(noIndex ? { robots: { index: false, follow: false } } : {}),
   };

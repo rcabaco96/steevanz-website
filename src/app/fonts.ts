@@ -26,7 +26,7 @@ export const hanken = Hanken_Grotesk({
 export const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["500"],
-  display: "optional",
+  display: "swap",
   preload: false,
   variable: "--font-jetbrains",
 });
