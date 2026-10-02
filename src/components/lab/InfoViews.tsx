@@ -1,3 +1,4 @@
+import { HandFlower } from "./HandFlower";
 import { aboutCopy, contactCopy } from "@/content/company";
 import { getProductCopy } from "@/content/product-copy";
 import { products, type ProductFamily } from "@/content/products";
@@ -21,6 +22,7 @@ function PageHero({ kicker, title, lead }: { kicker: string; title: string; lead
 function FinalCta({ title, body }: { title: string; body: string }) {
   return (
     <section className="pd-final">
+        <HandFlower className="pd-final-flower" />
       <h2>{title}</h2>
       <p>{body}</p>
       <div className="pd-actions">

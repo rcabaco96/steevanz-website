@@ -37,7 +37,7 @@ function Planet({ light }: { light: boolean }) {
       uSpec: { value: spec },
       uSun: { value: new THREE.Vector3(-0.55, 0.45, 0.7).normalize() },
       uTint: { value: new THREE.Color("#8b6bb8") },
-      uRim: { value: new THREE.Color("#c7b8ff") },
+      uRim: { value: new THREE.Color("#e9e2f2") },
       uLight: { value: light ? 1 : 0 },
     };
   }, [day, night, spec, light]);
@@ -77,14 +77,85 @@ function Planet({ light }: { light: boolean }) {
             vec3 nightCol = vec3(1.0, 0.72, 0.32) * lights * 1.6 + vec3(0.04, 0.025, 0.07);
             vec3 col = mix(nightCol, dayCol, dayMix);
             // Thin atmosphere line on the limb (no halo).
-            float rim = pow(1.0 - max(dot(n, vView), 0.0), 5.0);
-            col += uRim * rim * mix(0.35, 0.8, dayMix);
+            float rim = pow(1.0 - max(dot(n, vView), 0.0), 3.0);
+            col = mix(col, uRim, rim * mix(0.12, 0.3, dayMix));
             gl_FragColor = vec4(col, 1.0);
             #include <colorspace_fragment>
           }
         `}
       />
     </mesh>
+  );
+}
+
+/** A deep, slow starfield with gentle twinkle and an occasional shooting star. */
+function Stars() {
+  const material = useRef<THREE.ShaderMaterial>(null);
+  const shoot = useRef<THREE.Mesh>(null);
+  const geometry = useMemo(() => {
+    const n = 700;
+    const pos = new Float32Array(n * 3);
+    const seed = new Float32Array(n);
+    let a = 7;
+    const rand = () => ((a = (a * 16807) % 2147483647) - 1) / 2147483646;
+    for (let k = 0; k < n; k++) {
+      pos[k * 3] = (rand() - 0.5) * 14;
+      pos[k * 3 + 1] = (rand() - 0.15) * 8;
+      pos[k * 3 + 2] = -3 - rand() * 4;
+      seed[k] = rand();
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
+    return g;
+  }, []);
+  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uPixelRatio: { value: 1 } }), []);
+  useFrame(({ clock, gl }) => {
+    const t = clock.elapsedTime;
+    if (material.current) {
+      material.current.uniforms.uTime.value = t;
+      material.current.uniforms.uPixelRatio.value = gl.getPixelRatio();
+    }
+    // Shooting star every ~7 s, across the upper sky.
+    const m = shoot.current;
+    if (m) {
+      const k = (t % 7) / 1.1;
+      m.visible = k < 1;
+      m.position.set(-3 + k * 4.5, 2.6 - k * 1.3, -2.5);
+      (m.material as THREE.MeshBasicMaterial).opacity = Math.sin(Math.min(1, k) * Math.PI) * 0.8;
+    }
+  });
+  return (
+    <>
+      <points geometry={geometry} renderOrder={-1}>
+        <shaderMaterial
+          ref={material}
+          uniforms={uniforms}
+          transparent
+          depthWrite={false}
+          vertexShader={/* glsl */ `
+            attribute float aSeed; uniform float uTime; uniform float uPixelRatio; varying float vA;
+            void main() {
+              vec4 mv = modelViewMatrix * vec4(position, 1.0);
+              gl_PointSize = (0.8 + aSeed * aSeed * 2.4) * uPixelRatio;
+              vA = (0.25 + 0.75 * aSeed) * (0.6 + 0.4 * sin(uTime * (0.5 + aSeed * 1.5) + aSeed * 40.0));
+              gl_Position = projectionMatrix * mv;
+            }
+          `}
+          fragmentShader={/* glsl */ `
+            varying float vA;
+            void main() {
+              float d = length(gl_PointCoord - 0.5) * 2.0;
+              gl_FragColor = vec4(0.93, 0.9, 1.0, exp(-d * d * 5.0) * vA);
+            }
+          `}
+        />
+      </points>
+      <mesh ref={shoot} rotation={[0, 0, -0.28]}>
+        <planeGeometry args={[0.9, 0.012]} />
+        <meshBasicMaterial color="#f3ecff" transparent depthWrite={false} />
+      </mesh>
+    </>
   );
 }
 
@@ -203,7 +274,8 @@ function Pulse() {
 /** Globe body: spins slowly, can be dragged, eases back towards Portugal. */
 function Earth({ light }: { light: boolean }) {
   const spin = useRef<THREE.Group>(null);
-  const { gl } = useThree();
+  const { gl, size } = useThree();
+  const portrait = size.width < size.height;
   const drag = useRef({ active: false, x: 0, y: 0, vx: 0, vy: 0, rx: 0, ry: 0 });
 
   useEffect(() => {
@@ -247,14 +319,15 @@ function Earth({ light }: { light: boolean }) {
       d.ry += d.vy;
       d.vy *= 0.94;
       d.vx = 0;
-      d.ry += dt * 0.035;
+      // Sway gently around Portugal instead of drifting away from it.
+      d.ry += (Math.sin(performance.now() / 9000) * 0.18 - d.ry) * dt * 0.6;
       d.rx += (0 - d.rx) * dt * 1.5;
     }
     if (spin.current) spin.current.rotation.set(d.rx, d.ry, 0);
   });
 
   return (
-    <group position={[0, -1.25, 0]} scale={1.5} rotation={[0.1, 0, 0]}>
+    <group position={[0, portrait ? -0.55 : -1.45, 0]} scale={portrait ? 1.05 : 1.78} rotation={[0.1, 0, 0]}>
       <group ref={spin}>
         <group rotation={FACE_PT}>
           <Planet light={light} />
@@ -273,7 +346,17 @@ function Earth({ light }: { light: boolean }) {
  * "Em crescimento": a textured Earth (day, night lights, clouds) facing Portugal,
  * turning slowly and draggable. Loads its textures and renders only when near.
  */
+const TEXTURES = [TEX + "earth_atmos_2048.jpg", TEX + "earth_lights_2048.png", TEX + "earth_specular_2048.jpg", TEX + "earth_clouds_1024.png"];
+
 export function GlobeSection({ light }: { light: boolean }) {
+  // Download the Earth images in the background once the page is idle, so the
+  // globe is ready long before the visitor reaches it.
+  useEffect(() => {
+    const start = () => TEXTURES.forEach((url) => useLoader.preload(THREE.TextureLoader, url));
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(start);
+    else window.setTimeout(start, 1500);
+  }, []);
   const section = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -281,15 +364,18 @@ export function GlobeSection({ light }: { light: boolean }) {
   useEffect(() => {
     const el = section.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        setVisible(entry.isIntersecting);
-        if (entry.isIntersecting) setNear(true);
-      },
-      { rootMargin: "300px" },
-    );
+    // Mount (and compile) the globe well before it scrolls into view…
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setNear(true);
+    }, { rootMargin: "250% 0px" });
+    // …but only animate while it is actually on screen.
+    const vis = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { rootMargin: "100px" });
+    vis.observe(el);
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      vis.disconnect();
+    };
   }, []);
 
 
@@ -299,6 +385,7 @@ export function GlobeSection({ light }: { light: boolean }) {
         {near ? (
           <Canvas frameloop={visible ? "always" : "never"} dpr={[1, 1.75]} camera={{ position: [0, 0, 3.3], fov: 38 }} gl={{ antialias: true, alpha: true }}>
             <Suspense fallback={null}>
+              <Stars />
               <Earth light={light} />
             </Suspense>
           </Canvas>
@@ -306,10 +393,10 @@ export function GlobeSection({ light }: { light: boolean }) {
       </div>
       <div className="globe-copy">
         <p className="lab-kicker">Em crescimento</p>
-        <h2 id="globe-title">De Portugal, para negócios de qualquer lado.</h2>
+        <h2 id="globe-title">De Portugal para o mundo.</h2>
         <p>
           Nascemos no Alentejo, trabalhamos a partir de Lisboa e já criámos software para marcas como Sporting CP, BMW e Crédito
-          Agrícola. Online, chegamos a qualquer negócio.
+          Agrícola. Hoje, chegamos a negócios em qualquer parte do mundo.
         </p>
         <dl className="globe-facts">
           {about.facts.map((fact) => (

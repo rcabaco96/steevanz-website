@@ -66,6 +66,8 @@ export function FlowerExperience() {
     revealAt: -1,
     touch: typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches,
     flowerPos: { x: 0, y: 0 },
+    flowerTop: { x: 0, y: 0 },
+    dragged: false,
   });
   const [sceneReady, setSceneReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
@@ -84,6 +86,8 @@ export function FlowerExperience() {
   const heroEl = useRef<HTMLDivElement>(null);
   const hintEl = useRef<HTMLDivElement>(null);
   const introProductsEl = useRef<HTMLDivElement>(null);
+  const dragHintEl = useRef<HTMLDivElement>(null);
+  const stageEl = useRef<HTMLDivElement>(null);
   const overlayEl = useRef<HTMLDivElement>(null);
   const indexEls = useRef<(HTMLButtonElement | null)[]>([]);
   const timelineEl = useRef<HTMLElement>(null);
@@ -149,7 +153,16 @@ export function FlowerExperience() {
     const markScrolling = () => {
       root?.classList.add("is-scrolling");
       window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => root?.classList.remove("is-scrolling"), 160);
+      scrollTimer = window.setTimeout(() => {
+        root?.classList.remove("is-scrolling");
+        // Gentle snap: if the scroll stops near the globe section's top, settle onto it.
+        const globe = document.querySelector<HTMLElement>(".globe");
+        if (!globe || state.current.touch || !lenis.current) return;
+        const top = globe.getBoundingClientRect().top;
+        if (Math.abs(top) > 2 && Math.abs(top) < window.innerHeight * 0.3) {
+          lenis.current.scrollTo(window.scrollY + top, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
+        }
+      }, 160);
     };
     const measure = () => {
       markScrolling();
@@ -174,9 +187,17 @@ export function FlowerExperience() {
     window.addEventListener("pointermove", onPointer, { passive: true });
 
     let frame = 0;
+    let last = performance.now();
     const loop = (time: number) => {
       instance.raf(time);
-      const p = state.current.progress;
+      // Scroll progress is eased here, in the page loop, so text and timeline never
+      // wait for the 3D canvas to render a frame.
+      const dt = Math.min(0.05, (time - last) / 1000);
+      last = time;
+      const s0 = state.current;
+      if (s0.touch) s0.progress = s0.target;
+      else s0.progress += (s0.target - s0.progress) * Math.min(1, dt * 9);
+      const p = s0.progress;
       stepEls.current.forEach((els, step) => {
         if (!els || step === 0) return;
         // Strict sequence: a step is fully gone (by +0.45) before the next starts (-0.28).
@@ -208,6 +229,15 @@ export function FlowerExperience() {
         if (el && el.dataset.current !== value) el.dataset.current = value;
       });
       if (timelineEl.current) setVar(timelineEl.current, "--progress", (p / CHAPTER_SPAN).toFixed(4));
+      if (stageEl.current) setVar(stageEl.current, "--exit", smoothstep(FINALE_STEP - 0.15, FINALE_STEP, p).toFixed(3));
+      // Drag hint above the flower: after the hero, until the first drag (mouse only).
+      if (dragHintEl.current) {
+        const s = state.current;
+        const show = s.touch || s.dragged ? 0 : smoothstep(0.7, 1, p) * (1 - smoothstep(FINALE_STEP - 0.5, FINALE_STEP - 0.2, p));
+        setVar(dragHintEl.current, "--show", show.toFixed(3));
+        setVar(dragHintEl.current, "--hx", `${s.flowerTop.x.toFixed(0)}px`);
+        setVar(dragHintEl.current, "--hy", `${s.flowerTop.y.toFixed(0)}px`);
+      }
       frame = requestAnimationFrame(loop);
     };
     frame = requestAnimationFrame(loop);
@@ -234,7 +264,7 @@ export function FlowerExperience() {
         style={{ height: `${(CHAPTER_SPAN + 1) * 100}svh` }}
         aria-label="Steevanz"
       >
-        <div className="home-stage">
+        <div ref={stageEl} className="home-stage">
           <div className="lab-canvas" aria-hidden="true">
             <Canvas
               dpr={dpr}
@@ -249,6 +279,12 @@ export function FlowerExperience() {
 
           <div ref={overlayEl} className="lab-overlay">
             {/* Interlude between the hero and the products: what we do, in one line. */}
+            <div ref={dragHintEl} className="drag-hint" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="15" height="15">
+                <path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12m0-6.5v-1a1.5 1.5 0 0 1 3 0V12m0-6a1.5 1.5 0 0 1 3 0v6m0-3.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1.6a6 6 0 0 1-4.6-2.2L4.3 16a1.5 1.5 0 0 1 2.3-1.9L8 15.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Drag
+            </div>
             <div ref={introProductsEl} className="lab-products-intro" aria-hidden="true">
               <p className="lab-products-label">Os nossos produtos</p>
               <p className="lab-products-title">Cinco produtos, uma só equipa.</p>
@@ -264,6 +300,22 @@ export function FlowerExperience() {
             </div>
             <div ref={heroEl} className="lab-hero-title">
               <p className="lab-hero-kicker">{intro.line}</p>
+              {/* Slogan on a heartbeat: the beat runs in the left line, across the words, out the right line. */}
+              <p className="lab-slogan" aria-label="It runs in the family">
+                <svg className="lab-beat lab-beat-l" viewBox="0 0 140 24" aria-hidden="true">
+                  <path className="lab-beat-base" d="M0 12H54l5-6 5 12 6-18 7 22 5-10 4 0H140" />
+                  <path className="lab-beat-glow" d="M0 12H54l5-6 5 12 6-18 7 22 5-10 4 0H140" pathLength="1" />
+                </svg>
+                {["It", "runs", "in", "the", "family"].map((word, i) => (
+                  <span key={word} aria-hidden="true" style={{ "--w": i } as CSSProperties}>
+                    {word}
+                  </span>
+                ))}
+                <svg className="lab-beat lab-beat-r" viewBox="0 0 140 24" aria-hidden="true">
+                  <path className="lab-beat-base" d="M0 12H54l5-6 5 12 6-18 7 22 5-10 4 0H140" />
+                  <path className="lab-beat-glow" d="M0 12H54l5-6 5 12 6-18 7 22 5-10 4 0H140" pathLength="1" />
+                </svg>
+              </p>
               <h1 className="lab-wordmark" aria-label={intro.wordmark}>
                 {intro.wordmark.split("").map((letter, i) => (
                   <span

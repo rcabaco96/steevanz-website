@@ -30,6 +30,9 @@ export interface ExperienceState {
   touch: boolean;
   /** Flower position in world space (x, y), for the sun to follow. */
   flowerPos: { x: number; y: number };
+  /** Flower top edge on screen in pixels (for the drag hint), and whether it was dragged yet. */
+  flowerTop: { x: number; y: number };
+  dragged: boolean;
 }
 
 interface SceneProps {
@@ -50,6 +53,7 @@ const trailProbe = new THREE.Object3D();
 const trailPoint = new THREE.Vector3();
 const camTarget = new THREE.Vector3();
 const camLook = new THREE.Vector3();
+const hintPoint = new THREE.Vector3();
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const nfcWeight = (p: number) => smoothstep(1.3, 1.85, p) * (1 - smoothstep(2.25, 2.7, p));
@@ -360,8 +364,6 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
     cameraRef.current = camera;
     const dt = Math.min(delta, 0.05);
     const time = clock.elapsedTime;
-    if (stateRef.current.touch) stateRef.current.progress = stateRef.current.target;
-    else stateRef.current.progress += (stateRef.current.target - stateRef.current.progress) * Math.min(1, dt * 9);
     const p = stateRef.current.progress;
     // Compile every shader up front (petals, shadows, trail) before the loader opens.
     if (frames.current === 2) gl.compile(scene, camera);
@@ -422,6 +424,12 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
       root.current.scale.setScalar(root.current.scale.x + (s - root.current.scale.x) * Math.min(1, dt * 8));
       stateRef.current.flowerPos.x = root.current.position.x;
       stateRef.current.flowerPos.y = root.current.position.y;
+      // Screen point just above the flower's top edge, for the drag hint.
+      hintPoint.copy(root.current.position);
+      hintPoint.y += root.current.scale.x * 1.05;
+      hintPoint.project(camera);
+      stateRef.current.flowerTop.x = (hintPoint.x * 0.5 + 0.5) * size.width;
+      stateRef.current.flowerTop.y = (0.5 - hintPoint.y * 0.5) * size.height;
     }
     if (spin.current) spin.current.rotation.z = -time * 0.025 - Math.pow(1 - open, 3) * 0.45 - p * 0.35;
 
@@ -528,6 +536,7 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
     event.stopPropagation();
     const d = drag.current;
     d.active = true;
+    stateRef.current.dragged = true;
     d.moved = false;
     d.startX = event.clientX;
     d.startY = event.clientY;

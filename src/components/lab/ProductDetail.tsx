@@ -1,3 +1,4 @@
+import { HandFlower } from "./HandFlower";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct } from "@/content/products";
 import type { ProductId } from "@/content/types";
@@ -210,6 +211,7 @@ export function ProductDetail({ productId, headingLevel = 1 }: { productId: Prod
       ) : null}
 
       <section className="pd-final">
+        <HandFlower className="pd-final-flower" />
         <h2>Veja a funcionar no seu negócio.</h2>
         <p>Numa conversa de 20 minutos mostramos tudo e dizemos com franqueza o que faz sentido para si.</p>
         <div className="pd-actions">
