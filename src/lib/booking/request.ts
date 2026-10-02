@@ -26,7 +26,7 @@ function hashIp(ip: string): string {
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex");
 }
 
-export async function isRateLimited(client: SupabaseClient, kind: "booking" | "lead"): Promise<boolean> {
+export async function isRateLimited(client: SupabaseClient, kind: "booking" | "lead" | "order"): Promise<boolean> {
   const ipHash = hashIp(await clientIp());
   const since = new Date(Date.now() - windowMinutes * 60_000).toISOString();
   try {

@@ -8,6 +8,8 @@ import { getSector } from "@/content/sectors";
 import type { ProductId } from "@/content/types";
 import { ui } from "@/content/ui";
 import { JsonLd } from "@/components/JsonLd";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { cartCopy } from "@/content/cart";
 import { AlertIcon, ArrowRight, Check, ProductGlyph } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { CtaBand } from "@/components/marketing/CtaBand";
@@ -47,6 +49,8 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   const productHref = href(locale, { key: "product", productId });
   const bookHref = bookingHref(locale, productId);
   const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icon.svg";
+  const cartHref = href(locale, { key: "cart" });
+  const cartLabels = { add: cartCopy[locale].add, inCart: cartCopy[locale].inCart, added: cartCopy[locale].addedAnnouncement };
 
   return (
     <>
@@ -81,15 +85,17 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               </h1>
               <p className="max-w-xl text-lg leading-relaxed text-muted">{copy.heroSubtitle}</p>
               <Price product={product} locale={locale} showQualifier />
-              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
                 <ButtonLink href={bookHref} size="lg">
                   {t.common.bookDemo}
                   <ArrowRight size={18} className="transition-transform duration-300 group-hover/button:translate-x-1" />
                 </ButtonLink>
-                <ButtonLink href={requestInfoHref(locale, productId)} variant="secondary" size="lg">
+                <AddToCartButton productId={productId} cartHref={cartHref} labels={cartLabels} />
+                <ButtonLink href={requestInfoHref(locale, productId)} variant="ghost" size="lg">
                   {t.common.requestInfo}
                 </ButtonLink>
               </div>
+              {product.customization ? <p className="-mt-2 text-sm text-subtle">{cartCopy[locale].customize.productHint}</p> : null}
             </div>
             <ProductVisual product={product} locale={locale} />
           </div>
@@ -205,6 +211,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
             <ButtonLink href={bookHref} size="lg" className="w-full">
               {t.common.bookDemo}
             </ButtonLink>
+            <AddToCartButton productId={productId} cartHref={cartHref} labels={cartLabels} className="w-full" />
             <p className="text-center text-sm text-muted">
               {labels.requestInfoLead}{" "}
               <Link href={requestInfoHref(locale, productId)} className="font-semibold text-accent-text underline underline-offset-4">

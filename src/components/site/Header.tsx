@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ProductFamily, ProductIcon } from "@/content/products";
 import { ArrowRight, ChevronDown, CloseIcon, MenuIcon, ProductGlyph } from "@/components/icons";
 import type { Locale } from "@/lib/i18n";
+import { CartButton } from "@/components/cart/CartButton";
 import { buttonClasses } from "@/components/ui/Button";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { Logo } from "./Logo";
@@ -34,6 +35,8 @@ export interface HeaderLabels {
   languageSwitch: string;
   languageShort: string;
   homeLabel: string;
+  cart: string;
+  cartWithCount: string;
   families: Record<ProductFamily, string>;
 }
 
@@ -45,6 +48,7 @@ export interface HeaderLinks {
   about: string;
   contact: string;
   book: string;
+  cart: string;
 }
 
 interface HeaderProps {
@@ -127,7 +131,7 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
             : "border-b border-transparent"
         }`}
       >
-        <div className="container-page flex h-16 items-center justify-between gap-4 sm:h-18">
+        <div className="container-page flex h-16 items-center justify-between gap-2 sm:h-18 sm:gap-4">
           <Logo href={links.home} label={labels.homeLabel} />
 
           <nav aria-label={labels.mainNavLabel} className="hidden items-center gap-1 lg:flex">
@@ -200,7 +204,10 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
 
           <div className="flex items-center gap-1">
             <LanguageSwitch locale={locale} label={labels.languageSwitch} short={labels.languageShort} />
-            <ThemeToggle label={labels.themeToggle} />
+            <span className="hidden sm:block">
+              <ThemeToggle label={labels.themeToggle} />
+            </span>
+            <CartButton href={links.cart} label={labels.cart} labelWithCount={labels.cartWithCount} active={isActive(links.cart)} />
             <span className="ml-2 hidden md:block">
               <Link href={links.book} className={buttonClasses("primary", "sm")}>
                 {labels.bookDemo}
@@ -249,6 +256,14 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
                       {link.label}
                     </Link>
                   ))}
+                </div>
+                <div className="flex items-center justify-between border-t border-line pt-6 sm:hidden">
+                  <span aria-hidden="true" className="text-lg font-medium text-text">
+                    {labels.themeToggle}
+                  </span>
+                  <span className="rounded-full border border-line">
+                    <ThemeToggle label={labels.themeToggle} />
+                  </span>
                 </div>
                 <Link href={links.book} className={buttonClasses("primary", "lg", "w-full")}>
                   {labels.bookDemo}

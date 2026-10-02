@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Product } from "@/content/products";
 import { getProductCopy } from "@/content/product-copy";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { ArrowUpRight, ProductGlyph } from "@/components/icons";
+import { cartCopy } from "@/content/cart";
 import { priceLabel } from "@/components/ui/Price";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
@@ -38,10 +40,20 @@ export function ProductCard({ product, locale, headingLevel = "h3", revealDelay 
         </Heading>
         <p className="text-[0.95rem] leading-relaxed text-muted">{copy.summary}</p>
       </div>
-      <p className="border-t border-line pt-4 text-sm font-semibold text-text">
-        <span className="tabular">{priceLabel(product, locale)}</span>
-        <span className="font-normal text-subtle"> · {product.priceQualifier[locale]}</span>
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-3 border-t border-line pt-4">
+        <p className="min-w-0 flex-1 basis-40 text-sm font-semibold text-text">
+          <span className="tabular">{priceLabel(product, locale)}</span>
+          <span className="font-normal text-subtle"> · {product.priceQualifier[locale]}</span>
+        </p>
+        <div className="relative z-10 shrink-0">
+          <AddToCartButton
+            productId={product.id}
+            cartHref={href(locale, { key: "cart" })}
+            labels={{ add: cartCopy[locale].addShort, inCart: cartCopy[locale].inCart, added: cartCopy[locale].addedAnnouncement }}
+            size="sm"
+          />
+        </div>
+      </div>
     </article>
   );
 }

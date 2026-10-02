@@ -153,6 +153,26 @@ export const PlusIcon = (props: IconProps) => (
   </StrokeIcon>
 );
 
+export const MinusIcon = (props: IconProps) => (
+  <StrokeIcon {...props}>
+    <path d="M5 12h14" />
+  </StrokeIcon>
+);
+
+export const CartIcon = (props: IconProps) => (
+  <StrokeIcon {...props}>
+    <path d="M3 4h2.2l2.1 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.1" />
+    <circle cx="9.5" cy="19.5" r="1.2" />
+    <circle cx="17" cy="19.5" r="1.2" />
+  </StrokeIcon>
+);
+
+export const TrashIcon = (props: IconProps) => (
+  <StrokeIcon {...props}>
+    <path d="M4.5 7h15M9.5 7V4.8h5V7M6.5 7l.8 12.2h9.4L17.5 7M10.2 10.5v5.5M13.8 10.5v5.5" />
+  </StrokeIcon>
+);
+
 export const NfcWaves = (props: IconProps) => (
   <StrokeIcon {...props}>
     <path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17" />

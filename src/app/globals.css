@@ -356,3 +356,9 @@ html.reveal-ready [data-reveal] {
     transform: none;
   }
 }
+
+@media (width < 64rem) {
+  body:has([data-cart-bar]) .whatsapp-fab {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom));
+  }
+}

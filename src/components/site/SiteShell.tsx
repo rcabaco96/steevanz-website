@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { ReactNode } from "react";
 import { fontVariables } from "@/app/fonts";
+import { cartCopy } from "@/content/cart";
 import { products } from "@/content/products";
 import { getProductCopy } from "@/content/product-copy";
 import { ui } from "@/content/ui";
@@ -57,6 +58,8 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
             languageSwitch: t.language.switchTo,
             languageShort: t.language.short,
             homeLabel: "Steevanz",
+            cart: cartCopy[locale].headerLabel,
+            cartWithCount: cartCopy[locale].headerLabelCount,
             families: t.nav.families,
           }}
           links={{
@@ -67,6 +70,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
             about: href(locale, { key: "about" }),
             contact: href(locale, { key: "contact" }),
             book: href(locale, { key: "book" }),
+            cart: href(locale, { key: "cart" }),
           }}
         />
         <main id="main" className="relative">

@@ -96,7 +96,7 @@ export const homeCopy: Localized<HomeCopy> = {
     ],
     products: {
       eyebrow: "Produtos",
-      title: "Tudo o que um negócio local precisa para crescer. Nada do que não precisa.",
+      title: "Tudo o que um negócio local precisa para crescer.",
       lead: "Comece por uma placa NFC e acrescente o resto quando fizer sentido. Cada solução é configurada por nós e funciona sozinha ou em conjunto com as outras.",
     },
     flagship: {
@@ -217,7 +217,7 @@ export const homeCopy: Localized<HomeCopy> = {
     ],
     products: {
       eyebrow: "Products",
-      title: "Everything a local business needs to grow. Nothing it doesn't.",
+      title: "Everything a local business needs to grow.",
       lead: "Start with an NFC plate and add the rest when it makes sense. Every solution is set up by us and works on its own or together with the others.",
     },
     flagship: {

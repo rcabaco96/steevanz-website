@@ -24,6 +24,18 @@ export interface ProductImage {
   height: number;
 }
 
+export interface ProductFormat {
+  id: string;
+  label: Localized<string>;
+}
+
+export interface ProductCustomization {
+  formats: ProductFormat[];
+  logoExtra: number;
+  logoExtraIsProvisional: boolean;
+  textMaxLength: number;
+}
+
 export interface Product {
   id: ProductId;
   slug: Localized<string>;
@@ -38,7 +50,11 @@ export interface Product {
   related: ProductId[];
   image?: ProductImage;
   contextPhoto?: PhotoId;
+  customization?: ProductCustomization;
 }
+
+const plateLogoExtra = 5;
+const plateTextMaxLength = 60;
 
 export const products: Product[] = [
   {
@@ -54,6 +70,17 @@ export const products: Product[] = [
     sectors: ["restaurants", "beauty", "clinics", "retail"],
     related: ["ai-reviews", "nfc-social", "loyalty"],
     contextPhoto: "restaurant-table",
+    customization: {
+      formats: [
+        { id: "counter-acrylic", label: { pt: "Placa de balcão em acrílico", en: "Acrylic counter plate" } },
+        { id: "table-stand", label: { pt: "Expositor de mesa", en: "Table stand" } },
+        { id: "sticker", label: { pt: "Autocolante (balcão ou montra)", en: "Sticker (counter or window)" } },
+        { id: "wall-plate", label: { pt: "Placa de parede", en: "Wall plate" } },
+      ],
+      logoExtra: plateLogoExtra,
+      logoExtraIsProvisional: true,
+      textMaxLength: plateTextMaxLength,
+    },
   },
   {
     id: "nfc-social",
@@ -67,6 +94,16 @@ export const products: Product[] = [
     sectors: ["restaurants", "beauty", "retail"],
     related: ["nfc-google-reviews", "loyalty", "ai-chatbot"],
     contextPhoto: "phone-tap",
+    customization: {
+      formats: [
+        { id: "counter-plate", label: { pt: "Placa de balcão", en: "Counter plate" } },
+        { id: "sticker", label: { pt: "Autocolante (montra ou mesa)", en: "Sticker (window or table)" } },
+        { id: "card", label: { pt: "Cartão (tamanho cartão bancário)", en: "Card (credit-card size)" } },
+      ],
+      logoExtra: plateLogoExtra,
+      logoExtraIsProvisional: true,
+      textMaxLength: plateTextMaxLength,
+    },
   },
   {
     id: "loyalty",

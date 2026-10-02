@@ -66,8 +66,14 @@ export const leadSubmissionSchema = z.object({
   kind: z.enum(leadKinds),
 });
 
+export const orderSubmissionSchema = z
+  .object(contactShape)
+  .omit({ productId: true })
+  .extend({ phone: leadSubmissionSchema.shape.phone, items: z.string().max(8000) });
+
 export type BookingSubmission = z.infer<typeof bookingSubmissionSchema>;
 export type LeadSubmission = z.infer<typeof leadSubmissionSchema>;
+export type OrderSubmission = z.infer<typeof orderSubmissionSchema>;
 
 export const bookingFormKeys = [
   "name",
@@ -99,6 +105,24 @@ export const leadFormKeys = [
   "locale",
   "consent",
   "kind",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "referrer",
+] as const;
+
+export const orderFormKeys = [
+  "name",
+  "email",
+  "phone",
+  "businessName",
+  "sector",
+  "message",
+  "locale",
+  "consent",
+  "items",
   "utm_source",
   "utm_medium",
   "utm_campaign",

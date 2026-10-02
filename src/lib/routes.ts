@@ -15,7 +15,8 @@ export type StaticRouteKey =
   | "contact"
   | "privacy"
   | "cookies"
-  | "terms";
+  | "terms"
+  | "cart";
 
 export type Route =
   | { key: StaticRouteKey }
@@ -35,6 +36,7 @@ const staticSegments: Record<StaticRouteKey, Localized<string>> = {
   privacy: { pt: "privacidade", en: "privacy" },
   cookies: { pt: "cookies", en: "cookies" },
   terms: { pt: "termos", en: "terms" },
+  cart: { pt: "carrinho", en: "cart" },
 };
 
 function localePrefix(locale: Locale): string {
