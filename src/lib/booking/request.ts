@@ -21,7 +21,7 @@ export async function requestOrigin(): Promise<string> {
   return host ? `${protocol}://${host}` : "";
 }
 
-function hashIp(ip: string): string {
+export function hashIp(ip: string): string {
   const salt = process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(-24) ?? "steevanz";
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex");
 }

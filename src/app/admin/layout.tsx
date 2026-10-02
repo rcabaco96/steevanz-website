@@ -15,7 +15,7 @@ export const viewport: Viewport = rootViewport;
 
 export default function AdminRootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-PT" className={fontVariables} suppressHydrationWarning>
+    <html lang="pt-PT" className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="min-h-dvh bg-bg-soft">
         <ThemeScript />
         {children}

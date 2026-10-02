@@ -8,6 +8,7 @@ const links = [
   { href: "/admin/bookings", label: "Marcações", exact: false },
   { href: "/admin/leads", label: "Pedidos", exact: false },
   { href: "/admin/availability", label: "Disponibilidade", exact: false },
+  { href: "/admin/reviews", label: "Reviews", exact: false },
 ];
 
 export function AdminNav() {
