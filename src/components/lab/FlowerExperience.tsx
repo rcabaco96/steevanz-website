@@ -16,7 +16,9 @@ import {
 import { site } from "@/lib/site";
 import { smoothstep } from "./flowerAssets";
 import { FlowerScene, type ExperienceState } from "./FlowerScene";
+import { GlobeSection } from "./Globe";
 import { Loader } from "./Loader";
+import { useTheme } from "./theme";
 import { ProductSheet } from "./ProductSheet";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
 
@@ -69,6 +71,7 @@ export function FlowerExperience() {
   const [fontsReady, setFontsReady] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const theme = useTheme();
   // Lighter 3D on phones and small/weak devices; drops further if frames suffer.
   // (Only affects the canvas internals, never the server-rendered markup.)
   const [lite] = useState(
@@ -141,7 +144,15 @@ export function FlowerExperience() {
     });
     const header = document.querySelector<HTMLElement>(".site-header");
 
+    let scrollTimer = 0;
+    const root = document.querySelector<HTMLElement>(".lab-root");
+    const markScrolling = () => {
+      root?.classList.add("is-scrolling");
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => root?.classList.remove("is-scrolling"), 160);
+    };
     const measure = () => {
+      markScrolling();
       const el = section.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -239,8 +250,8 @@ export function FlowerExperience() {
           <div ref={overlayEl} className="lab-overlay">
             {/* Interlude between the hero and the products: what we do, in one line. */}
             <div ref={introProductsEl} className="lab-products-intro" aria-hidden="true">
-              <p className="lab-products-label">O que fazemos</p>
-              <p className="lab-products-title">Cinco áreas, uma só equipa.</p>
+              <p className="lab-products-label">Os nossos produtos</p>
+              <p className="lab-products-title">Cinco produtos, uma só equipa.</p>
               <ol className="lab-products-pills">
                 {modules.map((m, i) => (
                   <li key={m.id} style={{ "--i": i } as CSSProperties}>
@@ -249,6 +260,7 @@ export function FlowerExperience() {
                   </li>
                 ))}
               </ol>
+              <p className="lab-products-next">Conheça cada um a seguir ↓</p>
             </div>
             <div ref={heroEl} className="lab-hero-title">
               <p className="lab-hero-kicker">{intro.line}</p>
@@ -398,6 +410,8 @@ export function FlowerExperience() {
           </div>
         </div>
       </section>
+
+      <GlobeSection light={theme === "light"} />
 
       <SiteFooter />
     </div>

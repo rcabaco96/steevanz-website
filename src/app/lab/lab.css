@@ -3357,22 +3357,22 @@ html:not(.has-cursor) .cursor-ring {
   }
 }
 
-/* Hover effects only where a real hover exists (no sticky states on touch). */
+/* Hover effects only where a real hover exists, and never mid-scroll. */
 @media (hover: hover) and (pointer: fine) {
-  .home-module:hover .home-open-title::after {
+  .lab-root:not(.is-scrolling) .home-module[data-active="true"]:hover .home-open-title::after {
     transform: scaleX(1);
   }
 
-  .home-module:hover .home-title-arrow {
+  .lab-root:not(.is-scrolling) .home-module[data-active="true"]:hover .home-title-arrow {
     opacity: 1;
     transform: translate(0, -50%);
   }
 
-  .home-module:hover .home-open {
+  .lab-root:not(.is-scrolling) .home-module[data-active="true"]:hover .home-open {
     background: color-mix(in oklab, var(--plum) 8%, transparent);
   }
 
-  .home-module:hover .home-open-arrow {
+  .lab-root:not(.is-scrolling) .home-module[data-active="true"]:hover .home-open-arrow {
     transform: translateX(0.3rem);
   }
 }
@@ -3626,5 +3626,137 @@ html {
   .lab-chapter.home-about,
   .lab-chapter.home-module {
     top: calc(50% + 2.6rem);
+  }
+}
+
+/* ---------- Globe: "Em crescimento" (horizon layout) ---------- */
+
+.globe {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  min-height: 115svh;
+  padding: clamp(5rem, 9vw, 8rem) var(--edge) 0;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 55% at 50% 100%, color-mix(in oklab, var(--plum) 22%, transparent), transparent 70%),
+    var(--wall);
+  text-align: center;
+}
+
+.globe-copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  max-width: 54rem;
+  pointer-events: none;
+}
+
+.globe .lab-kicker {
+  opacity: 1;
+}
+
+.globe-copy h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(3rem, 7vw, 6.6rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.globe-copy > p:not(.lab-kicker) {
+  max-width: 36rem;
+  margin: 1.4rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.globe-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 2.2rem 0 0;
+}
+
+.globe-facts dt {
+  font-family: var(--display);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--plum);
+}
+
+.globe-facts dd {
+  max-width: 13rem;
+  margin: 0.35rem auto 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.globe-canvas {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 78%;
+}
+
+.globe-canvas canvas {
+  touch-action: pan-y;
+}
+
+@media (max-width: 760px) {
+  .globe {
+    min-height: 105svh;
+  }
+
+  .globe-facts {
+    gap: 1rem;
+  }
+
+  .globe-facts dt {
+    font-size: 2.2rem;
+  }
+
+  .globe-canvas {
+    height: 55%;
+  }
+}
+
+.lab-products-next {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  opacity: clamp(0, calc(var(--mid) * 2.4 - 1.3), 1);
+}
+
+.globe {
+  align-content: start;
+}
+
+.globe-copy {
+  align-content: start;
+}
+
+.globe-copy h2 {
+  font-size: clamp(2.6rem, 5.4vw, 5rem);
+}
+
+.globe-canvas {
+  height: 70%;
+}
+
+@media (max-width: 760px) {
+  .globe-facts dd {
+    display: none;
+  }
+
+  .globe-canvas {
+    height: 46%;
   }
 }
