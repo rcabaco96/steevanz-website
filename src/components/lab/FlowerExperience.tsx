@@ -17,7 +17,9 @@ import { site } from "@/lib/site";
 import { smoothstep } from "./flowerAssets";
 import { FlowerScene, type ExperienceState } from "./FlowerScene";
 import { GlobeSection } from "./Globe";
+import { HeroWater } from "./HeroWater";
 import { Loader } from "./Loader";
+import { playHoverSound } from "./menuSound";
 import { useTheme } from "./theme";
 import { ProductSheet } from "./ProductSheet";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
@@ -56,6 +58,9 @@ const INTRO_STEP = 1;
 const FIRST_MODULE_STEP = 2;
 const ABOUT_STEP = FIRST_MODULE_STEP + modules.length;
 const FINALE_STEP = CHAPTER_SPAN;
+// Extra scroll (in screens) where "Vamos falar?" holds, fully formed, before the stage releases.
+const FINALE_HOLD = 0.6;
+const SCROLL_SPAN = CHAPTER_SPAN + FINALE_HOLD;
 
 export function FlowerExperience() {
   const state = useRef<ExperienceState>({
@@ -87,17 +92,18 @@ export function FlowerExperience() {
   const hintEl = useRef<HTMLDivElement>(null);
   const introProductsEl = useRef<HTMLDivElement>(null);
   const dragHintEl = useRef<HTMLDivElement>(null);
-  const stageEl = useRef<HTMLDivElement>(null);
   const overlayEl = useRef<HTMLDivElement>(null);
   const indexEls = useRef<(HTMLButtonElement | null)[]>([]);
   const timelineEl = useRef<HTMLElement>(null);
+  // Water light over the hero: follows the hero in and out (0..1).
+  const water = useRef(0);
 
   /** Scroll position (px) of a timeline step inside the pinned section. */
   const stepScroll = useCallback((step: number) => {
     const el = section.current;
     if (!el) return 0;
     const top = el.getBoundingClientRect().top + window.scrollY;
-    return top + (step / CHAPTER_SPAN) * (el.offsetHeight - window.innerHeight);
+    return top + (step / SCROLL_SPAN) * (el.offsetHeight - window.innerHeight);
   }, []);
 
   const goTo = useCallback(
@@ -147,7 +153,7 @@ export function FlowerExperience() {
       if (!fontsCancelled) setFontsReady(true);
     });
     const header = document.querySelector<HTMLElement>(".site-header");
-
+    const globeEl = document.querySelector<HTMLElement>(".globe");
     let scrollTimer = 0;
     const root = document.querySelector<HTMLElement>(".lab-root");
     const markScrolling = () => {
@@ -169,12 +175,17 @@ export function FlowerExperience() {
       const el = section.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const total = el.offsetHeight - window.innerHeight;
-      const t = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
-      state.current.target = t * CHAPTER_SPAN;
-      if (header)
-        header.dataset.solid =
-          rect.bottom < window.innerHeight * 0.6 ? "true" : "false";
+      const h = window.innerHeight;
+      const span = el.offsetHeight - h;
+      const t = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
+      state.current.target = Math.min(CHAPTER_SPAN, t * SCROLL_SPAN);
+      if (header) {
+        const solid = rect.bottom < h * 0.6 ? "true" : "false";
+        if (header.dataset.solid !== solid) header.dataset.solid = solid;
+        // Over the night section (globe, then footer) the header takes its night style.
+        const night = globeEl && globeEl.getBoundingClientRect().top <= header.offsetHeight ? "night" : "day";
+        if (header.dataset.tone !== night) header.dataset.tone = night;
+      }
     };
     instance.on("scroll", measure);
     window.addEventListener("resize", measure);
@@ -217,6 +228,8 @@ export function FlowerExperience() {
       const heroOut = (1 - smoothstep(0.03, 0.24, p)).toFixed(3);
       if (heroEl.current) setVar(heroEl.current, "--out", heroOut);
       if (hintEl.current) setVar(hintEl.current, "--out", heroOut);
+      const waterTarget = s0.revealed ? 1 - smoothstep(0.02, 0.22, p) : 0;
+      water.current += (waterTarget - water.current) * Math.min(1, dt * 3);
       // Interlude: rises after the hero leaves, hands over to the first product.
       if (introProductsEl.current)
         setVar(introProductsEl.current, "--mid", (smoothstep(INTRO_STEP - 0.28, INTRO_STEP - 0.02, p) * (1 - smoothstep(INTRO_STEP + 0.2, INTRO_STEP + 0.45, p))).toFixed(3));
@@ -229,7 +242,6 @@ export function FlowerExperience() {
         if (el && el.dataset.current !== value) el.dataset.current = value;
       });
       if (timelineEl.current) setVar(timelineEl.current, "--progress", (p / CHAPTER_SPAN).toFixed(4));
-      if (stageEl.current) setVar(stageEl.current, "--exit", smoothstep(FINALE_STEP - 0.15, FINALE_STEP, p).toFixed(3));
       // Drag hint above the flower: after the hero, until the first drag (mouse only).
       if (dragHintEl.current) {
         const s = state.current;
@@ -261,13 +273,15 @@ export function FlowerExperience() {
       <section
         ref={section}
         className="home-experience"
-        style={{ height: `${(CHAPTER_SPAN + 1) * 100}svh` }}
+        style={{ height: `${(SCROLL_SPAN + 1) * 100}svh` }}
         aria-label="Steevanz"
       >
-        <div ref={stageEl} className="home-stage">
+        <div className="home-stage">
           <div className="lab-canvas" aria-hidden="true">
             <Canvas
               dpr={dpr}
+              // The stage is pinned at the viewport origin: no need to re-measure on scroll.
+              resize={{ scroll: false }}
               shadows={lite ? false : "percentage"}
               camera={{ position: [0, 0, 6], fov: 32, near: 0.1, far: 40 }}
               gl={{ antialias: true, powerPreference: "high-performance", toneMapping: NeutralToneMapping }}
@@ -276,6 +290,8 @@ export function FlowerExperience() {
               <FlowerScene stateRef={state} onAdvance={advance} onReady={onSceneReady} lite={lite} />
             </Canvas>
           </div>
+
+          <HeroWater strength={water} light={theme === "light"} />
 
           <div ref={overlayEl} className="lab-overlay">
             {/* Interlude between the hero and the products: what we do, in one line. */}
@@ -342,6 +358,9 @@ export function FlowerExperience() {
                   }}
                   data-current={i === 0}
                   onClick={() => goTo(i)}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === "mouse") playHoverSound();
+                  }}
                 >
                   <span>{String(i).padStart(2, "0")}</span>
                   {label}
@@ -463,7 +482,7 @@ export function FlowerExperience() {
         </div>
       </section>
 
-      <GlobeSection light={theme === "light"} />
+      <GlobeSection />
 
       <SiteFooter />
     </div>

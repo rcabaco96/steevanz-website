@@ -964,17 +964,6 @@ html {
   will-change: opacity, transform;
 }
 
-.loader[data-phase="opening"] {
-  animation: ld-exit 0.9s cubic-bezier(0.7, 0, 0.2, 1) forwards;
-}
-
-@keyframes ld-exit {
-  to {
-    opacity: 0;
-    transform: scale(1.08);
-  }
-}
-
 .ld-stage {
   display: grid;
   justify-items: center;
@@ -1014,65 +1003,9 @@ html {
   }
 }
 
-.ld-foot {
-  position: absolute;
-  inset: auto var(--edge) 2rem;
-  display: grid;
-  gap: 0.8rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  animation: ld-fade 0.8s 0.4s ease both;
-}
-
-@keyframes ld-fade {
-  from {
-    opacity: 0;
-  }
-}
-
-/* Progress line: a soft light that sweeps along it (loops, never stalls). */
-.loader-line {
-  position: relative;
-  display: block;
-  height: 1px;
-  overflow: hidden;
-  background: color-mix(in oklab, var(--plum) 20%, transparent);
-}
-
-.loader-line i {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 35%;
-  background: linear-gradient(90deg, transparent, var(--plum), transparent);
-  animation: ld-sweep 1.3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  will-change: transform;
-}
-
-@keyframes ld-sweep {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(290%);
-  }
-}
-
-.loader[data-phase="complete"] .loader-line i,
-.loader[data-phase="opening"] .loader-line i {
-  width: 100%;
-  animation: none;
-  transform: none;
-  background: var(--plum);
-  transition: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .ld-mark-slot,
-  .ld-name,
-  .ld-foot,
-  .loader-line i {
+  .ld-name {
     animation: none;
   }
 
@@ -4105,27 +4038,6 @@ html {
   max-width: min(36rem, calc(100% - min(22rem, 30vw) - 3rem));
 }
 
-/* Stage -> globe: as the contact step settles, the bottom of the stage fades into
-   the night colour the globe section starts with. Soft and short. */
-.home-stage {
-  --exit: 0;
-}
-
-.home-stage::before {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 3;
-  height: 22svh;
-  background: linear-gradient(180deg, transparent, #0b0712);
-  opacity: var(--exit);
-  pointer-events: none;
-}
-
-:root:not([data-theme="dark"]) .home-stage::before {
-  background: linear-gradient(180deg, transparent, var(--wall));
-}
-
 .globe {
   background:
     radial-gradient(45% 40% at 22% 30%, rgba(108, 70, 160, 0.14), transparent 70%),
@@ -4163,5 +4075,730 @@ html {
     height: 13rem;
     right: -3rem;
     bottom: -3.5rem;
+  }
+}
+
+/* ---------- Titles: light uppercase serif (after grail-app.com) ---------- */
+
+:root {
+  --title: var(--font-lab-title), "Cormorant Garamond", Georgia, "Times New Roman", serif;
+}
+
+.lab-wordmark,
+.lab-title,
+.lab-products-title,
+.home-work-head h2,
+.globe-copy h2,
+.pd-title,
+.pd-card h2,
+.pd-section-head h2,
+.pd-final h2,
+.nfc-show-head h2 {
+  font-family: var(--title);
+  font-weight: 300;
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  font-kerning: normal;
+}
+
+/* The serif runs ~1.6x wider than the old condensed face: same visual weight, smaller size. */
+.lab-wordmark {
+  font-size: min(14.5vw, 30svh);
+  letter-spacing: -0.015em;
+}
+
+.lab-title {
+  font-size: clamp(2.2rem, 4.1vw, 4.3rem);
+}
+
+.lab-products-title {
+  font-size: clamp(2.1rem, 3.8vw, 3.6rem);
+}
+
+.home-work-head h2,
+.pd-title {
+  font-size: clamp(2.4rem, 4.8vw, 4.8rem);
+}
+
+.pd-hero:has(.pd-hero-tap) .pd-title {
+  font-size: clamp(2.2rem, 4vw, 3.9rem);
+}
+
+.globe-copy h2 {
+  font-size: clamp(2.1rem, min(4.2vw, 7svh), 4rem);
+}
+
+.pd-card h2 {
+  font-size: clamp(1.6rem, 2.3vw, 2rem);
+}
+
+.pd-section-head h2,
+.nfc-show-head h2 {
+  font-size: clamp(1.9rem, 2.9vw, 2.7rem);
+}
+
+.pd-final h2 {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+}
+
+/* STEEVANZ: clean letters (the pitted mask would eat the serif's hairlines). The hover
+   only reacts on the letters themselves: each letter's hit area is a box fitted to its
+   capital (not the taller line box), extended down by the lift so it never flickers. */
+.lab-wordmark span {
+  position: relative;
+  -webkit-mask-image: none;
+  mask-image: none;
+  pointer-events: none;
+}
+
+.lab-wordmark span::before {
+  content: "";
+  position: absolute;
+  /* Measured on Cormorant at line-height 0.88: cap top 0.118em, baseline 0.106em up. */
+  inset: 0.115em 0.03em 0.1em;
+  pointer-events: auto;
+}
+
+/* While lifted, reach back down to where the letter was, so it never flickers. */
+.lab-wordmark span:hover::before {
+  bottom: 0.03em;
+}
+
+/* ---------- Hero water light ---------- */
+
+.hero-water {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+:root:not([data-theme="dark"]) .hero-water {
+  mix-blend-mode: normal;
+}
+
+/* Only shown once it has drawn a clean frame (see HeroWater). */
+.hero-water:not([data-on="true"]) {
+  visibility: hidden;
+}
+
+/* ---------- Right-hand menu (after aengel.io) ---------- */
+
+.site-burger,
+.site-mobile {
+  display: none !important;
+}
+
+.sm {
+  --sm-ease: cubic-bezier(0.33, 1, 0.68, 1);
+  --sm-hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  display: flex;
+}
+
+/* Closed: a round icon button matching the theme toggle, three even lines. */
+.sm-toggle {
+  position: relative;
+  display: grid;
+  place-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--glass);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sm-toggle:hover {
+  background: color-mix(in oklab, var(--plum) 14%, var(--glass));
+}
+
+.sm-toggle span {
+  display: block;
+  /* Whole pixels only (2px lines, 4px gaps in a 40px button), so all three render
+     identically at 100% instead of one smearing across a pixel boundary. */
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.9;
+  transition:
+    transform 0.45s var(--sm-hover-ease),
+    opacity 0.25s;
+}
+
+/* Open: the outer lines meet in an X, the middle one fades. */
+.sm[data-open="true"] .sm-toggle span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.sm[data-open="true"] .sm-toggle span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.3);
+}
+
+.sm[data-open="true"] .sm-toggle span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Open: a card under the header row, right-aligned to the button, so it never sits
+   over "Agendar demo". The card fades in first; then the line draws and the rows wipe in. */
+.sm-panel {
+  position: absolute;
+  top: calc(100% + 0.9rem);
+  right: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 15.5rem;
+  padding: 1.15rem 1.35rem 1.25rem;
+  border-radius: 1.1rem;
+  background: color-mix(in oklab, var(--wall) 94%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px var(--line),
+    0 24px 60px -24px rgba(20, 6, 26, 0.45);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition:
+    opacity 0.22s ease 0.3s,
+    transform 0.3s var(--sm-ease) 0.3s;
+}
+
+.sm[data-open="true"] .sm-panel {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s var(--sm-ease);
+}
+
+/* Line: draws out from the right (0.38 s); on close it waits for the rows. */
+.sm-line {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: color-mix(in oklab, var(--ink) 22%, transparent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 0.26s var(--sm-ease) 0.16s;
+}
+
+.sm[data-open="true"] .sm-line {
+  transform: scaleX(1);
+  transition: transform 0.38s var(--sm-ease) 0.08s;
+}
+
+.sm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Rows wipe in from the right, top to bottom, 80 ms apart, once the line is out;
+   closing wipes them away bottom to top. */
+.sm-item {
+  display: flex;
+  justify-content: flex-end;
+  clip-path: inset(0 0 0 100%);
+  transition: clip-path 0.26s var(--sm-ease) calc((var(--n, 10) - 1 - var(--i)) * 0.015s);
+}
+
+.sm[data-open="true"] .sm-item {
+  clip-path: inset(0 -0.8px 0 -19.2px);
+  transition: clip-path 0.43s var(--sm-ease) calc(0.45s + var(--i) * 0.08s);
+}
+
+/* Settings: a quiet block under the sections, label left and value right. */
+.sm-gap {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.sm-link {
+  position: relative;
+  display: inline-block;
+  padding: 0.12rem 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  text-align: right;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.25s;
+}
+
+.sm-label {
+  display: inline-block;
+  transition: transform 0.45s var(--sm-hover-ease);
+}
+
+.sm-item:has(.sm-setting) {
+  justify-content: stretch;
+}
+
+.sm-setting {
+  width: 100%;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.sm-setting .sm-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.sm-setting small {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+
+.sm-setting i {
+  font-style: normal;
+  opacity: 0.4;
+}
+
+.sm-dot {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 0.32em;
+  height: 0.32em;
+  color: var(--plum);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.4);
+  transition:
+    opacity 0.3s,
+    transform 0.45s var(--sm-hover-ease);
+}
+
+.sm-link:hover,
+.sm-link:focus-visible {
+  color: var(--plum);
+}
+
+.sm-link:hover .sm-label,
+.sm-link:focus-visible .sm-label {
+  transform: translateX(-0.85em);
+}
+
+.sm-setting:hover .sm-label,
+.sm-setting:focus-visible .sm-label {
+  transform: none;
+}
+
+.sm-link:hover .sm-dot,
+.sm-link:focus-visible .sm-dot {
+  opacity: 0.8;
+  transform: translateY(-50%) scale(1);
+}
+
+.sm-setting .sm-dot {
+  display: none;
+}
+
+:root[data-theme="dark"] .sm-link:hover,
+:root[data-theme="dark"] .sm-link:focus-visible {
+  color: #dbbdf0;
+}
+
+:root[data-theme="dark"] .sm-dot {
+  color: #dbbdf0;
+}
+
+@media (max-width: 640px) {
+  .sm-panel {
+    position: fixed;
+    top: 4.6rem;
+    right: var(--gutter);
+    left: var(--gutter);
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-panel,
+  .sm-line,
+  .sm-item {
+    transition-duration: 0.01s;
+    transition-delay: 0s !important;
+  }
+}
+
+/* ---------- Globe: copy sits a little lower, clear of the header ---------- */
+
+.globe {
+  padding-top: clamp(7.5rem, 15svh, 9.5rem);
+}
+
+/* Light theme globe: stays in the light palette (no dusk-to-night band). The wall
+   colour the hero ends on carries straight in, warming to a soft lilac glow under the
+   horizon, so the dark copy stays readable throughout. */
+:root:not([data-theme="dark"]) .globe {
+  background:
+    radial-gradient(60% 45% at 50% 100%, rgba(150, 110, 190, 0.22), transparent 72%),
+    radial-gradient(40% 30% at 18% 28%, rgba(200, 138, 28, 0.06), transparent 70%),
+    linear-gradient(180deg, var(--wall) 0%, #ece4e6 45%, #e6dbe6 100%);
+}
+
+.globe-copy h2 {
+  text-wrap: balance;
+}
+
+/* Product steps (02–06) and "Vamos falar?": a size down, so the serif sits calmer. */
+.home-module .lab-title {
+  font-size: clamp(2.4rem, 4.8vw, 4.8rem);
+}
+
+.lab-finale .lab-title {
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+}
+
+@media (max-width: 760px) {
+  .home-module .lab-title {
+    font-size: clamp(2.1rem, 10vw, 2.6rem);
+  }
+
+  .lab-finale .lab-title {
+    font-size: clamp(2.2rem, 11vw, 2.8rem);
+  }
+}
+
+/* Dark theme: the stage wall colour eases into the night sky at the globe's top. */
+:root[data-theme="dark"] .globe::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  height: 26svh;
+  background: linear-gradient(180deg, var(--wall), transparent);
+  pointer-events: none;
+}
+
+/* Globe layout: the canvas gets its own row under the copy (instead of hanging from the
+   bottom at a % height), so the horizon always starts a clear gap below the figures,
+   whatever the screen height. */
+.globe {
+  grid-template-rows: auto minmax(0, 1fr);
+  padding-top: clamp(6rem, 12svh, 8.5rem);
+  padding-bottom: 0;
+}
+
+.globe-canvas {
+  position: relative;
+  inset: auto;
+  grid-row: 2;
+  justify-self: stretch;
+  height: auto;
+  min-height: 0;
+  margin: clamp(1.25rem, 4svh, 2.5rem) calc(-1 * var(--edge)) 0;
+}
+
+@media (max-width: 760px) {
+  .globe {
+    height: auto;
+    min-height: 100svh;
+    padding-bottom: 0;
+  }
+
+  .globe-canvas {
+    min-height: 50svh;
+  }
+}
+
+/* Globe: a generous row for the planet (the section may grow past one screen on short
+   displays rather than squeeze it); the horizon sits just under the figures. */
+.globe {
+  height: auto;
+  min-height: 100svh;
+  grid-template-rows: auto minmax(54svh, 1fr);
+}
+
+.globe-canvas {
+  margin-top: clamp(0.5rem, 1.5svh, 1rem);
+}
+
+@media (max-width: 760px) {
+  .globe {
+    grid-template-rows: auto minmax(50svh, 1fr);
+  }
+}
+
+/* Globe section: exactly one screen. The copy takes what it needs and the planet fills
+   the rest, cut by the bottom edge (Globe.tsx sizes it to the space it gets). */
+.globe {
+  height: 100svh;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+@media (max-width: 760px) {
+  .globe {
+    height: auto;
+    min-height: 100svh;
+    grid-template-rows: auto minmax(50svh, 1fr);
+  }
+}
+
+/* Night sky across the whole globe section (dark theme), behind the copy and planet. */
+.globe-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.globe-sky canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Shooting star: a faint streak across the upper sky every ~11 s. */
+.globe-shoot {
+  position: absolute;
+  top: 14%;
+  left: -12%;
+  width: 7rem;
+  height: 1px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, rgba(243, 236, 255, 0.85));
+  opacity: 0;
+  transform: rotate(14deg);
+  animation: globe-shoot 11s cubic-bezier(0.3, 0, 0.6, 1) 3s infinite;
+}
+
+@keyframes globe-shoot {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  1.5% {
+    opacity: 1;
+  }
+  9% {
+    opacity: 0;
+    translate: 60vw 15vh;
+  }
+  100% {
+    opacity: 0;
+    translate: 60vw 15vh;
+  }
+}
+
+.globe-canvas,
+.globe-copy {
+  z-index: 1;
+}
+
+.globe-copy {
+  z-index: 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globe-shoot {
+    display: none;
+  }
+}
+
+/* ---------- Globe in the light theme: a night section ----------
+   Same night sky, stars and planet as the dark theme, starting with a crisp straight
+   edge where the stage ends (no grey gradient band; rounded corners exposed the flat
+   page colour against the lit 3D wall). Inside it the copy
+   uses the dark theme's colours so it reads on the night sky. */
+:root:not([data-theme="dark"]) .globe {
+  --wall: #1a0f24;
+  --paper: #22142e;
+  --paper-hi: #2c1c3a;
+  --glass: color-mix(in oklab, #2c1c3a 82%, transparent);
+  --ink: #f3ecf4;
+  --ink-soft: color-mix(in oklab, #f2e8dc 70%, transparent);
+  --line: color-mix(in oklab, #f2e8dc 14%, transparent);
+  --plum: #c9a2e4;
+  --accent: #c9a2e4;
+  --ochre: #e3ad4a;
+  color-scheme: dark;
+  background:
+    radial-gradient(45% 40% at 22% 30%, rgba(108, 70, 160, 0.14), transparent 70%),
+    radial-gradient(40% 35% at 82% 22%, rgba(60, 40, 120, 0.16), transparent 70%),
+    radial-gradient(70% 50% at 50% 100%, rgba(140, 100, 200, 0.12), transparent 70%),
+    linear-gradient(180deg, #120a1c 0%, #07050c 40%, #06040a 100%);
+  color: var(--ink);
+}
+
+/* Footer: the same deep night as the globe section in both themes (the light theme's
+   aubergine clashed with the night card above it), with a hairline to separate them. */
+.site-footer,
+:root[data-theme="dark"] .site-footer {
+  background: #07050c;
+  color: #f3ecf4;
+  box-shadow: inset 0 1px 0 rgba(242, 232, 220, 0.08);
+}
+
+/* Overlap the section above by a pixel: on fractional scroll positions the two dark
+   edges anti-alias and the light page background showed through as a bright seam. */
+.globe + .site-footer {
+  margin-top: -1px;
+}
+
+/* Header over the night section (globe + footer) in the light theme: it takes the night
+   style (dark glass, light ink, lavender CTA) instead of a light bar over the dark sky.
+   Toggled by FlowerExperience (data-tone); colours ease across. */
+:root:not([data-theme="dark"]) .site-header[data-tone="night"] {
+  --wall: #1a0f24;
+  --paper: #22142e;
+  --paper-hi: #2c1c3a;
+  --glass: color-mix(in oklab, #2c1c3a 82%, transparent);
+  --ink: #f3ecf4;
+  --ink-soft: color-mix(in oklab, #f2e8dc 70%, transparent);
+  --line: color-mix(in oklab, #f2e8dc 14%, transparent);
+  --plum: #c9a2e4;
+  --accent: #c9a2e4;
+  --ochre: #e3ad4a;
+  color-scheme: dark;
+}
+
+:root:not([data-theme="dark"]) .site-header[data-tone="night"] .site-cta {
+  color: #1a0f24;
+}
+
+:root:not([data-theme="dark"]) .site-header[data-tone="night"] .site-cta:hover {
+  background: #dbbdf0;
+}
+
+.site-header,
+.site-header .site-logo,
+.site-header .site-nav,
+.site-header .site-nav a,
+.site-header .site-nav button,
+.site-header .site-icon-btn,
+.site-header .sm-toggle,
+.site-header .site-cta {
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease,
+    box-shadow 0.45s ease,
+    backdrop-filter 0.5s,
+    transform 0.4s var(--ease);
+}
+
+/* Same seam fix at the top of the night section (stage -> globe). */
+.home-experience + .globe {
+  margin-top: -1px;
+}
+
+/* ---------- Loader, simplified: the mark and the name, always in motion ----------
+   Only HTML transforms/opacity (no SVG transforms, no layout), so everything keeps
+   moving on the compositor while the main thread boots the page and the 3D scene. */
+
+.ld-stage {
+  gap: 1.4rem;
+}
+
+.ld-mark-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  animation:
+    ld-in 0.9s 0.05s var(--ease) both,
+    ld-float 3.2s 0.95s ease-in-out infinite;
+}
+
+.ld-tile {
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  background: #562650;
+  box-shadow: 0 10px 30px -12px rgba(46, 10, 44, 0.45);
+}
+
+.ld-flower {
+  position: relative;
+  display: grid;
+  line-height: 0;
+  animation: ld-spin 9s linear infinite;
+  will-change: transform;
+}
+
+.ld-name {
+  padding-left: 0.42em;
+  font-family: var(--title);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  letter-spacing: 0.42em;
+  line-height: 1;
+  color: var(--plum);
+  animation: ld-in 1.1s 0.25s var(--ease) both;
+}
+
+@keyframes ld-float {
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes ld-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Exit: the backdrop fades while the mark and name lift slightly away. */
+.loader[data-phase="opening"] {
+  animation: ld-fade-out 0.75s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}
+
+.loader[data-phase="opening"] .ld-stage {
+  animation: ld-lift 0.75s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+}
+
+@keyframes ld-lift {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-mark-slot,
+  .ld-flower,
+  .ld-name {
+    animation: none;
+  }
+
+  .loader[data-phase="opening"] .ld-stage {
+    animation: none;
   }
 }

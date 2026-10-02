@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import { getProductCopy } from "@/content/product-copy";
 import { products, type ProductFamily } from "@/content/products";
 import { href } from "@/lib/routes";
 import { modules } from "./chapters";
 import { FlowerMark } from "./FlowerMark";
+import { playHoverSound, playMenuSound, setSoundEnabled, soundEnabled, subscribeSound } from "./menuSound";
 import { toggleTheme, useTheme } from "./theme";
 
 const GROUPS: { family: ProductFamily; title: string }[] = [
@@ -84,14 +85,160 @@ function ProductsMenu({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
+const MENU_LINKS = [
+  { label: "Início", href: href("pt", { key: "home" }) },
+  { label: "Produtos", href: href("pt", { key: "products" }) },
+  { label: "Setores", href: href("pt", { key: "sectors" }) },
+  { label: "Documentação", href: href("pt", { key: "docs" }) },
+  { label: "Sobre", href: href("pt", { key: "about" }) },
+  { label: "Contacto", href: href("pt", { key: "contact" }) },
+  { label: "Agendar demo", href: href("pt", { key: "book" }) },
+];
+
+/**
+ * Right-hand menu: a line draws out under the button, then each row wipes in from the
+ * right, top to bottom; closing runs it backwards. Sections first, then settings
+ * (theme, sound, language). Plays the menu sound on open and close.
+ */
+function SiteMenu() {
+  const [open, setOpen] = useState(false);
+  const sound = useSyncExternalStore(subscribeSound, soundEnabled, () => true);
+  const theme = useTheme();
+  const root = useRef<HTMLDivElement>(null);
+
+  const toggle = (next = !open) => {
+    if (next === open) return;
+    setOpen(next);
+    playMenuSound();
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) {
+        setOpen(false);
+        playMenuSound();
+      }
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        playMenuSound();
+      }
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const toggleSound = () => {
+    setSoundEnabled(!sound);
+    if (!sound) playMenuSound();
+  };
+
+  const rows: { key: string; node: ReactNode }[] = [
+    ...MENU_LINKS.map((link) => ({
+      key: link.label,
+      node: (
+        <a className="sm-link" href={link.href} onClick={() => setOpen(false)}>
+          <span className="sm-label">{link.label}</span>
+          <HoverDot />
+        </a>
+      ),
+    })),
+    {
+      key: "theme",
+      node: (
+        <button type="button" className="sm-link sm-setting" onClick={toggleTheme}>
+          <span className="sm-label">
+            <small>Tema</small>
+            <span>{theme === "dark" ? "Escuro" : "Claro"}</span>
+          </span>
+          <HoverDot />
+        </button>
+      ),
+    },
+    {
+      key: "sound",
+      node: (
+        <button type="button" className="sm-link sm-setting" aria-pressed={sound} onClick={toggleSound}>
+          <span className="sm-label">
+            <small>Som</small>
+            <span>{sound ? "Ligado" : "Desligado"}</span>
+          </span>
+          <HoverDot />
+        </button>
+      ),
+    },
+    {
+      key: "lang",
+      node: (
+        <a className="sm-link sm-setting" href={href("en", { key: "home" })} hrefLang="en" onClick={() => setOpen(false)}>
+          <span className="sm-label">
+            <small>Idioma</small>
+            <span>
+              PT <i>/</i> EN
+            </span>
+          </span>
+          <HoverDot />
+        </a>
+      ),
+    },
+  ];
+
+  return (
+    <div ref={root} className="sm" data-open={open}>
+      <button
+        type="button"
+        className="sm-toggle"
+        aria-expanded={open}
+        aria-controls="site-menu-panel"
+        aria-label={open ? "Fechar menu" : "Abrir menu"}
+        onClick={() => toggle()}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+      <div id="site-menu-panel" className="sm-panel" aria-hidden={!open} inert={!open} style={{ "--n": rows.length } as CSSProperties}>
+        <span className="sm-line" />
+        <ul className="sm-list">
+          {rows.map((row, i) => (
+            <li
+              key={row.key}
+              className={i === MENU_LINKS.length ? "sm-item sm-gap" : "sm-item"}
+              style={{ "--i": i } as CSSProperties}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") playHoverSound();
+              }}
+            >
+              {row.node}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function HoverDot() {
+  return (
+    <svg className="sm-dot" viewBox="0 0 10 10" aria-hidden="true">
+      <circle cx="5" cy="5" r="5" fill="currentColor" />
+    </svg>
+  );
+}
+
 /**
  * Site header: Produtos (dropdown with every product, grouped), Setores,
- * Documentação, Sobre, Contacto, language, light/dark theme and "Agendar demo".
- * Collapses into a full-screen menu on small screens.
+ * Documentação, Sobre, Contacto, light/dark theme and "Agendar demo", plus the
+ * right-hand menu with every section and the settings.
  */
 export function SiteHeader({ solid = false }: { solid?: boolean }) {
   const [menu, setMenu] = useState(false);
-  const [mobile, setMobile] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -110,29 +257,16 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
     };
   }, [menu]);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("site-menu-locked", mobile);
-    if (!mobile) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMobile(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [mobile]);
-
   const links = [
     { label: "Setores", href: href("pt", { key: "sectors" }) },
     { label: "Documentação", href: href("pt", { key: "docs" }) },
     { label: "Sobre", href: href("pt", { key: "about" }) },
     { label: "Contacto", href: href("pt", { key: "contact" }) },
   ];
-  const close = () => {
-    setMenu(false);
-    setMobile(false);
-  };
+  const close = () => setMenu(false);
 
   return (
-    <header className="site-header" data-solid={solid} data-menu={menu || mobile}>
+    <header className="site-header" data-solid={solid} data-menu={menu}>
       <Link className="site-logo" href="/" aria-label="Steevanz, início" onClick={close}>
         <FlowerMark />
         <span>STEEVANZ</span>
@@ -162,25 +296,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
         <a className="site-cta" href={href("pt", { key: "book" })}>
           Agendar demo
         </a>
-        <button type="button" className="site-icon-btn site-burger" aria-expanded={mobile} aria-controls="site-mobile-menu" aria-label={mobile ? "Fechar menu" : "Abrir menu"} onClick={() => setMobile((v) => !v)}>
-          <span />
-          <span />
-        </button>
-      </div>
-
-      <div id="site-mobile-menu" className="site-mobile" data-open={mobile}>
-        <p className="site-menu-title">Produtos</p>
-        <ProductsMenu onNavigate={close} />
-        <nav className="site-mobile-links" aria-label="Menu">
-          {links.map((link) => (
-            <a key={link.label} href={link.href} onClick={close}>
-              {link.label}
-            </a>
-          ))}
-        </nav>
-        <a className="site-cta site-mobile-cta" href={href("pt", { key: "book" })} onClick={close}>
-          Agendar demonstração
-        </a>
+        <SiteMenu />
       </div>
     </header>
   );

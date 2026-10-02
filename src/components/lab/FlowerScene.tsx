@@ -139,10 +139,12 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     bumpScale: 0.55,
     metalness: 0,
     roughness: 0.62,
-    sheen: 0.7,
-    sheenColor: new THREE.Color("#ffffff"),
-    sheenRoughness: 0.45,
-    envMapIntensity: 0.4,
+    // Soft, warm velvet; a modest specular so the sun models the petals instead of glaring.
+    sheen: 0.38,
+    sheenColor: new THREE.Color("#fff1e0"),
+    sheenRoughness: 0.55,
+    specularIntensity: 0.45,
+    envMapIntensity: 0.35,
     side: THREE.DoubleSide,
     transparent: false,
   });
@@ -150,7 +152,7 @@ function createPetalMaterial(textures: ReturnType<typeof createPetalTextures>, t
     uVein: { value: textures.veinMap },
     uPulse: { value: 0 },
     uTime: { value: 0 },
-    uRim: { value: 0.22 },
+    uRim: { value: 0.16 },
   };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, material.userData.uniforms);
@@ -303,10 +305,20 @@ function Flower({ stateRef, onAdvance, onReady }: { stateRef: RefObject<Experien
 
   const geometries = useMemo(() => Array.from({ length: PETAL_COUNT }, (_, i) => createPetalGeometry(11 + i * 7)), []);
   const textures = useMemo(() => createPetalTextures(), []);
-  const materials = useMemo(() => {
-    const tints = ["#ffffff", "#fdfbf8", "#fffefb", "#fbf9f6", "#ffffff"];
-    return geometries.map((_, i) => createPetalMaterial(textures, tints[i]));
-  }, [geometries, textures]);
+  // Warm cream with a little variation between petals: real petals reflect ~70-80% of
+  // light, and pure white under the sun clips to a flat shape with no modelling.
+  const tints = useMemo(() => ["#f4ebdf", "#f2e7d9", "#f5ede2", "#f0e4d5", "#f3e9dc"], []);
+  const materials = useMemo(
+    () => geometries.map((_, i) => createPetalMaterial(textures, tints[i])),
+    [geometries, textures, tints],
+  );
+  // The dark theme's sun is much stronger (for the leaf shadows on the dark wall), so
+  // the petals are toned down there to keep their shading.
+  const dark = useTheme() === "dark";
+  useEffect(() => {
+    const albedo = dark ? 0.8 : 0.93;
+    materials.forEach((material, i) => material.color.set(tints[i]).multiplyScalar(albedo));
+  }, [dark, materials, tints]);
   const filaments = useMemo(() => createFilaments(), []);
   const trailUniforms = useMemo(() => ({ uPixelRatio: { value: 1 } }), []);
 

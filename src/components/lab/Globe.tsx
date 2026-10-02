@@ -37,7 +37,7 @@ function Planet({ light }: { light: boolean }) {
       uSpec: { value: spec },
       uSun: { value: new THREE.Vector3(-0.55, 0.45, 0.7).normalize() },
       uTint: { value: new THREE.Color("#8b6bb8") },
-      uRim: { value: new THREE.Color("#e9e2f2") },
+      uRim: { value: new THREE.Color("#cbbde4") },
       uLight: { value: light ? 1 : 0 },
     };
   }, [day, night, spec, light]);
@@ -68,17 +68,19 @@ function Planet({ light }: { light: boolean }) {
             // Gentle grade towards the brand violet, mostly in the shadows.
             float lum = dot(dayCol, vec3(0.299, 0.587, 0.114));
             dayCol = mix(dayCol, uTint * (lum * 1.6), 0.28);
-            dayCol *= 0.35 + 0.75 * max(sun, 0.0);
-            // Ocean glint.
+            dayCol *= 0.24 + 0.58 * max(sun, 0.0);
+            // Ocean glint: small and soft, a highlight rather than a hotspot.
             float water = texture2D(uSpec, vUv).r;
             vec3 h = normalize(uSun + vView);
-            dayCol += vec3(1.0, 0.92, 0.85) * pow(max(dot(n, h), 0.0), 40.0) * water * 0.35;
+            dayCol += vec3(1.0, 0.92, 0.85) * pow(max(dot(n, h), 0.0), 70.0) * water * 0.16;
             vec3 lights = pow(texture2D(uNight, vUv).rgb, vec3(2.2));
-            vec3 nightCol = vec3(1.0, 0.72, 0.32) * lights * 1.6 + vec3(0.04, 0.025, 0.07);
+            vec3 nightCol = vec3(1.0, 0.72, 0.32) * lights * 1.3 + vec3(0.03, 0.02, 0.055);
             vec3 col = mix(nightCol, dayCol, dayMix);
             // Thin atmosphere line on the limb (no halo).
             float rim = pow(1.0 - max(dot(n, vView), 0.0), 3.0);
-            col = mix(col, uRim, rim * mix(0.12, 0.3, dayMix));
+            col = mix(col, uRim, rim * mix(0.08, 0.18, dayMix));
+            // Soft shoulder on the highlights so bright land and cloud never clip to white.
+            col = col / (1.0 + col * 0.35) * 1.18;
             gl_FragColor = vec4(col, 1.0);
             #include <colorspace_fragment>
           }
@@ -88,74 +90,95 @@ function Planet({ light }: { light: boolean }) {
   );
 }
 
-/** A deep, slow starfield with gentle twinkle and an occasional shooting star. */
-function Stars() {
-  const material = useRef<THREE.ShaderMaterial>(null);
-  const shoot = useRef<THREE.Mesh>(null);
-  const geometry = useMemo(() => {
-    const n = 700;
-    const pos = new Float32Array(n * 3);
-    const seed = new Float32Array(n);
-    let a = 7;
-    const rand = () => ((a = (a * 16807) % 2147483647) - 1) / 2147483646;
-    for (let k = 0; k < n; k++) {
-      pos[k * 3] = (rand() - 0.5) * 14;
-      pos[k * 3 + 1] = (rand() - 0.15) * 8;
-      pos[k * 3 + 2] = -3 - rand() * 4;
-      seed[k] = rand();
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    g.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
-    return g;
+/**
+ * Night sky behind the whole section (dark theme): a 2D starfield across the full
+ * height, copy included, with varied size and brightness, a gentle twinkle on some
+ * stars and an occasional shooting star. Cheap, and paused while off screen.
+ */
+function GlobeSky() {
+  const canvas = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const el = canvas.current;
+    const ctx = el?.getContext("2d");
+    if (!el || !ctx) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    type Star = { x: number; y: number; r: number; a: number; tw: number; ph: number; c: string };
+    let stars: Star[] = [];
+    let w = 0;
+    let h = 0;
+    const tints = ["243,236,255", "243,236,255", "243,236,255", "214,196,255", "255,228,196"];
+    let seed = 11;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+    const build = () => {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      w = el.clientWidth;
+      h = el.clientHeight;
+      el.width = Math.round(w * dpr);
+      el.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seed = 11;
+      const count = Math.round((w * h) / 2400);
+      stars = Array.from({ length: count }, () => {
+        const big = rand() < 0.06;
+        return {
+          x: rand() * w,
+          y: rand() * h,
+          r: big ? 0.9 + rand() * 0.6 : 0.35 + rand() * 0.55,
+          a: big ? 0.65 + rand() * 0.3 : 0.18 + rand() * 0.45,
+          tw: rand() < 0.3 ? 0.35 + rand() * 0.5 : 0,
+          ph: rand() * Math.PI * 2,
+          c: tints[Math.floor(rand() * tints.length)],
+        };
+      });
+    };
+    const draw = (t: number) => {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        const flicker = s.tw && !reduced ? 1 - s.tw * (0.5 + 0.5 * Math.sin(t * 0.0012 * (1 + s.ph * 0.3) + s.ph)) : 1;
+        ctx.globalAlpha = s.a * flicker;
+        ctx.fillStyle = `rgb(${s.c})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+    build();
+    draw(0);
+
+    let frame = 0;
+    let visible = false;
+    let last = 0;
+    const loop = (t: number) => {
+      frame = requestAnimationFrame(loop);
+      if (t - last < 33) return; // ~30 fps is plenty for a twinkle
+      last = t;
+      draw(t);
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      cancelAnimationFrame(frame);
+      if (visible && !reduced) frame = requestAnimationFrame(loop);
+    });
+    io.observe(el);
+    const onResize = () => {
+      build();
+      draw(performance.now());
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(frame);
+      io.disconnect();
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uPixelRatio: { value: 1 } }), []);
-  useFrame(({ clock, gl }) => {
-    const t = clock.elapsedTime;
-    if (material.current) {
-      material.current.uniforms.uTime.value = t;
-      material.current.uniforms.uPixelRatio.value = gl.getPixelRatio();
-    }
-    // Shooting star every ~7 s, across the upper sky.
-    const m = shoot.current;
-    if (m) {
-      const k = (t % 7) / 1.1;
-      m.visible = k < 1;
-      m.position.set(-3 + k * 4.5, 2.6 - k * 1.3, -2.5);
-      (m.material as THREE.MeshBasicMaterial).opacity = Math.sin(Math.min(1, k) * Math.PI) * 0.8;
-    }
-  });
+
   return (
-    <>
-      <points geometry={geometry} renderOrder={-1}>
-        <shaderMaterial
-          ref={material}
-          uniforms={uniforms}
-          transparent
-          depthWrite={false}
-          vertexShader={/* glsl */ `
-            attribute float aSeed; uniform float uTime; uniform float uPixelRatio; varying float vA;
-            void main() {
-              vec4 mv = modelViewMatrix * vec4(position, 1.0);
-              gl_PointSize = (0.8 + aSeed * aSeed * 2.4) * uPixelRatio;
-              vA = (0.25 + 0.75 * aSeed) * (0.6 + 0.4 * sin(uTime * (0.5 + aSeed * 1.5) + aSeed * 40.0));
-              gl_Position = projectionMatrix * mv;
-            }
-          `}
-          fragmentShader={/* glsl */ `
-            varying float vA;
-            void main() {
-              float d = length(gl_PointCoord - 0.5) * 2.0;
-              gl_FragColor = vec4(0.93, 0.9, 1.0, exp(-d * d * 5.0) * vA);
-            }
-          `}
-        />
-      </points>
-      <mesh ref={shoot} rotation={[0, 0, -0.28]}>
-        <planeGeometry args={[0.9, 0.012]} />
-        <meshBasicMaterial color="#f3ecff" transparent depthWrite={false} />
-      </mesh>
-    </>
+    <div className="globe-sky" aria-hidden="true">
+      <canvas ref={canvas} />
+      <span className="globe-shoot" />
+    </div>
   );
 }
 
@@ -169,7 +192,7 @@ function Clouds() {
   return (
     <mesh ref={mesh} renderOrder={1}>
       <sphereGeometry args={[R * 1.008, 96, 96]} />
-      <meshLambertMaterial map={tex} transparent opacity={0.32} depthWrite={false} />
+      <meshLambertMaterial map={tex} color="#e4dcef" transparent opacity={0.22} depthWrite={false} />
     </mesh>
   );
 }
@@ -326,8 +349,14 @@ function Earth({ light }: { light: boolean }) {
     if (spin.current) spin.current.rotation.set(d.rx, d.ry, 0);
   });
 
+  // Framing (solved for this camera, fov 38 at z 3.3): the horizon sits ~7% below the
+  // canvas top, right under the copy, and on landscape screens the planet spans ~55% of
+  // the width at the bottom edge whatever the canvas shape. Set back a little so the
+  // perspective stays natural.
+  const radius = Math.min(3, Math.max(2, 2.2 + (size.width / size.height - 3.6) * 0.51));
+  const position: [number, number, number] = portrait ? [0, -0.51, -0.5] : [0, -1.348 - 1.0425 * (radius - 2.4), -0.6];
   return (
-    <group position={[0, portrait ? -0.55 : -1.45, 0]} scale={portrait ? 1.05 : 1.78} rotation={[0.1, 0, 0]}>
+    <group position={position} scale={portrait ? 1.5 : radius} rotation={[0.1, 0, 0]}>
       <group ref={spin}>
         <group rotation={FACE_PT}>
           <Planet light={light} />
@@ -336,7 +365,7 @@ function Earth({ light }: { light: boolean }) {
           <Pulse />
         </group>
       </group>
-      <directionalLight position={[-0.55, 0.45, 0.7]} intensity={2.2} />
+      <directionalLight position={[-0.55, 0.45, 0.7]} intensity={1.5} />
       <ambientLight intensity={0.15} />
     </group>
   );
@@ -348,7 +377,12 @@ function Earth({ light }: { light: boolean }) {
  */
 const TEXTURES = [TEX + "earth_atmos_2048.jpg", TEX + "earth_lights_2048.png", TEX + "earth_specular_2048.jpg", TEX + "earth_clouds_1024.png"];
 
-export function GlobeSection({ light }: { light: boolean }) {
+/**
+ * "Em crescimento": a night scene in both themes (space is dark; a photoreal planet on
+ * a pale background reads as a product render). In the light theme it rises as a dark
+ * card with rounded top corners out of the warm wall (see lab.css).
+ */
+export function GlobeSection() {
   // Download the Earth images in the background once the page is idle, so the
   // globe is ready long before the visitor reaches it.
   useEffect(() => {
@@ -381,12 +415,12 @@ export function GlobeSection({ light }: { light: boolean }) {
 
   return (
     <section ref={section} className="globe" aria-labelledby="globe-title">
+      <GlobeSky />
       <div className="globe-canvas" aria-hidden="true">
         {near ? (
-          <Canvas frameloop={visible ? "always" : "never"} dpr={[1, 1.75]} camera={{ position: [0, 0, 3.3], fov: 38 }} gl={{ antialias: true, alpha: true }}>
+          <Canvas frameloop={visible ? "always" : "never"} resize={{ scroll: false }} dpr={[1, 1.75]} camera={{ position: [0, 0, 3.3], fov: 38 }} gl={{ antialias: true, alpha: true }}>
             <Suspense fallback={null}>
-              <Stars />
-              <Earth light={light} />
+              <Earth light={false} />
             </Suspense>
           </Canvas>
         ) : null}

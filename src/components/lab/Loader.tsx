@@ -78,16 +78,15 @@ export function Loader({ ready, onReveal }: { ready: boolean; onReveal: () => vo
   return (
     <div ref={root} className="loader" data-phase={phase} role="status" aria-label="A carregar a Steevanz">
       <div className="ld-stage" aria-hidden="true">
+        {/* The tile and the flower are separate HTML layers so the flower can turn inside
+            the tile with compositor-only transforms (fluid even while the page boots). */}
         <span className="ld-mark-slot">
-          <FlowerMark size={64} />
+          <span className="ld-tile" />
+          <span className="ld-flower">
+            <FlowerMark size={56} tile={false} />
+          </span>
         </span>
         <span className="ld-name">STEEVANZ</span>
-      </div>
-      <div className="ld-foot" aria-hidden="true">
-        <span>Empresa portuguesa · desde 2021</span>
-        <span className="loader-line">
-          <i />
-        </span>
       </div>
     </div>
   );

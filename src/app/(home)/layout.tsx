@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "../lab/lab.css";
-import { labDisplay, labSans } from "../lab/fonts";
+import { labDisplay, labSans, labTitle } from "../lab/fonts";
 import { rootMetadata } from "@/lib/root-metadata";
 import { Cursor } from "@/components/lab/Cursor";
 import { EmbedFlag } from "@/components/lab/EmbedFlag";
@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 export default function HomeRootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-PT" className={`${labDisplay.variable} ${labSans.variable}`} suppressHydrationWarning>
+    <html lang="pt-PT" className={`${labDisplay.variable} ${labTitle.variable} ${labSans.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
