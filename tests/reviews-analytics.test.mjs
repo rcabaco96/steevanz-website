@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { attributeReviews, computeAnalytics, computeRatingGoal, filterReviews, zonedParts } from "../src/lib/reviews/analytics.ts";
+import { attributeReviews, computeAnalytics, computeRatingGoal, filterReviews, isNegative, isPositive, zonedParts } from "../src/lib/reviews/analytics.ts";
 import { themeSentences, themesIn, significantWords } from "../src/lib/reviews/text.ts";
 
 function review(id, publishedAt, rating = 5, extra = {}) {
@@ -286,5 +286,15 @@ describe("competitors", async () => {
     assert.equal(result.ratingGap.fiveStarsToPass, 188);
     assert.equal(result.reviewsGap.reviewsDiff, 301);
     assert.equal(result.paceLeader.name, "x");
+  });
+});
+
+describe("negative and positive rule", () => {
+  it("treats 1 to 3 stars as negative and 4 to 5 as positive, with nothing in between", () => {
+    assert.deepEqual([1, 2, 3, 4, 5].map(isNegative), [true, true, true, false, false]);
+    assert.deepEqual([1, 2, 3, 4, 5].map(isPositive), [false, false, false, true, true]);
+    const list = [review("three", "2026-09-02T10:00:00Z", 3), review("four", "2026-09-01T10:00:00Z", 4)];
+    assert.deepEqual(filterReviews(list, { stars: "negative", unanswered: false, theme: null }).map((r) => r.id), ["three"]);
+    assert.deepEqual(filterReviews(list, { stars: "positive", unanswered: false, theme: null }).map((r) => r.id), ["four"]);
   });
 });

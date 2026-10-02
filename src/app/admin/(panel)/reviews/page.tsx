@@ -86,7 +86,7 @@ function BusinessFields({ business }: { business?: BusinessRow }) {
           placeholder="dono@negocio.pt"
           className={`${adminInputClasses} h-11`}
         />
-        <span className="text-xs font-normal text-subtle">Recebe um email quando entra uma review de 1 ou 2 estrelas.</span>
+        <span className="text-xs font-normal text-subtle">Recebe um email quando entra uma review negativa (1 a 3 estrelas).</span>
       </label>
       <fieldset className="flex flex-col gap-2 sm:col-span-2">
         <legend className="mb-1 text-sm font-medium text-muted">Serviços Steevanz que já tem</legend>

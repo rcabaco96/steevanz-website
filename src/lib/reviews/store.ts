@@ -3,6 +3,7 @@ import { sendOwnerEmail } from "@/lib/booking/email";
 import { siteUrl } from "@/lib/site";
 import { createServiceClient } from "@/lib/supabase/service";
 import { fetchGoogleReviews, type ApifyReviewItem } from "./apify";
+import { isNegative } from "./analytics";
 import { loadCompetition } from "./competitor-store";
 import type { DashboardSource, GoogleReview, NfcPlate, NfcTap, ReviewBusiness } from "./types";
 
@@ -242,7 +243,7 @@ export async function syncBusinessReviews(client: SupabaseClient, business: Sync
       .eq("id", business.id);
     if (updateError) throw new Error(updateError.message);
 
-    const negative = fresh.filter((row) => row.rating <= 2 && Date.now() - Date.parse(row.published_at) < alertMaxAgeMs);
+    const negative = fresh.filter((row) => isNegative(row.rating) && Date.now() - Date.parse(row.published_at) < alertMaxAgeMs);
     if (negative.length) await sendNegativeReviewAlert(business, negative);
     return { businessId: business.id, slug: business.slug, ok: true, imported: rows.length };
   } catch (error) {

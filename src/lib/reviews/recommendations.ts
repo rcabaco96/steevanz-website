@@ -1,4 +1,4 @@
-import type { DashboardAnalytics } from "./analytics.ts";
+import { isNegative, type DashboardAnalytics } from "./analytics.ts";
 import { normalize } from "./text.ts";
 import type { DashboardSource, GoogleReview } from "./types.ts";
 
@@ -24,7 +24,7 @@ const phonePattern = /\b(telefon\w*|ligu\w*|ligar|liguei|chamadas?|nao atend\w*|
 const bookingPattern = /\b(reserv\w*|marca[cç]\w*|marcar|booking|book\w*)\b/;
 
 function negativeMentions(reviews: GoogleReview[], pattern: RegExp): number {
-  return reviews.filter((review) => review.rating <= 3 && review.text && pattern.test(normalize(review.text))).length;
+  return reviews.filter((review) => isNegative(review.rating) && review.text && pattern.test(normalize(review.text))).length;
 }
 
 const format1 = (value: number) => value.toFixed(1).replace(".", ",");
@@ -36,7 +36,7 @@ const format1 = (value: number) => value.toFixed(1).replace(".", ",");
 export function aiReviewsPitch(source: DashboardSource, analytics: DashboardAnalytics, periodReviews: GoogleReview[]): AiReviewsPitch | null {
   if (source.business.activeServices?.includes("ai-reviews")) return null;
   const unanswered = periodReviews.filter((review) => !review.ownerReply?.trim());
-  const negativeUnanswered = unanswered.filter((review) => review.rating <= 2).length;
+  const negativeUnanswered = unanswered.filter((review) => isNegative(review.rating)).length;
   const { replyRate, medianReplyHours } = analytics.kpis;
   const lagging =
     unanswered.length >= 3 || negativeUnanswered > 0 || (replyRate.current !== null && replyRate.current < 0.9) || (medianReplyHours ?? 0) > 48;

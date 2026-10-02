@@ -5,6 +5,10 @@ export const periodIds = ["30d", "90d", "12m", "all"] as const;
 export type PeriodId = (typeof periodIds)[number];
 
 export const attributionWindowMinutes = 90;
+
+/** Steevanz rule, used everywhere: 1–3 stars is a negative review, 4–5 stars a positive one. */
+export const isNegative = (rating: number) => rating <= 3;
+export const isPositive = (rating: number) => rating >= 4;
 const timeZone = "Europe/Lisbon";
 const dayMs = 86_400_000;
 
@@ -125,7 +129,7 @@ export interface DashboardAnalytics {
   plates: PlateStats[];
   sources: Record<TapSource, number>;
   tapHeatmap: number[][];
-  sentiment: { positive: number; neutral: number; negative: number };
+  sentiment: { positive: number; negative: number };
   themes: ThemeStats[];
   words: { positive: WordCount[]; negative: WordCount[] };
   weekdays: WeekdayStats[];
@@ -342,7 +346,7 @@ export function computeRatingGoal(
   };
 }
 
-export const reviewStarFilters = ["all", "positive", "neutral", "negative"] as const;
+export const reviewStarFilters = ["all", "positive", "negative"] as const;
 export type ReviewStarFilter = (typeof reviewStarFilters)[number];
 
 export interface ReviewFilters {
@@ -354,9 +358,8 @@ export interface ReviewFilters {
 export function filterReviews(reviews: GoogleReview[], filters: ReviewFilters): GoogleReview[] {
   return reviews
     .filter((review) => {
-      if (filters.stars === "positive" && review.rating < 4) return false;
-      if (filters.stars === "neutral" && review.rating !== 3) return false;
-      if (filters.stars === "negative" && review.rating > 2) return false;
+      if (filters.stars === "positive" && !isPositive(review.rating)) return false;
+      if (filters.stars === "negative" && !isNegative(review.rating)) return false;
       if (filters.unanswered && review.ownerReply?.trim()) return false;
       if (filters.theme && !themesIn(review.text).includes(filters.theme)) return false;
       return true;
@@ -489,9 +492,8 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
 
   // Text.
   const sentiment = {
-    positive: reviews.filter((review) => review.rating >= 4).length,
-    neutral: reviews.filter((review) => review.rating === 3).length,
-    negative: reviews.filter((review) => review.rating <= 2).length,
+    positive: reviews.filter((review) => isPositive(review.rating)).length,
+    negative: reviews.filter((review) => isNegative(review.rating)).length,
   };
   const overall = kpis.avgRating.current ?? 0;
   const themed = reviews.map((review) => ({ review, themes: themesIn(review.text) }));
@@ -499,8 +501,8 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
     .map((id) => {
       const mentions = themed.filter((entry) => entry.themes.includes(id)).map((entry) => entry.review);
       const avgRating = average(mentions.map((review) => review.rating));
-      const positiveShare = ratio(mentions.filter((review) => review.rating >= 4).length, mentions.length) ?? 0;
-      const negativeShare = ratio(mentions.filter((review) => review.rating <= 2).length, mentions.length) ?? 0;
+      const positiveShare = ratio(mentions.filter((review) => isPositive(review.rating)).length, mentions.length) ?? 0;
+      const negativeShare = ratio(mentions.filter((review) => isNegative(review.rating)).length, mentions.length) ?? 0;
       let verdict: ThemeStats["verdict"] = "neutral";
       if (mentions.length >= minSample.themeMentions && avgRating !== null) {
         if (negativeShare >= 0.3 || avgRating <= overall - 0.4) verdict = "improve";
@@ -512,8 +514,8 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
     .sort((a, b) => b.mentions - a.mentions);
 
   const words = {
-    positive: topWords(reviews.filter((review) => review.rating >= 4), 12),
-    negative: topWords(reviews.filter((review) => review.rating <= 2), 12),
+    positive: topWords(reviews.filter((review) => isPositive(review.rating)), 12),
+    negative: topWords(reviews.filter((review) => isNegative(review.rating)), 12),
   };
 
   const weekdays: WeekdayStats[] = [1, 2, 3, 4, 5, 6, 0].map((weekday) => {

@@ -48,7 +48,7 @@ export const themeLabels: Record<ThemeId, string> = {
   location: "Localização",
 };
 
-const starFilterLabels: Record<ReviewStarFilter, string> = { all: "Todas", positive: "Positivas", neutral: "Neutras", negative: "Negativas" };
+const starFilterLabels: Record<ReviewStarFilter, string> = { all: "Todas", positive: "Positivas (4–5★)", negative: "Negativas (1–3★)" };
 
 export interface DashboardQuery {
   period: PeriodId;
@@ -815,7 +815,7 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
             {kpis.reviews.current ? (
               <p className="mt-4 text-sm text-muted">
                 <strong className="text-success">{formatPercent(analytics.sentiment.positive / kpis.reviews.current)} positivas</strong> (4–5★) ·{" "}
-                <strong className="text-danger">{formatPercent(analytics.sentiment.negative / kpis.reviews.current)} negativas</strong> (1–2★)
+                <strong className="text-danger">{formatPercent(analytics.sentiment.negative / kpis.reviews.current)} negativas</strong> (1–3★)
               </p>
             ) : null}
           </Card>
