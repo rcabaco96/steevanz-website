@@ -41,9 +41,10 @@ export async function GET(request: NextRequest) {
         steps.push("discover");
         snapshotDue = true;
       }
-      if (snapshotDue && hasTime()) {
-        await snapshotCompetitors(client, business.id);
-        steps.push("snapshot");
+      while (snapshotDue && hasTime()) {
+        const captured = await snapshotCompetitors(client, business.id);
+        if (!captured) break;
+        steps.push(`snapshot:${captured}`);
       }
       while (hasTime()) {
         const measured = await measureCompetitorPace(client, business.id);

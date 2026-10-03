@@ -6,12 +6,11 @@ import { ArrowUpRight } from "@/components/icons";
 import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
 import { requireAdmin } from "@/lib/admin/auth";
-import { createPlate, deleteReviewBusiness, refreshCompetitors, saveReviewBusiness, syncReviewsNow, toggleCompetitor, updatePlate } from "@/lib/admin/review-actions";
+import { deleteReviewBusiness, refreshCompetitors, saveReviewBusiness, syncReviewsNow, toggleCompetitor } from "@/lib/admin/review-actions";
 import { apifyToken } from "@/lib/reviews/apify";
 import { competitorRadiusKm } from "@/lib/reviews/competitors";
 import { formatDateTime } from "@/lib/reviews/format";
 import type { BusinessRow } from "@/lib/reviews/store";
-import { siteUrl } from "@/lib/site";
 import { createServiceClient } from "@/lib/supabase/service";
 
 export const metadata: Metadata = { title: "Reviews" };
@@ -25,13 +24,6 @@ interface CompetitorAdminRow {
   distance_m: number | null;
   excluded: boolean;
   pace_per_month: number | null;
-}
-
-interface PlateRow {
-  code: string;
-  business_id: string;
-  label: string;
-  active: boolean;
 }
 
 function BusinessFields({ business }: { business?: BusinessRow }) {
@@ -113,19 +105,27 @@ function BusinessFields({ business }: { business?: BusinessRow }) {
 export default async function ReviewsAdminPage() {
   await requireAdmin();
   const client = createServiceClient();
-  const [{ data: businesses, error }, { data: plates, error: platesError }, { data: competitors, error: competitorsError }] = await Promise.all([
+  const [{ data: businesses, error }] = await Promise.all([
     client
       .from("review_businesses")
-      .select("id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, created_at")
+      .select("id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, full_synced_at, created_at")
       .order("name"),
-    client.from("nfc_plates").select("code, business_id, label, active").order("created_at"),
-    client
-      .from("competitors")
-      .select("id, business_id, name, category, distance_m, is_self, excluded, pace_per_month")
-      .eq("is_self", false)
-      .order("distance_m"),
   ]);
-  if (error || platesError || competitorsError) throw new Error(error?.message ?? platesError?.message ?? competitorsError?.message);
+  if (error) throw new Error(error.message);
+  // One query per business: up to 100 competitors each would overflow a single 1000-row page.
+  const competitorLists = await Promise.all(
+    (businesses ?? []).map((business) =>
+      client
+        .from("competitors")
+        .select("id, business_id, name, category, distance_m, is_self, excluded, pace_per_month")
+        .eq("business_id", business.id)
+        .eq("is_self", false)
+        .order("distance_m"),
+    ),
+  );
+  const failedList = competitorLists.find((list) => list.error);
+  if (failedList?.error) throw new Error(failedList.error.message);
+  const competitors = competitorLists.flatMap((list) => list.data ?? []);
   const hasApify = Boolean(apifyToken());
 
   return (
@@ -143,7 +143,6 @@ export default async function ReviewsAdminPage() {
 
       {(businesses as BusinessRow[]).length ? (
         (businesses as BusinessRow[]).map((business) => {
-          const businessPlates = (plates as PlateRow[]).filter((plate) => plate.business_id === business.id);
           return (
             <Panel
               key={business.id}
@@ -162,68 +161,32 @@ export default async function ReviewsAdminPage() {
                     </p>
                     <p className="text-subtle">
                       {business.last_synced_at ? `Última sincronização: ${formatDateTime(business.last_synced_at)}` : "Nunca sincronizado"}
+                      {business.full_synced_at ? ` · histórico completo lido a ${formatDateTime(business.full_synced_at)} (repete todos os meses)` : ""}
                     </p>
                     {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}
                   </div>
-                  <AdminForm action={syncReviewsNow} className="flex flex-col items-start gap-1 sm:items-end">
-                    <input type="hidden" name="id" value={business.id} />
-                    <SubmitButton variant="secondary" size="sm" pendingLabel="A importar… (até 5 min)">
-                      Sincronizar agora
-                    </SubmitButton>
-                  </AdminForm>
+                  <div className="flex flex-wrap gap-2 sm:justify-end">
+                    <AdminForm action={syncReviewsNow} className="flex flex-col items-start gap-1 sm:items-end">
+                      <input type="hidden" name="id" value={business.id} />
+                      <input type="hidden" name="mode" value="refresh" />
+                      <SubmitButton variant="secondary" size="sm" pendingLabel="A importar…">
+                        Sincronizar agora
+                      </SubmitButton>
+                    </AdminForm>
+                    <AdminForm
+                      action={syncReviewsNow}
+                      confirmMessage="Ler outra vez todo o histórico de reviews? Usa mais crédito do Apify; serve para apanhar respostas a reviews antigas."
+                      className="flex flex-col items-start gap-1 sm:items-end"
+                    >
+                      <input type="hidden" name="id" value={business.id} />
+                      <input type="hidden" name="mode" value="full" />
+                      <SubmitButton variant="ghost" size="sm" pendingLabel="A reimportar… (até 5 min)">
+                        Reimportar tudo
+                      </SubmitButton>
+                    </AdminForm>
+                  </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  <h3 className="font-semibold text-text">Placas</h3>
-                  {businessPlates.length ? (
-                    <ul className="flex flex-col divide-y divide-line rounded-2xl border border-line">
-                      {businessPlates.map((plate) => (
-                        <li key={plate.code} className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="flex min-w-0 flex-col gap-1">
-                            <p className="font-medium text-text">
-                              {plate.label}
-                              {plate.active ? null : <span className="ml-2 text-xs font-normal text-subtle">(inativa)</span>}
-                            </p>
-                            <p className="flex flex-col gap-0.5 text-xs text-muted">
-                              <span>
-                                NFC: <code className="break-all select-all text-text">{`${siteUrl}/r/${plate.code}`}</code>
-                              </span>
-                              <span>
-                                QR: <code className="break-all select-all text-text">{`${siteUrl}/r/${plate.code}?s=qr`}</code>
-                              </span>
-                            </p>
-                          </div>
-                          <div className="flex shrink-0 gap-1">
-                            <AdminForm action={updatePlate} hideMessage>
-                              <input type="hidden" name="code" value={plate.code} />
-                              <input type="hidden" name="intent" value={plate.active ? "deactivate" : "activate"} />
-                              <SubmitButton variant="ghost" size="sm">
-                                {plate.active ? "Desativar" : "Ativar"}
-                              </SubmitButton>
-                            </AdminForm>
-                            <AdminForm action={updatePlate} hideMessage confirmMessage={`Remover a placa «${plate.label}» e os toques registados?`}>
-                              <input type="hidden" name="code" value={plate.code} />
-                              <input type="hidden" name="intent" value="delete" />
-                              <SubmitButton variant="ghost" size="sm" className="text-danger">
-                                Remover
-                              </SubmitButton>
-                            </AdminForm>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <EmptyState>Ainda sem placas. Crie uma para obter o link a gravar no chip NFC.</EmptyState>
-                  )}
-                  <AdminForm action={createPlate} className="flex flex-col gap-2 sm:flex-row sm:items-end">
-                    <input type="hidden" name="business_id" value={business.id} />
-                    <label className={`${adminLabelClasses} flex-1`}>
-                      Nova placa
-                      <input name="label" required maxLength={80} placeholder="Ex.: Balcão, Mesa 4, Montra" className={`${adminInputClasses} h-11`} />
-                    </label>
-                    <SubmitButton size="md">Criar placa</SubmitButton>
-                  </AdminForm>
-                </div>
 
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1">
@@ -235,7 +198,12 @@ export default async function ReviewsAdminPage() {
                     </p>
                   </div>
                   {(competitors as CompetitorAdminRow[]).some((row) => row.business_id === business.id) ? (
-                    <ul className="flex flex-col divide-y divide-line rounded-2xl border border-line">
+                    <details className="group">
+                      <summary className="inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-accent-text [&::-webkit-details-marker]:hidden">
+                        Ver os {(competitors as CompetitorAdminRow[]).filter((row) => row.business_id === business.id).length} concorrentes
+                        <span aria-hidden="true" className="transition-transform group-open:rotate-180">⌄</span>
+                      </summary>
+                    <ul className="mt-2 flex flex-col divide-y divide-line rounded-2xl border border-line">
                       {(competitors as CompetitorAdminRow[])
                         .filter((row) => row.business_id === business.id)
                         .map((row) => (
@@ -257,6 +225,7 @@ export default async function ReviewsAdminPage() {
                           </li>
                         ))}
                     </ul>
+                    </details>
                   ) : null}
                   <AdminForm action={refreshCompetitors} className="flex flex-col items-start gap-1">
                     <input type="hidden" name="id" value={business.id} />

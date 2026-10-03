@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GoogleG } from "@/components/icons";
 import type { CompetitorEntry } from "@/lib/reviews/competitors";
 
 type SortKey = "rating" | "reviews" | "pace";
@@ -30,6 +31,16 @@ function display(entry: CompetitorEntry, key: SortKey): string {
   if (key === "rating") return `${decimal(entry.rating ?? current, 1)}★`;
   if (key === "reviews") return number.format(current);
   return `${number.format(current)}/mês`;
+}
+
+/** First, last and the pages around the current one, with gaps in between: 1 … 4 5 6 … 10. */
+function pageItems(current: number, total: number): (number | "gap")[] {
+  const items: (number | "gap")[] = [];
+  for (let page = 0; page < total; page++) {
+    if (page === 0 || page === total - 1 || Math.abs(page - current) <= 1) items.push(page);
+    else if (items[items.length - 1] !== "gap") items.push("gap");
+  }
+  return items;
 }
 
 function distance(meters: number | null): string {
@@ -64,9 +75,29 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
         }`}
       >
         <span className={`text-center text-sm font-semibold ${entry.isSelf ? "text-accent-text" : "text-subtle"}`}>{current === null ? "–" : `${rank}.º`}</span>
-        <span className="flex min-w-0 flex-col">
-          <span className={`truncate text-sm ${entry.isSelf ? "font-semibold text-text" : "text-text"}`}>{entry.name}</span>
-          <span className="text-xs text-subtle">{entry.isSelf ? "O seu negócio" : distance(entry.distanceM)}</span>
+        <span className="flex min-w-0 items-center gap-2">
+          <a
+            href={entry.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir ${entry.name} no Google Maps`}
+            title="Abrir no Google Maps"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-accent-contrast shadow-sm transition-colors hover:bg-accent-hover"
+          >
+            <GoogleG size={17} />
+          </a>
+          <span className="flex min-w-0 flex-col">
+            <a
+              href={entry.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`relative max-w-full truncate self-start text-sm text-text hover:text-accent-text hover:underline ${entry.isSelf ? "font-semibold" : ""}`}
+            >
+              {entry.name}
+              <span className="sr-only"> (abrir no Google Maps)</span>
+            </a>
+            <span className="text-xs text-subtle">{entry.isSelf ? "O seu negócio" : distance(entry.distanceM)}</span>
+          </span>
         </span>
         <span className="tabular text-right text-sm font-semibold text-text">
           {display(entry, sort)}
@@ -129,21 +160,30 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
           >
             ← Anterior
           </button>
-          <span className="flex gap-1">
-            {Array.from({ length: pages }, (_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setPage(index)}
-                aria-current={index === currentPage ? "page" : undefined}
-                aria-label={`Página ${index + 1}: ${index * pageSize + 1}.º a ${Math.min(listed.length, (index + 1) * pageSize)}.º`}
-                className={`grid h-10 w-10 place-items-center rounded-full text-sm font-semibold ${
-                  index === currentPage ? "bg-surface-inverse text-inverse" : "text-muted hover:bg-surface-2"
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
+          <span className="text-sm text-muted sm:hidden">
+            Página {currentPage + 1} de {pages}
+          </span>
+          <span className="hidden gap-1 sm:flex">
+            {pageItems(currentPage, pages).map((item, index) =>
+              item === "gap" ? (
+                <span key={`gap-${index}`} className="grid h-10 w-6 place-items-center text-subtle" aria-hidden="true">
+                  …
+                </span>
+              ) : (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setPage(item)}
+                  aria-current={item === currentPage ? "page" : undefined}
+                  aria-label={`Página ${item + 1}: ${item * pageSize + 1}.º a ${Math.min(listed.length, (item + 1) * pageSize)}.º`}
+                  className={`grid h-10 w-10 place-items-center rounded-full text-sm font-semibold ${
+                    item === currentPage ? "bg-surface-inverse text-inverse" : "text-muted hover:bg-surface-2"
+                  }`}
+                >
+                  {item + 1}
+                </button>
+              ),
+            )}
           </span>
           <button
             type="button"

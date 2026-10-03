@@ -16,23 +16,6 @@ export interface ReviewBusiness {
   category: string | null;
 }
 
-export interface NfcPlate {
-  code: string;
-  label: string;
-  active: boolean;
-}
-
-export type TapSource = "nfc" | "qr";
-export type TapDevice = "ios" | "android" | "other";
-
-export interface NfcTap {
-  plateCode: string;
-  source: TapSource;
-  device: TapDevice;
-  visitorHash: string;
-  tappedAt: string;
-}
-
 export interface GoogleReview {
   id: string;
   rating: number;
@@ -48,8 +31,6 @@ export interface GoogleReview {
 
 export interface DashboardSource {
   business: ReviewBusiness;
-  plates: NfcPlate[];
-  taps: NfcTap[];
   reviews: GoogleReview[];
   competition: Competition | null;
 }

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { AlertIcon, ArrowUpRight, Check, CloseIcon, LightbulbIcon, ProductGlyph, SparkleIcon, StarFilled, WhatsAppIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
@@ -9,7 +8,6 @@ import { aiReviewsPitch, recommendations, type AiReviewsPitch, type Recommendati
 import { href as routeHref } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import {
-  attributionWindowMinutes,
   bucketKey,
   filterReviews,
   minSample,
@@ -20,13 +18,15 @@ import {
   type ReviewFilters,
   type ReviewStarFilter,
 } from "@/lib/reviews/analytics";
-import { formatBucket, formatDate, formatDateTime, formatHours, formatInt, formatPercent, formatRating, formatSignedPercent, weekdayLong, weekdayShort } from "@/lib/reviews/format";
+import { formatBucket, formatDate, formatDateTime, formatHours, formatInt, formatPercent, formatRating, formatSignedPercent, weekdayLong } from "@/lib/reviews/format";
 import { competitorRadiusKm, type Competition } from "@/lib/reviews/competitors";
 import type { ThemeId } from "@/lib/reviews/text";
 import type { DashboardSource } from "@/lib/reviews/types";
-import { BarList, ColumnChart, DataTable, Heatmap, RatingDots, RatingLineChart, SplitBar, type ColumnDatum } from "./charts";
+import { BarList, ColumnChart, DataTable, RatingDots, RatingLineChart, type ColumnDatum } from "./charts";
 import { CompetitionBoard } from "./CompetitionBoard";
+import { DashboardBusyProvider, PendingLink, Refreshable } from "./DashboardBusy";
 import { DashboardSync } from "./DashboardSync";
+import { InfoTip } from "./InfoTip";
 import { ReviewText } from "./ReviewText";
 import { Stars } from "./Stars";
 import { ThemeReviews } from "./ThemeReviews";
@@ -48,7 +48,35 @@ export const themeLabels: Record<ThemeId, string> = {
   location: "Localização",
 };
 
-const starFilterLabels: Record<ReviewStarFilter, string> = { all: "Todas", positive: "Positivas (4–5★)", negative: "Negativas (1–3★)" };
+/**
+ * How each figure built with our own criteria is calculated, shown behind an (i) icon.
+ * Business rule: anything we compute ourselves must explain itself (see the reviews skill).
+ */
+const infoTexts = {
+  ratingGoal:
+    "O Google mostra a média de todas as reviews arredondada a uma casa decimal (4,45 aparece como 4,5). A barra mostra onde está a sua média exata entre a nota atual e a seguinte. «Faltam X reviews de 5★» é o mínimo de reviews de 5★ que leva a média ao valor em que o Google passa a mostrar a nota seguinte. O ritmo usa as reviews de 5★ dos últimos 3 meses. Com o histórico incompleto, usamos os totais do Google (estimativa).",
+  avgRating:
+    "Média das estrelas das reviews publicadas no período escolhido. A comparação é com o período anterior de igual duração e só aparece com pelo menos 5 reviews nesse período.",
+  reviews: "Reviews publicadas no Google no período escolhido, comparadas com o período anterior de igual duração (mínimo de 5 reviews para comparar).",
+  competition:
+    "Até 30 negócios num raio de 5 km: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. Reviews por mês: ritmo nas últimas semanas (ou pelas datas das reviews mais recentes, enquanto não há histórico). «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Dados públicos do Google, atualizados todas as semanas.",
+  pace: "Média de reviews por mês nos últimos 3 meses, comparada com os 3 meses antes. Não depende do filtro de período: mostra sempre o ritmo atual.",
+  replyRate:
+    "Percentagem das reviews do período que já têm resposta do dono no Google. Ao atualizar, apanhamos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo.",
+  sentiment: "Regra Steevanz: reviews de 1 a 3★ contam como negativas e de 4 a 5★ como positivas. Não há categoria neutra.",
+  weekdayRating: "Média das estrelas das reviews publicadas em cada dia da semana (hora de Lisboa). Dias com menos de 5 reviews não mostram valor.",
+  themes:
+    "Detetamos os temas no texto das reviews com listas de palavras em português e inglês (ex.: «espera», «demora», «fila» para Tempo de espera). «Ponto forte»: pelo menos 5 menções, média acima da média geral e 80% ou mais positivas (4–5★). «A melhorar»: pelo menos 5 menções e 30% ou mais negativas (1–3★), ou média 0,4★ abaixo da geral.",
+  words: "Palavras mais repetidas nas reviews positivas (4–5★) e negativas (1–3★), sem palavras comuns como «muito» ou «bom». Cada palavra conta uma vez por review e só aparece se surgir em pelo menos 2.",
+  beforeAfter:
+    "Compara o tempo desde a instalação das placas com igual número de meses antes (mínimo 3 meses). Reviews por mês = reviews no intervalo ÷ meses. Só aparece com pelo menos 1 mês de placas e 3 reviews antes. Não depende do filtro de período.",
+  replies:
+    "Percentagem das reviews do período que já têm resposta do dono no Google; o tempo é a mediana entre a review e a resposta. Ao atualizar, vemos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo (todos os meses, ou com o link por baixo de «Atualizar reviews»).",
+  recommendations: "Cada sugestão só aparece quando os seus dados mostram um sinal concreto (indicado em cada cartão) e nunca para serviços que já tem.",
+  insights: "Frases geradas automaticamente a partir dos números deste painel. Só aparecem quando a diferença é relevante e há dados suficientes.",
+};
+
+const starFilterLabels: Record<ReviewStarFilter, string> ={ all: "Todas", positive: "Positivas (4–5★)", negative: "Negativas (1–3★)" };
 
 export interface DashboardQuery {
   period: PeriodId;
@@ -58,13 +86,16 @@ export interface DashboardQuery {
 
 export const reviewsPageSize = 20;
 
-function Section({ id, title, lead, children }: { id: string; title: string; lead?: ReactNode; children: ReactNode }) {
+function Section({ id, title, lead, info, children }: { id: string; title: string; lead?: ReactNode; info?: ReactNode; children: ReactNode }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 id={`${id}-title`} className="display text-2xl sm:text-3xl">
-          {title}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 id={`${id}-title`} className="display text-2xl sm:text-3xl">
+            {title}
+          </h2>
+          {info ? <InfoTip label={title}>{info}</InfoTip> : null}
+        </div>
         {lead ? <p className="max-w-3xl text-sm text-muted sm:text-base">{lead}</p> : null}
       </div>
       {children}
@@ -72,12 +103,15 @@ function Section({ id, title, lead, children }: { id: string; title: string; lea
   );
 }
 
-function Card({ title, subtitle, children, className = "" }: { title?: string; subtitle?: string; children: ReactNode; className?: string }) {
+function Card({ title, subtitle, info, children, className = "" }: { title?: string; subtitle?: string; info?: ReactNode; children: ReactNode; className?: string }) {
   return (
     <div className={`card min-w-0 p-4 sm:p-6 ${className}`}>
       {title ? (
         <div className="mb-5 flex flex-col gap-0.5">
-          <h3 className="font-semibold text-text">{title}</h3>
+          <h3 className="flex items-center gap-1.5 font-semibold text-text">
+            {title}
+            {info ? <InfoTip label={title}>{info}</InfoTip> : null}
+          </h3>
           {subtitle ? <p className="text-sm text-subtle">{subtitle}</p> : null}
         </div>
       ) : null}
@@ -87,7 +121,19 @@ function Card({ title, subtitle, children, className = "" }: { title?: string; s
 }
 
 
-function Delta({ comparison, format, unit = "", allTime = false }: { comparison: Comparison; format: "count" | "rating" | "share"; unit?: string; allTime?: boolean }) {
+function Delta({
+  comparison,
+  format,
+  unit = "",
+  allTime = false,
+  versus = "período anterior",
+}: {
+  comparison: Comparison;
+  format: "count" | "rating" | "share";
+  unit?: string;
+  allTime?: boolean;
+  versus?: string;
+}) {
   const { current, previous } = comparison;
   if (allTime) return <span className="text-xs text-subtle">todo o histórico</span>;
   if (current === null || previous === null) return <span className="text-xs text-subtle">poucos dados para comparar</span>;
@@ -110,15 +156,18 @@ function Delta({ comparison, format, unit = "", allTime = false }: { comparison:
   return (
     <span className={`text-xs font-semibold ${tone}`}>
       <span aria-hidden="true">{arrow} </span>
-      {label} <span className="font-normal text-subtle">vs período anterior</span>
+      {label} <span className="font-normal text-subtle">vs {versus}</span>
     </span>
   );
 }
 
-function StatTile({ label, value, children }: { label: string; value: string; children?: ReactNode }) {
+function StatTile({ label, value, info, children }: { label: string; value: string; info?: ReactNode; children?: ReactNode }) {
   return (
     <div className="card flex min-w-0 flex-col gap-1.5 p-4 sm:p-5">
-      <p className="text-sm text-muted">{label}</p>
+      <p className="flex items-center gap-1.5 text-sm text-muted">
+        {label}
+        {info ? <InfoTip label={label}>{info}</InfoTip> : null}
+      </p>
       <p className="text-3xl font-semibold tracking-[-0.02em] text-text">{value}</p>
       {children}
     </div>
@@ -189,7 +238,10 @@ function RatingGoalCard({ goal }: { goal: RatingGoal }) {
   return (
     <div className="card col-span-2 flex flex-col gap-4 p-5 sm:p-6 lg:row-span-2">
       <div className="flex flex-col gap-1">
-        <p className="text-sm text-muted">Avaliação no Google</p>
+        <p className="flex items-center gap-1.5 text-sm text-muted">
+          Avaliação no Google
+          <InfoTip label="Avaliação no Google e meta">{infoTexts.ratingGoal}</InfoTip>
+        </p>
         <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <span className="text-6xl font-semibold tracking-[-0.03em] text-text">{formatRating(goal.current)}</span>
           <Stars rating={goal.current} size={22} />
@@ -386,8 +438,9 @@ function CompetitionSummary({ competition }: { competition: Competition }) {
   return (
     <aside aria-labelledby="competition-summary-title" className="card flex flex-col gap-4 p-4 sm:p-5 lg:w-[27rem] lg:shrink-0">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="competition-summary-title" className="font-semibold text-text">
+        <h2 id="competition-summary-title" className="flex items-center gap-1.5 font-semibold text-text">
           Na sua zona
+          <InfoTip label="Na sua zona">{infoTexts.competition}</InfoTip>
         </h2>
         <span className="text-xs text-subtle">
           {plural(competition.total - 1, "concorrente", "concorrentes")} até {radiusLabel}
@@ -429,6 +482,7 @@ function CompetitionSection({ competition, category }: { competition: Competitio
     <Section
       id="competition"
       title="Como está face à concorrência"
+      info={infoTexts.competition}
       lead={`${plural(competition.total - 1, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel}. Dados públicos do Google, atualizados todas as semanas${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
     >
       <Card>
@@ -448,37 +502,11 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics): st
         : `Está em ${competition.ratingRank}.º de ${competition.total} na avaliação entre os negócios da mesma categoria num raio de ${radiusLabel}. Veja abaixo quanto falta para subir.`,
     );
   }
-  const { beforeAfter, plates, weekdays, themes, kpis, tapHeatmap } = analytics;
+  const { beforeAfter, weekdays, themes, kpis } = analytics;
   if (beforeAfter && beforeAfter.upliftPct !== null && Math.abs(beforeAfter.upliftPct) >= 10) {
     items.push(
       `Desde que as placas foram instaladas, recebe em média ${formatRating(beforeAfter.after.reviewsPerMonth)} reviews por mês, ${formatSignedPercent(beforeAfter.upliftPct)} face aos meses anteriores (${formatRating(beforeAfter.before.reviewsPerMonth)}/mês).`,
     );
-  }
-  const reliablePlates = plates.filter((plate) => plate.enoughData && plate.conversion !== null);
-  const bestPlate = [...reliablePlates].sort((a, b) => b.conversion! - a.conversion!)[0];
-  const worstPlate = [...reliablePlates].sort((a, b) => a.conversion! - b.conversion!)[0];
-  if (bestPlate && worstPlate && bestPlate.code !== worstPlate.code && bestPlate.conversion! > worstPlate.conversion! * 1.4) {
-    items.push(
-      `A placa «${bestPlate.label}» converte ${formatPercent(bestPlate.conversion)} dos toques em reviews, contra ${formatPercent(worstPlate.conversion)} em «${worstPlate.label}». Vale a pena pedir a review junto da placa com melhor resultado.`,
-    );
-  }
-  const bestDay = weekdays.filter((day) => day.enoughTaps && day.conversion !== null).sort((a, b) => b.conversion! - a.conversion!)[0];
-  if (bestDay && kpis.conversion.current && bestDay.conversion! > kpis.conversion.current * 1.2) {
-    items.push(`À ${weekdayLong[bestDay.weekday]}, ${formatPercent(bestDay.conversion)} dos toques resultam numa review, o melhor dia da semana.`);
-  }
-  const hourTotals = Array.from({ length: 24 }, (_, hour) => tapHeatmap.reduce((sum, row) => sum + row[hour], 0));
-  const totalTaps = hourTotals.reduce((sum, value) => sum + value, 0);
-  if (totalTaps >= 30) {
-    let bestStart = 0;
-    let bestSum = -1;
-    for (let hour = 0; hour < 22; hour++) {
-      const sum = hourTotals[hour] + hourTotals[hour + 1] + hourTotals[hour + 2];
-      if (sum > bestSum) {
-        bestSum = sum;
-        bestStart = hour;
-      }
-    }
-    items.push(`Entre as ${bestStart}h e as ${bestStart + 3}h acontecem ${formatPercent(bestSum / totalTaps)} dos toques. É a melhor altura para a equipa lembrar os clientes.`);
   }
   const weakest = themes.find((theme) => theme.verdict === "improve");
   if (weakest) {
@@ -496,7 +524,6 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics): st
   if (kpis.replyRate.current !== null && kpis.replyRate.current < 0.7 && analytics.unansweredCount > 0) {
     items.push(`Há ${plural(analytics.unansweredCount, "review", "reviews")} sem resposta neste período. Responder a todas, sobretudo às negativas, mostra a quem pesquisa que o negócio está atento.`);
   }
-  if (!source.taps.length) items.push("Ainda não há toques registados. Assim que as placas apontarem para o link Steevanz, aparecem aqui os toques e a conversão.");
   return items.slice(0, 5);
 }
 
@@ -517,13 +544,6 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
   const longLabel = (key: string) =>
     `${period.granularity === "week" ? `Semana de ${formatBucket(key)}` : formatBucket(key, true)}${key === lastKey ? " (em curso)" : ""}`;
   const reviewColumns: ColumnDatum[] = series.map((bucket) => ({ key: bucket.key, label: formatBucket(bucket.key), longLabel: longLabel(bucket.key), value: bucket.reviews }));
-  const tapColumns: ColumnDatum[] = series.map((bucket) => ({ key: bucket.key, label: formatBucket(bucket.key), longLabel: longLabel(bucket.key), value: bucket.taps }));
-  const hasTaps = source.taps.length > 0;
-  const activeHours = Array.from({ length: 24 }, (_, hour) => hour).filter((hour) => analytics.tapHeatmap.some((row) => row[hour] > 0));
-  const heatHours = activeHours.length
-    ? Array.from({ length: activeHours[activeHours.length - 1] - activeHours[0] + 1 }, (_, index) => activeHours[0] + index)
-    : [];
-  const weekdayOrder = [1, 2, 3, 4, 5, 6, 0];
 
   const href = (changes: Partial<{ period: PeriodId; stars: ReviewStarFilter; unanswered: boolean; theme: ThemeId | null; limit: number }>, hash = "") => {
     const next = { period: query.period, ...query.filters, limit: query.limit, ...changes };
@@ -546,6 +566,7 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
   const suggestions = recommendations(source, analytics, periodReviews);
 
   return (
+    <DashboardBusyProvider>
     <div className="flex flex-col gap-12 sm:gap-16">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div className="flex min-w-0 flex-col gap-5">
@@ -553,7 +574,7 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
             <p className="eyebrow">Análise de reviews Google</p>
             <h1 className="display text-[2.2rem] leading-tight sm:text-5xl">{business.name}</h1>
             {business.platesInstalledOn ? (
-              <p className="text-sm text-subtle">Placas instaladas a {formatDate(`${business.platesInstalledOn}T12:00:00Z`)} · toques em tempo real</p>
+              <p className="text-sm text-subtle">Placas instaladas a {formatDate(`${business.platesInstalledOn}T12:00:00Z`)}</p>
             ) : null}
           </div>
           <DashboardSync
@@ -563,7 +584,8 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
           />
           <nav aria-label="Período" className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
             {periodOrder.map((id) => (
-              <Link
+              <PendingLink
+                scope="period"
                 key={id}
                 href={href({ period: id, limit: reviewsPageSize })}
                 scroll={false}
@@ -573,263 +595,126 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
                 }`}
               >
                 {periodLabels[id]}
-              </Link>
+              </PendingLink>
             ))}
           </nav>
         </div>
-        {source.competition ? <CompetitionSummary competition={source.competition} /> : null}
+        {source.competition ? (
+          <Refreshable scopes={["sync"]}>
+            <CompetitionSummary competition={source.competition} />
+          </Refreshable>
+        ) : null}
       </div>
 
-      <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        {analytics.ratingGoal ? (
-          <RatingGoalCard goal={analytics.ratingGoal} />
-        ) : (
-          <div className="card col-span-2 p-5 sm:p-6 lg:row-span-2">
-            <p className="text-sm text-muted">Ainda não há reviews importadas do Google.</p>
-          </div>
-        )}
-        <StatTile label="Avaliação no período" value={kpis.avgRating.current === null ? "–" : `${formatRating(kpis.avgRating.current)}★`}>
-          <Delta allTime={period.id === "all"} comparison={kpis.avgRating} format="rating" unit="★" />
-        </StatTile>
-        <StatTile label="Reviews no período" value={formatInt(kpis.reviews.current ?? 0)}>
-          <Delta allTime={period.id === "all"} comparison={kpis.reviews} format="count" />
-        </StatTile>
-        <StatTile label="Toques nas placas" value={formatInt(kpis.taps.current ?? 0)}>
-          <Delta allTime={period.id === "all"} comparison={kpis.taps} format="count" />
-        </StatTile>
-        <StatTile label="Toques que viram review" value={formatPercent(kpis.conversion.current)}>
-          {kpis.conversion.current === null ? (
-            <span className="text-xs text-subtle">precisa de {minSample.taps} toques ou mais</span>
+      <Refreshable scopes={["sync","period"]}>
+  <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {analytics.ratingGoal ? (
+            <RatingGoalCard goal={analytics.ratingGoal} />
           ) : (
-            <Delta allTime={period.id === "all"} comparison={kpis.conversion} format="share" />
+            <div className="card col-span-2 p-5 sm:p-6 lg:row-span-2">
+              <p className="text-sm text-muted">Ainda não há reviews importadas do Google.</p>
+            </div>
           )}
-        </StatTile>
-      </section>
-
-      {insights.length ? (
-        <section aria-labelledby="insights-title" className="card flex flex-col gap-4 border-accent/30 p-5 sm:p-6">
-          <h2 id="insights-title" className="flex items-center gap-2 font-semibold text-text">
-            <LightbulbIcon size={20} className="text-accent-text" />
-            Destaques
-          </h2>
-          <ul className="flex flex-col gap-3">
-            {insights.map((insight) => (
-              <li key={insight} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
-                <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                {insight}
-              </li>
-            ))}
-          </ul>
+          <StatTile label="Avaliação no período" info={infoTexts.avgRating} value={kpis.avgRating.current === null ? "–" : `${formatRating(kpis.avgRating.current)}★`}>
+            <Delta allTime={period.id === "all"} comparison={kpis.avgRating} format="rating" unit="★" />
+          </StatTile>
+          <StatTile label="Reviews no período" info={infoTexts.reviews} value={formatInt(kpis.reviews.current ?? 0)}>
+            <Delta allTime={period.id === "all"} comparison={kpis.reviews} format="count" />
+          </StatTile>
+          <StatTile label="Reviews respondidas" info={infoTexts.replyRate} value={formatPercent(kpis.replyRate.current)}>
+            <Delta allTime={period.id === "all"} comparison={kpis.replyRate} format="share" />
+          </StatTile>
+          <StatTile label="Reviews por mês" info={infoTexts.pace} value={formatRating(kpis.pace.current)}>
+            <Delta comparison={kpis.pace} format="count" versus="3 meses anteriores" />
+          </StatTile>
         </section>
-      ) : null}
+      </Refreshable>
 
-      {showEvolutionSection ? (
-      <Section id="evolution" title="Evolução" lead={`Reviews, avaliação e toques por ${granularityLabel} no período escolhido.`}>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card title={`Reviews por ${granularityLabel}`} subtitle={marker ? "A linha marca a instalação das placas." : undefined} className="lg:col-span-2">
-            <div className="pt-6">
-              <ColumnChart data={reviewColumns} seriesLabel="reviews" marker={marker} />
-            </div>
-            <DataTable
-              caption={`Reviews por ${granularityLabel}`}
-              headers={["Período", "Reviews", "Avaliação média", "Toques"]}
-              rows={series.map((bucket) => [longLabel(bucket.key), bucket.reviews, formatRating(bucket.avgRating), bucket.taps])}
-            />
-          </Card>
-          <Card title={`Avaliação média por ${granularityLabel}`}>
-            <div className="pt-6">
-              <RatingLineChart
-                seriesLabel="Avaliação média"
-                data={series.map((bucket) => ({ key: bucket.key, label: formatBucket(bucket.key), longLabel: longLabel(bucket.key), value: bucket.avgRating }))}
+      <Refreshable scopes={["sync","period"]}>
+  {insights.length ? (
+          <section aria-labelledby="insights-title" className="card flex flex-col gap-4 border-accent/30 p-5 sm:p-6">
+            <h2 id="insights-title" className="flex items-center gap-2 font-semibold text-text">
+              <LightbulbIcon size={20} className="text-accent-text" />
+              Destaques
+              <InfoTip label="Destaques">{infoTexts.insights}</InfoTip>
+            </h2>
+            <ul className="flex flex-col gap-3">
+              {insights.map((insight) => (
+                <li key={insight} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
+                  <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                  {insight}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </Refreshable>
+
+      <Refreshable scopes={["sync"]}>
+  {source.competition ? <CompetitionSection competition={source.competition} category={business.category} /> : null}
+      </Refreshable>
+
+      <Refreshable scopes={["sync","period"]}>
+  <Section id="feedback" title="O que dizem os clientes" lead="Estrelas, dias da semana e palavras mais usadas nas reviews do período.">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card title="Distribuição de estrelas" info={infoTexts.sentiment}>
+              <BarList
+                rows={analytics.starDistribution.map((row) => ({
+                  key: String(row.stars),
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      {row.stars}
+                      <StarFilled size={14} className="text-star" />
+                    </span>
+                  ),
+                  value: row.count,
+                  display: formatPercent(row.share),
+                  detail: `(${row.count})`,
+                }))}
               />
-            </div>
-          </Card>
-          <Card title={`Toques nas placas por ${granularityLabel}`}>
-            {hasTaps ? (
-              <div className="pt-6">
-                <ColumnChart data={tapColumns} seriesLabel="toques" color="viz-2" marker={marker} />
-              </div>
-            ) : (
-              <p className="text-sm text-muted">Sem toques registados.</p>
-            )}
-          </Card>
-        </div>
-      </Section>
-      ) : null}
-
-      <Section id="before-after" title="Antes e depois das placas" lead="Compara o tempo desde a instalação com igual período anterior (independente do filtro).">
-        {analytics.beforeAfter ? (
-          <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
-            {[
-              {
-                label: "Reviews por mês",
-                before: formatRating(analytics.beforeAfter.before.reviewsPerMonth),
-                after: formatRating(analytics.beforeAfter.after.reviewsPerMonth),
-                note: analytics.beforeAfter.upliftPct !== null ? `${formatSignedPercent(analytics.beforeAfter.upliftPct)} reviews por mês` : null,
-              },
-              {
-                label: "Avaliação média",
-                before: `${formatRating(analytics.beforeAfter.before.avgRating)}★`,
-                after: `${formatRating(analytics.beforeAfter.after.avgRating)}★`,
-                note: null,
-              },
-              {
-                label: "Reviews com texto",
-                before: formatPercent(analytics.beforeAfter.before.textShare),
-                after: formatPercent(analytics.beforeAfter.after.textShare),
-                note: null,
-              },
-            ].map((item) => (
-              <div key={item.label} className="card flex flex-col gap-3 p-4 sm:p-5">
-                <p className="text-sm text-muted">{item.label}</p>
-                <div className="flex items-end justify-between gap-3">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-subtle">Antes</span>
-                    <span className="text-xl font-semibold text-muted">{item.before}</span>
-                  </div>
-                  <span aria-hidden="true" className="pb-1 text-subtle">
-                    →
-                  </span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs text-subtle">Depois</span>
-                    <span className="text-3xl font-semibold tracking-[-0.02em] text-text">{item.after}</span>
-                  </div>
-                </div>
-                {item.note ? <p className={`text-sm font-semibold ${analytics.beforeAfter!.upliftPct! >= 0 ? "text-success" : "text-danger"}`}>{item.note}</p> : null}
-              </div>
+              {kpis.reviews.current ? (
+                <p className="mt-4 text-sm text-muted">
+                  <strong className="text-success">{formatPercent(analytics.sentiment.positive / kpis.reviews.current)} positivas</strong> (4–5★) ·{" "}
+                  <strong className="text-danger">{formatPercent(analytics.sentiment.negative / kpis.reviews.current)} negativas</strong> (1–3★)
+                </p>
+              ) : null}
+            </Card>
+            <Card title="Avaliação por dia da semana" info={infoTexts.weekdayRating} subtitle={`Ajuda a detetar dias com problemas (equipa, movimento). «–»: menos de ${minSample.reviews} reviews.`}>
+              <RatingDots
+                rows={analytics.weekdays.map((day) => ({
+                  key: String(day.weekday),
+                  label: weekdayLong[day.weekday].replace("-feira", ""),
+                  rating: day.enoughReviews ? day.avgRating : null,
+                  count: day.reviews,
+                }))}
+              />
+            </Card>
+            {(["positive", "negative"] as const).map((tone) => (
+              <Card key={tone} info={infoTexts.words} title={tone === "positive" ? "Palavras nas reviews positivas" : "Palavras nas reviews negativas"}>
+                {analytics.words[tone].length ? (
+                  <ul className="flex flex-wrap gap-2">
+                    {analytics.words[tone].map((entry) => (
+                      <li
+                        key={entry.word}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${tone === "positive" ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}
+                      >
+                        {entry.word}
+                        <span className="tabular text-xs opacity-75">{entry.count}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted">Sem dados suficientes neste período.</p>
+                )}
+              </Card>
             ))}
           </div>
-        ) : (
-          <Card>
-            <p className="text-sm text-muted">{beforeAfterGapText(analytics.beforeAfterGap)}</p>
-          </Card>
-        )}
-      </Section>
+        </Section>
+      </Refreshable>
 
-      <Section
-        id="plates"
-        title="Placas NFC"
-        lead={`Uma review conta como vinda da placa quando é publicada até ${attributionWindowMinutes} minutos depois de um toque. É uma estimativa: o Google não diz de onde vem cada review.`}
-      >
-        {hasTaps ? (
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Card title="Desempenho por placa" subtitle="Percentagem de toques que resultam numa review." className="lg:col-span-2">
-              <ul className="flex flex-col divide-y divide-line">
-                {analytics.plates.map((plate) => {
-                  const best = Math.max(0.0001, ...analytics.plates.filter((candidate) => candidate.enoughData).map((candidate) => candidate.conversion ?? 0));
-                  const shown = plate.enoughData ? formatPercent(plate.conversion) : "–";
-                  return (
-                    <li key={plate.code} className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 sm:grid sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_max-content] sm:items-center sm:gap-4">
-                      <div className="flex items-baseline justify-between gap-3 sm:block">
-                        <p className="font-medium text-text">{plate.label}</p>
-                        <p className="text-2xl font-semibold tracking-[-0.02em] text-text sm:hidden">{shown}</p>
-                      </div>
-                      <span className="flex items-center gap-3">
-                        <span className="h-3 min-w-0 flex-1" aria-hidden="true">
-                          {plate.enoughData ? (
-                            <span className="block h-full rounded-r-[4px] bg-viz-1" style={{ width: `max(2px, ${((plate.conversion ?? 0) / best) * 100}%)` }} />
-                          ) : (
-                            <span className="block h-full w-full rounded-[4px] border border-dashed border-line-strong" />
-                          )}
-                        </span>
-                        <span className="hidden w-12 text-right text-lg font-semibold text-text sm:inline">{shown}</span>
-                      </span>
-                      <p className="tabular text-sm text-muted sm:text-right">
-                        {plate.enoughData
-                          ? `${formatInt(plate.taps)} toques · ${formatInt(plate.attributedReviews)} reviews`
-                          : `${plural(plate.taps, "toque", "toques")}: poucos dados (mín. ${minSample.taps})`}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Card>
-            <Card title="Quando tocam nas placas" subtitle="Toques por dia da semana e hora. Mostra quando a equipa deve lembrar os clientes." className="lg:col-span-2">
-              <div className="pt-6">
-                <Heatmap
-                  hours={heatHours}
-                  valueLabel="toques"
-                  rows={weekdayOrder.map((weekday) => ({ label: weekdayShort[weekday], longLabel: weekdayLong[weekday], values: analytics.tapHeatmap[weekday] }))}
-                />
-              </div>
-              <DataTable
-                caption="Toques por dia da semana e hora"
-                headers={["Dia", ...heatHours.map((hour) => `${hour}h`)]}
-                rows={weekdayOrder.map((weekday) => [weekdayShort[weekday], ...heatHours.map((hour) => analytics.tapHeatmap[weekday][hour])])}
-              />
-            </Card>
-            <Card title="Toques que viram review, por dia" subtitle={`A cinzento: menos de ${minSample.taps} toques nesse dia, valor pouco fiável.`}>
-              <div className="pt-6">
-                <ColumnChart
-                  seriesLabel="de conversão"
-                  valueFormat="percent"
-                  data={analytics.weekdays.map((day) => ({
-                    key: String(day.weekday),
-                    label: weekdayShort[day.weekday],
-                    longLabel: `${weekdayLong[day.weekday]} (${day.taps} toques)`,
-                    value: day.conversion ?? 0,
-                    muted: !day.enoughTaps,
-                  }))}
-                />
-              </div>
-              <DataTable
-                caption="Conversão por dia da semana"
-                headers={["Dia", "Toques", "Reviews atribuídas", "Conversão"]}
-                rows={analytics.weekdays.map((day) => [weekdayLong[day.weekday], day.taps, day.attributed, formatPercent(day.conversion)])}
-              />
-            </Card>
-            <Card title="NFC ou QR code" subtitle="Ajuda a decidir se vale a pena manter o QR impresso.">
-              <SplitBar
-                segments={[
-                  { key: "nfc", label: "Toque NFC", value: analytics.sources.nfc, className: "bg-viz-1" },
-                  { key: "qr", label: "QR code", value: analytics.sources.qr, className: "bg-viz-2" },
-                ]}
-              />
-              <p className="mt-4 text-sm text-muted">{plural(kpis.uniqueVisitors, "pessoa diferente tocou", "pessoas diferentes tocaram")} nas placas neste período (estimativa).</p>
-            </Card>
-          </div>
-        ) : (
+      <Refreshable scopes={["sync","period"]}>
+  <Section id="themes" info={infoTexts.themes} title="Temas mais falados" lead="Avaliação média das reviews que mencionam cada tema. Toque num tema para ler o que os clientes escreveram.">
           <Card>
-            <p className="text-sm text-muted">Ainda não há toques registados para este negócio.</p>
-          </Card>
-        )}
-      </Section>
-
-      <Section id="feedback" title="O que dizem os clientes" lead="Temas detetados automaticamente no texto das reviews do período.">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card title="Distribuição de estrelas">
-            <BarList
-              rows={analytics.starDistribution.map((row) => ({
-                key: String(row.stars),
-                label: (
-                  <span className="inline-flex items-center gap-1.5">
-                    {row.stars}
-                    <StarFilled size={14} className="text-star" />
-                  </span>
-                ),
-                value: row.count,
-                display: formatPercent(row.share),
-                detail: `(${row.count})`,
-              }))}
-            />
-            {kpis.reviews.current ? (
-              <p className="mt-4 text-sm text-muted">
-                <strong className="text-success">{formatPercent(analytics.sentiment.positive / kpis.reviews.current)} positivas</strong> (4–5★) ·{" "}
-                <strong className="text-danger">{formatPercent(analytics.sentiment.negative / kpis.reviews.current)} negativas</strong> (1–3★)
-              </p>
-            ) : null}
-          </Card>
-          <Card title="Avaliação por dia da semana" subtitle={`Ajuda a detetar dias com problemas (equipa, movimento). «–»: menos de ${minSample.reviews} reviews.`}>
-            <RatingDots
-              rows={analytics.weekdays.map((day) => ({
-                key: String(day.weekday),
-                label: weekdayLong[day.weekday].replace("-feira", ""),
-                rating: day.enoughReviews ? day.avgRating : null,
-                count: day.reviews,
-              }))}
-            />
-          </Card>
-          <Card title="Temas mais falados" subtitle="Toque num tema para ler o que os clientes escreveram." className="lg:col-span-2">
             {analytics.themes.length ? (
               <ul className="divide-y divide-line">
                 {analytics.themes.map((theme) => (
@@ -892,35 +777,92 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
               <p className="text-sm text-muted">Ainda não há reviews com texto suficiente.</p>
             )}
           </Card>
-          {(["positive", "negative"] as const).map((tone) => (
-            <Card key={tone} title={tone === "positive" ? "Palavras nas reviews positivas" : "Palavras nas reviews negativas"}>
-              {analytics.words[tone].length ? (
-                <ul className="flex flex-wrap gap-2">
-                  {analytics.words[tone].map((entry) => (
-                    <li
-                      key={entry.word}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${tone === "positive" ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}
-                    >
-                      {entry.word}
-                      <span className="tabular text-xs opacity-75">{entry.count}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted">Sem dados suficientes neste período.</p>
-              )}
+        </Section>
+      </Refreshable>
+
+      <Refreshable scopes={["sync"]}>
+  <Section id="before-after" info={infoTexts.beforeAfter} title="Antes e depois das placas" lead="Compara o tempo desde a instalação com igual período anterior (independente do filtro).">
+          {analytics.beforeAfter ? (
+            <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
+              {[
+                {
+                  label: "Reviews por mês",
+                  before: formatRating(analytics.beforeAfter.before.reviewsPerMonth),
+                  after: formatRating(analytics.beforeAfter.after.reviewsPerMonth),
+                  note: analytics.beforeAfter.upliftPct !== null ? `${formatSignedPercent(analytics.beforeAfter.upliftPct)} reviews por mês` : null,
+                },
+                {
+                  label: "Avaliação média",
+                  before: `${formatRating(analytics.beforeAfter.before.avgRating)}★`,
+                  after: `${formatRating(analytics.beforeAfter.after.avgRating)}★`,
+                  note: null,
+                },
+                {
+                  label: "Reviews com texto",
+                  before: formatPercent(analytics.beforeAfter.before.textShare),
+                  after: formatPercent(analytics.beforeAfter.after.textShare),
+                  note: null,
+                },
+              ].map((item) => (
+                <div key={item.label} className="card flex flex-col gap-3 p-4 sm:p-5">
+                  <p className="text-sm text-muted">{item.label}</p>
+                  <div className="flex items-end justify-between gap-3">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-subtle">Antes</span>
+                      <span className="text-xl font-semibold text-muted">{item.before}</span>
+                    </div>
+                    <span aria-hidden="true" className="pb-1 text-subtle">
+                      →
+                    </span>
+                    <div className="flex flex-col items-end">
+                      <span className="text-xs text-subtle">Depois</span>
+                      <span className="text-3xl font-semibold tracking-[-0.02em] text-text">{item.after}</span>
+                    </div>
+                  </div>
+                  {item.note ? <p className={`text-sm font-semibold ${analytics.beforeAfter!.upliftPct! >= 0 ? "text-success" : "text-danger"}`}>{item.note}</p> : null}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <p className="text-sm text-muted">{beforeAfterGapText(analytics.beforeAfterGap)}</p>
             </Card>
-          ))}
+          )}
+        </Section>
+      </Refreshable>
+
+      {showEvolutionSection ? (
+      <Section id="evolution" title="Evolução" lead={`Reviews e avaliação por ${granularityLabel} no período escolhido.`}>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card title={`Reviews por ${granularityLabel}`} subtitle={marker ? "A linha marca a instalação das placas." : undefined} className="lg:col-span-2">
+            <div className="pt-6">
+              <ColumnChart data={reviewColumns} seriesLabel="reviews" marker={marker} />
+            </div>
+            <DataTable
+              caption={`Reviews por ${granularityLabel}`}
+              headers={["Período", "Reviews", "Avaliação média"]}
+              rows={series.map((bucket) => [longLabel(bucket.key), bucket.reviews, formatRating(bucket.avgRating)])}
+            />
+          </Card>
+          <Card title={`Avaliação média por ${granularityLabel}`}>
+            <div className="pt-6">
+              <RatingLineChart
+                seriesLabel="Avaliação média"
+                data={series.map((bucket) => ({ key: bucket.key, label: formatBucket(bucket.key), longLabel: longLabel(bucket.key), value: bucket.avgRating }))}
+              />
+            </div>
+          </Card>
         </div>
       </Section>
-
-      {source.competition ? <CompetitionSection competition={source.competition} category={business.category} /> : null}
-
-      {suggestions.length ? (
-        <Section id="recommended" title="Recomendado para o seu negócio" lead="Sugestões a partir do que as suas reviews e placas mostram.">
-          <RecommendationCards items={suggestions} />
-        </Section>
       ) : null}
+
+      <Refreshable scopes={["sync","period"]}>
+  {suggestions.length ? (
+          <Section id="recommended" info={infoTexts.recommendations} title="Recomendado para o seu negócio" lead="Sugestões a partir do que as suas reviews e placas mostram.">
+            <RecommendationCards items={suggestions} />
+          </Section>
+        ) : null}
+      </Refreshable>
 
       <Section
         id="reviews"
@@ -930,7 +872,10 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
         {kpis.reviews.current ? (
           <div className="card flex flex-col gap-3 p-4 sm:p-5">
             <div className="flex items-baseline justify-between gap-3">
-              <p className="font-semibold text-text">Reviews respondidas</p>
+              <p className="flex items-center gap-1.5 font-semibold text-text">
+                Reviews respondidas
+                <InfoTip label="Reviews respondidas">{infoTexts.replies}</InfoTip>
+              </p>
               <p className="text-2xl font-semibold tracking-[-0.02em] text-text">{formatPercent(kpis.replyRate.current)}</p>
             </div>
             <ProgressBar
@@ -947,9 +892,9 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
                 {kpis.medianReplyHours !== null ? ` · responde em ${formatHours(kpis.medianReplyHours)} (mediana)` : ""}
               </span>
               {analytics.unansweredCount && !query.filters.unanswered ? (
-                <Link href={href({ unanswered: true, limit: reviewsPageSize }, "#reviews")} scroll={false} className="inline-flex min-h-10 items-center font-semibold text-accent-text hover:underline">
+                <PendingLink scope="reviews" href={href({ unanswered: true, limit: reviewsPageSize }, "#reviews")} scroll={false} className="inline-flex min-h-10 items-center font-semibold text-accent-text hover:underline">
                   Ver as que faltam →
-                </Link>
+                </PendingLink>
               ) : null}
             </div>
           </div>
@@ -958,7 +903,7 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
         <div className="flex flex-col gap-3">
           <nav aria-label="Filtrar reviews" className="flex flex-wrap gap-1.5">
             {(Object.keys(starFilterLabels) as ReviewStarFilter[]).map((stars) => (
-              <Link
+              <PendingLink scope="reviews"
                 key={stars}
                 href={href({ stars, limit: reviewsPageSize }, "#reviews")}
                 scroll={false}
@@ -968,9 +913,9 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
                 }`}
               >
                 {starFilterLabels[stars]}
-              </Link>
+              </PendingLink>
             ))}
-            <Link
+            <PendingLink scope="reviews"
               href={href({ unanswered: !query.filters.unanswered, limit: reviewsPageSize }, "#reviews")}
               scroll={false}
               aria-pressed={query.filters.unanswered}
@@ -980,10 +925,10 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
             >
               {query.filters.unanswered ? <Check size={14} /> : null}
               Sem resposta ({formatInt(analytics.unansweredCount)})
-            </Link>
+            </PendingLink>
           </nav>
           {query.filters.theme ? (
-            <Link
+            <PendingLink scope="reviews"
               href={href({ theme: null, limit: reviewsPageSize }, "#reviews")}
               scroll={false}
               className="inline-flex h-9 items-center gap-1.5 self-start rounded-full bg-accent-soft px-3.5 text-sm font-semibold text-accent-text"
@@ -991,7 +936,7 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
               Tema: {themeLabels[query.filters.theme]}
               <CloseIcon size={14} />
               <span className="sr-only">(remover filtro)</span>
-            </Link>
+            </PendingLink>
           ) : null}
           <p className="text-sm text-subtle" role="status">
             {plural(filtered.length, "review", "reviews")}
@@ -999,6 +944,7 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
           </p>
         </div>
 
+        <Refreshable scopes={["sync", "period", "reviews"]}>
         {visible.length ? (
           <ul className="grid gap-3 sm:gap-4 lg:grid-cols-2">
             {visible.map((review) => (
@@ -1042,15 +988,17 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
         )}
 
         {filtered.length > visible.length ? (
-          <Link
+          <PendingLink scope="reviews"
             href={href({ limit: query.limit + reviewsPageSize })}
             scroll={false}
             className="inline-flex h-12 items-center justify-center self-center rounded-full border border-line-strong bg-surface px-6 text-sm font-semibold text-text hover:bg-surface-2"
           >
             Ver mais reviews ({formatInt(filtered.length - visible.length)} restantes)
-          </Link>
+          </PendingLink>
         ) : null}
+        </Refreshable>
       </Section>
     </div>
+    </DashboardBusyProvider>
   );
 }

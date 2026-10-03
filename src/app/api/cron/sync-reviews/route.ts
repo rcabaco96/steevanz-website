@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { apifyToken } from "@/lib/reviews/apify";
-import { startReviewSync, syncBusinessReviews, syncTargetColumns, type SyncResult, type SyncTarget } from "@/lib/reviews/store";
+import { needsFullSync, startReviewSync, syncBusinessReviews, syncTargetColumns, type SyncResult, type SyncTarget } from "@/lib/reviews/store";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 
 export const maxDuration = 300;
@@ -19,18 +19,19 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await client
     .from("review_businesses")
-    .select(syncTargetColumns)
+    .select(`${syncTargetColumns}, full_synced_at`)
     .order("last_synced_at", { ascending: true, nullsFirst: true });
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
   const started = Date.now();
-  const queue = [...((data ?? []) as SyncTarget[])];
+  const queue = [...((data ?? []) as (SyncTarget & { full_synced_at: string | null })[])];
   const results: SyncResult[] = [];
   const worker = async () => {
     while (queue.length && Date.now() - started < startBudgetMs) {
       const business = queue.shift()!;
       if ((await startReviewSync(client, business.id, 3600)) !== "started") continue;
-      results.push(await syncBusinessReviews(client, business));
+      // Once a month each business re-reads its whole history, so replies to old reviews show up.
+      results.push(await syncBusinessReviews(client, business, needsFullSync(business) ? "full" : "refresh"));
     }
   };
   await Promise.all(Array.from({ length: concurrency }, worker));

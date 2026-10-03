@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { buttonClasses } from "@/components/ui/Button";
+import { useBusySignal } from "./DashboardBusy";
 import type { DashboardSyncResponse } from "@/lib/reviews/types";
 
 const runningPollMs = 15_000;
@@ -50,6 +51,7 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
   const [refreshing, startRefresh] = useTransition();
   const now = useClock();
   const started = useRef(false);
+  const [scope, setScope] = useState<"recent" | "all">("recent");
 
   // Feedback like "Já estava atualizado" is momentary; errors stay until the next attempt.
   useEffect(() => {
@@ -59,8 +61,9 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
   }, [message, phase]);
 
   const sync = useCallback(
-    async (manual: boolean) => {
+    async (manual: boolean, wholeHistory = false) => {
       setPhase("syncing");
+      setScope(wholeHistory ? "all" : "recent");
       setMessage(null);
       try {
         let body: DashboardSyncResponse = { status: "running" };
@@ -71,7 +74,12 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
             waited = true;
             await sleep(runningPollMs);
           }
-          const response = await fetch(syncUrl, { method: "POST", cache: "no-store" });
+          const response = await fetch(syncUrl, {
+            method: "POST",
+            cache: "no-store",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ scope: wholeHistory ? "all" : "recent" }),
+          });
           body = (await response.json()) as DashboardSyncResponse;
         }
         if (body.status === "running") body = { status: "error", message: "A atualização está a demorar. Tente daqui a pouco." };
@@ -83,7 +91,8 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
         setPhase("idle");
         // "fresh" on the first try means the page already shows the latest import.
         if (body.status === "fresh" && !waited) {
-          if (manual) setMessage("Já estava atualizado.");
+          if (wholeHistory) setMessage("Todo o histórico já foi verificado nas últimas 24 horas.");
+          else if (manual) setMessage("Já estava atualizado.");
           return;
         }
         startRefresh(() => router.refresh());
@@ -105,35 +114,48 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
   }, [sync]);
 
   const busy = phase === "syncing" || refreshing;
+  useBusySignal("sync", busy);
   const status = busy
-    ? "A procurar reviews novas no Google…"
+    ? scope === "all"
+      ? "A verificar todo o histórico de reviews e respostas… (até 2 min)"
+      : "A procurar reviews e respostas novas no Google…"
     : lastSyncedAt
       ? `Reviews atualizadas ${now ? relative(lastSyncedAt, now) : lastSyncedLabel}`
       : "Ainda sem reviews importadas";
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-      <button type="button" onClick={() => void sync(true)} disabled={busy} aria-busy={busy} className={buttonClasses("primary", "md", "disabled:opacity-90")}>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          width="17"
-          height="17"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={busy ? "motion-safe:animate-spin" : ""}
-        >
-          <path d="M20 11a8 8 0 0 0-14.9-3.9M4 5v4h4M4 13a8 8 0 0 0 14.9 3.9M20 19v-4h-4" />
-        </svg>
-        {busy ? "A atualizar…" : "Atualizar reviews"}
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <button type="button" onClick={() => void sync(true)} disabled={busy} aria-busy={busy} className={buttonClasses("primary", "md", "disabled:opacity-90")}>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            width="17"
+            height="17"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={busy ? "motion-safe:animate-spin" : ""}
+          >
+            <path d="M20 11a8 8 0 0 0-14.9-3.9M4 5v4h4M4 13a8 8 0 0 0 14.9 3.9M20 19v-4h-4" />
+          </svg>
+          {busy ? "A atualizar…" : "Atualizar reviews"}
+        </button>
+        <p role="status" className="text-sm text-subtle">
+          {status}
+          {message && !busy ? <span className={phase === "error" ? " text-danger" : ""}> · {message}</span> : null}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={() => void sync(true, true)}
+        disabled={busy}
+        className="inline-flex min-h-10 items-center self-start text-left text-sm font-semibold text-accent-text hover:underline disabled:opacity-50"
+      >
+        Respondeu a reviews antigas? Verificar todo o histórico
       </button>
-      <p role="status" className="text-sm text-subtle">
-        {status}
-        {message && !busy ? <span className={phase === "error" ? " text-danger" : ""}> · {message}</span> : null}
-      </p>
     </div>
   );
 }

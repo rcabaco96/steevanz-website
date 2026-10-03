@@ -1,6 +1,5 @@
 "use server";
 
-import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
@@ -13,7 +12,6 @@ import type { AdminActionState } from "./actions";
 import { AdminAccessError, requireAdmin } from "./auth";
 
 const uuid = z.uuid();
-const plateCode = z.string().regex(/^[a-z0-9]{4,16}$/);
 const googleHosts = /(^|\.)google\.[a-z.]+$|(^|\.)goo\.gl$|(^|\.)g\.page$/;
 
 function value(formData: FormData, key: string): string {
@@ -162,46 +160,6 @@ export async function deleteReviewBusiness(_previous: AdminActionState, formData
   });
 }
 
-function newPlateCode(): string {
-  const alphabet = "abcdefghjkmnpqrstuvwxyz23456789";
-  return Array.from(randomBytes(7), (byte) => alphabet[byte % alphabet.length]).join("");
-}
-
-export async function createPlate(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  return guarded(async () => {
-    const businessId = uuid.safeParse(value(formData, "business_id"));
-    const label = value(formData, "label");
-    if (!businessId.success) return { ok: false, message: "Pedido inválido." };
-    if (!label || label.length > 80) return { ok: false, message: "Dê um nome à placa (ex.: Balcão, Mesa 4)." };
-    const client = createServiceClient();
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const { error } = await client.from("nfc_plates").insert({ code: newPlateCode(), business_id: businessId.data, label });
-      if (!error) {
-        revalidatePath("/admin/reviews");
-        return { ok: true, message: "Placa criada. Grave o link no chip NFC e no QR code." };
-      }
-      if (error.code !== "23505") throw new Error(error.message);
-    }
-    return { ok: false, message: "Não foi possível gerar um código único. Tente novamente." };
-  });
-}
-
-export async function updatePlate(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  return guarded(async () => {
-    const code = plateCode.safeParse(value(formData, "code"));
-    if (!code.success) return { ok: false, message: "Pedido inválido." };
-    const client = createServiceClient();
-    const intent = value(formData, "intent");
-    const { error } =
-      intent === "delete"
-        ? await client.from("nfc_plates").delete().eq("code", code.data)
-        : await client.from("nfc_plates").update({ active: intent === "activate" }).eq("code", code.data);
-    if (error) throw new Error(error.message);
-    revalidatePath("/admin/reviews");
-    return { ok: true, message: intent === "delete" ? "Placa removida." : "Placa atualizada." };
-  });
-}
-
 export async function syncReviewsNow(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
   return guarded(async () => {
     const id = uuid.safeParse(value(formData, "id"));
@@ -212,11 +170,12 @@ export async function syncReviewsNow(_previous: AdminActionState, formData: Form
     if (error) throw new Error(error.message);
     if (!data) return { ok: false, message: "Negócio não encontrado." };
     if ((await startReviewSync(client, data.id, 0)) === "running") return { ok: false, message: "Já está a decorrer uma sincronização deste negócio. Aguarde um minuto." };
-    const result = await syncBusinessReviews(client, data);
+    const mode = value(formData, "mode") === "full" ? "full" : "refresh";
+    const result = await syncBusinessReviews(client, data, mode);
     revalidatePath("/admin/reviews");
     revalidatePath(`/painel/${data.slug}`);
     return result.ok
-      ? { ok: true, message: `Sincronizado: ${result.imported} reviews recebidas do Google.` }
+      ? { ok: true, message: mode === "full" ? `Reimportado: ${result.imported} reviews lidas, incluindo respostas a reviews antigas.` : `Sincronizado: ${result.imported} reviews recebidas do Google.` }
       : { ok: false, message: `A sincronização falhou: ${result.error?.slice(0, 160)}` };
   });
 }

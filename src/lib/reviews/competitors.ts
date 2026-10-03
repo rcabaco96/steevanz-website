@@ -42,7 +42,8 @@ export interface CompetitorCandidate {
 
 /**
  * Picks the places a customer would be compared with: same Google category first (the most
- * reviewed, i.e. the most visible), then other places Google returned for the category search.
+ * reviewed, i.e. the most visible), then places Google matched to the category search, then the
+ * rest of the broader search, until the limit is reached.
  */
 export function selectCompetitors(
   self: { placeId: string; category: string; lat: number; lng: number },
@@ -59,7 +60,7 @@ export function selectCompetitors(
     if (distanceM > radiusKm * 1000) continue;
     seen.add(place.placeId);
     candidates.push({
-      // 0: same Google category, 1: other places Google matched to the category search.
+      // 0: same Google category, 1: matched to the category search, 2: the broader search (e.g. "Restaurante").
       rank: place.categoryName === self.category ? 0 : place.searchString === self.category ? 1 : 2,
       candidate: {
         placeId: place.placeId,
@@ -75,7 +76,6 @@ export function selectCompetitors(
     });
   }
   return candidates
-    .filter((entry) => entry.rank < 2)
     .sort((a, b) => a.rank - b.rank || b.candidate.reviewsCount - a.candidate.reviewsCount)
     .slice(0, limit)
     .map((entry) => entry.candidate);
@@ -118,6 +118,8 @@ export interface CompetitorEntry {
   id: string;
   name: string;
   isSelf: boolean;
+  /** Google Maps page of the place. */
+  mapsUrl: string;
   distanceM: number | null;
   rating: number | null;
   average: number | null;
@@ -184,4 +186,8 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
     paceLeader: paceTop && !paceTop.isSelf ? { name: paceTop.name, pacePerMonth: paceTop.pacePerMonth! } : null,
     lastSnapshotOn,
   };
+}
+
+export function googleMapsPlaceUrl(placeId: string): string {
+  return `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(placeId)}`;
 }

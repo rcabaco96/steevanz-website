@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { attributeReviews, computeAnalytics, computeRatingGoal, filterReviews, isNegative, isPositive, zonedParts } from "../src/lib/reviews/analytics.ts";
+import { computeAnalytics, computeRatingGoal, filterReviews, isNegative, isPositive, zonedParts } from "../src/lib/reviews/analytics.ts";
 import { themeSentences, themesIn, significantWords } from "../src/lib/reviews/text.ts";
 
 function review(id, publishedAt, rating = 5, extra = {}) {
@@ -17,30 +17,6 @@ function review(id, publishedAt, rating = 5, extra = {}) {
     ...extra,
   };
 }
-
-function tap(plateCode, tappedAt) {
-  return { plateCode, source: "nfc", device: "ios", visitorHash: "x", tappedAt };
-}
-
-describe("attributeReviews", () => {
-  it("links a review to the latest earlier tap inside the window", () => {
-    const result = attributeReviews(
-      [review("r1", "2026-05-01T12:30:00Z")],
-      [tap("a", "2026-05-01T10:00:00Z"), tap("b", "2026-05-01T12:00:00Z"), tap("c", "2026-05-01T12:40:00Z")],
-    );
-    assert.equal(result.get("r1")?.plateCode, "b");
-  });
-
-  it("ignores taps outside the window and uses each tap once", () => {
-    const result = attributeReviews(
-      [review("r1", "2026-05-01T12:10:00Z"), review("r2", "2026-05-01T12:20:00Z"), review("r3", "2026-05-01T18:00:00Z")],
-      [tap("a", "2026-05-01T12:00:00Z")],
-    );
-    assert.equal(result.size, 1);
-    assert.ok(result.has("r1"));
-    assert.ok(!result.has("r3"));
-  });
-});
 
 describe("text analysis", () => {
   it("detects themes regardless of accents and case", () => {
@@ -62,14 +38,13 @@ describe("zonedParts", () => {
 });
 
 /**
- * Synthetic numbers only (stars, timestamps, taps): no review text, never rendered anywhere.
- * Plates installed 7 months ago; before that 2 reviews a month, after it 6 taps a day.
+ * Synthetic numbers only (stars and timestamps): no review text, never rendered anywhere.
+ * Plates installed 7 months ago; before that a review every 15 days, after it 1–2 a day.
  */
 function fixtureSource(now) {
   const dayMs = 86_400_000;
   const installed = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 7, 1));
   const reviews = [];
-  const taps = [];
   const start = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 20, 1);
   let n = 0;
   for (let day = start; day < now.getTime() - dayMs; day += dayMs) {
@@ -78,12 +53,8 @@ function fixtureSource(now) {
       if (index % 15 === 0) reviews.push(review(`b${n++}`, new Date(day + 13 * 3_600_000).toISOString(), index % 4 ? 5 : 3));
       continue;
     }
-    for (let i = 0; i < 6; i++) {
-      const tappedAt = day + (9 + i * 2) * 3_600_000;
-      const plate = i % 3 === 0 ? "p2" : "p1";
-      taps.push({ plateCode: plate, source: i === 5 ? "qr" : "nfc", device: "ios", visitorHash: `v${index}-${i}`, tappedAt: new Date(tappedAt).toISOString() });
-      if (i === 1 || (i === 4 && index % 2 === 0)) reviews.push(review(`a${n++}`, new Date(tappedAt + 10 * 60_000).toISOString(), index % 7 ? 5 : 2));
-    }
+    reviews.push(review(`a${n++}`, new Date(day + 12 * 3_600_000).toISOString(), index % 7 ? 5 : 2));
+    if (index % 2 === 0) reviews.push(review(`a${n++}`, new Date(day + 19 * 3_600_000).toISOString(), 4));
   }
   return {
     business: {
@@ -97,13 +68,10 @@ function fixtureSource(now) {
       reviewsTotal: null,
       lastSyncedAt: null,
       activeServices: [],
+      category: null,
     },
-    plates: [
-      { code: "p1", label: "Balcão", active: true },
-      { code: "p2", label: "Mesa", active: true },
-    ],
-    taps,
     reviews,
+    competition: null,
   };
 }
 
@@ -117,19 +85,23 @@ describe("computeAnalytics", () => {
       const stars = analytics.starDistribution.reduce((sum, row) => sum + row.count, 0);
       assert.equal(stars, analytics.kpis.reviews.current, period);
       assert.equal(analytics.series.reduce((sum, bucket) => sum + bucket.reviews, 0), analytics.kpis.reviews.current, period);
-      assert.equal(analytics.series.reduce((sum, bucket) => sum + bucket.taps, 0), analytics.kpis.taps.current, period);
-      const heat = analytics.tapHeatmap.flat().reduce((sum, value) => sum + value, 0);
-      assert.equal(heat, analytics.kpis.taps.current, period);
-      assert.ok(analytics.kpis.attributedReviews <= analytics.kpis.taps.current, period);
     }
   });
 
-  it("measures the effect of the plates and the conversion per plate", () => {
+  it("measures the effect of the plates on monthly reviews", () => {
     const analytics = computeAnalytics(source, "all", now);
     assert.ok(analytics.beforeAfter);
     assert.ok(analytics.beforeAfter.upliftPct > 100, `uplift ${analytics.beforeAfter.upliftPct}`);
-    const [balcao, mesa] = ["Balcão", "Mesa"].map((label) => analytics.plates.find((plate) => plate.label === label));
-    assert.ok(balcao.conversion > mesa.conversion);
+  });
+
+  it("reports the monthly pace of the last 90 days against the 90 days before, whatever the filter", () => {
+    const daysAgo = (days) => new Date(now.getTime() - days * 86_400_000).toISOString();
+    const paced = { ...source, reviews: [10, 20, 30, 40, 50, 60, 100, 120, 150].map((days, i) => review(`p${i}`, daysAgo(days))) };
+    for (const period of ["30d", "all"]) {
+      const { pace } = computeAnalytics(paced, period, now).kpis;
+      assert.equal(pace.current, 2);
+      assert.equal(pace.previous, 1);
+    }
   });
 });
 
@@ -183,18 +155,15 @@ describe("themeSentences and filterReviews", () => {
 });
 
 describe("sample-size guards", () => {
-  it("does not compare or convert on a handful of data points", () => {
+  it("does not compare on a handful of data points", () => {
     const now = new Date("2026-10-02T12:00:00Z");
     const source = {
-      business: { id: "b", slug: "b", name: "B", googleMapsUrl: "", reviewUrl: "", platesInstalledOn: "2026-09-25", ratingTotal: 5, reviewsTotal: 2, lastSyncedAt: null, activeServices: [] },
-      plates: [{ code: "p1", label: "Balcão", active: true }],
-      taps: [tap("p1", "2026-09-30T12:00:00Z")],
+      business: { id: "b", slug: "b", name: "B", googleMapsUrl: "", reviewUrl: "", platesInstalledOn: "2026-09-25", ratingTotal: 5, reviewsTotal: 2, lastSyncedAt: null, activeServices: [], category: null },
+      competition: null,
       reviews: [review("x", "2026-09-30T12:10:00Z", 5), review("y", "2025-09-01T12:00:00Z", 4)],
     };
     const analytics = computeAnalytics(source, "30d", now);
-    assert.equal(analytics.kpis.conversion.current, null);
     assert.equal(analytics.kpis.reviews.previous, null);
-    assert.equal(analytics.plates[0].enoughData, false);
     assert.equal(analytics.beforeAfter, null);
     assert.equal(analytics.beforeAfterGap, "too-early");
   });
@@ -226,7 +195,7 @@ describe("recommendations", async () => {
   it("links waiting complaints to the digital waitlist", () => {
     const complaints = Array.from({ length: 6 }, (_, i) => review(`w${i}`, "2026-09-1" + i + "T12:00:00Z", 1, { text: "espera demora" }));
     const fine = Array.from({ length: 10 }, (_, i) => review(`f${i}`, "2026-09-0" + (i % 9 + 1) + "T12:00:00Z", 5, { text: "comida" }));
-    const source = { ...base, taps: [], reviews: [...complaints, ...fine] };
+    const source = { ...base, reviews: [...complaints, ...fine] };
     const result = computeAnalytics(source, "12m", now);
     assert.ok(recommendations(source, result, source.reviews).some((item) => item.productId === "waitlist"));
   });
@@ -261,10 +230,10 @@ describe("competitors", async () => {
     assert.deepEqual(picked.map((p) => p.placeId), ["c", "a", "b"]);
   });
 
-  it("puts the same category first and fills with places Google matched to the category search", () => {
+  it("orders same category, then category-search matches, then the broader search", () => {
     const places = ["a", "b"].map((id, i) => place(id, "Marisqueira", 0.001 * (i + 1), 100 + i));
     const picked = selectCompetitors(home, [...places, place("fish", "Restaurante de peixe", 0.001, 9000), place("kebab", "Kebab", 0.002, 9000, "Restaurante")]);
-    assert.deepEqual(picked.map((p) => p.placeId), ["b", "a", "fish"]);
+    assert.deepEqual(picked.map((p) => p.placeId), ["b", "a", "fish", "kebab"]);
   });
 
   it("measures monthly pace from recent review dates and from weekly snapshots", () => {

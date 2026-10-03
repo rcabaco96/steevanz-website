@@ -44,7 +44,7 @@ export function aiReviewsPitch(source: DashboardSource, analytics: DashboardAnal
   return { unanswered: unanswered.length, negativeUnanswered, replyRate: replyRate.current, medianReplyHours };
 }
 
-/** Complementary products, each backed by something the reviews or taps actually show. */
+/** Complementary products, each backed by something the reviews or competitors actually show. */
 export function recommendations(source: DashboardSource, analytics: DashboardAnalytics, periodReviews: GoogleReview[]): Recommendation[] {
   const owned = new Set(source.business.activeServices ?? []);
   const items: Recommendation[] = [];
@@ -80,7 +80,6 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
   }
 
   const goal = analytics.ratingGoal;
-  const reliablePlates = analytics.plates.filter((plate) => plate.enoughData && plate.conversion !== null);
   const competition = source.competition;
   const ownPace = competition?.entries.find((entry) => entry.isSelf)?.pacePerMonth ?? null;
   if (competition?.paceLeader && ownPace !== null && competition.paceLeader.pacePerMonth >= Math.max(ownPace * 1.2, ownPace + 2)) {
@@ -92,14 +91,11 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
       body: "Quem recebe mais reviews aparece mais nas pesquisas do Google. Placas NFC nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque, para não ficar para trás.",
     });
   } else if (goal?.monthsToNext !== null && goal?.monthsToNext !== undefined && goal.monthsToNext > 4 && goal.next !== null) {
-    const best = [...reliablePlates].sort((a, b) => b.conversion! - a.conversion!)[0];
     items.push({
       productId: "nfc-google-reviews",
       signal: `${goal.fiveStarsNeeded} reviews de 5★ até aos ${format1(goal.next)}★`,
       title: "Chegar mais depressa à próxima estrela",
-      body: best
-        ? `Ao ritmo atual faltam cerca de ${Math.ceil(goal.monthsToNext)} meses. A placa «${best.label}» já converte ${Math.round(best.conversion! * 100)}% dos toques: mais placas nos sítios certos (mesas, balcão, saída) trazem mais reviews por mês.`
-        : `Ao ritmo atual faltam cerca de ${Math.ceil(goal.monthsToNext)} meses. Placas NFC nas mesas e no balcão pedem a review no melhor momento, com um toque.`,
+      body: `Ao ritmo atual faltam cerca de ${Math.ceil(goal.monthsToNext)} meses. Placas NFC nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque.`,
     });
   }
 

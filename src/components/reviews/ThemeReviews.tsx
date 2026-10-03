@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { ChevronDown } from "@/components/icons";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { PeriodId } from "@/lib/reviews/analytics";
 import { formatDateTime } from "@/lib/reviews/format";
 import type { ThemeId } from "@/lib/reviews/text";
@@ -69,9 +70,23 @@ export function ThemeReviews({ slug, theme, period, count, label }: ThemeReviews
 
       <div id={id} aria-live="polite">
         {state.status === "loading" ? (
-          <p className="flex items-center gap-2 text-sm text-muted">
-            <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />A carregar {count} reviews…
-          </p>
+          <div aria-busy="true">
+            <span role="status" className="sr-only">
+              A carregar {count} reviews…
+            </span>
+            <ul className="flex flex-col gap-2">
+            {Array.from({ length: Math.min(count, 3) }, (_, index) => (
+              <li key={index} className="flex flex-col gap-2 rounded-xl border border-line bg-surface px-3.5 py-3">
+                <span className="flex items-center justify-between gap-3">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-3 w-24" />
+                </span>
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className={`h-3 ${index % 2 ? "w-2/3" : "w-5/6"}`} />
+              </li>
+            ))}
+            </ul>
+          </div>
         ) : null}
         {state.status === "error" ? <p className="text-sm text-danger">Não foi possível carregar as reviews. Tente novamente.</p> : null}
         {state.status === "ready" ? (

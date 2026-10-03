@@ -5,11 +5,49 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { fetchGoogleReviews, type ApifyReviewItem } from "./apify";
 import { isNegative } from "./analytics";
 import { loadCompetition } from "./competitor-store";
-import type { DashboardSource, GoogleReview, NfcPlate, NfcTap, ReviewBusiness } from "./types";
+import type { DashboardSource, GoogleReview, ReviewBusiness } from "./types";
 
 const pageSize = 1000;
 const maxRows = 50_000;
-const incrementalOverlapDays = 30;
+/**
+ * Business rule (see .claude/skills/regras-negocio-reviews): only import what is not stored yet.
+ * - "visit" (opening the dashboard, "Atualizar"): new reviews, plus owner replies to any review
+ *   still unanswered from the last 90 days, so a customer can confirm the replies just posted.
+ * - "refresh" (daily job): the last 30 days, for replies and edits on recent reviews.
+ * - "full" (monthly, "Verificar respostas antigas" once a day, "Reimportar tudo"): the whole
+ *   history, so replies to old reviews are picked up too.
+ */
+export type SyncMode = "visit" | "refresh" | "full";
+const dayMs = 86_400_000;
+/** Safety margin behind the newest stored review: Google can index reviews late. */
+const newestMarginDays = 1;
+const visitReplyWindowDays = 90;
+const refreshWindowDays = 30;
+const fullSyncEveryDays = 30;
+/** Customers can trigger a whole-history check at most this often. */
+export const customerFullSyncEveryHours = 24;
+
+export function needsFullSync(business: { full_synced_at: string | null }, now = new Date()): boolean {
+  return !business.full_synced_at || now.getTime() - Date.parse(business.full_synced_at) > fullSyncEveryDays * dayMs;
+}
+
+/** Where an incremental sync starts reading; null means the whole history. */
+async function syncStart(client: SupabaseClient, businessId: string, mode: SyncMode, latest: string | null): Promise<Date | null> {
+  if (mode === "full" || !latest) return null;
+  const newest = Date.parse(latest) - newestMarginDays * dayMs;
+  if (mode === "refresh") return new Date(Math.min(newest, Date.parse(latest) - refreshWindowDays * dayMs));
+  const { data, error } = await client
+    .from("google_reviews")
+    .select("published_at")
+    .eq("business_id", businessId)
+    .is("owner_reply", null)
+    .gte("published_at", new Date(Date.now() - visitReplyWindowDays * dayMs).toISOString())
+    .order("published_at", { ascending: true })
+    .limit(1)
+    .maybeSingle<{ published_at: string }>();
+  if (error) throw new Error(error.message);
+  return new Date(Math.min(newest, data ? Date.parse(data.published_at) - newestMarginDays * dayMs : newest));
+}
 
 export interface BusinessRow {
   id: string;
@@ -26,6 +64,7 @@ export interface BusinessRow {
   active_services: string[];
   category?: string | null;
   competitors_refreshed_at?: string | null;
+  full_synced_at?: string | null;
   created_at: string;
 }
 
@@ -71,18 +110,7 @@ export async function getDashboardSource(slug: string): Promise<DashboardSource 
   if (error) throw new Error(error.message);
   if (!businessRow) return null;
 
-  const [plates, taps, reviews] = await Promise.all([
-    fetchAll<{ code: string; label: string; active: boolean }>((from, to) =>
-      client.from("nfc_plates").select("code, label, active").eq("business_id", businessRow.id).order("created_at").range(from, to),
-    ),
-    fetchAll<{ plate_code: string; source: NfcTap["source"]; device: NfcTap["device"]; visitor_hash: string; tapped_at: string }>((from, to) =>
-      client
-        .from("nfc_taps")
-        .select("plate_code, source, device, visitor_hash, tapped_at")
-        .eq("business_id", businessRow.id)
-        .order("tapped_at", { ascending: false })
-        .range(from, to),
-    ),
+  const [reviews] = await Promise.all([
     fetchAll<{
       review_id: string;
       rating: number;
@@ -123,14 +151,6 @@ export async function getDashboardSource(slug: string): Promise<DashboardSource 
 
   return {
     business: toBusiness(businessRow),
-    plates: plates satisfies NfcPlate[],
-    taps: taps.map((tap) => ({
-      plateCode: tap.plate_code,
-      source: tap.source,
-      device: tap.device,
-      visitorHash: tap.visitor_hash,
-      tappedAt: tap.tapped_at,
-    })),
     reviews: ownReviews,
     competition,
   };
@@ -164,10 +184,6 @@ export interface SyncResult {
   error?: string;
 }
 
-/**
- * Imports reviews for one business. The first run fetches the full history; later runs
- * re-fetch the last 30 days so new owner replies on recent reviews are picked up too.
- */
 type ReviewRow = NonNullable<ReturnType<typeof toReviewRow>>;
 
 async function unknownReviews(client: SupabaseClient, businessId: string, rows: ReviewRow[]): Promise<ReviewRow[]> {
@@ -210,7 +226,12 @@ export const syncTargetColumns = "id, slug, name, google_maps_url, alert_email";
 
 const alertMaxAgeMs = 7 * 86_400_000;
 
-export async function syncBusinessReviews(client: SupabaseClient, business: SyncTarget): Promise<SyncResult> {
+/**
+ * Imports a business's reviews. The first run fetches the whole history; later runs only fetch
+ * from the newest stored review onwards (see SyncMode). Reviews are upserted by id, so the
+ * overlap never duplicates anything.
+ */
+export async function syncBusinessReviews(client: SupabaseClient, business: SyncTarget, mode: SyncMode): Promise<SyncResult> {
   try {
     const { data: latest, error: latestError } = await client
       .from("google_reviews")
@@ -220,7 +241,8 @@ export async function syncBusinessReviews(client: SupabaseClient, business: Sync
       .limit(1)
       .maybeSingle<{ published_at: string }>();
     if (latestError) throw new Error(latestError.message);
-    const since = latest ? new Date(Date.parse(latest.published_at) - incrementalOverlapDays * 86_400_000) : null;
+    const full = mode === "full" || !latest;
+    const since = await syncStart(client, business.id, mode, latest?.published_at ?? null);
 
     const items = await fetchGoogleReviews(business.google_maps_url, since);
     const rows = items.map((item) => toReviewRow(business.id, item)).filter((row) => row !== null);
@@ -237,6 +259,7 @@ export async function syncBusinessReviews(client: SupabaseClient, business: Sync
       .update({
         last_synced_at: new Date().toISOString(),
         last_sync_error: null,
+        ...(full ? { full_synced_at: new Date().toISOString() } : {}),
         sync_started_at: null,
         ...(place ? { rating_total: place.totalScore, reviews_total: place.reviewsCount ?? null } : {}),
       })

@@ -1,10 +1,9 @@
 import { significantWords, themeIds, themeSentences, themesIn, type ThemeId } from "./text.ts";
-import type { DashboardSource, GoogleReview, NfcTap, TapSource } from "./types.ts";
+import type { DashboardSource, GoogleReview } from "./types.ts";
 
 export const periodIds = ["30d", "90d", "12m", "all"] as const;
 export type PeriodId = (typeof periodIds)[number];
 
-export const attributionWindowMinutes = 90;
 
 /** Steevanz rule, used everywhere: 1–3 stars is a negative review, 4–5 stars a positive one. */
 export const isNegative = (rating: number) => rating <= 3;
@@ -20,7 +19,6 @@ export interface TimeBucket {
   reviews: number;
   ratingSum: number;
   avgRating: number | null;
-  taps: number;
 }
 
 export interface Comparison {
@@ -31,12 +29,10 @@ export interface Comparison {
 export interface Kpis {
   avgRating: Comparison;
   reviews: Comparison;
-  taps: Comparison;
-  conversion: Comparison;
+  /** Reviews per month over the last 90 days vs the 90 days before, whatever the period filter. */
+  pace: Comparison;
   replyRate: Comparison;
   medianReplyHours: number | null;
-  uniqueVisitors: number;
-  attributedReviews: number;
 }
 
 export interface PeriodStats {
@@ -56,15 +52,6 @@ export interface BeforeAfter {
 
 /** Why the before/after comparison is missing, so the dashboard can say so instead of hiding it. */
 export type BeforeAfterGap = "no-install-date" | "too-early" | "no-history" | null;
-
-export interface PlateStats {
-  code: string;
-  label: string;
-  taps: number;
-  attributedReviews: number;
-  conversion: number | null;
-  enoughData: boolean;
-}
 
 export interface ThemeExample {
   reviewId: string;
@@ -92,10 +79,6 @@ export interface WeekdayStats {
   weekday: number;
   reviews: number;
   avgRating: number | null;
-  taps: number;
-  attributed: number;
-  conversion: number | null;
-  enoughTaps: boolean;
   enoughReviews: boolean;
 }
 
@@ -126,9 +109,6 @@ export interface DashboardAnalytics {
   starDistribution: { stars: number; count: number; share: number }[];
   beforeAfter: BeforeAfter | null;
   beforeAfterGap: BeforeAfterGap;
-  plates: PlateStats[];
-  sources: Record<TapSource, number>;
-  tapHeatmap: number[][];
   sentiment: { positive: number; negative: number };
   themes: ThemeStats[];
   words: { positive: WordCount[]; negative: WordCount[] };
@@ -137,7 +117,7 @@ export interface DashboardAnalytics {
 }
 
 /** Below these sample sizes a percentage or average is noise, so the dashboard greys it out. */
-export const minSample = { taps: 20, reviews: 5, themeMentions: 5, previousReviews: 5 } as const;
+export const minSample = { reviews: 5, themeMentions: 5, previousReviews: 5 } as const;
 
 const partsFormatter = new Intl.DateTimeFormat("en-GB", {
   timeZone,
@@ -208,31 +188,6 @@ function granularityFor(period: PeriodId, spanDays: number): Granularity {
   if (period === "30d") return "day";
   if (period === "90d") return "week";
   return spanDays > 120 ? "month" : "week";
-}
-
-/**
- * Links each review to the most recent unused tap at the same business within the
- * attribution window before it was published. Each tap explains at most one review.
- */
-export function attributeReviews(reviews: GoogleReview[], taps: NfcTap[], windowMinutes = attributionWindowMinutes): Map<string, NfcTap> {
-  const sortedTaps = [...taps].sort((a, b) => Date.parse(a.tappedAt) - Date.parse(b.tappedAt));
-  const sortedReviews = [...reviews].sort((a, b) => Date.parse(a.publishedAt) - Date.parse(b.publishedAt));
-  const used = new Set<NfcTap>();
-  const result = new Map<string, NfcTap>();
-  const windowMs = windowMinutes * 60_000;
-  let low = 0;
-  for (const review of sortedReviews) {
-    const published = Date.parse(review.publishedAt);
-    while (low < sortedTaps.length && Date.parse(sortedTaps[low].tappedAt) < published - windowMs) low++;
-    for (let i = sortedTaps.length - 1; i >= low; i--) {
-      const tapped = Date.parse(sortedTaps[i].tappedAt);
-      if (tapped > published || used.has(sortedTaps[i])) continue;
-      used.add(sortedTaps[i]);
-      result.set(review.id, sortedTaps[i]);
-      break;
-    }
-  }
-  return result;
 }
 
 function inRange(iso: string, start: number | null, end: number): boolean {
@@ -390,9 +345,6 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
   const startDate = periodStart(period, now);
   const startMs = startDate?.getTime() ?? null;
   const reviews = source.reviews.filter((review) => inRange(review.publishedAt, startMs, endMs));
-  const taps = source.taps.filter((tap) => inRange(tap.tappedAt, startMs, endMs));
-  const attribution = attributeReviews(source.reviews, source.taps);
-  const attributed = reviews.filter((review) => attribution.has(review.id));
   const allTimes = source.reviews.map((review) => Date.parse(review.publishedAt));
   const firstReviewMs = allTimes.length ? Math.min(...allTimes) : null;
   const seriesStartMs = startMs ?? firstReviewMs ?? endMs;
@@ -402,10 +354,7 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
   // Previous window of equal length, for deltas. Too few data points there means no comparison.
   const previousRange = startMs === null ? null : { start: startMs - (endMs - startMs), end: startMs - 1 };
   const previousReviews = previousRange ? source.reviews.filter((review) => inRange(review.publishedAt, previousRange.start, previousRange.end)) : [];
-  const previousTaps = previousRange ? source.taps.filter((tap) => inRange(tap.tappedAt, previousRange.start, previousRange.end)) : [];
-  const previousAttributed = previousReviews.filter((review) => attribution.has(review.id)).length;
   const comparableReviews = previousRange !== null && previousReviews.length >= minSample.previousReviews;
-  const comparableTaps = previousRange !== null && previousTaps.length >= minSample.taps;
 
   const replied = (list: GoogleReview[]) => list.filter((review) => review.ownerReply?.trim());
   const replyHours = replied(reviews)
@@ -419,18 +368,17 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
       previous: comparableReviews ? average(previousReviews.map((review) => review.rating)) : null,
     },
     reviews: { current: reviews.length, previous: comparableReviews ? previousReviews.length : null },
-    taps: { current: taps.length, previous: comparableTaps ? previousTaps.length : null },
-    conversion: {
-      current: taps.length >= minSample.taps ? ratio(attributed.length, taps.length) : null,
-      previous: comparableTaps ? ratio(previousAttributed, previousTaps.length) : null,
+    pace: {
+      current: source.reviews.filter((review) => inRange(review.publishedAt, endMs - 90 * dayMs, endMs)).length / 3,
+      previous: source.reviews.some((review) => Date.parse(review.publishedAt) < endMs - 90 * dayMs)
+        ? source.reviews.filter((review) => inRange(review.publishedAt, endMs - 180 * dayMs, endMs - 90 * dayMs - 1)).length / 3
+        : null,
     },
     replyRate: {
       current: ratio(replied(reviews).length, reviews.length),
       previous: comparableReviews ? ratio(replied(previousReviews).length, previousReviews.length) : null,
     },
     medianReplyHours: median(replyHours),
-    uniqueVisitors: new Set(taps.map((tap) => tap.visitorHash)).size,
-    attributedReviews: attributed.length,
   };
 
   // Time series.
@@ -438,7 +386,7 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
   let key = bucketKey(new Date(seriesStartMs).toISOString(), granularity);
   const lastKey = bucketKey(now.toISOString(), granularity);
   for (let guard = 0; guard < 400; guard++) {
-    buckets.set(key, { key, start: key, reviews: 0, ratingSum: 0, avgRating: null, taps: 0 });
+    buckets.set(key, { key, start: key, reviews: 0, ratingSum: 0, avgRating: null });
     if (key === lastKey) break;
     key = nextKey(key, granularity);
   }
@@ -448,47 +396,12 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
     bucket.reviews += 1;
     bucket.ratingSum += review.rating;
   }
-  for (const tap of taps) {
-    const bucket = buckets.get(bucketKey(tap.tappedAt, granularity));
-    if (bucket) bucket.taps += 1;
-  }
   const series = [...buckets.values()].map((bucket) => ({ ...bucket, avgRating: bucket.reviews ? bucket.ratingSum / bucket.reviews : null }));
 
   const starDistribution = [5, 4, 3, 2, 1].map((stars) => {
     const count = reviews.filter((review) => review.rating === stars).length;
     return { stars, count, share: reviews.length ? count / reviews.length : 0 };
   });
-
-  // Plates.
-  const plateTaps = new Map<string, number>();
-  for (const tap of taps) plateTaps.set(tap.plateCode, (plateTaps.get(tap.plateCode) ?? 0) + 1);
-  const plateAttributed = new Map<string, number>();
-  for (const review of attributed) {
-    const code = attribution.get(review.id)!.plateCode;
-    plateAttributed.set(code, (plateAttributed.get(code) ?? 0) + 1);
-  }
-  const plates: PlateStats[] = source.plates
-    .map((plate) => {
-      const plateTapCount = plateTaps.get(plate.code) ?? 0;
-      const plateReviews = plateAttributed.get(plate.code) ?? 0;
-      return {
-        code: plate.code,
-        label: plate.label,
-        taps: plateTapCount,
-        attributedReviews: plateReviews,
-        conversion: ratio(plateReviews, plateTapCount),
-        enoughData: plateTapCount >= minSample.taps,
-      };
-    })
-    .sort((a, b) => b.taps - a.taps);
-
-  const sources: Record<TapSource, number> = { nfc: 0, qr: 0 };
-  const tapHeatmap = Array.from({ length: 7 }, () => Array<number>(24).fill(0));
-  for (const tap of taps) {
-    sources[tap.source] += 1;
-    const { weekday, hour } = zonedParts(tap.tappedAt);
-    tapHeatmap[weekday][hour] += 1;
-  }
 
   // Text.
   const sentiment = {
@@ -520,16 +433,10 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
 
   const weekdays: WeekdayStats[] = [1, 2, 3, 4, 5, 6, 0].map((weekday) => {
     const dayReviews = reviews.filter((review) => zonedParts(review.publishedAt).weekday === weekday);
-    const dayTaps = taps.filter((tap) => zonedParts(tap.tappedAt).weekday === weekday).length;
-    const dayAttributed = dayReviews.filter((review) => attribution.has(review.id)).length;
     return {
       weekday,
       reviews: dayReviews.length,
       avgRating: average(dayReviews.map((review) => review.rating)),
-      taps: dayTaps,
-      attributed: dayAttributed,
-      conversion: ratio(dayAttributed, dayTaps),
-      enoughTaps: dayTaps >= minSample.taps,
       enoughReviews: dayReviews.length >= minSample.reviews,
     };
   });
@@ -545,9 +452,6 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
     starDistribution,
     beforeAfter: beforeAfter.value,
     beforeAfterGap: beforeAfter.gap,
-    plates,
-    sources,
-    tapHeatmap,
     sentiment,
     themes,
     words,
