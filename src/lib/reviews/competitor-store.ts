@@ -9,7 +9,9 @@ import {
   paceFromDates,
   paceFromSnapshots,
   paceSampleSize,
+  replyRateFrom,
   selectCompetitors,
+  shownReplyRate,
   type Competition,
   type CompetitorEntry,
 } from "./competitors";
@@ -32,6 +34,8 @@ export interface CompetitorRow {
   excluded: boolean;
   pace_per_month: number | null;
   pace_measured_at: string | null;
+  reply_rate: number | null;
+  reply_sample: number | null;
 }
 
 interface SnapshotRow {
@@ -127,7 +131,11 @@ export async function discoverCompetitors(client: SupabaseClient, business: { id
   return chosen.length;
 }
 
-/** One-off per competitor, in batches: newest reviews' dates, so its pace is known before weekly history exists. */
+/**
+ * One-off per competitor, in batches: newest reviews' dates, so its pace is known before weekly
+ * history exists. The same reviews give its reply rate at no extra cost; only the aggregate
+ * (share, reviews counted, oldest day counted) is stored, never review or reply texts.
+ */
 export async function measureCompetitorPace(client: SupabaseClient, businessId: string): Promise<number> {
   const { data, error } = await client
     .from("competitors")
@@ -144,10 +152,20 @@ export async function measureCompetitorPace(client: SupabaseClient, businessId: 
   );
   const now = new Date();
   for (const row of data) {
-    const dates = items.filter((item) => item.placeId === row.place_id && item.publishedAtDate).map((item) => item.publishedAtDate!);
+    const reviews = items.filter((item) => item.placeId === row.place_id && item.publishedAtDate);
+    const replies = replyRateFrom(
+      reviews.map((item) => ({ publishedAt: item.publishedAtDate!, replied: Boolean(item.responseFromOwnerText?.trim() || item.responseFromOwnerDate) })),
+      now,
+    );
     const { error: updateError } = await client
       .from("competitors")
-      .update({ pace_per_month: Math.round(paceFromDates(dates, now) * 100) / 100, pace_measured_at: now.toISOString() })
+      .update({
+        pace_per_month: Math.round(paceFromDates(reviews.map((item) => item.publishedAtDate!), now) * 100) / 100,
+        pace_measured_at: now.toISOString(),
+        reply_rate: replies.rate === null ? null : Math.round(replies.rate * 1000) / 1000,
+        reply_sample: replies.sample,
+        reply_since: replies.since,
+      })
       .eq("id", row.id);
     if (updateError) throw new Error(updateError.message);
   }
@@ -201,7 +219,7 @@ export function needsDiscovery(business: { place_id: string | null; competitors_
 export async function loadCompetition(client: SupabaseClient, businessId: string, ownReviews: GoogleReview[], now = new Date()): Promise<Competition | null> {
   const { data: competitors, error } = await client
     .from("competitors")
-    .select("id, place_id, name, category, distance_m, is_self, excluded, pace_per_month, pace_measured_at")
+    .select("id, place_id, name, category, distance_m, is_self, excluded, pace_per_month, pace_measured_at, reply_rate, reply_sample")
     .eq("business_id", businessId)
     .eq("excluded", false);
   if (error) throw new Error(error.message);
@@ -233,11 +251,20 @@ export async function loadCompetition(client: SupabaseClient, businessId: string
     now,
     Number.POSITIVE_INFINITY,
   );
+  // Same rule as for competitors (newest 60, 7 days to 12 months old), from the imported reviews.
+  const ownReplies = ownReviews.length
+    ? replyRateFrom(
+        ownReviews.map((review) => ({ publishedAt: review.publishedAt, replied: Boolean(review.ownerReply?.trim()) })),
+        now,
+      )
+    : null;
   const entries: CompetitorEntry[] = rows.flatMap((row) => {
     const own = history.filter((snapshot) => snapshot.competitor_id === row.id);
     const latest = own[own.length - 1];
     if (!latest) return [];
     const measured = paceFromSnapshots(own.map((snapshot) => ({ takenOn: snapshot.taken_on, reviewsCount: snapshot.reviews_count })), now);
+    const replySample = row.is_self ? (ownReplies?.sample ?? null) : row.reply_sample;
+    const replyRate = row.is_self ? (ownReplies?.rate ?? null) : row.reply_rate === null ? null : Number(row.reply_rate);
     return [
       {
         id: row.id,
@@ -249,6 +276,8 @@ export async function loadCompetition(client: SupabaseClient, businessId: string
         average: latest.average === null ? null : Number(latest.average),
         reviewsCount: latest.reviews_count,
         pacePerMonth: row.is_self ? (ownReviews.length ? ownPace : null) : (measured ?? (row.pace_per_month === null ? null : Number(row.pace_per_month))),
+        replyRate: shownReplyRate(replyRate, replySample),
+        replySample,
       },
     ];
   });

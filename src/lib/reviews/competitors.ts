@@ -1,6 +1,7 @@
 import type { ApifyPlaceItem, StarDistribution } from "./apify.ts";
 
-export const competitorRadiusKm = 5;
+/** Business rule: competitors are searched within 10 km (see regras-negocio-reviews, rule 5). */
+export const competitorRadiusKm = 10;
 export const competitorLimit = 30;
 /** How many recent reviews per place are read once to estimate the monthly pace. */
 export const paceSampleSize = 60;
@@ -96,6 +97,54 @@ export function paceFromDates(dates: string[], now: Date, sampleSize = paceSampl
   return times.filter((time) => time >= windowStart).length / 3;
 }
 
+/** Reply rate: reviews younger than this are left out, so owners have had time to answer. */
+export const replyGraceDays = 7;
+/** Reply rate: only reviews from the last 12 months count, so it reflects current habits. */
+export const replyWindowDays = 365;
+/** Below this many counted reviews the reply rate is not shown. */
+export const replyMinSample = 5;
+
+export interface ReplySampleItem {
+  publishedAt: string;
+  replied: boolean;
+}
+
+export interface ReplyRate {
+  /** Share of the counted reviews with an owner reply (0–1); null when none was counted. */
+  rate: number | null;
+  /** Reviews counted. */
+  sample: number;
+  /** Publication day (YYYY-MM-DD) of the oldest review counted. */
+  since: string | null;
+}
+
+/**
+ * Share of a place's recent Google reviews that have an owner reply. Takes the newest reviews
+ * (as many as the pace sample, which is what competitors are measured with) and counts those
+ * published between 12 months and 7 days ago. The customer's own reviews go through the same
+ * rule, so the comparison is fair. Only this aggregate is kept: never review texts.
+ */
+export function replyRateFrom(reviews: ReplySampleItem[], now: Date, sampleSize = paceSampleSize): ReplyRate {
+  const nowMs = now.getTime();
+  const counted = reviews
+    .map((review) => ({ time: Date.parse(review.publishedAt), replied: review.replied }))
+    .filter((review) => Number.isFinite(review.time) && review.time <= nowMs)
+    .sort((a, b) => b.time - a.time)
+    .slice(0, sampleSize)
+    .filter((review) => review.time <= nowMs - replyGraceDays * dayMs && review.time >= nowMs - replyWindowDays * dayMs);
+  if (!counted.length) return { rate: null, sample: 0, since: null };
+  return {
+    rate: counted.filter((review) => review.replied).length / counted.length,
+    sample: counted.length,
+    since: new Date(counted[counted.length - 1].time).toISOString().slice(0, 10),
+  };
+}
+
+/** The reply rate as shown: hidden when it was not measured or rests on too few reviews. */
+export function shownReplyRate(rate: number | null, sample: number | null): number | null {
+  return rate === null || sample === null || sample < replyMinSample ? null : rate;
+}
+
 export interface SnapshotPoint {
   takenOn: string;
   reviewsCount: number;
@@ -125,6 +174,10 @@ export interface CompetitorEntry {
   average: number | null;
   reviewsCount: number;
   pacePerMonth: number | null;
+  /** Share of recent reviews with an owner reply; null when not measured or under `replyMinSample`. */
+  replyRate: number | null;
+  /** Reviews the reply rate was measured on; null when not measured yet. */
+  replySample: number | null;
 }
 
 export interface Competition {

@@ -14,6 +14,8 @@ export interface ReviewBusiness {
   activeServices: string[];
   /** Google Maps category, set when competitors are discovered. */
   category: string | null;
+  /** Google's place identifier (fid), to link each review straight on Google Maps. */
+  googleFid: string | null;
 }
 
 export interface GoogleReview {
@@ -47,3 +49,7 @@ export interface ThemeReview {
   publishedAt: string;
   replied: boolean;
 }
+
+export type ReplyRunResponse =
+  | { status: "done"; synced: boolean; drafted: number; autoApproved: number; failed: number; backlog: number }
+  | { status: "error"; message: string };

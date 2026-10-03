@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore, useTransition } from "react";
 import { buttonClasses } from "@/components/ui/Button";
 import { useBusySignal } from "./DashboardBusy";
 import type { DashboardSyncResponse } from "@/lib/reviews/types";
@@ -45,12 +45,11 @@ interface DashboardSyncProps {
 
 export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: DashboardSyncProps) {
   const router = useRouter();
-  // Every visit asks for fresh reviews, so the button starts in its busy state.
-  const [phase, setPhase] = useState<Phase>("syncing");
+  // Google is only read when the customer asks (button), never just for opening the page.
+  const [phase, setPhase] = useState<Phase>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [refreshing, startRefresh] = useTransition();
   const now = useClock();
-  const started = useRef(false);
   const [scope, setScope] = useState<"recent" | "all">("recent");
 
   // Feedback like "Já estava atualizado" is momentary; errors stay until the next attempt.
@@ -104,14 +103,6 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
     [router, syncUrl],
   );
 
-  useEffect(() => {
-    if (started.current) return;
-    const timer = window.setTimeout(() => {
-      started.current = true;
-      void sync(false);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [sync]);
 
   const busy = phase === "syncing" || refreshing;
   useBusySignal("sync", busy);

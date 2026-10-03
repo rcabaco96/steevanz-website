@@ -17,6 +17,8 @@ export interface ApifyReviewItem {
   likesCount?: number | null;
   totalScore?: number | null;
   reviewsCount?: number | null;
+  /** Google's place identifier "0x…:0x…", used to link each review on Google Maps. */
+  fid?: string | null;
 }
 
 export interface StarDistribution {

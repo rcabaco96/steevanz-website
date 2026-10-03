@@ -43,6 +43,17 @@ export function themesIn(text: string | null): ThemeId[] {
   return themeIds.filter((theme) => themePatterns[theme].test(value));
 }
 
+/** Themes in the order the text first mentions them (the first is usually what the review is about). */
+export function themesByMention(text: string | null): ThemeId[] {
+  if (!text) return [];
+  const value = normalize(text);
+  return themeIds
+    .map((theme) => ({ theme, index: value.search(themePatterns[theme]) }))
+    .filter((item) => item.index >= 0)
+    .sort((x, y) => x.index - y.index)
+    .map((item) => item.theme);
+}
+
 export interface WordToken {
   key: string;
   surface: string;

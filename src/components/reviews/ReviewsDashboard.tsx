@@ -26,6 +26,7 @@ import { BarList, ColumnChart, DataTable, RatingDots, RatingLineChart, type Colu
 import { CompetitionBoard } from "./CompetitionBoard";
 import { DashboardBusyProvider, PendingLink, Refreshable } from "./DashboardBusy";
 import { DashboardSync } from "./DashboardSync";
+import { googleReviewUrl } from "@/lib/reviews/google-links";
 import { InfoTip } from "./InfoTip";
 import { ReviewText } from "./ReviewText";
 import { Stars } from "./Stars";
@@ -59,7 +60,9 @@ const infoTexts = {
     "Média das estrelas das reviews publicadas no período escolhido. A comparação é com o período anterior de igual duração e só aparece com pelo menos 5 reviews nesse período.",
   reviews: "Reviews publicadas no Google no período escolhido, comparadas com o período anterior de igual duração (mínimo de 5 reviews para comparar).",
   competition:
-    "Até 30 negócios num raio de 5 km: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. Reviews por mês: ritmo nas últimas semanas (ou pelas datas das reviews mais recentes, enquanto não há histórico). «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Dados públicos do Google, atualizados todas as semanas.",
+    `Até 30 negócios num raio de ${radiusLabel}: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. Reviews por mês: ritmo nas últimas semanas (ou pelas datas das reviews mais recentes, enquanto não há histórico). «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados todas as semanas.`,
+  competitionReplies:
+    "Percentagem das reviews recentes de cada negócio que têm resposta do dono no Google. Contamos as reviews mais recentes (até 60) publicadas nos últimos 12 meses, sem as dos últimos 7 dias, para dar tempo a responder. Nos concorrentes, é medida uma vez, quando entram na comparação, com as mesmas reviews usadas para o ritmo; no seu negócio, com as suas reviews importadas e a mesma regra. Com menos de 5 reviews contadas não mostramos valor («–»). Empates: primeiro quem tem mais reviews contadas. É uma estimativa: guardamos só a percentagem e o número de reviews contadas, nunca os textos.",
   pace: "Média de reviews por mês nos últimos 3 meses, comparada com os 3 meses antes. Não depende do filtro de período: mostra sempre o ritmo atual.",
   replyRate:
     "Percentagem das reviews do período que já têm resposta do dono no Google. Ao atualizar, apanhamos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo.",
@@ -486,7 +489,7 @@ function CompetitionSection({ competition, category }: { competition: Competitio
       lead={`${plural(competition.total - 1, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel}. Dados públicos do Google, atualizados todas as semanas${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
     >
       <Card>
-        <CompetitionBoard entries={competition.entries} />
+        <CompetitionBoard entries={competition.entries} replyInfo={infoTexts.competitionReplies} />
       </Card>
     </Section>
   );
@@ -970,12 +973,13 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
                   </details>
                 ) : (
                   <a
-                    href={business.googleMapsUrl}
+                    href={googleReviewUrl(review.id, business.googleFid) ?? business.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-auto inline-flex min-h-10 items-center gap-1.5 self-start text-sm font-semibold text-accent-text hover:underline"
                   >
                     Sem resposta · responder no Google <ArrowUpRight size={15} />
+                    <span className="sr-only">(abre esta review no Google Maps)</span>
                   </a>
                 )}
               </li>

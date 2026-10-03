@@ -226,7 +226,7 @@ describe("competitors", async () => {
   });
 
   it("keeps places inside the radius, same category first, most reviewed first", () => {
-    const picked = selectCompetitors(home, [place("far", "Marisqueira", 0.05, 900), place("a", "Marisqueira", 0.001, 100), place("b", "Pizzaria", 0.002, 5000), place("c", "Marisqueira", 0.003, 300), place("self", "Marisqueira", 0, 999)]);
+    const picked = selectCompetitors(home, [place("far", "Marisqueira", 0.1, 900), place("a", "Marisqueira", 0.001, 100), place("b", "Pizzaria", 0.002, 5000), place("c", "Marisqueira", 0.003, 300), place("self", "Marisqueira", 0, 999)]);
     assert.deepEqual(picked.map((p) => p.placeId), ["c", "a", "b"]);
   });
 

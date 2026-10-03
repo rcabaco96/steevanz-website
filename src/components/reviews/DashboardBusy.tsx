@@ -9,9 +9,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, u
  * skeleton while the rest stays put (see the "skeletons" skill):
  * - "sync": new reviews being imported (every data block);
  * - "period": the period filter changed (every data block);
- * - "reviews": review filters or "Ver mais" (the review list only).
+ * - "reviews": review filters or "Ver mais" (the review list only);
+ * - "replies": the Respostas IA tab is importing reviews and drafting replies (new cards only).
  */
-export type BusyScope = "sync" | "period" | "reviews";
+export type BusyScope = "sync" | "period" | "reviews" | "replies";
 
 const BusyContext = createContext<{ active: BusyScope[]; setBusy: (scope: BusyScope, busy: boolean) => void } | null>(null);
 
@@ -38,6 +39,11 @@ export function useBusySignal(scope: BusyScope, busy: boolean) {
       setBusy(scope, false);
     };
   }, [busy, scope, setBusy]);
+}
+
+/** Whether a scope is currently showing its busy state. */
+export function useBusyScope(scope: BusyScope): boolean {
+  return useContext(BusyContext)?.active.includes(scope) ?? false;
 }
 
 /** Wraps a block of server-rendered data; while one of its scopes refreshes, it shows a skeleton veil. */

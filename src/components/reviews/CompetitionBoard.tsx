@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { GoogleG } from "@/components/icons";
-import type { CompetitorEntry } from "@/lib/reviews/competitors";
+import { replyMinSample, type CompetitorEntry } from "@/lib/reviews/competitors";
+import { formatPercent } from "@/lib/reviews/format";
+import { InfoTip } from "./InfoTip";
 
-type SortKey = "rating" | "reviews" | "pace";
+type SortKey = "rating" | "reviews" | "pace" | "replies";
 
 const tabs: { key: SortKey; label: string }[] = [
   { key: "rating", label: "Avaliação" },
   { key: "reviews", label: "Total de reviews" },
   { key: "pace", label: "Reviews por mês" },
+  { key: "replies", label: "Respondidas" },
 ];
 
 /** The table always lists this many places; the customer is added below when outside it. */
@@ -22,6 +25,7 @@ const decimal = (value: number, digits: number) => value.toFixed(digits).replace
 function value(entry: CompetitorEntry, key: SortKey): number | null {
   if (key === "rating") return entry.average ?? entry.rating;
   if (key === "reviews") return entry.reviewsCount;
+  if (key === "replies") return entry.replyRate;
   return entry.pacePerMonth;
 }
 
@@ -30,7 +34,17 @@ function display(entry: CompetitorEntry, key: SortKey): string {
   if (current === null) return "–";
   if (key === "rating") return `${decimal(entry.rating ?? current, 1)}★`;
   if (key === "reviews") return number.format(current);
+  if (key === "replies") return formatPercent(current);
   return `${number.format(current)}/mês`;
+}
+
+/** Under the reply rate: how many reviews it rests on, or why it is not shown. */
+function replyNote(entry: CompetitorEntry): string | null {
+  const sample = entry.replySample;
+  if (sample === null) return null;
+  if (sample === 0) return "sem reviews";
+  const reviews = `${number.format(sample)} ${sample === 1 ? "review" : "reviews"}`;
+  return sample < replyMinSample ? `só ${reviews}` : reviews;
 }
 
 /** First, last and the pages around the current one, with gaps in between: 1 … 4 5 6 … 10. */
@@ -48,15 +62,23 @@ function distance(meters: number | null): string {
   return meters < 1000 ? `${number.format(Math.round(meters / 10) * 10)} m` : `${decimal(meters / 1000, 1)} km`;
 }
 
-export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
+export function CompetitionBoard({ entries, replyInfo }: { entries: CompetitorEntry[]; replyInfo: ReactNode }) {
   const [sort, setSort] = useState<SortKey>("rating");
   const [page, setPage] = useState(0);
-  const sorted = [...entries].sort((a, b) => (value(b, sort) ?? -1) - (value(a, sort) ?? -1) || b.reviewsCount - a.reviewsCount);
+  // The reply ranking appears once some competitor has been measured, even when every sample is
+  // too small to show a rate ("–" with "só N reviews" says why).
+  const shownTabs = entries.some((entry) => !entry.isSelf && entry.replySample !== null) ? tabs : tabs.filter((tab) => tab.key !== "replies");
+  const sorted = [...entries].sort(
+    (a, b) =>
+      (value(b, sort) ?? -1) - (value(a, sort) ?? -1) ||
+      (sort === "replies" ? (b.replySample ?? 0) - (a.replySample ?? 0) : 0) ||
+      b.reviewsCount - a.reviewsCount,
+  );
   const values = sorted.map((entry) => value(entry, sort)).filter((current): current is number => current !== null);
   const max = Math.max(1, ...values);
   // Ratings sit on a shared star scale starting at the lowest whole star, labelled on screen.
   const floor = Math.max(1, Math.floor(Math.min(5, ...values)));
-  const share = (current: number) => (sort === "rating" ? (current - floor) / (5 - floor || 1) : current / max);
+  const share = (current: number) => (sort === "rating" ? (current - floor) / (5 - floor || 1) : sort === "replies" ? current : current / max);
 
   const listed = sorted.slice(0, shownPlaces);
   const pages = Math.max(1, Math.ceil(listed.length / pageSize));
@@ -67,6 +89,7 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
 
   function row(entry: CompetitorEntry, rank: number) {
     const current = value(entry, sort);
+    const note = sort === "replies" ? replyNote(entry) : null;
     return (
       <li
         key={entry.id}
@@ -102,6 +125,7 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
         <span className="tabular text-right text-sm font-semibold text-text">
           {display(entry, sort)}
           {sort === "rating" && entry.average !== null ? <span className="block text-xs font-normal text-subtle">média {decimal(entry.average, 2)}</span> : null}
+          {note ? <span className="block text-xs font-normal text-subtle">{note}</span> : null}
         </span>
         <span className="col-span-2 col-start-2 h-1.5 rounded-full bg-line/60" aria-hidden="true">
           {current !== null ? (
@@ -118,7 +142,7 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div role="tablist" aria-label="Ordenar concorrentes por" className="flex flex-wrap gap-1.5">
-        {tabs.map((tab) => (
+        {shownTabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
@@ -128,7 +152,7 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
               setSort(tab.key);
               setPage(0);
             }}
-            className={`inline-flex h-10 items-center rounded-full px-4 text-sm font-semibold transition-colors ${
+            className={`inline-flex h-10 items-center rounded-full px-3.5 text-sm font-semibold transition-colors sm:px-4 ${
               sort === tab.key ? "bg-surface-inverse text-inverse" : "border border-line bg-surface text-muted hover:text-text"
             }`}
           >
@@ -201,7 +225,14 @@ export function CompetitionBoard({ entries }: { entries: CompetitorEntry[] }) {
           ? `Barras numa escala de ${floor}★ a 5★. Média exata calculada a partir da distribuição de estrelas no Google.`
           : sort === "pace"
             ? "Reviews novas por mês, medidas nas últimas semanas. «–»: ainda a medir."
-            : "Total de reviews no Google."}
+            : sort === "replies"
+              ? (
+                  <>
+                    Barras de 0 a 100%. Reviews recentes com resposta do dono no Google (estimativa). «–»: ainda sem medição ou menos de {replyMinSample} reviews.{" "}
+                    <InfoTip label="Respondidas">{replyInfo}</InfoTip>
+                  </>
+                )
+              : "Total de reviews no Google."}
       </p>
     </div>
   );

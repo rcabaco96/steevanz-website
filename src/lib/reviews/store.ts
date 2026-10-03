@@ -11,7 +11,7 @@ const pageSize = 1000;
 const maxRows = 50_000;
 /**
  * Business rule (see .claude/skills/regras-negocio-reviews): only import what is not stored yet.
- * - "visit" (opening the dashboard, "Atualizar"): new reviews, plus owner replies to any review
+ * - "visit" (the "Atualizar" buttons; opening a page never reads Google): new reviews, plus owner replies to any review
  *   still unanswered from the last 90 days, so a customer can confirm the replies just posted.
  * - "refresh" (daily job): the last 30 days, for replies and edits on recent reviews.
  * - "full" (monthly, "Verificar respostas antigas" once a day, "Reimportar tudo"): the whole
@@ -65,11 +65,12 @@ export interface BusinessRow {
   category?: string | null;
   competitors_refreshed_at?: string | null;
   full_synced_at?: string | null;
+  google_fid?: string | null;
   created_at: string;
 }
 
 const businessColumns =
-  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, category, created_at";
+  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, category, google_fid, created_at";
 
 export function toBusiness(row: BusinessRow): ReviewBusiness {
   return {
@@ -84,6 +85,7 @@ export function toBusiness(row: BusinessRow): ReviewBusiness {
     lastSyncedAt: row.last_synced_at,
     activeServices: row.active_services ?? [],
     category: row.category ?? null,
+    googleFid: row.google_fid ?? null,
   };
 }
 
@@ -254,6 +256,7 @@ export async function syncBusinessReviews(client: SupabaseClient, business: Sync
     }
 
     const place = items.find((item) => item.totalScore !== undefined && item.totalScore !== null);
+    const ids = items.find((item) => item.fid && item.placeId);
     const { error: updateError } = await client
       .from("review_businesses")
       .update({
@@ -262,6 +265,7 @@ export async function syncBusinessReviews(client: SupabaseClient, business: Sync
         ...(full ? { full_synced_at: new Date().toISOString() } : {}),
         sync_started_at: null,
         ...(place ? { rating_total: place.totalScore, reviews_total: place.reviewsCount ?? null } : {}),
+        ...(ids ? { google_fid: ids.fid, google_place_id: ids.placeId } : {}),
       })
       .eq("id", business.id);
     if (updateError) throw new Error(updateError.message);
