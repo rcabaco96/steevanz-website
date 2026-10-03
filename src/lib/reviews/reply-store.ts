@@ -122,7 +122,13 @@ export async function saveReplySettings(client: SupabaseClient, businessId: stri
   };
   const { error } = await client.from("review_reply_settings").upsert(row, { onConflict: "business_id" });
   if (error) throw new Error(error.message);
-  if (previous.profileId && previous.profileId !== profileId) {
+  const voiceChanged =
+    (previous.profileId !== null && previous.profileId !== profileId) ||
+    previous.signature.trim() !== settings.signature.trim() ||
+    previous.negativeContact.trim() !== settings.negativeContact.trim();
+  if (previous.onboardedAt && voiceChanged) {
+    // Pending replies carry the old tone, signature or contact: they are built again right away
+    // (saveReplySettingsAction). Rejected and approved ones stay as history.
     const { error: draftsError } = await client.from("review_reply_drafts").delete().eq("business_id", businessId).in("status", ["pending", "generating"]);
     if (draftsError) throw new Error(draftsError.message);
   }
@@ -634,14 +640,18 @@ export async function rejectAndRedraft(client: SupabaseClient, businessId: strin
 
 /** Every reply already suggested for a review (any status): alternatives never repeat them. */
 async function shownReplyKeys(client: SupabaseClient, businessId: string, reviewId: string): Promise<Set<string>> {
-  const { data, error } = await client.from("review_reply_drafts").select("reply").eq("business_id", businessId).eq("review_id", reviewId).neq("reply", "").limit(500);
-  if (error) throw new Error(error.message);
-  return new Set((data ?? []).map((row) => replyKey(row.reply as string)));
+  const [drafts, alternatives] = await Promise.all([
+    client.from("review_reply_drafts").select("reply").eq("business_id", businessId).eq("review_id", reviewId).neq("reply", "").limit(500),
+    client.from("review_reply_alternatives").select("reply_key").eq("business_id", businessId).eq("review_id", reviewId).limit(1000),
+  ]);
+  if (drafts.error) throw new Error(drafts.error.message);
+  if (alternatives.error) throw new Error(alternatives.error.message);
+  return new Set([...(drafts.data ?? []).map((row) => replyKey(row.reply as string)), ...(alternatives.data ?? []).map((row) => row.reply_key as string)]);
 }
 
 export interface ReplyAlternative {
-  /** replyKey of the text: identifies the option when the owner picks it. */
-  key: string;
+  /** Stored alternative (review_reply_alternatives): the owner picks it by this id. */
+  id: string;
   reply: string;
   reasoning: string;
 }
@@ -649,9 +659,8 @@ export interface ReplyAlternative {
 /** Number of alternatives offered by "Outra resposta". */
 export const alternativesCount = 5;
 
-async function alternativesFor(client: SupabaseClient, businessId: string, draft: DraftRow): Promise<ComposedReply[]> {
+async function alternativesFor(client: SupabaseClient, businessId: string, draft: DraftRow, settings: ReplySettings): Promise<ComposedReply[]> {
   const review = draft.google_reviews!;
-  const settings = await loadReplySettings(client, businessId);
   const [library, ownKeys, shownKeys] = await Promise.all([
     loadLibrary(client, businessId, settings.profileId),
     loadOwnTextKeys(client, businessId, settings),
@@ -662,23 +671,52 @@ async function alternativesFor(client: SupabaseClient, businessId: string, draft
 
 /**
  * "Outra resposta": up to 5 replies with different texts, none equal to one already shown for this
- * review nor to a text the owner wrote. Nothing is saved until the owner picks one.
+ * review (drafts or earlier alternatives) nor to a text the owner wrote. Every alternative shown
+ * is stored, picked or not: it never comes back, and what the owner skipped stays as learning.
  */
 export async function draftAlternatives(client: SupabaseClient, businessId: string, draftId: string): Promise<ReplyAlternative[] | null> {
   const draft = await liveDraft(client, businessId, draftId);
   if (!draft || draft.status !== "pending" || !draft.google_reviews) return null;
-  return (await alternativesFor(client, businessId, draft)).map((option) => ({ key: replyKey(option.reply), reply: option.reply, reasoning: option.reasoning }));
+  const settings = await loadReplySettings(client, businessId);
+  const options = await alternativesFor(client, businessId, draft, settings);
+  if (!options.length) return [];
+  const { data, error } = await client
+    .from("review_reply_alternatives")
+    .insert(
+      options.map((option) => ({
+        business_id: businessId,
+        review_id: draft.google_reviews!.review_id,
+        draft_id: draftId,
+        profile_id: settings.profileId,
+        reply: option.reply,
+        reply_key: replyKey(option.reply),
+        reasoning: option.reasoning,
+        snippet_ids: option.snippetIds,
+      })),
+    )
+    .select("id, reply, reasoning");
+  if (error) throw new Error(error.message);
+  // Same order as composed (the usual reply first).
+  const rows = (data ?? []) as ReplyAlternative[];
+  return options.map((option) => rows.find((row) => row.reply === option.reply)!).filter(Boolean);
 }
 
 /**
  * The owner picked an alternative: the current suggestion is kept as rejected (its sentences count
  * a rejection) and the chosen text becomes the new suggestion, still waiting for "Aceitar".
  */
-export async function chooseAlternative(client: SupabaseClient, businessId: string, draftId: string, key: string): Promise<"chosen" | "stale" | "missing"> {
+export async function chooseAlternative(client: SupabaseClient, businessId: string, draftId: string, alternativeId: string): Promise<"chosen" | "stale" | "missing"> {
   const draft = await liveDraft(client, businessId, draftId);
   if (!draft || draft.status !== "pending" || !draft.google_reviews) return "missing";
-  // Rebuilt on the server: the client only says which text, never what to store.
-  const chosen = (await alternativesFor(client, businessId, draft)).find((option) => replyKey(option.reply) === key);
+  // The text comes from what the server stored when showing it, never from the client.
+  const { data: chosen, error: chosenError } = await client
+    .from("review_reply_alternatives")
+    .select("id, reply, reasoning, snippet_ids")
+    .eq("id", alternativeId)
+    .eq("business_id", businessId)
+    .eq("draft_id", draftId)
+    .maybeSingle<{ id: string; reply: string; reasoning: string; snippet_ids: string[] }>();
+  if (chosenError) throw new Error(chosenError.message);
   if (!chosen) return "stale";
   const { error } = await client
     .from("review_reply_drafts")
@@ -692,9 +730,10 @@ export async function chooseAlternative(client: SupabaseClient, businessId: stri
   if (!newId) return "missing";
   const { error: updateError } = await client
     .from("review_reply_drafts")
-    .update({ status: "pending", reply: chosen.reply, reasoning: chosen.reasoning, snippet_ids: chosen.snippetIds, model: "regras" })
+    .update({ status: "pending", reply: chosen.reply, reasoning: chosen.reasoning, snippet_ids: chosen.snippet_ids, model: "regras" })
     .eq("id", newId);
   if (updateError) throw new Error(updateError.message);
+  await client.from("review_reply_alternatives").update({ chosen: true }).eq("id", chosen.id);
   return "chosen";
 }
 
@@ -723,7 +762,7 @@ export async function loadToneHistory(client: SupabaseClient, businessId: string
     (rows ?? []).filter((row) => row.profile_id === id && test(row)).length;
   type DraftStat = { profile_id: string | null; status: string; approved_by: string | null; edited: boolean };
   const draftRows = drafts.data as DraftStat[] | null;
-  return (profiles.data ?? []).map((profile) => ({
+  const entries = (profiles.data ?? []).map((profile) => ({
     id: profile.id as string,
     settings: profile.settings as ToneSettings,
     createdAt: profile.created_at as string,
@@ -734,4 +773,5 @@ export async function loadToneHistory(client: SupabaseClient, businessId: string
     edited: count(draftRows, profile.id as string, (row) => row.status === "approved" && row.edited),
     rejected: count(draftRows, profile.id as string, (row) => row.status === "rejected"),
   }));
+  return entries.sort((a, b) => Number(b.current) - Number(a.current));
 }

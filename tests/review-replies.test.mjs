@@ -157,3 +157,15 @@ describe("alternatives (Outra resposta)", () => {
     });
   }
 });
+
+describe("learning from the owner's answer", () => {
+  it("keeps a thanking first sentence as the opening even when it mentions a theme", () => {
+    const learned = learnFromAnswer("Muito obrigado pela confiança e pelas palavras simpáticas! Foi um prazer trabalhar consigo.", 5, { signature: "", negativeContact: "" });
+    assert.equal(learned[0].kind, "opening");
+  });
+
+  it("files contact invitations in positive replies as closings", () => {
+    const learned = learnFromAnswer("Obrigado! Para qualquer novo projeto, fale connosco: geral@x.pt.", 5, { signature: "", negativeContact: "geral@x.pt" });
+    assert.equal(learned[1].kind, "closing");
+  });
+});

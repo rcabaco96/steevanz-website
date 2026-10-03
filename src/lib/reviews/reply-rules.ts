@@ -399,6 +399,9 @@ export interface LearnedSnippet {
   text: string;
 }
 
+/** First sentences that thank or greet are openings, whatever else they mention. */
+const openingPattern = /^\s*(muito |muitissimo |um grande |mil )?(obrigad|agradec|ola\b|bom dia|boa tarde|boa noite|caro|cara|querid|thank|hi\b|hello|dear)/;
+
 const contactPattern = /@|\b\d{9}\b|\b(contact\w*|fale connosco|fala connosco|ligue|liga-nos|envie|mensagem|telefone|email)\b/i;
 
 /**
@@ -418,7 +421,8 @@ export function learnFromAnswer(answer: string, rating: number, settings: Pick<R
     const text = contact ? sentence.replaceAll(contact, "<contacto>") : sentence;
     const theme = themesByMention(sentence)[0] ?? null;
     let kind: SnippetKind;
-    if (text.includes("<contacto>") || contactPattern.test(sentence)) kind = "contact";
+    if (text.includes("<contacto>") || contactPattern.test(sentence)) kind = sentiment === "negative" ? "contact" : "closing";
+    else if (index === 0 && openingPattern.test(normalize(sentence))) kind = "opening";
     else if (theme) kind = "theme";
     else if (index === 0) kind = "opening";
     else kind = "closing";

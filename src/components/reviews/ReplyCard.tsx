@@ -158,13 +158,13 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
           ) : alternatives.length ? (
             <ol className="flex flex-col gap-2">
               {alternatives.map((option, index) => (
-                <li key={option.key} className="flex flex-col gap-2.5 rounded-xl border border-line bg-surface p-3">
+                <li key={option.id} className="flex flex-col gap-2.5 rounded-xl border border-line bg-surface p-3">
                   <span className="text-xs font-semibold text-subtle">Opção {index + 1}</span>
                   <p className="text-[0.95rem] leading-relaxed whitespace-pre-line text-text">{option.reply}</p>
                   <button
                     type="button"
                     disabled={pending}
-                    onClick={() => run("choose", () => chooseAlternativeAction(slug, item.draftId, option.key))}
+                    onClick={() => run("choose", () => chooseAlternativeAction(slug, item.draftId, option.id))}
                     className={buttonClasses("secondary", "sm", "self-start")}
                   >
                     Usar esta

@@ -6,6 +6,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import {
   approveDraft,
   chooseAlternative,
+  draftMissingReplies,
   draftAlternatives,
   learnTrainingAnswer,
   loadReplyBusiness,
@@ -69,6 +70,8 @@ export async function saveReplySettingsAction(slug: string, input: ReplySettings
     await saveReplySettings(client, business.id, settings, previous);
     // Settings first: learning strips the signature and the contact the owner just typed.
     for (const item of training.filter((entry) => entry.answer)) await learnTrainingAnswer(client, business.id, item.reviewId, item.answer);
+    // Replies are built by rules (instant, free): pending ones dropped by a change come back now.
+    if (previous.onboardedAt) await draftMissingReplies(client, business);
     return { ok: true as const };
   });
 }
@@ -164,10 +167,10 @@ export async function alternativesAction(slug: string, draftId: string): Promise
   }
 }
 
-export async function chooseAlternativeAction(slug: string, draftId: string, key: string): Promise<ReplyActionState> {
-  if (!z.uuid().safeParse(draftId).success || key.length > 4000) return { ok: false, message: "Resposta inválida." };
+export async function chooseAlternativeAction(slug: string, draftId: string, alternativeId: string): Promise<ReplyActionState> {
+  if (!z.uuid().safeParse(draftId).success || !z.uuid().safeParse(alternativeId).success) return { ok: false, message: "Resposta inválida." };
   return withBusiness(slug, async (client, business) => {
-    const outcome = await chooseAlternative(client, business.id, draftId, key);
+    const outcome = await chooseAlternative(client, business.id, draftId, alternativeId);
     if (outcome === "missing") return { ok: false as const, message: "Esta resposta já foi tratada." };
     if (outcome === "stale") return { ok: false as const, message: "As alternativas mudaram entretanto. Peça outra vez." };
     return { ok: true as const };
