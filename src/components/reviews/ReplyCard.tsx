@@ -8,6 +8,7 @@ import { isNegative } from "@/lib/reviews/analytics";
 import { formatDateTime } from "@/lib/reviews/format";
 import { googleReviewUrl } from "@/lib/reviews/google-links";
 import { alternativesAction, approveDraftAction, chooseAlternativeAction, rejectDraftAction, undoApprovalAction } from "@/lib/reviews/reply-actions";
+import { languageNames, type ReplyLanguage } from "@/lib/reviews/reply-languages";
 import type { InboxItem, ReplyAlternative } from "@/lib/reviews/reply-store";
 import { rejectReasons } from "@/lib/reviews/replies";
 import { InfoTip } from "./InfoTip";
@@ -19,6 +20,26 @@ type Action = "approve" | "reject" | "choose" | "undo";
 
 const fieldClasses =
   "w-full rounded-xl border border-line-strong bg-surface px-3.5 py-3 text-[0.95rem] leading-relaxed text-text placeholder:text-subtle focus-visible:outline-2 focus-visible:outline-ring";
+
+/** Language of a reply that is not in Portuguese (the review's language). */
+function LanguageTag({ language }: { language: ReplyLanguage }) {
+  return (
+    <span className="rounded-full border border-line bg-surface px-2 py-0.5 text-xs font-semibold tracking-normal text-text normal-case">
+      <span className="sr-only">Resposta em </span>
+      {languageNames[language]}
+    </span>
+  );
+}
+
+/** Portuguese translation under a reply in another language (same sentences, composed in Portuguese). */
+function Translation({ text, label = "Tradução em português" }: { text: string; label?: string }) {
+  return (
+    <div className="flex flex-col gap-1 border-t border-line pt-2.5">
+      <p className="text-xs font-semibold text-subtle">{label}</p>
+      <p className="text-sm leading-relaxed whitespace-pre-line text-muted">{text}</p>
+    </div>
+  );
+}
 
 export function ReplyCard({ slug, item, googleFid }: { slug: string; item: InboxItem; googleFid: string | null }) {
   const [mode, setMode] = useState<Mode>("view");
@@ -33,6 +54,8 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
   const publishedOnGoogle = Boolean(item.review.ownerReply);
   const googleUrl = googleReviewUrl(item.review.id, googleFid);
   const redrafting = pending && (action === "reject" || action === "choose");
+  const foreign = item.language !== "pt";
+  const languageName = languageNames[item.language].toLowerCase();
 
   function showAlternatives() {
     setMode("alternatives");
@@ -82,10 +105,11 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
 
       <div className={`flex flex-col gap-2 rounded-2xl p-3.5 ${item.status === "approved" ? "bg-success-soft" : "bg-accent-soft"}`}>
         <div className="flex items-center justify-between gap-2">
-          <p className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-accent-text uppercase">
+          <p className="inline-flex flex-wrap items-center gap-1.5 text-xs font-semibold tracking-wide text-accent-text uppercase">
             <SparkleIcon size={14} />
             {item.status === "approved" ? "Resposta aprovada" : "Resposta sugerida"}
             {item.edited ? <span className="font-normal normal-case text-subtle">· editada por si</span> : null}
+            {foreign ? <LanguageTag language={item.language} /> : null}
           </p>
           {item.reasoning && !redrafting ? (
             <InfoTip label="Como montei esta resposta">{item.reasoning}</InfoTip>
@@ -101,9 +125,22 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
             <Skeleton className="h-3.5 w-2/3" />
           </div>
         ) : mode === "edit" ? (
-          <textarea aria-label="Editar resposta" className={`${fieldClasses} min-h-36`} value={text} maxLength={4000} onChange={(event) => setText(event.target.value)} />
+          <>
+            <textarea aria-label="Editar resposta" className={`${fieldClasses} min-h-36`} value={text} maxLength={4000} onChange={(event) => setText(event.target.value)} />
+            {foreign ? (
+              <p className="text-xs text-subtle">
+                Escreva em {languageName}, a língua da review. As suas frases aprendidas são em português, por isso estas alterações não entram nelas.
+              </p>
+            ) : null}
+            {item.replyPt ? <Translation text={item.replyPt} label="Tradução da sugestão em português" /> : null}
+          </>
         ) : (
-          <p className="text-[0.95rem] leading-relaxed whitespace-pre-line text-text">{item.reply}</p>
+          <>
+            <p className="text-[0.95rem] leading-relaxed whitespace-pre-line text-text" lang={foreign ? item.language : undefined}>
+              {item.reply}
+            </p>
+            {item.replyPt ? <Translation text={item.replyPt} /> : null}
+          </>
         )}
       </div>
 
@@ -129,7 +166,11 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
               );
             })}
           </div>
-          <p className="text-xs text-subtle">Monto outra resposta com frases diferentes. Prefere escrever a sua? Use «Editar»: as suas frases ficam guardadas para as próximas.</p>
+          <p className="text-xs text-subtle">
+            {foreign
+              ? `Monto outra resposta em ${languageName} com frases diferentes. Prefere escrever a sua? Use «Editar».`
+              : "Monto outra resposta com frases diferentes. Prefere escrever a sua? Use «Editar»: as suas frases ficam guardadas para as próximas."}
+          </p>
         </div>
       ) : null}
 
@@ -138,8 +179,11 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
           <p className="flex items-center gap-1.5 text-sm font-semibold text-text">
             Escolha outra resposta
             <InfoTip label="Outras respostas">
-              Até 5 respostas com textos diferentes, montadas com as suas frases e com frases-base da Steevanz. Nunca repetem uma resposta já mostrada para esta review nem
-              um texto que tenha escrito. A que escolher passa a ser a sugestão e ainda espera por «Aceitar»; a anterior conta como rejeitada.
+              {foreign
+                ? `Até 5 respostas em ${languageName}, a língua da review, montadas com frases-base da Steevanz (as suas frases são em português), cada uma com a tradução em português.`
+                : "Até 5 respostas com textos diferentes, montadas com as suas frases e com frases-base da Steevanz."}{" "}
+              Nunca repetem uma resposta já mostrada para esta review nem um texto que tenha escrito. A que escolher passa a ser a sugestão e ainda espera por «Aceitar»; a
+              anterior conta como rejeitada.
             </InfoTip>
           </p>
           {loadingAlternatives || !alternatives ? (
@@ -160,7 +204,10 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
               {alternatives.map((option, index) => (
                 <li key={option.id} className="flex flex-col gap-2.5 rounded-xl border border-line bg-surface p-3">
                   <span className="text-xs font-semibold text-subtle">Opção {index + 1}</span>
-                  <p className="text-[0.95rem] leading-relaxed whitespace-pre-line text-text">{option.reply}</p>
+                  <p className="text-[0.95rem] leading-relaxed whitespace-pre-line text-text" lang={option.language !== "pt" ? option.language : undefined}>
+                    {option.reply}
+                  </p>
+                  {option.replyPt ? <Translation text={option.replyPt} /> : null}
                   <button
                     type="button"
                     disabled={pending}
@@ -178,7 +225,7 @@ export function ReplyCard({ slug, item, googleFid }: { slug: string; item: Inbox
               {alternatives.length
                 ? `Só há ${alternatives.length} ${alternatives.length === 1 ? "alternativa diferente" : "alternativas diferentes"} com as frases atuais.`
                 : "Já não há respostas diferentes com as frases atuais."}{" "}
-              Treine mais respostas ou use «Editar» para ter mais variedade.
+              {foreign ? "Use «Editar» para escrever a sua." : "Treine mais respostas ou use «Editar» para ter mais variedade."}
             </p>
           ) : null}
           <button type="button" disabled={pending} onClick={() => setMode("view")} className={buttonClasses("ghost", "md", "self-start")}>

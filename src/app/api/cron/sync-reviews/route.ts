@@ -1,48 +1,40 @@
 import type { NextRequest } from "next/server";
-import { apifyToken } from "@/lib/reviews/apify";
-import { needsFullSync, startReviewSync, syncBusinessReviews, syncTargetColumns, type SyncResult, type SyncTarget } from "@/lib/reviews/store";
-import { dailySyncFor } from "@/lib/reviews/sync-rules";
+import { loadPlanInputs } from "@/lib/reviews/reader-queue";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
+import { runCustomerJobs, runReaderAlert, runVerifiedSyncs } from "../_scheduler/routines";
 
 export const maxDuration = 300;
 
-const concurrency = 3;
-const startBudgetMs = 200_000;
-
 /**
- * Daily routine, at the end of the day (vercel.json): updates the customers who did not press
- * "Atualizar" that day, so nobody is read twice on the same day (see sync-rules.ts).
+ * Customers' daily routine, on demand. The scheduler tick (/api/cron/tick) runs it every day at
+ * 22:00 Portuguese time; this route remains for manual runs. Never reads Google for non-verified
+ * customers: it queues "full" (first import) / "update" (not updated today) jobs for DataForSEO
+ * (local reader when DataForSEO is not configured). Verified customers not synced today are synced
+ * through the official Google API. The reader-offline email is checked only while jobs use the reader.
+ * Jobs are deduplicated, so running it twice is harmless; it does not mark the tick's routine as done.
+ *
+ * `?dry=1` (or READER_QUEUE_DRY_RUN=1) returns the plan without queuing anything or sending email.
  */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET?.trim();
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
-  if (!apifyToken()) return Response.json({ error: "APIFY_TOKEN is not configured" }, { status: 500 });
   const client = tryCreateServiceClient();
   if (!client) return Response.json({ error: "Supabase is not configured" }, { status: 500 });
+  const dryRun = request.nextUrl.searchParams.get("dry") === "1" || process.env.READER_QUEUE_DRY_RUN === "1";
 
-  const { data, error } = await client
-    .from("review_businesses")
-    .select(`${syncTargetColumns}, full_synced_at, last_synced_at`)
-    .order("last_synced_at", { ascending: true, nullsFirst: true });
-  if (error) return Response.json({ error: error.message }, { status: 500 });
-
-  const started = Date.now();
-  const businesses = (data ?? []) as (SyncTarget & { full_synced_at: string | null; last_synced_at: string | null })[];
-  const plan = businesses.map((business) => ({ business, mode: dailySyncFor({ lastSyncedAt: business.last_synced_at, fullDue: needsFullSync(business) }) }));
-  const skipped = plan.filter((item) => item.mode === "skip").map((item) => item.business.slug);
-  const queue = plan.filter((item) => item.mode !== "skip");
-  const results: SyncResult[] = [];
-  const worker = async () => {
-    while (queue.length && Date.now() - started < startBudgetMs) {
-      const { business, mode } = queue.shift()!;
-      if ((await startReviewSync(client, business.id, 3600)) !== "started") continue;
-      // Once a month each business re-reads its whole history, so replies to old reviews show up.
-      results.push(await syncBusinessReviews(client, business, mode === "full" ? "full" : "refresh"));
-    }
-  };
-  await Promise.all(Array.from({ length: concurrency }, worker));
-
-  return Response.json({ synced: results, skipped, deferred: queue.map((item) => item.business.slug) });
+  try {
+    const now = new Date();
+    const inputs = await loadPlanInputs(client);
+    const customers = await runCustomerJobs(client, { now, dryRun, inputs });
+    const verified = await runVerifiedSyncs(client, { now, dryRun, inputs, deadline: now.getTime() + 200_000 });
+    // After queuing, so a heartbeat problem never stops the day's work.
+    const reader = await runReaderAlert(client, { now, dryRun });
+    return Response.json({ dryRun, customers, verified, reader });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[sync-reviews] failed:", message);
+    return Response.json({ error: message }, { status: 500 });
+  }
 }

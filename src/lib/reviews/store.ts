@@ -13,9 +13,11 @@ const maxRows = 50_000;
  * Business rule (see .claude/skills/regras-negocio-reviews): only import what is not stored yet.
  * - "visit" (the "Atualizar" buttons; opening a page never reads Google): new reviews, plus owner replies to any review
  *   still unanswered from the last 90 days, so a customer can confirm the replies just posted.
- * - "refresh" (daily job): the last 30 days, for replies and edits on recent reviews.
- * - "full" (monthly, "Verificar respostas antigas" once a day, "Reimportar tudo"): the whole
+ * - "refresh" (Apify plan B, "Ler com o Apify" in the admin): the last 30 days, for replies and
+ *   edits on recent reviews.
+ * - "full" ("Verificar respostas antigas" once a day, Apify plan B in the admin): the whole
  *   history, so replies to old reviews are picked up too.
+ * The normal path is the free local reader (reader-queue.ts): Vercel only queues its jobs.
  */
 export type SyncMode = "visit" | "refresh" | "full";
 const dayMs = 86_400_000;
@@ -23,13 +25,11 @@ const dayMs = 86_400_000;
 const newestMarginDays = 1;
 const visitReplyWindowDays = 90;
 const refreshWindowDays = 30;
-const fullSyncEveryDays = 30;
 /** Customers can trigger a whole-history check at most this often. */
 export const customerFullSyncEveryHours = 24;
 
-export function needsFullSync(business: { full_synced_at: string | null }, now = new Date()): boolean {
-  return !business.full_synced_at || now.getTime() - Date.parse(business.full_synced_at) > fullSyncEveryDays * dayMs;
-}
+/** Twice-a-year whole-history cadence; the pure rule lives in sync-rules.ts. */
+export { needsFullSync } from "./sync-rules";
 
 /** Where an incremental sync starts reading; null means the whole history. */
 async function syncStart(client: SupabaseClient, businessId: string, mode: SyncMode, latest: string | null): Promise<Date | null> {
@@ -146,7 +146,12 @@ export async function getDashboardSource(slug: string): Promise<DashboardSource 
       likes: review.likes,
     }),
   );
-  const competition = await loadCompetition(client, businessRow.id, ownReviews).catch((error: unknown) => {
+  const competition = await loadCompetition(client, businessRow.id, ownReviews, new Date(), {
+    name: businessRow.name,
+    placeId: (businessRow as { place_id?: string | null }).place_id ?? null,
+    rating: businessRow.rating_total === null ? null : Number(businessRow.rating_total),
+    reviewsTotal: businessRow.reviews_total,
+  }).catch((error: unknown) => {
     console.error("[reviews] competition load failed:", error instanceof Error ? error.message : error);
     return null;
   });
@@ -204,7 +209,14 @@ async function unknownReviews(client: SupabaseClient, businessId: string, rows: 
 
 const stars = (rating: number) => "★".repeat(rating) + "☆".repeat(5 - rating);
 
-async function sendNegativeReviewAlert(business: SyncTarget, reviews: ReviewRow[]) {
+/** Review fields the negative-review email shows. */
+export type AlertReview = Pick<ReviewRow, "rating" | "published_at" | "text">;
+
+/**
+ * Emails the customer about new negative reviews (1–3★). Called after Apify syncs and, for the
+ * local reader, by /api/reader/alerts. Callers check `alert_email` first.
+ */
+export async function sendNegativeReviewAlert(business: SyncTarget, reviews: AlertReview[]) {
   const many = reviews.length > 1;
   await sendOwnerEmail({
     to: [business.alert_email!],
@@ -226,7 +238,48 @@ async function sendNegativeReviewAlert(business: SyncTarget, reviews: ReviewRow[
 export type SyncTarget = Pick<BusinessRow, "id" | "slug" | "name" | "google_maps_url" | "alert_email">;
 export const syncTargetColumns = "id, slug, name, google_maps_url, alert_email";
 
-const alertMaxAgeMs = 7 * 86_400_000;
+/** Only reviews published in the last 7 days produce an alert: older ones are history, not news. */
+export const alertMaxAgeMs = 7 * 86_400_000;
+
+/**
+ * Stores what Apify read for a business: reviews upserted by id (never duplicated), Google's rating
+ * and total, its ids and the sync dates. `full` marks the first import done. Alerts for new
+ * negative reviews only when the business already had reviews (the first import is history).
+ */
+export async function storeApifyReviews(
+  client: SupabaseClient,
+  business: SyncTarget,
+  items: ApifyReviewItem[],
+  options: { full: boolean; hadReviews: boolean },
+): Promise<{ imported: number; fresh: number }> {
+  const rows = items.map((item) => toReviewRow(business.id, item)).filter((row) => row !== null);
+  const fresh = await unknownReviews(client, business.id, rows);
+  for (let index = 0; index < rows.length; index += 500) {
+    const { error } = await client.from("google_reviews").upsert(rows.slice(index, index + 500), { onConflict: "review_id" });
+    if (error) throw new Error(error.message);
+  }
+
+  const place = items.find((item) => item.totalScore !== undefined && item.totalScore !== null);
+  const ids = items.find((item) => item.fid && item.placeId);
+  const { error: updateError } = await client
+    .from("review_businesses")
+    .update({
+      last_synced_at: new Date().toISOString(),
+      last_sync_error: null,
+      ...(options.full ? { full_synced_at: new Date().toISOString() } : {}),
+      sync_started_at: null,
+      ...(place ? { rating_total: place.totalScore, reviews_total: place.reviewsCount ?? null } : {}),
+      ...(ids ? { google_fid: ids.fid, google_place_id: ids.placeId } : {}),
+    })
+    .eq("id", business.id);
+  if (updateError) throw new Error(updateError.message);
+
+  if (options.hadReviews && business.alert_email) {
+    const negative = fresh.filter((row) => isNegative(row.rating) && Date.now() - Date.parse(row.published_at) < alertMaxAgeMs);
+    if (negative.length) await sendNegativeReviewAlert(business, negative);
+  }
+  return { imported: rows.length, fresh: fresh.length };
+}
 
 /**
  * Imports a business's reviews. The first run fetches the whole history; later runs only fetch
@@ -247,32 +300,8 @@ export async function syncBusinessReviews(client: SupabaseClient, business: Sync
     const since = await syncStart(client, business.id, mode, latest?.published_at ?? null);
 
     const items = await fetchGoogleReviews(business.google_maps_url, since);
-    const rows = items.map((item) => toReviewRow(business.id, item)).filter((row) => row !== null);
-    // The first import is the whole history, so only later syncs can produce alerts.
-    const fresh = latest && business.alert_email ? await unknownReviews(client, business.id, rows) : [];
-    for (let index = 0; index < rows.length; index += 500) {
-      const { error } = await client.from("google_reviews").upsert(rows.slice(index, index + 500), { onConflict: "review_id" });
-      if (error) throw new Error(error.message);
-    }
-
-    const place = items.find((item) => item.totalScore !== undefined && item.totalScore !== null);
-    const ids = items.find((item) => item.fid && item.placeId);
-    const { error: updateError } = await client
-      .from("review_businesses")
-      .update({
-        last_synced_at: new Date().toISOString(),
-        last_sync_error: null,
-        ...(full ? { full_synced_at: new Date().toISOString() } : {}),
-        sync_started_at: null,
-        ...(place ? { rating_total: place.totalScore, reviews_total: place.reviewsCount ?? null } : {}),
-        ...(ids ? { google_fid: ids.fid, google_place_id: ids.placeId } : {}),
-      })
-      .eq("id", business.id);
-    if (updateError) throw new Error(updateError.message);
-
-    const negative = fresh.filter((row) => isNegative(row.rating) && Date.now() - Date.parse(row.published_at) < alertMaxAgeMs);
-    if (negative.length) await sendNegativeReviewAlert(business, negative);
-    return { businessId: business.id, slug: business.slug, ok: true, imported: rows.length };
+    const { imported } = await storeApifyReviews(client, business, items, { full, hadReviews: Boolean(latest) });
+    return { businessId: business.id, slug: business.slug, ok: true, imported };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[reviews] sync failed for ${business.slug}:`, message);

@@ -25,8 +25,10 @@ export interface CartCatalogItem {
   customization?: {
     formats: SelectOption[];
     logoExtraCents: number;
+    logoExtraPer: "unit" | "line";
     textMaxLength: number;
   };
+  packs?: { quantity: number; unitCents: number }[];
 }
 
 interface CartViewProps {
@@ -431,6 +433,9 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
           <p className="tabular text-sm text-muted">
             {money(line.unitCents)} {copy.unitPrice}
           </p>
+          {line.lineExtraCents ? (
+            <p className="tabular text-sm text-muted">{copy.customize.lineExtra.replace("{price}", money(line.lineExtraCents))}</p>
+          ) : null}
         </div>
         <button
           type="button"
@@ -442,6 +447,8 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
           <TrashIcon size={18} />
         </button>
       </div>
+
+      {item.packs?.length ? <PackPicker line={line} packs={item.packs} copy={copy} money={money} /> : null}
 
       {item.customization && line.options ? (
         <LineCustomization locale={locale} line={line} customization={item.customization} copy={copy} />
@@ -541,10 +548,51 @@ function LineCustomization({
         />
         <span className="flex flex-col gap-0.5">
           <span className="font-semibold text-text">{t.logo}</span>
-          <span className="tabular text-subtle">{t.logoExtra.replace("{price}", formatCents(customization.logoExtraCents, locale))}</span>
+          <span className="tabular text-subtle">
+            {(customization.logoExtraPer === "line" ? t.logoExtraOnce : t.logoExtra).replace("{price}", formatCents(customization.logoExtraCents, locale))}
+          </span>
         </span>
       </label>
     </fieldset>
+  );
+}
+
+function PackPicker({
+  line,
+  packs,
+  copy,
+  money,
+}: {
+  line: PricedLine;
+  packs: NonNullable<CartCatalogItem["packs"]>;
+  copy: CartCopy;
+  money: (cents: number) => string;
+}) {
+  return (
+    <div role="group" aria-label={copy.packs.title} className="flex flex-col gap-2 sm:ml-15">
+      <p aria-hidden="true" className="text-sm font-semibold text-text">
+        {copy.packs.title}
+      </p>
+      <div className="grid grid-cols-3 gap-2">
+        {packs.map((pack) => {
+          const active = line.quantity === pack.quantity;
+          return (
+            <button
+              key={pack.quantity}
+              type="button"
+              aria-pressed={active}
+              onClick={() => cart.setQuantity(line.id, pack.quantity)}
+              className={`flex min-h-12 flex-col items-center justify-center rounded-xl border px-2 py-1.5 text-center transition-colors ${
+                active ? "border-accent/50 bg-accent-soft/60 text-text" : "border-line bg-surface text-muted hover:border-line-strong hover:text-text"
+              }`}
+            >
+              <span className="tabular text-sm font-semibold">{copy.packs.option.replace("{count}", String(pack.quantity))}</span>
+              <span className="tabular text-xs">{copy.packs.unit.replace("{price}", money(pack.unitCents))}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

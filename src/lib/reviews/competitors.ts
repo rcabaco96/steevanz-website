@@ -1,3 +1,4 @@
+import type { PlaceProfile } from "./maps-reader.ts";
 import type { ApifyPlaceItem, StarDistribution } from "./apify.ts";
 
 /** Business rule: competitors are searched within 10 km (see regras-negocio-reviews, rule 5). */
@@ -178,13 +179,25 @@ export interface CompetitorEntry {
   replyRate: number | null;
   /** Reviews the reply rate was measured on; null when not measured yet. */
   replySample: number | null;
+  /** Photos on Google and the filled profile fields, from the place's page (null until read). */
+  photos?: number | null;
+  profile?: PlaceProfile | null;
+  /**
+   * «Perfil verificado» (business rule 14): the place belongs to a Steevanz customer whose Google
+   * Business Profile is connected (google_link_status = connected). Never set by hand; missing = no.
+   */
+  verified?: boolean;
 }
 
 export interface Competition {
   entries: CompetitorEntry[];
+  /** Places in the comparison, the customer included when known. */
   total: number;
+  /** Competitors with numbers (the customer excluded). */
+  competitors: number;
+  /** Null while the customer's own numbers are not known yet. */
   ratingRank: number | null;
-  reviewsRank: number;
+  reviewsRank: number | null;
   paceRank: number | null;
   /** The place right above the customer on each ranking, and how far it is. */
   /** 5-star reviews the customer needs for an exact average above the place right above. */
@@ -192,6 +205,61 @@ export interface Competition {
   reviewsGap: { name: string; reviewsDiff: number } | null;
   paceLeader: { name: string; pacePerMonth: number } | null;
   lastSnapshotOn: string | null;
+  /** Movement since about a month ago (null until there is an old enough snapshot). */
+  trend: RankTrend | null;
+}
+
+export interface RankTrend {
+  /** Day of the comparison point (yyyy-mm-dd). */
+  since: string;
+  /** Places climbed since then (positive = up), among the places compared on both days. */
+  ratingRankChange: number | null;
+  reviewsRankChange: number | null;
+  /** Relative change of the customer's own number (0.012 = +1,2%). */
+  ratingChange: number | null;
+  reviewsChange: number | null;
+}
+
+/** Age of the comparison point of the arrows. */
+export const trendDays = 30;
+
+/**
+ * A place's numbers about a month ago when no snapshot is that old (owner rule: the history is the
+ * reviews). The customer: today's numbers minus its reviews of the last month (`recentRatings`),
+ * which the import always has. A competitor: today's total minus its monthly pace (measured on its
+ * recent review dates), with today's rating (its old stars are not known).
+ */
+export function entryMonthAgo(entry: CompetitorEntry, recentRatings: number[] | null): CompetitorEntry {
+  if (entry.isSelf && recentRatings) {
+    const count = entry.reviewsCount - recentRatings.length;
+    const exact = entry.average ?? entry.rating;
+    const average =
+      exact === null || count <= 0 ? null : Math.min(5, Math.max(1, (exact * entry.reviewsCount - recentRatings.reduce((sum, value) => sum + value, 0)) / count));
+    return { ...entry, reviewsCount: Math.max(0, count), average, rating: average === null ? null : Math.round(average * 10) / 10 };
+  }
+  return { ...entry, reviewsCount: Math.max(0, entry.reviewsCount - Math.round(entry.pacePerMonth ?? 0)) };
+}
+
+/**
+ * Movement of the customer between two comparisons of the same places (then and now). Ranks are
+ * compared only among places present on both days, so new competitors do not fake a fall.
+ */
+export function competitionTrend(now: CompetitorEntry[], then: CompetitorEntry[], since: string): RankTrend | null {
+  const both = new Set(then.map((entry) => entry.id).filter((id) => now.some((entry) => entry.id === id)));
+  const current = computeCompetition(now.filter((entry) => both.has(entry.id)), null);
+  const previous = computeCompetition(then.filter((entry) => both.has(entry.id)), null);
+  const selfNow = now.find((entry) => entry.isSelf);
+  const selfThen = then.find((entry) => entry.isSelf);
+  if (!current || !previous || !selfNow || !selfThen) return null;
+  const change = (a: number | null, b: number | null) => (a === null || b === null ? null : a - b);
+  const relative = (value: number | null, base: number | null) => (value === null || base === null || base === 0 ? null : (value - base) / base);
+  return {
+    since,
+    ratingRankChange: change(previous.ratingRank, current.ratingRank),
+    reviewsRankChange: change(previous.reviewsRank, current.reviewsRank),
+    ratingChange: relative(selfNow.average ?? selfNow.rating, selfThen.average ?? selfThen.rating),
+    reviewsChange: relative(selfNow.reviewsCount, selfThen.reviewsCount),
+  };
 }
 
 /**
@@ -206,16 +274,23 @@ export function fiveStarsToBeat(average: number, count: number, target: number):
 
 const byRating = (a: CompetitorEntry, b: CompetitorEntry) => (b.average ?? b.rating ?? 0) - (a.average ?? a.rating ?? 0) || b.reviewsCount - a.reviewsCount;
 
+/**
+ * The comparison, shown as soon as anyone has numbers: the customer alone, or competitors while the
+ * customer's own numbers are still coming (its positions are then null). Null with nobody.
+ */
 export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: string | null): Competition | null {
-  const self = entries.find((entry) => entry.isSelf);
-  if (!self || entries.length < 2) return null;
+  if (!entries.length) return null;
+  const self = entries.find((entry) => entry.isSelf) ?? null;
+  const exact = (entry: CompetitorEntry) => entry.average ?? entry.rating;
+  // Positions only once there is someone to be compared with ("1.º de 1" would mislead).
+  const ranked = self !== null && entries.some((entry) => !entry.isSelf);
 
   const rated = entries.filter((entry) => entry.average !== null || entry.rating !== null).sort(byRating);
-  const ratingIndex = rated.findIndex((entry) => entry.isSelf);
+  const ratingIndex = !ranked ? -1 : rated.findIndex((entry) => entry.isSelf);
   const byReviews = [...entries].sort((a, b) => b.reviewsCount - a.reviewsCount);
-  const reviewsIndex = byReviews.findIndex((entry) => entry.isSelf);
+  const reviewsIndex = ranked ? byReviews.findIndex((entry) => entry.isSelf) : -1;
   const paced = entries.filter((entry) => entry.pacePerMonth !== null).sort((a, b) => b.pacePerMonth! - a.pacePerMonth!);
-  const paceIndex = paced.findIndex((entry) => entry.isSelf);
+  const paceIndex = !ranked ? -1 : paced.findIndex((entry) => entry.isSelf);
 
   const aboveRating = ratingIndex > 0 ? rated[ratingIndex - 1] : null;
   const aboveReviews = reviewsIndex > 0 ? byReviews[reviewsIndex - 1] : null;
@@ -224,20 +299,22 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
   return {
     entries: [...entries].sort(byRating),
     total: entries.length,
+    competitors: entries.filter((entry) => !entry.isSelf).length,
     ratingRank: ratingIndex >= 0 ? ratingIndex + 1 : null,
-    reviewsRank: reviewsIndex + 1,
+    reviewsRank: reviewsIndex >= 0 ? reviewsIndex + 1 : null,
     paceRank: paceIndex >= 0 ? paceIndex + 1 : null,
     ratingGap:
-      aboveRating && self.average !== null && aboveRating.average !== null
+      aboveRating && self && exact(self) !== null && exact(aboveRating) !== null
         ? {
             name: aboveRating.name,
-            averageDiff: aboveRating.average - self.average,
-            fiveStarsToPass: fiveStarsToBeat(self.average, self.reviewsCount, aboveRating.average),
+            averageDiff: exact(aboveRating)! - exact(self)!,
+            fiveStarsToPass: fiveStarsToBeat(exact(self)!, self.reviewsCount, exact(aboveRating)!),
           }
         : null,
-    reviewsGap: aboveReviews ? { name: aboveReviews.name, reviewsDiff: aboveReviews.reviewsCount - self.reviewsCount + 1 } : null,
-    paceLeader: paceTop && !paceTop.isSelf ? { name: paceTop.name, pacePerMonth: paceTop.pacePerMonth! } : null,
+    reviewsGap: aboveReviews && self ? { name: aboveReviews.name, reviewsDiff: aboveReviews.reviewsCount - self.reviewsCount + 1 } : null,
+    paceLeader: paceTop && !paceTop.isSelf && self ? { name: paceTop.name, pacePerMonth: paceTop.pacePerMonth! } : null,
     lastSnapshotOn,
+    trend: null,
   };
 }
 

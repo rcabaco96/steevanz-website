@@ -202,7 +202,7 @@ describe("recommendations", async () => {
 });
 
 describe("competitors", async () => {
-  const { computeCompetition, distributionAverage, fiveStarsToBeat, paceFromDates, paceFromSnapshots, selectCompetitors } = await import("../src/lib/reviews/competitors.ts");
+  const { competitionTrend, computeCompetition, distributionAverage, entryMonthAgo, fiveStarsToBeat, paceFromDates, paceFromSnapshots, selectCompetitors } = await import("../src/lib/reviews/competitors.ts");
   const home = { placeId: "self", category: "Marisqueira", lat: 37.1, lng: -8.35 };
   const place = (placeId, category, dLat, reviewsCount, searchString = "Marisqueira") => ({
     placeId,
@@ -255,6 +255,50 @@ describe("competitors", async () => {
     assert.equal(result.ratingGap.fiveStarsToPass, 188);
     assert.equal(result.reviewsGap.reviewsDiff, 301);
     assert.equal(result.paceLeader.name, "x");
+  });
+
+  it("works out a month ago from the reviews when no snapshot is that old", () => {
+    const base = { id: "me", name: "me", isSelf: true, distanceM: 0, rating: 4.5, average: 4.5, reviewsCount: 100, pacePerMonth: 4, replyRate: null, replySample: null };
+    // 4 reviews this month (5, 5, 5, 1): before them 96 reviews summing 450 - 16 = 434.
+    const self = entryMonthAgo(base, [5, 5, 5, 1]);
+    assert.equal(self.reviewsCount, 96);
+    assert.ok(Math.abs(self.average - 434 / 96) < 1e-9);
+    assert.equal(self.rating, 4.5);
+    // A competitor: its monthly pace off the total, today's rating kept.
+    const other = entryMonthAgo({ ...base, id: "x", isSelf: false, pacePerMonth: 6.4 }, null);
+    assert.equal(other.reviewsCount, 94);
+    assert.equal(other.average, 4.5);
+  });
+
+  it("counts places climbed only among places compared on both days", () => {
+    const entry = (id, average, reviewsCount, isSelf = false) => ({ id, name: id, isSelf, distanceM: 0, rating: average, average, reviewsCount, pacePerMonth: null, replyRate: null, replySample: null });
+    const then = [entry("me", 4.4, 100, true), entry("x", 4.6, 300), entry("y", 4.5, 50)];
+    // "new" joined later with a better rating: it must not count as a fall.
+    const now = [entry("me", 4.55, 110, true), entry("x", 4.6, 305), entry("y", 4.5, 52), entry("new", 4.9, 10)];
+    const trend = competitionTrend(now, then, "2026-09-04");
+    assert.equal(trend.ratingRankChange, 1);
+    assert.equal(trend.reviewsRankChange, 0);
+    assert.ok(Math.abs(trend.ratingChange - 0.15 / 4.4) < 1e-9);
+    assert.ok(Math.abs(trend.reviewsChange - 0.1) < 1e-9);
+  });
+
+  it("shows the comparison as soon as anyone has numbers", () => {
+    const entry = (id, rating, reviewsCount, isSelf = false) => ({ id, name: id, isSelf, distanceM: 0, rating, average: null, reviewsCount, pacePerMonth: null });
+    assert.equal(computeCompetition([], null), null);
+    const selfOnly = computeCompetition([entry("me", 4.4, 500, true)], null);
+    assert.equal(selfOnly.competitors, 0);
+    assert.equal(selfOnly.ratingRank, null);
+    const competitorsOnly = computeCompetition([entry("x", 4.6, 300), entry("y", 4.2, 800)], null);
+    assert.equal(competitorsOnly.competitors, 2);
+    assert.equal(competitorsOnly.ratingRank, null);
+    assert.equal(competitorsOnly.reviewsRank, null);
+    assert.equal(competitorsOnly.ratingGap, null);
+    // The customer's own rating from its import (no star breakdown yet) already places it.
+    const withSelf = computeCompetition([entry("me", 4.4, 500, true), entry("x", 4.6, 300)], null);
+    assert.equal(withSelf.competitors, 1);
+    assert.equal(withSelf.ratingRank, 2);
+    assert.equal(withSelf.reviewsRank, 1);
+    assert.ok(Math.abs(withSelf.ratingGap.averageDiff - 0.2) < 1e-9);
   });
 });
 

@@ -1,123 +1,116 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useSyncExternalStore, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { buttonClasses } from "@/components/ui/Button";
+import { finishedJob, isActive, relativeTime, updateIntervalMinutes, type ImportJob, type ReaderStatus, type UpdateResponse } from "@/lib/reviews/import-jobs";
 import { useBusySignal } from "./DashboardBusy";
-import type { DashboardSyncResponse } from "@/lib/reviews/types";
+import { InfoTip } from "./InfoTip";
+import { readerTexts } from "./LeitorStatus";
+import { useReaderJobs, useReaderJobsListener } from "./ReaderJobs";
 
-const runningPollMs = 15_000;
-const maxPolls = 20;
-const clockTickMs = 30_000;
+const number = new Intl.NumberFormat("pt-PT");
+/** Feedback like "Já estava atualizado" is momentary; errors stay until the next attempt. */
+const messageMs = 8000;
 
-type Phase = "idle" | "syncing" | "error";
+export const newReviewsLabel = (count: number) => `${number.format(count)} ${count === 1 ? "review nova" : "reviews novas"}`;
 
-function subscribeClock(onChange: () => void) {
-  const timer = window.setInterval(onChange, clockTickMs);
-  return () => window.clearInterval(timer);
+/** Why an update failed, in Portuguese (the reader already writes its errors in Portuguese). */
+export const updateFailedText = (job: ImportJob) => `A leitura do Google falhou. ${job.error ?? "Tente outra vez daqui a pouco."}`;
+
+/** Progress of an update job while it waits for or runs on the reader, with the (i) that explains it. */
+export function UpdateProgress({ job, reader }: { job: ImportJob; reader: ReaderStatus }) {
+  if (job.status === "running")
+    return (
+      <span>
+        A ler o Google… {newReviewsLabel(job.reviewsNew)} <InfoTip label="Reviews novas">{readerTexts.newReviews}</InfoTip>
+      </span>
+    );
+  if (!reader.online)
+    return (
+      <span>
+        O leitor está desligado: o pedido fica em espera <InfoTip label="Leitor desligado">{readerTexts.reader}</InfoTip>
+      </span>
+    );
+  if (reader.service === "dataforseo") return <span>A ler o Google… (normalmente menos de 1 minuto)</span>;
+  return <span>{reader.busy ? "À espera do leitor… (está a terminar outro pedido)" : "À espera do leitor…"}</span>;
 }
 
-/** Current time, rounded so the snapshot stays stable between ticks; null while server rendering. */
-function useClock(): number | null {
-  return useSyncExternalStore(
-    subscribeClock,
-    () => Math.floor(Date.now() / clockTickMs) * clockTickMs,
-    () => null,
-  );
-}
+type Message = { tone: "info" | "error"; text: string } | { tone: "recent"; minutes: number };
 
-const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
-function relative(iso: string, now: number): string {
-  const minutes = Math.max(0, Math.round((now - Date.parse(iso)) / 60_000));
-  if (minutes < 1) return "agora mesmo";
-  if (minutes < 60) return `há ${minutes} min`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) return `há ${hours} h`;
-  const days = Math.round(hours / 24);
-  return `há ${days} ${days === 1 ? "dia" : "dias"}`;
-}
-
-interface DashboardSyncProps {
-  syncUrl: string;
-  lastSyncedAt: string | null;
-  lastSyncedLabel: string;
-}
-
-export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: DashboardSyncProps) {
+/**
+ * "Atualizar reviews": queues an update for the Steevanz reader and follows it until the new
+ * reviews are saved, then reloads the dashboard's data. Opening the page never reads Google.
+ */
+export function DashboardSync({ syncUrl, lastSyncedLabel }: { syncUrl: string; lastSyncedLabel: string }) {
   const router = useRouter();
-  // Google is only read when the customer asks (button), never just for opening the page.
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [message, setMessage] = useState<string | null>(null);
+  const { state, now, apply } = useReaderJobs();
+  const [requesting, setRequesting] = useState(false);
+  const [message, setMessage] = useState<Message | null>(null);
   const [refreshing, startRefresh] = useTransition();
-  const now = useClock();
-  const [scope, setScope] = useState<"recent" | "all">("recent");
+  const job = state.update;
+  const waiting = isActive(job);
 
-  // Feedback like "Já estava atualizado" is momentary; errors stay until the next attempt.
+  useReaderJobsListener((previous, next) => {
+    const finished = finishedJob(previous, next, "update");
+    if (!finished) return;
+    if (finished.status === "failed") {
+      setMessage({ tone: "error", text: updateFailedText(finished) });
+      return;
+    }
+    setMessage({ tone: "info", text: finished.reviewsNew ? `${newReviewsLabel(finished.reviewsNew)}.` : "Já estava atualizado." });
+    // Owner replies may have changed even without new reviews: reload the data blocks (with skeletons).
+    startRefresh(() => router.refresh());
+  });
+
   useEffect(() => {
-    if (!message || phase === "error") return;
-    const timer = window.setTimeout(() => setMessage(null), 5000);
+    if (!message || message.tone === "error") return;
+    const timer = window.setTimeout(() => setMessage(null), messageMs);
     return () => window.clearTimeout(timer);
-  }, [message, phase]);
+  }, [message]);
 
-  const sync = useCallback(
-    async (manual: boolean, wholeHistory = false) => {
-      setPhase("syncing");
-      setScope(wholeHistory ? "all" : "recent");
-      setMessage(null);
-      try {
-        let body: DashboardSyncResponse = { status: "running" };
-        let waited = false;
-        // Someone else's sync may already be running: wait for it instead of starting another.
-        for (let attempt = 0; attempt < maxPolls && body.status === "running"; attempt++) {
-          if (attempt) {
-            waited = true;
-            await sleep(runningPollMs);
-          }
-          const response = await fetch(syncUrl, {
-            method: "POST",
-            cache: "no-store",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ scope: wholeHistory ? "all" : "recent" }),
-          });
-          body = (await response.json()) as DashboardSyncResponse;
-        }
-        if (body.status === "running") body = { status: "error", message: "A atualização está a demorar. Tente daqui a pouco." };
-        if (body.status === "error") {
-          setPhase("error");
-          setMessage(body.message);
-          return;
-        }
-        setPhase("idle");
-        // "fresh" on the first try means the page already shows the latest import.
-        if (body.status === "fresh" && !waited) {
-          if (wholeHistory) setMessage("Todo o histórico já foi verificado nas últimas 24 horas.");
-          else if (manual) setMessage("Já estava atualizado.");
-          return;
-        }
-        startRefresh(() => router.refresh());
-      } catch {
-        setPhase("error");
-        setMessage("Sem ligação. Tente novamente.");
+  async function update() {
+    setRequesting(true);
+    setMessage(null);
+    try {
+      const response = await fetch(syncUrl, { method: "POST", cache: "no-store" });
+      const body = (await response.json()) as UpdateResponse;
+      if ("error" in body) {
+        setMessage({ tone: "error", text: body.error });
+        return;
       }
-    },
-    [router, syncUrl],
-  );
+      const { recentMinutes, google, ...next } = body;
+      apply(next);
+      if (google) {
+        // Perfil verificado: already updated from Google's official API.
+        if (!google.ok) setMessage({ tone: "error", text: google.error ?? "Não foi possível atualizar a partir do Google." });
+        else {
+          setMessage({ tone: "info", text: google.newReviews ? `${newReviewsLabel(google.newReviews)}.` : "Já estava atualizado." });
+          startRefresh(() => router.refresh());
+        }
+      } else if (recentMinutes !== null) setMessage({ tone: "recent", minutes: recentMinutes });
+    } catch {
+      setMessage({ tone: "error", text: "Sem ligação. Tente novamente." });
+    } finally {
+      setRequesting(false);
+    }
+  }
 
+  const busy = requesting || waiting || refreshing;
+  useBusySignal("sync", refreshing);
 
-  const busy = phase === "syncing" || refreshing;
-  useBusySignal("sync", busy);
-  const status = busy
-    ? scope === "all"
-      ? "A verificar todo o histórico de reviews e respostas… (até 2 min)"
-      : "A procurar reviews e respostas novas no Google…"
-    : lastSyncedAt
-      ? `Reviews atualizadas ${now ? relative(lastSyncedAt, now) : lastSyncedLabel}`
+  let status;
+  if (refreshing) status = "A mostrar as reviews atualizadas…";
+  else if (requesting) status = "A pedir ao Google…";
+  else if (job && waiting) status = <UpdateProgress job={job} reader={state.reader} />;
+  else status = state.lastSyncedAt ? `Reviews atualizadas ${now ? relativeTime(state.lastSyncedAt, now) : lastSyncedLabel}` : state.stored.count
+      ? "Ainda não foi atualizado"
       : "Ainda sem reviews importadas";
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <button type="button" onClick={() => void sync(true)} disabled={busy} aria-busy={busy} className={buttonClasses("primary", "md", "disabled:opacity-90")}>
+        <button type="button" onClick={() => void update()} disabled={busy} aria-busy={busy} className={buttonClasses("primary", "md", "disabled:opacity-90")}>
           <svg
             aria-hidden="true"
             viewBox="0 0 24 24"
@@ -134,19 +127,20 @@ export function DashboardSync({ syncUrl, lastSyncedAt, lastSyncedLabel }: Dashbo
           </svg>
           {busy ? "A atualizar…" : "Atualizar reviews"}
         </button>
-        <p role="status" className="text-sm text-subtle">
-          {status}
-          {message && !busy ? <span className={phase === "error" ? " text-danger" : ""}> · {message}</span> : null}
-        </p>
+        <div role="status" className="flex min-w-0 flex-col gap-0.5 text-sm text-subtle">
+          <span>{status}</span>
+          {message && !busy ? (
+            message.tone === "recent" ? (
+              <span className="text-text">
+                {message.minutes < 1 ? "Atualizado há menos de 1 min" : `Atualizado há ${message.minutes} min`}{" "}
+                <InfoTip label={`Uma leitura a cada ${updateIntervalMinutes} minutos`}>{readerTexts.interval(message.minutes)}</InfoTip>
+              </span>
+            ) : (
+              <span className={message.tone === "error" ? "text-danger" : "text-text"}>{message.text}</span>
+            )
+          ) : null}
+        </div>
       </div>
-      <button
-        type="button"
-        onClick={() => void sync(true, true)}
-        disabled={busy}
-        className="inline-flex min-h-10 items-center self-start text-left text-sm font-semibold text-accent-text hover:underline disabled:opacity-50"
-      >
-        Respondeu a reviews antigas? Verificar todo o histórico
-      </button>
     </div>
   );
 }

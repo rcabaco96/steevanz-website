@@ -11,7 +11,7 @@ describe("daily sync routine", () => {
     assert.equal(dailySyncFor({ lastSyncedAt: null, fullDue: false }, now), "refresh");
   });
 
-  it("still runs the monthly whole-history read", () => {
+  it("still runs the twice-a-year whole-history read", () => {
     assert.equal(dailySyncFor({ lastSyncedAt: "2026-10-03T08:00:00Z", fullDue: true }, now), "full");
   });
 

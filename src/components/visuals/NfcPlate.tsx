@@ -1,8 +1,8 @@
 import { useId } from "react";
 
-export type PlateVariant = "stand" | "square" | "sticker" | "wall";
+export type PlateVariant = "stand" | "square" | "sticker" | "wall" | "round";
 export type PlateFinish = "black" | "white";
-export type PlateSymbol = "stars" | "social" | "stamps";
+export type PlateSymbol = "stars" | "social" | "stamps" | "menu";
 
 interface NfcPlateProps {
   variant?: PlateVariant;
@@ -99,9 +99,27 @@ function StampRow({ cx, y, size, color }: { cx: number; y: number; size: number;
   );
 }
 
+function MenuTiles({ cx, y, size, color }: { cx: number; y: number; size: number; color: string }) {
+  const gap = size * 0.35;
+  const total = size * 3 + gap * 2;
+  const start = cx - total / 2;
+  const middle = start + size + gap;
+  return (
+    <g fill="none" stroke={color} strokeWidth={1.6}>
+      {[start, middle, middle + size + gap].map((x) => (
+        <rect key={x} x={x} y={y} width={size} height={size} rx={size * 0.22} />
+      ))}
+      <circle cx={start + size / 2} cy={y + size / 2} r={size * 0.2} />
+      <path d={`M${middle + size * 0.38} ${y + size * 0.3}l${size * 0.32} ${size * 0.2}-${size * 0.32} ${size * 0.2}z`} fill={color} stroke="none" />
+      <path d={`M${middle + size + gap + size * 0.25} ${y + size * 0.4}h${size * 0.5}M${middle + size + gap + size * 0.25} ${y + size * 0.62}h${size * 0.32}`} />
+    </g>
+  );
+}
+
 function SymbolRow({ symbol, cx, y, size, color }: { symbol: PlateSymbol; cx: number; y: number; size: number; color: string }) {
   if (symbol === "social") return <SocialDots cx={cx} y={y} size={size} color={color} />;
   if (symbol === "stamps") return <StampRow cx={cx} y={y} size={size * 0.9} color={color} />;
+  if (symbol === "menu") return <MenuTiles cx={cx} y={y} size={size} color={color} />;
   return <Stars cx={cx} y={y} size={size} color={color} />;
 }
 
@@ -138,6 +156,37 @@ export function NfcPlate({ variant = "stand", finish = "black", line1, line2, cl
         <text x="100" y="158" textAnchor="middle" fontFamily="var(--font-sans)" fontSize="11" fill={colors.subtle}>
           {line2}
         </text>
+      </svg>
+    );
+  }
+
+  if (variant === "round") {
+    return (
+      <svg viewBox="0 0 220 232" className={className} role={decorative ? undefined : "img"} aria-hidden={decorative ? true : undefined} aria-label={title}>
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0.4" y2="1">
+            <stop offset="0" stopColor={colors.faceTo} />
+            <stop offset="1" stopColor={colors.face} />
+          </linearGradient>
+          <linearGradient id={shineId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0.28" />
+            <stop offset="0.45" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="110" cy="222" rx="90" ry="7" fill="#000" opacity="0.16" />
+        <circle cx="110" cy="114" r="102" fill={colors.edge} />
+        <circle cx="110" cy="108" r="100" fill={`url(#${gradientId})`} />
+        <circle cx="110" cy="108" r="100" fill={`url(#${shineId})`} />
+        <NfcSymbol cx={110} cy={36} scale={1.35} color={colors.accent} />
+        <SymbolRow symbol={symbol} cx={110} y={56} size={18} color={colors.accent} />
+        <text x="110" y="104" textAnchor="middle" fontFamily="var(--font-display)" fontSize="21" fill={colors.text}>
+          {line1}
+        </text>
+        <text x="110" y="122" textAnchor="middle" fontFamily="var(--font-sans)" fontSize="11.5" fill={colors.subtle}>
+          {line2}
+        </text>
+        <rect x="88" y="134" width="44" height="44" rx="6" fill="#ffffff" />
+        <QrMark x={92} y={138} size={36} color="#1d1220" />
       </svg>
     );
   }

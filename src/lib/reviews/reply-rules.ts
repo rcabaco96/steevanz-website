@@ -3,9 +3,13 @@
  * opening → one sentence per theme the review mentions → contact (negatives) → closing → signature.
  * Each sentence comes from the owner's own library (learned in "Treinar" and from edits) and,
  * while that library has nothing for the case, from the Steevanz base sentences below.
+ * Reviews in another language are answered in that language (reply-languages.ts) with the base
+ * sentences translated in reply-translations.ts, plus the same reply in Portuguese for the owner.
  * Pure module so it can be tested with node --test.
  */
 import { isNegative } from "./analytics.ts";
+import { languageCode, languageNames, replyLanguage, themesInLanguage, type ForeignLanguage, type ReplyLanguage } from "./reply-languages.ts";
+import { translations } from "./reply-translations.ts";
 import { normalize, themesByMention, type ThemeId } from "./text.ts";
 import type { AddressForm, ReplySettings } from "./replies.ts";
 
@@ -157,19 +161,6 @@ const emptyBase: Record<Sentiment, string[]> = {
   ],
 };
 
-/** English reviews (tourists): the owner's library is Portuguese, so these get a short base reply. */
-const englishBase: Record<Sentiment, string[][]> = {
-  positive: [
-    ["Thank you so much for your review!", "Thanks a lot for the kind words!", "We really appreciate your review!"],
-    ["We're delighted you enjoyed your visit.", "It's great to hear you had a good time with us.", "Your feedback means a lot to the whole team."],
-    ["We hope to see you again soon!", "Looking forward to your next visit!", "See you next time!"],
-  ],
-  negative: [
-    ["Thank you for your feedback, and we're sorry your visit didn't meet your expectations.", "We're sorry to read about your experience.", "Thank you for taking the time to share this, and we apologise."],
-    ["We'd love to hear more so we can make it right.", "We'll look into what happened so it doesn't happen again.", "Your comments will help us improve."],
-  ],
-};
-
 const addressIndex: Record<AddressForm, number> = { voce: 0, tu: 1, neutro: 2 };
 
 /** Picks the variant of every `{você|tu|sem tratamento}` group for the owner's address form. */
@@ -178,14 +169,6 @@ export function applyAddress(text: string, form: AddressForm): string {
     const options = group.split("|");
     return options[addressIndex[form]] ?? options[0];
   });
-}
-
-export function isEnglish(text: string | null): boolean {
-  if (!text) return false;
-  const words = normalize(text).split(/\s+/).filter(Boolean);
-  const english = words.filter((word) => /^(the|and|was|were|very|we|our|is|it|with|for|great|staff|food|really|place|you|they|had|but|not|this)$/.test(word)).length;
-  const portuguese = words.filter((word) => /^(o|a|os|as|e|que|de|do|da|muito|foi|com|para|nao|um|uma|mas|nos|ja|bem|estava)$/.test(word)).length;
-  return english >= 3 && english > portuguese * 1.5;
 }
 
 /** Small deterministic hash, so a review always gets the same choice and different reviews vary. */
@@ -201,7 +184,8 @@ export function snippetRetired(snippet: Pick<Snippet, "accepted" | "rejected">):
 }
 
 export interface ComposeInput {
-  review: { id: string; rating: number; text: string | null };
+  /** `language`: Google's language code for the review (google_reviews.language), when known. */
+  review: { id: string; rating: number; text: string | null; language?: string | null };
   settings: Pick<ReplySettings, "addressForm" | "tone" | "length" | "emojis" | "signature" | "negativeContact" | "emptyPositive" | "emptyNegative">;
   library: Snippet[];
   /** Sentences to avoid (used in a draft the owner just rejected). */
@@ -215,33 +199,51 @@ export interface ComposeInput {
 }
 
 export interface ComposedReply {
+  /** The reply, in `language`. */
   reply: string;
   reasoning: string;
   snippetIds: string[];
+  language: ReplyLanguage;
+  /** The same reply in Portuguese (same sentences, same order); null when `reply` is Portuguese. */
+  replyPt: string | null;
 }
 
+/** One sentence of a reply and its Portuguese version (the same text for Portuguese replies). */
+interface Line {
+  text: string;
+  pt: string;
+}
+
+/**
+ * Business rule for replies in another language: the owner's learned sentences, star-only templates
+ * and training are Portuguese, so a review in another language is answered only with the Steevanz
+ * base sentences in that language (same tone, address form, length, emojis and exclusions). The
+ * signature (a name) and the contact details go in as they are, inside a sentence of that language.
+ */
 export function composeReply({ review, settings, library, exclude = [], lengthDelta = 0, variant = 0, looseTone = false }: ComposeInput): ComposedReply {
   const sentiment: Sentiment = isNegative(review.rating) ? "negative" : "positive";
   const contact = settings.negativeContact.trim();
   const text = review.text?.trim() ?? "";
   const signature = settings.signature.trim();
-  const finish = (sentences: string[], reasoning: string, snippetIds: string[]): ComposedReply => ({
-    reply: [sentences.filter(Boolean).join(" "), signature].filter(Boolean).join("\n\n"),
+  const language = replyLanguage(text, review.language);
+  const foreign: ForeignLanguage | null = language === "pt" ? null : language;
+  const join = (texts: string[]) => [texts.join(" "), signature].filter(Boolean).join("\n\n");
+  const finish = (lines: Line[], reasoning: string, snippetIds: string[]): ComposedReply => ({
+    reply: join(lines.map((line) => line.text)),
     reasoning,
     snippetIds,
+    language,
+    replyPt: foreign ? join(lines.map((line) => line.pt)) : null,
   });
   const stars = `${sentiment === "positive" ? "Positiva" : "Negativa"} (${review.rating}★)`;
 
-  if (isEnglish(text)) {
-    const sentences = englishBase[sentiment].map((options, slot) => options[hash(`${review.id}:en:${slot}:${variant}`) % options.length]);
-    if (sentiment === "negative" && contact) sentences.push(`You can reach us at ${contact}.`);
-    return finish(sentences, `${stars} · review em inglês: resposta-base em inglês, sem frases suas. Reveja antes de aceitar.`, ["default:english"]);
-  }
-
   const fill = (sentence: string) => sentence.replaceAll("<contacto>", contact).replaceAll("<estrelas>", String(review.rating));
+  const same = (sentence: string): Line => ({ text: sentence, pt: sentence });
 
   const skip = new Set(exclude);
   const usable = (snippet: Snippet) => !skip.has(snippet.id) && !snippetRetired(snippet) && (contact || !snippet.text.includes("<contacto>"));
+  // The owner's sentences are Portuguese: replies in another language use base sentences only.
+  const ownLibrary = foreign ? [] : library;
   let ownCount = 0;
   let baseCount = 0;
   const used: string[] = [];
@@ -252,21 +254,24 @@ export function composeReply({ review, settings, library, exclude = [], lengthDe
       .join(" e ");
   }
 
-  function withEmoji(sentences: (string | null)[]): string[] {
-    const final = sentences.filter((sentence): sentence is string => Boolean(sentence));
-    if (sentiment === "positive" && settings.emojis && final.length && !/\p{Extended_Pictographic}/u.test(final.join(" "))) final[final.length - 1] += " 😊";
+  function withEmoji(lines: (Line | null)[]): Line[] {
+    const final = lines.filter((line): line is Line => Boolean(line));
+    if (sentiment === "positive" && settings.emojis && final.length && !/\p{Extended_Pictographic}/u.test(final.map((line) => line.text).join(" "))) {
+      const last = final[final.length - 1];
+      final[final.length - 1] = { text: `${last.text} 😊`, pt: `${last.pt} 😊` };
+    }
     return final;
   }
 
-  function pick(kind: SnippetKind, theme: ThemeId | null = null): string | null {
+  function pick(kind: SnippetKind, theme: ThemeId | null = null): Line | null {
     const seed = hash(`${review.id}:${kind}:${theme ?? ""}:${variant}`);
-    const own = library
+    const own = ownLibrary
       .filter((snippet) => snippet.kind === kind && snippet.sentiment === sentiment && (kind !== "theme" || snippet.theme === theme) && usable(snippet))
       .sort((a, b) => b.accepted - b.rejected - (a.accepted - a.rejected));
     const takeOwn = (choice: Snippet) => {
       ownCount++;
       used.push(choice.id);
-      return fill(choice.text);
+      return same(fill(choice.text));
     };
     // The usual reply uses the owner's best sentences; alternatives also mix in base sentences.
     if (own.length && variant === 0) return takeOwn(own[seed % Math.min(3, own.length)]);
@@ -288,7 +293,8 @@ export function composeReply({ review, settings, library, exclude = [], lengthDe
     const choice = basePool[index - own.length];
     baseCount++;
     used.push(`default:${choice.id}`);
-    return fill(applyAddress(choice.text, settings.addressForm));
+    const pt = fill(applyAddress(choice.text, settings.addressForm));
+    return { text: foreign ? fill(applyAddress(translations[choice.id][foreign], settings.addressForm)) : pt, pt };
   }
 
   if (!text) {
@@ -299,28 +305,81 @@ export function composeReply({ review, settings, library, exclude = [], lengthDe
     const opening = template.length && !skip.has("settings:empty") && (variant === 0 || slot === baseOptions.length) ? template[0] : null;
     // Only the first sentence of the owner's template: the whole template word for word would be
     // a reply the owner wrote, and suggestions must never repeat those exactly.
-    const sentences: (string | null)[] = [fill(opening ?? applyAddress(baseOptions[slot % baseOptions.length], settings.addressForm))];
+    const lines: (Line | null)[] = [same(fill(opening ?? applyAddress(baseOptions[slot % baseOptions.length], settings.addressForm)))];
     if (opening) ownCount++;
     else baseCount++;
     used.push(opening ? "settings:empty" : "default:empty");
-    if (sentiment === "negative" && !(contact && sentences[0]!.includes(contact))) sentences.push(pick("contact"));
-    sentences.push(pick("closing"));
-    return finish(withEmoji(sentences), `${stars} · review só com estrelas · ${sourcesText()}.`, used);
+    if (sentiment === "negative" && !(contact && lines[0]!.text.includes(contact))) lines.push(pick("contact"));
+    lines.push(pick("closing"));
+    return finish(withEmoji(lines), `${stars} · review só com estrelas · ${sourcesText()}.`, used);
   }
 
-  const themes = themesByMention(text);
+  const themes = foreign ? themesInLanguage(text, foreign) : themesByMention(text);
   const maxThemes = Math.max(0, Math.min(3, (settings.length === "curta" ? 1 : 2) + lengthDelta));
   const chosenThemes = themes.slice(0, maxThemes);
   const short = settings.length === "curta" && lengthDelta <= 0;
 
-  const sentences: (string | null)[] = [pick("opening")];
-  for (const theme of chosenThemes) sentences.push(pick("theme", theme));
-  if (sentiment === "negative") sentences.push(pick("contact"));
+  const lines: (Line | null)[] = [pick("opening")];
+  for (const theme of chosenThemes) lines.push(pick("theme", theme));
+  if (sentiment === "negative") lines.push(pick("contact"));
   // Short positive replies with a theme end on the theme sentence; negatives end on the contact.
-  if (!(short && (sentiment === "negative" || chosenThemes.length > 0))) sentences.push(pick("closing"));
+  if (!(short && (sentiment === "negative" || chosenThemes.length > 0))) lines.push(pick("closing"));
 
   const about = chosenThemes.length ? `fala de ${chosenThemes.map((theme) => themeNames[theme]).join(" e ")}` : "sem temas reconhecidos";
-  return finish(withEmoji(sentences), `${stars} · ${about} · ${sourcesText()}.`, used);
+  if (!foreign) return finish(withEmoji(lines), `${stars} · ${about} · ${sourcesText()}.`, used);
+  const name = languageNames[foreign].toLowerCase();
+  const code = languageCode(review.language);
+  const where = code && code !== foreign ? `review noutra língua (${code}): resposta em ${name}` : `review em ${name}: resposta em ${name}`;
+  return finish(
+    withEmoji(lines),
+    `${stars} · ${where} · ${about} · ${sourcesText()} (as suas frases são em português, por isso aqui não entram). A tradução em português aparece por baixo.`,
+    used,
+  );
+}
+
+/** Every base sentence id (each one must have a version in every reply language). */
+export const baseSnippetIds: string[] = base.map((snippet) => snippet.id);
+
+/**
+ * Portuguese version of a reply in another language, sentence by sentence: each base sentence (as
+ * rendered with an address form and the owner's contact) becomes its Portuguese version; sentences
+ * the owner wrote or changed stay as they are. For edited replies and drafts saved without a translation.
+ */
+export function translateToPortuguese(
+  reply: string,
+  language: ForeignLanguage,
+  settings: Pick<ReplySettings, "addressForm" | "negativeContact">,
+): { text: string; translated: number; sentences: number } {
+  const contact = settings.negativeContact.trim();
+  const fill = (sentence: string) => sentence.replaceAll("<contacto>", contact);
+  const known = new Map<string, string>();
+  // The owner's address form first; the other forms catch a reply edited with another one.
+  const forms: AddressForm[] = [settings.addressForm, ...(["voce", "tu", "neutro"] as const).filter((form) => form !== settings.addressForm)];
+  for (const form of forms) {
+    for (const snippet of base) {
+      const key = replyKey(fill(applyAddress(translations[snippet.id][language], form)));
+      if (!known.has(key)) known.set(key, fill(applyAddress(snippet.text, form)));
+    }
+  }
+  let translated = 0;
+  let sentences = 0;
+  const text = reply
+    .trim()
+    .split(/\n{2,}/)
+    .map((paragraph) =>
+      splitSentences(paragraph)
+        .map((sentence) => {
+          sentences++;
+          const pt = known.get(replyKey(sentence));
+          if (!pt) return sentence;
+          translated++;
+          // Keeps a trailing emoji (replyKey ignores it).
+          return pt + (sentence.match(/(\s*\p{Extended_Pictographic}\uFE0F?)+$/u)?.[0] ?? "");
+        })
+        .join(" "),
+    )
+    .join("\n\n");
+  return { text, translated, sentences };
 }
 
 /** Splits a text into sentences (also on line breaks). */

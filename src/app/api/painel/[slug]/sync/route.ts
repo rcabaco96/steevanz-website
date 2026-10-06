@@ -1,48 +1,85 @@
 import type { NextRequest } from "next/server";
-import { apifyToken } from "@/lib/reviews/apify";
-import { customerFullSyncEveryHours, startReviewSync, syncBusinessReviews, syncTargetColumns, type SyncTarget } from "@/lib/reviews/store";
-import type { DashboardSyncResponse } from "@/lib/reviews/types";
+import { isActive, loadReaderJobs, queueUpdate, recentSyncMinutes, type UpdateResponse } from "@/lib/reviews/import-jobs";
+import { syncVerifiedBusiness } from "@/lib/google/verified-sync";
+import { dataForSeoConfigured } from "@/lib/dataforseo/client";
+import { collectForPanel } from "@/lib/dataforseo/collect";
+import { dispatchForPanel } from "@/lib/dataforseo/dispatch";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 
-export const maxDuration = 300;
-
-/** Minimum time between syncs triggered from the dashboard, whoever opens it. */
-const dashboardSyncIntervalSeconds = 300;
+export const maxDuration = 60;
 
 
-function reply(body: DashboardSyncResponse, status = 200) {
+/**
+ * Someone is waiting in the panel: send the job to DataForSEO right away on the high-priority
+ * queue (~30 s). Without DataForSEO credentials the job is left for the local reader.
+ */
+async function sendNow(client: NonNullable<ReturnType<typeof tryCreateServiceClient>>, jobId: string) {
+  if (!dataForSeoConfigured()) {
+    await client.from("review_import_jobs").update({ provider: "reader" }).eq("id", jobId).eq("status", "queued");
+    return;
+  }
+  await dispatchForPanel(client, jobId);
+}
+
+function reply(body: UpdateResponse, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 }
 
+async function business(slug: string) {
+  const client = tryCreateServiceClient();
+  if (!client) return { client: null, id: null };
+  const { data } = await client.from("review_businesses").select("id, google_link_status").eq("slug", slug).maybeSingle<{ id: string; google_link_status: string }>();
+  return { client, id: data?.id ?? null, verified: data?.google_link_status === "connected" };
+}
+
+/** Verified customers may update again after this many seconds (Google's API is free and fast). */
+const verifiedIntervalSeconds = 60;
+
+/** State of "Atualizar reviews" (same as GET /import). Only reads Supabase. */
+export async function GET(_request: NextRequest, ctx: RouteContext<"/api/painel/[slug]/sync">) {
+  const { slug } = await ctx.params;
+  const { client, id } = await business(slug);
+  if (!client) return reply({ error: "Serviço indisponível." }, 503);
+  if (!id) return reply({ error: "Painel não encontrado." }, 404);
+  try {
+    if (dataForSeoConfigured()) await collectForPanel(client, id);
+    return reply({ ...(await loadReaderJobs(client, id)), recentMinutes: null });
+  } catch {
+    return reply({ error: "Serviço indisponível." }, 500);
+  }
+}
+
+/**
+ * "Atualizar reviews" (and "Atualizar" in Respostas): queues an update for the local reader, which
+ * reads Google on the owner's computer. Vercel never reads Google. If the customer was synced less
+ * than 15 minutes ago nothing is queued; if an update is already waiting or running, that one is
+ * returned.
+ */
 export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/[slug]/sync">) {
   const { slug } = await ctx.params;
-
   const origin = request.headers.get("origin");
-  if (origin && origin !== request.nextUrl.origin) return reply({ status: "error", message: "forbidden" }, 403);
-  if (!apifyToken()) return reply({ status: "error", message: "A importação de reviews não está configurada." }, 503);
-  const client = tryCreateServiceClient();
-  if (!client) return reply({ status: "error", message: "Serviço indisponível." }, 503);
-
-  // "all": the customer asks to check replies on old reviews too (whole history, once a day).
-  const body = (await request.json().catch(() => null)) as { scope?: string } | null;
-  const wholeHistory = body?.scope === "all";
-
-  const { data: business, error } = await client
-    .from("review_businesses")
-    .select(`${syncTargetColumns}, full_synced_at`)
-    .eq("slug", slug)
-    .maybeSingle<SyncTarget & { full_synced_at: string | null }>();
-  if (error) return reply({ status: "error", message: "Serviço indisponível." }, 500);
-  if (!business) return reply({ status: "error", message: "Painel não encontrado." }, 404);
-
-  if (wholeHistory && business.full_synced_at && Date.now() - Date.parse(business.full_synced_at) < customerFullSyncEveryHours * 3_600_000) {
-    return reply({ status: "fresh" });
+  if (origin && origin !== request.nextUrl.origin) return reply({ error: "forbidden" }, 403);
+  const { client, id, verified } = await business(slug);
+  if (!client) return reply({ error: "Serviço indisponível." }, 503);
+  if (!id) return reply({ error: "Painel não encontrado." }, 404);
+  try {
+    const state = await loadReaderJobs(client, id);
+    if (verified) {
+      // Perfil verificado: straight from Google Business Profile, in seconds, no reader.
+      if (state.lastSyncedAt && Date.now() - Date.parse(state.lastSyncedAt) < verifiedIntervalSeconds * 1000) {
+        return reply({ ...state, recentMinutes: 0 });
+      }
+      const result = await syncVerifiedBusiness(client, id, { deadlineMs: 50_000 });
+      return reply({ ...(await loadReaderJobs(client, id)), recentMinutes: null, google: { ok: result.ok, newReviews: result.newReviews, error: result.error } });
+    }
+    if (isActive(state.update)) return reply({ ...state, recentMinutes: null });
+    const recentMinutes = recentSyncMinutes(state.lastSyncedAt, Date.now());
+    if (recentMinutes !== null) return reply({ ...state, recentMinutes });
+    const job = await queueUpdate(client, id);
+    await sendNow(client, job.id);
+    if (dataForSeoConfigured()) await collectForPanel(client, id);
+    return reply({ ...(await loadReaderJobs(client, id)), recentMinutes: null });
+  } catch {
+    return reply({ error: "Não foi possível fazer o pedido. Tente novamente." }, 500);
   }
-
-  const start = await startReviewSync(client, business.id, wholeHistory ? 0 : dashboardSyncIntervalSeconds);
-  if (start === "fresh" || start === "running") return reply({ status: start });
-  if (start === "missing") return reply({ status: "error", message: "Painel não encontrado." }, 404);
-
-  const result = await syncBusinessReviews(client, business, wholeHistory ? "full" : "visit");
-  return result.ok ? reply({ status: "synced", imported: result.imported }) : reply({ status: "error", message: "Não foi possível atualizar as reviews." }, 502);
 }

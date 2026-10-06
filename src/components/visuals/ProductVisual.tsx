@@ -193,6 +193,48 @@ function ReviewsScreen({ t }: { t: MockupCopy }) {
   );
 }
 
+function MenuScreen({ t }: { t: MockupCopy }) {
+  const highlights = [t.menuHighlights, t.menuHighlight1, t.menuHighlight2, t.menuHighlight3];
+  const dishes = [
+    { name: t.menuDish1, price: t.menuPrice1, tone: "from-[#c9774a] to-[#7a3b22]", video: true },
+    { name: t.menuDish2, price: t.menuPrice2, tone: "from-[#e0a85a] to-[#9a4d1f]", video: false },
+    { name: t.menuDish3, price: t.menuPrice3, tone: "from-[#efd9a0] to-[#b88a3e]", video: false },
+    { name: t.menuDish4, price: t.menuPrice4, tone: "from-[#f3c97a] to-[#a8641c]", video: true },
+  ];
+  return (
+    <>
+      <ScreenHeader title={t.menuTitle} />
+      <div className="flex flex-1 flex-col gap-3 p-3">
+        <div className="flex justify-between px-1">
+          {highlights.map((label, index) => (
+            <span key={label + index} className="flex w-12 flex-col items-center gap-1">
+              <span className={`grid h-11 w-11 place-items-center rounded-full p-[2px] ${index === 0 ? "bg-gradient-to-br from-[#e9c685] to-[#7a2d60]" : "bg-[#e7ddd0]"}`}>
+                <span className="h-full w-full rounded-full border-2 border-[#fbf7f1] bg-gradient-to-br from-[#d9a066] to-[#8a4a2a]" />
+              </span>
+              <span className={`w-full truncate text-center text-[0.58rem] ${index === 0 ? "font-bold" : "text-[#574659]"}`}>{label}</span>
+            </span>
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {dishes.map((dish) => (
+            <div key={dish.name} className={`relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-xl bg-gradient-to-br p-2 text-white ${dish.tone}`}>
+              {dish.video ? (
+                <span className="absolute top-1.5 right-1.5 grid h-5 w-5 place-items-center rounded-full bg-black/35">
+                  <svg aria-hidden="true" viewBox="0 0 10 10" width="8" height="8" fill="currentColor">
+                    <path d="M2.5 1.5 8.5 5l-6 3.5v-7Z" />
+                  </svg>
+                </span>
+              ) : null}
+              <span className="text-[0.6rem] leading-tight font-semibold [text-shadow:0_1px_2px_rgb(0_0_0/0.4)]">{dish.name}</span>
+              <span className="mt-0.5 w-fit rounded-full bg-white/90 px-1.5 py-0.5 text-[0.6rem] font-bold text-[#1d1220]">{dish.price}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
 function AutomationDiagram({ t }: { t: MockupCopy }) {
   const steps = [t.flowAction1, t.flowAction2, t.flowAction3];
   return (
@@ -231,6 +273,7 @@ const phoneScreens: Partial<Record<ProductId, (t: MockupCopy) => ReactNode>> = {
   "ai-chatbot": (t) => <ChatScreen t={t} />,
   "ai-voice": (t) => <VoiceScreen t={t} />,
   "ai-reviews": (t) => <ReviewsScreen t={t} />,
+  "nfc-menu": (t) => <MenuScreen t={t} />,
 };
 
 interface ProductVisualProps {
@@ -303,6 +346,16 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
   return (
     <div className="relative mx-auto w-full max-w-md py-4">
       <div aria-hidden="true" className="absolute inset-[10%] rounded-full bg-[radial-gradient(closest-side,rgb(var(--glow)/0.28),transparent)]" />
+      {product.id === "nfc-menu" ? (
+        <NfcPlate
+          variant="round"
+          finish="black"
+          symbol="menu"
+          line1={t.menuLine1}
+          line2={t.menuLine2}
+          className="absolute bottom-[4%] left-[0%] z-10 h-auto w-[38%] -rotate-[6deg] drop-shadow-[0_24px_30px_rgba(0,0,0,0.3)]"
+        />
+      ) : null}
       {product.id === "loyalty" ? (
         <NfcPlate
           variant="sticker"
@@ -314,6 +367,11 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
         />
       ) : null}
       <PhoneFrame>{screen ? screen(t) : null}</PhoneFrame>
+      {product.id === "nfc-menu" ? (
+        <FloatingChip className="top-[10%] right-0">
+          <NfcWaves size={16} className="text-accent-text" /> NFC + QR
+        </FloatingChip>
+      ) : null}
       {product.id === "bookings" ? (
         <FloatingChip className="right-0 bottom-[12%]">
           <Check size={14} className="text-success" /> {t.bookingReminder}

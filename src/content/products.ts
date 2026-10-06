@@ -9,6 +9,7 @@ export type ProductFamily = "nfc" | "operations" | "ai";
 export type ProductIcon =
   | "star-tap"
   | "share-tap"
+  | "menu-tap"
   | "stamp"
   | "calendar"
   | "queue"
@@ -32,8 +33,17 @@ export interface ProductFormat {
 export interface ProductCustomization {
   formats: ProductFormat[];
   logoExtra: number;
+  // "unit": charged on every plate; "line": charged once per cart line (the design is set up once for the whole pack).
+  logoExtraPer: "unit" | "line";
   logoExtraIsProvisional: boolean;
   textMaxLength: number;
+}
+
+// Quantity discount: from `quantity` units on, every unit costs `unitPrice` (12 plates pay the 10-plate price).
+// The cart offers each one as a pack shortcut.
+export interface ProductPack {
+  quantity: number;
+  unitPrice: number;
 }
 
 export interface Product {
@@ -51,9 +61,10 @@ export interface Product {
   image?: ProductImage;
   contextPhoto?: PhotoId;
   customization?: ProductCustomization;
+  packs?: ProductPack[];
 }
 
-const plateLogoExtra = 5;
+const plateLogoExtra = 10;
 const plateTextMaxLength = 60;
 
 export const products: Product[] = [
@@ -77,10 +88,17 @@ export const products: Product[] = [
         { id: "sticker", label: { pt: "Autocolante (balcão ou montra)", en: "Sticker (counter or window)" } },
         { id: "wall-plate", label: { pt: "Placa de parede", en: "Wall plate" } },
       ],
-      logoExtra: plateLogoExtra,
+      // Owner decision 2026-10-05: with the packs, the logo costs +5 € on each plate.
+      logoExtra: 5,
+      logoExtraPer: "unit",
       logoExtraIsProvisional: true,
       textMaxLength: plateTextMaxLength,
     },
+    packs: [
+      { quantity: 3, unitPrice: 25 },
+      { quantity: 5, unitPrice: 23 },
+      { quantity: 10, unitPrice: 20 },
+    ],
   },
   {
     id: "nfc-social",
@@ -101,9 +119,38 @@ export const products: Product[] = [
         { id: "card", label: { pt: "Cartão (tamanho cartão bancário)", en: "Card (credit-card size)" } },
       ],
       logoExtra: plateLogoExtra,
+      logoExtraPer: "unit",
       logoExtraIsProvisional: true,
       textMaxLength: plateTextMaxLength,
     },
+  },
+  {
+    id: "nfc-menu",
+    slug: { pt: "cardapio-digital-nfc", en: "nfc-digital-menu" },
+    family: "nfc",
+    icon: "menu-tap",
+    priceFrom: 15,
+    priceBilling: "one-time",
+    priceQualifier: { pt: "por placa, configuração incluída", en: "per plate, setup included" },
+    priceIsProvisional: true,
+    sectors: ["restaurants", "retail"],
+    related: ["nfc-google-reviews", "nfc-social", "bookings"],
+    contextPhoto: "restaurant-hero",
+    customization: {
+      formats: [
+        { id: "round-sticker", label: { pt: "Autocolante circular de mesa", en: "Round table sticker" } },
+        { id: "round-base", label: { pt: "Base circular de mesa", en: "Round table base" } },
+      ],
+      logoExtra: plateLogoExtra,
+      logoExtraPer: "line",
+      logoExtraIsProvisional: true,
+      textMaxLength: plateTextMaxLength,
+    },
+    packs: [
+      { quantity: 5, unitPrice: 12 },
+      { quantity: 10, unitPrice: 10 },
+      { quantity: 20, unitPrice: 9 },
+    ],
   },
   {
     id: "loyalty",

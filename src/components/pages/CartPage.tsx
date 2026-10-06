@@ -35,9 +35,11 @@ export function CartPage({ locale }: { locale: Locale }) {
         ? {
             formats: product.customization.formats.map((format) => ({ value: format.id, label: format.label[locale] })),
             logoExtraCents: product.customization.logoExtra * 100,
+            logoExtraPer: product.customization.logoExtraPer,
             textMaxLength: product.customization.textMaxLength,
           }
         : undefined,
+      packs: product.packs?.map((pack) => ({ quantity: pack.quantity, unitCents: pack.unitPrice * 100 })),
     };
   });
   const sectorOptions = [

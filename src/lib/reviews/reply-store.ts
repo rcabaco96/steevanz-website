@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isNegative } from "./analytics.ts";
-import { composeDistinct, composeOptions, learnFromAnswer, ownTextKeys, replyKey, type ComposedReply, type Snippet } from "./reply-rules.ts";
+import { isReplyLanguage, replyLanguage, type ReplyLanguage } from "./reply-languages.ts";
+import { composeDistinct, composeOptions, learnFromAnswer, ownTextKeys, replyKey, translateToPortuguese, type ComposedReply, type Snippet } from "./reply-rules.ts";
 import { normalize, themesIn, type ThemeId } from "./text.ts";
 import {
   defaultReplySettings,
@@ -150,24 +151,29 @@ export interface ReplyBusiness {
   category: string | null;
   lastSyncedAt: string | null;
   googleFid: string | null;
+  googleMapsUrl: string | null;
 }
 
 export async function loadReplyBusiness(client: SupabaseClient, slug: string): Promise<ReplyBusiness | null> {
   const { data, error } = await client
     .from("review_businesses")
-    .select("id, slug, name, category, last_synced_at, google_fid")
+    .select("id, slug, name, category, last_synced_at, google_fid, google_maps_url")
     .eq("slug", slug)
-    .maybeSingle<{ id: string; slug: string; name: string; category: string | null; last_synced_at: string | null; google_fid: string | null }>();
+    .maybeSingle<{ id: string; slug: string; name: string; category: string | null; last_synced_at: string | null; google_fid: string | null; google_maps_url: string | null }>();
   if (error) throw new Error(error.message);
   return data
-    ? { id: data.id, slug: data.slug, name: data.name, category: data.category, lastSyncedAt: data.last_synced_at, googleFid: data.google_fid }
+    ? { id: data.id, slug: data.slug, name: data.name, category: data.category, lastSyncedAt: data.last_synced_at, googleFid: data.google_fid, googleMapsUrl: data.google_maps_url }
     : null;
 }
 
 export interface InboxItem {
   draftId: string;
   status: DraftStatus;
+  /** The reply, in `language` (the review's language; see replyLanguage). */
   reply: string;
+  language: ReplyLanguage;
+  /** Portuguese translation shown under a reply in another language; null for Portuguese replies. */
+  replyPt: string | null;
   reasoning: string;
   approvedBy: "client" | "auto" | null;
   edited: boolean;
@@ -189,19 +195,59 @@ interface DraftRow {
   snippet_ids: string[];
   feedback_reasons: string[];
   feedback_note: string;
-  google_reviews: { review_id: string; rating: number; text: string | null; published_at: string; owner_reply: string | null } | null;
+  /** Missing until the reply_languages migration is applied (see withLanguageColumns). */
+  language?: string;
+  reply_pt?: string | null;
+  google_reviews: { review_id: string; rating: number; text: string | null; language: string | null; published_at: string; owner_reply: string | null } | null;
 }
 
-const draftColumns =
-  "id, status, reply, reasoning, approved_by, edited, decided_at, created_at, original_reply, feedback_reasons, feedback_note, snippet_ids, google_reviews(review_id, rating, text, published_at, owner_reply)";
+/**
+ * review_reply_drafts.language / reply_pt and the same columns on review_reply_alternatives come
+ * from supabase/migrations/20261005120000_reply_languages.sql. Until it is applied, the queries
+ * that use them run again without them: replies still come in the review's language, and the
+ * Portuguese translation is worked out when reading (draftTranslation) instead of stored.
+ */
+function missingLanguageColumns(error: { code?: string; message: string } | null): boolean {
+  return Boolean(error && (error.code === "42703" || error.code === "PGRST204") && /\b(language|reply_pt)\b/.test(error.message));
+}
 
-function toInboxItem(row: DraftRow): InboxItem | null {
+async function withLanguageColumns<T extends { error: { code?: string; message: string } | null }>(run: (stored: boolean) => PromiseLike<T>): Promise<T> {
+  const result = await run(true);
+  return missingLanguageColumns(result.error) ? run(false) : result;
+}
+
+const baseDraftColumns =
+  "id, status, reply, reasoning, approved_by, edited, decided_at, created_at, original_reply, feedback_reasons, feedback_note, snippet_ids, google_reviews(review_id, rating, text, language, published_at, owner_reply)";
+const draftColumns = (stored: boolean) => (stored ? `${baseDraftColumns}, language, reply_pt` : baseDraftColumns);
+
+type TranslationSettings = Pick<ReplySettings, "addressForm" | "negativeContact">;
+
+/**
+ * Language and Portuguese translation of a draft. Stored with the draft; for drafts without them
+ * (before the migration) the language comes from the review and the translation from the base
+ * sentences — a reply with no base sentence of that language was written in Portuguese.
+ */
+function draftTranslation(row: DraftRow, settings: TranslationSettings): { language: ReplyLanguage; replyPt: string | null } {
+  if (isReplyLanguage(row.language)) {
+    if (row.language === "pt" || row.reply_pt || !row.reply) return { language: row.language, replyPt: row.language === "pt" ? null : (row.reply_pt ?? null) };
+    return { language: row.language, replyPt: translateToPortuguese(row.reply, row.language, settings).text };
+  }
+  const review = row.google_reviews;
+  const language = review ? replyLanguage(review.text, review.language) : "pt";
+  if (language === "pt" || !row.reply) return { language: "pt", replyPt: null };
+  const translation = translateToPortuguese(row.reply, language, settings);
+  // Most sentences must be base sentences of that language (a few are identical in Spanish and Portuguese).
+  return translation.translated * 2 > translation.sentences ? { language, replyPt: translation.text } : { language: "pt", replyPt: null };
+}
+
+function toInboxItem(row: DraftRow, settings: TranslationSettings): InboxItem | null {
   const review = row.google_reviews;
   if (!review) return null;
   return {
     draftId: row.id,
     status: row.status,
     reply: row.reply,
+    ...draftTranslation(row, settings),
     reasoning: row.reasoning,
     approvedBy: row.approved_by,
     edited: row.edited,
@@ -220,10 +266,12 @@ export interface ReplyInbox {
 }
 
 /** Live drafts (pending and approved), newest reviews first. */
-export async function loadInbox(client: SupabaseClient, businessId: string, onboardedAt: string | null): Promise<ReplyInbox> {
-  const since = (replyWindowStart(onboardedAt) ?? new Date()).toISOString();
+export async function loadInbox(client: SupabaseClient, businessId: string, settings: ReplySettings): Promise<ReplyInbox> {
+  const since = (replyWindowStart(settings.onboardedAt) ?? new Date()).toISOString();
   const [drafts, unanswered, older] = await Promise.all([
-    client.from("review_reply_drafts").select(draftColumns).eq("business_id", businessId).in("status", ["pending", "approved", "generating"]).limit(1000),
+    withLanguageColumns((stored) =>
+      client.from("review_reply_drafts").select(draftColumns(stored)).eq("business_id", businessId).in("status", ["pending", "approved", "generating"]).limit(1000),
+    ),
     client.from("google_reviews").select("review_id").eq("business_id", businessId).is("owner_reply", null).gte("published_at", since).limit(5000),
     client.from("google_reviews").select("review_id", { count: "exact", head: true }).eq("business_id", businessId).is("owner_reply", null).lt("published_at", since),
   ]);
@@ -231,7 +279,7 @@ export async function loadInbox(client: SupabaseClient, businessId: string, onbo
   if (unanswered.error) throw new Error(unanswered.error.message);
   if (older.error) throw new Error(older.error.message);
   const items = (drafts.data as unknown as DraftRow[])
-    .map(toInboxItem)
+    .map((row) => toInboxItem(row, settings))
     .filter((item): item is InboxItem => item !== null)
     .sort((a, b) => Date.parse(b.review.publishedAt) - Date.parse(a.review.publishedAt));
   const drafted = new Set(items.map((item) => item.review.id));
@@ -285,13 +333,14 @@ export const trainingBatch = 3;
 
 /**
  * Picks real reviews of the business (never invented) that teach the most: the ones whose
- * sentiment and themes the owner's library covers least, mixing positives and negatives.
+ * sentiment and themes the owner's library covers least, mixing positives and negatives. Only
+ * reviews answered in Portuguese: the library is the owner's Portuguese voice.
  */
 export async function loadTrainingQueue(client: SupabaseClient, businessId: string, profileId: string | null, limit = trainingBatch): Promise<TrainingReview[]> {
   const [reviews, done, library] = await Promise.all([
     client
       .from("google_reviews")
-      .select("review_id, rating, text, published_at, owner_reply")
+      .select("review_id, rating, text, language, published_at, owner_reply")
       .eq("business_id", businessId)
       .not("text", "is", null)
       .order("published_at", { ascending: false })
@@ -310,7 +359,12 @@ export async function loadTrainingQueue(client: SupabaseClient, businessId: stri
     covered.set(key, (covered.get(key) ?? 0) + 1);
   }
   const candidates = (reviews.data ?? [])
-    .filter((row) => !seen.has(row.review_id as string) && ((row.text as string) ?? "").trim().length >= 40)
+    .filter(
+      (row) =>
+        !seen.has(row.review_id as string) &&
+        ((row.text as string) ?? "").trim().length >= 40 &&
+        replyLanguage(row.text as string, row.language as string | null) === "pt",
+    )
     .map((row) => {
       const sentiment = isNegative(row.rating as number) ? "negative" : "positive";
       const themes = themesIn(row.text as string);
@@ -458,7 +512,11 @@ interface ReviewToDraft {
   review_id: string;
   rating: number;
   text: string | null;
+  /** Google's language code: the reply is written in the review's language. */
+  language: string | null;
 }
+
+const toComposeReview = (review: ReviewToDraft) => ({ id: review.review_id, rating: review.rating, text: review.text, language: review.language });
 
 /** Builds the reply for one claimed review, applying automatic approval when the settings allow it. */
 async function fillDraft(
@@ -473,7 +531,7 @@ async function fillDraft(
 ): Promise<"pending" | "approved" | "failed"> {
   try {
     const draft = composeDistinct(
-      { review: { id: review.review_id, rating: review.rating, text: review.text }, settings, library, exclude: options.exclude, lengthDelta: options.lengthDelta },
+      { review: toComposeReview(review), settings, library, exclude: options.exclude, lengthDelta: options.lengthDelta },
       ownKeys,
       options.shownKeys,
     );
@@ -484,18 +542,21 @@ async function fillDraft(
       const { data: allowed } = await client.rpc("take_auto_reply", { p_business_id: businessId });
       if (allowed === true) status = "approved";
     }
-    const { error } = await client
-      .from("review_reply_drafts")
-      .update({
-        status,
-        reply: draft.reply,
-        reasoning: draft.reasoning,
-        snippet_ids: draft.snippetIds,
-        model: "regras",
-        error: null,
-        ...(status === "approved" ? { approved_by: "auto", decided_at: new Date().toISOString() } : {}),
-      })
-      .eq("id", draftId);
+    const { error } = await withLanguageColumns((stored) =>
+      client
+        .from("review_reply_drafts")
+        .update({
+          status,
+          reply: draft.reply,
+          reasoning: draft.reasoning,
+          snippet_ids: draft.snippetIds,
+          model: "regras",
+          error: null,
+          ...(stored ? { language: draft.language, reply_pt: draft.replyPt } : {}),
+          ...(status === "approved" ? { approved_by: "auto", decided_at: new Date().toISOString() } : {}),
+        })
+        .eq("id", draftId),
+    );
     if (error) throw new Error(error.message);
     if (status === "approved") await scoreSnippets(client, businessId, draft.snippetIds, "accepted");
     return status;
@@ -530,7 +591,7 @@ export async function draftMissingReplies(client: SupabaseClient, business: Repl
   const [{ data: reviews, error }, { data: live, error: liveError }, library, ownKeys] = await Promise.all([
     client
       .from("google_reviews")
-      .select("review_id, rating, text")
+      .select("review_id, rating, text, language")
       .eq("business_id", business.id)
       .is("owner_reply", null)
       .gte("published_at", replyWindowStart(settings.onboardedAt)!.toISOString())
@@ -561,37 +622,52 @@ export async function draftMissingReplies(client: SupabaseClient, business: Repl
 }
 
 async function liveDraft(client: SupabaseClient, businessId: string, draftId: string): Promise<DraftRow | null> {
-  const { data, error } = await client.from("review_reply_drafts").select(draftColumns).eq("id", draftId).eq("business_id", businessId).maybeSingle();
+  const { data, error } = await withLanguageColumns((stored) =>
+    client.from("review_reply_drafts").select(draftColumns(stored)).eq("id", draftId).eq("business_id", businessId).maybeSingle(),
+  );
   if (error) throw new Error(error.message);
   return (data as unknown as DraftRow | null) ?? null;
 }
 
 /**
  * "Aceitar": only marks the reply as approved (Google is not connected yet). With an edited text,
- * the owner's new sentences go into the library.
+ * the owner's new sentences go into the library. Business rule: the library is the owner's
+ * Portuguese voice, so an edited reply in another language teaches nothing (`foreign`); its
+ * Portuguese translation is redone sentence by sentence (the owner's own sentences stay as written).
  */
-export async function approveDraft(client: SupabaseClient, businessId: string, draftId: string, editedReply: string | null): Promise<{ ok: boolean; learned: number }> {
+export async function approveDraft(
+  client: SupabaseClient,
+  businessId: string,
+  draftId: string,
+  editedReply: string | null,
+): Promise<{ ok: boolean; learned: number; foreign: boolean }> {
   const draft = await liveDraft(client, businessId, draftId);
-  if (!draft || draft.status !== "pending" || !draft.google_reviews) return { ok: false, learned: 0 };
+  if (!draft || draft.status !== "pending" || !draft.google_reviews) return { ok: false, learned: 0, foreign: false };
   const edited = editedReply !== null && editedReply.trim() !== "" && editedReply.trim() !== draft.reply.trim();
-  const { error } = await client
-    .from("review_reply_drafts")
-    .update({
-      status: "approved",
-      approved_by: "client",
-      decided_at: new Date().toISOString(),
-      ...(edited ? { edited: true, original_reply: draft.reply, reply: editedReply!.trim() } : {}),
-    })
-    .eq("id", draftId)
-    .eq("status", "pending");
+  const settings = await loadReplySettings(client, businessId);
+  const { language } = draftTranslation(draft, settings);
+  const replyPt = edited && language !== "pt" ? translateToPortuguese(editedReply!.trim(), language, settings).text : null;
+  const { error } = await withLanguageColumns((stored) =>
+    client
+      .from("review_reply_drafts")
+      .update({
+        status: "approved",
+        approved_by: "client",
+        decided_at: new Date().toISOString(),
+        ...(edited ? { edited: true, original_reply: draft.reply, reply: editedReply!.trim() } : {}),
+        ...(stored && replyPt ? { reply_pt: replyPt } : {}),
+      })
+      .eq("id", draftId)
+      .eq("status", "pending"),
+  );
   if (error) throw new Error(error.message);
   if (!edited) {
     await scoreSnippets(client, businessId, draft.snippet_ids, "accepted");
-    return { ok: true, learned: 0 };
+    return { ok: true, learned: 0, foreign: false };
   }
-  const settings = await loadReplySettings(client, businessId);
+  if (language !== "pt") return { ok: true, learned: 0, foreign: true };
   const learned = await addToLibrary(client, businessId, editedReply!, draft.google_reviews.rating, settings, "edit", draft.google_reviews.review_id);
-  return { ok: true, learned: learned.length };
+  return { ok: true, learned: learned.length, foreign: false };
 }
 
 /** Puts an approved reply back to "por aprovar" (only while it is not published). */
@@ -654,6 +730,9 @@ export interface ReplyAlternative {
   id: string;
   reply: string;
   reasoning: string;
+  language: ReplyLanguage;
+  /** Portuguese translation when the reply is in another language. */
+  replyPt: string | null;
 }
 
 /** Number of alternatives offered by "Outra resposta". */
@@ -666,7 +745,7 @@ async function alternativesFor(client: SupabaseClient, businessId: string, draft
     loadOwnTextKeys(client, businessId, settings),
     shownReplyKeys(client, businessId, review.review_id),
   ]);
-  return composeOptions({ review: { id: review.review_id, rating: review.rating, text: review.text }, settings, library }, ownKeys, shownKeys, alternativesCount);
+  return composeOptions({ review: toComposeReview(review), settings, library }, ownKeys, shownKeys, alternativesCount);
 }
 
 /**
@@ -680,25 +759,31 @@ export async function draftAlternatives(client: SupabaseClient, businessId: stri
   const settings = await loadReplySettings(client, businessId);
   const options = await alternativesFor(client, businessId, draft, settings);
   if (!options.length) return [];
-  const { data, error } = await client
-    .from("review_reply_alternatives")
-    .insert(
-      options.map((option) => ({
-        business_id: businessId,
-        review_id: draft.google_reviews!.review_id,
-        draft_id: draftId,
-        profile_id: settings.profileId,
-        reply: option.reply,
-        reply_key: replyKey(option.reply),
-        reasoning: option.reasoning,
-        snippet_ids: option.snippetIds,
-      })),
-    )
-    .select("id, reply, reasoning");
+  const { data, error } = await withLanguageColumns((stored) =>
+    client
+      .from("review_reply_alternatives")
+      .insert(
+        options.map((option) => ({
+          business_id: businessId,
+          review_id: draft.google_reviews!.review_id,
+          draft_id: draftId,
+          profile_id: settings.profileId,
+          reply: option.reply,
+          reply_key: replyKey(option.reply),
+          reasoning: option.reasoning,
+          snippet_ids: option.snippetIds,
+          ...(stored ? { language: option.language, reply_pt: option.replyPt } : {}),
+        })),
+      )
+      .select("id, reply"),
+  );
   if (error) throw new Error(error.message);
   // Same order as composed (the usual reply first).
-  const rows = (data ?? []) as ReplyAlternative[];
-  return options.map((option) => rows.find((row) => row.reply === option.reply)!).filter(Boolean);
+  const rows = (data ?? []) as { id: string; reply: string }[];
+  return options.flatMap((option) => {
+    const row = rows.find((candidate) => candidate.reply === option.reply);
+    return row ? [{ id: row.id, reply: option.reply, reasoning: option.reasoning, language: option.language, replyPt: option.replyPt }] : [];
+  });
 }
 
 /**
@@ -709,13 +794,15 @@ export async function chooseAlternative(client: SupabaseClient, businessId: stri
   const draft = await liveDraft(client, businessId, draftId);
   if (!draft || draft.status !== "pending" || !draft.google_reviews) return "missing";
   // The text comes from what the server stored when showing it, never from the client.
-  const { data: chosen, error: chosenError } = await client
-    .from("review_reply_alternatives")
-    .select("id, reply, reasoning, snippet_ids")
-    .eq("id", alternativeId)
-    .eq("business_id", businessId)
-    .eq("draft_id", draftId)
-    .maybeSingle<{ id: string; reply: string; reasoning: string; snippet_ids: string[] }>();
+  const { data: chosen, error: chosenError } = await withLanguageColumns((stored) =>
+    client
+      .from("review_reply_alternatives")
+      .select(stored ? "id, reply, reasoning, snippet_ids, language, reply_pt" : "id, reply, reasoning, snippet_ids")
+      .eq("id", alternativeId)
+      .eq("business_id", businessId)
+      .eq("draft_id", draftId)
+      .maybeSingle<{ id: string; reply: string; reasoning: string; snippet_ids: string[]; language?: string; reply_pt?: string | null }>(),
+  );
   if (chosenError) throw new Error(chosenError.message);
   if (!chosen) return "stale";
   const { error } = await client
@@ -728,10 +815,19 @@ export async function chooseAlternative(client: SupabaseClient, businessId: stri
   const settings = await loadReplySettings(client, businessId);
   const newId = await claim(client, businessId, draft.google_reviews.review_id, settings.profileId);
   if (!newId) return "missing";
-  const { error: updateError } = await client
-    .from("review_reply_drafts")
-    .update({ status: "pending", reply: chosen.reply, reasoning: chosen.reasoning, snippet_ids: chosen.snippet_ids, model: "regras" })
-    .eq("id", newId);
+  const { error: updateError } = await withLanguageColumns((stored) =>
+    client
+      .from("review_reply_drafts")
+      .update({
+        status: "pending",
+        reply: chosen.reply,
+        reasoning: chosen.reasoning,
+        snippet_ids: chosen.snippet_ids,
+        model: "regras",
+        ...(stored && isReplyLanguage(chosen.language) ? { language: chosen.language, reply_pt: chosen.reply_pt ?? null } : {}),
+      })
+      .eq("id", newId),
+  );
   if (updateError) throw new Error(updateError.message);
   await client.from("review_reply_alternatives").update({ chosen: true }).eq("id", chosen.id);
   return "chosen";

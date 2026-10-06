@@ -1,7 +1,21 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { autoRemaining, defaultReplySettings, replyWindowStart, shouldAutoApprove, toneFingerprint } from "../src/lib/reviews/replies.ts";
-import { applyAddress, composeDistinct, composeOptions, composeReply, replyKey, isEnglish, isOwnText, learnFromAnswer, ownTextKeys, snippetRetired } from "../src/lib/reviews/reply-rules.ts";
+import { detectLanguage, replyLanguage } from "../src/lib/reviews/reply-languages.ts";
+import {
+  applyAddress,
+  baseSnippetIds,
+  composeDistinct,
+  composeOptions,
+  composeReply,
+  isOwnText,
+  learnFromAnswer,
+  ownTextKeys,
+  replyKey,
+  snippetRetired,
+  translateToPortuguese,
+} from "../src/lib/reviews/reply-rules.ts";
+import { translations } from "../src/lib/reviews/reply-translations.ts";
 
 const settings = (changes = {}) => ({ ...defaultReplySettings, ...changes });
 
@@ -69,12 +83,6 @@ describe("rule-based replies", () => {
     const result = composeReply({ review: review("r4", 5, null), settings: settings({ emptyPositive: template }), library: [] });
     assert.match(result.reply, /^Obrigado pelas estrelas! /);
     assert.equal(isOwnText(result.reply, "", new Set(ownTextKeys(template))), false);
-  });
-
-  it("answers English reviews with an English base reply", () => {
-    assert.equal(isEnglish("The food was great and the staff were very friendly"), true);
-    assert.equal(isEnglish("A comida estava ótima e o staff muito simpático"), false);
-    assert.match(composeReply({ review: review("r5", 5, "The food was great and the staff were very friendly"), settings: settings(), library: [] }).reply, /^(Thank|Thanks|We really)/);
   });
 
   it("avoids sentences from a rejected draft and retires sentences rejected more than accepted", () => {
@@ -167,5 +175,94 @@ describe("learning from the owner's answer", () => {
   it("files contact invitations in positive replies as closings", () => {
     const learned = learnFromAnswer("Obrigado! Para qualquer novo projeto, fale connosco: geral@x.pt.", 5, { signature: "", negativeContact: "geral@x.pt" });
     assert.equal(learned[1].kind, "closing");
+  });
+});
+
+describe("replies in the review's language", () => {
+  // Plain example sentences in each language (not reviews).
+  const samples = {
+    en: "The food was great and the staff were very friendly",
+    es: "La comida estaba muy rica y el personal fue muy amable",
+    fr: "Le personnel était très sympa et la nourriture délicieuse",
+    de: "Das Essen war sehr lecker und die Bedienung freundlich",
+    it: "Il cibo era ottimo e il personale molto gentile",
+    nl: "Het eten was heel lekker en het personeel vriendelijk",
+    pt: "A comida estava ótima e o pessoal muito simpático",
+  };
+
+  it("detects the language from frequent words", () => {
+    for (const [language, text] of Object.entries(samples)) assert.equal(detectLanguage(text), language, text);
+  });
+
+  it("does not guess on empty or very short texts, and those are answered in Portuguese", () => {
+    assert.equal(detectLanguage(null), null);
+    assert.equal(detectLanguage(""), null);
+    assert.equal(detectLanguage("Top!"), null);
+    assert.equal(replyLanguage(null, "en"), "pt");
+    assert.equal(replyLanguage("   ", "en"), "pt");
+    assert.equal(replyLanguage("Top!", null), "pt");
+  });
+
+  it("uses Google's language code when the detector is unsure, and English for languages without base sentences", () => {
+    assert.equal(replyLanguage("Top!", "en"), "en");
+    assert.equal(replyLanguage("Excelente!", "pt-PT"), "pt");
+    assert.equal(replyLanguage("Polecam", "pl"), "en");
+    // A sure detection wins over a code that is only the reviewer's account language.
+    assert.equal(replyLanguage(samples.en, "pt"), "en");
+  });
+
+  it("has every base sentence in every reply language", () => {
+    for (const id of baseSnippetIds) {
+      assert.ok(translations[id], id);
+      for (const language of ["en", "es", "fr", "de", "it", "nl"]) assert.ok(translations[id][language]?.trim(), `${id} ${language}`);
+    }
+    assert.deepEqual(Object.keys(translations).sort(), [...baseSnippetIds].sort());
+  });
+
+  it("composes the same sentence keys in the review's language and in Portuguese", () => {
+    const input = (text) => ({ review: { id: "lang", rating: 5, text }, settings: settings({ signature: "Rui", length: "media" }), library: [] });
+    const english = composeReply(input(samples.en));
+    const spanish = composeReply(input(samples.es));
+    assert.equal(english.language, "en");
+    assert.equal(spanish.language, "es");
+    // Same review id and themes → same sentences, so the Portuguese translations match.
+    assert.deepEqual(english.snippetIds, spanish.snippetIds);
+    assert.equal(english.replyPt, spanish.replyPt);
+    assert.match(english.reasoning, /inglês/);
+    assert.ok(english.reply.endsWith("\n\nRui") && english.replyPt.endsWith("\n\nRui"));
+    // The Portuguese translation is the Portuguese composition of those sentences.
+    const portuguese = composeReply({ ...input(samples.pt) });
+    assert.equal(portuguese.language, "pt");
+    assert.equal(portuguese.replyPt, null);
+    assert.equal(translateToPortuguese(english.reply, "en", settings()).text, english.replyPt);
+  });
+
+  it("never uses the owner's Portuguese sentences in another language, but keeps the contact", () => {
+    const library = [own("a", "opening", "negative", "Obrigado pelo seu comentário."), own("b", "closing", "negative", "Até breve.")];
+    function own(id, kind, sentiment, text) {
+      return { id, kind, sentiment, theme: null, text, accepted: 5, rejected: 0 };
+    }
+    const result = composeReply({ review: { id: "c", rating: 1, text: samples.de }, settings: settings({ negativeContact: "geral@cafe.pt" }), library });
+    assert.equal(result.language, "de");
+    assert.ok(result.snippetIds.every((id) => id.startsWith("default:")));
+    assert.match(result.reply, /geral@cafe\.pt/);
+    assert.match(result.replyPt, /geral@cafe\.pt/);
+  });
+
+  it("keeps sentences the owner changed as written when translating an edited reply", () => {
+    const reply = composeReply({ review: { id: "e", rating: 5, text: samples.fr }, settings: settings(), library: [] });
+    const edited = `${reply.reply} Merci Marie!`;
+    const { text, translated } = translateToPortuguese(edited, "fr", settings());
+    assert.ok(translated >= 1);
+    assert.ok(text.endsWith("Merci Marie!"));
+  });
+
+  it("gives 5 different alternatives in the review's language", () => {
+    const options = composeOptions({ review: { id: "alt-en", rating: 2, text: "We waited a long time and the food was cold" }, settings: settings(), library: [] }, new Set(), new Set(), 5);
+    assert.equal(options.length, 5);
+    for (const option of options) {
+      assert.equal(option.language, "en");
+      assert.ok(option.replyPt);
+    }
   });
 });

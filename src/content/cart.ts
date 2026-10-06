@@ -52,10 +52,17 @@ export interface CartCopy {
     format: string;
     logo: string;
     logoExtra: string;
+    logoExtraOnce: string;
+    lineExtra: string;
     text: string;
     textPlaceholder: string;
     addVariant: string;
     productHint: string;
+  };
+  packs: {
+    title: string;
+    option: string;
+    unit: string;
   };
 }
 
@@ -122,10 +129,17 @@ export const cartCopy: Localized<CartCopy> = {
       format: "Formato",
       logo: "Com logótipo e cores do negócio",
       logoExtra: "+{price} por unidade",
+      logoExtraOnce: "+{price} uma só vez, seja qual for a quantidade",
+      lineExtra: "+ {price} de logótipo e cores, uma vez",
       text: "Texto na placa",
       textPlaceholder: "Ex.: Gostou? Deixe-nos a sua opinião!",
       addVariant: "Adicionar outro formato ou versão",
       productHint: "Formato, logótipo e texto escolhem-se no carrinho.",
+    },
+    packs: {
+      title: "Packs com desconto",
+      option: "{count} un.",
+      unit: "{price}/un.",
     },
   },
   en: {
@@ -190,10 +204,17 @@ export const cartCopy: Localized<CartCopy> = {
       format: "Format",
       logo: "With your logo and brand colours",
       logoExtra: "+{price} per unit",
+      logoExtraOnce: "+{price} once, whatever the quantity",
+      lineExtra: "+ {price} for logo and colours, once",
       text: "Text on the plate",
       textPlaceholder: "e.g. Enjoyed it? Leave us a review!",
       addVariant: "Add another format or version",
       productHint: "Choose the format, logo and text in your cart.",
+    },
+    packs: {
+      title: "Discounted packs",
+      option: "{count} pcs",
+      unit: "{price}/pc",
     },
   },
 };
