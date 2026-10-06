@@ -24,6 +24,8 @@
   --gold-soft: #f6ead3;
   --gold-text: #7f5a1c;
   --star: #e3a21a;
+  --viz-1: #9c3d7d;
+  --viz-2: #b97a0f;
   --success: #1e7a4c;
   --success-soft: #e3f3ea;
   --danger: #b3261e;
@@ -55,6 +57,8 @@
   --gold-soft: #3a2c19;
   --gold-text: #ebcb8e;
   --star: #f2b93b;
+  --viz-1: #bf5c9e;
+  --viz-2: #bd8519;
   --success: #6fd49e;
   --success-soft: #16301f;
   --danger: #ff8a80;
@@ -87,6 +91,8 @@
     --gold-soft: #3a2c19;
     --gold-text: #ebcb8e;
     --star: #f2b93b;
+    --viz-1: #bf5c9e;
+    --viz-2: #bd8519;
     --success: #6fd49e;
     --success-soft: #16301f;
     --danger: #ff8a80;
@@ -122,6 +128,8 @@
   --color-gold-soft: var(--gold-soft);
   --color-gold-text: var(--gold-text);
   --color-star: var(--star);
+  --color-viz-1: var(--viz-1);
+  --color-viz-2: var(--viz-2);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-danger: var(--danger);
@@ -135,6 +143,7 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --animate-float: float 7s ease-in-out infinite;
   --animate-marquee: marquee 40s linear infinite;
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
 
   @keyframes float {
     0%,
@@ -157,6 +166,16 @@
     }
   }
 
+  /* Light sweep across skeleton blocks while data loads. */
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
   @keyframes marquee {
     from {
       transform: translateX(0);
@@ -171,6 +190,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 6rem;
+    scroll-behavior: smooth;
   }
 
   body {

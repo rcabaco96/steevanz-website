@@ -12,6 +12,7 @@ const links = [
   { href: "/admin/bookings", label: "Marcações" },
   { href: "/admin/leads", label: "Pedidos" },
   { href: "/admin/availability", label: "Disponibilidade" },
+  { href: "/admin/reviews", label: "Reviews" },
 ];
 
 export default async function AdminPanelLayout({ children }: { children: ReactNode }) {

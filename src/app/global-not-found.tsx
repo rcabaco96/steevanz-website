@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function GlobalNotFound() {
   return (
-    <html lang="pt-PT" className={fontVariables} suppressHydrationWarning>
+    <html lang="pt-PT" className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="min-h-dvh">
         <ThemeScript />
         <main className="relative isolate grid min-h-dvh place-items-center overflow-hidden px-5 py-20">

@@ -20,6 +20,9 @@ export interface OwnerEmail {
   rows: EmailRow[];
   tables?: EmailTable[];
   replyTo?: string;
+  /** Defaults to the Steevanz owner inbox. */
+  to?: string[];
+  linkLabel?: string;
   adminUrl?: string;
 }
 
@@ -61,7 +64,7 @@ function renderTableText({ title, rows, foot = [] }: EmailTable): string[] {
   return ["", title.toUpperCase(), ...rows.map((row) => `- ${row.join(" | ")}`), ...foot.map(([label, value]) => `  ${label}: ${value}`)];
 }
 
-function renderHtml({ heading, rows, tables = [], adminUrl }: OwnerEmail): string {
+function renderHtml({ heading, rows, tables = [], adminUrl, linkLabel = "Abrir no painel" }: OwnerEmail): string {
   const body = rows
     .filter((row) => row.value)
     .map(
@@ -70,7 +73,7 @@ function renderHtml({ heading, rows, tables = [], adminUrl }: OwnerEmail): strin
     )
     .join("");
   const link = adminUrl
-    ? `<p style="margin:24px 0 0"><a href="${escapeHtml(adminUrl)}" style="display:inline-block;background:#7a2d60;color:#ffffff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600">Abrir no painel</a></p>`
+    ? `<p style="margin:24px 0 0"><a href="${escapeHtml(adminUrl)}" style="display:inline-block;background:#7a2d60;color:#ffffff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600">${escapeHtml(linkLabel)}</a></p>`
     : "";
   return `<!doctype html><html><body style="margin:0;padding:24px;background:#fbf7f1;font-family:Arial,Helvetica,sans-serif"><div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e7ddd0;border-radius:16px;padding:24px"><h1 style="margin:0 0 16px;font-size:20px;color:#1d1220">${escapeHtml(heading)}</h1><table style="border-collapse:collapse;width:100%">${body}</table>${tables.map(renderTableHtml).join("")}${link}</div></body></html>`;
 }
@@ -92,7 +95,7 @@ export async function sendOwnerEmail(email: OwnerEmail): Promise<boolean> {
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: fromAddress,
-        to: [ownerAddress],
+        to: email.to?.length ? email.to : [ownerAddress],
         subject: email.subject,
         html: renderHtml(email),
         text: renderText(email),

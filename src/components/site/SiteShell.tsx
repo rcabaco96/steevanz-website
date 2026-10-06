@@ -31,7 +31,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
   });
 
   return (
-    <html lang={htmlLang[locale]} className={fontVariables} suppressHydrationWarning>
+    <html lang={htmlLang[locale]} className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="min-h-dvh">
         <ThemeScript />
         <a
