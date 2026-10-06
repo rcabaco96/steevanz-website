@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ReviewsDashboard, reviewsPageSize, type DashboardQuery } from "@/components/reviews/ReviewsDashboard";
+import { requirePanelPage } from "@/lib/reviews/access";
 import { computeAnalytics, periodIds, reviewStarFilters, type PeriodId, type ReviewStarFilter } from "@/lib/reviews/analytics";
 import { getDashboardSource } from "@/lib/reviews/store";
 import { themeIds, type ThemeId } from "@/lib/reviews/text";
@@ -38,6 +39,7 @@ export async function generateMetadata({ params }: PageProps<"/painel/[slug]">):
 
 export default async function DashboardPage({ params, searchParams }: PageProps<"/painel/[slug]">) {
   const { slug } = await params;
+  if (!(await requirePanelPage(slug, `/painel/${slug}`))) notFound();
   const query = parseQuery(await searchParams);
 
   const source = await getDashboardSource(slug);

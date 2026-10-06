@@ -3,6 +3,7 @@ import { isOrderStatus, type ClientProductRow, type OrderRow, type OrderStatus, 
 import { addDaysToDate, zonedDateTimeToUtc } from "@/lib/booking/slots";
 import { isLeadKind, isPipelineStatus, type BookingRow, type LeadKind, type LeadRow, type PipelineStatus } from "@/lib/booking/types";
 import { site } from "@/lib/site";
+import { adminEmails } from "@/lib/supabase/env";
 import { createServiceClient } from "@/lib/supabase/service";
 
 export type AdminSearchParams = Record<string, string | string[] | undefined>;
@@ -217,6 +218,9 @@ function searchPattern(term: string, columns: string[]): string | null {
 export async function listClients(q: string): Promise<ClientSummary[]> {
   const client = createServiceClient();
   let query = client.from("profiles").select("*").order("created_at", { ascending: false }).limit(listLimit);
+  // Admin accounts are staff, not clients.
+  const admins = adminEmails();
+  if (admins.length) query = query.not("email", "in", `(${admins.map((email) => `"${email}"`).join(",")})`);
   const pattern = searchPattern(q, ["email", "full_name", "business_name", "phone", "nif"]);
   if (pattern) query = query.or(pattern);
   const { data, error } = await query;

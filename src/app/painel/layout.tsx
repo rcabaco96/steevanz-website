@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import "../globals.css";
 import { fontVariables } from "@/app/fonts";
+import { UserIcon } from "@/components/icons";
 import { PanelTabs } from "@/components/reviews/PanelTabs";
 import { Logo } from "@/components/site/Logo";
 import { ThemeScript } from "@/components/site/ThemeScript";
@@ -29,8 +31,16 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
               <span className="hidden rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-text lg:inline">Reviews</span>
             </div>
             <PanelTabs className="w-full max-w-xs justify-self-center sm:w-auto sm:max-w-none" />
-            <div className="col-start-3 flex justify-end">
+            <div className="col-start-3 flex items-center justify-end gap-1">
               <ThemeToggle label="Mudar tema" />
+              <Link
+                href="/conta"
+                aria-label="A minha conta"
+                title="A minha conta"
+                className="grid h-10 w-10 place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-text"
+              >
+                <UserIcon size={19} />
+              </Link>
             </div>
           </div>
         </header>

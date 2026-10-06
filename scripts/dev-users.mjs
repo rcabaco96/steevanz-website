@@ -2,6 +2,7 @@
 //   node --env-file=.env.local scripts/dev-users.mjs             -> list users (dry run)
 //   node --env-file=.env.local scripts/dev-users.mjs --delete    -> delete every non-admin user
 //   node --env-file=.env.local scripts/dev-users.mjs --create    -> create confirmed test clients
+//   node --env-file=.env.local scripts/dev-users.mjs --delete-email=a@b.pt -> delete one non-admin user
 import { randomBytes } from "node:crypto";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -30,6 +31,17 @@ if (process.argv.includes("--delete")) {
   for (const u of users.filter((u) => !isAdmin(u))) {
     await api(`/users/${u.id}`, { method: "DELETE" });
     console.log("deleted", u.email);
+  }
+}
+
+const single = process.argv.find((arg) => arg.startsWith("--delete-email="))?.split("=")[1]?.toLowerCase();
+if (single) {
+  if (admins.includes(single)) throw new Error(`${single} is an admin; remove it from ADMIN_EMAILS first`);
+  const user = users.find((u) => (u.email ?? "").toLowerCase() === single);
+  if (!user) console.log("not found", single);
+  else {
+    await api(`/users/${user.id}`, { method: "DELETE" });
+    console.log("deleted", single);
   }
 }
 

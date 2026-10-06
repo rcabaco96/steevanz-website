@@ -66,6 +66,8 @@ export interface BusinessRow {
   competitors_refreshed_at?: string | null;
   full_synced_at?: string | null;
   google_fid?: string | null;
+  /** Client account that can open the panel (admins always can). */
+  owner_id?: string | null;
   created_at: string;
 }
 

@@ -47,4 +47,4 @@ supabase/.branches
 
 # local-only
 marketing/
-.claude/
+.claude/launch.json

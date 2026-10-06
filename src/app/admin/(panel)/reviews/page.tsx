@@ -6,6 +6,7 @@ import { ArrowUpRight } from "@/components/icons";
 import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
 import { requireAdmin } from "@/lib/admin/auth";
+import { listClients } from "@/lib/admin/queries";
 import { deleteReviewBusiness, refreshCompetitors, saveReviewBusiness, syncReviewsNow, toggleCompetitor } from "@/lib/admin/review-actions";
 import { apifyToken } from "@/lib/reviews/apify";
 import { competitorRadiusKm } from "@/lib/reviews/competitors";
@@ -26,10 +27,27 @@ interface CompetitorAdminRow {
   pace_per_month: number | null;
 }
 
-function BusinessFields({ business }: { business?: BusinessRow }) {
+interface ClientOption {
+  id: string;
+  label: string;
+}
+
+function BusinessFields({ business, clients }: { business?: BusinessRow; clients: ClientOption[] }) {
   return (
     <>
       <input type="hidden" name="id" value={business?.id ?? ""} />
+      <label className={`${adminLabelClasses} sm:col-span-2`}>
+        Conta do cliente
+        <select name="owner_id" defaultValue={business?.owner_id ?? ""} className={`${adminInputClasses} h-11`}>
+          <option value="">Sem conta (só os admins veem o painel)</option>
+          {clients.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <span className="text-xs font-normal text-subtle">Só esta conta (e os admins) consegue abrir o painel. O cliente tem de criar conta primeiro.</span>
+      </label>
       <label className={adminLabelClasses}>
         Nome do negócio
         <input name="name" required maxLength={160} defaultValue={business?.name} placeholder="Café Central" className={`${adminInputClasses} h-11`} />
@@ -105,13 +123,19 @@ function BusinessFields({ business }: { business?: BusinessRow }) {
 export default async function ReviewsAdminPage() {
   await requireAdmin();
   const client = createServiceClient();
-  const [{ data: businesses, error }] = await Promise.all([
+  const [{ data: businesses, error }, profiles] = await Promise.all([
     client
       .from("review_businesses")
-      .select("id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, full_synced_at, created_at")
+      .select("id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, full_synced_at, owner_id, created_at")
       .order("name"),
+    listClients(""),
   ]);
   if (error) throw new Error(error.message);
+  const clients: ClientOption[] = profiles.map((profile) => ({
+    id: profile.id,
+    label: [profile.business_name || profile.full_name, profile.email].filter(Boolean).join(" · "),
+  }));
+  const clientLabels = new Map(clients.map((option) => [option.id, option.label]));
   // One query per business: up to 100 competitors each would overflow a single 1000-row page.
   const competitorLists = await Promise.all(
     (businesses ?? []).map((business) =>
@@ -164,6 +188,9 @@ export default async function ReviewsAdminPage() {
                       {business.full_synced_at ? ` · histórico completo lido a ${formatDateTime(business.full_synced_at)} (repete todos os meses)` : ""}
                     </p>
                     {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}
+                    <p className="mt-1 text-subtle">
+                      {business.owner_id ? `Conta: ${clientLabels.get(business.owner_id) ?? "conta removida"}` : "Sem conta de cliente: só os admins veem o painel."}
+                    </p>
                   </div>
                   <div className="flex flex-wrap gap-2 sm:justify-end">
                     <ActionForm action={syncReviewsNow} className="flex flex-col items-start gap-1 sm:items-end">
@@ -238,7 +265,7 @@ export default async function ReviewsAdminPage() {
                 <details className="group">
                   <summary className="cursor-pointer text-sm font-semibold text-muted hover:text-text">Editar dados do negócio</summary>
                   <ActionForm action={saveReviewBusiness} className="mt-4 grid gap-4 sm:grid-cols-2">
-                    <BusinessFields business={business} />
+                    <BusinessFields business={business} clients={clients} />
                     <div className="flex items-end">
                       <SubmitButton>Guardar</SubmitButton>
                     </div>
@@ -260,7 +287,7 @@ export default async function ReviewsAdminPage() {
 
       <Panel title="Novo negócio">
         <ActionForm action={saveReviewBusiness} className="grid gap-4 sm:grid-cols-2">
-          <BusinessFields />
+          <BusinessFields clients={clients} />
           <div className="flex items-end">
             <SubmitButton>Criar negócio</SubmitButton>
           </div>

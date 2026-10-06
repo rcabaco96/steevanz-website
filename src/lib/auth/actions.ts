@@ -118,6 +118,22 @@ export async function signIn(_previous: ActionState, formData: FormData): Promis
   redirect(safeNextPath(value(formData, "next"), isAdminUser(data.user) ? "/admin" : "/conta"));
 }
 
+/** Sign-in link by email, for existing accounts only (new accounts go through sign-up and the terms). */
+export async function requestSignInLink(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  const parsed = z.email().safeParse(value(formData, "email").toLowerCase());
+  if (!parsed.success) return { ok: false, message: "Indique um email válido." };
+  const supabase = await createAuthClient();
+  if (!supabase) return unconfigured;
+  const { error } = await supabase.auth.signInWithOtp({
+    email: parsed.data,
+    options: { shouldCreateUser: false, emailRedirectTo: await callbackUrl(safeNextPath(value(formData, "next"), "")) },
+  });
+  if (error?.code === "over_email_send_rate_limit") return { ok: false, message: "Demasiados pedidos. Aguarde um minuto e tente novamente." };
+  // Unknown emails also fail here: the answer stays the same so it doesn't reveal which emails have an account.
+  if (error) console.error("[auth] signInWithOtp failed:", error.code, error.message);
+  return { ok: true, message: "Se existir uma conta com este email, vai receber um link para entrar. Abra-o neste mesmo navegador." };
+}
+
 export async function requestPasswordReset(_previous: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = z.email().safeParse(value(formData, "email").toLowerCase());
   if (!parsed.success) return { ok: false, message: "Indique um email válido." };

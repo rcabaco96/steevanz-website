@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { panelApiDenied } from "@/lib/reviews/access";
 import { filterReviews, periodIds, periodStart, type PeriodId } from "@/lib/reviews/analytics";
 import { getDashboardSource } from "@/lib/reviews/store";
 import { themeIds, type ThemeId } from "@/lib/reviews/text";
@@ -8,6 +9,8 @@ const maxReviews = 200;
 
 export async function GET(request: NextRequest, ctx: RouteContext<"/api/painel/[slug]/reviews">) {
   const { slug } = await ctx.params;
+  const denied = await panelApiDenied(slug);
+  if (denied) return denied;
   const theme = request.nextUrl.searchParams.get("tema") as ThemeId;
   const period = request.nextUrl.searchParams.get("periodo") as PeriodId;
   if (!themeIds.includes(theme) || !periodIds.includes(period)) return Response.json({ error: "invalid" }, { status: 400 });

@@ -8,6 +8,7 @@ import { ReplyInbox } from "@/components/reviews/ReplyInbox";
 import { ReplyOnboarding } from "@/components/reviews/ReplyOnboarding";
 import { DraftMoreButton, ReplyRunner } from "@/components/reviews/ReplyRunner";
 import { ReplyLibrary, ReplyTraining } from "@/components/reviews/ReplyTraining";
+import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDate, formatPercent } from "@/lib/reviews/format";
 import { loadInbox, loadLibrary, loadReplyBusiness, loadReplySettings, loadToneHistory, loadTrainingQueue, type ToneHistoryEntry } from "@/lib/reviews/reply-store";
 import { describeTone, draftsPerRun, replyWindowDays } from "@/lib/reviews/replies";
@@ -79,6 +80,7 @@ function ToneHistory({ history }: { history: ToneHistoryEntry[] }) {
 
 export default async function RepliesPage({ params, searchParams }: PageProps<"/painel/[slug]/respostas">) {
   const { slug } = await params;
+  if (!(await requirePanelPage(slug, `/painel/${slug}/respostas`))) notFound();
   const editing = (await searchParams).editar === "1";
   const client = tryCreateServiceClient();
   if (!client) notFound();

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createServiceClient } from "@/lib/supabase/service";
+import { panelAccess } from "./access.ts";
 import {
   approveDraft,
   chooseAlternative,
@@ -46,8 +47,17 @@ export type ReplySettingsInput = z.input<typeof SettingsSchema>;
 
 type Client = ReturnType<typeof createServiceClient>;
 
+/** Same rule as the panel pages: the panel's own client account or an admin. */
+async function accessError(slug: string): Promise<{ ok: false; message: string } | null> {
+  const access = await panelAccess(slug);
+  if (access === "allowed") return null;
+  return { ok: false, message: access === "anonymous" ? "A sessão expirou. Entre novamente." : "Painel não encontrado." };
+}
+
 async function withBusiness<T extends { ok: boolean }>(slug: string, task: (client: Client, business: ReplyBusiness) => Promise<T>): Promise<T | { ok: false; message: string }> {
   try {
+    const denied = await accessError(slug);
+    if (denied) return denied;
     const client = createServiceClient();
     const business = await loadReplyBusiness(client, slug);
     if (!business) return { ok: false, message: "Painel não encontrado." };
@@ -156,6 +166,8 @@ export type AlternativesState = { ok: true; options: ReplyAlternative[] } | { ok
 export async function alternativesAction(slug: string, draftId: string): Promise<AlternativesState> {
   if (!z.uuid().safeParse(draftId).success) return { ok: false, message: "Resposta inválida." };
   try {
+    const denied = await accessError(slug);
+    if (denied) return denied;
     const client = createServiceClient();
     const business = await loadReplyBusiness(client, slug);
     if (!business) return { ok: false, message: "Painel não encontrado." };

@@ -52,6 +52,7 @@ const businessSchema = z.object({
   plates_installed_on: z.union([z.iso.date(), z.literal("")]).transform((date) => date || null),
   alert_email: z.union([z.email(), z.literal("")]).transform((email) => email.toLowerCase() || null),
   active_services: z.array(z.string().refine(isProductId)).max(20),
+  owner_id: z.union([uuid, z.literal("")]).transform((owner) => owner || null),
 });
 
 export async function saveReviewBusiness(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
@@ -66,6 +67,7 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
       plates_installed_on: value(formData, "plates_installed_on"),
       alert_email: value(formData, "alert_email"),
       active_services: formData.getAll("active_services").filter((entry): entry is string => typeof entry === "string"),
+      owner_id: value(formData, "owner_id"),
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? "");
@@ -76,6 +78,7 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
         review_url: "O link de avaliação tem de ser um link https do Google (g.page/r/…/review ou search.google.com).",
         plates_installed_on: "Data de instalação inválida.",
         alert_email: "Indique um email válido para os alertas (ou deixe vazio).",
+        owner_id: "Escolha uma conta de cliente válida.",
       };
       return { ok: false, message: messages[field] ?? "Dados inválidos." };
     }
@@ -86,6 +89,7 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
       : await client.from("review_businesses").insert(business).select("id").single();
     if (error) {
       if (error.code === "23505") return { ok: false, message: "Já existe um negócio com esse endereço de painel." };
+      if (error.code === "23503") return { ok: false, message: "Essa conta de cliente já não existe." };
       throw new Error(error.message);
     }
     revalidatePath("/admin/reviews");

@@ -2,18 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SubscriptionBadge } from "@/components/account/badges";
 import { AdminPageHeader, EmptyState } from "@/components/backoffice/ui";
-import { ArrowRight, ProductGlyph } from "@/components/icons";
+import { ArrowRight, ProductGlyph, StarFilled } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, isProductId } from "@/content/products";
 import { listOwnProducts } from "@/lib/accounts/queries";
 import { getOwnProfile, requireUser } from "@/lib/auth/session";
+import { listOwnedPanels } from "@/lib/reviews/access";
 
 export const metadata: Metadata = { title: "Os meus produtos" };
 
 export default async function AccountHomePage() {
   const user = await requireUser();
-  const [profile, owned] = await Promise.all([getOwnProfile(), listOwnProducts(user.id)]);
+  const [profile, owned, panels] = await Promise.all([getOwnProfile(), listOwnProducts(user.id), listOwnedPanels(user.id)]);
   const items = owned.filter((row) => isProductId(row.product_id));
   const firstName = profile?.full_name?.split(" ")[0];
 
@@ -23,6 +24,29 @@ export default async function AccountHomePage() {
         title={firstName ? `Olá, ${firstName}` : "Os meus produtos"}
         description={profile?.business_name ?? "Gestão dos produtos Steevanz que comprou."}
       />
+      {panels.length ? (
+        <section aria-labelledby="paineis-title" className="flex flex-col gap-3">
+          <h2 id="paineis-title" className="text-sm font-semibold text-muted">
+            Painel de reviews
+          </h2>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {panels.map((panel) => (
+              <li key={panel.slug} className="flex">
+                <Link href={`/painel/${panel.slug}`} className="card card-interactive flex w-full flex-col gap-3 p-5 sm:p-6">
+                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-soft text-accent-text">
+                    <StarFilled size={20} />
+                  </span>
+                  <span className="text-lg font-semibold text-text">{panel.name}</span>
+                  <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
+                    Abrir painel
+                    <ArrowRight size={16} />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {items.length ? (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((row) => {

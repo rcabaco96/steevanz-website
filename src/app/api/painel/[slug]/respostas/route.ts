@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { panelApiDenied } from "@/lib/reviews/access";
 import { apifyToken } from "@/lib/reviews/apify";
 import { draftMissingReplies, loadReplyBusiness } from "@/lib/reviews/reply-store";
 import { startReviewSync, syncBusinessReviews, syncTargetColumns, type SyncTarget } from "@/lib/reviews/store";
@@ -19,6 +20,8 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/
   const { slug } = await ctx.params;
   const origin = request.headers.get("origin");
   if (origin && origin !== request.nextUrl.origin) return reply({ status: "error", message: "forbidden" }, 403);
+  const denied = await panelApiDenied(slug);
+  if (denied) return denied;
   const client = tryCreateServiceClient();
   if (!client) return reply({ status: "error", message: "Serviço indisponível." }, 503);
 
