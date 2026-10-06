@@ -5,7 +5,7 @@ import { products } from "@/content/products";
 import type { ListFilters } from "@/lib/admin/queries";
 import { kindLabels, statusLabels } from "@/lib/booking/labels";
 import { leadKinds, pipelineStatuses } from "@/lib/booking/types";
-import { adminInputClasses, adminLabelClasses } from "./ui";
+import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 
 interface FilterBarProps {
   basePath: string;

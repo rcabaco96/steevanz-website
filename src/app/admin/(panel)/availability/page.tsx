@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { AdminForm, SubmitButton } from "@/components/admin/AdminForm";
-import { AdminPageHeader, adminInputClasses, adminLabelClasses, EmptyState, Panel } from "@/components/admin/ui";
+import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { AdminPageHeader, adminInputClasses, adminLabelClasses, EmptyState, Panel } from "@/components/backoffice/ui";
 import { CloseIcon } from "@/components/icons";
 import { createBlockedDate, createBreak, deleteAvailabilityItem, saveRule, saveSettings } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
@@ -34,13 +34,13 @@ function WeekdaySelect({ defaultValue = 1 }: { defaultValue?: number }) {
 
 function DeleteButton({ kind, id, label, confirmMessage }: { kind: "rule" | "break" | "blocked"; id: string; label: string; confirmMessage: string }) {
   return (
-    <AdminForm action={deleteAvailabilityItem} confirmMessage={confirmMessage} hideMessage className="flex shrink-0 flex-wrap items-end">
+    <ActionForm action={deleteAvailabilityItem} confirmMessage={confirmMessage} hideMessage className="flex shrink-0 flex-wrap items-end">
       <input type="hidden" name="kind" value={kind} />
       <input type="hidden" name="id" value={id} />
       <SubmitButton variant="ghost" size="sm" ariaLabel={label} className="h-11 w-11 px-0 text-danger">
         <CloseIcon size={18} />
       </SubmitButton>
-    </AdminForm>
+    </ActionForm>
   );
 }
 
@@ -111,12 +111,12 @@ export default async function AdminAvailabilityPage() {
                     {rules.length ? (
                       rules.map((rule) => (
                         <div key={rule.id} className="flex items-start gap-2">
-                          <AdminForm action={saveRule} className="grid flex-1 grid-cols-2 items-end gap-2 sm:grid-cols-[1fr_1fr_1fr_auto_auto]">
+                          <ActionForm action={saveRule} className="grid flex-1 grid-cols-2 items-end gap-2 sm:grid-cols-[1fr_1fr_1fr_auto_auto]">
                             <RuleFields rule={rule} />
                             <SubmitButton variant="secondary" size="sm" pendingLabel="…" className="h-11">
                               Guardar
                             </SubmitButton>
-                          </AdminForm>
+                          </ActionForm>
                           <DeleteButton kind="rule" id={rule.id} label={`Remover horário de ${weekdayNames[weekday]}`} confirmMessage="Remover este horário?" />
                         </div>
                       ))
@@ -130,12 +130,12 @@ export default async function AdminAvailabilityPage() {
           </Panel>
 
           <Panel title="Adicionar horário">
-            <AdminForm action={saveRule} className="grid grid-cols-2 items-end gap-2 sm:grid-cols-[1.2fr_1fr_1fr_1fr_auto_auto]">
+            <ActionForm action={saveRule} className="grid grid-cols-2 items-end gap-2 sm:grid-cols-[1.2fr_1fr_1fr_1fr_auto_auto]">
               <RuleFields />
               <SubmitButton size="sm" pendingLabel="…" className="h-11">
                 Adicionar
               </SubmitButton>
-            </AdminForm>
+            </ActionForm>
           </Panel>
 
           <Panel title="Pausas (ex.: almoço)">
@@ -159,7 +159,7 @@ export default async function AdminAvailabilityPage() {
               ) : (
                 <EmptyState>Sem pausas.</EmptyState>
               )}
-              <AdminForm action={createBreak} className="mt-3 grid grid-cols-2 items-end gap-2 sm:grid-cols-[1.2fr_1fr_1fr_auto]">
+              <ActionForm action={createBreak} className="mt-3 grid grid-cols-2 items-end gap-2 sm:grid-cols-[1.2fr_1fr_1fr_auto]">
                 <label className={`${adminLabelClasses} col-span-2 sm:col-span-1`}>
                   Dia
                   <WeekdaySelect />
@@ -175,14 +175,14 @@ export default async function AdminAvailabilityPage() {
                 <SubmitButton size="sm" pendingLabel="…" className="col-span-2 h-11 sm:col-span-1">
                   Adicionar
                 </SubmitButton>
-              </AdminForm>
+              </ActionForm>
             </div>
           </Panel>
         </div>
 
         <div className="flex flex-col gap-6">
           <Panel title="Regras gerais">
-            <AdminForm action={saveSettings} className="flex flex-col gap-3">
+            <ActionForm action={saveSettings} className="flex flex-col gap-3">
               <label className={adminLabelClasses}>
                 Antecedência mínima (horas)
                 <input
@@ -211,7 +211,7 @@ export default async function AdminAvailabilityPage() {
               <SubmitButton size="sm" pendingLabel="A guardar…" className="self-start">
                 Guardar
               </SubmitButton>
-            </AdminForm>
+            </ActionForm>
           </Panel>
 
           <Panel title="Dias bloqueados">
@@ -231,7 +231,7 @@ export default async function AdminAvailabilityPage() {
               ) : (
                 <EmptyState>Nenhum dia bloqueado.</EmptyState>
               )}
-              <AdminForm action={createBlockedDate} className="mt-3 flex flex-col gap-2">
+              <ActionForm action={createBlockedDate} className="mt-3 flex flex-col gap-2">
                 <label className={adminLabelClasses}>
                   Data
                   <input type="date" name="date" required min={today} className={`${adminInputClasses} h-11`} />
@@ -243,7 +243,7 @@ export default async function AdminAvailabilityPage() {
                 <SubmitButton size="sm" pendingLabel="…" className="self-start">
                   Bloquear dia
                 </SubmitButton>
-              </AdminForm>
+              </ActionForm>
             </div>
           </Panel>
 

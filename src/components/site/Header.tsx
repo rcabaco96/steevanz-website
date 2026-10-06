@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ProductFamily, ProductIcon } from "@/content/products";
-import { ArrowRight, ChevronDown, CloseIcon, MenuIcon, ProductGlyph } from "@/components/icons";
+import { ArrowRight, ChevronDown, CloseIcon, MenuIcon, ProductGlyph, UserIcon } from "@/components/icons";
 import type { Locale } from "@/lib/i18n";
 import { CartButton } from "@/components/cart/CartButton";
 import { buttonClasses } from "@/components/ui/Button";
@@ -37,6 +37,7 @@ export interface HeaderLabels {
   homeLabel: string;
   cart: string;
   cartWithCount: string;
+  account: string;
   families: Record<ProductFamily, string>;
 }
 
@@ -49,6 +50,7 @@ export interface HeaderLinks {
   contact: string;
   book: string;
   cart: string;
+  account: string;
 }
 
 interface HeaderProps {
@@ -208,6 +210,14 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
               <ThemeToggle label={labels.themeToggle} />
             </span>
             <CartButton href={links.cart} label={labels.cart} labelWithCount={labels.cartWithCount} active={isActive(links.cart)} />
+            <Link
+              href={links.account}
+              aria-label={labels.account}
+              title={labels.account}
+              className="grid h-10 w-10 place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-text"
+            >
+              <UserIcon size={19} />
+            </Link>
             <span className="ml-2 hidden md:block">
               <Link href={links.book} className={buttonClasses("primary", "sm")}>
                 {labels.bookDemo}

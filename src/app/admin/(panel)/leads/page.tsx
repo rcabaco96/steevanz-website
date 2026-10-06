@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FilterBar } from "@/components/admin/FilterBar";
-import { AdminPageHeader, EmptyState, StatusBadge } from "@/components/admin/ui";
+import { AdminPageHeader, EmptyState, StatusBadge } from "@/components/backoffice/ui";
 import { buttonClasses } from "@/components/ui/Button";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";

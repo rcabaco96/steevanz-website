@@ -60,6 +60,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
             homeLabel: "Steevanz",
             cart: cartCopy[locale].headerLabel,
             cartWithCount: cartCopy[locale].headerLabelCount,
+            account: cartCopy[locale].accountLabel,
             families: t.nav.families,
           }}
           links={{
@@ -71,6 +72,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
             contact: href(locale, { key: "contact" }),
             book: href(locale, { key: "book" }),
             cart: href(locale, { key: "cart" }),
+            account: "/conta",
           }}
         />
         <main id="main" className="relative">

@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { publicSupabaseConfig } from "./env";
 
-export async function refreshAdminSession(request: NextRequest): Promise<NextResponse> {
+export async function refreshSession(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request });
   const config = publicSupabaseConfig();
   if (!config) return response;
@@ -24,7 +24,7 @@ export async function refreshAdminSession(request: NextRequest): Promise<NextRes
   try {
     await supabase.auth.getClaims();
   } catch (error) {
-    console.error("[admin] session refresh failed:", error instanceof Error ? error.message : error);
+    console.error("[auth] session refresh failed:", error instanceof Error ? error.message : error);
   }
   return response;
 }

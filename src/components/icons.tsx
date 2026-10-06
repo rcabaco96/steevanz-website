@@ -167,6 +167,13 @@ export const CartIcon = (props: IconProps) => (
   </StrokeIcon>
 );
 
+export const UserIcon = (props: IconProps) => (
+  <StrokeIcon {...props}>
+    <circle cx="12" cy="8" r="3.6" />
+    <path d="M4.8 20a7.2 7.2 0 0 1 14.4 0" />
+  </StrokeIcon>
+);
+
 export const TrashIcon = (props: IconProps) => (
   <StrokeIcon {...props}>
     <path d="M4.5 7h15M9.5 7V4.8h5V7M6.5 7l.8 12.2h9.4L17.5 7M10.2 10.5v5.5M13.8 10.5v5.5" />

@@ -3,17 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const links = [
-  { href: "/admin", label: "Resumo", exact: true },
-  { href: "/admin/bookings", label: "Marcações", exact: false },
-  { href: "/admin/leads", label: "Pedidos", exact: false },
-  { href: "/admin/availability", label: "Disponibilidade", exact: false },
-];
+export interface NavLink {
+  href: string;
+  label: string;
+  exact?: boolean;
+}
 
-export function AdminNav() {
+export function BackofficeNav({ links, label }: { links: NavLink[]; label: string }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Navegação do painel" className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+    <nav aria-label={label} className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
       {links.map((link) => {
         const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
         return (

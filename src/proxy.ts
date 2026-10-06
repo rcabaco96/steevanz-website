@@ -1,13 +1,13 @@
 import type { NextRequest } from "next/server";
-import { refreshAdminSession } from "@/lib/supabase/proxy";
+import { refreshSession } from "@/lib/supabase/proxy";
 
 export async function proxy(request: NextRequest) {
-  const response = await refreshAdminSession(request);
+  const response = await refreshSession(request);
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
   response.headers.set("Cache-Control", "private, no-store");
   return response;
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/conta", "/conta/:path*"],
 };

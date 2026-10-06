@@ -12,6 +12,8 @@ export interface CartCopy {
   addedAnnouncement: string;
   headerLabel: string;
   headerLabelCount: string;
+  accountLabel: string;
+  accountHint: { text: string; link: string };
   empty: { title: string; body: string; cta: string };
   groups: {
     oneTime: { title: string; body: string };
@@ -72,6 +74,8 @@ export const cartCopy: Localized<CartCopy> = {
     addedAnnouncement: "Adicionado ao carrinho.",
     headerLabel: "Carrinho",
     headerLabelCount: "Carrinho, {count} artigos",
+    accountLabel: "A minha conta",
+    accountHint: { text: "Tem conta? Entre antes de enviar para acompanhar a encomenda e gerir os produtos na sua área de cliente.", link: "Entrar ou criar conta" },
     empty: {
       title: "O seu carrinho está vazio.",
       body: "Adicione os produtos que lhe interessam para ver quanto fica a pagar.",
@@ -140,6 +144,8 @@ export const cartCopy: Localized<CartCopy> = {
     addedAnnouncement: "Added to cart.",
     headerLabel: "Cart",
     headerLabelCount: "Cart, {count} items",
+    accountLabel: "My account",
+    accountHint: { text: "Have an account? Sign in before sending to track the order and manage your products in the client area.", link: "Sign in or create an account" },
     empty: {
       title: "Your cart is empty.",
       body: "Add the products you are interested in to see what you would pay.",

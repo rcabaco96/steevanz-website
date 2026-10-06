@@ -4,19 +4,19 @@ import { useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon, Check } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
-import type { AdminActionState } from "@/lib/admin/actions";
+import type { ActionState } from "@/lib/action-state";
 
-type AdminAction = (state: AdminActionState, formData: FormData) => Promise<AdminActionState>;
+type FormAction = (state: ActionState, formData: FormData) => Promise<ActionState>;
 
-interface AdminFormProps {
-  action: AdminAction;
+interface ActionFormProps {
+  action: FormAction;
   children: ReactNode;
   className?: string;
   confirmMessage?: string;
   hideMessage?: boolean;
 }
 
-export function AdminForm({ action, children, className = "", confirmMessage, hideMessage = false }: AdminFormProps) {
+export function ActionForm({ action, children, className = "", confirmMessage, hideMessage = false }: ActionFormProps) {
   const [state, formAction] = useActionState(action, null);
   return (
     <form

@@ -1,16 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
+import { isProductId } from "@/content/products";
+import { orderStatuses, subscriptionStatuses } from "@/lib/accounts/types";
+import type { ActionState } from "@/lib/action-state";
 import { pipelineStatuses } from "@/lib/booking/types";
-import { requestOrigin } from "@/lib/booking/request";
-import { isAdminEmail } from "@/lib/supabase/env";
-import { createAuthClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { AdminAccessError, requireAdmin } from "./auth";
+import { accountForOrder, getOrder } from "./queries";
 
-export type AdminActionState = { ok: boolean; message: string } | null;
+export type AdminActionState = ActionState;
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
 const uuid = z.uuid();
@@ -35,36 +35,6 @@ async function guarded(task: () => Promise<AdminActionState>): Promise<AdminActi
 function toMinutes(timeValue: string): number {
   const [hours, minutes] = timeValue.split(":").map(Number);
   return hours * 60 + minutes;
-}
-
-export async function requestMagicLink(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  const parsed = z.email().safeParse(value(formData, "email").toLowerCase());
-  if (!parsed.success) return { ok: false, message: "Indique um email válido." };
-  const email = parsed.data;
-  const generic: AdminActionState = {
-    ok: true,
-    message: "Se este email tiver acesso ao painel, vai receber um link de entrada dentro de momentos.",
-  };
-  if (!isAdminEmail(email)) return generic;
-
-  const supabase = await createAuthClient();
-  if (!supabase) return { ok: false, message: "O painel ainda não está configurado." };
-  const origin = await requestOrigin();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: `${origin}/admin/auth/callback`, shouldCreateUser: true },
-  });
-  if (error) {
-    console.error("[admin] signInWithOtp failed:", error.message);
-    return { ok: false, message: "Não foi possível enviar o link. Aguarde um minuto e tente novamente." };
-  }
-  return generic;
-}
-
-export async function signOut(): Promise<void> {
-  const supabase = await createAuthClient();
-  if (supabase) await supabase.auth.signOut();
-  redirect("/admin/login");
 }
 
 const pipelineUpdateSchema = z.object({
@@ -214,5 +184,96 @@ export async function deleteAvailabilityItem(_previous: AdminActionState, formDa
     if (error) throw new Error(error.message);
     revalidatePath("/admin/availability");
     return { ok: true, message: "Removido." };
+  });
+}
+
+// Client accounts and orders
+
+const orderUpdateSchema = z.object({
+  id: uuid,
+  status: z.enum(orderStatuses),
+  admin_notes: z
+    .string()
+    .max(5000)
+    .transform((notes) => (notes.trim().length ? notes.trim() : null)),
+});
+
+export async function updateOrder(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const parsed = orderUpdateSchema.safeParse({
+      id: value(formData, "id"),
+      status: value(formData, "status"),
+      admin_notes: typeof formData.get("admin_notes") === "string" ? String(formData.get("admin_notes")) : "",
+    });
+    if (!parsed.success) return { ok: false, message: "Dados inválidos." };
+    const { id, status, admin_notes } = parsed.data;
+    const order = await getOrder(id);
+    if (!order) return { ok: false, message: "Encomenda não encontrada." };
+    const client = createServiceClient();
+
+    if (status !== "accepted") {
+      const { error } = await client.from("orders").update({ status, admin_notes }).eq("id", id);
+      if (error) throw new Error(error.message);
+      revalidatePath("/admin", "layout");
+      return { ok: true, message: "Alterações guardadas." };
+    }
+
+    // Accepting gives the client access to every product in the order.
+    const account = await accountForOrder(order);
+    if (!account) {
+      return { ok: false, message: `Não existe conta com o email ${order.email}. Peça ao cliente para criar conta com esse email e aceite de novo.` };
+    }
+    const productIds = [...new Set(order.items.map((item) => item.productId).filter(isProductId))];
+    if (productIds.length) {
+      const { error } = await client.from("client_products").upsert(
+        productIds.map((product_id) => ({ user_id: account.id, product_id, status: "active", order_id: order.id, activated_at: new Date().toISOString() })),
+        { onConflict: "user_id,product_id" },
+      );
+      if (error) throw new Error(error.message);
+    }
+    const { error } = await client.from("orders").update({ status, admin_notes, user_id: account.id }).eq("id", id);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin", "layout");
+    return { ok: true, message: `Encomenda aceite. ${productIds.length} ${productIds.length === 1 ? "produto ativado" : "produtos ativados"} na conta de ${account.email}.` };
+  });
+}
+
+const clientProductSchema = z.object({
+  user_id: uuid,
+  product_id: z.string().refine(isProductId),
+  status: z.enum(subscriptionStatuses),
+  notes: z
+    .string()
+    .trim()
+    .max(2000)
+    .transform((notes) => (notes.length ? notes : null)),
+});
+
+export async function saveClientProduct(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const parsed = clientProductSchema.safeParse({
+      user_id: value(formData, "user_id"),
+      product_id: value(formData, "product_id"),
+      status: value(formData, "status") || "active",
+      notes: typeof formData.get("notes") === "string" ? String(formData.get("notes")) : "",
+    });
+    if (!parsed.success) return { ok: false, message: "Escolha um produto e um estado válidos." };
+    const client = createServiceClient();
+    const { data: existing, error: lookupError } = await client
+      .from("client_products")
+      .select("id")
+      .eq("user_id", parsed.data.user_id)
+      .eq("product_id", parsed.data.product_id)
+      .maybeSingle();
+    if (lookupError) throw new Error(lookupError.message);
+    const { error } = existing
+      ? await client.from("client_products").update({ status: parsed.data.status, notes: parsed.data.notes }).eq("id", existing.id)
+      : await client.from("client_products").insert(parsed.data);
+    if (error) {
+      if (error.code === "23503") return { ok: false, message: "Conta não encontrada." };
+      throw new Error(error.message);
+    }
+    revalidatePath("/admin/clientes", "layout");
+    return { ok: true, message: existing ? "Produto atualizado." : "Produto adicionado." };
   });
 }

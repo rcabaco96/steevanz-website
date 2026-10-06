@@ -1,4 +1,5 @@
 import { isProductId } from "@/content/products";
+import { isOrderStatus, type ClientProductRow, type OrderRow, type OrderStatus, type ProfileRow } from "@/lib/accounts/types";
 import { addDaysToDate, zonedDateTimeToUtc } from "@/lib/booking/slots";
 import { isLeadKind, isPipelineStatus, type BookingRow, type LeadKind, type LeadRow, type PipelineStatus } from "@/lib/booking/types";
 import { site } from "@/lib/site";
@@ -200,4 +201,119 @@ export async function dashboardStats(now = new Date()): Promise<DashboardStats> 
     upcoming: (upcomingResult.data ?? []) as BookingRow[],
     recentLeads: (recentLeadsResult.data ?? []) as LeadRow[],
   };
+}
+
+// Client accounts and orders
+
+export interface ClientSummary extends ProfileRow {
+  activeProducts: number;
+}
+
+function searchPattern(term: string, columns: string[]): string | null {
+  const clean = sanitizeSearch(term);
+  return clean ? columns.map((column) => `${column}.ilike.%${clean}%`).join(",") : null;
+}
+
+export async function listClients(q: string): Promise<ClientSummary[]> {
+  const client = createServiceClient();
+  let query = client.from("profiles").select("*").order("created_at", { ascending: false }).limit(listLimit);
+  const pattern = searchPattern(q, ["email", "full_name", "business_name", "phone", "nif"]);
+  if (pattern) query = query.or(pattern);
+  const { data, error } = await query;
+  if (error) throw new Error(`listClients: ${error.message}`);
+  const profiles = (data ?? []) as ProfileRow[];
+  if (!profiles.length) return [];
+
+  const { data: owned, error: ownedError } = await client
+    .from("client_products")
+    .select("user_id")
+    .eq("status", "active")
+    .in(
+      "user_id",
+      profiles.map((profile) => profile.id),
+    );
+  if (ownedError) throw new Error(`listClients products: ${ownedError.message}`);
+  const counts = new Map<string, number>();
+  for (const row of (owned ?? []) as Pick<ClientProductRow, "user_id">[]) counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
+  return profiles.map((profile) => ({ ...profile, activeProducts: counts.get(profile.id) ?? 0 }));
+}
+
+export async function getProfile(id: string): Promise<ProfileRow | null> {
+  if (!isUuid(id)) return null;
+  const { data, error } = await createServiceClient().from("profiles").select("*").eq("id", id).maybeSingle();
+  if (error) throw new Error(`getProfile: ${error.message}`);
+  return data as ProfileRow | null;
+}
+
+export async function findProfileByEmail(email: string): Promise<ProfileRow | null> {
+  const { data, error } = await createServiceClient().from("profiles").select("*").eq("email", email.toLowerCase()).maybeSingle();
+  if (error) throw new Error(`findProfileByEmail: ${error.message}`);
+  return data as ProfileRow | null;
+}
+
+export async function listClientProducts(userId: string): Promise<ClientProductRow[]> {
+  const { data, error } = await createServiceClient()
+    .from("client_products")
+    .select("*")
+    .eq("user_id", userId)
+    .order("activated_at", { ascending: true });
+  if (error) throw new Error(`listClientProducts: ${error.message}`);
+  return (data ?? []) as ClientProductRow[];
+}
+
+export async function getClientProduct(userId: string, productId: string): Promise<ClientProductRow | null> {
+  if (!isUuid(userId)) return null;
+  const { data, error } = await createServiceClient()
+    .from("client_products")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("product_id", productId)
+    .maybeSingle();
+  if (error) throw new Error(`getClientProduct: ${error.message}`);
+  return data as ClientProductRow | null;
+}
+
+/** Orders placed while signed in, plus guest orders made with the same email. */
+export async function listClientOrders(profile: ProfileRow): Promise<OrderRow[]> {
+  const client = createServiceClient();
+  const [own, guest] = await Promise.all([
+    client.from("orders").select("*").eq("user_id", profile.id).limit(listLimit),
+    client.from("orders").select("*").is("user_id", null).eq("email", profile.email).limit(listLimit),
+  ]);
+  const error = own.error ?? guest.error;
+  if (error) throw new Error(`listClientOrders: ${error.message}`);
+  return [...((own.data ?? []) as OrderRow[]), ...((guest.data ?? []) as OrderRow[])].sort((a, b) => b.created_at.localeCompare(a.created_at));
+}
+
+export interface OrderFilters {
+  status: OrderStatus | "";
+  q: string;
+}
+
+export function parseOrderFilters(params: AdminSearchParams): OrderFilters {
+  const status = first(params, "status");
+  return { status: isOrderStatus(status) ? status : "", q: first(params, "q").slice(0, 80) };
+}
+
+export async function listOrders(filters: OrderFilters): Promise<OrderRow[]> {
+  let query = createServiceClient().from("orders").select("*").order("created_at", { ascending: false }).limit(listLimit);
+  if (filters.status) query = query.eq("status", filters.status);
+  const pattern = searchPattern(filters.q, ["reference", "name", "email", "phone", "business_name"]);
+  if (pattern) query = query.or(pattern);
+  const { data, error } = await query;
+  if (error) throw new Error(`listOrders: ${error.message}`);
+  return (data ?? []) as OrderRow[];
+}
+
+export async function getOrder(id: string): Promise<OrderRow | null> {
+  if (!isUuid(id)) return null;
+  const { data, error } = await createServiceClient().from("orders").select("*").eq("id", id).maybeSingle();
+  if (error) throw new Error(`getOrder: ${error.message}`);
+  return data as OrderRow | null;
+}
+
+/** The account an order belongs to: the one it was placed with, or one registered with the same email. */
+export async function accountForOrder(order: OrderRow): Promise<ProfileRow | null> {
+  if (order.user_id) return getProfile(order.user_id);
+  return findProfileByEmail(order.email);
 }

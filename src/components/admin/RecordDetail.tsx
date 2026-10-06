@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft, MailIcon, PhoneIcon, WhatsAppIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
-import type { AdminActionState } from "@/lib/admin/actions";
+import type { ActionState } from "@/lib/action-state";
 import { lisbonTimestamp } from "@/lib/admin/csv";
 import { productLabel, sectorLabel, statusLabels } from "@/lib/booking/labels";
 import { pipelineStatuses, type BookingRow, type LeadRow } from "@/lib/booking/types";
-import { AdminForm, SubmitButton } from "./AdminForm";
-import { adminInputClasses, adminLabelClasses, DetailRow, Panel, StatusBadge } from "./ui";
+import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { adminInputClasses, adminLabelClasses, DetailRow, Panel, StatusBadge } from "@/components/backoffice/ui";
 
 type Row = BookingRow | LeadRow;
 
@@ -26,7 +26,7 @@ export function BackLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function ContactActions({ row }: { row: Row }) {
+export function ContactActions({ row }: { row: Pick<Row, "email" | "phone"> }) {
   const whatsapp = row.phone ? whatsappLink(row.phone) : null;
   return (
     <div className="flex flex-wrap gap-2">
@@ -83,14 +83,14 @@ export function TrackingDetails({ row }: { row: Row }) {
 
 interface PipelineEditorProps {
   row: Row;
-  action: (state: AdminActionState, formData: FormData) => Promise<AdminActionState>;
+  action: (state: ActionState, formData: FormData) => Promise<ActionState>;
   cancelledHint?: string;
 }
 
 export function PipelineEditor({ row, action, cancelledHint }: PipelineEditorProps) {
   return (
     <Panel title="Acompanhamento" actions={<StatusBadge status={row.status} />}>
-      <AdminForm action={action} className="flex flex-col gap-4">
+      <ActionForm action={action} className="flex flex-col gap-4">
         <input type="hidden" name="id" value={row.id} />
         <label className={adminLabelClasses}>
           Estado
@@ -117,7 +117,7 @@ export function PipelineEditor({ row, action, cancelledHint }: PipelineEditorPro
         <SubmitButton pendingLabel="A guardar…" className="self-start">
           Guardar
         </SubmitButton>
-      </AdminForm>
+      </ActionForm>
     </Panel>
   );
 }

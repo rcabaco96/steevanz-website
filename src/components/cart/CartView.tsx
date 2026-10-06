@@ -35,7 +35,7 @@ interface CartViewProps {
   formCopy: FormCopy;
   catalog: CartCatalogItem[];
   sectors: SelectOption[];
-  links: { privacy: string; products: string; home: string };
+  links: { privacy: string; products: string; home: string; signIn: string };
 }
 
 type Step = "cart" | "checkout";
@@ -184,6 +184,12 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
               <div className="flex flex-col gap-2">
                 <h2 className="display text-2xl sm:text-3xl">{copy.checkoutTitle}</h2>
                 <p className="text-muted">{copy.checkoutLead}</p>
+                <p className="text-sm text-subtle">
+                  {copy.accountHint.text}{" "}
+                  <Link href={links.signIn} className="font-semibold text-accent-text underline-offset-4 hover:underline">
+                    {copy.accountHint.link}
+                  </Link>
+                </p>
               </div>
               {generalError ? <FormAlert>{generalError}</FormAlert> : null}
               <div className="grid gap-5 sm:grid-cols-2">

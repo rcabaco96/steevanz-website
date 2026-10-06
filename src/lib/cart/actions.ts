@@ -9,6 +9,8 @@ import { productLabel, sectorLabel } from "@/lib/booking/labels";
 import { isRateLimited } from "@/lib/booking/request";
 import { fieldErrorsFrom, formDataToObject, orderFormKeys, orderSubmissionSchema } from "@/lib/booking/schema";
 import { honeypotField } from "@/lib/booking/types";
+import type { OrderItem, OrderTotals } from "@/lib/accounts/types";
+import { getSession } from "@/lib/auth/session";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { formatCents, priceCart, sanitizeLines, vatRate, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
 
@@ -45,6 +47,19 @@ function customizationLines({ productId, options }: CartLine): string[] {
     options.logo ? `Logótipo: sim (+${formatCents(customization.logoExtra * 100, "pt")}/un.)` : "Logótipo: não",
     `Texto: ${text ? `"${text}"` : "sem texto"}`,
   ];
+}
+
+function orderItems(totals: Record<CartGroupId, GroupTotals>): OrderItem[] {
+  return (["oneTime", "monthly"] as const).flatMap((billing) =>
+    totals[billing].lines.map((line) => ({
+      productId: line.productId,
+      quantity: line.quantity,
+      unitCents: line.unitCents,
+      subtotalCents: line.subtotalCents,
+      billing,
+      details: customizationLines(line),
+    })),
+  );
 }
 
 function groupTable(group: CartGroupId, totals: GroupTotals): EmailTable {
@@ -91,12 +106,37 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
     .join(" + ");
   const reference = orderReference();
 
+  // Orders are stored so they show up in the client area (when signed in) and in
+  // the admin panel. A storage failure must not lose the order: the email still goes out.
+  const session = await getSession();
+  const userId = session.state === "client" || session.state === "admin" ? session.user.id : null;
+  const orderTotals: OrderTotals = { oneTimeCents: totals.oneTime.totalCents, monthlyCents: totals.monthly.totalCents };
+  let saved = false;
+  if (client) {
+    const { error } = await client.from("orders").insert({
+      reference,
+      user_id: userId,
+      name: data.name,
+      email: data.email.toLowerCase(),
+      phone: data.phone ?? null,
+      business_name: data.businessName ?? null,
+      sector: data.sector ?? null,
+      message: data.message ?? null,
+      locale: data.locale,
+      items: orderItems(totals),
+      totals: orderTotals,
+    });
+    if (error) console.error("[cart] order insert failed:", error.message);
+    else saved = true;
+  }
+
   const sent = await sendOwnerEmail({
     subject: `Novo pedido de encomenda ${reference}: ${data.name} · ${summary}`,
     heading: `Novo pedido de encomenda ${reference}`,
     replyTo: data.email,
     rows: [
       { label: "Referência", value: reference },
+      { label: "Conta", value: userId ? "Cliente com conta (ver Encomendas no painel)" : "Sem conta" },
       { label: "Nome", value: data.name },
       { label: "Email", value: data.email },
       { label: "Telemóvel", value: data.phone },
@@ -113,6 +153,6 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
     tables: groups.map((group) => groupTable(group, totals[group])),
   });
 
-  if (!sent) return { status: "error", code: "generic", fields: [] };
+  if (!sent && !saved) return { status: "error", code: "generic", fields: [] };
   return { status: "success", reference };
 }

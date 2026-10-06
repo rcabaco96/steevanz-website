@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
-import { AdminPageHeader, EmptyState, Panel, StatusBadge } from "@/components/admin/ui";
+import { AdminPageHeader, EmptyState, Panel, StatusBadge } from "@/components/backoffice/ui";
 import { requireAdmin } from "@/lib/admin/auth";
 import { dashboardStats, type DashboardStats } from "@/lib/admin/queries";
 import { formatSlotRange } from "@/lib/booking/format";

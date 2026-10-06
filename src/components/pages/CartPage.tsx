@@ -70,6 +70,7 @@ export function CartPage({ locale }: { locale: Locale }) {
             privacy: href(locale, { key: "privacy" }),
             products: href(locale, { key: "products" }),
             home: href(locale, { key: "home" }),
+            signIn: `/conta/entrar?next=${encodeURIComponent(href(locale, { key: "cart" }))}`,
           }}
         />
       </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackLink, ContactActions, ContactDetails, PipelineEditor, TrackingDetails } from "@/components/admin/RecordDetail";
-import { Panel } from "@/components/admin/ui";
+import { Panel } from "@/components/backoffice/ui";
 import { updateLead } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getLead } from "@/lib/admin/queries";
