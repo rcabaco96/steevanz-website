@@ -5,8 +5,8 @@ import { ArrowUpRight } from "@/components/icons";
 import { requireAdmin } from "@/lib/admin/auth";
 import type { BusinessRow } from "@/lib/reviews/store";
 import { createServiceClient } from "@/lib/supabase/service";
-import { listClients } from "@/lib/admin/queries";
-import { BusinessDetail, businessColumns, jobColumns, ReaderBanner, type ClientOption, type CompetitorAdminRow, type ReaderJobRow } from "../shared";
+import { loadOwnerAccount } from "@/lib/admin/client-access";
+import { BusinessDetail, businessColumns, jobColumns, ReaderBanner, type CompetitorAdminRow, type ReaderJobRow } from "../shared";
 
 export const metadata: Metadata = { title: "Negócio" };
 export const maxDuration = 300;
@@ -34,17 +34,13 @@ export default async function ReviewBusinessAdminPage({ params }: PageProps<"/ad
       </>
     );
   }
-  const [jobs, competitors, profiles] = await Promise.all([
+  const [jobs, competitors, owner] = await Promise.all([
     client.from("review_import_jobs").select(jobColumns).eq("business_id", business.id).order("requested_at", { ascending: false }).limit(jobsShown),
     client.from("competitors").select("id, business_id, name, category, distance_m, excluded").eq("business_id", business.id).eq("is_self", false).order("distance_m"),
-    listClients(""),
+    business.owner_id ? loadOwnerAccount(client, business.owner_id) : Promise.resolve(null),
   ]);
   if (jobs.error) throw new Error(jobs.error.message);
   if (competitors.error) throw new Error(competitors.error.message);
-  const clients: ClientOption[] = profiles.map((profile) => ({
-    id: profile.id,
-    label: [profile.business_name || profile.full_name, profile.email].filter(Boolean).join(" · "),
-  }));
 
   return (
     <>
@@ -62,7 +58,7 @@ export default async function ReviewBusinessAdminPage({ params }: PageProps<"/ad
       />
       <ReaderBanner client={client} />
       <Panel>
-        <BusinessDetail business={business} jobs={(jobs.data ?? []) as ReaderJobRow[]} competitors={(competitors.data ?? []) as CompetitorAdminRow[]} clients={clients} />
+        <BusinessDetail business={business} jobs={(jobs.data ?? []) as ReaderJobRow[]} competitors={(competitors.data ?? []) as CompetitorAdminRow[]} owner={owner} />
       </Panel>
     </>
   );

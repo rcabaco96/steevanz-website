@@ -5,11 +5,17 @@ import type { ProfileRow } from "@/lib/accounts/types";
 import { isAdminEmail, publicSupabaseConfig, serviceSupabaseConfig } from "@/lib/supabase/env";
 import { createAuthClient } from "@/lib/supabase/server";
 
+/** The signed-in account, as far as pages need it. */
+export interface SessionUser {
+  id: string;
+  email: string;
+}
+
 export type Session =
   | { state: "unconfigured" }
   | { state: "anonymous" }
-  | { state: "client"; user: User; email: string }
-  | { state: "admin"; user: User; email: string };
+  | { state: "client"; user: SessionUser; email: string }
+  | { state: "admin"; user: SessionUser; email: string };
 
 export function isAuthConfigured(): boolean {
   return Boolean(publicSupabaseConfig() && serviceSupabaseConfig());
@@ -29,12 +35,17 @@ export const getSession = cache(async (): Promise<Session> => {
   const supabase = await createAuthClient();
   if (!supabase) return { state: "unconfigured" };
   try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user?.email) return { state: "anonymous" };
-    const email = data.user.email.toLowerCase();
-    return isAdminUser(data.user) ? { state: "admin", user: data.user, email } : { state: "client", user: data.user, email };
+    // The access token is checked locally against the project's signing key (no round trip to
+    // Supabase on every page). Its email is always a confirmed one: sessions are only issued after
+    // confirmation, and an email change only reaches the token once the new address is confirmed.
+    const { data, error } = await supabase.auth.getClaims();
+    const claims = data?.claims;
+    if (error || !claims?.sub || typeof claims.email !== "string" || !claims.email || claims.is_anonymous) return { state: "anonymous" };
+    const email = claims.email.toLowerCase();
+    const user = { id: claims.sub, email };
+    return isAdminEmail(email) ? { state: "admin", user, email } : { state: "client", user, email };
   } catch (error) {
-    console.error("[auth] getUser failed:", error instanceof Error ? error.message : error);
+    console.error("[auth] getClaims failed:", error instanceof Error ? error.message : error);
     return { state: "anonymous" };
   }
 });
@@ -47,7 +58,7 @@ export class AuthRequiredError extends Error {
 }
 
 /** Any signed-in account (admins included). */
-export async function requireUser(): Promise<User> {
+export async function requireUser(): Promise<SessionUser> {
   const session = await getSession();
   if (session.state !== "client" && session.state !== "admin") throw new AuthRequiredError();
   return session.user;

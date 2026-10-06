@@ -2,11 +2,15 @@ import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
+import { accessLabels, accessState, type AccessState, type OwnerAccount } from "@/lib/admin/client-access";
 import {
   deleteReviewBusiness,
   queueReaderReviews,
   refreshCompetitors,
+  removeBusinessAccess,
+  saveBusinessAccess,
   saveReviewBusiness,
+  sendBusinessInvite,
   searchCompetitorsWithReader,
   syncReviewsNow,
   toggleCompetitor,
@@ -21,13 +25,7 @@ import type { createServiceClient } from "@/lib/supabase/service";
 type Client = ReturnType<typeof createServiceClient>;
 
 export const businessColumns =
-  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, full_synced_at, owner_id, created_at";
-
-/** Client accounts that can own a panel (admins excluded). */
-export interface ClientOption {
-  id: string;
-  label: string;
-}
+  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, full_synced_at, owner_id, contact_name, contact_phone, invite_sent_at, created_at";
 
 export interface CompetitorAdminRow {
   id: string;
@@ -73,7 +71,7 @@ function readerState(lastSeenAt: string | null): { online: boolean; offlineTooLo
 export async function ReaderBanner({ client }: { client: Client }) {
   const [readerResult, queuedResult] = await Promise.all([
     client.from("review_reader_status").select("id, last_seen_at, busy").order("last_seen_at", { ascending: false }).limit(1).maybeSingle<{ id: string; last_seen_at: string; busy: boolean }>(),
-    client.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("status", "queued"),
+    client.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("status", "queued").eq("provider", "reader"),
   ]);
   if (readerResult.error) throw new Error(readerResult.error.message);
   const reader = readerResult.data;
@@ -114,22 +112,88 @@ function ReaderJobs({ jobs }: { jobs: ReaderJobRow[] }) {
   );
 }
 
-function BusinessFields({ business, clients }: { business: BusinessRow; clients: ClientOption[] }) {
+const accessTones: Record<AccessState, string> = {
+  no_email: "bg-danger-soft text-danger",
+  not_invited: "bg-gold-soft text-gold-text",
+  invited: "bg-accent-soft text-accent-text",
+  active: "bg-success-soft text-success",
+};
+
+export function AccessBadge({ state }: { state: AccessState }) {
+  return <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${accessTones[state]}`}>{accessLabels[state]}</span>;
+}
+
+/** Who can open the panel: the owner's contact, the account (created with the email) and the invite. */
+function ClientAccess({ business, owner }: { business: BusinessRow; owner: OwnerAccount | null }) {
+  const state = accessState(business, owner);
+  return (
+    <section aria-labelledby="acesso-title" className="flex flex-col gap-4 rounded-2xl border border-line p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="acesso-title" className="font-semibold text-text">
+          Acesso do cliente
+        </h2>
+        <AccessBadge state={state} />
+      </div>
+      <p className="-mt-2 text-sm text-muted">
+        {state === "no_email"
+          ? "Só os admins veem o painel. Com o email do dono, a conta fica criada sem lhe enviar nada."
+          : state === "not_invited"
+            ? `Conta criada para ${owner?.email ?? "o dono"}. Envie o convite quando o negócio for cliente.`
+            : state === "invited"
+              ? `Convite enviado a ${owner?.email ?? "o dono"} em ${business.invite_sent_at ? formatDateTime(business.invite_sent_at) : "–"}. O link vale 24 horas; reenvie se expirar.`
+              : `${owner?.email ?? "O dono"} já entrou no painel (último acesso: ${owner?.lastSignInAt ? formatDateTime(owner.lastSignInAt) : "–"}).`}
+      </p>
+      <ActionForm action={saveBusinessAccess} className="grid gap-3 sm:grid-cols-2">
+        <input type="hidden" name="id" value={business.id} />
+        <label className={adminLabelClasses}>
+          Nome do dono
+          <input name="contact_name" maxLength={120} defaultValue={business.contact_name ?? ""} className={`${adminInputClasses} h-11`} />
+        </label>
+        <label className={adminLabelClasses}>
+          Telefone
+          <input name="contact_phone" type="tel" maxLength={40} defaultValue={business.contact_phone ?? ""} className={`${adminInputClasses} h-11`} />
+        </label>
+        <label className={`${adminLabelClasses} sm:col-span-2`}>
+          Email
+          {owner ? (
+            <input value={owner.email} readOnly disabled className={`${adminInputClasses} h-11 opacity-70`} />
+          ) : (
+            <input name="email" type="email" maxLength={200} placeholder="dono@negocio.pt" className={`${adminInputClasses} h-11`} />
+          )}
+          <span className="text-xs font-normal text-subtle">
+            {owner ? "Para trocar de email, retire o acesso e volte a pôr o email novo." : "Opcional. Se já existir uma conta com este email, é essa que fica ligada."}
+          </span>
+        </label>
+        <div className="sm:col-span-2">
+          <SubmitButton variant="secondary" size="sm">
+            {owner ? "Guardar contacto" : "Guardar"}
+          </SubmitButton>
+        </div>
+      </ActionForm>
+      {owner ? (
+        <div className="flex flex-wrap items-start gap-2 border-t border-line pt-4">
+          <ActionForm action={sendBusinessInvite} className="flex flex-col items-start gap-1">
+            <input type="hidden" name="id" value={business.id} />
+            <SubmitButton size="sm" pendingLabel="A enviar…">
+              {state === "not_invited" ? "Enviar convite" : "Reenviar convite"}
+            </SubmitButton>
+          </ActionForm>
+          <ActionForm action={removeBusinessAccess} confirmMessage={`Retirar o acesso de ${owner.email} a este painel? A conta continua a existir.`} className="flex flex-col items-start gap-1">
+            <input type="hidden" name="id" value={business.id} />
+            <SubmitButton variant="ghost" size="sm" className="text-danger">
+              Retirar acesso
+            </SubmitButton>
+          </ActionForm>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function BusinessFields({ business }: { business: BusinessRow }) {
   return (
     <>
       <input type="hidden" name="id" value={business.id} />
-      <label className={`${adminLabelClasses} sm:col-span-2`}>
-        Conta do cliente
-        <select name="owner_id" defaultValue={business.owner_id ?? ""} className={`${adminInputClasses} h-11`}>
-          <option value="">Sem conta (só os admins veem o painel)</option>
-          {clients.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <span className="text-xs font-normal text-subtle">Só esta conta (e os admins) consegue abrir o painel. O cliente tem de criar conta primeiro.</span>
-      </label>
       <label className={adminLabelClasses}>
         Nome do negócio
         <input name="name" required maxLength={160} defaultValue={business.name} className={`${adminInputClasses} h-11`} />
@@ -181,16 +245,16 @@ export function BusinessDetail({
   business,
   jobs,
   competitors,
-  clients,
+  owner,
 }: {
   business: BusinessRow;
   jobs: ReaderJobRow[];
   competitors: CompetitorAdminRow[];
-  clients: ClientOption[];
+  owner: OwnerAccount | null;
 }) {
-  const owner = business.owner_id ? (clients.find((option) => option.id === business.owner_id)?.label ?? "conta removida") : null;
   return (
     <div className="flex flex-col gap-6">
+      <ClientAccess business={business} owner={owner} />
       <div className="flex flex-col gap-3 rounded-2xl bg-surface-2/60 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
           <p className="text-text">
@@ -200,9 +264,7 @@ export function BusinessDetail({
             {business.last_synced_at ? `Última sincronização: ${formatDateTime(business.last_synced_at)}` : "Nunca sincronizado"}
             {business.full_synced_at ? ` · histórico lido a ${formatDateTime(business.full_synced_at)}` : ""}
           </p>
-          {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}
-          <p className="mt-1 text-subtle">{owner ? `Conta: ${owner}` : "Sem conta de cliente: só os admins veem o painel."}</p>
-        </div>
+          {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}        </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
           <ActionForm action={queueReaderReviews} className="flex flex-col items-start gap-1 sm:items-end">
             <input type="hidden" name="id" value={business.id} />
@@ -306,7 +368,7 @@ export function BusinessDetail({
       <details className="group">
         <summary className="cursor-pointer text-sm font-semibold text-muted hover:text-text">Editar dados do negócio</summary>
         <ActionForm action={saveReviewBusiness} className="mt-4 grid gap-4 sm:grid-cols-2">
-          <BusinessFields business={business} clients={clients} />
+          <BusinessFields business={business} />
           <div className="flex items-end">
             <SubmitButton>Guardar</SubmitButton>
           </div>

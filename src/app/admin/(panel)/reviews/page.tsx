@@ -6,7 +6,8 @@ import { ArrowUpRight } from "@/components/icons";
 import { requireAdmin } from "@/lib/admin/auth";
 import type { BusinessRow } from "@/lib/reviews/store";
 import { createServiceClient } from "@/lib/supabase/service";
-import { businessColumns, jobColumns, jobKindLabels, jobStatusLabels, ReaderBanner, type ReaderJobRow } from "./shared";
+import { accessState, loadOwnerAccount } from "@/lib/admin/client-access";
+import { AccessBadge, businessColumns, jobColumns, jobKindLabels, jobStatusLabels, ReaderBanner, type ReaderJobRow } from "./shared";
 
 export const metadata: Metadata = { title: "Reviews" };
 
@@ -19,14 +20,17 @@ export default async function ReviewsAdminPage({ searchParams }: PageProps<"/adm
   if (error) throw new Error(error.message);
   const businesses = (data ?? []) as BusinessRow[];
   const ids = businesses.map((business) => business.id);
-  const [competitorCounts, jobsResult] = await Promise.all([
+  const ownerIds = [...new Set(businesses.flatMap((business) => (business.owner_id ? [business.owner_id] : [])))];
+  const [competitorCounts, jobsResult, owners] = await Promise.all([
     Promise.all(
       ids.map((id) => client.from("competitors").select("id", { count: "exact", head: true }).eq("business_id", id).eq("is_self", false).eq("excluded", false)),
     ),
     ids.length
       ? client.from("review_import_jobs").select(jobColumns).in("business_id", ids).order("requested_at", { ascending: false }).limit(Math.min(1000, ids.length * 10))
       : Promise.resolve({ data: [], error: null }),
+    Promise.all(ownerIds.map(async (ownerId) => [ownerId, await loadOwnerAccount(client, ownerId)] as const)),
   ]);
+  const ownerOf = new Map(owners);
   if (jobsResult.error) throw new Error(jobsResult.error.message);
   const latestJob = new Map<string, ReaderJobRow>();
   for (const job of (jobsResult.data ?? []) as ReaderJobRow[]) if (!latestJob.has(job.business_id)) latestJob.set(job.business_id, job);
@@ -56,10 +60,11 @@ export default async function ReviewsAdminPage({ searchParams }: PageProps<"/adm
 
       {businesses.length ? (
         <div className="card overflow-x-auto p-0">
-          <table className="w-full min-w-[44rem] text-left text-sm">
+          <table className="w-full min-w-[52rem] text-left text-sm">
             <thead className="border-b border-line text-xs text-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Negócio</th>
+                <th className="px-4 py-3 font-medium">Acesso</th>
                 <th className="px-4 py-3 font-medium">Nota</th>
                 <th className="px-4 py-3 font-medium">Reviews</th>
                 <th className="px-4 py-3 font-medium">Concorrentes</th>
@@ -79,6 +84,9 @@ export default async function ReviewsAdminPage({ searchParams }: PageProps<"/adm
                         {business.name}
                       </Link>
                       <p className="text-xs text-subtle">/painel/{business.slug}</p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <AccessBadge state={accessState(business, business.owner_id ? ownerOf.get(business.owner_id) : null)} />
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-text">{business.rating_total !== null ? `${String(business.rating_total).replace(".", ",")}★` : "–"}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-text">{business.reviews_total ?? "–"}</td>

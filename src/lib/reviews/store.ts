@@ -68,6 +68,10 @@ export interface BusinessRow {
   google_fid?: string | null;
   /** Client account that can open the panel (admins always can). */
   owner_id?: string | null;
+  /** Owner's contact while there is no account (or alongside it). */
+  contact_name?: string | null;
+  contact_phone?: string | null;
+  invite_sent_at?: string | null;
   created_at: string;
 }
 

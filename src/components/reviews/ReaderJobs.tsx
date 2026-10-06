@@ -3,8 +3,12 @@
 import { createContext, useCallback, useContext, useEffect, useEffectEvent, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { isActive, type ImportResponse, type ReaderJobsState } from "@/lib/reviews/import-jobs";
 
-/** While the reader works on a job of this customer the panel checks every second; otherwise every 10 s (heartbeat). */
+/**
+ * While the reader works on a job of this customer the panel checks every second; while a job only
+ * waits in the queue (reader busy or switched off) every 5 s; otherwise every 10 s (heartbeat).
+ */
 const activePollMs = 1000;
+const queuedPollMs = 5000;
 const idlePollMs = 10_000;
 const clockTickMs = 5000;
 
@@ -65,6 +69,8 @@ export function ReaderJobsProvider({ slug, initial, children }: { slug: string; 
   }, []);
 
   const active = isActive(state.full) || isActive(state.update);
+  const running = state.full?.status === "running" || state.update?.status === "running";
+  const pollMs = running ? activePollMs : active ? queuedPollMs : idlePollMs;
   useEffect(() => {
     if (!visible) return;
     let cancelled = false;
@@ -84,12 +90,12 @@ export function ReaderJobsProvider({ slug, initial, children }: { slug: string; 
     // The page was just rendered with fresh data; afterwards (tab visible again, job started) check at once.
     if (skipFirstPoll.current) skipFirstPoll.current = false;
     else void poll();
-    const timer = window.setInterval(() => void poll(), active ? activePollMs : idlePollMs);
+    const timer = window.setInterval(() => void poll(), pollMs);
     return () => {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [active, apply, url, visible]);
+  }, [pollMs, apply, url, visible]);
 
   const value = useMemo(() => ({ state, now, apply, subscribe }), [state, now, apply, subscribe]);
   return <Context.Provider value={value}>{children}</Context.Provider>;

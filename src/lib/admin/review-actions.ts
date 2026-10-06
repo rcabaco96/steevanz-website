@@ -11,9 +11,11 @@ import { jobPriority, queueNewCompetitorReads, queueReaderJob } from "@/lib/revi
 import { fullImportSource } from "@/lib/reviews/import-source";
 import { queueCompetitorSearch } from "@/lib/reviews/import-jobs";
 import { isShortMapsLink, parseMapsPlaceLink, placeIdFromFid, writeReviewLink } from "@/lib/reviews/maps-link";
+import { isAdminEmail } from "@/lib/supabase/env";
 import { createServiceClient } from "@/lib/supabase/service";
 import type { AdminActionState } from "./actions";
 import { AdminAccessError, requireAdmin } from "./auth";
+import { ClientAccessError, ensureClientAccount, loadOwnerAccount, sendPanelInvite } from "./client-access";
 
 const uuid = z.uuid();
 const googleHosts = /(^|\.)google\.[a-z.]+$|(^|\.)goo\.gl$|(^|\.)g\.page$/;
@@ -56,7 +58,6 @@ const businessSchema = z.object({
   plates_installed_on: z.union([z.iso.date(), z.literal("")]).transform((date) => date || null),
   alert_email: z.union([z.email(), z.literal("")]).transform((email) => email.toLowerCase() || null),
   active_services: z.array(z.string().refine(isProductId)).max(20),
-  owner_id: z.union([uuid, z.literal("")]).transform((owner) => owner || null),
 });
 
 export async function saveReviewBusiness(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
@@ -71,7 +72,6 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
       plates_installed_on: value(formData, "plates_installed_on"),
       alert_email: value(formData, "alert_email"),
       active_services: formData.getAll("active_services").filter((entry): entry is string => typeof entry === "string"),
-      owner_id: value(formData, "owner_id"),
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? "");
@@ -82,7 +82,6 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
         review_url: "O link de avaliação tem de ser um link https do Google (g.page/r/…/review ou search.google.com).",
         plates_installed_on: "Data de instalação inválida.",
         alert_email: "Indique um email válido para os alertas (ou deixe vazio).",
-        owner_id: "Escolha uma conta de cliente válida.",
       };
       return { ok: false, message: messages[field] ?? "Dados inválidos." };
     }
@@ -93,13 +92,113 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
       : await client.from("review_businesses").insert(business).select("id").single();
     if (error) {
       if (error.code === "23505") return { ok: false, message: "Já existe um negócio com esse endereço de painel." };
-      if (error.code === "23503") return { ok: false, message: "Essa conta de cliente já não existe." };
       throw new Error(error.message);
     }
     revalidatePath("/admin/reviews", "layout");
     revalidatePath(`/painel/${business.slug}`);
     // No paid competitor search here: the reader searches the competitors at the first import.
     return { ok: true, message: id ? "Negócio atualizado." : saved ? "Negócio criado." : "Negócio guardado." };
+  });
+}
+
+// Client access: contact while there is no email, a silent account once there is, then the invite.
+
+const optionalText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .transform((text) => text || null);
+
+const accessSchema = z.object({
+  id: uuid,
+  contact_name: optionalText(120),
+  contact_phone: optionalText(40),
+  email: z.union([z.email().max(200), z.literal("")]).transform((email) => email.toLowerCase() || null),
+});
+
+interface AccessBusiness {
+  id: string;
+  name: string;
+  slug: string;
+  owner_id: string | null;
+  contact_name: string | null;
+  contact_phone: string | null;
+}
+
+async function loadAccessBusiness(client: ReturnType<typeof createServiceClient>, id: string): Promise<AccessBusiness | null> {
+  const { data, error } = await client
+    .from("review_businesses")
+    .select("id, name, slug, owner_id, contact_name, contact_phone")
+    .eq("id", id)
+    .maybeSingle<AccessBusiness>();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+/** Saves the owner's contact and, when an email is given, creates (or finds) the account and links it. */
+export async function saveBusinessAccess(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const parsed = accessSchema.safeParse({
+      id: value(formData, "id"),
+      contact_name: value(formData, "contact_name"),
+      contact_phone: value(formData, "contact_phone"),
+      email: value(formData, "email"),
+    });
+    if (!parsed.success) {
+      const field = String(parsed.error.issues[0]?.path[0] ?? "");
+      return { ok: false, message: field === "email" ? "Indique um email válido (ou deixe vazio)." : "Verifique o nome e o telefone." };
+    }
+    const { id, contact_name, contact_phone, email } = parsed.data;
+    const client = createServiceClient();
+    const business = await loadAccessBusiness(client, id);
+    if (!business) return { ok: false, message: "Negócio não encontrado." };
+
+    let ownerId = business.owner_id;
+    if (email && !ownerId) {
+      try {
+        ownerId = await ensureClientAccount(client, { email, fullName: contact_name, businessName: business.name, phone: contact_phone });
+      } catch (error) {
+        if (error instanceof ClientAccessError) return { ok: false, message: error.message };
+        throw error;
+      }
+    }
+    const { error } = await client.from("review_businesses").update({ contact_name, contact_phone, owner_id: ownerId }).eq("id", id);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/reviews", "layout");
+    if (email && ownerId && !business.owner_id) return { ok: true, message: `Acesso criado para ${email}. Nada foi enviado: use «Enviar convite» quando quiser.` };
+    return { ok: true, message: "Contacto guardado." };
+  });
+}
+
+/** Emails the owner a sign-in link to the panel (also used to resend it). */
+export async function sendBusinessInvite(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const id = uuid.safeParse(value(formData, "id"));
+    if (!id.success) return { ok: false, message: "Pedido inválido." };
+    const client = createServiceClient();
+    const business = await loadAccessBusiness(client, id.data);
+    if (!business) return { ok: false, message: "Negócio não encontrado." };
+    if (!business.owner_id) return { ok: false, message: "Acrescente primeiro o email do dono." };
+    const owner = await loadOwnerAccount(client, business.owner_id);
+    if (!owner) return { ok: false, message: "A conta deste negócio já não existe. Retire o acesso e volte a pôr o email." };
+    if (!(await sendPanelInvite(client, business, owner.email))) return { ok: false, message: "O email não foi enviado. Tente novamente daqui a pouco." };
+    const { error } = await client.from("review_businesses").update({ invite_sent_at: new Date().toISOString() }).eq("id", business.id);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/reviews", "layout");
+    return { ok: true, message: `Convite enviado para ${owner.email}.` };
+  });
+}
+
+/** Unlinks the account from the panel (the account itself stays, as a client without this panel). */
+export async function removeBusinessAccess(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const id = uuid.safeParse(value(formData, "id"));
+    if (!id.success) return { ok: false, message: "Pedido inválido." };
+    const { error } = await createServiceClient().from("review_businesses").update({ owner_id: null, invite_sent_at: null }).eq("id", id.data);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/reviews", "layout");
+    return { ok: true, message: "Acesso retirado. A conta continua a existir, mas já não abre este painel." };
   });
 }
 
@@ -134,6 +233,14 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
     if (!place) {
       return { ok: false, message: "Este link não é de um negócio no Google Maps. Abra o negócio no Maps e copie o link da barra de endereço ou de «Partilhar»." };
     }
+    // Optional owner contact: with an email, the client account is created right away (nothing is sent).
+    const contact = accessSchema.omit({ id: true }).safeParse({
+      contact_name: value(formData, "contact_name"),
+      contact_phone: value(formData, "contact_phone"),
+      email: value(formData, "email"),
+    });
+    if (!contact.success) return { ok: false, message: "Verifique o email (ou deixe vazio), o nome e o telefone do dono." };
+    if (contact.data.email && isAdminEmail(contact.data.email)) return { ok: false, message: "Esse email é de um admin. Use o email do dono do negócio." };
     const client = createServiceClient();
     const { data: existing, error: existingError } = await client.from("review_businesses").select("slug").eq("google_fid", place.fid).maybeSingle<{ slug: string }>();
     if (existingError) throw new Error(existingError.message);
@@ -147,13 +254,40 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
       const slug = attempt === 1 ? base : `${base.slice(0, 56)}-${attempt}`;
       const { data, error } = await client
         .from("review_businesses")
-        .insert({ slug, name: place.name, google_maps_url: place.cleanUrl, review_url: placeId ? writeReviewLink(placeId) : place.cleanUrl, place_id: placeId, google_fid: place.fid, lat: place.lat, lng: place.lng })
+        .insert({
+          slug,
+          name: place.name,
+          google_maps_url: place.cleanUrl,
+          review_url: placeId ? writeReviewLink(placeId) : place.cleanUrl,
+          place_id: placeId,
+          google_fid: place.fid,
+          lat: place.lat,
+          lng: place.lng,
+          contact_name: contact.data.contact_name,
+          contact_phone: contact.data.contact_phone,
+        })
         .select("id, slug")
         .single<{ id: string; slug: string }>();
       if (!error) saved = data;
       else if (error.code !== "23505") throw new Error(error.message);
     }
     if (!saved) return { ok: false, message: "Não foi possível escolher um endereço livre para o painel." };
+
+    if (contact.data.email) {
+      // The business stays even if this fails: the email can be added again on its page.
+      try {
+        const ownerId = await ensureClientAccount(client, {
+          email: contact.data.email,
+          fullName: contact.data.contact_name,
+          businessName: place.name,
+          phone: contact.data.contact_phone,
+        });
+        const { error } = await client.from("review_businesses").update({ owner_id: ownerId }).eq("id", saved.id);
+        if (error) throw new Error(error.message);
+      } catch (error) {
+        console.error("[admin] client account for new business failed:", error instanceof Error ? error.message : error);
+      }
+    }
 
     let queued = false;
     if (fullImportSource() === "reader") {

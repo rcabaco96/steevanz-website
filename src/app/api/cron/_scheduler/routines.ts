@@ -152,9 +152,17 @@ export async function runReaderAlert(client: Client, options: { now: Date; dryRu
 
 // --- Every tick ------------------------------------------------------------------------------------
 
-/** Sends queued DataForSEO jobs (panel requests first, then the routine). */
+/**
+ * Sends queued DataForSEO jobs (panel requests first, then the routine). With DataForSEO switched
+ * off, jobs still queued for it (from before it was switched off) go to the reader instead: nothing
+ * else would ever pick them up, and while they wait no new job can be queued for the same place.
+ */
 export async function runDispatch(client: Client, options: { dryRun: boolean }) {
-  if (!dataForSeoConfigured()) return { skipped: "DataForSEO is not configured" };
+  if (!dataForSeoConfigured()) {
+    if (options.dryRun) return { skipped: "DataForSEO is not configured" };
+    const { data, error } = await client.from("review_import_jobs").update({ provider: "reader" }).eq("status", "queued").eq("provider", "dataforseo").select("id");
+    return { skipped: "DataForSEO is not configured", handedToReader: error ? { error: error.message } : (data?.length ?? 0) };
+  }
   if (options.dryRun) return { dryRun: true, maxJobs: tickMaxJobs };
   return dispatchQueuedJobs(client, { maxJobs: tickMaxJobs });
 }

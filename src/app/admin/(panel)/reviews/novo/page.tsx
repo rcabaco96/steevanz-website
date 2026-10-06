@@ -28,6 +28,26 @@ export default async function NewReviewBusinessPage() {
             O nome e o endereço do painel saem do link, e a primeira importação vai buscar as reviews, a nota, a categoria e a concorrência. O resto (email de
             alertas, placas, serviços) acrescenta-se depois, na página do negócio.
           </p>
+          <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
+            <legend className="px-1 text-sm font-semibold text-text">Dono do negócio (opcional)</legend>
+            <p className="-mt-1 text-xs text-subtle">
+              Com email, a conta do cliente fica criada já, mas nada lhe é enviado: o convite envia-se depois, na página do negócio. Sem email, fica só o contacto.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className={adminLabelClasses}>
+                Nome
+                <input name="contact_name" maxLength={120} autoComplete="off" className={`${adminInputClasses} h-11`} />
+              </label>
+              <label className={adminLabelClasses}>
+                Telefone
+                <input name="contact_phone" type="tel" maxLength={40} autoComplete="off" className={`${adminInputClasses} h-11`} />
+              </label>
+              <label className={`${adminLabelClasses} sm:col-span-2`}>
+                Email
+                <input name="email" type="email" maxLength={200} autoComplete="off" placeholder="dono@negocio.pt" className={`${adminInputClasses} h-11`} />
+              </label>
+            </div>
+          </fieldset>
           <SubmitButton>Criar negócio</SubmitButton>
         </ActionForm>
       </Panel>
