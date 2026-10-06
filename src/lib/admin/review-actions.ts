@@ -87,8 +87,12 @@ export async function saveReviewBusiness(_previous: AdminActionState, formData: 
     }
     const { id, ...business } = parsed.data;
     const client = createServiceClient();
+    // With a client account the services come from its products: the form doesn't show the boxes then.
+    const { active_services: services, ...rest } = business;
+    const owned = id ? (await client.from("review_businesses").select("owner_id").eq("id", id).maybeSingle<{ owner_id: string | null }>()).data?.owner_id : null;
+    const changes = owned ? rest : { ...rest, active_services: services };
     const { data: saved, error } = id
-      ? await client.from("review_businesses").update(business).eq("id", id).select("id").single()
+      ? await client.from("review_businesses").update(changes).eq("id", id).select("id").single()
       : await client.from("review_businesses").insert(business).select("id").single();
     if (error) {
       if (error.code === "23505") return { ok: false, message: "Já existe um negócio com esse endereço de painel." };

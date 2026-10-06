@@ -49,6 +49,12 @@ export default async function AdminClientsPage({ searchParams }: { searchParams:
                 <span className="text-sm text-muted">
                   <strong className="font-semibold tabular-nums text-text">{client.activeProducts}</strong>{" "}
                   {client.activeProducts === 1 ? "produto ativo" : "produtos ativos"}
+                  {client.panels ? (
+                    <>
+                      {" · "}
+                      <strong className="font-semibold tabular-nums text-text">{client.panels}</strong> {client.panels === 1 ? "painel" : "painéis"}
+                    </>
+                  ) : null}
                 </span>
                 <span className="text-sm text-subtle tabular-nums sm:text-right">{lisbonTimestamp(client.created_at)}</span>
               </Link>

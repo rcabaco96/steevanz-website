@@ -76,7 +76,7 @@ export interface BusinessRow {
 }
 
 const businessColumns =
-  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, category, google_fid, created_at";
+  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, category, google_fid, owner_id, created_at";
 
 export function toBusiness(row: BusinessRow): ReviewBusiness {
   return {
@@ -106,6 +106,14 @@ async function fetchAll<T>(build: (from: number, to: number) => PromiseLike<{ da
   return rows;
 }
 
+/** Products the panel owner has active (client account), or null when the business has no owner. */
+async function ownerServices(client: SupabaseClient, ownerId: string | null): Promise<string[] | null> {
+  if (!ownerId) return null;
+  const { data, error } = await client.from("client_products").select("product_id").eq("user_id", ownerId).eq("status", "active");
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as { product_id: string }[]).map((row) => row.product_id);
+}
+
 export async function getDashboardSource(slug: string): Promise<DashboardSource | null> {
   let client: SupabaseClient;
   try {
@@ -118,7 +126,7 @@ export async function getDashboardSource(slug: string): Promise<DashboardSource 
   if (error) throw new Error(error.message);
   if (!businessRow) return null;
 
-  const [reviews] = await Promise.all([
+  const [reviews, owned] = await Promise.all([
     fetchAll<{
       review_id: string;
       rating: number;
@@ -137,7 +145,10 @@ export async function getDashboardSource(slug: string): Promise<DashboardSource 
         .order("published_at", { ascending: false })
         .range(from, to),
     ),
+    ownerServices(client, businessRow.owner_id ?? null),
   ]);
+  // With a client account, what it has active is the truth; the manual list is for businesses without one.
+  if (owned) businessRow.active_services = owned;
 
   const ownReviews = reviews.map(
     (review): GoogleReview => ({

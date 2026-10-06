@@ -1,7 +1,8 @@
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import Link from "next/link";
 import { getProductCopy } from "@/content/product-copy";
-import { products } from "@/content/products";
+import { isProductId, products } from "@/content/products";
 import { accessLabels, accessState, type AccessState, type OwnerAccount } from "@/lib/admin/client-access";
 import {
   deleteReviewBusiness,
@@ -124,8 +125,9 @@ export function AccessBadge({ state }: { state: AccessState }) {
 }
 
 /** Who can open the panel: the owner's contact, the account (created with the email) and the invite. */
-function ClientAccess({ business, owner }: { business: BusinessRow; owner: OwnerAccount | null }) {
+function ClientAccess({ business, owner, ownerProducts }: { business: BusinessRow; owner: OwnerAccount | null; ownerProducts: string[] }) {
   const state = accessState(business, owner);
+  const productNames = ownerProducts.filter(isProductId).map((id) => getProductCopy(id, "pt").shortName);
   return (
     <section aria-labelledby="acesso-title" className="flex flex-col gap-4 rounded-2xl border border-line p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -170,6 +172,16 @@ function ClientAccess({ business, owner }: { business: BusinessRow; owner: Owner
           </SubmitButton>
         </div>
       </ActionForm>
+      {business.owner_id ? (
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line pt-4 text-sm text-muted">
+          <span>
+            Produtos ativos do cliente: <strong className="font-semibold text-text">{productNames.length ? productNames.join(", ") : "nenhum (só o painel)"}</strong>
+          </span>
+          <Link href={`/admin/clientes/${business.owner_id}`} className="font-semibold text-accent-text hover:underline">
+            Gerir produtos do cliente
+          </Link>
+        </p>
+      ) : null}
       {owner ? (
         <div className="flex flex-wrap items-start gap-2 border-t border-line pt-4">
           <ActionForm action={sendBusinessInvite} className="flex flex-col items-start gap-1">
@@ -224,18 +236,26 @@ function BusinessFields({ business }: { business: BusinessRow }) {
         <input name="alert_email" type="email" defaultValue={business.alert_email ?? ""} placeholder="dono@negocio.pt" className={`${adminInputClasses} h-11`} />
         <span className="text-xs font-normal text-subtle">Recebe um email quando entra uma review negativa (1 a 3 estrelas).</span>
       </label>
-      <fieldset className="flex flex-col gap-2 sm:col-span-2">
-        <legend className="mb-1 text-sm font-medium text-muted">Serviços Steevanz que já tem</legend>
-        <span className="-mt-1 mb-1 text-xs text-subtle">O painel não sugere ao cliente o que ele já contratou.</span>
-        <div className="grid gap-2 sm:grid-cols-3">
-          {products.map((product) => (
-            <label key={product.id} className="flex min-h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm text-text has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50">
-              <input type="checkbox" name="active_services" value={product.id} defaultChecked={business.active_services?.includes(product.id)} className="h-4.5 w-4.5 accent-accent" />
-              {getProductCopy(product.id, "pt").shortName}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {business.owner_id ? (
+        <p className="text-sm text-muted sm:col-span-2">
+          Serviços Steevanz que já tem: vêm dos produtos ativos da conta do cliente (ver «Acesso do cliente»). O painel não sugere o que ele já contratou.
+        </p>
+      ) : (
+        <fieldset className="flex flex-col gap-2 sm:col-span-2">
+          <legend className="mb-1 text-sm font-medium text-muted">Serviços Steevanz que já tem</legend>
+          <span className="-mt-1 mb-1 text-xs text-subtle">
+            O painel não sugere ao cliente o que ele já contratou. Quando o negócio tiver conta de cliente, passam a vir dos produtos dessa conta.
+          </span>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {products.map((product) => (
+              <label key={product.id} className="flex min-h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm text-text has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50">
+                <input type="checkbox" name="active_services" value={product.id} defaultChecked={business.active_services?.includes(product.id)} className="h-4.5 w-4.5 accent-accent" />
+                {getProductCopy(product.id, "pt").shortName}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
     </>
   );
 }
@@ -246,15 +266,17 @@ export function BusinessDetail({
   jobs,
   competitors,
   owner,
+  ownerProducts,
 }: {
   business: BusinessRow;
   jobs: ReaderJobRow[];
   competitors: CompetitorAdminRow[];
   owner: OwnerAccount | null;
+  ownerProducts: string[];
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <ClientAccess business={business} owner={owner} />
+      <ClientAccess business={business} owner={owner} ownerProducts={ownerProducts} />
       <div className="flex flex-col gap-3 rounded-2xl bg-surface-2/60 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
           <p className="text-text">

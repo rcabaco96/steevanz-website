@@ -208,6 +208,14 @@ export async function dashboardStats(now = new Date()): Promise<DashboardStats> 
 
 export interface ClientSummary extends ProfileRow {
   activeProducts: number;
+  /** Review panels this account owns. */
+  panels: number;
+}
+
+export interface ClientPanel {
+  id: string;
+  slug: string;
+  name: string;
 }
 
 function searchPattern(term: string, columns: string[]): string | null {
@@ -228,18 +236,36 @@ export async function listClients(q: string): Promise<ClientSummary[]> {
   const profiles = (data ?? []) as ProfileRow[];
   if (!profiles.length) return [];
 
-  const { data: owned, error: ownedError } = await client
-    .from("client_products")
-    .select("user_id")
-    .eq("status", "active")
-    .in(
-      "user_id",
-      profiles.map((profile) => profile.id),
-    );
+  const ids = profiles.map((profile) => profile.id);
+  const [{ data: owned, error: ownedError }, { data: panels, error: panelsError }] = await Promise.all([
+    client.from("client_products").select("user_id").eq("status", "active").in("user_id", ids),
+    client.from("review_businesses").select("owner_id").in("owner_id", ids),
+  ]);
   if (ownedError) throw new Error(`listClients products: ${ownedError.message}`);
-  const counts = new Map<string, number>();
-  for (const row of (owned ?? []) as Pick<ClientProductRow, "user_id">[]) counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
-  return profiles.map((profile) => ({ ...profile, activeProducts: counts.get(profile.id) ?? 0 }));
+  if (panelsError) throw new Error(`listClients panels: ${panelsError.message}`);
+  const tally = (rows: { key: string | null }[]) => {
+    const counts = new Map<string, number>();
+    for (const { key } of rows) if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
+    return counts;
+  };
+  const productCounts = tally(((owned ?? []) as Pick<ClientProductRow, "user_id">[]).map((row) => ({ key: row.user_id })));
+  const panelCounts = tally(((panels ?? []) as { owner_id: string | null }[]).map((row) => ({ key: row.owner_id })));
+  return profiles.map((profile) => ({ ...profile, activeProducts: productCounts.get(profile.id) ?? 0, panels: panelCounts.get(profile.id) ?? 0 }));
+}
+
+export async function listClientPanels(userId: string): Promise<ClientPanel[]> {
+  if (!isUuid(userId)) return [];
+  const { data, error } = await createServiceClient().from("review_businesses").select("id, slug, name").eq("owner_id", userId).order("name");
+  if (error) throw new Error(`listClientPanels: ${error.message}`);
+  return (data ?? []) as ClientPanel[];
+}
+
+/** Products the account has active: what the client really bought (orders accepted or added by an admin). */
+export async function listActiveProductIds(userId: string): Promise<string[]> {
+  if (!isUuid(userId)) return [];
+  const { data, error } = await createServiceClient().from("client_products").select("product_id").eq("user_id", userId).eq("status", "active");
+  if (error) throw new Error(`listActiveProductIds: ${error.message}`);
+  return ((data ?? []) as { product_id: string }[]).map((row) => row.product_id);
 }
 
 export async function getProfile(id: string): Promise<ProfileRow | null> {

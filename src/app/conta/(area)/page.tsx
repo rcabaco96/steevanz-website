@@ -88,7 +88,7 @@ export default async function AccountHomePage() {
             );
           })}
         </ul>
-      ) : (
+      ) : panels.length ? null : (
         <div className="flex flex-col gap-4">
           <EmptyState>
             Ainda não tem produtos ativos. Depois de fazer uma encomenda e a nossa equipa a confirmar, os produtos aparecem aqui.

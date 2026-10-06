@@ -14,7 +14,7 @@ import { subscriptionStatusLabels, subscriptionStatuses } from "@/lib/accounts/t
 import { saveClientProduct } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
-import { getProfile, listClientOrders, listClientProducts } from "@/lib/admin/queries";
+import { getProfile, listClientOrders, listClientPanels, listClientProducts } from "@/lib/admin/queries";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -23,7 +23,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
   const { id } = await params;
   const profile = await getProfile(id);
   if (!profile) notFound();
-  const [owned, orders] = await Promise.all([listClientProducts(profile.id), listClientOrders(profile)]);
+  const [owned, orders, panels] = await Promise.all([listClientProducts(profile.id), listClientOrders(profile), listClientPanels(profile.id)]);
   const ownedIds = new Set(owned.map((row) => row.product_id));
   const available = products.filter((product) => !ownedIds.has(product.id));
 
@@ -44,6 +44,27 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-6">
+          <Panel title="Painéis de reviews">
+            {panels.length ? (
+              <ul className="flex flex-col divide-y divide-line">
+                {panels.map((panel) => (
+                  <li key={panel.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                    <span className="font-semibold text-text">{panel.name}</span>
+                    <span className="flex items-center gap-4 text-sm">
+                      <Link href={`/admin/reviews/${panel.id}`} className="font-semibold text-accent-text hover:underline">
+                        Gerir
+                      </Link>
+                      <Link href={`/painel/${panel.slug}`} target="_blank" className="font-semibold text-muted hover:text-text">
+                        Abrir painel
+                      </Link>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyState>Sem painéis. O acesso dá-se na página do negócio, em Reviews.</EmptyState>
+            )}
+          </Panel>
           <Panel title="Produtos">
             {owned.length ? (
               <ul className="flex flex-col divide-y divide-line">
