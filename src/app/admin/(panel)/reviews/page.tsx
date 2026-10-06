@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdminForm, SubmitButton } from "@/components/admin/AdminForm";
-import { AdminPageHeader, adminInputClasses, adminLabelClasses, EmptyState, Panel } from "@/components/admin/ui";
+import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { AdminPageHeader, adminInputClasses, adminLabelClasses, EmptyState, Panel } from "@/components/backoffice/ui";
 import { ArrowUpRight } from "@/components/icons";
 import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
@@ -166,14 +166,14 @@ export default async function ReviewsAdminPage() {
                     {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}
                   </div>
                   <div className="flex flex-wrap gap-2 sm:justify-end">
-                    <AdminForm action={syncReviewsNow} className="flex flex-col items-start gap-1 sm:items-end">
+                    <ActionForm action={syncReviewsNow} className="flex flex-col items-start gap-1 sm:items-end">
                       <input type="hidden" name="id" value={business.id} />
                       <input type="hidden" name="mode" value="refresh" />
                       <SubmitButton variant="secondary" size="sm" pendingLabel="A importar…">
                         Sincronizar agora
                       </SubmitButton>
-                    </AdminForm>
-                    <AdminForm
+                    </ActionForm>
+                    <ActionForm
                       action={syncReviewsNow}
                       confirmMessage="Ler outra vez todo o histórico de reviews? Usa mais crédito do Apify; serve para apanhar respostas a reviews antigas."
                       className="flex flex-col items-start gap-1 sm:items-end"
@@ -183,7 +183,7 @@ export default async function ReviewsAdminPage() {
                       <SubmitButton variant="ghost" size="sm" pendingLabel="A reimportar… (até 5 min)">
                         Reimportar tudo
                       </SubmitButton>
-                    </AdminForm>
+                    </ActionForm>
                   </div>
                 </div>
 
@@ -215,40 +215,40 @@ export default async function ReviewsAdminPage() {
                                 {row.pace_per_month !== null ? ` · ${String(Number(row.pace_per_month).toFixed(1)).replace(".", ",")} reviews/mês` : ""}
                               </p>
                             </div>
-                            <AdminForm action={toggleCompetitor} hideMessage>
+                            <ActionForm action={toggleCompetitor} hideMessage>
                               <input type="hidden" name="id" value={row.id} />
                               <input type="hidden" name="excluded" value={row.excluded ? "false" : "true"} />
                               <SubmitButton variant="ghost" size="sm" className={row.excluded ? "" : "text-danger"}>
                                 {row.excluded ? "Incluir" : "Excluir"}
                               </SubmitButton>
-                            </AdminForm>
+                            </ActionForm>
                           </li>
                         ))}
                     </ul>
                     </details>
                   ) : null}
-                  <AdminForm action={refreshCompetitors} className="flex flex-col items-start gap-1">
+                  <ActionForm action={refreshCompetitors} className="flex flex-col items-start gap-1">
                     <input type="hidden" name="id" value={business.id} />
                     <SubmitButton variant="secondary" size="sm" pendingLabel="A procurar… (1–2 min)">
                       Procurar concorrentes agora
                     </SubmitButton>
-                  </AdminForm>
+                  </ActionForm>
                 </div>
 
                 <details className="group">
                   <summary className="cursor-pointer text-sm font-semibold text-muted hover:text-text">Editar dados do negócio</summary>
-                  <AdminForm action={saveReviewBusiness} className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <ActionForm action={saveReviewBusiness} className="mt-4 grid gap-4 sm:grid-cols-2">
                     <BusinessFields business={business} />
                     <div className="flex items-end">
                       <SubmitButton>Guardar</SubmitButton>
                     </div>
-                  </AdminForm>
-                  <AdminForm action={deleteReviewBusiness} confirmMessage={`Remover «${business.name}», as placas, os toques e as reviews importadas?`} className="mt-4">
+                  </ActionForm>
+                  <ActionForm action={deleteReviewBusiness} confirmMessage={`Remover «${business.name}», as placas, os toques e as reviews importadas?`} className="mt-4">
                     <input type="hidden" name="id" value={business.id} />
                     <SubmitButton variant="ghost" size="sm" className="text-danger">
                       Remover negócio
                     </SubmitButton>
-                  </AdminForm>
+                  </ActionForm>
                 </details>
               </div>
             </Panel>
@@ -259,12 +259,12 @@ export default async function ReviewsAdminPage() {
       )}
 
       <Panel title="Novo negócio">
-        <AdminForm action={saveReviewBusiness} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={saveReviewBusiness} className="grid gap-4 sm:grid-cols-2">
           <BusinessFields />
           <div className="flex items-end">
             <SubmitButton>Criar negócio</SubmitButton>
           </div>
-        </AdminForm>
+        </ActionForm>
       </Panel>
     </>
   );
