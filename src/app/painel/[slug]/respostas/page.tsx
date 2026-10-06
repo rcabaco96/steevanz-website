@@ -1,15 +1,18 @@
+import { BusinessName } from "@/components/reviews/BusinessName";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutoReplyPanel } from "@/components/reviews/AutoReplyPanel";
 import { DashboardBusyProvider } from "@/components/reviews/DashboardBusy";
 import { InfoTip } from "@/components/reviews/InfoTip";
+import { ReaderJobsProvider } from "@/components/reviews/ReaderJobs";
 import { ReplyInbox } from "@/components/reviews/ReplyInbox";
 import { ReplyOnboarding } from "@/components/reviews/ReplyOnboarding";
 import { DraftMoreButton, ReplyRunner } from "@/components/reviews/ReplyRunner";
 import { ReplyLibrary, ReplyTraining } from "@/components/reviews/ReplyTraining";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDate, formatPercent } from "@/lib/reviews/format";
+import { emptyReaderJobs, loadReaderJobs } from "@/lib/reviews/import-jobs";
 import { loadInbox, loadLibrary, loadReplyBusiness, loadReplySettings, loadToneHistory, loadTrainingQueue, type ToneHistoryEntry } from "@/lib/reviews/reply-store";
 import { describeTone, draftsPerRun, replyWindowDays } from "@/lib/reviews/replies";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
@@ -93,11 +96,12 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
     return <ReplyOnboarding slug={slug} initial={settings} candidates={candidates} editing={Boolean(settings.onboardedAt)} />;
   }
 
-  const [inbox, library, queue, history] = await Promise.all([
-    loadInbox(client, business.id, settings.onboardedAt),
+  const [inbox, library, queue, history, readerJobs] = await Promise.all([
+    loadInbox(client, business.id, settings),
     loadLibrary(client, business.id, settings.profileId),
     loadTrainingQueue(client, business.id, settings.profileId),
     loadToneHistory(client, business.id, settings.profileId),
+    loadReaderJobs(client, business.id).catch(() => emptyReaderJobs),
   ]);
   const pending = inbox.items.filter((item) => item.status === "pending" && !item.review.ownerReply).length;
   const approved = inbox.items.filter((item) => item.status === "approved").length;
@@ -109,7 +113,7 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex min-w-0 flex-col gap-2">
             <p className="eyebrow">Respostas às reviews</p>
-            <h1 className="display text-[2.2rem] leading-tight sm:text-5xl">{business.name}</h1>
+            <BusinessName name={business.name} mapsUrl={business.googleMapsUrl} />
           </div>
           <Link
             href={`/painel/${slug}/respostas?editar=1`}
@@ -124,7 +128,9 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
           Google Business Profile, as respostas aprovadas passam a ser publicadas sozinhas.
         </p>
 
-        <ReplyRunner runUrl={runUrl} />
+        <ReaderJobsProvider slug={slug} initial={readerJobs}>
+          <ReplyRunner runUrl={runUrl} syncUrl={`/api/painel/${slug}/sync`} />
+        </ReaderJobsProvider>
 
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <Stat label="Por aprovar" value={pending} info="Respostas preparadas à espera da sua decisão. As de reviews negativas (1 a 3★) aparecem primeiro." />

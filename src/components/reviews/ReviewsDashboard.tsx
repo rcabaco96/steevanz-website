@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
 import { AlertIcon, ArrowUpRight, Check, CloseIcon, LightbulbIcon, ProductGlyph, SparkleIcon, StarFilled, WhatsAppIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { priceLabel } from "@/components/ui/Price";
 import { getProduct } from "@/content/products";
+import { getProductCopy } from "@/content/product-copy";
+import { BusinessName } from "./BusinessName";
 import type { ProductId } from "@/content/types";
-import { aiReviewsPitch, recommendations, type AiReviewsPitch, type Recommendation } from "@/lib/reviews/recommendations";
+import { aiReviewsPitch, recommendations, themeServices, type AiReviewsPitch, type Recommendation, type ThemeService } from "@/lib/reviews/recommendations";
 import { href as routeHref } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import {
@@ -19,7 +22,7 @@ import {
   type ReviewStarFilter,
 } from "@/lib/reviews/analytics";
 import { formatBucket, formatDate, formatDateTime, formatHours, formatInt, formatPercent, formatRating, formatSignedPercent, weekdayLong } from "@/lib/reviews/format";
-import { competitorRadiusKm, type Competition } from "@/lib/reviews/competitors";
+import { competitorLimit, competitorRadiusKm, type Competition } from "@/lib/reviews/competitors";
 import type { ThemeId } from "@/lib/reviews/text";
 import type { DashboardSource } from "@/lib/reviews/types";
 import { BarList, ColumnChart, DataTable, RatingDots, RatingLineChart, type ColumnDatum } from "./charts";
@@ -27,13 +30,15 @@ import { CompetitionBoard } from "./CompetitionBoard";
 import { DashboardBusyProvider, PendingLink, Refreshable } from "./DashboardBusy";
 import { DashboardSync } from "./DashboardSync";
 import { googleReviewUrl } from "@/lib/reviews/google-links";
+import type { ReaderJobsState } from "@/lib/reviews/import-jobs";
+import { HistoryImport } from "./HistoryImport";
 import { InfoTip } from "./InfoTip";
+import { ReaderJobsProvider } from "./ReaderJobs";
 import { ReviewText } from "./ReviewText";
 import { Stars } from "./Stars";
 import { ThemeReviews } from "./ThemeReviews";
 
 export const periodLabels: Record<PeriodId, string> = { "30d": "30 dias", "90d": "90 dias", "12m": "12 meses", all: "Tudo" };
-const periodOrder: PeriodId[] = ["all", "12m", "90d", "30d"];
 const radiusLabel = `${String(competitorRadiusKm).replace(".", ",")} km`;
 
 /** Hidden for now at the owner's request; the charts and data stay ready for later. */
@@ -60,7 +65,7 @@ const infoTexts = {
     "Média das estrelas das reviews publicadas no período escolhido. A comparação é com o período anterior de igual duração e só aparece com pelo menos 5 reviews nesse período.",
   reviews: "Reviews publicadas no Google no período escolhido, comparadas com o período anterior de igual duração (mínimo de 5 reviews para comparar).",
   competition:
-    `Até 30 negócios num raio de ${radiusLabel}: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. Reviews por mês: ritmo nas últimas semanas (ou pelas datas das reviews mais recentes, enquanto não há histórico). «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados todas as semanas.`,
+    `Até ${competitorLimit} negócios num raio de ${radiusLabel}: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
   competitionReplies:
     "Percentagem das reviews recentes de cada negócio que têm resposta do dono no Google. Contamos as reviews mais recentes (até 60) publicadas nos últimos 12 meses, sem as dos últimos 7 dias, para dar tempo a responder. Nos concorrentes, é medida uma vez, quando entram na comparação, com as mesmas reviews usadas para o ritmo; no seu negócio, com as suas reviews importadas e a mesma regra. Com menos de 5 reviews contadas não mostramos valor («–»). Empates: primeiro quem tem mais reviews contadas. É uma estimativa: guardamos só a percentagem e o número de reviews contadas, nunca os textos.",
   pace: "Média de reviews por mês nos últimos 3 meses, comparada com os 3 meses antes. Não depende do filtro de período: mostra sempre o ritmo atual.",
@@ -239,7 +244,7 @@ function GoalProgress({ goal }: { goal: RatingGoal }) {
 
 function RatingGoalCard({ goal }: { goal: RatingGoal }) {
   return (
-    <div className="card col-span-2 flex flex-col gap-4 p-5 sm:p-6 lg:row-span-2">
+    <div className="card flex flex-col gap-4 p-5 sm:p-6">
       <div className="flex flex-col gap-1">
         <p className="flex items-center gap-1.5 text-sm text-muted">
           Avaliação no Google
@@ -356,7 +361,10 @@ function RecommendationCards({ items }: { items: Recommendation[] }) {
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-text">
                 <ProductGlyph icon={product.icon} size={19} />
               </span>
-              <h3 className="pt-1 font-semibold text-text">{item.title}</h3>
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <p className="text-xs font-semibold uppercase tracking-[0.06em] text-accent-text">{getProductCopy(item.productId, "pt").name}</p>
+                <h3 className="font-semibold text-text">{item.title}</h3>
+              </div>
             </div>
             <p className="text-sm leading-relaxed text-muted">{item.body}</p>
             <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-3">
@@ -372,8 +380,40 @@ function RecommendationCards({ items }: { items: Recommendation[] }) {
   );
 }
 
+/** Inside an opened theme with a problem: the services that tackle it (at most 2). */
+function ThemeServiceCards({ items, theme }: { items: ThemeService[]; theme: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-text">
+        <LightbulbIcon size={14} className="text-gold-text" /> Pode ajudar com {theme.toLowerCase()}
+      </p>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {items.map((item) => {
+          const product = getProduct(item.productId);
+          return (
+            <li key={item.productId} className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-3.5">
+              <div className="flex items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent-text">
+                  <ProductGlyph icon={product.icon} size={16} />
+                </span>
+                <p className="min-w-0 text-sm font-semibold text-text">{getProductCopy(item.productId, "pt").name}</p>
+              </div>
+              <p className="text-sm leading-relaxed text-muted">{item.body}</p>
+              <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-2">
+                <span className="text-sm font-semibold text-text">{priceLabel(product, "pt")}</span>
+                <a href={productLink(item.productId)} target="_blank" rel="noopener" className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-accent-text hover:underline">
+                  Saber mais <ArrowUpRight size={15} />
+                </a>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 function competitionNotes(competition: Competition): { tone: "good" | "info"; text: ReactNode }[] {
-  const self = competition.entries.find((entry) => entry.isSelf);
   const notes: { tone: "good" | "info"; text: ReactNode }[] = [];
   if (competition.ratingRank === 1) notes.push({ tone: "good", text: "É o negócio mais bem avaliado da zona. Agora é manter!" });
   else if (competition.ratingGap) {
@@ -406,62 +446,78 @@ function competitionNotes(competition: Competition): { tone: "good" | "info"; te
       ),
     });
   }
-  if (competition.paceLeader && self?.pacePerMonth !== null && self?.pacePerMonth !== undefined) {
-    const fasterPct = self.pacePerMonth > 0 ? Math.round((competition.paceLeader.pacePerMonth / self.pacePerMonth - 1) * 100) : null;
-    notes.push({
-      tone: "info",
-      text: (
-        <>
-          O <strong>{competition.paceLeader.name}</strong> recebe cerca de <strong>{formatInt(competition.paceLeader.pacePerMonth)} reviews por mês</strong>
-          {fasterPct === null ? (
-            `, e o seu negócio não recebeu nenhuma nos últimos 3 meses`
-          ) : fasterPct >= 10 ? (
-            <>
-              , um ritmo <strong>{fasterPct}% mais rápido</strong> que o seu ({formatInt(self.pacePerMonth)} por mês)
-            </>
-          ) : null}
-          .
-        </>
-      ),
-    });
-  } else if (competition.paceRank === 1) {
-    notes.push({ tone: "good", text: "É o negócio da zona que recebe mais reviews por mês." });
-  }
   return notes;
 }
 
-/** Top-of-page summary: where the customer stands nearby and what it takes to climb, leading to the table. */
-function CompetitionSummary({ competition }: { competition: Competition }) {
-  const notes = competitionNotes(competition);
+/**
+ * Top-of-page summary: where the customer stands nearby and what it takes to climb, leading to the
+ * table. Always shown: before the competitors are read, and for any position not known yet, a
+ * loading placeholder.
+ */
+const signedPercent = new Intl.NumberFormat("pt-PT", { style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" });
+
+/** "▲ 2 · +1,2%": places climbed since the comparison day and the change of the customer's own number. */
+function RankTrendLine({ places, change, since }: { places: number | null; change: number | null; since: string }) {
+  if (places === null && change === null) return null;
+  const direction = places ?? 0;
+  const tone = direction > 0 ? "text-success" : direction < 0 ? "text-danger" : "text-subtle";
+  const arrow = direction > 0 ? "▲" : direction < 0 ? "▼" : "=";
+  const placesLabel = places === null || places === 0 ? "mesma posição" : `${Math.abs(places)} ${Math.abs(places) === 1 ? "lugar" : "lugares"}`;
+  return (
+    <span className={`flex flex-wrap items-center gap-x-1 text-[0.7rem] leading-tight font-semibold ${tone}`} title={`Desde ${formatDate(`${since}T12:00:00Z`)}`}>
+      <span aria-hidden="true">{arrow}</span>
+      <span className="sr-only">{direction > 0 ? "Subiu" : direction < 0 ? "Desceu" : "Manteve"}</span>
+      {places === null || places === 0 ? null : <span>{Math.abs(places)}</span>}
+      {places !== null && places !== 0 ? <span className="sr-only">{placesLabel}</span> : null}
+      {change !== null ? <span className="font-normal text-subtle">{places ? "· " : ""}{signedPercent.format(change)}</span> : null}
+    </span>
+  );
+}
+
+function CompetitionSummary({ competition }: { competition: Competition | null }) {
+  const notes = competition ? competitionNotes(competition) : [];
+  const trend = competition?.trend ?? null;
   const ranks = [
-    { label: "Avaliação", rank: competition.ratingRank },
-    { label: "Total de reviews", rank: competition.reviewsRank },
-    { label: "Reviews por mês", rank: competition.paceRank },
+    { label: "Avaliação", rank: competition?.ratingRank ?? null, places: trend?.ratingRankChange ?? null, change: trend?.ratingChange ?? null },
+    { label: "Total de reviews", rank: competition?.reviewsRank ?? null, places: trend?.reviewsRankChange ?? null, change: trend?.reviewsChange ?? null },
   ];
   return (
-    <aside aria-labelledby="competition-summary-title" className="card flex flex-col gap-4 p-4 sm:p-5 lg:w-[27rem] lg:shrink-0">
+    <aside aria-labelledby="competition-summary-title" className="card flex flex-col gap-4 p-4 sm:p-5">
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="competition-summary-title" className="flex items-center gap-1.5 font-semibold text-text">
           Na sua zona
           <InfoTip label="Na sua zona">{infoTexts.competition}</InfoTip>
         </h2>
         <span className="text-xs text-subtle">
-          {plural(competition.total - 1, "concorrente", "concorrentes")} até {radiusLabel}
+          {competition ? `${plural(competition.competitors, "concorrente", "concorrentes")} até ${radiusLabel}` : `concorrentes até ${radiusLabel}`}
         </span>
       </div>
-      <dl className="grid grid-cols-3 gap-2">
+      <dl className="grid grid-cols-2 gap-2">
         {ranks.map((item) => (
           <div key={item.label} className="flex min-w-0 flex-col gap-0.5 rounded-xl bg-surface-2/70 px-2.5 py-2">
             <dt className="text-[0.7rem] leading-tight text-muted">{item.label}</dt>
             <dd className="flex flex-wrap items-baseline gap-x-1">
-              <span className={`text-2xl font-semibold tracking-[-0.02em] ${item.rank === 1 ? "text-success" : "text-text"}`}>
-                {item.rank === null ? "–" : `${item.rank}.º`}
-              </span>
-              <span className="text-[0.7rem] whitespace-nowrap text-subtle">de {competition.total}</span>
+              {item.rank === null || !competition ? (
+                <span className="flex flex-col gap-1 pt-1">
+                  <Skeleton className="h-6 w-10" />
+                  <span className="text-[0.7rem] whitespace-nowrap text-subtle">a carregar</span>
+                </span>
+              ) : (
+                <>
+                  <span className={`text-2xl font-semibold tracking-[-0.02em] ${item.rank === 1 ? "text-success" : "text-text"}`}>{item.rank}.º</span>
+                  <span className="text-[0.7rem] whitespace-nowrap text-subtle">de {competition.total}</span>
+                  {trend ? (
+                    <span className="basis-full">
+                      <RankTrendLine places={item.places} change={item.change} since={trend.since} />
+                    </span>
+                  ) : null}
+                </>
+              )}
             </dd>
           </div>
         ))}
       </dl>
+      {trend ? <p className="-mt-2 text-[0.7rem] text-subtle">Setas e percentagens: face a há 1 mês.</p> : null}
       {notes.length ? (
         <ul className="flex flex-col gap-2">
           {notes.map((note, index) => (
@@ -472,10 +528,17 @@ function CompetitionSummary({ competition }: { competition: Competition }) {
           ))}
         </ul>
       ) : null}
-      <a href="#competition" className={buttonClasses("primary", "md", "w-full")}>
-        Ver a tabela da concorrência
-        <span aria-hidden="true">↓</span>
-      </a>
+      {competition ? (
+        <a href="#competition" className={buttonClasses("primary", "md", "w-full")}>
+          Ver a tabela da concorrência
+          <span aria-hidden="true">↓</span>
+        </a>
+      ) : (
+        <p className="text-sm text-muted">
+          A carregar a concorrência: o leitor procura os negócios da zona na primeira importação e lê a nota, o total e as estrelas de cada um. As posições
+          aparecem aqui à medida que chegam.
+        </p>
+      )}
     </aside>
   );
 }
@@ -486,7 +549,7 @@ function CompetitionSection({ competition, category }: { competition: Competitio
       id="competition"
       title="Como está face à concorrência"
       info={infoTexts.competition}
-      lead={`${plural(competition.total - 1, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel}. Dados públicos do Google, atualizados todas as semanas${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
+      lead={`${plural(competition.competitors, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel}. Dados públicos do Google, atualizados duas vezes por dia${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
     >
       <Card>
         <CompetitionBoard entries={competition.entries} replyInfo={infoTexts.competitionReplies} />
@@ -536,7 +599,22 @@ function beforeAfterGapText(gap: DashboardAnalytics["beforeAfterGap"]): string {
   return "Não há reviews suficientes antes das placas para fazer uma comparação justa.";
 }
 
-export function ReviewsDashboard({ source, analytics, basePath, query }: { source: DashboardSource; analytics: DashboardAnalytics; basePath: string; query: DashboardQuery }) {
+export function ReviewsDashboard({
+  source,
+  analytics,
+  basePath,
+  query,
+  readerJobs,
+  googleConnect = null,
+}: {
+  source: DashboardSource;
+  analytics: DashboardAnalytics;
+  basePath: string;
+  query: DashboardQuery;
+  readerJobs: ReaderJobsState;
+  /** Where «Ligar Google» goes; null when the Business Profile is already connected. */
+  googleConnect?: { href: string; external: boolean } | null;
+}) {
   const { business } = source;
   const { kpis, series, period } = analytics;
   const insights = insightsFor(source, analytics);
@@ -575,49 +653,51 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
         <div className="flex min-w-0 flex-col gap-5">
           <div className="flex flex-col gap-2">
             <p className="eyebrow">Análise de reviews Google</p>
-            <h1 className="display text-[2.2rem] leading-tight sm:text-5xl">{business.name}</h1>
+            <BusinessName name={business.name} mapsUrl={business.googleMapsUrl} />
             {business.platesInstalledOn ? (
               <p className="text-sm text-subtle">Placas instaladas a {formatDate(`${business.platesInstalledOn}T12:00:00Z`)}</p>
             ) : null}
           </div>
-          <DashboardSync
-            syncUrl={`/api/painel/${business.slug}/sync`}
-            lastSyncedAt={business.lastSyncedAt}
-            lastSyncedLabel={business.lastSyncedAt ? `a ${formatDateTime(business.lastSyncedAt)}` : ""}
-          />
-          <nav aria-label="Período" className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
-            {periodOrder.map((id) => (
-              <PendingLink
-                scope="period"
-                key={id}
-                href={href({ period: id, limit: reviewsPageSize })}
-                scroll={false}
-                aria-current={id === period.id ? "page" : undefined}
-                className={`inline-flex h-10 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition-colors ${
-                  id === period.id ? "bg-surface-inverse text-inverse" : "border border-line bg-surface text-muted hover:text-text"
-                }`}
-              >
-                {periodLabels[id]}
-              </PendingLink>
-            ))}
-          </nav>
+          <ReaderJobsProvider slug={business.slug} initial={readerJobs}>
+            <DashboardSync syncUrl={`/api/painel/${business.slug}/sync`} lastSyncedLabel={business.lastSyncedAt ? `a ${formatDateTime(business.lastSyncedAt)}` : ""} />
+            <HistoryImport slug={business.slug} googleConnect={googleConnect} />
+          </ReaderJobsProvider>
         </div>
-        {source.competition ? (
+        <div className="flex flex-col gap-4 lg:w-[27rem] lg:shrink-0">
           <Refreshable scopes={["sync"]}>
             <CompetitionSummary competition={source.competition} />
           </Refreshable>
-        ) : null}
+          <Refreshable scopes={["sync"]}>
+            {analytics.ratingGoal ? (
+              <RatingGoalCard goal={analytics.ratingGoal} />
+            ) : (
+              <div className="card p-5 sm:p-6">
+                <p className="text-sm text-muted">Ainda não há reviews importadas do Google.</p>
+              </div>
+            )}
+          </Refreshable>
+        </div>
       </div>
 
       <Refreshable scopes={["sync","period"]}>
   <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {analytics.ratingGoal ? (
-            <RatingGoalCard goal={analytics.ratingGoal} />
-          ) : (
-            <div className="card col-span-2 p-5 sm:p-6 lg:row-span-2">
-              <p className="text-sm text-muted">Ainda não há reviews importadas do Google.</p>
-            </div>
-          )}
+          {insights.length ? (
+            <section aria-labelledby="insights-title" className="card col-span-2 flex flex-col gap-4 border-accent/30 p-5 sm:p-6 lg:row-span-2">
+              <h2 id="insights-title" className="flex items-center gap-2 font-semibold text-text">
+                <LightbulbIcon size={20} className="text-accent-text" />
+                Destaques
+                <InfoTip label="Destaques">{infoTexts.insights}</InfoTip>
+              </h2>
+              <ul className="flex flex-col gap-3">
+                {insights.map((insight) => (
+                  <li key={insight} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                    {insight}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
           <StatTile label="Avaliação no período" info={infoTexts.avgRating} value={kpis.avgRating.current === null ? "–" : `${formatRating(kpis.avgRating.current)}★`}>
             <Delta allTime={period.id === "all"} comparison={kpis.avgRating} format="rating" unit="★" />
           </StatTile>
@@ -631,26 +711,6 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
             <Delta comparison={kpis.pace} format="count" versus="3 meses anteriores" />
           </StatTile>
         </section>
-      </Refreshable>
-
-      <Refreshable scopes={["sync","period"]}>
-  {insights.length ? (
-          <section aria-labelledby="insights-title" className="card flex flex-col gap-4 border-accent/30 p-5 sm:p-6">
-            <h2 id="insights-title" className="flex items-center gap-2 font-semibold text-text">
-              <LightbulbIcon size={20} className="text-accent-text" />
-              Destaques
-              <InfoTip label="Destaques">{infoTexts.insights}</InfoTip>
-            </h2>
-            <ul className="flex flex-col gap-3">
-              {insights.map((insight) => (
-                <li key={insight} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
-                  <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                  {insight}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
       </Refreshable>
 
       <Refreshable scopes={["sync"]}>
@@ -750,6 +810,10 @@ export function ReviewsDashboard({ source, analytics, basePath, query }: { sourc
                         </span>
                       </summary>
                       <div className="flex flex-col gap-3 pb-4">
+                        {(() => {
+                          const services = themeServices(theme, business.activeServices);
+                          return services.length ? <ThemeServiceCards items={services} theme={themeLabels[theme.id]} /> : null;
+                        })()}
                         {theme.examples.length ? (
                           <ul className="flex flex-col gap-2">
                             {theme.examples.map((example) => (

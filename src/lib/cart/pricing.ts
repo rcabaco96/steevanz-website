@@ -1,6 +1,7 @@
-import { getProduct, isProductId, type PriceBilling } from "@/content/products";
-import type { ProductId } from "@/content/types";
-import type { Locale } from "@/lib/i18n";
+// Relative imports with extensions keep this module runnable by `node --test` (tests/cart-pricing.test.mjs).
+import { getProduct, isProductId, type PriceBilling, type Product } from "../../content/products.ts";
+import type { ProductId } from "../../content/types.ts";
+import type { Locale } from "../i18n.ts";
 
 export const vatRate = 23;
 export const maxQuantity = 99;
@@ -26,6 +27,8 @@ export const cartGroups: CartGroupId[] = ["oneTime", "monthly"];
 export interface PricedLine extends CartLine {
   billing: PriceBilling;
   unitCents: number;
+  // Charged once for the whole line (logo set up once for a pack), on top of unitCents × quantity.
+  lineExtraCents: number;
   subtotalCents: number;
 }
 
@@ -84,10 +87,21 @@ export function sanitizeLines(input: unknown): CartLine[] {
   return lines;
 }
 
-export function unitCentsFor(line: Pick<CartLine, "productId" | "options">): number {
+export function unitPriceFor(product: Pick<Product, "priceFrom" | "packs">, quantity: number): number {
+  const pack = product.packs?.filter((candidate) => quantity >= candidate.quantity).at(-1);
+  return pack ? pack.unitPrice : product.priceFrom;
+}
+
+export function unitCentsFor(line: Pick<CartLine, "productId" | "options" | "quantity">): number {
   const product = getProduct(line.productId);
-  const extra = line.options?.logo && product.customization ? product.customization.logoExtra : 0;
-  return (product.priceFrom + extra) * 100;
+  const customization = product.customization;
+  const extra = line.options?.logo && customization?.logoExtraPer === "unit" ? customization.logoExtra : 0;
+  return (unitPriceFor(product, line.quantity) + extra) * 100;
+}
+
+export function lineExtraCentsFor(line: Pick<CartLine, "productId" | "options">): number {
+  const customization = getProduct(line.productId).customization;
+  return line.options?.logo && customization?.logoExtraPer === "line" ? customization.logoExtra * 100 : 0;
 }
 
 function totalsFor(lines: PricedLine[]): GroupTotals {
@@ -105,7 +119,14 @@ function totalsFor(lines: PricedLine[]): GroupTotals {
 export function priceCart(lines: CartLine[]): Record<CartGroupId, GroupTotals> {
   const priced: PricedLine[] = lines.map((line) => {
     const unitCents = unitCentsFor(line);
-    return { ...line, billing: getProduct(line.productId).priceBilling, unitCents, subtotalCents: unitCents * line.quantity };
+    const lineExtraCents = lineExtraCentsFor(line);
+    return {
+      ...line,
+      billing: getProduct(line.productId).priceBilling,
+      unitCents,
+      lineExtraCents,
+      subtotalCents: unitCents * line.quantity + lineExtraCents,
+    };
   });
   return {
     oneTime: totalsFor(priced.filter((line) => groupForBilling(line.billing) === "oneTime")),

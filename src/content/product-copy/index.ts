@@ -7,12 +7,14 @@ import { copy as automation } from "./automation";
 import { copy as bookings } from "./bookings";
 import { copy as loyalty } from "./loyalty";
 import { copy as nfcGoogleReviews } from "./nfc-google-reviews";
+import { copy as nfcMenu } from "./nfc-menu";
 import { copy as nfcSocial } from "./nfc-social";
 import { copy as waitlist } from "./waitlist";
 
 export const productCopy: Record<ProductId, ProductCopyByLocale> = {
   "nfc-google-reviews": nfcGoogleReviews,
   "nfc-social": nfcSocial,
+  "nfc-menu": nfcMenu,
   loyalty,
   bookings,
   waitlist,

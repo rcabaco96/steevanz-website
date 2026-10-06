@@ -17,7 +17,7 @@ import { ProductCard } from "@/components/marketing/ProductCard";
 import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
-import { Price } from "@/components/ui/Price";
+import { Price, formatEuro } from "@/components/ui/Price";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { ProductVisual } from "@/components/visuals/ProductVisual";
 import type { Locale } from "@/lib/i18n";
@@ -148,18 +148,6 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </ol>
       </Section>
 
-      <Section tone="soft" labelledBy="features-title">
-        <SectionHeader id="features-title" eyebrow={labels.featuresEyebrow} title={labels.featuresTitle} />
-        <div className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {copy.features.map((feature, index) => (
-            <div key={feature.title} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 3) * 80}ms` }} className="flex flex-col gap-2 border-t border-line-strong pt-5">
-              <h3 className="text-lg font-semibold text-text">{feature.title}</h3>
-              <p className="text-[0.95rem] leading-relaxed text-muted">{feature.body}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       {product.contextPhoto ? (
         <div className="container-page">
           <Photo
@@ -172,7 +160,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       ) : null}
 
-      <Section labelledBy="usecases-title">
+      <Section tone="soft" labelledBy="usecases-title">
         <SectionHeader id="usecases-title" eyebrow={labels.useCasesEyebrow} title={labels.useCasesTitle} />
         <div className="mt-12 grid gap-5 md:grid-cols-2">
           {copy.useCases.map((useCase, index) => (
@@ -187,7 +175,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       </Section>
 
-      <Section tone="soft" labelledBy="pricing-title">
+      <Section labelledBy="pricing-title">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
           <div data-reveal className="card p-7 sm:p-10">
             <h2 className="display text-3xl">{labels.includesTitle}</h2>
@@ -207,6 +195,23 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               {labels.priceTitle}
             </h2>
             <Price product={product} locale={locale} size="lg" showQualifier />
+            {product.packs?.length ? (
+              <div className="flex flex-col gap-3">
+                <h3 className="text-sm font-semibold text-text">{labels.packsTitle}</h3>
+                <ul className="grid grid-cols-3 gap-2">
+                  {product.packs.map((pack) => (
+                    <li key={pack.quantity} className="flex flex-col items-center gap-0.5 rounded-xl border border-line bg-surface-2/50 px-2 py-3 text-center">
+                      <span className="text-sm font-semibold text-text">{labels.packsCount.replace("{count}", String(pack.quantity))}</span>
+                      <span className="display tabular text-2xl">{formatEuro(pack.quantity * pack.unitPrice, locale)}</span>
+                      <span className="tabular text-xs text-subtle">{labels.packsUnit.replace("{price}", formatEuro(pack.unitPrice, locale))}</span>
+                    </li>
+                  ))}
+                </ul>
+                {product.customization?.logoExtraPer === "line" ? (
+                  <p className="text-sm text-muted">{labels.packsLogoOnce.replace("{price}", formatEuro(product.customization.logoExtra, locale))}</p>
+                ) : null}
+              </div>
+            ) : null}
             <p className="text-sm text-muted">{labels.priceNote}</p>
             <ButtonLink href={bookHref} size="lg" className="w-full">
               {t.common.bookDemo}
@@ -222,7 +227,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       </Section>
 
-      <Section labelledBy="faq-title">
+      <Section tone="soft" labelledBy="faq-title">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="flex flex-col gap-6">
             <SectionHeader id="faq-title" eyebrow="FAQ" title={t.common.faqTitle} />
@@ -244,7 +249,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       </Section>
 
-      <Section tone="soft" labelledBy="related-title">
+      <Section labelledBy="related-title">
         <SectionHeader id="related-title" title={t.common.relatedProducts} />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {product.related.map((relatedId, index) => (

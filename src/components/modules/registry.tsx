@@ -22,6 +22,7 @@ export const productModules: Record<ProductId, ComponentType<ModuleProps>> = {
   "ai-voice": ModulePlaceholder,
   "ai-reviews": ModulePlaceholder,
   automation: ModulePlaceholder,
+  "nfc-menu": ModulePlaceholder,
 };
 
 export function ProductModule(props: ModuleProps) {

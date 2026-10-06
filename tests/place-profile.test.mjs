@@ -1,0 +1,34 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { parsePlaceProfile, profileScore } from "../src/lib/reviews/maps-reader.ts";
+
+/** A place payload as Maps sends it, with only the positions the parser reads. */
+function payload(fields) {
+  const place = new Array(260).fill(null);
+  place[11] = "Exemplo";
+  for (const [index, value] of Object.entries(fields)) place[Number(index)] = value;
+  return `)]}'\n${JSON.stringify([null, null, null, null, null, null, place])}`;
+}
+
+describe("parsePlaceProfile", () => {
+  it("reads the photos and the filled profile fields", () => {
+    const read = parsePlaceProfile(
+      payload({ 37: [null, 1308], 57: [null, "Exemplo (Proprietário)"], 7: ["https://example.pt", "example.pt"], 178: [["289 000 000"]], 203: [[["segunda-feira"]]], 154: [["Texto do dono"]] }),
+    );
+    assert.equal(read.photos, 1308);
+    assert.deepEqual(read.profile, { claimed: true, website: true, phone: true, hours: true, description: true });
+    assert.equal(profileScore(read.profile), 1);
+  });
+
+  it("marks missing fields and an unknown photo count", () => {
+    const read = parsePlaceProfile(payload({ 178: [["289 000 000"]] }));
+    assert.equal(read.photos, null);
+    assert.deepEqual(read.profile, { claimed: false, website: false, phone: true, hours: false, description: false });
+    assert.equal(profileScore(read.profile), 0.2);
+  });
+
+  it("ignores answers that are not a place", () => {
+    assert.equal(parsePlaceProfile("not json"), null);
+    assert.equal(parsePlaceProfile(`)]}'\n[1,2,3]`), null);
+  });
+});

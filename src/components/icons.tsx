@@ -235,6 +235,13 @@ const productIconPaths: Record<ProductIcon, ReactNode> = {
       <path d="m8.2 10.8 6.6-3.6M8.2 13.2l6.6 3.6" />
     </>
   ),
+  "menu-tap": (
+    <>
+      <circle cx="9" cy="12" r="6.5" />
+      <path d="m7.6 9.4 4.1 2.6-4.1 2.6V9.4Z" />
+      <path d="M17.5 9a4 4 0 0 1 0 6M20 7a7 7 0 0 1 0 10" />
+    </>
+  ),
   stamp: (
     <>
       <rect x="3" y="5" width="18" height="14" rx="3" />

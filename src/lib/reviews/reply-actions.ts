@@ -80,8 +80,9 @@ export async function saveReplySettingsAction(slug: string, input: ReplySettings
     await saveReplySettings(client, business.id, settings, previous);
     // Settings first: learning strips the signature and the contact the owner just typed.
     for (const item of training.filter((entry) => entry.answer)) await learnTrainingAnswer(client, business.id, item.reviewId, item.answer);
-    // Replies are built by rules (instant, free): pending ones dropped by a change come back now.
-    if (previous.onboardedAt) await draftMissingReplies(client, business);
+    // Replies are built by rules (instant, free): right after the first setup, and pending ones
+    // dropped by a change come back now.
+    await draftMissingReplies(client, business);
     return { ok: true as const };
   });
 }
@@ -120,6 +121,7 @@ export async function approveDraftAction(slug: string, draftId: string, editedRe
   return withBusiness(slug, async (client, business) => {
     const result = await approveDraft(client, business.id, draftId, edited);
     if (!result.ok) return { ok: false as const, message: "Esta resposta já foi tratada." };
+    if (result.foreign) return { ok: true as const, message: "Aprovada. Como não está em português, as suas alterações não entram nas suas frases." };
     return {
       ok: true as const,
       message: result.learned ? `Aprovada. Aprendi ${result.learned} ${result.learned === 1 ? "frase nova sua" : "frases novas suas"}.` : undefined,

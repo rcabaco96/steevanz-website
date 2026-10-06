@@ -3,6 +3,7 @@ import type { Locale, Localized } from "@/lib/i18n";
 export type ProductId =
   | "nfc-google-reviews"
   | "nfc-social"
+  | "nfc-menu"
   | "loyalty"
   | "bookings"
   | "waitlist"

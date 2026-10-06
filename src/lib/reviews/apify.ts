@@ -72,9 +72,8 @@ async function runActor<T>(actor: string, input: Record<string, unknown>): Promi
   return items as T[];
 }
 
-/** Reviews of one place. Personal data (reviewer names and photos) is never requested. */
-export function fetchGoogleReviews(googleMapsUrl: string, since: Date | null): Promise<ApifyReviewItem[]> {
-  return runActor<ApifyReviewItem>(reviewsActor, {
+function reviewsInput(googleMapsUrl: string, since: Date | null): Record<string, unknown> {
+  return {
     startUrls: [{ url: googleMapsUrl }],
     reviewsSort: "newest",
     reviewsOrigin: "google",
@@ -82,7 +81,64 @@ export function fetchGoogleReviews(googleMapsUrl: string, since: Date | null): P
     personalData: false,
     maxReviews: fullImportMaxReviews,
     ...(since ? { reviewsStartDate: since.toISOString().slice(0, 10) } : {}),
+  };
+}
+
+/** Reviews of one place. Personal data (reviewer names and photos) is never requested. */
+export function fetchGoogleReviews(googleMapsUrl: string, since: Date | null): Promise<ApifyReviewItem[]> {
+  return runActor<ApifyReviewItem>(reviewsActor, reviewsInput(googleMapsUrl, since));
+}
+
+// --- Asynchronous runs (full import from the panel) ----------------------------------------------
+// A full history can take longer than a request may wait, so the panel starts a run (the paid part)
+// and later reads its status, item count and items (no new run).
+
+async function apifyApi<T>(path: string, init: { method?: "GET" | "POST"; body?: unknown } = {}): Promise<T> {
+  const token = apifyToken();
+  if (!token) throw new ApifyError("APIFY_TOKEN is not configured");
+  const response = await fetch(`https://api.apify.com/v2/${path}`, {
+    method: init.method ?? "GET",
+    headers: { Authorization: `Bearer ${token}`, ...(init.body === undefined ? {} : { "Content-Type": "application/json" }) },
+    body: init.body === undefined ? undefined : JSON.stringify(init.body),
+    cache: "no-store",
+    signal: AbortSignal.timeout(60_000),
   });
+  if (!response.ok) throw new ApifyError(`Apify responded ${response.status}: ${(await response.text()).slice(0, 300)}`);
+  return (await response.json()) as T;
+}
+
+export type ApifyRunStatus = "READY" | "RUNNING" | "SUCCEEDED" | "FAILED" | "TIMING-OUT" | "TIMED-OUT" | "ABORTING" | "ABORTED";
+
+export interface ApifyRun {
+  id: string;
+  status: ApifyRunStatus;
+  defaultDatasetId: string;
+}
+
+/** Starts the reviews actor for one place (this is what Apify charges for). */
+export async function startGoogleReviewsRun(googleMapsUrl: string, since: Date | null): Promise<ApifyRun> {
+  const { data } = await apifyApi<{ data: ApifyRun }>(`acts/${reviewsActor}/runs`, { method: "POST", body: reviewsInput(googleMapsUrl, since) });
+  return data;
+}
+
+export async function getApifyRun(runId: string): Promise<ApifyRun> {
+  return (await apifyApi<{ data: ApifyRun }>(`actor-runs/${encodeURIComponent(runId)}`)).data;
+}
+
+/** How many items the run has written so far (progress while it runs). */
+export async function apifyDatasetCount(datasetId: string): Promise<number> {
+  const { data } = await apifyApi<{ data: { itemCount?: number | null } }>(`datasets/${encodeURIComponent(datasetId)}`);
+  return data.itemCount ?? 0;
+}
+
+/** Every item of a finished run, 1000 at a time. */
+export async function apifyDatasetItems<T>(datasetId: string): Promise<T[]> {
+  const items: T[] = [];
+  for (let offset = 0; ; offset += 1000) {
+    const page = await apifyApi<T[]>(`datasets/${encodeURIComponent(datasetId)}/items?clean=true&format=json&offset=${offset}&limit=1000`);
+    items.push(...page);
+    if (page.length < 1000) return items;
+  }
 }
 
 /** Publication dates of the newest reviews of several places, to estimate their pace. */

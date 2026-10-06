@@ -1,5 +1,5 @@
-import { isNegative, type DashboardAnalytics } from "./analytics.ts";
-import { normalize } from "./text.ts";
+import { isNegative, type DashboardAnalytics, type ThemeStats } from "./analytics.ts";
+import { normalize, type ThemeId } from "./text.ts";
 import type { DashboardSource, GoogleReview } from "./types.ts";
 
 /** Product ids from the Steevanz catalogue that the dashboard can recommend. */
@@ -42,6 +42,60 @@ export function aiReviewsPitch(source: DashboardSource, analytics: DashboardAnal
     unanswered.length >= 3 || negativeUnanswered > 0 || (replyRate.current !== null && replyRate.current < 0.9) || (medianReplyHours ?? 0) > 48;
   if (!lagging || !periodReviews.length) return null;
   return { unanswered: unanswered.length, negativeUnanswered, replyRate: replyRate.current, medianReplyHours };
+}
+
+// --- Services inside "Temas mais falados" -----------------------------------------------------------
+
+export type ThemeServiceProduct = "waitlist" | "bookings" | "ai-reviews" | "ai-chatbot" | "loyalty";
+
+export interface ThemeService {
+  productId: ThemeServiceProduct;
+  /** How this service tackles the complaint of this theme (one sentence). */
+  body: string;
+}
+
+/** At most this many services per theme. */
+export const themeServicesLimit = 2;
+
+const replyBody = {
+  service: "Responder a cada queixa sobre o atendimento, com calma e no seu tom, mostra a quem lê que o problema foi ouvido e traz o cliente de volta.",
+  quality: "Uma resposta cuidada a cada queixa sobre a qualidade mostra que leva o assunto a sério, antes que outros clientes tirem conclusões.",
+  price: "Explicar o que está incluído e agradecer a crítica sobre o preço evita que a review fique sem resposta à vista de todos.",
+  cleanliness: "Responder às queixas de limpeza depressa, a dizer o que mudou, tranquiliza quem está a decidir se vem.",
+  ambience: "Responder a quem não gostou do ambiente (ruído, temperatura, espaço) mostra que ouve e que está a melhorar.",
+  location: "Responder a quem se perdeu ou não encontrou estacionamento, com as indicações certas, ajuda os próximos clientes.",
+} as const;
+
+/**
+ * Services shown inside a theme of "Temas mais falados" once it is opened, only when the theme shows a
+ * problem (same rule as the waitlist suggestion: at least 3 mentions and "A melhorar" or 25%+ negative),
+ * at most 2, the best fit first, never one the customer already has.
+ */
+export function themeServices(theme: Pick<ThemeStats, "id" | "mentions" | "verdict" | "negativeShare">, owned: readonly string[] = []): ThemeService[] {
+  if (theme.mentions < 3 || (theme.verdict !== "improve" && theme.negativeShare < 0.25)) return [];
+  const reply = (id: Exclude<ThemeId, "waiting">): ThemeService => ({ productId: "ai-reviews", body: replyBody[id] });
+  const byTheme: Record<ThemeId, ThemeService[]> = {
+    waiting: [
+      { productId: "waitlist", body: "Os clientes entram na fila por QR code ou NFC, veem o tempo estimado e são avisados por SMS ou WhatsApp. Esperam onde quiserem, sem fila à porta." },
+      { productId: "bookings", body: "Com reservas online a qualquer hora e lembretes automáticos, sabe quem vem e quando, e há menos gente à espera de mesa." },
+    ],
+    service: [
+      reply("service"),
+      { productId: "ai-chatbot", body: "O chatbot responde logo, 24 horas, às perguntas do site e do WhatsApp, e a equipa fica livre para quem está no balcão." },
+    ],
+    price: [
+      { productId: "loyalty", body: "O cartão de fidelização dá a quem volta uma recompensa automática, e o preço passa a valer mais para os clientes habituais." },
+      reply("price"),
+    ],
+    quality: [reply("quality")],
+    cleanliness: [reply("cleanliness")],
+    ambience: [reply("ambience")],
+    location: [
+      { productId: "ai-chatbot", body: "O chatbot explica como chegar, onde estacionar e o horário, a qualquer hora, no site e no WhatsApp." },
+      reply("location"),
+    ],
+  };
+  return byTheme[theme.id].filter((service) => !owned.includes(service.productId)).slice(0, themeServicesLimit);
 }
 
 /** Complementary products, each backed by something the reviews or competitors actually show. */

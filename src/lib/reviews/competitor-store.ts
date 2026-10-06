@@ -1,5 +1,6 @@
+import type { PlaceProfile } from "./maps-reader";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { fetchPlaceByUrl, fetchPlacesByIds, fetchRecentReviewDates, searchPlacesNear, type ApifyPlaceItem, type StarDistribution } from "./apify";
+import { fetchPlaceByUrl, searchPlacesNear, type ApifyPlaceItem, type StarDistribution } from "./apify";
 import {
   competitorLimit,
   competitorRadiusKm,
@@ -8,20 +9,21 @@ import {
   googleMapsPlaceUrl,
   paceFromDates,
   paceFromSnapshots,
-  paceSampleSize,
   replyRateFrom,
   selectCompetitors,
   shownReplyRate,
   type Competition,
   type CompetitorEntry,
+  competitionTrend,
+  entryMonthAgo,
+  trendDays,
 } from "./competitors";
 import type { GoogleReview } from "./types";
+import { dataForSeoConfigured } from "../dataforseo/client";
+import { fetchOwnPlace, searchZone } from "../dataforseo/discover";
+import { cidFromFid } from "../dataforseo/rules";
 
 const searchResultsPerTerm = 60;
-/** Places per detailed-snapshot call, so each Apify run stays well inside the time limit. */
-const detailBatchSize = 25;
-/** Places whose pace is measured per call: each reads ~60 reviews, so batches keep calls short. */
-const paceBatchSize = 10;
 const rediscoverAfterDays = 90;
 
 export interface CompetitorRow {
@@ -44,6 +46,8 @@ interface SnapshotRow {
   rating: number | null;
   average: number | null;
   reviews_count: number;
+  photos_count: number | null;
+  profile: PlaceProfile | null;
 }
 
 function snapshotFrom(place: ApifyPlaceItem) {
@@ -66,20 +70,42 @@ async function saveSnapshots(client: SupabaseClient, rows: { competitor_id: stri
   if (error) throw new Error(error.message);
 }
 
+/** "…!1s0xd1acdcaf56a5a53:0xd09a04caf1c7ec58!…" in a Google Maps link → the feature id. */
+function fidFromMapsUrl(url: string): string | null {
+  return decodeURIComponent(url).match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i)?.[1] ?? null;
+}
+
+/** Where the places come from: DataForSEO when configured (~1 cent per customer), else Apify (paid). */
+async function placeSource(client: SupabaseClient, business: { id: string; google_maps_url: string }) {
+  if (!dataForSeoConfigured()) {
+    return {
+      self: () => fetchPlaceByUrl(business.google_maps_url),
+      near: (term: string, lat: number, lng: number) => searchPlacesNear([term], lat, lng, competitorRadiusKm, searchResultsPerTerm),
+    };
+  }
+  const { data } = await client.from("review_businesses").select("place_id, google_fid").eq("id", business.id).maybeSingle<{ place_id: string | null; google_fid: string | null }>();
+  const fid = data?.google_fid ?? fidFromMapsUrl(business.google_maps_url);
+  return {
+    self: () => fetchOwnPlace({ placeId: data?.place_id ?? null, cid: cidFromFid(fid) }),
+    near: (term: string, lat: number, lng: number) => searchZone(term, lat, lng),
+  };
+}
+
 /**
  * Finds the customer's own place on Google, then the most visible places of the same category
  * within the radius. Places an admin excluded stay excluded across rediscoveries.
  */
 export async function discoverCompetitors(client: SupabaseClient, business: { id: string; google_maps_url: string }): Promise<number> {
-  const self = await fetchPlaceByUrl(business.google_maps_url);
+  const source = await placeSource(client, business);
+  const self = await source.self();
   if (!self?.placeId || !self.location || !self.categoryName) throw new Error("Não foi possível encontrar o negócio no Google Maps.");
   const origin = { placeId: self.placeId, category: self.categoryName, lat: self.location.lat, lng: self.location.lng };
 
-  let places = await searchPlacesNear([origin.category], origin.lat, origin.lng, competitorRadiusKm, searchResultsPerTerm);
+  let places = await source.near(origin.category, origin.lat, origin.lng);
   let chosen = selectCompetitors(origin, places);
   const broader = origin.category.split(" ")[0];
   if (chosen.length < competitorLimit && broader && broader !== origin.category) {
-    places = [...places, ...(await searchPlacesNear([broader], origin.lat, origin.lng, competitorRadiusKm, searchResultsPerTerm))];
+    places = [...places, ...(await source.near(broader, origin.lat, origin.lng))];
     chosen = selectCompetitors(origin, places);
   }
 
@@ -125,98 +151,36 @@ export async function discoverCompetitors(client: SupabaseClient, business: { id
   );
 
   const now = new Date().toISOString();
-  // The listing has no star distribution: leave the snapshot date empty so details are fetched next.
-  const { error: doneError } = await client.from("review_businesses").update({ competitors_refreshed_at: now, competitors_snapshot_at: null }).eq("id", business.id);
+  // DataForSEO's search brings each place's star distribution (the snapshots above are complete);
+  // Apify's listing has none: the per-place reads fill it next (reader-queue.ts).
+  const { error: doneError } = await client.from("review_businesses").update({ competitors_refreshed_at: now, competitors_snapshot_at: dataForSeoConfigured() ? now : null }).eq("id", business.id);
   if (doneError) throw new Error(doneError.message);
   return chosen.length;
 }
 
 /**
- * One-off per competitor, in batches: newest reviews' dates, so its pace is known before weekly
- * history exists. The same reviews give its reply rate at no extra cost; only the aggregate
- * (share, reviews counted, oldest day counted) is stored, never review or reply texts.
+ * The daily cron only searches competitors (Apify, paid) for customers that never had them
+ * searched. A new search every 90 days is manual, from the admin. Ratings, star
+ * distributions, new reviews and reply rates are read by the free local reader (reader-queue.ts),
+ * once per Google place for every customer that compares with it.
  */
-export async function measureCompetitorPace(client: SupabaseClient, businessId: string): Promise<number> {
-  const { data, error } = await client
-    .from("competitors")
-    .select("id, place_id")
-    .eq("business_id", businessId)
-    .eq("is_self", false)
-    .is("pace_measured_at", null)
-    .limit(paceBatchSize);
-  if (error) throw new Error(error.message);
-  if (!data?.length) return 0;
-  const items = await fetchRecentReviewDates(
-    data.map((row) => row.place_id as string),
-    paceSampleSize,
-  );
-  const now = new Date();
-  for (const row of data) {
-    const reviews = items.filter((item) => item.placeId === row.place_id && item.publishedAtDate);
-    const replies = replyRateFrom(
-      reviews.map((item) => ({ publishedAt: item.publishedAtDate!, replied: Boolean(item.responseFromOwnerText?.trim() || item.responseFromOwnerDate) })),
-      now,
-    );
-    const { error: updateError } = await client
-      .from("competitors")
-      .update({
-        pace_per_month: Math.round(paceFromDates(reviews.map((item) => item.publishedAtDate!), now) * 100) / 100,
-        pace_measured_at: now.toISOString(),
-        reply_rate: replies.rate === null ? null : Math.round(replies.rate * 1000) / 1000,
-        reply_sample: replies.sample,
-        reply_since: replies.since,
-      })
-      .eq("id", row.id);
-    if (updateError) throw new Error(updateError.message);
-  }
-  return data.length;
+export function needsDiscovery(business: { competitors_refreshed_at: string | null }): boolean {
+  return !business.competitors_refreshed_at;
 }
 
-/**
- * Weekly, in batches: rating, review count and star distribution of compared places whose last
- * detailed snapshot is over 6 days old. Returns how many were captured; 0 means all are current.
- */
-export async function snapshotCompetitors(client: SupabaseClient, businessId: string): Promise<number> {
-  const staleBefore = new Date(Date.now() - 6 * 86_400_000).toISOString().slice(0, 10);
-  const { data, error } = await client
-    .from("competitors")
-    .select("id, place_id")
-    .eq("business_id", businessId)
-    .eq("excluded", false)
-    .or(`detailed_on.is.null,detailed_on.lt.${staleBefore}`)
-    .order("detailed_on", { ascending: true, nullsFirst: true })
-    .limit(detailBatchSize);
-  if (error) throw new Error(error.message);
-  if (!data?.length) {
-    const { error: dateError } = await client.from("review_businesses").update({ competitors_snapshot_at: new Date().toISOString() }).eq("id", businessId);
-    if (dateError) throw new Error(dateError.message);
-    return 0;
-  }
-  const places = await fetchPlacesByIds(data.map((row) => row.place_id as string));
-  const byPlace = new Map(places.filter((place) => place.placeId).map((place) => [place.placeId!, place]));
-  await saveSnapshots(
-    client,
-    data.flatMap((row) => (byPlace.has(row.place_id) ? [{ competitor_id: row.id as string, place: byPlace.get(row.place_id)! }] : [])),
-  );
-  // Marked even when Google returned nothing for a place, so one closed place cannot block the queue.
-  const { error: markError } = await client
-    .from("competitors")
-    .update({ detailed_on: new Date().toISOString().slice(0, 10) })
-    .in(
-      "id",
-      data.map((row) => row.id),
-    );
-  if (markError) throw new Error(markError.message);
-  return data.length;
-}
-
-export function needsDiscovery(business: { place_id: string | null; competitors_refreshed_at: string | null }, now = new Date()): boolean {
-  if (!business.place_id || !business.competitors_refreshed_at) return true;
-  return now.getTime() - Date.parse(business.competitors_refreshed_at) > rediscoverAfterDays * 86_400_000;
+/** When a new competitor search is suggested in the admin (manual). */
+export function rediscoveryDue(business: { competitors_refreshed_at?: string | null }, now = new Date()): boolean {
+  return !business.competitors_refreshed_at || now.getTime() - Date.parse(business.competitors_refreshed_at) > rediscoverAfterDays * 86_400_000;
 }
 
 /** Everything the dashboard needs, from stored rows only: never calls Apify. */
-export async function loadCompetition(client: SupabaseClient, businessId: string, ownReviews: GoogleReview[], now = new Date()): Promise<Competition | null> {
+export async function loadCompetition(
+  client: SupabaseClient,
+  businessId: string,
+  ownReviews: GoogleReview[],
+  now = new Date(),
+  own: { name: string; placeId: string | null; rating: number | null; reviewsTotal: number | null } | null = null,
+): Promise<Competition | null> {
   const { data: competitors, error } = await client
     .from("competitors")
     .select("id, place_id, name, category, distance_m, is_self, excluded, pace_per_month, pace_measured_at, reply_rate, reply_sample")
@@ -224,6 +188,8 @@ export async function loadCompetition(client: SupabaseClient, businessId: string
     .eq("excluded", false);
   if (error) throw new Error(error.message);
   if (!competitors?.length) return null;
+  // Nothing to compare before the competitor search (the customer's own row alone is no competition).
+  if (!competitors.some((row) => !row.is_self)) return null;
 
   const since = new Date(now.getTime() - 100 * 86_400_000).toISOString().slice(0, 10);
   // Up to 100 places with ~14 weekly snapshots each exceeds one 1000-row page, so read in pages.
@@ -231,7 +197,7 @@ export async function loadCompetition(client: SupabaseClient, businessId: string
   for (let from = 0; ; from += 1000) {
     const { data: page, error: snapshotError } = await client
       .from("competitor_snapshots")
-      .select("competitor_id, taken_on, rating, average, reviews_count")
+      .select("competitor_id, taken_on, rating, average, reviews_count, photos_count, profile")
       .in(
         "competitor_id",
         competitors.map((row) => row.id),
@@ -278,13 +244,47 @@ export async function loadCompetition(client: SupabaseClient, businessId: string
         pacePerMonth: row.is_self ? (ownReviews.length ? ownPace : null) : (measured ?? (row.pace_per_month === null ? null : Number(row.pace_per_month))),
         replyRate: shownReplyRate(replyRate, replySample),
         replySample,
+        // From the newest read that had them (a page without them keeps the last known values).
+        photos: own.filter((snapshot) => snapshot.photos_count !== null).at(-1)?.photos_count ?? null,
+        profile: own.filter((snapshot) => snapshot.profile !== null).at(-1)?.profile ?? null,
       },
     ];
   });
-  return computeCompetition(entries, history.length ? history[history.length - 1].taken_on : null);
-}
-
-/** Competitor numbers are refreshed weekly; the daily job spreads businesses across the week. */
-export function needsSnapshot(business: { competitors_snapshot_at: string | null }, now = new Date()): boolean {
-  return !business.competitors_snapshot_at || now.getTime() - Date.parse(business.competitors_snapshot_at) > 6 * 86_400_000;
+  // The customer's own row from its import (rating and total Google shows) until its first snapshot.
+  if (own && own.rating !== null && !entries.some((entry) => entry.isSelf)) {
+    const selfRow = rows.find((row) => row.is_self);
+    entries.push({
+      id: selfRow?.id ?? `self:${businessId}`,
+      name: own.name,
+      isSelf: true,
+      mapsUrl: googleMapsPlaceUrl(selfRow?.place_id ?? own.placeId ?? ""),
+      distanceM: 0,
+      rating: own.rating,
+      average: null,
+      reviewsCount: own.reviewsTotal ?? 0,
+      pacePerMonth: ownReviews.length ? ownPace : null,
+      replyRate: shownReplyRate(ownReplies?.rate ?? null, ownReplies?.sample ?? null),
+      replySample: ownReplies?.sample ?? null,
+    });
+  }
+  const competition = computeCompetition(entries, history.length ? history[history.length - 1].taken_on : null);
+  // Arrows in "Na sua zona": each place a month ago against today. A snapshot that old when there
+  // is one (exact); otherwise from the reviews (entryMonthAgo).
+  if (competition) {
+    const sinceMs = now.getTime() - trendDays * 86_400_000;
+    const trendSince = new Date(sinceMs).toISOString().slice(0, 10);
+    const recentRatings = ownReviews.filter((review) => Date.parse(review.publishedAt) > sinceMs).map((review) => review.rating);
+    const then = entries.map((entry) => {
+      const old = history.filter((snapshot) => snapshot.competitor_id === entry.id && snapshot.taken_on <= trendSince).at(-1);
+      if (!old) return entryMonthAgo(entry, entry.isSelf ? recentRatings : null);
+      return {
+        ...entry,
+        rating: old.rating === null ? null : Number(old.rating),
+        average: old.average === null ? null : Number(old.average),
+        reviewsCount: old.reviews_count,
+      };
+    });
+    competition.trend = competitionTrend(entries, then, trendSince);
+  }
+  return competition;
 }

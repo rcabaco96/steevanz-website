@@ -44,7 +44,9 @@ function customizationLines({ productId, options }: CartLine): string[] {
   const text = options.text.trim();
   return [
     `Formato: ${format}`,
-    options.logo ? `Logótipo: sim (+${formatCents(customization.logoExtra * 100, "pt")}/un.)` : "Logótipo: não",
+    options.logo
+      ? `Logótipo: sim (+${formatCents(customization.logoExtra * 100, "pt")}${customization.logoExtraPer === "line" ? " uma vez, incluído no subtotal" : "/un."})`
+      : "Logótipo: não",
     `Texto: ${text ? `"${text}"` : "sem texto"}`,
   ];
 }
