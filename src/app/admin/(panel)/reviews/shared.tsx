@@ -145,7 +145,7 @@ function ClientAccess({ business, owner, ownerProducts }: { business: BusinessRo
               ? `Convite enviado a ${owner?.email ?? "o dono"} em ${business.invite_sent_at ? formatDateTime(business.invite_sent_at) : "–"}. O link vale 24 horas; reenvie se expirar.`
               : `${owner?.email ?? "O dono"} já entrou no painel (último acesso: ${owner?.lastSignInAt ? formatDateTime(owner.lastSignInAt) : "–"}).`}
       </p>
-      <ActionForm action={saveBusinessAccess} className="grid gap-3 sm:grid-cols-2">
+      <ActionForm key={`${business.contact_name ?? ""}:${business.contact_phone ?? ""}:${business.owner_id ?? ""}`} action={saveBusinessAccess} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input type="hidden" name="id" value={business.id} />
         <label className={adminLabelClasses}>
           Nome do dono
@@ -246,7 +246,7 @@ function BusinessFields({ business }: { business: BusinessRow }) {
           <span className="-mt-1 mb-1 text-xs text-subtle">
             O painel não sugere ao cliente o que ele já contratou. Quando o negócio tiver conta de cliente, passam a vir dos produtos dessa conta.
           </span>
-          <div className="grid gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {products.map((product) => (
               <label key={product.id} className="flex min-h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm text-text has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50">
                 <input type="checkbox" name="active_services" value={product.id} defaultChecked={business.active_services?.includes(product.id)} className="h-4.5 w-4.5 accent-accent" />
@@ -389,7 +389,7 @@ export function BusinessDetail({
 
       <details className="group">
         <summary className="cursor-pointer text-sm font-semibold text-muted hover:text-text">Editar dados do negócio</summary>
-        <ActionForm action={saveReviewBusiness} className="mt-4 grid gap-4 sm:grid-cols-2">
+        <ActionForm key={JSON.stringify([business.name, business.slug, business.google_maps_url, business.review_url, business.plates_installed_on, business.alert_email, business.active_services])} action={saveReviewBusiness} className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <BusinessFields business={business} />
           <div className="flex items-end">
             <SubmitButton>Guardar</SubmitButton>

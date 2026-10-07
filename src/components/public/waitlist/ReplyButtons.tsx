@@ -39,7 +39,7 @@ export function ReplyButtons({ token, called, current }: { token: string; called
           <Option value="late" label={current === "late" ? "✓ Vou atrasar-me" : "Vou atrasar-me uns minutos"} />
         </>
       ) : null}
-      <Option value="leaving" label="Já não venho — sair da fila" danger />
+      <Option value="leaving" label="Já não venho, sair da fila" danger />
       {state ? (
         <p role={state.ok ? "status" : "alert"} className={`text-center text-sm ${state.ok ? "text-success" : "text-danger"}`}>
           {state.message}

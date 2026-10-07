@@ -16,11 +16,6 @@ import {
 } from "@/lib/modules/waitlist/store";
 import { AutoRefresh } from "../shared/AutoRefresh";
 
-const stateTone = {
-  open: "bg-success-soft text-success",
-  paused: "bg-gold-soft text-gold-text",
-  closed: "bg-surface-2 text-muted",
-} as const;
 
 function minutesSince(iso: string, now: number): number {
   return Math.max(0, Math.round((now - Date.parse(iso)) / 60_000));
@@ -69,23 +64,95 @@ function EntryForm({
   );
 }
 
-function StateControls({ settings, establishmentId }: { settings: WaitlistSettingsRow; establishmentId: string }) {
-  const options = [
-    { state: "open", label: "Abrir fila" },
-    { state: "paused", label: "Pausar entradas" },
-    { state: "closed", label: "Fechar fila" },
-  ].filter((option) => option.state !== settings.state);
+const stateCopy = {
+  open: {
+    title: "A fila está aberta",
+    text: "Os clientes entram pelo QR code ou pelo link.",
+    tone: "border-success/40 bg-success-soft/50",
+    dot: "bg-success",
+  },
+  paused: {
+    title: "Entradas em pausa",
+    text: "Ninguém novo entra. Quem já está na fila continua a ser chamado.",
+    tone: "border-gold/40 bg-gold-soft/50",
+    dot: "bg-gold",
+  },
+  closed: {
+    title: "A fila está fechada",
+    text: "Os clientes não conseguem entrar. Abra a fila quando começar a atender.",
+    tone: "border-line bg-surface-2/60",
+    dot: "bg-subtle",
+  },
+} as const;
+
+function StateButton({
+  establishmentId,
+  state,
+  children,
+  variant,
+  confirmMessage,
+}: {
+  establishmentId: string;
+  state: WaitlistSettingsRow["state"];
+  children: ReactNode;
+  variant: "primary" | "secondary" | "ghost";
+  confirmMessage?: string;
+}) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {options.map((option) => (
-        <ActionForm key={option.state} action={setQueueState} hideMessage>
-          <input type="hidden" name="establishment_id" value={establishmentId} />
-          <input type="hidden" name="state" value={option.state} />
-          <SubmitButton size="sm" variant={option.state === "open" ? "primary" : "secondary"}>
-            {option.label}
-          </SubmitButton>
-        </ActionForm>
-      ))}
+    <ActionForm action={setQueueState} hideMessage confirmMessage={confirmMessage}>
+      <input type="hidden" name="establishment_id" value={establishmentId} />
+      <input type="hidden" name="state" value={state} />
+      <SubmitButton size="sm" variant={variant} pendingLabel="A mudar…">
+        {children}
+      </SubmitButton>
+    </ActionForm>
+  );
+}
+
+/**
+ * The queue's state said in words, with the next actions as plain verbs ("Abrir fila",
+ * "Pausar entradas", "Fechar fila") instead of a switch the owner has to decode.
+ */
+function StateBanner({ settings, establishmentId }: { settings: WaitlistSettingsRow; establishmentId: string }) {
+  const copy = stateCopy[settings.state];
+  const closeConfirm = "Fechar a fila? Ninguém novo entra. Quem já está na fila continua a ser chamado.";
+  return (
+    <div className={`flex flex-col gap-4 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between ${copy.tone}`}>
+      <div className="flex min-w-0 items-start gap-3">
+        <span aria-hidden="true" className="relative mt-1.5 flex h-3 w-3 shrink-0">
+          {settings.state === "open" ? <span className={`absolute inset-0 animate-ping rounded-full opacity-60 ${copy.dot}`} /> : null}
+          <span className={`relative h-3 w-3 rounded-full ${copy.dot}`} />
+        </span>
+        <div className="min-w-0">
+          <p className="text-lg font-semibold text-text">{copy.title}</p>
+          <p className="text-sm text-muted">{copy.text}</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2 sm:shrink-0 sm:justify-end">
+        {settings.state === "open" ? (
+          <>
+            <StateButton establishmentId={establishmentId} state="paused" variant="secondary">
+              Pausar entradas
+            </StateButton>
+            <StateButton establishmentId={establishmentId} state="closed" variant="ghost" confirmMessage={closeConfirm}>
+              Fechar fila
+            </StateButton>
+          </>
+        ) : settings.state === "paused" ? (
+          <>
+            <StateButton establishmentId={establishmentId} state="open" variant="primary">
+              Retomar entradas
+            </StateButton>
+            <StateButton establishmentId={establishmentId} state="closed" variant="ghost" confirmMessage={closeConfirm}>
+              Fechar fila
+            </StateButton>
+          </>
+        ) : (
+          <StateButton establishmentId={establishmentId} state="open" variant="primary">
+            Abrir fila
+          </StateButton>
+        )}
+      </div>
     </div>
   );
 }
@@ -104,7 +171,7 @@ function AddForm({ bundle, settings }: { bundle: EstablishmentBundle; settings: 
           Adicionar alguém ao balcão
         </span>
       </summary>
-      <ActionForm action={addEntryByStaff} className="mt-4 grid gap-3 sm:grid-cols-2">
+      <ActionForm action={addEntryByStaff} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
         <label className={adminLabelClasses}>
           Nome
@@ -173,15 +240,22 @@ export function QueueBoard({ bundle, settings, queue }: { bundle: EstablishmentB
   return (
     <div className="flex flex-col gap-5">
       <AutoRefresh intervalMs={8000} />
-      <section className="card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${stateTone[settings.state]}`}>Fila {stateLabels[settings.state].toLowerCase()}</span>
-          <span className="text-sm text-muted">
-            <strong className="text-text tabular-nums">{waiting.length}</strong> à espera · <strong className="text-text tabular-nums">{called.length}</strong> chamados
-          </span>
-          <span className="text-sm text-muted">Quem entrar agora: {formatWait(newcomerWait)}</span>
-        </div>
-        <StateControls settings={settings} establishmentId={establishmentId} />
+      <section className="card flex flex-col gap-5 p-4 sm:p-5">
+        <StateBanner settings={settings} establishmentId={establishmentId} />
+        <dl className="grid grid-cols-3 gap-3 border-t border-line pt-4">
+          <div>
+            <dt className="text-sm text-muted">À espera</dt>
+            <dd className="display text-3xl tabular-nums">{waiting.length}</dd>
+          </div>
+          <div>
+            <dt className="text-sm text-muted">Chamados</dt>
+            <dd className="display text-3xl tabular-nums">{called.length}</dd>
+          </div>
+          <div>
+            <dt className="text-sm text-muted">Quem entrar agora</dt>
+            <dd className="display text-2xl leading-9">{newcomerWait ? formatWait(newcomerWait).replace("cerca de ", "~ ") : "Sem espera"}</dd>
+          </div>
+        </dl>
       </section>
 
       {called.length ? (
@@ -193,14 +267,17 @@ export function QueueBoard({ bundle, settings, queue }: { bundle: EstablishmentB
             {called.map((entry) => {
               const late = entry.called_at && minutesSince(entry.called_at, now) > settings.grace_minutes;
               return (
-                <li key={entry.id} className={`card flex flex-col gap-3 p-4 ${late ? "border-danger/40" : "border-accent/40"}`}>
+                <li key={entry.id} className={`card flex flex-col gap-3 p-4 ${late ? "border-danger/50 bg-danger-soft/40" : "border-accent/50 bg-accent-soft/40"}`}>
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-semibold text-text">
-                        <span className="tabular-nums text-muted">N.º {entry.number}</span> · {entry.name}
-                      </p>
+                    <div className="flex min-w-0 items-start gap-3">
+                      <span className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl ${late ? "bg-danger text-white" : "bg-accent text-accent-contrast"}`}>
+                        <span className="display text-2xl leading-none tabular-nums">{entry.number}</span>
+                      </span>
+                      <div className="min-w-0">
+                      <p className="text-lg font-semibold text-text">{entry.name}</p>
                       <p className="text-sm text-muted">{details(entry, bundle) || " "}</p>
                       {entry.notes ? <p className="text-sm text-subtle">«{entry.notes}»</p> : null}
+                      </div>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1 text-right">
                       <span className={`text-xs font-semibold ${late ? "text-danger" : "text-accent-text"}`}>
@@ -249,13 +326,12 @@ export function QueueBoard({ bundle, settings, queue }: { bundle: EstablishmentB
               return (
                 <li key={entry.id} className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-start gap-3">
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface-2 text-sm font-semibold tabular-nums text-text">
-                      {index + 1}.º
+                    <span className="flex w-14 shrink-0 flex-col items-center rounded-2xl bg-surface-2 py-1.5">
+                      <span className="display text-2xl leading-none tabular-nums text-text">{entry.number}</span>
+                      <span className="mt-0.5 text-[0.7rem] text-muted">{index + 1}.º</span>
                     </span>
                     <div className="min-w-0">
-                      <p className="font-semibold text-text">
-                        <span className="tabular-nums text-muted">N.º {entry.number}</span> · {entry.name}
-                      </p>
+                      <p className="text-lg font-semibold text-text">{entry.name}</p>
                       <p className="text-sm text-muted">{details(entry, bundle) || " "}</p>
                       <p className="text-xs text-subtle">
                         Entrou {ago(entry.joined_at, now)} · {outlook.minutes ? `vez ${formatWait(outlook.minutes)}` : "é o próximo"}

@@ -50,7 +50,7 @@ export function OrderList({ orders, hrefFor, showCustomer = false, empty }: { or
             <OrderStatusBadge status={order.status} />
           </>
         );
-        const className = "grid gap-2 px-4 py-4 sm:grid-cols-[11rem_1fr_auto] sm:items-center sm:gap-4 sm:px-5";
+        const className = "grid grid-cols-1 gap-2 px-4 py-4 sm:grid-cols-[11rem_1fr_auto] sm:items-center sm:gap-4 sm:px-5";
         return (
           <li key={order.id}>
             {hrefFor ? (

@@ -60,8 +60,8 @@ export function JoinForm({
   return (
     <form action={formAction} onSubmit={() => unlockAlerts()} className="flex flex-col gap-4">
       {saved ? (
-        <a href={`/fila/${slug}/${saved}`} className="rounded-xl border border-line bg-surface-2/60 px-4 py-3 text-sm font-semibold text-text hover:bg-surface-2">
-          Já está na fila? Ver a sua senha →
+        <a href={`/fila/${slug}/${saved}`} className="rounded-2xl border border-[var(--brand)]/40 bg-[color-mix(in_oklab,var(--brand)_8%,var(--surface))] px-4 py-3.5 text-center font-semibold text-text hover:brightness-105">
+          Já está na fila? Ver a sua senha
         </a>
       ) : null}
       <input type="hidden" name="slug" value={slug} />
@@ -124,7 +124,7 @@ export function JoinForm({
       ) : null}
       <Submit label={submitLabel} />
       <p className="text-xs text-subtle">
-        Usamos o nome e o email só para gerir esta fila; são apagados ao fim de 30 dias.
+        O nome e o email servem só para esta fila e são apagados ao fim de 30 dias.
       </p>
     </form>
   );

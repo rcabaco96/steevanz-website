@@ -28,7 +28,7 @@ export default async function SignUpPage() {
       {session.state === "unconfigured" ? (
         <AuthAlert>O acesso a contas ainda não está configurado (variáveis do Supabase em falta).</AuthAlert>
       ) : (
-        <ActionForm action={signUp} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm action={signUp} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <AuthField label="Nome" name="full_name" required autoComplete="name" maxLength={120} />
           </div>

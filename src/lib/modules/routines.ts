@@ -4,6 +4,7 @@ import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { siteUrl } from "@/lib/site";
 import { sendReminder } from "./bookings/notify";
 import type { EstablishmentBookingRow } from "./bookings/store";
+import { staleAfterHours } from "./waitlist/store";
 
 // Routines of the establishment modules, run by the scheduler tick (every 15 minutes).
 
@@ -37,6 +38,7 @@ export async function runModuleRoutines(client: SupabaseClient, options: { now: 
   const due = ((data ?? []) as EstablishmentBookingRow[]).filter((booking) => Date.parse(booking.starts_at) - Date.parse(booking.created_at) >= minLeadHours * 3_600_000);
 
   const cutoff = new Date(now - waitlistRetentionDays * 86_400_000).toISOString();
+  const stale = new Date(now - staleAfterHours * 3_600_000).toISOString();
   if (options.dryRun) {
     const { count } = await client.from("waitlist_entries").select("id", { count: "exact", head: true }).lt("joined_at", cutoff);
     return { reminders: { due: due.length, sent: 0 }, waitlistExpired: count ?? 0 };
@@ -63,6 +65,14 @@ export async function runModuleRoutines(client: SupabaseClient, options: { now: 
     if (!claimed?.length) continue;
     if (await sendReminder(booking, bundle, `${publicBaseUrl()}/reservar/${bundle.establishment.slug}/${booking.token}`)) sent++;
   }
+
+  // Tickets nobody closed (left waiting or called from a previous service) are closed as cancelled.
+  const { error: staleError } = await client
+    .from("waitlist_entries")
+    .update({ status: "cancelled", finished_at: new Date(now).toISOString() })
+    .in("status", ["waiting", "called"])
+    .lt("joined_at", stale);
+  if (staleError) throw new Error(`waitlist stale tickets: ${staleError.message}`);
 
   const { count: expired, error: purgeError } = await client.from("waitlist_entries").delete({ count: "exact" }).lt("joined_at", cutoff);
   if (purgeError) throw new Error(`waitlist retention: ${purgeError.message}`);

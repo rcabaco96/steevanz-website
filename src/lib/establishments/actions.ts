@@ -76,7 +76,7 @@ export async function createEstablishment(_previous: ActionState, formData: Form
     const { error: hoursError } = await client.from("establishment_hours").insert(hours);
     if (hoursError) console.error("[establishments] starting hours failed:", hoursError.message);
     refresh();
-    return { ok: true, message: `Estabelecimento «${parsed.data.name}» criado.` };
+    return { ok: true, message: `Loja «${parsed.data.name}» criada.` };
   });
 }
 
@@ -89,7 +89,7 @@ export async function deleteEstablishment(_previous: ActionState, formData: Form
     const { error } = await createServiceClient().from("establishments").delete().eq("id", id);
     if (error) throw new Error(error.message);
     refresh();
-    return { ok: true, message: "Estabelecimento removido." };
+    return { ok: true, message: "Loja removida." };
   });
 }
 

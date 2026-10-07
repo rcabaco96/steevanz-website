@@ -29,7 +29,7 @@ export default async function AccountHomePage() {
           <h2 id="paineis-title" className="text-sm font-semibold text-muted">
             Painel de reviews
           </h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {panels.map((panel) => (
               <li key={panel.slug} className="flex">
                 <Link href={`/painel/${panel.slug}`} className="card card-interactive flex w-full flex-col gap-3 p-5 sm:p-6">
@@ -48,7 +48,7 @@ export default async function AccountHomePage() {
         </section>
       ) : null}
       {items.length ? (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((row) => {
             if (!isProductId(row.product_id)) return null;
             const product = getProduct(row.product_id);

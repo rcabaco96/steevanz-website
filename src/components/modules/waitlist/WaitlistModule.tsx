@@ -34,7 +34,7 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
   const input = `${adminInputClasses} h-11`;
   return (
     <Panel title="Regras da fila">
-      <ActionForm action={saveWaitlistSettings} className="grid gap-4 sm:grid-cols-2">
+      <ActionForm key={settings.updated_at} action={saveWaitlistSettings} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={establishmentId} />
         <label className={adminLabelClasses}>
           Minutos por vez (média)

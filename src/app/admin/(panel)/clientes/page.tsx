@@ -37,7 +37,7 @@ export default async function AdminClientsPage({ searchParams }: { searchParams:
             <li key={client.id}>
               <Link
                 href={`/admin/clientes/${client.id}`}
-                className="grid gap-2 px-4 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[1fr_auto_9rem] sm:items-center sm:gap-4 sm:px-5"
+                className="grid grid-cols-1 gap-2 px-4 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[1fr_auto_9rem] sm:items-center sm:gap-4 sm:px-5"
               >
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-text">

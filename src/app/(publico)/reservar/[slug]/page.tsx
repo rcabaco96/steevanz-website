@@ -37,7 +37,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
   const unavailable = !page.active || (page.mode === "service" && !services.length) || !bundle.hours.length;
 
   return (
-    <BrandFrame establishment={establishment} eyebrow={words.bookingTitle}>
+    <BrandFrame establishment={establishment} service={words.bookingTitle}>
       {unavailable ? (
         <PublicCard>
           <p className="text-center text-sm text-muted">

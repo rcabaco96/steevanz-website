@@ -43,6 +43,9 @@ export interface WaitlistEntryRow {
   finished_at: string | null;
 }
 
+/** Tickets left waiting or called longer than this (e.g. from yesterday) are no longer part of the queue. */
+export const staleAfterHours = 12;
+
 export const stateLabels: Record<QueueState, string> = { open: "Aberta", paused: "Em pausa", closed: "Fechada" };
 export const replyLabels: Record<EntryReply, string> = { on_way: "A caminho", late: "Vai atrasar-se", leaving: "Já não vem" };
 export const statusLabels: Record<EntryStatus, string> = {
@@ -87,7 +90,14 @@ export async function loadQueue(establishment: EstablishmentRow): Promise<QueueS
   const client = createServiceClient();
   const dayStart = startOfLocalDay(establishment.time_zone).toISOString();
   const [live, done, calls] = await Promise.all([
-    client.from("waitlist_entries").select("*").eq("establishment_id", establishment.id).in("status", ["waiting", "called"]).order("sort_key").limit(500),
+    client
+      .from("waitlist_entries")
+      .select("*")
+      .eq("establishment_id", establishment.id)
+      .in("status", ["waiting", "called"])
+      .gte("joined_at", new Date(Date.now() - staleAfterHours * 3_600_000).toISOString())
+      .order("sort_key")
+      .limit(500),
     client
       .from("waitlist_entries")
       .select("*")

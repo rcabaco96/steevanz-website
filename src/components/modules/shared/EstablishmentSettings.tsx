@@ -26,8 +26,8 @@ function Hidden({ id }: { id: string }) {
 function Details({ bundle, viewer }: { bundle: EstablishmentBundle; viewer: "client" | "admin" }) {
   const { establishment } = bundle;
   return (
-    <Panel title="Estabelecimento">
-      <ActionForm action={updateEstablishment} className="grid gap-4 sm:grid-cols-2">
+    <Panel title="Loja">
+      <ActionForm key={establishment.updated_at} action={updateEstablishment} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Hidden id={establishment.id} />
         <label className={adminLabelClasses}>
           Nome
@@ -85,7 +85,10 @@ function Services({ bundle }: { bundle: EstablishmentBundle }) {
         <ul className="mb-5 flex flex-col divide-y divide-line">
           {bundle.services.map((service) => (
             <li key={service.id} className="py-3 first:pt-0">
-              <ActionForm action={saveService} className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))_auto] sm:items-end">
+              <ActionForm
+                key={`${service.name}:${service.duration_minutes}:${service.buffer_minutes}:${service.price_cents}:${service.active}`}
+                action={saveService}
+                className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))_auto] sm:items-end">
                 <Hidden id={id} />
                 <input type="hidden" name="id" value={service.id} />
                 <label className={`${adminLabelClasses} col-span-2 sm:col-span-1`}>
@@ -170,7 +173,7 @@ function Staff({ bundle }: { bundle: EstablishmentBundle }) {
         <ul className="mb-5 flex flex-col divide-y divide-line">
           {bundle.staff.map((person) => (
             <li key={person.id} className="flex flex-wrap items-end gap-2 py-3 first:pt-0">
-              <ActionForm action={saveStaff} className="flex flex-1 flex-wrap items-end gap-2">
+              <ActionForm key={`${person.name}:${person.active}`} action={saveStaff} className="flex flex-1 flex-wrap items-end gap-2">
                 <Hidden id={id} />
                 <input type="hidden" name="id" value={person.id} />
                 <label className={`${adminLabelClasses} min-w-40 flex-1`}>
@@ -217,7 +220,7 @@ function Hours({ bundle }: { bundle: EstablishmentBundle }) {
   return (
     <Panel title="Horário">
       <p className="-mt-2 mb-4 text-sm text-muted">Até dois períodos por dia (por exemplo almoço e jantar). Dia sem horas = fechado.</p>
-      <ActionForm action={saveHours} className="flex flex-col gap-2">
+      <ActionForm key={bundle.hours.map((row) => `${row.weekday}${row.opens}${row.closes}`).join("|")} action={saveHours} className="flex flex-col gap-2">
         <Hidden id={bundle.establishment.id} />
         {weekdayOrder.map((weekday) => {
           const intervals = bundle.hours.filter((row) => row.weekday === weekday);

@@ -46,7 +46,8 @@ export function BackofficeShell({ home, homeLabel, badge, email, links, navLabel
           <BackofficeNav links={links} label={navLabel} />
         </div>
       </header>
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-10">{children}</main>
+      {/* Long emails, links and codes break instead of pushing the page sideways on phones. */}
+      <main className="mx-auto flex w-full max-w-6xl min-w-0 flex-col gap-6 px-4 py-6 [overflow-wrap:anywhere] sm:px-6 sm:py-10">{children}</main>
     </div>
   );
 }

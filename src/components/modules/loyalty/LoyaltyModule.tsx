@@ -65,6 +65,14 @@ function CardRow({
             {card.phone ? ` · ${card.phone}` : ""}
           </p>
           <p className="text-xs text-subtle">Última visita: {lastVisit(card, establishment.time_zone)}</p>
+          <div aria-hidden="true" className="mt-2 flex flex-wrap gap-1">
+            {Array.from({ length: program.stamps_required }, (_, index) => (
+              <span
+                key={index}
+                className={`h-2.5 w-2.5 rounded-full ${index < card.stamps ? "bg-gold" : index === program.stamps_required - 1 ? "border border-gold" : "bg-surface-2"}`}
+              />
+            ))}
+          </div>
         </div>
         <div className="flex flex-col items-end gap-1">
           <span className="display text-2xl tabular-nums">
@@ -132,7 +140,7 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
   const input = `${adminInputClasses} h-11`;
   return (
     <Panel title="Regras do cartão">
-      <ActionForm action={saveProgram} className="grid gap-4 sm:grid-cols-2">
+      <ActionForm key={program.updated_at} action={saveProgram} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={establishmentId} />
         <label className={adminLabelClasses}>
           Carimbos para completar

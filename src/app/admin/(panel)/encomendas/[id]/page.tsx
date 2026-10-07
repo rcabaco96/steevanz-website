@@ -35,7 +35,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <ContactActions row={order} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-6">
           <Panel title="Artigos">
             <ul className="flex flex-col divide-y divide-line">

@@ -1,8 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { BackofficeShell } from "@/components/backoffice/Shell";
-import { buttonClasses } from "@/components/ui/Button";
 import { getSession } from "@/lib/auth/session";
 
 const links = [
@@ -14,6 +12,8 @@ const links = [
 export default async function AccountAreaLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
   if (session.state !== "client" && session.state !== "admin") redirect("/conta/entrar");
+  // The client area is for clients. Admins see a client's area from the admin (client page → module).
+  if (session.state === "admin") redirect("/admin");
 
   return (
     <BackofficeShell
@@ -23,13 +23,6 @@ export default async function AccountAreaLayout({ children }: { children: ReactN
       email={session.email}
       links={links}
       navLabel="Navegação da conta"
-      actions={
-        session.state === "admin" ? (
-          <Link href="/admin" className={buttonClasses("secondary", "sm")}>
-            Painel
-          </Link>
-        ) : null
-      }
     >
       {children}
     </BackofficeShell>

@@ -41,6 +41,14 @@ const statusTone: Record<EstablishmentBookingRow["status"], string> = {
   cancelled: "bg-surface-2 text-subtle line-through",
 };
 
+/** Colour on the left edge of each booking: what still needs attention stands out. */
+const statusEdge: Record<EstablishmentBookingRow["status"], string> = {
+  confirmed: "border-l-accent",
+  arrived: "border-l-success",
+  no_show: "border-l-danger",
+  cancelled: "border-l-line-strong",
+};
+
 function time(iso: string, timeZone: string): string {
   return new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
@@ -64,7 +72,7 @@ function BookingCard({ booking, bundle, showDate = false }: { booking: Establish
     </ActionForm>
   );
   return (
-    <li className={`card flex flex-col gap-3 p-4 ${booking.status === "cancelled" ? "opacity-70" : ""}`}>
+    <li className={`card flex flex-col gap-3 border-l-4 p-4 ${statusEdge[booking.status]} ${booking.status === "cancelled" ? "opacity-70" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
           <span className="display shrink-0 text-2xl tabular-nums">{time(booking.starts_at, establishment.time_zone)}</span>
@@ -136,7 +144,7 @@ function NewBookingForm({ bundle, page, date }: { bundle: EstablishmentBundle; p
           Nova reserva (telefone ou balcão)
         </span>
       </summary>
-      <ActionForm action={staffCreateBooking} className="mt-4 grid gap-3 sm:grid-cols-2">
+      <ActionForm action={staffCreateBooking} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
         <label className={adminLabelClasses}>
           Dia
@@ -210,7 +218,7 @@ function BlockForm({ bundle, date }: { bundle: EstablishmentBundle; date: string
   return (
     <details className="card p-4 sm:p-5">
       <summary className="cursor-pointer text-sm font-semibold text-text">Bloquear um horário</summary>
-      <ActionForm action={addBlock} className="mt-4 grid gap-3 sm:grid-cols-4">
+      <ActionForm action={addBlock} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
         <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
         <label className={adminLabelClasses}>
           Dia
@@ -254,7 +262,7 @@ function PageSettings({ page, establishmentId, calendarUrl }: { page: BookingPag
   return (
     <>
       <Panel title="Página de reservas">
-        <ActionForm action={saveBookingPage} className="grid gap-4 sm:grid-cols-2">
+        <ActionForm key={page.updated_at} action={saveBookingPage} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <input type="hidden" name="establishment_id" value={establishmentId} />
           <label className="flex items-center gap-2 text-sm font-semibold text-text sm:col-span-2">
             <input type="checkbox" name="active" defaultChecked={page.active} className="h-4.5 w-4.5 accent-accent" />
@@ -279,7 +287,7 @@ function PageSettings({ page, establishmentId, calendarUrl }: { page: BookingPag
             Reservas até quantos dias à frente
             <input name="max_days_ahead" type="number" min={1} max={365} required defaultValue={page.max_days_ahead} className={input} />
           </label>
-          <fieldset className="grid gap-4 rounded-2xl bg-surface-2/60 p-3 sm:col-span-2 sm:grid-cols-3">
+          <fieldset className="grid grid-cols-1 gap-4 rounded-2xl bg-surface-2/60 p-3 sm:col-span-2 sm:grid-cols-3">
             <legend className="px-1 text-xs font-semibold text-muted">Só para mesas</legend>
             <label className={adminLabelClasses}>
               Lugares por horário

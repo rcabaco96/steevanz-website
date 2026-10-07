@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
-import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
+import { BrandFrame, Fact, PublicCard } from "@/components/public/BrandFrame";
 import { CallAlert } from "@/components/public/waitlist/CallAlert";
+import { QueueLine } from "@/components/public/waitlist/QueueLine";
 import { ReplyButtons } from "@/components/public/waitlist/ReplyButtons";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
@@ -13,7 +14,13 @@ import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string; token: string }> };
 
-export const metadata: Metadata = { title: "A sua vez na fila", referrer: "no-referrer" };
+export const metadata: Metadata = { title: "A sua senha", referrer: "no-referrer" };
+
+const finished = {
+  served: { chip: "Atendido", text: "Foi atendido. Obrigado pela visita!" },
+  no_show: { chip: "Senha expirada", text: "Foi chamado mas não se apresentou a tempo. Se ainda estiver por perto, fale com a equipa." },
+  cancelled: { chip: "Saiu da fila", text: "Já não está na fila." },
+} as const;
 
 export default async function WaitlistTicketPage({ params }: Props) {
   const { slug, token } = await params;
@@ -23,84 +30,79 @@ export default async function WaitlistTicketPage({ params }: Props) {
   if (!entry || entry.establishment_id !== establishment.id) notFound();
   const [bundle, settings, queue] = await Promise.all([loadBundle(establishment), ensureWaitlistSettings(establishment), loadQueue(establishment)]);
   const words = kindWords[establishment.kind];
-  const live = entry.status === "waiting" || entry.status === "called";
+  const called = entry.status === "called";
+  const live = entry.status === "waiting" || called;
   const outlook = entry.status === "waiting" ? entryOutlook(entry, queue, bundle, settings) : null;
   const service = entry.service_id ? bundle.services.find((item) => item.id === entry.service_id) : null;
   const staff = entry.staff_id ? bundle.staff.find((item) => item.id === entry.staff_id) : null;
+  const joinedAt = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(entry.joined_at));
+  const details = [
+    entry.party_size ? `${entry.party_size} ${entry.party_size === 1 ? "pessoa" : "pessoas"}` : null,
+    service?.name ?? null,
+    entry.service_id || entry.staff_id ? `com ${staff?.name ?? "qualquer profissional"}` : null,
+    `entrou às ${joinedAt}`,
+  ].filter(Boolean);
+  const done = entry.status === "served" || entry.status === "no_show" || entry.status === "cancelled" ? finished[entry.status] : null;
 
   return (
-    <BrandFrame establishment={establishment} eyebrow="Lista de espera">
+    <BrandFrame establishment={establishment} service="Lista de espera">
       {live ? <AutoRefresh intervalMs={5000} whileHidden /> : null}
-      <CallAlert slug={establishment.slug} token={entry.token} status={entry.status} calledAt={entry.called_at} title={words.callAction} message={words.ready} />
 
-      {entry.status === "called" ? (
-        <section role="alert" className="flex flex-col items-center gap-2 rounded-[var(--radius-card)] bg-[var(--brand)] px-5 py-8 text-center text-[var(--brand-text)] shadow-lg">
-          <p className="text-sm font-semibold tracking-[0.12em] uppercase opacity-80">Senha n.º {entry.number}</p>
-          <p className="display text-4xl leading-tight">{words.callAction}!</p>
-          <p className="text-base opacity-90">{words.ready}</p>
-          <p className="text-sm opacity-80">Tem cerca de {settings.grace_minutes} minutos para se apresentar.</p>
-        </section>
-      ) : (
-        <PublicCard className="items-center text-center">
-          <p className="text-xs font-semibold tracking-[0.12em] text-subtle uppercase">A sua senha</p>
-          <p className="display text-6xl tabular-nums">{entry.number}</p>
-          <p className="text-base font-semibold text-text">{entry.name}</p>
-          {entry.status === "waiting" && outlook ? (
-            <div className="grid w-full grid-cols-2 gap-3 pt-2">
-              <div className="rounded-2xl bg-surface-2/70 p-3">
-                <p className="text-xs font-semibold tracking-[0.08em] text-subtle uppercase">Posição</p>
-                <p className="display mt-1 text-3xl tabular-nums">{outlook.position}.º</p>
-              </div>
-              <div className="rounded-2xl bg-surface-2/70 p-3">
-                <p className="text-xs font-semibold tracking-[0.08em] text-subtle uppercase">Estimativa</p>
-                <p className="display mt-1 text-2xl leading-9">{outlook.minutes ? formatWait(outlook.minutes).replace("cerca de ", "~") : "A seguir"}</p>
-              </div>
+      <article
+        aria-live="polite"
+        className={`ticket overflow-hidden ${called ? "call-pulse" : ""} ${done ? "opacity-75" : ""}`}
+      >
+        <div className={`px-6 pt-5 pb-7 ${called ? "bg-[var(--brand)] text-[var(--brand-text)]" : ""}`}>
+          <div className="flex items-center justify-between gap-3">
+            <span className={`text-sm font-medium ${called ? "opacity-85" : "text-muted"}`}>A sua senha</span>
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${called ? "bg-black/15" : "bg-surface-2 text-text"} ${done ? "text-muted" : ""}`}
+            >
+              {!called && !done ? <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-[var(--brand)] motion-reduce:animate-none" /> : null}
+              {called ? words.callAction : (done?.chip ?? "À espera")}
+            </span>
+          </div>
+          <p className={`display mt-2 text-[6rem] leading-[0.9] tabular-nums ${done ? "line-through decoration-2" : ""}`}>{entry.number}</p>
+          <p className={`mt-2 text-lg font-semibold ${called ? "" : "text-text"}`}>{entry.name}</p>
+          {called ? (
+            <div role="alert" className="mt-4 flex flex-col gap-1">
+              <p className="display text-[1.7rem] leading-tight">{words.ready}</p>
+              <p className="opacity-85">Tem cerca de {settings.grace_minutes} minutos para se apresentar.</p>
             </div>
           ) : null}
-          {entry.status === "waiting" ? (
-            <p className="text-sm text-muted">Pode esperar onde quiser. Esta página atualiza-se sozinha e toca quando for a sua vez.</p>
+        </div>
+        <div className="ticket-tear" />
+        <div className="flex flex-col gap-4 px-6 pt-5 pb-6">
+          {outlook ? (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <Fact value={`${outlook.position}.º`} label="na fila" />
+                <Fact value={outlook.minutes ? formatWait(outlook.minutes).replace("cerca de ", "~ ") : "Já"} label={outlook.minutes ? "de espera estimada" : "é a seguir"} />
+              </div>
+              <QueueLine ahead={outlook.position - 1} withYou />
+            </>
           ) : null}
-          {entry.status === "served" ? <p className="text-sm text-muted">Já foi atendido. Obrigado pela visita!</p> : null}
-          {entry.status === "no_show" ? <p className="text-sm text-muted">Foi chamado mas não se apresentou a tempo. Fale com a equipa se ainda estiver por perto.</p> : null}
-          {entry.status === "cancelled" ? <p className="text-sm text-muted">Saiu da fila.</p> : null}
-        </PublicCard>
-      )}
+          {done ? <p className="text-muted">{done.text}</p> : null}
+          {live ? <p className="text-sm text-muted">{details.join(", ")}</p> : null}
+        </div>
+      </article>
+
+      <CallAlert slug={establishment.slug} token={entry.token} status={entry.status} calledAt={entry.called_at} title={words.callAction} message={words.ready} />
 
       {live ? (
         <PublicCard>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-            {entry.party_size ? (
-              <>
-                <dt className="text-subtle">Pessoas</dt>
-                <dd className="text-text">{entry.party_size}</dd>
-              </>
-            ) : null}
-            {service ? (
-              <>
-                <dt className="text-subtle">Serviço</dt>
-                <dd className="text-text">{service.name}</dd>
-              </>
-            ) : null}
-            {entry.service_id || entry.staff_id ? (
-              <>
-                <dt className="text-subtle">Com</dt>
-                <dd className="text-text">{staff?.name ?? "Qualquer profissional"}</dd>
-              </>
-            ) : null}
-            <dt className="text-subtle">Entrou às</dt>
-            <dd className="text-text">
-              {new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(entry.joined_at))}
-            </dd>
-          </dl>
-          <ReplyButtons token={entry.token} called={entry.status === "called"} current={entry.reply} />
+          {called ? <h2 className="text-lg font-semibold text-text">Diga à equipa se já vem</h2> : null}
+          <ReplyButtons token={entry.token} called={called} current={entry.reply} />
         </PublicCard>
       ) : (
         <Link href={`/fila/${establishment.slug}`} className="text-center text-sm font-semibold text-muted hover:text-text">
           Voltar à lista de espera
         </Link>
       )}
-      {live ? (
-        <p className="px-2 text-center text-xs text-subtle">Guarde esta página: é a sua senha. Se a fechar, volte a abri-la pelo mesmo QR code.</p>
+      {entry.status === "waiting" ? (
+        <p className="px-4 text-center text-sm text-subtle">
+          Pode bloquear o ecrã: a página continua atenta. Se a fechar, volte a ler o mesmo QR code para ver a sua senha.
+        </p>
       ) : null}
     </BrandFrame>
   );

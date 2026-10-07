@@ -34,7 +34,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
             <li key={lead.id}>
               <Link
                 href={`/admin/leads/${lead.id}`}
-                className="grid gap-2 px-4 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[11rem_1fr_auto] sm:items-center sm:gap-4 sm:px-5"
+                className="grid grid-cols-1 gap-2 px-4 py-4 transition-colors hover:bg-surface-2 sm:grid-cols-[11rem_1fr_auto] sm:items-center sm:gap-4 sm:px-5"
               >
                 <div className="flex items-baseline gap-2 sm:flex-col sm:gap-0">
                   <span className="text-sm font-semibold text-text tabular-nums">{lisbonTimestamp(lead.created_at)}</span>

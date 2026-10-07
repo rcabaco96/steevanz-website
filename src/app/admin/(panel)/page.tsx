@@ -79,7 +79,7 @@ export default async function AdminDashboardPage() {
         <StatTile label="Pedidos novos" value={stats.leads.byStatus.new} detail={`${stats.leads.waitlist} em lista de espera`} href="/admin/leads?status=new" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel
           title="Próximas demonstrações"
           actions={

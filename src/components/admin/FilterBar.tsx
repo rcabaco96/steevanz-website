@@ -26,7 +26,7 @@ export function FilterBar({ basePath, filters, showKind = false, dateLabel }: Fi
         <span className="text-xs font-normal text-subtle group-open:hidden">Mostrar</span>
         <span className="hidden text-xs font-normal text-subtle group-open:inline">Esconder</span>
       </summary>
-      <form method="get" action={basePath} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+      <form method="get" action={basePath} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
         <label className={`${adminLabelClasses} sm:col-span-2`}>
           Pesquisa
           <input type="search" name="q" defaultValue={filters.q} placeholder="Nome, email, telemóvel…" className={`${adminInputClasses} h-11`} />

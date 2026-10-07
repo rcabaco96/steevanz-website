@@ -1,74 +1,106 @@
 import Link from "next/link";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
-import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { ArrowUpRight } from "@/components/icons";
 import { createEstablishment, deleteEstablishment } from "@/lib/establishments/actions";
 import { businessKinds, kindLabels } from "@/lib/establishments/kinds";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 
 const moduleLinks = [
   { product: "waitlist", label: "Lista de espera", publicPath: "fila" },
-  { product: "loyalty", label: "Cartão", publicPath: "cartao" },
+  { product: "loyalty", label: "Cartão de cliente", publicPath: "cartao" },
   { product: "bookings", label: "Reservas", publicPath: "reservar" },
 ] as const;
 
-/** Admin, client page: the client's establishments (the base of the waitlist, loyalty card and bookings). */
+/**
+ * Admin, client page: the client's shops. Each shop has its own waitlist, loyalty card and booking
+ * page (for the products the client has active); "Nova loja" stays folded until needed.
+ */
 export function EstablishmentsAdminPanel({ ownerId, establishments, activeProducts }: { ownerId: string; establishments: EstablishmentRow[]; activeProducts: string[] }) {
   const input = `${adminInputClasses} h-11`;
   const modules = moduleLinks.filter((item) => activeProducts.includes(item.product));
   return (
-    <div id="estabelecimentos" className="scroll-mt-24">
-      <Panel title="Estabelecimentos">
-        <p className="-mt-2 mb-4 text-sm text-muted">
-          Cada loja tem a sua lista de espera, cartão de cliente e página de reservas. Os módulos aparecem com os produtos ativos abaixo.
-        </p>
-        {establishments.length ? (
-          <ul className="mb-5 flex flex-col divide-y divide-line">
-            {establishments.map((establishment) => (
-              <li key={establishment.id} className="flex flex-col gap-2 py-3 first:pt-0">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="flex items-center gap-2">
-                    <span aria-hidden="true" className="h-3.5 w-3.5 rounded-full" style={{ backgroundColor: establishment.accent_color }} />
-                    <span className="font-semibold text-text">{establishment.name}</span>
-                    <span className="text-xs text-subtle">{kindLabels[establishment.kind]}</span>
-                  </span>
-                  <ActionForm
-                    action={deleteEstablishment}
-                    hideMessage
-                    confirmMessage={`Remover «${establishment.name}» e tudo dos seus módulos (fila, cartões, reservas)? Não se pode desfazer.`}
-                  >
-                    <input type="hidden" name="id" value={establishment.id} />
-                    <SubmitButton size="sm" variant="ghost" className="text-danger">
-                      Remover
-                    </SubmitButton>
-                  </ActionForm>
-                </div>
-                {modules.length ? (
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                    {modules.map((item) => (
-                      <span key={item.product} className="flex items-center gap-2">
-                        <Link
-                          href={`/admin/clientes/${ownerId}/${item.product}?${new URLSearchParams({ loja: establishment.slug })}`}
-                          className="font-semibold text-accent-text hover:underline"
-                        >
-                          {item.label}
-                        </Link>
-                        <a href={`/${item.publicPath}/${establishment.slug}`} target="_blank" rel="noopener" className="text-xs text-muted hover:text-text">
-                          página pública ↗
-                        </a>
-                      </span>
-                    ))}
+    <section id="estabelecimentos" aria-labelledby="lojas-title" className="flex scroll-mt-24 flex-col gap-3">
+      <div className="flex flex-col gap-0.5">
+        <h2 id="lojas-title" className="text-lg font-semibold text-text">
+          Lojas
+        </h2>
+        <p className="text-sm text-muted">Onde a lista de espera, o cartão e as reservas funcionam. Cada loja tem os seus.</p>
+      </div>
+
+      {establishments.length ? (
+        <ul className="flex flex-col gap-3">
+          {establishments.map((establishment) => (
+            <li key={establishment.id} className="card overflow-hidden">
+              <div className="flex">
+                <span aria-hidden="true" className="w-1.5 shrink-0" style={{ backgroundColor: establishment.accent_color }} />
+                <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-text">{establishment.name}</p>
+                      <p className="text-sm text-muted">{kindLabels[establishment.kind]}</p>
+                    </div>
+                    <ActionForm
+                      action={deleteEstablishment}
+                      hideMessage
+                      confirmMessage={`Remover «${establishment.name}» e tudo dos seus módulos (fila, cartões, reservas)? Não se pode desfazer.`}
+                    >
+                      <input type="hidden" name="id" value={establishment.id} />
+                      <SubmitButton size="sm" variant="ghost" className="text-muted hover:text-danger">
+                        Remover loja
+                      </SubmitButton>
+                    </ActionForm>
                   </div>
-                ) : (
-                  <p className="text-xs text-subtle">Ative a lista de espera, o cartão ou as reservas para os módulos aparecerem.</p>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        <ActionForm action={createEstablishment} className="grid gap-3 rounded-2xl bg-surface-2/60 p-3 sm:grid-cols-2">
+                  {modules.length ? (
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      {modules.map((item) => (
+                        <div key={item.product} className="flex items-stretch overflow-hidden rounded-xl border border-line">
+                          <Link
+                            href={`/admin/clientes/${ownerId}/${item.product}?${new URLSearchParams({ loja: establishment.slug })}`}
+                            className="flex flex-1 items-center px-3 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-2"
+                          >
+                            {item.label}
+                          </Link>
+                          <a
+                            href={`/${item.publicPath}/${establishment.slug}`}
+                            target="_blank"
+                            rel="noopener"
+                            title={`Ver a página que os clientes da loja abrem (${item.label})`}
+                            aria-label={`Página pública: ${item.label}`}
+                            className="grid w-10 place-items-center border-l border-line text-muted transition-colors hover:bg-surface-2 hover:text-text"
+                          >
+                            <ArrowUpRight size={15} />
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl bg-surface-2/60 px-3 py-2.5 text-sm text-muted">
+                      Ative a lista de espera, o cartão ou as reservas em Produtos para gerir esta loja.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="rounded-2xl border border-dashed border-line-strong px-4 py-5 text-sm text-muted">
+          Ainda sem lojas. Crie a primeira para a lista de espera, o cartão ou as reservas começarem a funcionar.
+        </p>
+      )}
+
+      <details className="group card p-4 sm:p-5" open={!establishments.length}>
+        <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-text">
+          <span aria-hidden="true" className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text transition-transform group-open:rotate-45">
+            +
+          </span>
+          Nova loja
+        </summary>
+        <ActionForm action={createEstablishment} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input type="hidden" name="owner_id" value={ownerId} />
           <label className={adminLabelClasses}>
-            Novo estabelecimento
+            Nome da loja
             <input name="name" required maxLength={120} placeholder="Café Central" className={input} />
           </label>
           <label className={adminLabelClasses}>
@@ -81,16 +113,18 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
               ))}
             </select>
           </label>
-          <label className={`${adminLabelClasses} sm:col-span-2`}>
-            Endereço das páginas (opcional)
-            <input name="slug" maxLength={60} placeholder="sai do nome: cafe-central" className={input} />
-            <span className="text-xs font-normal text-subtle">Fica em …/fila/cafe-central, …/cartao/cafe-central e …/reservar/cafe-central.</span>
-          </label>
+          <details className="sm:col-span-2">
+            <summary className="cursor-pointer text-xs font-semibold text-muted hover:text-text">Endereço das páginas (opcional)</summary>
+            <label className={`${adminLabelClasses} mt-2`}>
+              <input name="slug" maxLength={60} placeholder="sai do nome: cafe-central" className={input} />
+              <span className="text-xs font-normal text-subtle">As páginas ficam em …/fila/cafe-central, …/cartao/cafe-central e …/reservar/cafe-central.</span>
+            </label>
+          </details>
           <div className="sm:col-span-2">
-            <SubmitButton size="sm">Criar estabelecimento</SubmitButton>
+            <SubmitButton size="sm">Criar loja</SubmitButton>
           </div>
         </ActionForm>
-      </Panel>
-    </div>
+      </details>
+    </section>
   );
 }

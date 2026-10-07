@@ -144,7 +144,7 @@ export function BookingWizard({
               {services.map((item) => (
                 <label
                   key={item.id}
-                  className="flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-line px-4 py-3 has-[:checked]:border-[var(--brand)] has-[:checked]:ring-2 has-[:checked]:ring-[var(--brand)]/25"
+                  className="flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-line bg-surface-2/40 px-4 py-3.5 transition-colors has-[:checked]:border-[var(--brand)] has-[:checked]:bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))]"
                 >
                   <span className="flex items-center gap-3">
                     <input
@@ -254,7 +254,7 @@ export function BookingWizard({
                       setDate(day.date);
                       setStart(null);
                     }}
-                    className={`flex w-14 shrink-0 flex-col items-center rounded-2xl border px-1 py-2 text-xs transition-colors ${
+                    className={`flex w-[3.6rem] shrink-0 flex-col items-center rounded-2xl border px-1 py-2.5 text-xs transition-colors ${
                       selected
                         ? "border-transparent bg-[var(--brand)] text-[var(--brand-text)]"
                         : open
@@ -296,7 +296,7 @@ export function BookingWizard({
                       role="option"
                       aria-selected={slot.start === start}
                       onClick={() => setStart(slot.start)}
-                      className={`h-11 rounded-xl border text-sm font-semibold tabular-nums transition-colors ${
+                      className={`h-12 rounded-2xl border text-base font-semibold tabular-nums transition-colors ${
                         slot.start === start ? "border-transparent bg-[var(--brand)] text-[var(--brand-text)]" : "border-line text-text hover:border-line-strong"
                       }`}
                     >

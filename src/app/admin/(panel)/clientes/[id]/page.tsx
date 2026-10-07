@@ -5,20 +5,95 @@ import { SubscriptionBadge } from "@/components/account/badges";
 import { OrderList } from "@/components/account/OrderList";
 import { BackLink } from "@/components/admin/RecordDetail";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
-import { DetailRow, EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { AccountCard, AddProduct } from "@/components/admin/ClientDetail";
 import { MailIcon, ProductGlyph } from "@/components/icons";
+import { EstablishmentsAdminPanel } from "@/components/modules/shared/EstablishmentsAdminPanel";
+import { productModules } from "@/components/modules/registry";
+import { ModulePlaceholder } from "@/components/modules/ModulePlaceholder";
 import { buttonClasses } from "@/components/ui/Button";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, isProductId, products } from "@/content/products";
-import { subscriptionStatusLabels, subscriptionStatuses } from "@/lib/accounts/types";
+import { subscriptionStatusLabels, subscriptionStatuses, type ClientProductRow } from "@/lib/accounts/types";
 import { saveClientProduct } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
 import { getProfile, listClientOrders, listClientPanels, listClientProducts } from "@/lib/admin/queries";
-import { EstablishmentsAdminPanel } from "@/components/modules/shared/EstablishmentsAdminPanel";
 import { listOwnerEstablishments } from "@/lib/establishments/store";
 
 export const metadata: Metadata = { title: "Cliente" };
+
+function initials(name: string): string {
+  const parts = name.replace(/@.*/, "").split(/[\s._-]+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
+}
+
+function SectionTitle({ id, title, hint }: { id: string; title: string; hint?: string }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <h2 id={id} className="text-lg font-semibold text-text">
+        {title}
+      </h2>
+      {hint ? <p className="text-sm text-muted">{hint}</p> : null}
+    </div>
+  );
+}
+
+/** One product the client has: what it is, its state, and the way into it. */
+function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string }) {
+  const productId = isProductId(row.product_id) ? row.product_id : null;
+  const hasModule = productId ? productModules[productId] !== ModulePlaceholder : false;
+  return (
+    <li className="card flex flex-col gap-4 p-4 sm:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          {productId ? (
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-text">
+              <ProductGlyph icon={getProduct(productId).icon} size={19} />
+            </span>
+          ) : null}
+          <div className="min-w-0">
+            <p className="font-semibold text-text">{productId ? getProductCopy(productId, "pt").name : row.product_id}</p>
+            <p className="text-xs text-subtle">Desde {lisbonTimestamp(row.activated_at)}</p>
+          </div>
+        </div>
+        <SubscriptionBadge status={row.status} />
+      </div>
+      {row.notes ? <p className="rounded-xl bg-surface-2/60 px-3 py-2 text-sm text-muted">{row.notes}</p> : null}
+      <div className="mt-auto flex flex-wrap items-center gap-2">
+        {productId ? (
+          <Link href={`/admin/clientes/${ownerId}/${row.product_id}`} className={buttonClasses(hasModule ? "primary" : "secondary", "sm")}>
+            {hasModule ? "Abrir" : "Ver"}
+          </Link>
+        ) : null}
+        <details className="group w-full">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-muted hover:text-text">Alterar estado ou notas</summary>
+          <ActionForm key={`${row.status}:${row.notes ?? ""}`} action={saveClientProduct} className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-end">
+            <input type="hidden" name="user_id" value={ownerId} />
+            <input type="hidden" name="product_id" value={row.product_id} />
+            <label className={adminLabelClasses}>
+              Estado
+              <select name="status" defaultValue={row.status} className={`${adminInputClasses} h-10`}>
+                {subscriptionStatuses.map((status) => (
+                  <option key={status} value={status}>
+                    {subscriptionStatusLabels[status]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={adminLabelClasses}>
+              Notas internas
+              <input name="notes" defaultValue={row.notes ?? ""} maxLength={2000} className={`${adminInputClasses} h-10`} />
+            </label>
+            <SubmitButton size="sm" variant="secondary" pendingLabel="A guardar…">
+              Guardar
+            </SubmitButton>
+          </ActionForm>
+        </details>
+      </div>
+    </li>
+  );
+}
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
@@ -33,40 +108,57 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
   ]);
   const ownedIds = new Set(owned.map((row) => row.product_id));
   const available = products.filter((product) => !ownedIds.has(product.id));
+  const active = owned.filter((row) => row.status === "active");
+  const displayName = profile.full_name ?? profile.email;
 
   return (
     <>
       <BackLink href="/admin/clientes" label="Clientes" />
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <p className="eyebrow">Cliente</p>
-          <h1 className="display text-3xl sm:text-4xl">{profile.full_name ?? profile.email}</h1>
-          {profile.business_name ? <p className="text-lg text-muted">{profile.business_name}</p> : null}
-        </div>
-        <a href={`mailto:${profile.email}`} className={buttonClasses("primary", "sm")}>
-          <MailIcon size={16} />
-          Email
-        </a>
-      </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-        <div className="flex flex-col gap-6">
-          <EstablishmentsAdminPanel
-            ownerId={profile.id}
-            establishments={establishments}
-            activeProducts={owned.filter((row) => row.status === "active").map((row) => row.product_id)}
-          />
-          <Panel title="Painéis de reviews">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
+          <span aria-hidden="true" className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-accent-soft text-lg font-semibold text-accent-text">
+            {initials(displayName)}
+          </span>
+          <div className="min-w-0">
+            <h1 className="display text-3xl sm:text-4xl">{displayName}</h1>
+            <p className="text-muted">
+              {[profile.business_name, `${active.length} ${active.length === 1 ? "produto ativo" : "produtos ativos"}`].filter(Boolean).join(" · ")}
+            </p>
+          </div>
+        </div>
+        <a href={`mailto:${profile.email}`} className={buttonClasses("secondary", "sm", "self-start sm:self-auto")}>
+          <MailIcon size={16} />
+          Enviar email
+        </a>
+      </header>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="flex min-w-0 flex-col gap-8">
+          <section aria-labelledby="produtos-title" className="flex flex-col gap-3">
+            <SectionTitle id="produtos-title" title="Produtos" hint="O que o cliente comprou. «Abrir» mostra a gestão tal como o cliente a vê." />
+            <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {owned.map((row) => (
+                <ProductCard key={row.id} row={row} ownerId={profile.id} />
+              ))}
+            </ul>
+            {available.length ? <AddProduct ownerId={profile.id} available={available.map((product) => product.id)} open={!owned.length} /> : null}
+          </section>
+
+          <EstablishmentsAdminPanel ownerId={profile.id} establishments={establishments} activeProducts={active.map((row) => row.product_id)} />
+
+          <section aria-labelledby="paineis-title" className="flex flex-col gap-3">
+            <SectionTitle id="paineis-title" title="Painéis de reviews" />
             {panels.length ? (
-              <ul className="flex flex-col divide-y divide-line">
+              <ul className="card divide-y divide-line overflow-hidden">
                 {panels.map((panel) => (
-                  <li key={panel.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                  <li key={panel.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
                     <span className="font-semibold text-text">{panel.name}</span>
-                    <span className="flex items-center gap-4 text-sm">
-                      <Link href={`/admin/reviews/${panel.id}`} className="font-semibold text-accent-text hover:underline">
+                    <span className="flex items-center gap-2">
+                      <Link href={`/admin/reviews/${panel.id}`} className={buttonClasses("secondary", "sm")}>
                         Gerir
                       </Link>
-                      <Link href={`/painel/${panel.slug}`} target="_blank" className="font-semibold text-muted hover:text-text">
+                      <Link href={`/painel/${panel.slug}`} target="_blank" className={buttonClasses("ghost", "sm")}>
                         Abrir painel
                       </Link>
                     </span>
@@ -74,102 +166,25 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
                 ))}
               </ul>
             ) : (
-              <EmptyState>Sem painéis. O acesso dá-se na página do negócio, em Reviews.</EmptyState>
+              <p className="text-sm text-muted">
+                Sem painéis. O acesso dá-se em{" "}
+                <Link href="/admin/reviews" className="font-semibold text-accent-text hover:underline">
+                  Reviews
+                </Link>
+                , na página de cada negócio.
+              </p>
             )}
-          </Panel>
-          <Panel title="Produtos">
-            {owned.length ? (
-              <ul className="flex flex-col divide-y divide-line">
-                {owned.map((row) => {
-                  const productId = isProductId(row.product_id) ? row.product_id : null;
-                  return (
-                    <li key={row.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex min-w-0 items-center gap-3">
-                          {productId ? (
-                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent-text">
-                              <ProductGlyph icon={getProduct(productId).icon} size={18} />
-                            </span>
-                          ) : null}
-                          <div className="min-w-0">
-                            <p className="truncate font-semibold text-text">{productId ? getProductCopy(productId, "pt").name : row.product_id}</p>
-                            <p className="text-xs text-subtle">Desde {lisbonTimestamp(row.activated_at)}</p>
-                          </div>
-                        </div>
-                        <SubscriptionBadge status={row.status} />
-                      </div>
-                      <ActionForm action={saveClientProduct} className="flex flex-wrap items-end gap-2">
-                        <input type="hidden" name="user_id" value={profile.id} />
-                        <input type="hidden" name="product_id" value={row.product_id} />
-                        <label className={`${adminLabelClasses} w-36`}>
-                          Estado
-                          <select name="status" defaultValue={row.status} className={`${adminInputClasses} h-10`}>
-                            {subscriptionStatuses.map((status) => (
-                              <option key={status} value={status}>
-                                {subscriptionStatusLabels[status]}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className={`${adminLabelClasses} min-w-40 flex-1`}>
-                          Notas
-                          <input name="notes" defaultValue={row.notes ?? ""} maxLength={2000} className={`${adminInputClasses} h-10`} />
-                        </label>
-                        <SubmitButton size="sm" variant="secondary" pendingLabel="…">
-                          Guardar
-                        </SubmitButton>
-                        {productId ? (
-                          <Link href={`/admin/clientes/${profile.id}/${row.product_id}`} className={buttonClasses("ghost", "sm")}>
-                            Abrir módulo
-                          </Link>
-                        ) : null}
-                      </ActionForm>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <EmptyState>Este cliente ainda não tem produtos.</EmptyState>
-            )}
-            {available.length ? (
-              <ActionForm action={saveClientProduct} className="mt-5 flex flex-wrap items-end gap-2 border-t border-line pt-5">
-                <input type="hidden" name="user_id" value={profile.id} />
-                <input type="hidden" name="status" value="active" />
-                <label className={`${adminLabelClasses} min-w-48 flex-1`}>
-                  Adicionar produto
-                  <select name="product_id" required defaultValue="" className={`${adminInputClasses} h-11`}>
-                    <option value="" disabled>
-                      Escolher…
-                    </option>
-                    {available.map((product) => (
-                      <option key={product.id} value={product.id}>
-                        {getProductCopy(product.id, "pt").name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <SubmitButton pendingLabel="A adicionar…">Ativar</SubmitButton>
-              </ActionForm>
-            ) : null}
-          </Panel>
+          </section>
 
-          <Panel title="Encomendas">
+          <section aria-labelledby="encomendas-title" className="flex flex-col gap-3">
+            <SectionTitle id="encomendas-title" title="Encomendas" />
             <OrderList orders={orders} hrefFor={(order) => `/admin/encomendas/${order.id}`} empty="Sem encomendas." />
-          </Panel>
+          </section>
         </div>
 
-        <div className="lg:sticky lg:top-36 lg:self-start">
-          <Panel title="Conta">
-            <dl>
-              <DetailRow label="Nome">{profile.full_name}</DetailRow>
-              <DetailRow label="Email">{profile.email}</DetailRow>
-              <DetailRow label="Telemóvel">{profile.phone}</DetailRow>
-              <DetailRow label="Negócio">{profile.business_name}</DetailRow>
-              <DetailRow label="NIF">{profile.nif}</DetailRow>
-              <DetailRow label="Registo">{lisbonTimestamp(profile.created_at)}</DetailRow>
-            </dl>
-          </Panel>
-        </div>
+        <aside className="lg:sticky lg:top-36 lg:self-start">
+          <AccountCard profile={profile} />
+        </aside>
       </div>
     </>
   );

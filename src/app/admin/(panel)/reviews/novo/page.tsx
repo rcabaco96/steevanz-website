@@ -33,7 +33,7 @@ export default async function NewReviewBusinessPage() {
             <p className="-mt-1 text-xs text-subtle">
               Com email, a conta do cliente fica criada já, mas nada lhe é enviado: o convite envia-se depois, na página do negócio. Sem email, fica só o contacto.
             </p>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className={adminLabelClasses}>
                 Nome
                 <input name="contact_name" maxLength={120} autoComplete="off" className={`${adminInputClasses} h-11`} />

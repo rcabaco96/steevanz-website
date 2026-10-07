@@ -70,7 +70,7 @@ export function CallAlert({
 
   if (status !== "waiting") return null;
   if (current === "granted") {
-    return <p className="text-center text-sm text-muted">🔔 Avisos ligados. Pode bloquear o ecrã, mas não feche esta página.</p>;
+    return <p className="text-center text-sm text-muted">Avisos ligados neste telemóvel. Não feche esta página.</p>;
   }
   return (
     <button
@@ -86,7 +86,7 @@ export function CallAlert({
         setPermission(await Notification.requestPermission());
       }}
     >
-      🔔 {current === "denied" || current === "unsupported" ? "Testar o som do aviso" : "Ativar avisos neste telemóvel"}
+      {current === "denied" || current === "unsupported" ? "Testar o som do aviso" : "Ativar avisos neste telemóvel"}
     </button>
   );
 }

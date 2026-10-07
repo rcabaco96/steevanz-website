@@ -23,9 +23,9 @@ export default async function AccountProfilePage() {
   return (
     <>
       <AdminPageHeader title="Perfil" description={user.email} />
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel title="Dados">
-          <ActionForm action={updateProfile} className="grid gap-4 sm:grid-cols-2">
+          <ActionForm key={profile?.updated_at ?? "novo"} action={updateProfile} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Field label="Nome" name="full_name" defaultValue={profile?.full_name} maxLength={120} required autoComplete="name" />
             </div>

@@ -99,7 +99,7 @@ export default async function AdminAvailabilityPage() {
         description="Horários em que os clientes podem marcar demonstrações (hora de Lisboa)."
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-6">
           <Panel title="Horário semanal">
             <div className="flex flex-col gap-5">

@@ -52,7 +52,7 @@ export function EmptyState({ children }: { children: ReactNode }) {
 export function DetailRow({ label, children }: { label: string; children: ReactNode }) {
   if (children === null || children === undefined || children === "") return null;
   return (
-    <div className="grid gap-1 border-b border-line py-3 last:border-b-0 sm:grid-cols-[10rem_1fr] sm:gap-4">
+    <div className="grid grid-cols-1 gap-1 border-b border-line py-3 last:border-b-0 sm:grid-cols-[10rem_1fr] sm:gap-4">
       <dt className="text-sm text-subtle">{label}</dt>
       <dd className="min-w-0 break-words whitespace-pre-wrap text-text">{children}</dd>
     </div>
