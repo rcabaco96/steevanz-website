@@ -1,14 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { isProductId } from "@/content/products";
 import { orderStatuses, subscriptionStatuses } from "@/lib/accounts/types";
 import type { ActionState } from "@/lib/action-state";
 import { pipelineStatuses } from "@/lib/booking/types";
+import { ensureFirstEstablishment, establishmentProducts } from "@/lib/establishments/provision";
 import { createServiceClient } from "@/lib/supabase/service";
 import { AdminAccessError, requireAdmin } from "./auth";
-import { accountForOrder, getOrder } from "./queries";
+import { ClientAccessError, ensureClientAccount } from "./client-access";
+import { accountForOrder, findProfileByEmail, getOrder } from "./queries";
 
 export type AdminActionState = ActionState;
 
@@ -230,6 +233,7 @@ export async function updateOrder(_previous: AdminActionState, formData: FormDat
         { onConflict: "user_id,product_id" },
       );
       if (error) throw new Error(error.message);
+      if (productIds.some(isEstablishmentProduct)) await ensureFirstEstablishment(account.id);
     }
     const { error } = await client.from("orders").update({ status, admin_notes, user_id: account.id }).eq("id", id);
     if (error) throw new Error(error.message);
@@ -273,7 +277,88 @@ export async function saveClientProduct(_previous: AdminActionState, formData: F
       if (error.code === "23503") return { ok: false, message: "Conta não encontrada." };
       throw new Error(error.message);
     }
+    // The waitlist, card and bookings run inside an establishment: the first one is created on its own.
+    if (parsed.data.status === "active" && isEstablishmentProduct(parsed.data.product_id)) await ensureFirstEstablishment(parsed.data.user_id);
     revalidatePath("/admin/clientes", "layout");
     return { ok: true, message: existing ? "Produto atualizado." : "Produto adicionado." };
+  });
+}
+
+function isEstablishmentProduct(productId: string): boolean {
+  return (establishmentProducts as readonly string[]).includes(productId);
+}
+
+function optionalText(max: number) {
+  return z
+    .string()
+    .trim()
+    .max(max)
+    .transform((text) => (text.length ? text : null));
+}
+
+const clientDetailsSchema = z.object({
+  full_name: z.string().trim().min(1).max(120),
+  business_name: optionalText(160),
+  phone: optionalText(40),
+  nif: optionalText(20),
+});
+
+function clientDetails(formData: FormData) {
+  return clientDetailsSchema.safeParse({
+    full_name: value(formData, "full_name"),
+    business_name: value(formData, "business_name"),
+    phone: value(formData, "phone"),
+    nif: value(formData, "nif"),
+  });
+}
+
+/**
+ * Admin: a client account created by hand (e.g. a café that only wants the waitlist). No password and
+ * no email is sent; the client gets in later with "Entrar com link" on their email. Opens the new
+ * client's page, where products and shops are added.
+ */
+export async function createClientAccount(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  let created: string | null = null;
+  const result = await guarded(async () => {
+    const details = clientDetails(formData);
+    const email = z.email().max(200).safeParse(value(formData, "email").toLowerCase());
+    if (!details.success) return { ok: false, message: "Indique o nome e verifique o tamanho dos campos." };
+    if (!email.success) return { ok: false, message: "Indique um email válido." };
+    const productIds = formData.getAll("products").filter((id): id is string => typeof id === "string" && isProductId(id));
+    if (await findProfileByEmail(email.data)) return { ok: false, message: "Já existe uma conta com esse email. Pesquise-a em Clientes." };
+    const client = createServiceClient();
+    let id: string;
+    try {
+      id = await ensureClientAccount(client, { email: email.data, fullName: details.data.full_name, businessName: details.data.business_name, phone: details.data.phone });
+    } catch (error) {
+      if (error instanceof ClientAccessError) return { ok: false, message: error.message };
+      throw error;
+    }
+    const { error: profileError } = await client.from("profiles").update(details.data).eq("id", id);
+    if (profileError) throw new Error(profileError.message);
+    if (productIds.length) {
+      const { error } = await client.from("client_products").insert(productIds.map((product_id) => ({ user_id: id, product_id, status: "active" })));
+      if (error) throw new Error(error.message);
+      if (productIds.some(isEstablishmentProduct)) await ensureFirstEstablishment(id);
+    }
+    revalidatePath("/admin/clientes", "layout");
+    created = id;
+    return { ok: true, message: "Cliente criado." };
+  });
+  if (created) redirect(`/admin/clientes/${created}`);
+  return result;
+}
+
+/** Admin: the client's name, business, phone and NIF (the email is the login, so it stays). */
+export async function updateClientProfile(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const id = uuid.safeParse(value(formData, "id"));
+    const details = clientDetails(formData);
+    if (!id.success) return { ok: false, message: "Conta não encontrada." };
+    if (!details.success) return { ok: false, message: "Indique o nome e verifique o tamanho dos campos." };
+    const { error } = await createServiceClient().from("profiles").update(details.data).eq("id", id.data);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/clientes", "layout");
+    return { ok: true, message: "Dados guardados." };
   });
 }

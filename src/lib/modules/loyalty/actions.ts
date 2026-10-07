@@ -149,7 +149,7 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
 
 /** Checks the team's code typed on the customer's phone, with a lock after repeated mistakes. */
 async function verifyCodeOnCard(card: LoyaltyCardRow, program: LoyaltyProgramRow, code: string): Promise<ActionState | null> {
-  if (!program.staff_code_set_at) return { ok: false, message: "A loja ainda não definiu o código da equipa." };
+  if (!program.staff_code_set_at) return { ok: false, message: "O código da equipa ainda não foi definido." };
   if (isLocked(card.locked_until, Date.now())) return { ok: false, message: `Demasiadas tentativas erradas. Tente de novo daqui a ${codeLockMinutes} minutos.` };
   if (isStaffCode(code) && staffCodeMatches(program, code)) return null;
   const attempts = card.failed_code_attempts + 1;

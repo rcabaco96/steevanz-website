@@ -70,7 +70,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
           </div>
           <div className="ticket-tear" />
           <div className="flex flex-col gap-3 px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">Na altura de usar, a equipa escreve aqui o código da loja.</p>
+            <p className="text-sm text-muted">Na altura de usar, a equipa escreve aqui o código da equipa.</p>
             <RedeemWithCodeForm token={card.token} rewardId={rewards[0].id} reward={program.reward} />
           </div>
         </article>
@@ -79,7 +79,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
       <PublicCard>
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold text-text">Pedir carimbo</h2>
-          <p className="text-muted">Mostre este ecrã ao balcão: a equipa escreve o código da loja e o carimbo aparece no cartão.</p>
+          <p className="text-muted">Mostre este ecrã ao balcão: a equipa escreve o seu código e o carimbo aparece no cartão.</p>
         </div>
         {program.active ? <StampWithCodeForm token={card.token} /> : <p className="text-muted">Os carimbos estão em pausa de momento.</p>}
         <p className="text-sm text-subtle">

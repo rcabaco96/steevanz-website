@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminPageHeader, EmptyState, adminInputClasses } from "@/components/backoffice/ui";
+import { PlusIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
@@ -16,7 +17,14 @@ export default async function AdminClientsPage({ searchParams }: { searchParams:
 
   return (
     <>
-      <AdminPageHeader title="Clientes" description={`${clients.length} ${clients.length === 1 ? "conta" : "contas"}`} />
+      <AdminPageHeader title="Clientes" description={`${clients.length} ${clients.length === 1 ? "conta" : "contas"}`}
+        actions={
+          <Link href="/admin/clientes/novo" className={buttonClasses("primary", "md")}>
+            <PlusIcon size={16} />
+            Novo cliente
+          </Link>
+        }
+      />
       <form method="get" action="/admin/clientes" className="flex gap-2">
         <input
           type="search"
@@ -26,7 +34,7 @@ export default async function AdminClientsPage({ searchParams }: { searchParams:
           placeholder="Nome, email, negócio, NIF…"
           className={`${adminInputClasses} h-11 flex-1`}
         />
-        <button type="submit" className={buttonClasses("primary", "md")}>
+        <button type="submit" className={buttonClasses("secondary", "md")}>
           Pesquisar
         </button>
       </form>

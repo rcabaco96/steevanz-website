@@ -7,6 +7,19 @@ export function isBusinessKind(value: string): value is BusinessKind {
   return (businessKinds as readonly string[]).includes(value);
 }
 
+const kindHints: [BusinessKind, RegExp][] = [
+  ["salon", /barb|cabele|sal[aã]o|salon|est[eé]tica|beauty|hair|nail|unha|spa|massag|tattoo|tatua/],
+  ["clinic", /cl[ií]nic|clinic|dent|m[eé]dic|medic|fisio|physio|veterin|consult|sa[uú]de|health|psic|optic|[oó]tic/],
+  ["restaurant", /restaur|caf[eé]|bar|pastel|padaria|bakery|pizz|marisq|seafood|tasca|snack|cervej|brew|food|grill|sushi|churrasq|tapas|hamb[uú]rg|burger|gelat|tea|ch[aá]/],
+  ["retail", /loja|store|shop|boutique|mercad|market|livraria|florist|farm[aá]c|pharmac/],
+];
+
+/** The kind that fits a Google category ("Restaurante de marisco", "Barber shop"); restaurant if unsure. */
+export function kindFromCategory(category: string | null | undefined): BusinessKind {
+  const text = (category ?? "").toLowerCase();
+  return kindHints.find(([, pattern]) => pattern.test(text))?.[0] ?? "restaurant";
+}
+
 export const kindLabels: Record<BusinessKind, string> = {
   restaurant: "Restaurante, café ou bar",
   salon: "Barbeiro, cabeleireiro ou estética",

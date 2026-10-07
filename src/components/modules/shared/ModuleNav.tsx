@@ -41,7 +41,7 @@ export function ModuleNav({
   return (
     <div className="flex flex-col gap-3">
       {establishments.length > 1 ? (
-        <nav aria-label="Loja" className="flex flex-wrap gap-2">
+        <nav aria-label="Espaço" className="flex flex-wrap gap-2">
           {establishments.map((item) => (
             <Link
               key={item.id}

@@ -11,11 +11,11 @@ export function NoEstablishment({ productId, viewer, ownerId }: { productId: Pro
         <ProductGlyph icon={getProduct(productId).icon} size={22} />
       </span>
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-lg font-semibold text-text">Falta criar a loja</h2>
+        <h2 className="text-lg font-semibold text-text">Falta o espaço</h2>
         <p className="max-w-prose text-muted">
           {viewer === "admin"
-            ? "Este cliente ainda não tem lojas. Crie a primeira na ficha do cliente (nome e tipo de negócio); o módulo fica pronto a configurar."
-            : "A nossa equipa está a preparar a sua loja. Assim que estiver pronta, a gestão aparece aqui. Se precisar de alguma coisa, fale connosco."}
+            ? "Não foi possível criar o espaço deste cliente sozinho. Crie-o na ficha do cliente (nome e tipo de negócio)."
+            : "A nossa equipa está a preparar o seu espaço. Assim que estiver pronta, a gestão aparece aqui. Se precisar de alguma coisa, fale connosco."}
         </p>
       </div>
       {viewer === "admin" ? (

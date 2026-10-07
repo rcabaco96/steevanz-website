@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { readableTextOn, slugify } from "../src/lib/establishments/kinds.ts";
+import { kindFromCategory, readableTextOn, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
 import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
@@ -8,6 +8,19 @@ import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/li
 const minute = 60_000;
 
 describe("establishments", () => {
+  it("picks the kind from the Google category", () => {
+    assert.equal(kindFromCategory("Restaurante de marisco"), "restaurant");
+    assert.equal(kindFromCategory("Seafood restaurant"), "restaurant");
+    assert.equal(kindFromCategory("Café"), "restaurant");
+    assert.equal(kindFromCategory("Barbearia"), "salon");
+    assert.equal(kindFromCategory("Barber shop"), "salon");
+    assert.equal(kindFromCategory("Cabeleireiro"), "salon");
+    assert.equal(kindFromCategory("Clínica dentária"), "clinic");
+    assert.equal(kindFromCategory("Loja de roupa"), "retail");
+    assert.equal(kindFromCategory(null), "restaurant");
+    assert.equal(kindFromCategory("Algo desconhecido"), "restaurant");
+  });
+
   it("slugifies names", () => {
     assert.equal(slugify("Café Central — Lisboa"), "cafe-central-lisboa");
     assert.equal(slugify("  ##  "), "");

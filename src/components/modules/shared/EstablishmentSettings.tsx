@@ -26,7 +26,7 @@ function Hidden({ id }: { id: string }) {
 function Details({ bundle, viewer }: { bundle: EstablishmentBundle; viewer: "client" | "admin" }) {
   const { establishment } = bundle;
   return (
-    <Panel title="Loja">
+    <Panel title="Espaço">
       <ActionForm key={establishment.updated_at} action={updateEstablishment} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Hidden id={establishment.id} />
         <label className={adminLabelClasses}>

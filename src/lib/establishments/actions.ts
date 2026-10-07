@@ -7,6 +7,7 @@ import { formText } from "@/lib/modules/common";
 import { createServiceClient } from "@/lib/supabase/service";
 import { accessErrorMessage, requireAdminSession, requireEstablishmentAccess } from "./access";
 import { businessKinds, slugify } from "./kinds";
+import { addStartingHours } from "./provision";
 import { isUuid } from "./store";
 
 async function guarded(task: () => Promise<ActionState>): Promise<ActionState> {
@@ -33,14 +34,6 @@ const optional = (max: number) =>
     .transform((text) => text || null);
 
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
-
-// Opening hours a new establishment starts with (editable straight away).
-const startingHours: Record<(typeof businessKinds)[number], { weekdays: number[]; intervals: [string, string][] }> = {
-  restaurant: { weekdays: [2, 3, 4, 5, 6, 0], intervals: [["12:00", "15:00"], ["19:00", "23:00"]] },
-  salon: { weekdays: [2, 3, 4, 5, 6], intervals: [["09:00", "19:00"]] },
-  clinic: { weekdays: [1, 2, 3, 4, 5], intervals: [["09:00", "13:00"], ["14:00", "19:00"]] },
-  retail: { weekdays: [1, 2, 3, 4, 5, 6], intervals: [["09:00", "19:00"]] },
-};
 
 const createSchema = z.object({
   owner_id: z.uuid(),
@@ -71,12 +64,9 @@ export async function createEstablishment(_previous: ActionState, formData: Form
       if (error.code === "23503") return { ok: false, message: "Conta de cliente não encontrada." };
       throw new Error(error.message);
     }
-    const plan = startingHours[parsed.data.kind];
-    const hours = plan.weekdays.flatMap((weekday) => plan.intervals.map(([opens, closes]) => ({ establishment_id: data.id, weekday, opens, closes })));
-    const { error: hoursError } = await client.from("establishment_hours").insert(hours);
-    if (hoursError) console.error("[establishments] starting hours failed:", hoursError.message);
+    await addStartingHours(data.id, parsed.data.kind);
     refresh();
-    return { ok: true, message: `Loja «${parsed.data.name}» criada.` };
+    return { ok: true, message: `Espaço «${parsed.data.name}» criado.` };
   });
 }
 
@@ -89,7 +79,7 @@ export async function deleteEstablishment(_previous: ActionState, formData: Form
     const { error } = await createServiceClient().from("establishments").delete().eq("id", id);
     if (error) throw new Error(error.message);
     refresh();
-    return { ok: true, message: "Loja removida." };
+    return { ok: true, message: "Espaço removido." };
   });
 }
 

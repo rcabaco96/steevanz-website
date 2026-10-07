@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { ArrowUpRight } from "@/components/icons";
+import { buttonClasses } from "@/components/ui/Button";
 import { createEstablishment, deleteEstablishment } from "@/lib/establishments/actions";
 import { businessKinds, kindLabels } from "@/lib/establishments/kinds";
 import type { EstablishmentRow } from "@/lib/establishments/types";
@@ -14,7 +15,7 @@ const moduleLinks = [
 
 /**
  * Admin, client page: the client's shops. Each shop has its own waitlist, loyalty card and booking
- * page (for the products the client has active); "Nova loja" stays folded until needed.
+ * page (for the products the client has active); "Novo espaço" stays folded until needed (the first one is created on its own).
  */
 export function EstablishmentsAdminPanel({ ownerId, establishments, activeProducts }: { ownerId: string; establishments: EstablishmentRow[]; activeProducts: string[] }) {
   const input = `${adminInputClasses} h-11`;
@@ -23,9 +24,9 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
     <section id="estabelecimentos" aria-labelledby="lojas-title" className="flex scroll-mt-24 flex-col gap-3">
       <div className="flex flex-col gap-0.5">
         <h2 id="lojas-title" className="text-lg font-semibold text-text">
-          Lojas
+          Espaços
         </h2>
-        <p className="text-sm text-muted">Onde a lista de espera, o cartão e as reservas funcionam. Cada loja tem os seus.</p>
+        <p className="text-sm text-muted">O restaurante, café ou barbearia onde a lista de espera, o cartão e as reservas funcionam. O primeiro é criado sozinho; acrescente outro só se o cliente tiver mais de uma morada.</p>
       </div>
 
       {establishments.length ? (
@@ -40,16 +41,27 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
                       <p className="text-base font-semibold text-text">{establishment.name}</p>
                       <p className="text-sm text-muted">{kindLabels[establishment.kind]}</p>
                     </div>
-                    <ActionForm
-                      action={deleteEstablishment}
-                      hideMessage
-                      confirmMessage={`Remover «${establishment.name}» e tudo dos seus módulos (fila, cartões, reservas)? Não se pode desfazer.`}
-                    >
-                      <input type="hidden" name="id" value={establishment.id} />
-                      <SubmitButton size="sm" variant="ghost" className="text-muted hover:text-danger">
-                        Remover loja
-                      </SubmitButton>
-                    </ActionForm>
+                    <div className="flex items-center gap-1">
+                      {modules.length ? (
+                        <Link
+                          href={`/admin/clientes/${ownerId}/${modules[0].product}?${new URLSearchParams({ loja: establishment.slug, vista: "definicoes" })}`}
+                          title="Nome, cor, tipo de negócio, horário, serviços e equipa"
+                          className={buttonClasses("secondary", "sm")}
+                        >
+                          Editar espaço
+                        </Link>
+                      ) : null}
+                      <ActionForm
+                        action={deleteEstablishment}
+                        hideMessage
+                        confirmMessage={`Remover «${establishment.name}» e tudo dos seus módulos (fila, cartões, reservas)? Não se pode desfazer.`}
+                      >
+                        <input type="hidden" name="id" value={establishment.id} />
+                        <SubmitButton size="sm" variant="ghost" className="text-muted hover:text-danger">
+                          Remover espaço
+                        </SubmitButton>
+                      </ActionForm>
+                    </div>
                   </div>
                   {modules.length ? (
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -65,7 +77,7 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
                             href={`/${item.publicPath}/${establishment.slug}`}
                             target="_blank"
                             rel="noopener"
-                            title={`Ver a página que os clientes da loja abrem (${item.label})`}
+                            title={`Ver a página que os clientes abrem (${item.label})`}
                             aria-label={`Página pública: ${item.label}`}
                             className="grid w-10 place-items-center border-l border-line text-muted transition-colors hover:bg-surface-2 hover:text-text"
                           >
@@ -76,7 +88,7 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
                     </div>
                   ) : (
                     <p className="rounded-xl bg-surface-2/60 px-3 py-2.5 text-sm text-muted">
-                      Ative a lista de espera, o cartão ou as reservas em Produtos para gerir esta loja.
+                      Ative a lista de espera, o cartão ou as reservas em Produtos para gerir este espaço.
                     </p>
                   )}
                 </div>
@@ -86,7 +98,7 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
         </ul>
       ) : (
         <p className="rounded-2xl border border-dashed border-line-strong px-4 py-5 text-sm text-muted">
-          Ainda sem lojas. Crie a primeira para a lista de espera, o cartão ou as reservas começarem a funcionar.
+          Ainda sem espaços. O primeiro é criado sozinho quando ativar a lista de espera, o cartão ou as reservas.
         </p>
       )}
 
@@ -95,12 +107,12 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
           <span aria-hidden="true" className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text transition-transform group-open:rotate-45">
             +
           </span>
-          Nova loja
+          Novo espaço
         </summary>
         <ActionForm action={createEstablishment} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input type="hidden" name="owner_id" value={ownerId} />
           <label className={adminLabelClasses}>
-            Nome da loja
+            Nome do espaço
             <input name="name" required maxLength={120} placeholder="Café Central" className={input} />
           </label>
           <label className={adminLabelClasses}>
@@ -121,7 +133,7 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
             </label>
           </details>
           <div className="sm:col-span-2">
-            <SubmitButton size="sm">Criar loja</SubmitButton>
+            <SubmitButton size="sm">Criar espaço</SubmitButton>
           </div>
         </ActionForm>
       </details>

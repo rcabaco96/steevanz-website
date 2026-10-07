@@ -2,7 +2,8 @@ import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { requestOrigin } from "@/lib/booking/request";
 import { readableTextOn } from "@/lib/establishments/kinds";
-import { listOwnerEstablishments, loadBundle } from "@/lib/establishments/store";
+import { moduleEstablishments } from "@/lib/establishments/provision";
+import { loadBundle } from "@/lib/establishments/store";
 import { weekdayNames } from "@/lib/establishments/types";
 import { saveWaitlistSettings } from "@/lib/modules/waitlist/actions";
 import { ensureWaitlistSettings, loadQueue, loadStats, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
@@ -82,7 +83,7 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
 }
 
 export async function WaitlistModule({ userId, viewer, basePath, query, productId }: ModuleProps) {
-  const establishments = await listOwnerEstablishments(userId);
+  const establishments = await moduleEstablishments(userId);
   const current = pickEstablishment(establishments, query);
   if (!current) return <NoEstablishment productId={productId} viewer={viewer} ownerId={userId} />;
   const view = pickView(query, views);

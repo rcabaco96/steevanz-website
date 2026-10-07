@@ -1,9 +1,10 @@
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { MailIcon, PhoneIcon, PlusIcon, ProductGlyph } from "@/components/icons";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct } from "@/content/products";
 import type { ProductId } from "@/content/types";
-import { saveClientProduct } from "@/lib/admin/actions";
+import { saveClientProduct, updateClientProfile } from "@/lib/admin/actions";
 import type { getProfile } from "@/lib/admin/queries";
 
 type Profile = NonNullable<Awaited<ReturnType<typeof getProfile>>>;
@@ -58,12 +59,44 @@ export function AccountCard({ profile }: { profile: Profile }) {
     { href: `mailto:${profile.email}`, icon: <MailIcon size={16} />, label: "Email", value: profile.email },
     ...(profile.phone ? [{ href: `tel:${profile.phone.replace(/[^\d+]/g, "")}`, icon: <PhoneIcon size={16} />, label: "Telemóvel", value: profile.phone }] : []),
   ];
+  const input = `${adminInputClasses} h-10`;
   return (
     <section aria-labelledby="conta-title" className="card flex flex-col gap-5 p-5">
-      <h2 id="conta-title" className="text-lg font-semibold text-text">
-        Conta
-      </h2>
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-4 lg:grid-cols-1">
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+          <h2 id="conta-title" className="text-lg font-semibold text-text">
+            Conta
+          </h2>
+          <span className="rounded-full px-3 py-1 text-sm font-semibold text-accent-text hover:bg-accent-soft">
+            <span className="group-open:hidden">Editar</span>
+            <span className="hidden group-open:inline">Cancelar</span>
+          </span>
+        </summary>
+        <ActionForm key={profile.updated_at} action={updateClientProfile} className="mt-4 flex flex-col gap-3">
+          <input type="hidden" name="id" value={profile.id} />
+          <label className={adminLabelClasses}>
+            Nome
+            <input name="full_name" required maxLength={120} defaultValue={profile.full_name ?? ""} className={input} />
+          </label>
+          <label className={adminLabelClasses}>
+            Negócio
+            <input name="business_name" maxLength={160} defaultValue={profile.business_name ?? ""} className={input} />
+          </label>
+          <label className={adminLabelClasses}>
+            Telemóvel
+            <input name="phone" type="tel" maxLength={40} defaultValue={profile.phone ?? ""} className={input} />
+          </label>
+          <label className={adminLabelClasses}>
+            NIF
+            <input name="nif" inputMode="numeric" maxLength={20} defaultValue={profile.nif ?? ""} className={input} />
+          </label>
+          <p className="text-xs text-subtle">O email não se muda aqui: é com ele que o cliente entra.</p>
+          <SubmitButton size="sm" pendingLabel="A guardar…" className="self-start">
+            Guardar
+          </SubmitButton>
+        </ActionForm>
+      </details>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-4 [details[open]~&]:hidden lg:grid-cols-1">
         {facts.map((fact) => (
           <div key={fact.label} className="min-w-0">
             <dt className="text-xs text-subtle">{fact.label}</dt>
@@ -71,7 +104,7 @@ export function AccountCard({ profile }: { profile: Profile }) {
           </div>
         ))}
       </dl>
-      <ul className="flex flex-col gap-2 border-t border-line pt-4">
+      <ul className="flex flex-col gap-2 border-t border-line pt-4 [details[open]~&]:hidden">
         {contacts.map((contact) => (
           <li key={contact.label}>
             <a href={contact.href} className="flex items-center gap-3 rounded-xl bg-surface-2/60 px-3 py-2.5 transition-colors hover:bg-surface-2">

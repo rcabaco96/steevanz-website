@@ -5,7 +5,8 @@ import { EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/compo
 import { requestOrigin } from "@/lib/booking/request";
 import { addDaysToDate, zonedDateString } from "@/lib/booking/slots";
 import { readableTextOn } from "@/lib/establishments/kinds";
-import { listOwnerEstablishments, loadBundle } from "@/lib/establishments/store";
+import { moduleEstablishments } from "@/lib/establishments/provision";
+import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { addBlock, removeBlock, rotateCalendarToken, saveBookingPage, setBookingStatus, staffCreateBooking } from "@/lib/modules/bookings/actions";
 import { bookingSummary } from "@/lib/modules/bookings/notify";
@@ -354,7 +355,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
 }
 
 export async function BookingsModule({ userId, viewer, basePath, query, productId }: ModuleProps) {
-  const establishments = await listOwnerEstablishments(userId);
+  const establishments = await moduleEstablishments(userId);
   const current = pickEstablishment(establishments, query);
   if (!current) return <NoEstablishment productId={productId} viewer={viewer} ownerId={userId} />;
   const view = pickView(query, views);

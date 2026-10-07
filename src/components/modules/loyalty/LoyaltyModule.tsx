@@ -4,7 +4,8 @@ import { EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/compo
 import { buttonClasses } from "@/components/ui/Button";
 import { requestOrigin } from "@/lib/booking/request";
 import { readableTextOn } from "@/lib/establishments/kinds";
-import { listOwnerEstablishments, loadBundle } from "@/lib/establishments/store";
+import { moduleEstablishments } from "@/lib/establishments/provision";
+import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { saveProgram, setStaffCode, staffDeleteCard, staffMigrateStamps, staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
 import { formatCardCode } from "@/lib/modules/loyalty/rules";
@@ -174,7 +175,7 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
             rows={3}
             maxLength={600}
             defaultValue={program.terms ?? ""}
-            placeholder="Por omissão: «Aceito que [loja] guarde o meu nome e contacto para gerir o cartão de cliente…»"
+            placeholder="Por omissão: «Aceito que [nome do espaço] guarde o meu nome e contacto para gerir o cartão de cliente…»"
             className={`${adminInputClasses} py-2`}
           />
         </label>
@@ -224,7 +225,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
 }
 
 export async function LoyaltyModule({ userId, viewer, basePath, query, productId }: ModuleProps) {
-  const establishments = await listOwnerEstablishments(userId);
+  const establishments = await moduleEstablishments(userId);
   const current = pickEstablishment(establishments, query);
   if (!current) return <NoEstablishment productId={productId} viewer={viewer} ownerId={userId} />;
   const view = pickView(query, views);
