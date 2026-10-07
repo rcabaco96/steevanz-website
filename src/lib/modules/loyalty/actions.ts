@@ -50,7 +50,7 @@ function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, establis
   if (result.outcome === "cooldown") return { ok: false, message: cooldownMessage(result.next_allowed_at!, establishment.time_zone) };
   if (result.rewards_earned > 0) return { ok: true, message: `Cartão completo! Ganhou: ${program.reward}. Mostre à equipa quando quiser usar.` };
   const left = program.stamps_required - result.stamps;
-  return { ok: true, message: `Carimbo dado. Faltam ${left} para: ${program.reward}.` };
+  return { ok: true, message: `Carimbo dado. ${left === 1 ? "Falta 1" : `Faltam ${left}`} para: ${program.reward}.` };
 }
 
 async function cardLink(establishment: EstablishmentRow, card: LoyaltyCardRow): Promise<string> {
@@ -84,7 +84,7 @@ const joinSchema = z.object({
   consent: z.literal(true),
 });
 
-/** Public: a customer gets a card (with the welcome stamp, if the program gives one). */
+/** Public: a customer gets a card (with the welcome stamp, if the program gives one). Only the name is required. */
 export async function joinLoyalty(_previous: ActionState, formData: FormData): Promise<ActionState> {
   let target: string | null = null;
   try {
@@ -101,7 +101,6 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
       const field = String(parsed.error.issues[0]?.path[0] ?? "");
       return { ok: false, message: field === "consent" ? "Para criar o cartão tem de aceitar o tratamento dos dados." : field === "email" ? "Indique um email válido." : "Indique o seu nome." };
     }
-    if (!parsed.data.email && !parsed.data.phone) return { ok: false, message: "Indique o email ou o telemóvel, para podermos recuperar o cartão se mudar de telemóvel." };
     const client = createServiceClient();
     if (await isModuleRateLimited(client, "loyalty")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
     const program = await ensureProgram(establishment);
@@ -149,7 +148,7 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
 
 /** Checks the team's code typed on the customer's phone, with a lock after repeated mistakes. */
 async function verifyCodeOnCard(card: LoyaltyCardRow, program: LoyaltyProgramRow, code: string): Promise<ActionState | null> {
-  if (!program.staff_code_set_at) return { ok: false, message: "O código da equipa ainda não foi definido." };
+  if (!program.staff_code_set_at) return { ok: false, message: "O PIN de carimbo ainda não foi definido. Peça ao funcionário para carimbar no painel." };
   if (isLocked(card.locked_until, Date.now())) return { ok: false, message: `Demasiadas tentativas erradas. Tente de novo daqui a ${codeLockMinutes} minutos.` };
   if (isStaffCode(code) && staffCodeMatches(program, code)) return null;
   const attempts = card.failed_code_attempts + 1;
@@ -158,7 +157,7 @@ async function verifyCodeOnCard(card: LoyaltyCardRow, program: LoyaltyProgramRow
     .from("loyalty_cards")
     .update({ failed_code_attempts: lock ? 0 : attempts, locked_until: lock ? new Date(Date.now() + codeLockMinutes * 60_000).toISOString() : null })
     .eq("id", card.id);
-  return { ok: false, message: lock ? `Código errado. O cartão fica bloqueado durante ${codeLockMinutes} minutos.` : "Código errado. Peça à equipa para o escrever." };
+  return { ok: false, message: lock ? `PIN errado. O cartão fica bloqueado durante ${codeLockMinutes} minutos.` : "PIN errado. Peça ao funcionário para o escrever." };
 }
 
 async function publicCard(formData: FormData) {
@@ -196,6 +195,7 @@ export async function redeemWithCode(_previous: ActionState, formData: FormData)
     const found = await publicCard(formData);
     if (!found) return { ok: false, message: "Cartão não encontrado." };
     const { card, establishment, program } = found;
+    if (await isModuleRateLimited(createServiceClient(), "loyalty_stamp")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
     const refused = await verifyCodeOnCard(card, program, formText(formData, "code"));
     if (refused) return refused;
     const redeemed = await redeemReward(card, formText(formData, "reward_id"));
@@ -266,11 +266,14 @@ async function staffCard(formData: FormData) {
   return { establishment, card, program: await ensureProgram(establishment) };
 }
 
+const paused: ActionState = { ok: false, message: "O cartão de cliente está em pausa. Ative-o em Definições para dar ou retirar carimbos." };
+
 /** Staff panel: one stamp (respects the time window between stamps). */
 export async function staffStamp(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
+    if (!program.active) return paused;
     const result = await stamp(card.id, 1, "staff_panel", true);
     refresh(establishment);
     const outcome = stampMessage(result, program, establishment)!;
@@ -281,8 +284,9 @@ export async function staffStamp(_previous: ActionState, formData: FormData): Pr
 /** Staff panel: removes a stamp given by mistake. */
 export async function staffRemoveStamp(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
-    const { establishment, card } = await staffCard(formData);
+    const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
+    if (!program.active) return paused;
     if (card.stamps === 0) return { ok: false, message: "Este cartão não tem carimbos para retirar." };
     await stamp(card.id, -1, "staff_panel", false);
     refresh(establishment);
@@ -295,6 +299,7 @@ export async function staffMigrateStamps(_previous: ActionState, formData: FormD
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
+    if (!program.active) return paused;
     const amount = Number(formText(formData, "amount"));
     if (!Number.isInteger(amount) || amount < 1 || amount > program.stamps_required * 3) return { ok: false, message: "Indique quantos carimbos tinha no cartão de papel." };
     const result = await stamp(card.id, amount, "migration", false);
@@ -360,15 +365,15 @@ export async function saveProgram(_previous: ActionState, formData: FormData): P
   });
 }
 
-/** The 6-digit code the team types on the customer's phone. Only its salted hash is stored. */
+/** The stamp PIN (6 digits) staff type on the customer's phone. Only its salted hash is stored. */
 export async function setStaffCode(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "loyalty");
     const code = formText(formData, "code");
-    if (!isStaffCode(code)) return { ok: false, message: "O código tem de ter 6 algarismos." };
-    if (code !== formText(formData, "confirm")) return { ok: false, message: "Os dois códigos não coincidem." };
+    if (!isStaffCode(code)) return { ok: false, message: "O PIN tem de ter 6 algarismos." };
+    if (code !== formText(formData, "confirm")) return { ok: false, message: "Os dois PIN não coincidem." };
     if (/^(\d)\1{5}$/.test(code) || "0123456789".includes(code) || "9876543210".includes(code)) {
-      return { ok: false, message: "Escolha um código menos óbvio (sem algarismos todos iguais ou seguidos)." };
+      return { ok: false, message: "Escolha um PIN menos óbvio (sem algarismos todos iguais ou seguidos)." };
     }
     await ensureProgram(establishment);
     const { error } = await createServiceClient()
@@ -377,6 +382,6 @@ export async function setStaffCode(_previous: ActionState, formData: FormData): 
       .eq("establishment_id", establishment.id);
     if (error) throw new Error(error.message);
     refresh(establishment);
-    return { ok: true, message: "Código da equipa guardado. O código anterior deixa de funcionar." };
+    return { ok: true, message: "PIN de carimbo guardado. O PIN anterior deixa de funcionar." };
   });
 }

@@ -78,13 +78,14 @@ export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; term
       </label>
       <label className={publicLabel}>
         Email (recomendado)
-        <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" placeholder="Recebe o link do cartão por email" className={publicInput} />
+        <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" className={publicInput} />
+        <span className="text-xs font-normal text-subtle">Enviamos-lhe o link do cartão: é assim que o recupera se mudar de telemóvel.</span>
       </label>
       <label className={publicLabel}>
-        Telemóvel
+        Telemóvel (opcional)
         <input name="phone" type="tel" maxLength={40} autoComplete="tel" className={publicInput} />
+        <span className="text-xs font-normal text-subtle">Se um dia vier sem telemóvel, diga o número ao balcão e recebe o carimbo na mesma.</span>
       </label>
-      <p className="-mt-2 text-xs text-subtle">Indique pelo menos um: serve para recuperar o cartão se mudar de telemóvel.</p>
       <label className="flex items-start gap-2.5 text-sm text-muted">
         <input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--brand)]" />
         <span>{terms}</span>
@@ -113,7 +114,7 @@ export function RecoverForm({ slug }: { slug: string }) {
 function CodeInput() {
   return (
     <label className={publicLabel}>
-      Código da equipa
+      PIN de carimbo <span className="font-normal text-subtle">(escrito pelo funcionário)</span>
       <input
         name="code"
         type="password"

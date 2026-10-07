@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
+import { QrCode } from "@/components/modules/shared/QrCode";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { RedeemWithCodeForm, RememberCard, StampWithCodeForm } from "@/components/public/loyalty/CardForms";
 import { StampCard } from "@/components/public/loyalty/StampCard";
-import { formatCardCode } from "@/lib/modules/loyalty/rules";
+import { requestOrigin } from "@/lib/booking/request";
+import { formatCardCode, rewardInSentence } from "@/lib/modules/loyalty/rules";
 import { availableRewards, ensureProgram, getCardByToken, recentlyRedeemed } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
@@ -42,16 +45,18 @@ export default async function LoyaltyCardPage({ params }: Props) {
   if (!establishment) notFound();
   const card = await getCardByToken(token);
   if (!card || card.establishment_id !== establishment.id) notFound();
-  const [program, rewards, redeemed] = await Promise.all([ensureProgram(establishment), availableRewards([card.id]), recentlyRedeemed(card.id)]);
+  const [program, rewards, redeemed, origin] = await Promise.all([ensureProgram(establishment), availableRewards([card.id]), recentlyRedeemed(card.id), requestOrigin()]);
   const format = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, day: "numeric", month: "long" });
   const left = program.stamps_required - card.stamps;
 
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
       <RememberCard slug={establishment.slug} token={card.token} />
+      {/* A stamp given from the staff panel shows up while the customer is at the counter. */}
+      <AutoRefresh intervalMs={10_000} />
       <StampCard name={establishment.name} holder={card.name} stamps={card.stamps} required={program.stamps_required} reward={program.reward} code={card.code} />
       <p className="-mt-1 text-center text-muted">
-        {card.stamps === 0 ? `Junte ${program.stamps_required} carimbos para ${program.reward.toLowerCase()}.` : `Faltam ${left} ${left === 1 ? "carimbo" : "carimbos"} para ${program.reward.toLowerCase()}.`}
+        {card.stamps === 0 ? `Junte ${program.stamps_required} carimbos para ${rewardInSentence(program.reward)}.` : `${left === 1 ? "Falta 1 carimbo" : `Faltam ${left} carimbos`} para ${rewardInSentence(program.reward)}.`}
       </p>
 
       {redeemed?.redeemed_at ? (
@@ -70,7 +75,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
           </div>
           <div className="ticket-tear" />
           <div className="flex flex-col gap-3 px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">Na altura de usar, a equipa escreve aqui o código da equipa.</p>
+            <p className="text-sm text-muted">Na altura de usar, mostre este ecrã ao balcão: o funcionário escreve aqui o PIN de carimbo.</p>
             <RedeemWithCodeForm token={card.token} rewardId={rewards[0].id} reward={program.reward} />
           </div>
         </article>
@@ -79,11 +84,24 @@ export default async function LoyaltyCardPage({ params }: Props) {
       <PublicCard>
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold text-text">Pedir carimbo</h2>
-          <p className="text-muted">Mostre este ecrã ao balcão: a equipa escreve o seu código e o carimbo aparece no cartão.</p>
+          <p className="text-muted">Mostre este ecrã ao balcão. O carimbo aparece no cartão em segundos.</p>
         </div>
-        {program.active ? <StampWithCodeForm token={card.token} /> : <p className="text-muted">Os carimbos estão em pausa de momento.</p>}
+        {program.active ? (
+          <>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <div className="rounded-2xl bg-white p-2.5">
+                <QrCode value={`${origin}/conta/carimbar?${new URLSearchParams({ espaco: establishment.slug, cartao: card.code })}`} label="Código QR para o funcionário carimbar" className="h-40 w-40" />
+              </div>
+              <p className="text-sm text-muted">O funcionário lê este código com o telemóvel ou tablet do estabelecimento.</p>
+            </div>
+            <p className="flex items-center gap-3 text-sm text-subtle before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line">ou</p>
+            <StampWithCodeForm token={card.token} />
+          </>
+        ) : (
+          <p className="text-muted">Os carimbos estão em pausa de momento.</p>
+        )}
         <p className="text-sm text-subtle">
-          A equipa também encontra o cartão pelo código <strong className="font-semibold text-muted">{formatCardCode(card.code)}</strong>.
+          O funcionário também encontra o cartão pelo código <strong className="font-semibold text-muted">{formatCardCode(card.code)}</strong>.
         </p>
       </PublicCard>
 
@@ -91,7 +109,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
         <ul className="flex list-disc flex-col gap-1.5 pl-5">
           <li>No iPhone: botão Partilhar, depois «Adicionar ao ecrã principal».</li>
           <li>No Android: menu ⋮, depois «Adicionar ao ecrã principal».</li>
-          <li>{card.email ? `Enviámos o link para ${card.email}: use-o se mudar de telemóvel.` : "Guarde esta página nos favoritos: é o seu cartão."}</li>
+          <li>{card.email ? `Enviámos o link para ${card.email}: use-o se mudar de telemóvel.` : "Guarde esta página nos favoritos: é o seu cartão. Se mudar de telemóvel, peça ao balcão para lhe mostrar o código QR do seu cartão."}</li>
         </ul>
       </Disclosure>
     </BrandFrame>

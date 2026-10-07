@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { JoinCardForm, RecoverForm } from "@/components/public/loyalty/CardForms";
 import { StampCard } from "@/components/public/loyalty/StampCard";
+import { rewardInSentence } from "@/lib/modules/loyalty/rules";
 import { ensureProgram } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
@@ -26,7 +27,7 @@ export default async function LoyaltyJoinPage({ params }: Props) {
     <BrandFrame establishment={establishment} service="Cartão de cliente">
       <div className="flex flex-col gap-2">
         <h2 className="display text-[1.9rem] leading-tight text-balance">
-          Junte {program.stamps_required} carimbos e ganhe {program.reward.toLowerCase()}.
+          Junte {program.stamps_required} carimbos e ganhe {rewardInSentence(program.reward)}.
         </h2>
         <p className="text-muted">O cartão fica no seu telemóvel: sem aplicação, sem papel para perder.</p>
       </div>

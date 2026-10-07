@@ -52,3 +52,8 @@ export function cooldownMessage(nextAllowedAt: string, timeZone: string): string
         minute: "2-digit",
       }).format(new Date(nextAllowedAt))}.`;
 }
+
+/** "Pastel de Belém" → "pastel de Belém": the reward inside a sentence, keeping its proper nouns. */
+export function rewardInSentence(reward: string): string {
+  return reward.charAt(0).toLowerCase() + reward.slice(1);
+}

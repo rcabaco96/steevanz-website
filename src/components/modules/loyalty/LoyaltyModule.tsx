@@ -8,10 +8,11 @@ import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { saveProgram, setStaffCode, staffDeleteCard, staffMigrateStamps, staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
-import { formatCardCode } from "@/lib/modules/loyalty/rules";
+import { formatCardCode, rewardInSentence } from "@/lib/modules/loyalty/rules";
 import {
   availableRewards,
   ensureProgram,
+  getCard,
   loadLoyaltyStats,
   recentCards,
   searchCards,
@@ -24,6 +25,7 @@ import { EstablishmentSettings } from "../shared/EstablishmentSettings";
 import { Materials } from "../shared/Materials";
 import { ModuleNav, pickEstablishment, pickView, queryValue } from "../shared/ModuleNav";
 import { NoEstablishment } from "../shared/NoEstablishment";
+import { QrCode } from "../shared/QrCode";
 
 const views = [
   { id: "carimbar", label: "Carimbar" },
@@ -43,11 +45,13 @@ function CardRow({
   program,
   rewards,
   establishment,
+  qrHref,
 }: {
   card: LoyaltyCardRow;
   program: LoyaltyProgramRow;
   rewards: LoyaltyRewardRow[];
   establishment: EstablishmentRow;
+  qrHref: string;
 }) {
   const hidden = (
     <>
@@ -109,6 +113,9 @@ function CardRow({
             Retirar carimbo
           </SubmitButton>
         </ActionForm>
+        <Link href={qrHref} scroll={false} className={buttonClasses("ghost", "sm")}>
+          Mostrar QR do cartão
+        </Link>
         <details className="basis-full">
           <summary className="cursor-pointer text-xs font-semibold text-muted hover:text-text">Mais: carimbos do papel, apagar cartão</summary>
           <ActionForm action={staffMigrateStamps} className="mt-2 flex flex-wrap items-end gap-2">
@@ -134,6 +141,30 @@ function CardRow({
         </details>
       </div>
     </li>
+  );
+}
+
+/** The card's QR on the staff screen: a customer on a new phone scans it and has the card back. */
+async function CardQr({ card, url, closeHref }: { card: LoyaltyCardRow; url: string; closeHref: string }) {
+  return (
+    <section aria-labelledby="qr-title" className="card flex flex-col items-center gap-4 p-5 text-center sm:flex-row sm:text-left">
+      <div className="shrink-0 rounded-2xl bg-white p-2.5">
+        <QrCode value={url} label={`Código QR do cartão de ${card.name}`} className="h-44 w-44" />
+      </div>
+      <div className="flex min-w-0 flex-col gap-2">
+        <h2 id="qr-title" className="text-lg font-semibold text-text">
+          Cartão de {card.name}
+        </h2>
+        <p className="text-sm text-muted">
+          Peça ao cliente para apontar a câmara do telemóvel a este código: o cartão abre com os carimbos todos. Útil quando muda de telemóvel e não deu
+          email.
+        </p>
+        <p className="text-xs text-subtle">Mostre-o só ao próprio cliente: quem tiver este código abre o cartão.</p>
+        <Link href={closeHref} scroll={false} className={buttonClasses("secondary", "sm", "self-center sm:self-start")}>
+          Fechar
+        </Link>
+      </div>
+    </section>
   );
 }
 
@@ -190,10 +221,10 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
 function StaffCodeSettings({ program, establishmentId, timeZone }: { program: LoyaltyProgramRow; establishmentId: string; timeZone: string }) {
   const input = `${adminInputClasses} h-11 tracking-[0.3em]`;
   return (
-    <Panel title="Código da equipa">
+    <Panel title="PIN de carimbo">
       <p className="-mt-2 mb-4 text-sm text-muted">
-        A equipa escreve este código de 6 algarismos no telemóvel do cliente para dar carimbos e entregar recompensas. Não o deixe à vista dos clientes; se
-        suspeitar que foi divulgado, mude-o aqui.
+        6 algarismos que só o dono e os funcionários sabem. O cliente mostra o cartão no telemóvel, o funcionário escreve o PIN e o carimbo aparece: assim o
+        cliente não consegue carimbar sozinho. Serve também para entregar recompensas. Não o deixe à vista; se suspeitar que foi divulgado, mude-o aqui.
         {program.staff_code_set_at
           ? ` Definido a ${new Intl.DateTimeFormat("pt-PT", { timeZone, dateStyle: "medium", timeStyle: "short" }).format(new Date(program.staff_code_set_at))}.`
           : ""}
@@ -201,14 +232,14 @@ function StaffCodeSettings({ program, establishmentId, timeZone }: { program: Lo
       <ActionForm action={setStaffCode} className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="establishment_id" value={establishmentId} />
         <label className={adminLabelClasses}>
-          Novo código
+          Novo PIN
           <input name="code" type="password" inputMode="numeric" pattern="\d{6}" maxLength={6} required autoComplete="new-password" className={input} />
         </label>
         <label className={adminLabelClasses}>
           Repetir
           <input name="confirm" type="password" inputMode="numeric" pattern="\d{6}" maxLength={6} required autoComplete="new-password" className={input} />
         </label>
-        <SubmitButton size="sm">{program.staff_code_set_at ? "Mudar código" : "Definir código"}</SubmitButton>
+        <SubmitButton size="sm">{program.staff_code_set_at ? "Mudar PIN" : "Definir PIN"}</SubmitButton>
       </ActionForm>
     </Panel>
   );
@@ -234,7 +265,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
   const settingsHref = `${basePath}?${new URLSearchParams({ ...(establishments.length > 1 ? { loja: current.slug } : {}), vista: "definicoes" })}`;
   const codeMissing = !program.staff_code_set_at ? (
     <p className="rounded-2xl border border-gold/40 bg-gold-soft px-4 py-3 text-sm text-gold-text">
-      Falta definir o <strong>código da equipa</strong>: sem ele, os clientes não conseguem receber carimbos no próprio telemóvel.{" "}
+      Falta definir o <strong>PIN de carimbo</strong>: sem ele, só consegue dar carimbos aqui no painel (procurando o cliente).{" "}
       <Link href={settingsHref} className="font-semibold underline">
         Definir agora
       </Link>
@@ -246,6 +277,10 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
     const cards = view === "clientes" ? await recentCards(current.id, 100) : term ? await searchCards(current.id, term) : await recentCards(current.id, 8);
     const rewards = await availableRewards(cards.map((card) => card.id));
     const rewardsOf = (cardId: string) => rewards.filter((reward) => reward.card_id === cardId);
+    const keep = { ...(establishments.length > 1 ? { loja: current.slug } : {}), ...(view === "carimbar" ? {} : { vista: view }), ...(term ? { q: term } : {}) };
+    const hrefWith = (extra: Record<string, string>) => `${basePath}?${new URLSearchParams({ ...keep, ...extra })}`;
+    const qrCard = await getCard(current.id, queryValue(query, "qr"));
+    const origin = await requestOrigin();
     return (
       <div className="flex flex-col gap-6">
         {nav}
@@ -267,9 +302,10 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
             </button>
           </form>
         ) : null}
+        {qrCard ? <CardQr card={qrCard} url={`${origin}/cartao/${current.slug}/${qrCard.token}`} closeHref={hrefWith({})} /> : null}
         {view === "carimbar" ? (
           <p className="-mt-3 text-xs text-subtle">
-            {term ? `Resultados para «${term}».` : "Últimos clientes com carimbo. O código está no cartão do cliente, no canto superior direito."}
+            {term ? `Resultados para «${term}».` : "Mais rápido: aponte a câmara deste telemóvel ou tablet ao QR do cartão do cliente e o cartão abre aqui. Em baixo, os últimos clientes com carimbo."}
           </p>
         ) : (
           <p className="-mt-3 text-sm text-muted">Os 100 cartões mais recentes, pela última visita.</p>
@@ -277,7 +313,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
         {cards.length ? (
           <ul className="flex flex-col gap-2">
             {cards.map((card) => (
-              <CardRow key={card.id} card={card} program={program} rewards={rewardsOf(card.id)} establishment={current} />
+              <CardRow key={card.id} card={card} program={program} rewards={rewardsOf(card.id)} establishment={current} qrHref={hrefWith({ qr: card.id })} />
             ))}
           </ul>
         ) : (
@@ -329,7 +365,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
         url={url}
         hint="Os clientes aderem por este link. Imprima o cartaz para o balcão, ou peça-nos a placa NFC já programada."
         poster={{
-          heading: `Junte ${program.stamps_required} carimbos, ganhe ${program.reward.toLowerCase()}.`,
+          heading: `Junte ${program.stamps_required} carimbos, ganhe ${rewardInSentence(program.reward)}.`,
           sub: "Aponte a câmara ao código. O cartão fica no seu telemóvel, sem aplicação.",
           name: current.name,
           color: current.accent_color,

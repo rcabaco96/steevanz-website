@@ -312,17 +312,17 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Carimbos apenas pela equipa**: o cliente não consegue carimbar sozinho. A equipa valida com um código ou com um toque no dispositivo da loja.",
+              "**Carimbos apenas pela equipa**: o cliente não consegue carimbar sozinho. O funcionário valida com o PIN de carimbo, escrito no telemóvel do cliente, ou no painel.",
               "**Janela temporal**: só é possível um carimbo por cliente dentro de um intervalo definido (por exemplo, um por visita a cada 2 horas).",
               "**Registo de atividade**: cada carimbo fica registado com data e hora, para poder verificar situações estranhas.",
-              "**Códigos individuais**: se um código da equipa for partilhado indevidamente, alteramo-lo.",
+              "**PIN que se muda**: se o PIN de carimbo for divulgado, muda-se em segundos nas Definições.",
             ],
           },
           {
             type: "callout",
             tone: "warning",
-            title: "Proteja o código da equipa",
-            text: "Não deixe o código de carimbo visível para os clientes nem o escreva em papéis junto à caixa. Se suspeitar que foi divulgado, peça-nos um novo.",
+            title: "Proteja o PIN de carimbo",
+            text: "Não deixe o PIN de carimbo visível para os clientes nem o escreva em papéis junto à caixa. Se suspeitar que foi divulgado, mude-o nas Definições.",
           },
           { type: "h2", id: "notificacoes-wallet", text: "Notificações na Wallet" },
           {
@@ -470,7 +470,7 @@ export const docs: ProductDocs = {
               },
               {
                 title: "Validar",
-                body: "A equipa valida o carimbo com o código da loja ou com um toque no dispositivo da loja, conforme configurado.",
+                body: "O funcionário valida o carimbo com o PIN de carimbo no telemóvel do cliente, ou procurando o cliente no painel.",
               },
               {
                 title: "Confirmar",
@@ -635,7 +635,7 @@ export const docs: ProductDocs = {
             type: "ol",
             items: [
               "Verifique se o cliente já recebeu um carimbo dentro da janela temporal (por exemplo, nas últimas 2 horas).",
-              "Confirme que a equipa está a usar o código atual da loja.",
+              "Confirme que a equipa está a usar o PIN de carimbo atual.",
               "Verifique a ligação à internet do dispositivo da loja.",
               "Se o problema persistir, anote a hora e contacte-nos: consultamos o registo de atividade.",
             ],
@@ -743,7 +743,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "O cliente pode carimbar o próprio cartão?",
-                a: "Não. Os carimbos são validados pela equipa, com um código ou um toque no dispositivo da loja, e há um limite por visita.",
+                a: "Não. Os carimbos são validados pelo funcionário, com o PIN de carimbo ou no painel, e há um limite por visita.",
               },
               {
                 q: "Posso mudar a recompensa depois do lançamento?",

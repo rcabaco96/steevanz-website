@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { kindFromCategory, readableTextOn, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
-import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
+import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, rewardInSentence, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 
 const minute = 60_000;
@@ -86,6 +86,11 @@ describe("waitlist estimate", () => {
 });
 
 describe("loyalty rules", () => {
+  it("puts the reward inside a sentence without lowercasing proper nouns", () => {
+    assert.equal(rewardInSentence("Pastel de Belém oferecido"), "pastel de Belém oferecido");
+    assert.equal(rewardInSentence("Um corte grátis"), "um corte grátis");
+  });
+
   it("makes readable 6-character codes", () => {
     const code = cardCodeFrom(new Uint8Array([0, 1, 2, 3, 4, 250]));
     assert.equal(code.length, 6);
