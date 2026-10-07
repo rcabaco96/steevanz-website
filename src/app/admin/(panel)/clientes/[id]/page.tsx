@@ -15,6 +15,8 @@ import { saveClientProduct } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
 import { getProfile, listClientOrders, listClientPanels, listClientProducts } from "@/lib/admin/queries";
+import { EstablishmentsAdminPanel } from "@/components/modules/shared/EstablishmentsAdminPanel";
+import { listOwnerEstablishments } from "@/lib/establishments/store";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -23,7 +25,12 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
   const { id } = await params;
   const profile = await getProfile(id);
   if (!profile) notFound();
-  const [owned, orders, panels] = await Promise.all([listClientProducts(profile.id), listClientOrders(profile), listClientPanels(profile.id)]);
+  const [owned, orders, panels, establishments] = await Promise.all([
+    listClientProducts(profile.id),
+    listClientOrders(profile),
+    listClientPanels(profile.id),
+    listOwnerEstablishments(profile.id),
+  ]);
   const ownedIds = new Set(owned.map((row) => row.product_id));
   const available = products.filter((product) => !ownedIds.has(product.id));
 
@@ -44,6 +51,11 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-6">
+          <EstablishmentsAdminPanel
+            ownerId={profile.id}
+            establishments={establishments}
+            activeProducts={owned.filter((row) => row.status === "active").map((row) => row.product_id)}
+          />
           <Panel title="Painéis de reviews">
             {panels.length ? (
               <ul className="flex flex-col divide-y divide-line">

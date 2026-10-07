@@ -382,3 +382,21 @@ html.reveal-ready [data-reveal] {
     bottom: calc(5.75rem + env(safe-area-inset-bottom));
   }
 }
+
+/* Module posters (QR to print): only the poster prints, the page around it doesn't. */
+@media print {
+  body:has([data-print-poster]) * {
+    visibility: hidden;
+  }
+  body:has([data-print-poster]) [data-print-poster],
+  body:has([data-print-poster]) [data-print-poster] * {
+    visibility: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body:has([data-print-poster]) [data-print-poster] {
+    position: absolute;
+    inset: 0 0 auto;
+    margin: 2cm auto 0;
+  }
+}

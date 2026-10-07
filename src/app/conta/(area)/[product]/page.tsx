@@ -15,8 +15,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: isProductId(product) ? getProductCopy(product, "pt").shortName : "Produto" };
 }
 
-export default async function AccountProductPage({ params }: { params: Params }) {
+export default async function AccountProductPage({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { product } = await params;
+  const query = await searchParams;
   if (!isProductId(product)) notFound();
   const user = await requireUser();
   const owned = await getOwnProduct(user.id, product);
@@ -27,7 +34,7 @@ export default async function AccountProductPage({ params }: { params: Params })
     <>
       <BackLink href="/conta" label="Os meus produtos" />
       <AdminPageHeader title={copy.name} description={copy.tagline} />
-      <ProductModule productId={product} userId={user.id} viewer="client" />
+      <ProductModule productId={product} userId={user.id} viewer="client" basePath={`/conta/${product}`} query={query} />
     </>
   );
 }

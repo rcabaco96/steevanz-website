@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { runModuleRoutines } from "@/lib/modules/routines";
 import { loadPlanInputs } from "@/lib/reviews/reader-queue";
 import { decideTick, schedulerKeys, tickSchedule } from "@/lib/reviews/tick";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
@@ -106,6 +107,12 @@ export async function GET(request: NextRequest) {
     response.dispatch = await runDispatch(client, { dryRun });
   } catch (error) {
     errors.push(`dispatch: ${errorText(error)}`);
+  }
+  // Establishment modules: booking reminders (day before) and waitlist data retention.
+  try {
+    response.modules = await runModuleRoutines(client, { now, dryRun });
+  } catch (error) {
+    errors.push(`modules: ${errorText(error)}`);
   }
 
   response.seconds = Math.round((Date.now() - started) / 1000);
