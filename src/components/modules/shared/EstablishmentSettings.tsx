@@ -47,13 +47,6 @@ function Details({ bundle, viewer }: { bundle: EstablishmentBundle; viewer: "cli
           Telefone
           <input name="phone" type="tel" maxLength={40} defaultValue={establishment.phone ?? ""} className={input} />
         </label>
-        <label className={adminLabelClasses}>
-          Cor da marca
-          <span className="flex items-center gap-3">
-            <input name="accent_color" type="color" defaultValue={establishment.accent_color} className="h-11 w-16 cursor-pointer rounded-xl border border-line bg-surface p-1" />
-            <span className="text-xs font-normal text-subtle">Usada nas páginas que os clientes veem.</span>
-          </span>
-        </label>
         <label className={`${adminLabelClasses} sm:col-span-2`}>
           Morada
           <input name="address" maxLength={200} defaultValue={establishment.address ?? ""} className={input} />

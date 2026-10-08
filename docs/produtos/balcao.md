@@ -1,25 +1,23 @@
 # Balcão
 
-O ecrã do dia a dia do dono e da equipa: **tudo o que precisa de um toque durante o serviço, num só
-ecrã, por espaço**. Feito para o telemóvel ou tablet do balcão; parece um produto, não um backoffice.
-Definições, histórico e estatísticas ficam em cada módulo.
+Página da área de cliente (backoffice) com **tudo o que precisa de um toque durante o serviço, por
+espaço**: a fila, as reservas de hoje e o cartão de cliente, em separadores. Mesmo layout e cores
+Steevanz do resto do backoffice. Definições, histórico e estatísticas ficam em cada módulo.
 
 ## Onde está
 
-- `/conta/balcao`: vai direto ao espaço (ou deixa escolher, se o cliente tiver vários).
-- `/conta/balcao/<espaco>`: o Balcão de um espaço. Só o dono (para os produtos que esse espaço
-  tem) e o admin.
-- Atalhos: cartão **Balcão** no topo de «Os meus produtos», botão **Abrir o Balcão** em cada módulo e
-  **Abrir Balcão** em cada espaço na ficha do cliente (admin).
+- Cliente: **Balcão** no menu da área de cliente (`/conta/balcao`; só aparece a quem tem a fila, as
+  reservas ou o cartão), o cartão no topo de «Os meus produtos» e o botão **Abrir o Balcão** em cada
+  módulo. Com vários espaços, escolhe-se o espaço como nos módulos (`?loja=`).
+- Admin: **Abrir Balcão** em cada espaço na ficha do cliente (`/admin/clientes/<id>/balcao`).
 - Ler o QR do cartão de um cliente com a câmara do aparelho do balcão abre o Balcão nesse cartão.
 
 ## Como está feito
 
-- Cabeçalho com o nome e a cor do espaço, as horas e um atalho para as definições do módulo aberto.
-- Separadores **só para os produtos desse espaço**, por esta ordem: **Fila**, **Reservas**,
-  **Cartão**. No telemóvel ficam em baixo, como numa app; no tablet, em cima. Com contadores ao vivo
-  (pessoas à espera, reservas por chegar).
-- Os botões principais são grandes e na cor do espaço; as exceções ficam no «⋯» de cada linha.
+- Separadores **só para os produtos desse espaço**, por esta ordem: **Fila**, **Reservas de hoje**,
+  **Cartão**, com contadores ao vivo (pessoas à espera, reservas por chegar), e um atalho
+  «Definições e histórico» para o módulo do separador aberto.
+- O botão principal de cada separador é grande; as exceções ficam no «⋯» de cada linha.
 - Atualiza-se sozinho: de 8 em 8 s quando o espaço tem a fila (também para o som de novas entradas,
   em qualquer separador), de 30 em 30 s só com reservas.
 
@@ -51,7 +49,7 @@ fecham como atendidas); reservas de hoje e cartões só são acrescentados uma v
 
 | O quê | Onde |
 | --- | --- |
-| Páginas | `src/app/conta/balcao/` |
+| Páginas | `src/app/conta/(area)/balcao/`, `src/app/admin/(panel)/clientes/[id]/balcao/` |
 | Ecrã e separadores | `src/components/modules/counter/` |
 | Acesso e produtos por espaço | `src/lib/establishments/counter.ts` |
 | Dados de demonstração | `scripts/demo-balcao.mjs` |

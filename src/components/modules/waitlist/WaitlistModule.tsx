@@ -1,7 +1,6 @@
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { requestOrigin } from "@/lib/booking/request";
-import { readableTextOn } from "@/lib/establishments/kinds";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import { weekdayNames } from "@/lib/establishments/types";
@@ -12,7 +11,9 @@ import { EstablishmentSettings } from "../shared/EstablishmentSettings";
 import { Materials } from "../shared/Materials";
 import { ModuleNav, pickEstablishment, pickView } from "../shared/ModuleNav";
 import { NoEstablishment } from "../shared/NoEstablishment";
-import { QueueBoard } from "./QueueBoard";
+import { QueueCounter } from "../counter/QueueCounter";
+import { AutoRefresh } from "../shared/AutoRefresh";
+import { JoinChime } from "./JoinChime";
 
 const views = [
   { id: "fila", label: "Fila" },
@@ -25,7 +26,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
   return (
     <div className="card flex flex-col gap-1 p-4">
       <span className="text-sm text-muted">{label}</span>
-      <span className="display text-3xl tabular-nums">{value}</span>
+      <span className="text-2xl font-semibold tabular-nums text-text">{value}</span>
       <span className="text-xs text-subtle">{hint}</span>
     </div>
   );
@@ -173,8 +174,6 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
             heading: current.kind === "restaurant" ? "Mesa ocupada? Entre na fila." : "Entre na fila pelo telemóvel.",
             sub: "Aponte a câmara ao código. Avisamos quando for a sua vez — pode esperar onde quiser.",
             name: current.name,
-            color: current.accent_color,
-            textColor: readableTextOn(current.accent_color),
           }}
           extra={
             <div className="mt-5 flex flex-col gap-1 border-t border-line pt-4 text-sm">
@@ -193,10 +192,15 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
   }
 
   const queue = await loadQueue(current, settings);
+  const newest = queue.live.filter((entry) => entry.status === "waiting").sort((a, b) => Date.parse(b.joined_at) - Date.parse(a.joined_at))[0];
   return (
     <div className="flex flex-col gap-6">
+      <AutoRefresh intervalMs={8000} />
       {nav}
-      <QueueBoard bundle={bundle} settings={settings} queue={queue} />
+      <div className="flex justify-end">
+        <JoinChime latest={newest?.id ?? null} />
+      </div>
+      <QueueCounter bundle={bundle} settings={settings} queue={queue} />
     </div>
   );
 }

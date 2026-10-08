@@ -169,8 +169,8 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               {
-                title: "Enviar a informação da marca",
-                body: "Envie-nos o logótipo, as cores e uma imagem de fundo, se tiver. Usamos estes elementos para desenhar o cartão da Wallet e a página web.",
+                title: "Enviar a informação do negócio",
+                body: "Envie-nos o nome do negócio, as regras e a recompensa. Usamos esta informação para configurar o cartão e a página web.",
               },
               {
                 title: "Aprovar as regras e o design",
@@ -240,8 +240,8 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               {
-                title: "Send your brand assets",
-                body: "Send us your logo, colours and a background image if you have one. We use them to design the Wallet card and the web page.",
+                title: "Send your business details",
+                body: "Send us your business name, the rules and the reward. We use them to set up the card and the web page.",
               },
               {
                 title: "Approve the rules and design",
@@ -771,14 +771,14 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Quanto tempo demora a lançar?",
-                a: "Normalmente poucos dias depois de recebermos o logótipo, as cores e a aprovação das regras.",
+                a: "Normalmente poucos dias depois de recebermos o nome do negócio e a aprovação das regras.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Quer ver como fica com a sua marca? [Agende uma demonstração](/agendar) ou veja o [cartão de fidelidade digital](/produtos/cartao-fidelidade-digital).",
+            text: "Quer ver como funciona? [Agende uma demonstração](/agendar) ou veja o [cartão de fidelidade digital](/produtos/cartao-fidelidade-digital).",
           },
         ],
       },
@@ -829,14 +829,14 @@ export const docs: ProductDocs = {
               },
               {
                 q: "How long does it take to launch?",
-                a: "Usually a few days after we receive your logo, colours and approval of the rules.",
+                a: "Usually a few days after we receive your business name and approval of the rules.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Want to see it with your branding? [Book a demo](/en/book-a-demo) or see the [digital loyalty card](/en/products/digital-loyalty-card).",
+            text: "Want to see how it works? [Book a demo](/en/book-a-demo) or see the [digital loyalty card](/en/products/digital-loyalty-card).",
           },
         ],
       },

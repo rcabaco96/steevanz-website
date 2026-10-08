@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { CSSProperties } from "react";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { QrCode } from "@/components/modules/shared/QrCode";
-import { brandStyle } from "@/components/public/BrandFrame";
 import { ScreenChime } from "@/components/public/waitlist/ScreenChime";
 import { requestOrigin } from "@/lib/booking/request";
 import { kindWords } from "@/lib/establishments/kinds";
@@ -10,6 +10,9 @@ import { loadBundle } from "@/lib/establishments/store";
 import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
 import { currentSettings, loadQueue } from "@/lib/modules/waitlist/store";
 import { publicEstablishment } from "@/lib/modules/public";
+
+/** Always dark (a TV at the door): the Steevanz accent of dark mode. */
+const screenStyle = { "--brand": "#e39ac6", "--brand-text": "#1d0d1a" } as CSSProperties;
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -45,7 +48,7 @@ export default async function WaitlistScreenPage({ params }: Props) {
   const open = settings.state === "open";
 
   return (
-    <div style={brandStyle(establishment)} className="flex h-dvh flex-col overflow-hidden bg-[#120b14] text-white">
+    <div style={screenStyle} className="flex h-dvh flex-col overflow-hidden bg-[#120b14] text-white">
       <AutoRefresh intervalMs={5000} />
 
       <header className="flex items-center justify-between gap-6 px-[3vw] py-[2.2vh]">

@@ -5,7 +5,6 @@ import { isLeadKind, isPipelineStatus, type BookingRow, type LeadKind, type Lead
 import { site } from "@/lib/site";
 import { adminEmails } from "@/lib/supabase/env";
 import { createServiceClient } from "@/lib/supabase/service";
-import { clientRevenue } from "./revenue";
 
 export type AdminSearchParams = Record<string, string | string[] | undefined>;
 
@@ -209,8 +208,6 @@ export async function dashboardStats(now = new Date()): Promise<DashboardStats> 
 
 export interface ClientSummary extends ProfileRow {
   activeProducts: number;
-  /** Recurring revenue at catalogue prices (estimate). */
-  monthlyCents: number;
   /** Review panels this account owns. */
   panels: number;
 }
@@ -241,7 +238,7 @@ export async function listClients(q: string): Promise<ClientSummary[]> {
 
   const ids = profiles.map((profile) => profile.id);
   const [{ data: owned, error: ownedError }, { data: panels, error: panelsError }] = await Promise.all([
-    client.from("client_products").select("user_id, product_id, status, spaces, activated_at").eq("status", "active").in("user_id", ids),
+    client.from("client_products").select("user_id").eq("status", "active").in("user_id", ids),
     client.from("review_businesses").select("owner_id").in("owner_id", ids),
   ]);
   if (ownedError) throw new Error(`listClients products: ${ownedError.message}`);
@@ -253,11 +250,9 @@ export async function listClients(q: string): Promise<ClientSummary[]> {
   };
   const productCounts = tally(((owned ?? []) as Pick<ClientProductRow, "user_id">[]).map((row) => ({ key: row.user_id })));
   const panelCounts = tally(((panels ?? []) as { owner_id: string | null }[]).map((row) => ({ key: row.owner_id })));
-  const rows = (owned ?? []) as Pick<ClientProductRow, "user_id" | "product_id" | "status" | "spaces" | "activated_at">[];
   return profiles.map((profile) => ({
     ...profile,
     activeProducts: productCounts.get(profile.id) ?? 0,
-    monthlyCents: clientRevenue(rows.filter((row) => row.user_id === profile.id), []).monthlyCents,
     panels: panelCounts.get(profile.id) ?? 0,
   }));
 }

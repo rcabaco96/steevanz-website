@@ -415,8 +415,8 @@ html.reveal-ready [data-reveal] {
   }
 }
 
-/* Public module pages (waitlist, loyalty card, bookings): the establishment's own look.
-   --brand / --brand-text are set per establishment on the page wrapper. */
+/* Public module pages (waitlist, loyalty card, bookings), always in the Steevanz palette.
+   --brand / --brand-text are set on the page wrapper (brandStyle: the Steevanz accent). */
 @layer components {
   /* Shop awning: the brand colour with a scalloped bottom edge. */
   .awning {

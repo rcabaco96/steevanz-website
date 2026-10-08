@@ -53,7 +53,7 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 - Cria o cartão **só com o nome**:
   - Email recomendado: recebe o link do cartão e é assim que o recupera sozinho.
   - Telemóvel opcional: se vier sem telemóvel, diz o número ao balcão e recebe o carimbo na mesma.
-- Fica com o cartão no telemóvel (`/cartao/<espaco>/<token>`): cores do estabelecimento, carimbos,
+- Fica com o cartão no telemóvel (`/cartao/<espaco>/<token>`): cores Steevanz, nome do estabelecimento, carimbos,
   recompensa, código do cartão e o QR para o funcionário ler.
 - Pode adicioná-lo ao ecrã principal (cada cartão tem o seu manifest, abre como uma app).
 - O cartão atualiza-se sozinho (de 10 em 10 s) quando o funcionário carimba pelo backoffice.

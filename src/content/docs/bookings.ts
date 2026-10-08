@@ -57,7 +57,6 @@ export const docs: ProductDocs = {
               "**Equipa**: quem atende, que serviços faz cada pessoa e os respetivos horários.",
               "Para restaurantes: **lotação**, número e tamanho das mesas e turnos (almoço, jantar).",
               "**Políticas**: antecedência mínima para reservar, prazo de cancelamento e se pretende pedir sinal.",
-              "Logótipo e cores, para a página de reserva ficar com a imagem do seu negócio.",
             ],
           },
           { type: "h2", id: "primeiros-dias", text: "Os primeiros dias" },
@@ -125,7 +124,6 @@ export const docs: ProductDocs = {
               "**Team**: who serves customers, which services each person offers and their working hours.",
               "For restaurants: **capacity**, number and size of tables, and shifts (lunch, dinner).",
               "**Policies**: minimum notice for bookings, cancellation window and whether you want to take a deposit.",
-              "Logo and brand colours, so the booking page looks like your business.",
             ],
           },
           { type: "h2", id: "first-days", text: "The first few days" },
@@ -164,8 +162,8 @@ export const docs: ProductDocs = {
                 body: "Criamos os serviços ou turnos, os perfis da equipa, os horários, os intervalos entre marcações e os dias de fecho já conhecidos.",
               },
               {
-                title: "Personalização da página de reserva",
-                body: "Aplicamos o seu logótipo e cores e escrevemos os textos de confirmação e de lembrete no tom do seu negócio.",
+                title: "Textos da página de reserva",
+                body: "Escrevemos a política, a nota de confirmação e os textos de lembrete no tom do seu negócio.",
               },
               {
                 title: "Testes consigo",
@@ -245,8 +243,8 @@ export const docs: ProductDocs = {
                 body: "We create the services or shifts, staff profiles, working hours, buffer times between appointments and any known closure dates.",
               },
               {
-                title: "Booking page branding",
-                body: "We apply your logo and colours and write the confirmation and reminder messages in your business's tone of voice.",
+                title: "Booking page texts",
+                body: "We write the policy, the confirmation note and the reminder messages in your business's tone of voice.",
               },
               {
                 title: "Testing with you",

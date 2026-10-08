@@ -1,20 +1,20 @@
 import Link from "next/link";
+import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { EmptyState, Panel, adminInputClasses } from "@/components/backoffice/ui";
 import { ArrowRight } from "@/components/icons";
-import { ActionForm } from "@/components/backoffice/ActionForm";
+import { buttonClasses } from "@/components/ui/Button";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
 import { formatCardCode } from "@/lib/modules/loyalty/rules";
 import type { LoyaltyCardRow, LoyaltyProgramRow, LoyaltyRewardRow } from "@/lib/modules/loyalty/store";
 import { QrCode } from "../shared/QrCode";
-import { CounterSubmit } from "./CounterSubmit";
 
 function Stamps({ stamps, required, large = false }: { stamps: number; required: number; large?: boolean }) {
   return (
     <div
       aria-label={`${stamps} de ${required} carimbos`}
       role="img"
-      className={large ? "grid max-w-md gap-1.5" : "flex flex-wrap gap-1"}
-      style={large ? { gridTemplateColumns: `repeat(${Math.min(required, 10)}, minmax(0, 1fr))` } : undefined}
+      className={`flex flex-wrap ${large ? "gap-1.5" : "gap-1"}`}
     >
       {Array.from({ length: required }, (_, index) => {
         const filled = index < stamps;
@@ -22,8 +22,8 @@ function Stamps({ stamps, required, large = false }: { stamps: number; required:
         return (
           <span
             key={index}
-            className={`rounded-full ${large ? "aspect-square w-full" : "h-2.5 w-2.5"} ${
-              filled ? "bg-[var(--brand)]" : last ? "border-2 border-dashed border-gold" : "bg-surface-2 ring-1 ring-line ring-inset"
+            className={`rounded-full ${large ? "h-5 w-5" : "h-2.5 w-2.5"} ${
+              filled ? "bg-accent" : last ? "border-2 border-dashed border-gold" : "bg-surface-2 ring-1 ring-line ring-inset"
             }`}
           />
         );
@@ -40,42 +40,38 @@ function CardActions({ card, establishment, rewards, program, qrHref }: { card: 
     </>
   );
   return (
-    <div className="flex flex-col gap-2">
-      <div className={`grid gap-2 ${rewards.length ? "sm:grid-cols-2" : ""}`}>
-        <ActionForm action={staffStamp} className="flex flex-col">
+    <div className="flex flex-wrap items-start gap-2 border-t border-line pt-4">
+      <ActionForm action={staffStamp} className="flex flex-col">
+        {hidden}
+        <SubmitButton size="md" pendingLabel="A carimbar…">
+          Dar carimbo
+        </SubmitButton>
+      </ActionForm>
+      {rewards.length ? (
+        <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${program.reward}» a ${card.name}?`}>
           {hidden}
-          <CounterSubmit size="xl" pendingLabel="A carimbar…">
-            Dar carimbo
-          </CounterSubmit>
+          <input type="hidden" name="reward_id" value={rewards[0].id} />
+          <SubmitButton size="md" variant="secondary">
+            Entregar recompensa
+          </SubmitButton>
         </ActionForm>
-        {rewards.length ? (
-          <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${program.reward}» a ${card.name}?`}>
-            {hidden}
-            <input type="hidden" name="reward_id" value={rewards[0].id} />
-            <CounterSubmit size="xl" tone="gold">
-              Entregar recompensa
-            </CounterSubmit>
-          </ActionForm>
-        ) : null}
-      </div>
-      <div className="flex flex-wrap justify-center gap-1">
-        <ActionForm action={staffRemoveStamp} confirmMessage={`Retirar um carimbo a ${card.name}?`} className="flex flex-col items-center">
-          {hidden}
-          <CounterSubmit size="sm" tone="quiet">
-            Retirar um carimbo
-          </CounterSubmit>
-        </ActionForm>
-        <Link href={qrHref} scroll={false} className="inline-flex h-9 items-center rounded-xl px-3 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-text">
-          Mostrar QR do cartão
-        </Link>
-      </div>
+      ) : null}
+      <ActionForm action={staffRemoveStamp} confirmMessage={`Retirar um carimbo a ${card.name}?`} className="flex flex-col">
+        {hidden}
+        <SubmitButton size="md" variant="ghost">
+          Retirar um carimbo
+        </SubmitButton>
+      </ActionForm>
+      <Link href={qrHref} scroll={false} className={buttonClasses("ghost", "md")}>
+        Mostrar QR do cartão
+      </Link>
     </div>
   );
 }
 
 /**
- * The loyalty card at the counter: find the customer (or scan their card's QR with this device's
- * camera, which lands here), then one big "Dar carimbo". A single result opens as the big card.
+ * The loyalty card for the team (the Balcão): find the customer (or scan their card's QR with this
+ * device's camera, which lands here), then "Dar carimbo". A single result opens the card.
  */
 export function CardCounter({
   establishment,
@@ -84,6 +80,7 @@ export function CardCounter({
   rewards,
   term,
   basePath,
+  keep,
   qrCard,
   qrUrl,
   settingsHref,
@@ -94,12 +91,14 @@ export function CardCounter({
   rewards: LoyaltyRewardRow[];
   term: string;
   basePath: string;
+  /** Query kept on every link (the space and the tab). */
+  keep: Record<string, string>;
   qrCard: LoyaltyCardRow | null;
   qrUrl: string | null;
   settingsHref: string;
 }) {
   const rewardsOf = (cardId: string) => rewards.filter((reward) => reward.card_id === cardId);
-  const hrefWith = (extra: Record<string, string>) => `${basePath}?${new URLSearchParams({ vista: "cartao", ...(term ? { q: term } : {}), ...extra })}`;
+  const hrefWith = (extra: Record<string, string>) => `${basePath}?${new URLSearchParams({ ...keep, ...(term ? { q: term } : {}), ...extra })}`;
   const focus = term && cards.length === 1 ? cards[0] : null;
   const list = focus ? [] : cards;
 
@@ -115,7 +114,9 @@ export function CardCounter({
       ) : null}
 
       <form method="get" action={basePath} role="search" className="flex flex-col gap-2">
-        <input type="hidden" name="vista" value="cartao" />
+        {Object.entries(keep).map(([name, value]) => (
+          <input key={name} type="hidden" name={name} value={value} />
+        ))}
         <div className="flex gap-2">
           <input
             type="search"
@@ -124,21 +125,18 @@ export function CardCounter({
             aria-label="Procurar cartão"
             placeholder="Procurar cliente"
             autoComplete="off"
-            className="h-14 min-w-0 flex-1 rounded-2xl border border-line bg-surface px-4 text-lg text-text placeholder:text-subtle focus:border-[var(--brand)] focus:outline-none focus:ring-4 focus:ring-[color-mix(in_oklab,var(--brand)_18%,transparent)]"
+            className={`${adminInputClasses} h-11 min-w-0 flex-1`}
           />
-          <button
-            type="submit"
-            className="h-14 shrink-0 rounded-2xl bg-surface-inverse px-5 text-base font-semibold text-inverse transition-opacity hover:opacity-90 active:scale-[0.98]"
-          >
+          <button type="submit" className={buttonClasses("secondary", "md", "shrink-0")}>
             Procurar
           </button>
         </div>
-        <p className="px-1 text-xs text-subtle">
+        <p className="text-xs text-subtle">
           Pelo nome, telemóvel ou código do cartão. Mais rápido: aponte a câmara deste aparelho ao QR do cartão do cliente e o cartão abre aqui.
           {term ? (
             <>
               {" "}
-              <Link href={`${basePath}?vista=cartao`} className="font-semibold text-muted underline hover:text-text">
+              <Link href={`${basePath}?${new URLSearchParams(keep)}`} className="font-semibold text-muted underline hover:text-text">
                 Limpar
               </Link>
             </>
@@ -147,7 +145,7 @@ export function CardCounter({
       </form>
 
       {qrCard && qrUrl ? (
-        <section aria-labelledby="qr-title" className="flex flex-col items-center gap-4 rounded-[2rem] border border-line bg-surface p-6 text-center">
+        <section aria-labelledby="qr-title" className="card flex flex-col items-center gap-4 p-6 text-center">
           <div className="rounded-2xl bg-white p-3">
             <QrCode value={qrUrl} label={`Código QR do cartão de ${qrCard.name}`} className="h-52 w-52" />
           </div>
@@ -157,30 +155,30 @@ export function CardCounter({
             </h2>
             <p className="max-w-sm text-sm text-muted">O cliente aponta a câmara do telemóvel a este código e o cartão abre com os carimbos todos. Mostre-o só ao próprio.</p>
           </div>
-          <Link href={hrefWith({})} scroll={false} className="inline-flex h-11 items-center rounded-2xl border border-line-strong px-5 text-sm font-semibold text-text hover:bg-surface-2">
+          <Link href={hrefWith({})} scroll={false} className={buttonClasses("secondary", "sm")}>
             Fechar
           </Link>
         </section>
       ) : null}
 
       {focus ? (
-        <section aria-label={`Cartão de ${focus.name}`} className="flex flex-col gap-5 rounded-[2rem] border border-line bg-surface p-5 sm:p-7">
+        <section aria-label={`Cartão de ${focus.name}`} className="card flex flex-col gap-4 p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <p className="truncate text-2xl font-semibold text-text">{focus.name}</p>
+              <p className="truncate text-lg font-semibold text-text">{focus.name}</p>
               <p className="text-sm text-muted">
                 <span className="font-mono">{formatCardCode(focus.code)}</span>
                 {focus.phone ? ` · ${focus.phone}` : ""}
               </p>
             </div>
             <p className="shrink-0 text-right">
-              <span className="display text-5xl leading-none tabular-nums">{focus.stamps}</span>
-              <span className="display text-2xl text-muted">/{program.stamps_required}</span>
+              <span className="text-2xl font-semibold tabular-nums text-text">{focus.stamps}</span>
+              <span className="text-base text-muted">/{program.stamps_required}</span>
             </p>
           </div>
           <Stamps stamps={focus.stamps} required={program.stamps_required} large />
           {rewardsOf(focus.id).length ? (
-            <p className="rounded-2xl bg-gold-soft px-4 py-3 text-sm font-semibold text-gold-text">
+            <p className="rounded-xl bg-gold-soft px-3 py-2 text-sm font-semibold text-gold-text">
               Tem {rewardsOf(focus.id).length === 1 ? "uma recompensa" : `${rewardsOf(focus.id).length} recompensas`} por usar: {program.reward}.
             </p>
           ) : (
@@ -193,16 +191,13 @@ export function CardCounter({
       ) : null}
 
       {list.length ? (
-        <section aria-labelledby="cartoes-title" className="flex flex-col gap-2">
-          <h2 id="cartoes-title" className="px-1 text-sm font-semibold text-muted">
-            {term ? `${list.length} cartões para «${term}»` : "Últimos clientes com carimbo"}
-          </h2>
-          <ul className="flex flex-col gap-2">
+        <Panel title={term ? `${list.length} cartões para «${term}»` : "Últimos clientes com carimbo"}>
+          <ul className="-my-3 divide-y divide-line">
             {list.map((card) => {
               const cardRewards = rewardsOf(card.id).length;
               return (
                 <li key={card.id}>
-                  <Link href={`${basePath}?${new URLSearchParams({ vista: "cartao", q: card.code })}`} className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 pr-2 transition-colors hover:border-line-strong">
+                  <Link href={`${basePath}?${new URLSearchParams({ ...keep, q: card.code })}`} className="-mx-2 flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-surface-2">
                   <span className="flex min-w-0 flex-1 flex-col gap-1.5 px-1">
                     <span className="flex items-center gap-2">
                       <span className="truncate font-semibold text-text">{card.name}</span>
@@ -215,7 +210,7 @@ export function CardCounter({
                       </span>
                     </span>
                   </span>
-                  <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-muted">
+                  <span aria-hidden="true" className="shrink-0 text-muted">
                     <ArrowRight size={18} />
                   </span>
                   </Link>
@@ -223,11 +218,11 @@ export function CardCounter({
               );
             })}
           </ul>
-        </section>
+        </Panel>
       ) : term && !focus ? (
-        <p className="rounded-3xl border border-dashed border-line-strong px-5 py-8 text-center text-muted">Nenhum cartão encontrado para «{term}».</p>
+        <EmptyState>Nenhum cartão encontrado para «{term}».</EmptyState>
       ) : !term && !cards.length ? (
-        <p className="rounded-3xl border border-dashed border-line-strong px-5 py-8 text-center text-muted">Ainda sem cartões. Os clientes aderem pelo QR code ao balcão.</p>
+        <EmptyState>Ainda sem cartões. Os clientes aderem pelo QR code ao balcão.</EmptyState>
       ) : null}
     </div>
   );

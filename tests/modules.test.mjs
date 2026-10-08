@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { kindFromCategory, readableTextOn, slugify } from "../src/lib/establishments/kinds.ts";
+import { kindFromCategory, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
 import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/schedule.ts";
 import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, rewardInSentence, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
@@ -25,12 +25,6 @@ describe("establishments", () => {
   it("slugifies names", () => {
     assert.equal(slugify("Café Central — Lisboa"), "cafe-central-lisboa");
     assert.equal(slugify("  ##  "), "");
-  });
-
-  it("picks readable text on brand colours", () => {
-    assert.equal(readableTextOn("#7a2d60"), "#ffffff");
-    assert.equal(readableTextOn("#f5d76e"), "#1d1220");
-    assert.equal(readableTextOn("#ffffff"), "#1d1220");
   });
 });
 

@@ -18,7 +18,7 @@ import { subscriptionStatusLabels, subscriptionStatuses, type ClientProductRow }
 import { removeClientProduct, saveClientProduct } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
-import { clientRevenue, euros, perSpace } from "@/lib/admin/revenue";
+import { isPerSpace as perSpace } from "@/lib/cart/ownership";
 import { getProfile, listClientOrders, listClientPanels, listClientProducts } from "@/lib/admin/queries";
 import { coveredEstablishmentIds, listOwnerEstablishments } from "@/lib/establishments/store";
 
@@ -135,7 +135,6 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
     listOwnerEstablishments(profile.id),
   ]);
   const ownedIds = new Set(owned.map((row) => row.product_id));
-  const revenue = clientRevenue(owned, orders);
   const moduleRows = owned.filter((row) => row.status === "active" && perSpace(row.product_id));
   const coverage = Object.fromEntries(
     await Promise.all(moduleRows.map(async (row) => [row.product_id, { spaces: row.spaces, ids: await coveredEstablishmentIds(profile.id, row.product_id) }] as const)),
@@ -158,11 +157,6 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             <p className="text-muted">
               {[profile.business_name, `${active.length} ${active.length === 1 ? "produto ativo" : "produtos ativos"}`].filter(Boolean).join(" · ")}
             </p>
-            {revenue.totalCents ? (
-              <p className="mt-1 text-xs text-subtle" title="Estimativa a preços de catálogo: produtos mensais ativos × espaços, mais os valores únicos das encomendas aceites.">
-                <span className="font-semibold text-success">{euros(revenue.monthlyCents)}/mês</span> · ≈ {euros(revenue.totalCents)} faturados até hoje
-              </p>
-            ) : null}
           </div>
         </div>
         <a href={`mailto:${profile.email}`} className={buttonClasses("secondary", "sm", "self-start sm:self-auto")}>

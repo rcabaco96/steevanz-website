@@ -86,23 +86,21 @@ export async function deleteEstablishment(_previous: ActionState, formData: Form
 const detailsSchema = z.object({
   name: z.string().trim().min(1).max(120),
   kind: z.enum(businessKinds),
-  accent_color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   phone: optional(40),
   address: optional(200),
 });
 
-/** Name, kind, brand colour and contacts. The public address (slug) only changes from the admin. */
+/** Name, kind and contacts. The public address (slug) only changes from the admin. */
 export async function updateEstablishment(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { establishment, viewer } = await requireEstablishmentAccess(formText(formData, "establishment_id"));
     const parsed = detailsSchema.safeParse({
       name: formText(formData, "name"),
       kind: formText(formData, "kind"),
-      accent_color: formText(formData, "accent_color"),
       phone: formText(formData, "phone"),
       address: formText(formData, "address"),
     });
-    if (!parsed.success) return { ok: false, message: "Verifique o nome, o tipo de negócio e a cor." };
+    if (!parsed.success) return { ok: false, message: "Verifique o nome e o tipo de negócio." };
     const changes: Record<string, unknown> = { ...parsed.data };
     const slugInput = formText(formData, "slug");
     if (viewer === "admin" && slugInput && slugInput !== establishment.slug) {

@@ -22,9 +22,8 @@ cliente não tem de fazer nada depois de tirar a senha: a chamada fecha sozinha.
 
 ## Quem faz o quê
 
-### Dono e equipa: o Balcão (`/conta/balcao`)
-O ecrã do dia a dia, feito para o telemóvel ou tablet do balcão (ver `balcao.md`). No separador
-**Fila**:
+### Dono e equipa: separador **Fila** (no módulo e no Balcão, `/conta/balcao`)
+O mesmo quadro nos dois sítios (ver `balcao.md`):
 - **«Chamar o seguinte»** em grande. Com profissionais (barbearias), um botão por profissional: chama
   quem o escolheu ou quem aceita «qualquer um».
 - «A chamar agora»: o número e o nome de quem foi chamado.
@@ -37,7 +36,7 @@ O ecrã do dia a dia, feito para o telemóvel ou tablet do balcão (ver `balcao.
 - **Som de novas entradas** (liga-se uma vez em cada aparelho).
 
 ### Dono: o módulo (`/conta/waitlist`)
-- **Fila**: o mesmo quadro, em formato de painel.
+- **Fila**: o mesmo quadro do Balcão.
 - **Estatísticas** dos últimos 30 dias: entradas, atendidos, desistências, espera mediana e horas
   com mais gente.
 - **Definições**: regras da fila, espaço, serviços e profissionais.
@@ -114,8 +113,8 @@ carregar uma vez em «Ativar som»).
 | Fila, fecho automático e textos | `src/lib/modules/waitlist/store.ts` |
 | Horário (módulo puro, com testes) | `src/lib/modules/waitlist/schedule.ts` |
 | Estimativa (módulo puro, com testes) | `src/lib/modules/waitlist/eta.ts` |
-| Balcão (separador Fila) | `src/components/modules/counter/QueueCounter.tsx` |
-| Módulo do dono / admin | `src/components/modules/waitlist/WaitlistModule.tsx`, `QueueBoard.tsx` |
+| Quadro da fila (separador Fila do módulo e do Balcão) | `src/components/modules/counter/QueueCounter.tsx` |
+| Módulo do dono / admin | `src/components/modules/waitlist/WaitlistModule.tsx` |
 | Páginas públicas | `src/app/(publico)/fila/[slug]/` (entrada, senha, ecrã) |
 | Componentes públicos (alerta, respostas, som) | `src/components/public/waitlist/` |
 | Rotinas (fecho automático, horário, senhas esquecidas, 30 dias) | `src/lib/modules/routines.ts`, chamadas por `/api/cron/tick` |

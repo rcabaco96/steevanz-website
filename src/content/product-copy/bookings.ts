@@ -97,7 +97,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Configuração completa de serviços, mesas, horários e equipa",
-      "Página de reservas com a imagem do seu negócio",
+      "Página de reservas com o nome e os serviços do seu negócio",
       "Lembretes por SMS, WhatsApp ou email",
       "Ligação ao Google Calendar",
       "Link de reserva no Instagram, site e perfil no Google",
@@ -226,7 +226,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Full set-up of services, tables, opening hours and staff",
-      "Booking page in your brand colours",
+      "Booking page with your business name and services",
       "Reminders by SMS, WhatsApp or email",
       "Google Calendar connection",
       "Booking link on Instagram, website and Google profile",

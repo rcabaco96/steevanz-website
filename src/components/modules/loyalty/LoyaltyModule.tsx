@@ -3,7 +3,6 @@ import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { buttonClasses } from "@/components/ui/Button";
 import { requestOrigin } from "@/lib/booking/request";
-import { readableTextOn } from "@/lib/establishments/kinds";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
@@ -60,7 +59,7 @@ function CardRow({
     </>
   );
   return (
-    <li className="card flex flex-col gap-3 p-4">
+    <li className="flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold text-text">{card.name}</p>
@@ -80,7 +79,7 @@ function CardRow({
           </div>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className="display text-2xl tabular-nums">
+          <span className="text-xl font-semibold tabular-nums text-text">
             {card.stamps}
             <span className="text-base text-muted">/{program.stamps_required}</span>
           </span>
@@ -249,7 +248,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
   return (
     <div className="card flex flex-col gap-1 p-4">
       <span className="text-sm text-muted">{label}</span>
-      <span className="display text-3xl tabular-nums">{value}</span>
+      <span className="text-2xl font-semibold tabular-nums text-text">{value}</span>
       <span className="text-xs text-subtle">{hint}</span>
     </div>
   );
@@ -311,7 +310,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
           <p className="-mt-3 text-sm text-muted">Os 100 cartões mais recentes, pela última visita.</p>
         )}
         {cards.length ? (
-          <ul className="flex flex-col gap-2">
+          <ul className="card divide-y divide-line">
             {cards.map((card) => (
               <CardRow key={card.id} card={card} program={program} rewards={rewardsOf(card.id)} establishment={current} qrHref={hrefWith({ qr: card.id })} />
             ))}
@@ -368,8 +367,6 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
           heading: `Junte ${program.stamps_required} carimbos, ganhe ${rewardInSentence(program.reward)}.`,
           sub: "Aponte a câmara ao código. O cartão fica no seu telemóvel, sem aplicação.",
           name: current.name,
-          color: current.accent_color,
-          textColor: readableTextOn(current.accent_color),
         }}
       />
     </div>

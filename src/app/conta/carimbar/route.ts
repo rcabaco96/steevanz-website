@@ -17,10 +17,12 @@ export async function GET(request: NextRequest) {
   const to = (path: string) => NextResponse.redirect(new URL(path, request.url));
   if (!establishment || code.length !== 6) return to("/");
 
-  const counter = `/conta/balcao/${establishment.slug}?${new URLSearchParams({ vista: "cartao", q: code })}`;
+  const query = new URLSearchParams({ loja: establishment.slug, vista: "cartao", q: code });
   const session = await getSession();
-  if (session.state === "admin") return to(counter);
-  if (session.state === "client" && session.user.id === establishment.owner_id && (await establishmentHasProduct(establishment, "loyalty"))) return to(counter);
+  if (session.state === "admin") return to(`/admin/clientes/${establishment.owner_id}/balcao?${query}`);
+  if (session.state === "client" && session.user.id === establishment.owner_id && (await establishmentHasProduct(establishment, "loyalty"))) {
+    return to(`/conta/balcao?${query}`);
+  }
   if (session.state === "anonymous") {
     return to(`/conta/entrar?${new URLSearchParams({ next: `${request.nextUrl.pathname}${request.nextUrl.search}` })}`);
   }

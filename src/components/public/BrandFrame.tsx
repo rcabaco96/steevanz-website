@@ -1,12 +1,9 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import { readableTextOn } from "@/lib/establishments/kinds";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 
-/** Brand colour of the establishment as CSS variables, for buttons and highlights on its pages. */
-export function brandStyle(establishment: EstablishmentRow): CSSProperties {
-  return { "--brand": establishment.accent_color, "--brand-text": readableTextOn(establishment.accent_color) } as CSSProperties;
-}
+/** The Steevanz accent as the pages' brand colour (follows light and dark mode). Never the business's own. */
+export const brandStyle = { "--brand": "var(--accent)", "--brand-text": "var(--accent-contrast)" } as CSSProperties;
 
 export const brandButton =
   "inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--brand)] px-5 text-base font-semibold text-[var(--brand-text)] shadow-[0_10px_24px_-14px_var(--brand)] transition-[filter,transform] hover:brightness-110 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)]";
@@ -34,7 +31,7 @@ function PinIcon() {
  */
 export function BrandFrame({ establishment, service, children }: { establishment: EstablishmentRow; service: string; children: ReactNode }) {
   return (
-    <div style={brandStyle(establishment)} className="flex min-h-dvh flex-col">
+    <div style={brandStyle} className="flex min-h-dvh flex-col">
       <header className="awning">
         <div className="mx-auto flex w-full max-w-md flex-col gap-2 px-6 pt-9 pb-9">
           <span className="w-fit rounded-full bg-black/12 px-3 py-1 text-sm font-medium">{service}</span>

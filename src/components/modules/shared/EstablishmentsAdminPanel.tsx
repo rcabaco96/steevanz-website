@@ -48,7 +48,7 @@ export function EstablishmentsAdminPanel({
             return (
             <li key={establishment.id} className="card overflow-hidden">
               <div className="flex">
-                <span aria-hidden="true" className="w-1.5 shrink-0" style={{ backgroundColor: establishment.accent_color }} />
+                <span aria-hidden="true" className="w-1.5 shrink-0 bg-accent" />
                 <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
@@ -57,7 +57,7 @@ export function EstablishmentsAdminPanel({
                     </div>
                     <div className="flex items-center gap-1">
                       {covered.length ? (
-                        <Link href={`/conta/balcao/${establishment.slug}`} title="O ecrã do dia a dia: fila, reservas de hoje e cartão" className={buttonClasses("primary", "sm")}>
+                        <Link href={`/admin/clientes/${ownerId}/balcao?${new URLSearchParams({ loja: establishment.slug })}`} title="Fila, reservas de hoje e cartão num só sítio" className={buttonClasses("primary", "sm")}>
                           Abrir Balcão
                         </Link>
                       ) : null}

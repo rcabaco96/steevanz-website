@@ -93,24 +93,3 @@ export function slugify(text: string): string {
     .slice(0, 60)
     .replace(/-+$/g, "");
 }
-
-function channel(value: number): number {
-  const c = value / 255;
-  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-}
-
-/** Relative luminance of a #rrggbb colour (WCAG). */
-export function luminance(hex: string): number {
-  const value = /^#([0-9a-f]{6})$/i.exec(hex)?.[1];
-  if (!value) return 0;
-  const [r, g, b] = [0, 2, 4].map((i) => Number.parseInt(value.slice(i, i + 2), 16));
-  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
-}
-
-/** White or near-black text, whichever reads better on the brand colour. */
-export function readableTextOn(hex: string): "#ffffff" | "#1d1220" {
-  const l = luminance(hex);
-  const onWhite = 1.05 / (l + 0.05);
-  const onDark = (l + 0.05) / (luminance("#1d1220") + 0.05);
-  return onWhite >= onDark ? "#ffffff" : "#1d1220";
-}

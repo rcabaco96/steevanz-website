@@ -1,3 +1,4 @@
+import { steevanzColors } from "@/lib/brand";
 import type { ReactNode } from "react";
 import { Panel } from "@/components/backoffice/ui";
 import { CopyButton, PrintButton } from "./CopyButton";
@@ -14,7 +15,7 @@ export async function Materials({
   title: string;
   url: string;
   /** Big line on the printable poster ("Mesa ocupada? Entre na fila"). */
-  poster: { heading: string; sub: string; name: string; color: string; textColor: string };
+  poster: { heading: string; sub: string; name: string };
   hint: string;
   extra?: ReactNode;
 }) {
@@ -35,7 +36,7 @@ export async function Materials({
       </Panel>
       {/* Printable poster: only this block prints (print rule for [data-print-poster] in globals.css). */}
       <section data-print-poster aria-label="Cartaz para imprimir" className="mx-auto flex w-full max-w-md flex-col items-center gap-5 overflow-hidden rounded-3xl border border-line bg-white p-0 text-center shadow-sm print:max-w-none print:border-0 print:shadow-none">
-        <div className="w-full px-6 py-6" style={{ backgroundColor: poster.color, color: poster.textColor }}>
+        <div className="w-full px-6 py-6" style={{ backgroundColor: steevanzColors.accent, color: steevanzColors.accentText }}>
           <p className="text-sm font-semibold tracking-[0.12em] uppercase opacity-80">{poster.name}</p>
           <p className="display mt-1 text-3xl leading-tight">{poster.heading}</p>
         </div>

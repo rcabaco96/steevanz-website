@@ -1,3 +1,4 @@
+import { steevanzColors } from "@/lib/brand";
 import { getCardByToken } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
@@ -16,7 +17,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/cartao/[slug]/[
       scope: url,
       display: "standalone",
       background_color: "#fbf7f1",
-      theme_color: establishment.accent_color,
+      theme_color: steevanzColors.accent,
       lang: "pt-PT",
       icons: [
         { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },

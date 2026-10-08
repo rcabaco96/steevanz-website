@@ -75,7 +75,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Com a sua imagem",
-        body: "O cartão tem o logótipo, as cores e o nome do seu negócio. O cliente reconhece-o de imediato quando abre a carteira do telemóvel.",
+        body: "O cartão tem o nome do seu negócio e fica no telemóvel do cliente, sem app: abre num toque a partir do ecrã principal.",
       },
     ],
     useCases: [
@@ -96,7 +96,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Configuração do cartão com o logótipo e as cores do seu negócio",
+      "Configuração do cartão com o nome, as regras e a recompensa do seu negócio",
       "Placa NFC de balcão com QR code impresso",
       "Definição das regras de carimbo e recompensa",
       "Painel com estatísticas de visitas e recompensas",
@@ -204,7 +204,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Your branding",
-        body: "The card carries your logo, colours and business name. Customers recognise it instantly when they open their phone's wallet.",
+        body: "The card carries your business name and lives on the customer's phone, no app: one tap from the home screen.",
       },
     ],
     useCases: [
@@ -225,7 +225,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Card design with your logo and colours",
+      "Card set up with your business name, rules and reward",
       "NFC counter plate with printed QR code",
       "Set-up of stamp and reward rules",
       "Dashboard with visit and reward stats",

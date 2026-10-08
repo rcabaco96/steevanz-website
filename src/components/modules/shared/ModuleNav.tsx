@@ -22,6 +22,8 @@ function href(basePath: string, params: Record<string, string>) {
 export interface ModuleView {
   id: string;
   label: string;
+  /** A live count next to the label (e.g. people waiting). */
+  badge?: number;
 }
 
 /** Establishment switcher (when there are several) and the module's views as tabs. */
@@ -67,6 +69,9 @@ export function ModuleNav({
             }`}
           >
             {item.label}
+            {item.badge ? (
+              <span className="ml-1.5 inline-grid min-w-5 place-items-center rounded-full bg-accent px-1.5 text-xs leading-5 tabular-nums text-accent-contrast">{item.badge}</span>
+            ) : null}
           </Link>
         ))}
       </nav>

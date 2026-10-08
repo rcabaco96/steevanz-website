@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { steevanzColors } from "@/lib/brand";
 import { requestOrigin } from "@/lib/booking/request";
 import { addDaysToDate, zonedDateString } from "@/lib/booking/slots";
-import { readableTextOn } from "@/lib/establishments/kinds";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
@@ -46,14 +46,6 @@ const statusTone: Record<EstablishmentBookingRow["status"], string> = {
   cancelled: "bg-surface-2 text-subtle line-through",
 };
 
-/** Colour on the left edge of each booking: what still needs attention stands out. */
-const statusEdge: Record<EstablishmentBookingRow["status"], string> = {
-  confirmed: "border-l-accent",
-  arrived: "border-l-success",
-  no_show: "border-l-danger",
-  cancelled: "border-l-line-strong",
-};
-
 function time(iso: string, timeZone: string): string {
   return new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
@@ -77,10 +69,10 @@ function BookingCard({ booking, bundle, showDate = false, late = false }: { book
     </ActionForm>
   );
   return (
-    <li className={`card flex flex-col gap-3 border-l-4 p-4 ${late ? "border-l-danger bg-danger-soft/30" : statusEdge[booking.status]} ${booking.status === "cancelled" ? "opacity-70" : ""}`}>
+    <li className={`flex flex-col gap-3 px-4 py-4 sm:px-5 ${late ? "bg-danger-soft/30" : ""} ${booking.status === "cancelled" ? "opacity-70" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
-          <span className="display shrink-0 text-2xl tabular-nums">{time(booking.starts_at, establishment.time_zone)}</span>
+          <span className="w-12 shrink-0 font-semibold tabular-nums text-text">{time(booking.starts_at, establishment.time_zone)}</span>
           <div className="min-w-0">
             <p className="font-semibold text-text">{booking.name}</p>
             <p className="text-sm text-muted">
@@ -299,7 +291,7 @@ function PageSettings({ page, establishmentId, calendarUrl }: { page: BookingPag
               <label className={adminLabelClasses}>
                 Lugares para reservas
                 <input name="seats_per_slot" type="number" min={1} max={1000} required defaultValue={page.seats_per_slot} className={input} />
-                <span className="text-xs font-normal text-subtle">Quantas pessoas podem estar sentadas com reserva ao mesmo tempo. Deixe lugares para quem chega sem reserva.</span>
+                <span className="text-xs font-normal text-subtle">O total de lugares para reservas. Aceita várias reservas para a mesma hora até os encher (ex.: 24 lugares → às 20:00 cabem 6 mesas de 4). Deixe lugares para quem chega sem reserva.</span>
               </label>
               <Choice
                 name="table_minutes"
@@ -472,7 +464,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
   return (
     <div className="card flex flex-col gap-1 p-4">
       <span className="text-sm text-muted">{label}</span>
-      <span className="display text-3xl tabular-nums">{value}</span>
+      <span className="text-2xl font-semibold tabular-nums text-text">{value}</span>
       <span className="text-xs text-subtle">{hint}</span>
     </div>
   );
@@ -514,7 +506,7 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
         {nav}
         <p className="-mt-2 text-sm text-muted">Reservas confirmadas nos próximos 14 dias.</p>
         {upcoming.length ? (
-          <ul className="flex flex-col gap-2">
+          <ul className="card divide-y divide-line overflow-hidden">
             {upcoming.map((booking) => (
               <BookingCard key={booking.id} booking={booking} bundle={bundle} showDate />
             ))}
@@ -562,7 +554,7 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
 
   if (view === "link") {
     const embed = `<iframe src="${publicUrl}" title="Reservas ${current.name}" style="width:100%;max-width:520px;height:900px;border:0;border-radius:16px"></iframe>`;
-    const button = `<a href="${publicUrl}" target="_blank" rel="noopener" style="display:inline-block;padding:14px 22px;border-radius:999px;background:${current.accent_color};color:${readableTextOn(current.accent_color)};font-weight:600;text-decoration:none">Reservar</a>`;
+    const button = `<a href="${publicUrl}" target="_blank" rel="noopener" style="display:inline-block;padding:14px 22px;border-radius:999px;background:${steevanzColors.accent};color:${steevanzColors.accentText};font-weight:600;text-decoration:none">Reservar</a>`;
     return (
       <div className="flex flex-col gap-6">
         {nav}
@@ -575,8 +567,6 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
             heading: current.kind === "restaurant" ? "Reserve a sua mesa." : "Marque online, a qualquer hora.",
             sub: "Aponte a câmara ao código para ver os horários livres.",
             name: current.name,
-            color: current.accent_color,
-            textColor: readableTextOn(current.accent_color),
           }}
           extra={
             <div className="mt-5 flex flex-col gap-4 border-t border-line pt-4">
@@ -665,7 +655,7 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
       {warningBox}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="display text-2xl first-letter:uppercase">{date === today ? `Hoje, ${dayLabel}` : dayLabel}</h2>
+          <h2 className="text-xl font-semibold text-text first-letter:uppercase">{date === today ? `Hoje, ${dayLabel}` : dayLabel}</h2>
           <p className="text-sm text-muted">
             {live.length} {page.mode === "table" ? (live.length === 1 ? "reserva" : "reservas") : live.length === 1 ? "marcação" : "marcações"}
             {page.mode === "table" && covers ? ` · ${covers} pessoas` : ""}
@@ -731,7 +721,7 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
                 </span>
               ) : null}
             </div>
-            <ul className="flex flex-col gap-2">
+            <ul className="card divide-y divide-line overflow-hidden">
               {group.items.map((booking) => (
                 <BookingCard key={booking.id} booking={booking} bundle={bundle} late={late.has(booking.id)} />
               ))}

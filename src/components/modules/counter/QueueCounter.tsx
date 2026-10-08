@@ -1,13 +1,34 @@
 import type { ReactNode } from "react";
-import { ActionForm } from "@/components/backoffice/ActionForm";
+import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
-import { callEntry, callNext, moveEntry, setEntryStatus, setQueueState } from "@/lib/modules/waitlist/actions";
+import { addEntryByStaff, callEntry, callNext, moveEntry, setEntryStatus, setQueueState } from "@/lib/modules/waitlist/actions";
 import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
 import { nextScheduleChange } from "@/lib/modules/waitlist/schedule";
-import { entryOutlook, replyLabels, type QueueSnapshot, type WaitlistEntryRow, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
-import { AddForm, ago, details, minutesSince } from "../waitlist/QueueBoard";
-import { CounterSubmit } from "./CounterSubmit";
+import { entryOutlook, replyLabels, statusLabels, type QueueSnapshot, type WaitlistEntryRow, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
 import { More } from "./More";
+
+function minutesSince(iso: string, now: number): number {
+  return Math.max(0, Math.round((now - Date.parse(iso)) / 60_000));
+}
+
+function ago(iso: string, now: number): string {
+  const minutes = minutesSince(iso, now);
+  if (minutes < 1) return "agora";
+  if (minutes < 60) return `há ${minutes} min`;
+  return `há ${Math.floor(minutes / 60)} h ${minutes % 60} min`;
+}
+
+function details(entry: WaitlistEntryRow, bundle: EstablishmentBundle): string {
+  const parts: string[] = [];
+  if (entry.party_size) parts.push(`${entry.party_size} ${entry.party_size === 1 ? "pessoa" : "pessoas"}`);
+  const service = entry.service_id ? bundle.services.find((item) => item.id === entry.service_id) : null;
+  if (service) parts.push(service.name);
+  const staff = entry.staff_id ? bundle.staff.find((item) => item.id === entry.staff_id) : null;
+  if (entry.service_id || entry.staff_id) parts.push(staff ? `com ${staff.name}` : "qualquer profissional");
+  if (entry.source === "staff") parts.push("adicionado ao balcão");
+  return parts.join(" · ");
+}
 
 function EntryAction({
   action,
@@ -36,51 +57,112 @@ function EntryAction({
 
 const menuItem = "w-full justify-start!";
 
-function StateControl({ settings, establishmentId, schedule }: { settings: WaitlistSettingsRow; establishmentId: string; schedule: string | null }) {
-  const form = (state: WaitlistSettingsRow["state"], label: string, tone: "brand" | "soft" | "quiet", confirm?: string) => (
+function StateActions({ settings, establishmentId }: { settings: WaitlistSettingsRow; establishmentId: string }) {
+  const form = (state: WaitlistSettingsRow["state"], label: string, variant: "primary" | "secondary" | "ghost", confirm?: string) => (
     <ActionForm action={setQueueState} hideMessage confirmMessage={confirm}>
       <input type="hidden" name="establishment_id" value={establishmentId} />
       <input type="hidden" name="state" value={state} />
-      <CounterSubmit size="sm" tone={tone} pendingLabel="A mudar…">
+      <SubmitButton size="sm" variant={variant} pendingLabel="A mudar…">
         {label}
-      </CounterSubmit>
+      </SubmitButton>
     </ActionForm>
   );
   const close = "Fechar a fila? Ninguém novo entra. Quem já está na fila continua a ser chamado.";
-  const dot = settings.state === "open" ? "bg-success" : settings.state === "paused" ? "bg-gold" : "bg-subtle";
-  const title = settings.state === "open" ? "Fila aberta" : settings.state === "paused" ? "Entradas em pausa" : "Fila fechada";
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-      <p className="flex min-w-0 items-center gap-2.5">
-        <span aria-hidden="true" className="relative flex h-2.5 w-2.5 shrink-0">
-          {settings.state === "open" ? <span className={`absolute inset-0 animate-ping rounded-full opacity-60 ${dot}`} /> : null}
-          <span className={`relative h-2.5 w-2.5 rounded-full ${dot}`} />
+    <div className="flex flex-wrap gap-1">
+      {settings.state === "open" ? (
+        <>
+          {form("paused", "Pausar entradas", "secondary")}
+          {form("closed", "Fechar", "ghost", close)}
+        </>
+      ) : settings.state === "paused" ? (
+        <>
+          {form("open", "Retomar entradas", "primary")}
+          {form("closed", "Fechar", "ghost", close)}
+        </>
+      ) : (
+        form("open", "Abrir a fila", "primary")
+      )}
+    </div>
+  );
+}
+
+function AddForm({ bundle, settings }: { bundle: EstablishmentBundle; settings: WaitlistSettingsRow }) {
+  const input = `${adminInputClasses} h-10 text-sm`;
+  const services = bundle.services.filter((item) => item.active);
+  const staff = bundle.staff.filter((item) => item.active);
+  return (
+    <details className="group card p-4 sm:p-5">
+      <summary className="cursor-pointer list-none text-sm font-semibold text-text marker:hidden">
+        <span className="inline-flex items-center gap-2">
+          <span aria-hidden="true" className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text group-open:rotate-45">
+            +
+          </span>
+          Adicionar alguém ao balcão
         </span>
-        <span className="font-semibold text-text">{title}</span>
-        {schedule ? <span className="truncate text-sm text-muted">{schedule}</span> : null}
-      </p>
-      <div className="flex gap-1">
-        {settings.state === "open" ? (
-          <>
-            {form("paused", "Pausar entradas", "quiet")}
-            {form("closed", "Fechar", "quiet", close)}
-          </>
-        ) : settings.state === "paused" ? (
-          <>
-            {form("open", "Retomar entradas", "brand")}
-            {form("closed", "Fechar", "quiet", close)}
-          </>
-        ) : (
-          form("open", "Abrir a fila", "brand")
-        )}
-      </div>
+      </summary>
+      <ActionForm action={addEntryByStaff} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
+        <label className={adminLabelClasses}>
+          Nome
+          <input name="name" required maxLength={60} className={input} />
+        </label>
+        {settings.ask_party ? (
+          <label className={adminLabelClasses}>
+            Pessoas
+            <input name="party" type="number" min={1} max={settings.max_party} required defaultValue={2} className={input} />
+          </label>
+        ) : null}
+        {settings.ask_service && services.length ? (
+          <label className={adminLabelClasses}>
+            Serviço
+            <select name="service" className={input}>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        {settings.ask_staff && staff.length ? (
+          <label className={adminLabelClasses}>
+            Profissional
+            <select name="staff" className={input} defaultValue="">
+              <option value="">Qualquer um</option>
+              {staff.map((person) => (
+                <option key={person.id} value={person.id}>
+                  {person.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        <label className={`${adminLabelClasses} sm:col-span-2`}>
+          Nota (opcional)
+          <input name="notes" maxLength={200} placeholder="Ex.: prefere esplanada" className={input} />
+        </label>
+        <div className="sm:col-span-2">
+          <SubmitButton size="sm">Adicionar à fila</SubmitButton>
+        </div>
+      </ActionForm>
+    </details>
+  );
+}
+
+function Figure({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="text-2xl font-semibold tabular-nums text-text">{value}</dd>
     </div>
   );
 }
 
 /**
- * The queue as the team uses it all day: one huge "Chamar o seguinte" (one per professional when
- * customers choose one), who is being called, and the line. Everything else is behind "⋯".
+ * The queue for the team (the module's "Fila" tab and the Balcão): "Chamar o seguinte" (one per
+ * professional when customers choose one), who is being called and the line. The exceptions are
+ * behind "⋯" on each row. Calls close on their own as served; nobody has to mark them.
  */
 export function QueueCounter({ bundle, settings, queue }: { bundle: EstablishmentBundle; settings: WaitlistSettingsRow; queue: QueueSnapshot }) {
   const { now } = queue;
@@ -105,212 +187,174 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
   });
   const change = settings.auto_hours ? nextScheduleChange({ hours: bundle.hours, closures: bundle.closures.map((item) => item.day), timeZone, now }) : null;
   const clock = (at: number) => new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(at));
-  const schedule = change ? `· ${change.kind === "closes" ? "fecha" : "abre"} às ${clock(change.at)}` : null;
   const served = queue.doneToday.filter((entry) => entry.status === "served").length;
+  const stateTitle = settings.state === "open" ? "Fila aberta" : settings.state === "paused" ? "Entradas em pausa" : "Fila fechada";
+  const dot = settings.state === "open" ? "bg-success" : settings.state === "paused" ? "bg-gold" : "bg-subtle";
 
   return (
     <div className="flex flex-col gap-5">
-      <StateControl settings={settings} establishmentId={establishmentId} schedule={schedule} />
+      <Panel title={stateTitle} actions={<StateActions settings={settings} establishmentId={establishmentId} />}>
+        <p className="-mt-2 mb-4 flex items-center gap-2 text-sm text-muted">
+          <span aria-hidden="true" className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
+          <span>
+            {settings.state === "open"
+              ? "Os clientes entram pelo QR code ou pelo link."
+              : settings.state === "paused"
+                ? "Ninguém novo entra. Quem já está na fila continua a ser chamado."
+                : "Os clientes não conseguem entrar."}
+            {change ? ` ${change.kind === "closes" ? "Fecha" : "Abre"} às ${clock(change.at)}, com o horário.` : ""}
+          </span>
+        </p>
 
-      <section aria-labelledby="chamar-title" className="overflow-hidden rounded-[2rem] border border-line bg-surface shadow-[0_30px_60px_-40px_rgb(0_0_0/0.35)]">
-        <div className="flex items-end justify-between gap-4 px-5 pt-5 sm:px-7 sm:pt-6">
-          <div className="min-w-0">
-            <h2 id="chamar-title" className="text-sm font-semibold text-muted">
-              A chamar agora
-            </h2>
+        <div className="flex flex-col gap-4 border-t border-line pt-4">
+          <p className="text-sm text-muted">
+            A chamar agora:{" "}
             {latest ? (
-              <p className="mt-1 flex min-w-0 items-baseline gap-3">
-                <span className="display text-[4.5rem] leading-[0.9] tabular-nums text-[var(--brand)] sm:text-[5.5rem]">{latest.number}</span>
-                <span className="min-w-0">
-                  <span className="block truncate text-xl font-semibold text-text">{latest.name}</span>
-                  <span className="block text-sm text-muted">
-                    {latest.called_at ? `chamado ${ago(latest.called_at, now)}` : ""}
-                    {latest.reply ? ` · ${replyLabels[latest.reply]}` : ""}
-                  </span>
-                </span>
-              </p>
+              <>
+                <strong className="font-semibold text-text">
+                  N.º {latest.number} · {latest.name}
+                </strong>
+                {latest.called_at ? ` · ${ago(latest.called_at, now)}` : ""}
+                {latest.reply ? ` · ${replyLabels[latest.reply]}` : ""}
+              </>
             ) : (
-              <p className="mt-2 text-xl text-muted">Ninguém chamado.</p>
+              "ninguém"
             )}
-          </div>
-          <dl className="hidden shrink-0 text-right sm:block">
-            <dt className="text-sm text-muted">À espera</dt>
-            <dd className="display text-5xl leading-none tabular-nums">{waiting.length}</dd>
-          </dl>
-        </div>
-
-        <div className={`grid grid-cols-1 gap-3 p-5 sm:p-7 ${lanes.length > 2 ? "sm:grid-cols-3" : lanes.length > 1 ? "sm:grid-cols-2" : ""}`}>
-          {lanes.map((lane) => (
-            <div key={lane.id || "all"} className="flex flex-col gap-2">
-              {lane.next ? (
-                <ActionForm action={callNext} hideMessage>
-                  <input type="hidden" name="establishment_id" value={establishmentId} />
-                  {lane.id ? <input type="hidden" name="staff_id" value={lane.id} /> : null}
-                  <CounterSubmit size="xl" pendingLabel="A chamar…" className={lane.name ? "flex-col gap-0! leading-tight" : ""}>
-                    {lane.name ? (
-                      <>
-                        <span>Chamar o seguinte</span>
-                        <span className="text-sm font-medium opacity-85">{lane.name}</span>
-                      </>
-                    ) : (
-                      "Chamar o seguinte"
-                    )}
-                  </CounterSubmit>
-                </ActionForm>
-              ) : (
-                <div className="flex min-h-20 items-center justify-center rounded-[1.75rem] border-2 border-dashed border-line-strong px-6 text-lg font-semibold text-subtle">
-                  {lane.name ? `${lane.name}: ninguém à espera` : "Ninguém à espera"}
-                </div>
-              )}
-              <p className="text-center text-sm text-muted">
+          </p>
+          <div className="flex flex-col gap-3">
+            {lanes.map((lane) => (
+              <div key={lane.id || "all"} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
                 {lane.next ? (
-                  <>
+                  <ActionForm action={callNext} hideMessage className="sm:shrink-0">
+                    <input type="hidden" name="establishment_id" value={establishmentId} />
+                    {lane.id ? <input type="hidden" name="staff_id" value={lane.id} /> : null}
+                    <SubmitButton size="lg" pendingLabel="A chamar…" className="w-full sm:w-auto">
+                      {lane.name ? `Chamar o seguinte · ${lane.name}` : "Chamar o seguinte"}
+                    </SubmitButton>
+                  </ActionForm>
+                ) : (
+                  <span className="text-sm font-semibold text-subtle">{lane.name ? `${lane.name}: ninguém à espera` : "Ninguém à espera"}</span>
+                )}
+                {lane.next ? (
+                  <p className="text-sm text-muted">
                     A seguir: <strong className="font-semibold text-text">N.º {lane.next.number}</strong> · {lane.next.name}
                     {details(lane.next, bundle) ? ` · ${details(lane.next, bundle)}` : ""}
-                  </>
-                ) : settings.state === "open" ? (
-                  "Quem entrar pelo QR aparece aqui."
-                ) : (
-                  "Abra a fila para os clientes poderem entrar."
-                )}
-              </p>
-            </div>
-          ))}
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
         </div>
 
-        <dl className="grid grid-cols-3 divide-x divide-line border-t border-line bg-surface-2/40 text-center">
-          <div className="px-2 py-3 sm:hidden">
-            <dt className="text-xs text-muted">À espera</dt>
-            <dd className="display text-2xl tabular-nums">{waiting.length}</dd>
-          </div>
-          <div className="hidden px-2 py-3 sm:block">
-            <dt className="text-xs text-muted">Chamados</dt>
-            <dd className="display text-2xl tabular-nums">{called.length}</dd>
-          </div>
-          <div className="px-2 py-3">
-            <dt className="text-xs text-muted">Quem entrar agora</dt>
-            <dd className={`display ${newcomerWait ? "text-2xl" : "text-lg leading-8"}`}>{newcomerWait ? formatWait(newcomerWait).replace("cerca de ", "~") : "Sem espera"}</dd>
-          </div>
-          <div className="px-2 py-3">
-            <dt className="text-xs text-muted">Atendidos hoje</dt>
-            <dd className="display text-2xl tabular-nums">{served}</dd>
-          </div>
+        <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 sm:grid-cols-4">
+          <Figure label="À espera" value={String(waiting.length)} />
+          <Figure label="Chamados" value={String(called.length)} />
+          <Figure label="Quem entrar agora" value={newcomerWait ? formatWait(newcomerWait).replace("cerca de ", "~") : "Sem espera"} />
+          <Figure label="Atendidos hoje" value={String(served)} />
         </dl>
-      </section>
-
-      <p className="-mt-1 px-2 text-center text-xs text-subtle">
-        Ninguém precisa de marcar nada: a chamada fecha sozinha como atendida ao fim de {settings.grace_minutes} min. Se alguém não aparecer, toque em «Não
-        apareceu»{settings.auto_next ? " e o seguinte é logo chamado" : ""}.
-      </p>
+        <p className="mt-4 text-xs text-subtle">
+          Ninguém precisa de marcar nada: a chamada fecha sozinha como atendida ao fim de {settings.grace_minutes} min. Se alguém não aparecer, use «Não
+          apareceu»{settings.auto_next ? " e o seguinte é logo chamado" : ""}.
+        </p>
+      </Panel>
 
       {called.length ? (
-        <section aria-labelledby="chamados-title" className="flex flex-col gap-2">
-          <h2 id="chamados-title" className="px-1 text-sm font-semibold text-muted">
-            Chamados · {called.length}
-          </h2>
-          <ul className="flex flex-col gap-2">
+        <Panel title={`Chamados · ${called.length}`}>
+          <ul className="-my-3 divide-y divide-line">
             {called.map((entry) => {
               const limit = settings.grace_minutes * (entry.reply === "late" ? 2 : 1);
               const elapsed = entry.called_at ? minutesSince(entry.called_at, now) : 0;
-              const over = elapsed >= limit;
               return (
-                <li key={entry.id} className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 pr-2">
-                  <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[var(--brand)] text-[var(--brand-text)]">
-                    <span className="display text-2xl leading-none tabular-nums">{entry.number}</span>
-                  </span>
+                <li key={entry.id} className="flex items-center gap-3 py-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-soft font-semibold tabular-nums text-accent-text">{entry.number}</span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-text">{entry.name}</p>
                     <p className="truncate text-sm text-muted">
-                      {over ? "A fechar…" : `Fecha sozinha em ${Math.max(1, limit - elapsed)} min`}
+                      {elapsed >= limit ? "A fechar…" : `Fecha sozinha em ${Math.max(1, limit - elapsed)} min`}
                       {entry.reply ? ` · ${replyLabels[entry.reply]}` : ""}
                       {details(entry, bundle) ? ` · ${details(entry, bundle)}` : ""}
                     </p>
                   </div>
                   <div className="hidden shrink-0 sm:block">
                     <EntryAction action={setEntryStatus} establishmentId={establishmentId} entryId={entry.id} fields={{ status: "no_show" }}>
-                      <CounterSubmit size="md" tone="danger">
+                      <SubmitButton size="sm" variant="ghost" className="text-danger">
                         Não apareceu
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                   </div>
                   <More label={`Mais opções para ${entry.name}`}>
                     <EntryAction action={setEntryStatus} establishmentId={establishmentId} entryId={entry.id} fields={{ status: "no_show" }}>
-                      <CounterSubmit size="md" tone="danger" className={`${menuItem} sm:hidden`}>
+                      <SubmitButton size="sm" variant="ghost" className={`${menuItem} text-danger sm:hidden`}>
                         Não apareceu{settings.auto_next ? " (chama o seguinte)" : ""}
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                     <EntryAction action={setEntryStatus} establishmentId={establishmentId} entryId={entry.id} fields={{ status: "served" }}>
-                      <CounterSubmit size="md" tone="quiet" className={menuItem}>
+                      <SubmitButton size="sm" variant="ghost" className={menuItem}>
                         Já foi atendido
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                     <EntryAction action={callEntry} establishmentId={establishmentId} entryId={entry.id}>
-                      <CounterSubmit size="md" tone="quiet" className={menuItem}>
+                      <SubmitButton size="sm" variant="ghost" className={menuItem}>
                         Chamar outra vez
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                     <EntryAction action={setEntryStatus} establishmentId={establishmentId} entryId={entry.id} fields={{ status: "waiting" }}>
-                      <CounterSubmit size="md" tone="quiet" className={menuItem}>
+                      <SubmitButton size="sm" variant="ghost" className={menuItem}>
                         Voltar à fila
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                   </More>
                 </li>
               );
             })}
           </ul>
-        </section>
+        </Panel>
       ) : null}
 
-      <section aria-labelledby="espera-title" className="flex flex-col gap-2">
-        <h2 id="espera-title" className="px-1 text-sm font-semibold text-muted">
-          À espera · {waiting.length}
-        </h2>
+      <Panel title={`À espera · ${waiting.length}`}>
         {waiting.length ? (
-          <ol className="flex flex-col gap-2">
+          <ol className="-my-3 divide-y divide-line">
             {waiting.map((entry, index) => {
               const outlook = entryOutlook(entry, queue, bundle, settings);
               return (
-                <li key={entry.id} className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3 pr-2">
-                  <span className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-surface-2">
-                    <span className="display text-2xl leading-none tabular-nums text-text">{entry.number}</span>
-                    <span className="text-[0.68rem] text-muted">{index + 1}.º</span>
-                  </span>
+                <li key={entry.id} className="flex items-center gap-3 py-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-2 font-semibold tabular-nums text-text">{entry.number}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-text">{entry.name}</p>
-                    <p className="truncate text-sm text-muted">
-                      {details(entry, bundle) || (entry.source === "staff" ? "adicionado ao balcão" : "pelo QR")}
+                    <p className="truncate font-semibold text-text">
+                      {entry.name} <span className="font-normal text-subtle">· {index + 1}.º</span>
                     </p>
-                    <p className="truncate text-xs text-subtle">
-                      Entrou {ago(entry.joined_at, now)} · {outlook.minutes ? `vez em ${formatWait(outlook.minutes).replace("cerca de ", "~")}` : "é o próximo"}
+                    <p className="truncate text-sm text-muted">
+                      {[details(entry, bundle), `entrou ${ago(entry.joined_at, now)}`, outlook.minutes ? `vez em ${formatWait(outlook.minutes).replace("cerca de ", "~")}` : "é o próximo"]
+                        .filter(Boolean)
+                        .join(" · ")}
                       {entry.reply ? ` · ${replyLabels[entry.reply]}` : ""}
                       {entry.notes ? ` · «${entry.notes}»` : ""}
                     </p>
                   </div>
                   <More label={`Mais opções para ${entry.name}`}>
                     <EntryAction action={callEntry} establishmentId={establishmentId} entryId={entry.id}>
-                      <CounterSubmit size="md" tone="quiet" className={menuItem} pendingLabel="A chamar…">
+                      <SubmitButton size="sm" variant="ghost" className={menuItem} pendingLabel="A chamar…">
                         Chamar já (fora da ordem)
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                     {index > 0 ? (
                       <EntryAction action={moveEntry} establishmentId={establishmentId} entryId={entry.id} fields={{ direction: "up" }}>
-                        <CounterSubmit size="md" tone="quiet" className={menuItem}>
+                        <SubmitButton size="sm" variant="ghost" className={menuItem}>
                           Subir um lugar
-                        </CounterSubmit>
+                        </SubmitButton>
                       </EntryAction>
                     ) : null}
                     {index < waiting.length - 1 ? (
                       <EntryAction action={moveEntry} establishmentId={establishmentId} entryId={entry.id} fields={{ direction: "down" }}>
-                        <CounterSubmit size="md" tone="quiet" className={menuItem}>
+                        <SubmitButton size="sm" variant="ghost" className={menuItem}>
                           Descer um lugar
-                        </CounterSubmit>
+                        </SubmitButton>
                       </EntryAction>
                     ) : null}
                     <EntryAction action={setEntryStatus} establishmentId={establishmentId} entryId={entry.id} fields={{ status: "cancelled" }}>
-                      <CounterSubmit size="md" tone="danger" className={menuItem}>
+                      <SubmitButton size="sm" variant="ghost" className={`${menuItem} text-danger`}>
                         Desistiu
-                      </CounterSubmit>
+                      </SubmitButton>
                     </EntryAction>
                   </More>
                 </li>
@@ -318,13 +362,38 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
             })}
           </ol>
         ) : (
-          <p className="rounded-3xl border border-dashed border-line-strong px-5 py-8 text-center text-muted">
+          <p className="text-sm text-muted">
             {settings.state === "open" ? "Ninguém à espera. Quem ler o QR ou tocar na placa aparece aqui." : "A fila não está aberta: ninguém consegue entrar."}
           </p>
         )}
-      </section>
+      </Panel>
 
       <AddForm bundle={bundle} settings={settings} />
+
+      {queue.doneToday.length ? (
+        <details className="card p-4 sm:p-5">
+          <summary className="cursor-pointer text-sm font-semibold text-muted">Hoje: {queue.doneToday.length} terminados</summary>
+          <ul className="mt-3 flex flex-col divide-y divide-line">
+            {queue.doneToday.map((entry) => (
+              <li key={entry.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <span className="min-w-0 truncate text-text">
+                  <span className="tabular-nums text-muted">N.º {entry.number}</span> · {entry.name}
+                </span>
+                <span className="flex shrink-0 items-center gap-3">
+                  <span className="text-muted">{statusLabels[entry.status]}</span>
+                  {entry.status !== "served" ? (
+                    <EntryAction action={setEntryStatus} establishmentId={establishmentId} entryId={entry.id} fields={{ status: "waiting" }}>
+                      <SubmitButton size="sm" variant="ghost">
+                        Repor na fila
+                      </SubmitButton>
+                    </EntryAction>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
     </div>
   );
 }
