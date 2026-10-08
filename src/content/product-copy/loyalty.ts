@@ -6,13 +6,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Cartão Fidelização",
     tagline: "Carimbos digitais que os clientes não perdem nem esquecem em casa.",
     summary:
-      "Um cartão de fidelização no telemóvel do cliente, carimbado por NFC ou QR code. Sem app, guardado na Apple Wallet ou Google Wallet, com recompensas automáticas.",
+      "Um cartão de fidelização no telemóvel do cliente: adere por NFC ou QR code, sem app, e a equipa carimba a cada visita. Recompensas automáticas.",
     metaTitle: "Cartão de Fidelização Digital NFC | Steevanz",
     metaDescription:
-      "Cartão de fidelização digital com NFC e QR code: carimbos no telemóvel, sem app, na Apple Wallet ou Google Wallet. Recompensas automáticas e estatísticas.",
+      "Cartão de fidelização digital com NFC e QR code: carimbos no telemóvel, sem app e sem cartões de papel. Recompensas automáticas e estatísticas.",
     heroTitle: "O cartão de carimbos, agora no telemóvel",
     heroSubtitle:
-      "Os seus clientes juntam carimbos com um toque ou uma leitura de QR code e recebem a recompensa automaticamente. O cartão fica na Apple Wallet, na Google Wallet ou numa página web. Sem app para instalar.",
+      "Os clientes aderem com um toque ou uma leitura de QR code, juntam carimbos a cada visita e recebem a recompensa automaticamente. O cartão fica no telemóvel, a um toque do ecrã principal. Sem app para instalar.",
     problem: {
       title: "Os cartões de papel perdem-se e não lhe dizem nada",
       body:
@@ -26,10 +26,10 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Fidelização simples para si e para o cliente",
       body:
-        "O cartão vive no telemóvel do cliente e cada visita é registada com um toque na placa NFC ou uma leitura do QR code. Quando os carimbos estão completos, a recompensa fica disponível automaticamente.",
+        "O cartão vive no telemóvel do cliente e cada visita é carimbada pela equipa em segundos. Quando os carimbos estão completos, a recompensa fica disponível automaticamente.",
       points: [
-        "Cartão guardado na Apple Wallet, na Google Wallet ou aberto como página web",
-        "Carimbo por NFC ou QR code, validado pela sua equipa",
+        "Cartão no telemóvel, a um toque do ecrã principal, sem app",
+        "Carimbo dado pela equipa: com o PIN no telemóvel do cliente ou lendo o QR do cartão",
         "Recompensa desbloqueada automaticamente",
         "Estatísticas simples sobre visitas e clientes habituais",
       ],
@@ -37,7 +37,7 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Defina a regra",
-        body: "Por exemplo: ao fim de 9 cafés, o 10.º é oferecido. Nós configuramos o cartão com a sua imagem.",
+        body: "Por exemplo: ao fim de 9 cafés, o 10.º é oferecido. Nós configuramos o cartão com o nome do seu negócio.",
       },
       {
         title: "O cliente adere",
@@ -45,7 +45,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Carimbe a cada visita",
-        body: "Em cada compra, o cliente toca na placa ou mostra o cartão e a sua equipa valida o carimbo.",
+        body: "Em cada compra, o cliente mostra o cartão e a equipa dá o carimbo: escreve o PIN no telemóvel do cliente ou lê o QR do cartão.",
       },
       {
         title: "Recompensa automática",
@@ -54,16 +54,16 @@ export const copy: ProductCopyByLocale = {
     ],
     features: [
       {
-        title: "Na carteira do telemóvel",
-        body: "O cartão pode ser guardado na Apple Wallet ou na Google Wallet, ou aberto como página web. Está sempre à mão, sem ocupar espaço com mais uma app.",
+        title: "Sempre no telemóvel",
+        body: "O cartão abre como uma página no telemóvel e pode ficar no ecrã principal, como uma app. Está sempre à mão, sem instalar nada.",
       },
       {
-        title: "Carimbo por NFC ou QR",
-        body: "Uma placa NFC no balcão, com QR code impresso, regista o carimbo em segundos. Funciona mesmo nas horas de maior movimento.",
+        title: "Carimbo em segundos",
+        body: "A equipa escreve o PIN de carimbo no telemóvel do cliente ou lê o QR do cartão com o telemóvel do balcão. A placa NFC com QR serve para os clientes aderirem.",
       },
       {
         title: "Recompensas automáticas",
-        body: "Define a regra uma vez e o sistema trata do resto: conta os carimbos, avisa o cliente e marca a recompensa como usada.",
+        body: "Define a regra uma vez e o sistema trata do resto: conta os carimbos, mostra a recompensa no cartão e marca-a como usada.",
       },
       {
         title: "Controlo contra abusos",
@@ -74,7 +74,7 @@ export const copy: ProductCopyByLocale = {
         body: "Veja quantos clientes aderiram, com que frequência voltam e quantas recompensas foram entregues, sem folhas de cálculo.",
       },
       {
-        title: "Com a sua imagem",
+        title: "Com o nome do seu negócio",
         body: "O cartão tem o nome do seu negócio e fica no telemóvel do cliente, sem app: abre num toque a partir do ecrã principal.",
       },
     ],
@@ -106,7 +106,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "O cliente precisa de instalar uma app?",
-        a: "Não. O cartão é guardado na Apple Wallet ou na Google Wallet, que já vêm no telemóvel, ou aberto como página web. O cliente só precisa de tocar na placa ou ler o QR code.",
+        a: "Não. O cartão abre no navegador e pode ficar no ecrã principal do telemóvel. O cliente só precisa de tocar na placa ou ler o QR code.",
       },
       {
         q: "Que telemóveis funcionam?",
@@ -118,7 +118,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Que dados dos clientes são guardados?",
-        a: "Apenas o necessário para o cartão funcionar, como o registo de carimbos e recompensas. Os dados são tratados de acordo com o RGPD e não são partilhados com terceiros para publicidade.",
+        a: "Apenas o nome (o email e o telemóvel são opcionais) e o registo de carimbos e recompensas. Os dados são tratados de acordo com o RGPD e não são partilhados com terceiros para publicidade.",
       },
       {
         q: "Posso cancelar o plano mensal?",
@@ -126,7 +126,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quanto tempo demora a pôr a funcionar?",
-        a: "Normalmente, o cartão e a placa ficam prontos em poucos dias úteis depois de definirmos juntos a regra e a imagem. Na demonstração indicamos o prazo exato.",
+        a: "Normalmente, o cartão e a placa ficam prontos em poucos dias úteis depois de definirmos juntos a regra. Na demonstração indicamos o prazo exato.",
       },
     ],
   },
@@ -135,13 +135,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Loyalty Card",
     tagline: "Digital stamps your customers can't lose or leave at home.",
     summary:
-      "A loyalty card on your customer's phone, stamped by NFC or QR code. No app, saved to Apple Wallet or Google Wallet, with rewards unlocked automatically.",
+      "A loyalty card on your customer's phone: they join by NFC or QR code, no app, and your staff stamp it at every visit. Rewards unlock automatically.",
     metaTitle: "NFC Digital Loyalty Card | Steevanz",
     metaDescription:
-      "Digital loyalty card with NFC and QR code: stamps on the phone, no app, saved to Apple Wallet or Google Wallet. Automatic rewards and simple stats.",
+      "Digital loyalty card with NFC and QR code: stamps on the phone, no app and no paper cards. Automatic rewards and simple stats.",
     heroTitle: "The stamp card, now on their phone",
     heroSubtitle:
-      "Your customers collect stamps with a tap or a QR scan and receive their reward automatically. The card lives in Apple Wallet, Google Wallet or on a web page. Nothing to install.",
+      "Customers join with a tap or a QR scan, collect a stamp at every visit and receive their reward automatically. The card lives on their phone, one tap from the home screen. Nothing to install.",
     problem: {
       title: "Paper cards get lost and tell you nothing",
       body:
@@ -155,10 +155,10 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Loyalty made simple, for you and your customers",
       body:
-        "The card lives on the customer's phone and every visit is recorded with a tap on the NFC plate or a QR scan. When the card is full, the reward becomes available automatically.",
+        "The card lives on the customer's phone and your staff stamp every visit in seconds. When the card is full, the reward becomes available automatically.",
       points: [
-        "Card saved to Apple Wallet, Google Wallet or opened as a web page",
-        "Stamps by NFC or QR code, validated by your staff",
+        "Card on the phone, one tap from the home screen, no app",
+        "Stamps given by your staff: with the PIN on the customer's phone or by scanning the card's QR",
         "Reward unlocked automatically",
         "Simple stats on visits and regular customers",
       ],
@@ -166,7 +166,7 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Set the rule",
-        body: "For example: buy 9 coffees, get the 10th free. We design the card with your branding.",
+        body: "For example: buy 9 coffees, get the 10th free. We set up the card with your business name.",
       },
       {
         title: "Customers join",
@@ -174,7 +174,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Stamp every visit",
-        body: "At each purchase, the customer taps the plate or shows the card and your staff confirm the stamp.",
+        body: "At each purchase, the customer shows the card and your staff give the stamp: they type the PIN on the customer's phone or scan the card's QR.",
       },
       {
         title: "Automatic reward",
@@ -183,16 +183,16 @@ export const copy: ProductCopyByLocale = {
     ],
     features: [
       {
-        title: "In the phone's wallet",
-        body: "The card can be saved to Apple Wallet or Google Wallet, or opened as a web page. Always to hand, without taking up space with yet another app.",
+        title: "Always on the phone",
+        body: "The card opens as a page on the phone and can sit on the home screen, like an app. Always to hand, with nothing to install.",
       },
       {
-        title: "Stamps by NFC or QR",
-        body: "An NFC counter plate with a printed QR code records the stamp in seconds. It works even at your busiest times.",
+        title: "Stamps in seconds",
+        body: "Your staff type the stamp PIN on the customer's phone or scan the card's QR with the counter phone. The NFC plate with QR is how customers join.",
       },
       {
         title: "Automatic rewards",
-        body: "Set the rule once and the system does the rest: counts stamps, notifies the customer and marks the reward as used.",
+        body: "Set the rule once and the system does the rest: counts stamps, shows the reward on the card and marks it as used.",
       },
       {
         title: "Protection from abuse",
@@ -203,7 +203,7 @@ export const copy: ProductCopyByLocale = {
         body: "See how many customers joined, how often they return and how many rewards were given, without spreadsheets.",
       },
       {
-        title: "Your branding",
+        title: "With your business name",
         body: "The card carries your business name and lives on the customer's phone, no app: one tap from the home screen.",
       },
     ],
@@ -235,7 +235,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Do customers need to install an app?",
-        a: "No. The card is saved to Apple Wallet or Google Wallet, which come with the phone, or opened as a web page. Customers just tap the plate or scan the QR code.",
+        a: "No. The card opens in the browser and can sit on the phone's home screen. Customers just tap the plate or scan the QR code.",
       },
       {
         q: "Which phones work?",
@@ -247,7 +247,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "What customer data is stored?",
-        a: "Only what the card needs to work, such as the record of stamps and rewards. Data is handled in line with GDPR and is never shared with third parties for advertising.",
+        a: "Only the name (email and phone are optional) and the record of stamps and rewards. Data is handled in line with GDPR and is never shared with third parties for advertising.",
       },
       {
         q: "Can I cancel the monthly plan?",
@@ -255,7 +255,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "How long does it take to get started?",
-        a: "The card and plate are usually ready within a few working days once we've agreed the rule and design together. We confirm exact timing during the demo.",
+        a: "The card and plate are usually ready within a few working days once we've agreed the rule together. We confirm exact timing during the demo.",
       },
     ],
   },

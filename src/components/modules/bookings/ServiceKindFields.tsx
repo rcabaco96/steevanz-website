@@ -46,7 +46,7 @@ export function ServiceKindFields({
           {(
             [
               ["one", "Um cliente de cada vez", "Cortes, consultas, campos: cada pessoa ou espaço atende um de cada vez."],
-              ["group", "Várias pessoas à mesma hora", "Mesas de restaurante: aceita reservas até encher o almoço ou o jantar."],
+              ["group", "Várias pessoas à mesma hora", "Restaurantes: aceita reservas até encher a lotação do almoço ou do jantar."],
             ] as const
           ).map(([value, title, hint]) => (
             <label key={value} className="flex cursor-pointer gap-2.5 rounded-2xl border border-line p-3 text-sm has-[:checked]:border-accent has-[:checked]:bg-accent-soft/50">
@@ -100,7 +100,7 @@ export function ServiceKindFields({
       ) : (
         <>
           <label className={adminLabelClasses}>
-            Lugares por turno
+            Pessoas por turno
             <input name="capacity" type="number" min={1} max={10000} required defaultValue={capacity ?? 40} className={input} />
             <span className="text-xs font-normal text-subtle">Ex.: 50. Quando as reservas do almoço (ou do jantar) somarem 50 pessoas, esse turno fica cheio.</span>
           </label>

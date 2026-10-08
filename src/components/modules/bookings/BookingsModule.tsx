@@ -31,9 +31,10 @@ import { Materials } from "../shared/Materials";
 import { ModuleNav, pickEstablishment, pickView, queryValue, type ModuleQuery } from "../shared/ModuleNav";
 import { NoEstablishment } from "../shared/NoEstablishment";
 import { templateForKind } from "@/lib/modules/bookings/templates";
+import { AutoSubmitForm } from "./AutoSubmitForm";
 import { ServicesView } from "./ServicesView";
 
-/** The tabs; a business with a fixed service (a restaurant) sees "Mesas" instead of "Serviços". */
+/** The tabs; a business with a fixed service (a restaurant) sees "Lotação" instead of "Serviços". */
 function moduleViews(establishment: EstablishmentRow) {
   return [
     { id: "reservas", label: "Reservas" },
@@ -253,7 +254,18 @@ export function AgendaDay({ bundle, agenda, links }: { bundle: EstablishmentBund
                   {full ? <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-semibold text-danger">Cheio</span> : null}
                 </div>
                 <span className="text-sm text-muted">
-                  <strong className="font-semibold tabular-nums text-text">{turn.booked}</strong> de {turn.capacity} lugares reservados
+                  {turn.booked === 0 ? (
+                    `Sem reservas · lotação de ${turn.capacity} pessoas`
+                  ) : full ? (
+                    <>
+                      Cheio · reservas para <strong className="font-semibold tabular-nums text-text">{turn.booked}</strong> pessoas
+                    </>
+                  ) : (
+                    <>
+                      Reservas para <strong className="font-semibold tabular-nums text-text">{turn.booked}</strong> {turn.booked === 1 ? "pessoa" : "pessoas"} · ainda há lugar para{" "}
+                      {turn.capacity - turn.booked}
+                    </>
+                  )}
                 </span>
                 <span className="h-1.5 overflow-hidden rounded-full bg-surface-2">
                   <span className={`block h-full rounded-full ${full ? "bg-danger" : "bg-accent"}`} style={{ width: `${Math.min(100, (turn.booked / Math.max(1, turn.capacity)) * 100)}%` }} />
@@ -264,7 +276,8 @@ export function AgendaDay({ bundle, agenda, links }: { bundle: EstablishmentBund
         </div>
       ) : null}
 
-      {date === today ? <DelayControl bundle={bundle} delays={delays} /> : null}
+      {/* Running late matters for back-to-back appointments, not for restaurant capacity. */}
+      {date === today && bundle.services.some((service) => service.active && service.booking_kind === "one") ? <DelayControl bundle={bundle} delays={delays} /> : null}
 
       {blocks.length ? (
         <p className="rounded-2xl border border-dashed border-line-strong px-4 py-3 text-sm text-muted">
@@ -397,7 +410,7 @@ async function BookingFormView({
       </div>
 
       <Panel title="1. Dia e hora">
-        <form method="get" action={basePath} className="grid grid-cols-1 gap-3 sm:grid-cols-[repeat(3,minmax(0,1fr))_auto] sm:items-end">
+        <AutoSubmitForm action={basePath} className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-end">
           {Object.entries(keep).map(([name, value]) => (
             <input key={name} type="hidden" name={name} value={value} />
           ))}
@@ -437,10 +450,12 @@ async function BookingFormView({
               </select>
             </label>
           ) : null}
-          <button type="submit" className={buttonClasses("secondary", "md")}>
-            Ver horas livres
-          </button>
-        </form>
+          <noscript>
+            <button type="submit" className={buttonClasses("secondary", "md")}>
+              Ver horas livres
+            </button>
+          </noscript>
+        </AutoSubmitForm>
       </Panel>
 
       <ActionForm action={staffSaveBooking} className="flex flex-col gap-5">
@@ -578,7 +593,7 @@ function PageSettings({ page, establishmentId, hasGroup }: { page: BookingPageRo
           {hasGroup ? (
             <Choice
               name="last_booking_minutes"
-              label="Última reserva de mesas"
+              label="Última reserva"
               value={page.last_booking_minutes}
               options={[
                 [30, "30 minutos antes de fechar"],
@@ -715,7 +730,7 @@ function BlocksPanel({ bundle, blocks }: { bundle: EstablishmentBundle; blocks: 
 function setupWarnings(bundle: EstablishmentBundle, page: BookingPageRow): string[] {
   const warnings: string[] = [];
   if (!bundle.services.some((item) => item.active)) {
-    warnings.push(templateForKind(bundle.establishment.kind)?.fixed ? "As reservas de mesa ainda não estão ativas: veja o separador Mesas." : "Ainda não há serviços: crie-os (ou comece por um exemplo) no separador Serviços.");
+    warnings.push(templateForKind(bundle.establishment.kind)?.fixed ? "As reservas ainda não estão ativas: veja o separador Lotação." : "Ainda não há serviços: crie-os (ou comece por um exemplo) no separador Serviços.");
   }
   if (!bundle.hours.length) warnings.push("Falta o horário: sem ele não há horas para reservar.");
   if (!page.active) warnings.push("As reservas online estão desligadas: só entram as que fizer aqui.");

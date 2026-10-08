@@ -6,10 +6,10 @@ export const copy: ProductCopyByLocale = {
     shortName: "Reservas Online",
     tagline: "Reservas e marcações a qualquer hora, sem atender o telefone.",
     summary:
-      "Agenda online para mesas, marcações e serviços, com lembretes por SMS, WhatsApp ou email, sincronização com o Google Calendar e um link pronto para o Instagram.",
+      "Agenda online para restaurantes e serviços, com confirmação e lembrete por email, as reservas no calendário do telemóvel e um link pronto para o Instagram.",
     metaTitle: "Sistema de Reservas Online para Negócios | Steevanz",
     metaDescription:
-      "Sistema de reservas online para restaurantes, salões e clínicas: marcações 24 horas, lembretes por SMS, WhatsApp ou email e menos faltas. Configurado por nós.",
+      "Sistema de reservas online para restaurantes, salões e clínicas: reservas 24 horas, lembretes por email e menos faltas. Configurado por nós.",
     heroTitle: "A sua agenda cheia, mesmo com a porta fechada",
     heroSubtitle:
       "Os clientes reservam mesa, marcação ou serviço online, a qualquer hora, a partir do seu Instagram, site ou perfil no Google. Recebem lembretes automáticos e a sua equipa vê tudo numa só agenda.",
@@ -29,15 +29,15 @@ export const copy: ProductCopyByLocale = {
         "Os clientes escolhem o dia, a hora, o serviço e até o profissional, sem ligar. O sistema confirma, envia lembretes e mantém a agenda da equipa sempre atualizada.",
       points: [
         "Reservas 24 horas por dia, a partir de qualquer canal",
-        "Lembretes automáticos por SMS, WhatsApp ou email",
-        "Sincronização com o Google Calendar",
+        "Confirmação e lembrete automáticos por email",
+        "As reservas no calendário do telemóvel (Google, iPhone, Outlook)",
         "Link de reserva pronto para o Instagram e o perfil no Google",
       ],
     },
     steps: [
       {
         title: "Conte-nos como trabalha",
-        body: "Mesas, serviços, durações, horários e equipa. Nós configuramos a agenda à medida do seu negócio.",
+        body: "Lotação, serviços, durações, horários e equipa. Nós configuramos a agenda à medida do seu negócio.",
       },
       {
         title: "Partilhe o link",
@@ -49,21 +49,21 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "A equipa acompanha",
-        body: "Todos veem a agenda do dia no telemóvel ou no computador, sincronizada com o Google Calendar.",
+        body: "Todos veem a agenda do dia no telemóvel ou no computador, e podem tê-la também no calendário do telemóvel.",
       },
     ],
     features: [
       {
-        title: "Mesas, serviços e equipa",
-        body: "Configure mesas e lotação, serviços com durações diferentes e a disponibilidade de cada profissional. O cliente só vê horários realmente livres.",
+        title: "Lotação, serviços e equipa",
+        body: "Restaurantes: lotação por turno (almoço, jantar). Outros negócios: serviços com durações diferentes e o horário de cada profissional ou espaço. O cliente só vê horários realmente livres.",
       },
       {
         title: "Lembretes automáticos",
-        body: "Confirmação e lembrete por SMS, WhatsApp ou email antes da visita, com opção de cancelar ou alterar. Menos faltas sem aviso.",
+        body: "Confirmação e lembrete por email na véspera, com opção de cancelar ou alterar. Menos faltas sem aviso.",
       },
       {
-        title: "Sincronização com o Google Calendar",
-        body: "As reservas aparecem no calendário de quem as vai atender, e os compromissos pessoais bloqueiam horários automaticamente.",
+        title: "No calendário do telemóvel",
+        body: "Subscreva a agenda no Google Calendar, no iPhone ou no Outlook e veja as reservas onde já vê o resto do dia.",
       },
       {
         title: "Link para todos os canais",
@@ -71,11 +71,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Gestão simples",
-        body: "Adicione reservas feitas ao telefone, mova marcações e bloqueie folgas a partir do telemóvel, sem formação complicada.",
+        body: "Adicione reservas feitas ao telefone, altere-as e feche horários (um evento, uma folga) a partir do telemóvel, sem formação complicada.",
       },
       {
-        title: "Histórico de clientes",
-        body: "Veja as visitas anteriores de cada cliente e notas úteis, como preferências ou alergias, para um atendimento mais pessoal.",
+        title: "Atrasos sem confusão",
+        body: "Defina a tolerância de atraso que o cliente vê ao reservar. Nas marcações de serviços, num dia complicado, avise com um toque os clientes das próximas horas de que está com atraso.",
       },
     ],
     useCases: [
@@ -96,17 +96,17 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Configuração completa de serviços, mesas, horários e equipa",
+      "Configuração completa da lotação ou dos serviços, horários e equipa",
       "Página de reservas com o nome e os serviços do seu negócio",
-      "Lembretes por SMS, WhatsApp ou email",
-      "Ligação ao Google Calendar",
+      "Confirmação e lembrete por email",
+      "Calendário para ver as reservas no telemóvel",
       "Link de reserva no Instagram, site e perfil no Google",
       "Formação da equipa e suporte por WhatsApp e email",
     ],
     faq: [
       {
         q: "Os clientes precisam de criar conta ou instalar uma app?",
-        a: "Não. Reservam numa página web com o nome e o contacto, e recebem a confirmação por SMS, WhatsApp ou email.",
+        a: "Não. Reservam numa página web com o nome e o contacto, e recebem a confirmação por email.",
       },
       {
         q: "Os lembretes reduzem mesmo as faltas?",
@@ -135,10 +135,10 @@ export const copy: ProductCopyByLocale = {
     shortName: "Online Bookings",
     tagline: "Bookings and appointments at any hour, without picking up the phone.",
     summary:
-      "An online diary for tables, appointments and services, with reminders by SMS, WhatsApp or email, Google Calendar sync and a link ready for your Instagram.",
+      "An online diary for restaurants and services, with email confirmation and reminders, bookings in your phone's calendar and a link ready for your Instagram.",
     metaTitle: "Online Booking System for Local Businesses | Steevanz",
     metaDescription:
-      "Online booking system for restaurants, salons and clinics: bookings around the clock, reminders by SMS, WhatsApp or email and fewer no-shows. Set up for you.",
+      "Online booking system for restaurants, salons and clinics: bookings around the clock, email reminders and fewer no-shows. Set up for you.",
     heroTitle: "A full diary, even when you're closed",
     heroSubtitle:
       "Customers book a table, appointment or service online, at any hour, from your Instagram, website or Google profile. They get automatic reminders and your team sees everything in one diary.",
@@ -158,15 +158,15 @@ export const copy: ProductCopyByLocale = {
         "Customers pick the day, time, service and even the staff member, without calling. The system confirms, sends reminders and keeps your team's diary up to date.",
       points: [
         "Bookings around the clock, from any channel",
-        "Automatic reminders by SMS, WhatsApp or email",
-        "Google Calendar sync",
+        "Automatic confirmation and reminder by email",
+        "Bookings in your phone's calendar (Google, iPhone, Outlook)",
         "Booking link ready for Instagram and your Google profile",
       ],
     },
     steps: [
       {
         title: "Tell us how you work",
-        body: "Tables, services, durations, opening hours and staff. We set up the diary around your business.",
+        body: "Capacity, services, durations, opening hours and staff. We set up the diary around your business.",
       },
       {
         title: "Share the link",
@@ -178,21 +178,21 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Your team stays on top",
-        body: "Everyone sees the day's diary on phone or computer, synced with Google Calendar.",
+        body: "Everyone sees the day's diary on phone or computer, and can have it in their phone's calendar too.",
       },
     ],
     features: [
       {
-        title: "Tables, services and staff",
-        body: "Set up tables and capacity, services with different durations and each person's availability. Customers only see genuinely free slots.",
+        title: "Capacity, services and staff",
+        body: "Restaurants: capacity per sitting (lunch, dinner). Other businesses: services with different durations and each person's or place's hours. Customers only see genuinely free slots.",
       },
       {
         title: "Automatic reminders",
-        body: "Confirmation and a reminder by SMS, WhatsApp or email before the visit, with an option to cancel or change. Fewer unannounced no-shows.",
+        body: "Confirmation and a reminder by email the day before, with an option to cancel or change. Fewer unannounced no-shows.",
       },
       {
-        title: "Google Calendar sync",
-        body: "Bookings appear in the calendar of whoever is handling them, and personal commitments block out slots automatically.",
+        title: "In your phone's calendar",
+        body: "Subscribe to the diary in Google Calendar, on iPhone or in Outlook and see bookings where you already see the rest of your day.",
       },
       {
         title: "One link for every channel",
@@ -200,11 +200,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Easy to manage",
-        body: "Add phone bookings, move appointments and block time off from your phone, with no complicated training.",
+        body: "Add phone bookings, change them and close times (an event, a day off) from your phone, with no complicated training.",
       },
       {
-        title: "Customer history",
-        body: "See each customer's past visits and useful notes, such as preferences or allergies, for a more personal service.",
+        title: "Delays without confusion",
+        body: "Set the lateness allowance customers see when booking. For service appointments, on a hard day, tell the next hours' customers you're running late with one tap.",
       },
     ],
     useCases: [
@@ -225,17 +225,17 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Full set-up of services, tables, opening hours and staff",
+      "Full set-up of capacity or services, opening hours and staff",
       "Booking page with your business name and services",
-      "Reminders by SMS, WhatsApp or email",
-      "Google Calendar connection",
+      "Confirmation and reminder by email",
+      "Calendar to see bookings on your phone",
       "Booking link on Instagram, website and Google profile",
       "Staff training and support by WhatsApp and email",
     ],
     faq: [
       {
         q: "Do customers need an account or an app?",
-        a: "No. They book on a web page with their name and contact details, and receive confirmation by SMS, WhatsApp or email.",
+        a: "No. They book on a web page with their name and contact details, and receive confirmation by email.",
       },
       {
         q: "Do reminders really reduce no-shows?",

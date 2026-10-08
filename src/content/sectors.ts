@@ -38,7 +38,7 @@ export const sectors: Sector[] = [
         cardTitle: "Restaurantes e cafés",
         cardBody: "Mais reviews no Google, mesas cheias sem telefonemas perdidos e uma fila de espera que não entope a porta.",
         metaTitle: "Soluções NFC e IA para restaurantes | Steevanz",
-        metaDescription: "Placas NFC para reviews no Google, reservas online, lista de espera por SMS e receção por voz com IA. Pensado para restaurantes e cafés em Portugal.",
+        metaDescription: "Placas NFC para reviews no Google, reservas online, lista de espera digital e receção por voz com IA. Pensado para restaurantes e cafés em Portugal.",
         heroTitle: "A sala cheia. O telefone atendido. As reviews a crescer.",
         heroSubtitle: "Num restaurante, cada minuto de serviço conta. Juntamos as ferramentas que tiram trabalho à equipa e trazem mais clientes pela porta, sem apps para instalar e com a configuração feita por nós.",
         pains: [
@@ -47,10 +47,10 @@ export const sectors: Sector[] = [
           { title: "Uma fila à porta que desmotiva", body: "Grupos à espera no passeio, sem saber quanto tempo falta. Muitos desistem antes de a mesa ficar livre." },
         ],
         bundleTitle: "O pacote para restaurantes",
-        bundleBody: "Placas NFC nas mesas e no balcão para pedir reviews no momento certo, reservas online com lembretes que reduzem as faltas, lista de espera digital com aviso por SMS e uma receção por voz que atende quando a equipa não pode.",
+        bundleBody: "Placas NFC nas mesas e no balcão para pedir reviews no momento certo, reservas online com lembretes que reduzem as faltas, lista de espera digital com aviso no telemóvel e uma receção por voz que atende quando a equipa não pode.",
         dayInTheLife: [
           { title: "12:15 — Reservas a entrar sozinhas", body: "Os clientes reservam pelo Instagram e pelo perfil no Google. A confirmação e o lembrete seguem automaticamente." },
-          { title: "13:30 — Casa cheia, fila organizada", body: "Quem chega sem reserva junta-se à lista de espera com um QR code e recebe um SMS quando a mesa está pronta." },
+          { title: "13:30 — Casa cheia, fila organizada", body: "Quem chega sem reserva junta-se à lista de espera com um QR code e é avisado no telemóvel quando a mesa está pronta." },
           { title: "14:45 — A conta e um toque", body: "Na altura de pagar, o empregado aponta para a placa na mesa. Um toque com o telemóvel e o cliente está no formulário de review." },
           { title: "22:30 — Telefone atendido depois de fechar", body: "A receção por voz responde a horários e morada, aceita reservas para amanhã e envia-lhe um resumo por WhatsApp." },
         ],
@@ -65,7 +65,7 @@ export const sectors: Sector[] = [
         cardTitle: "Restaurants and cafés",
         cardBody: "More Google reviews, full tables without missed calls and a waiting list that doesn't block the door.",
         metaTitle: "NFC and AI solutions for restaurants | Steevanz",
-        metaDescription: "NFC plates for Google reviews, online bookings, SMS waiting lists and an AI voice receptionist. Built for restaurants and cafés in Portugal.",
+        metaDescription: "NFC plates for Google reviews, online bookings, digital waiting lists and an AI voice receptionist. Built for restaurants and cafés in Portugal.",
         heroTitle: "A full room. Every call answered. Reviews climbing.",
         heroSubtitle: "In a restaurant, every minute of service counts. We bring together the tools that take work off your team and bring more guests through the door, with no apps to install and the setup done by us.",
         pains: [
@@ -74,7 +74,7 @@ export const sectors: Sector[] = [
           { title: "A queue at the door that puts people off", body: "Groups waiting on the pavement with no idea how long it will take. Many give up before a table frees up." },
         ],
         bundleTitle: "The restaurant bundle",
-        bundleBody: "NFC plates on tables and at the counter to ask for reviews at the right moment, online bookings with reminders that cut no-shows, a digital waiting list with SMS alerts and a voice receptionist that answers when your team can't.",
+        bundleBody: "NFC plates on tables and at the counter to ask for reviews at the right moment, online bookings with reminders that cut no-shows, a digital waiting list with phone alerts and a voice receptionist that answers when your team can't.",
         dayInTheLife: [
           { title: "12:15 — Bookings coming in on their own", body: "Guests book from Instagram and your Google profile. Confirmation and reminder go out automatically." },
           { title: "13:30 — Full house, orderly queue", body: "Walk-ins join the waiting list with a QR code and get a text when their table is ready." },
@@ -100,7 +100,7 @@ export const sectors: Sector[] = [
         cardTitle: "Cabeleireiros e estética",
         cardBody: "Agenda sempre cheia, menos faltas e clientes que voltam por causa do cartão de fidelidade no telemóvel.",
         metaTitle: "Marcações online e NFC para cabeleireiros | Steevanz",
-        metaDescription: "Agenda online com lembretes por WhatsApp, placas NFC para reviews, cartão de fidelidade digital e chatbot com IA para cabeleireiros e centros de estética.",
+        metaDescription: "Agenda online com lembretes por email, placas NFC para reviews, cartão de fidelidade digital e chatbot com IA para cabeleireiros e centros de estética.",
         heroTitle: "Mãos ocupadas com clientes, não com o telemóvel.",
         heroSubtitle: "Entre um corte e uma coloração não há tempo para responder a mensagens. Deixe as marcações, os lembretes e as perguntas repetidas connosco e concentre-se no que faz melhor.",
         pains: [
@@ -118,7 +118,7 @@ export const sectors: Sector[] = [
         ],
         faq: [
           { q: "Cada profissional pode ter a sua própria agenda?", a: "Sim. Cada pessoa tem os seus serviços, horários e folgas. O cliente pode escolher com quem quer marcar ou deixar ao critério do salão." },
-          { q: "O cartão de fidelidade obriga os clientes a instalar uma app?", a: "Não. O cartão abre no navegador e pode ser guardado na carteira do telemóvel. O cliente só precisa de um toque ou de ler um QR code." },
+          { q: "O cartão de fidelidade obriga os clientes a instalar uma app?", a: "Não. O cartão abre no navegador e pode ficar no ecrã principal do telemóvel. O cliente só precisa de um toque ou de ler um QR code." },
           { q: "Posso cobrar um sinal nas marcações mais longas?", a: "Podemos configurar pedido de sinal para serviços específicos, como colorações ou tratamentos longos. Falamos dos detalhes na demonstração." },
         ],
       },
@@ -127,7 +127,7 @@ export const sectors: Sector[] = [
         cardTitle: "Hair salons and beauty",
         cardBody: "A full diary, fewer no-shows and clients who come back thanks to a loyalty card on their phone.",
         metaTitle: "Online bookings and NFC for salons | Steevanz",
-        metaDescription: "Online appointments with WhatsApp reminders, NFC plates for Google reviews, a digital loyalty card and an AI chatbot for hair salons and beauty clinics.",
+        metaDescription: "Online appointments with email reminders, NFC plates for Google reviews, a digital loyalty card and an AI chatbot for hair salons and beauty clinics.",
         heroTitle: "Hands busy with clients, not with your phone.",
         heroSubtitle: "Between a cut and a colour there's no time to answer messages. Leave bookings, reminders and repeated questions to us and focus on what you do best.",
         pains: [
@@ -145,7 +145,7 @@ export const sectors: Sector[] = [
         ],
         faq: [
           { q: "Can each stylist have their own diary?", a: "Yes. Each person has their own services, hours and days off. Clients can choose who to book with or leave it to the salon." },
-          { q: "Do clients need to install an app for the loyalty card?", a: "No. The card opens in the browser and can be saved to the phone's wallet. Clients just tap or scan a QR code." },
+          { q: "Do clients need to install an app for the loyalty card?", a: "No. The card opens in the browser and can sit on the phone's home screen. Clients just tap or scan a QR code." },
           { q: "Can I take a deposit for longer appointments?", a: "We can set up deposits for specific services such as colouring or long treatments. We'll go through the details in the demo." },
         ],
       },
@@ -171,11 +171,11 @@ export const sectors: Sector[] = [
           { title: "Uma sala de espera cheia e ansiosa", body: "Sem saber quanto falta, os pacientes perguntam repetidamente ao balcão e a tensão aumenta." },
         ],
         bundleTitle: "O pacote para clínicas",
-        bundleBody: "Receção por voz com IA que atende, esclarece dúvidas administrativas e marca consultas, agenda online por tipo de consulta e profissional, aviso por SMS quando é a vez do paciente e acompanhamento das reviews no Google.",
+        bundleBody: "Receção por voz com IA que atende, esclarece dúvidas administrativas e marca consultas, agenda online por tipo de consulta e profissional, aviso no telemóvel quando é a vez do paciente e acompanhamento das reviews no Google.",
         dayInTheLife: [
           { title: "07:45 — Marcações feitas durante a noite", body: "Pacientes que ligaram fora de horas foram atendidos pela receção por voz e as consultas já estão na agenda." },
           { title: "10:00 — Balcão livre para quem chega", body: "As dúvidas sobre horários, acordos e preparação para exames são respondidas automaticamente ao telefone." },
-          { title: "15:20 — Espera sem ansiedade", body: "O paciente pode ir tomar um café. Recebe um SMS quando faltarem poucos minutos para a consulta." },
+          { title: "15:20 — Espera sem ansiedade", body: "O paciente acompanha a fila no telemóvel e é avisado quando chega a sua vez." },
           { title: "18:30 — Reviews acompanhadas", body: "Recebe um alerta se surgir uma review negativa e uma proposta de resposta cuidadosa, sem dados clínicos." },
         ],
         faq: [
@@ -198,7 +198,7 @@ export const sectors: Sector[] = [
           { title: "A crowded, anxious waiting room", body: "Without knowing how long is left, patients keep asking at the desk and tension rises." },
         ],
         bundleTitle: "The clinic bundle",
-        bundleBody: "An AI voice receptionist that answers, handles admin questions and books appointments, online scheduling by appointment type and practitioner, SMS alerts when it's the patient's turn and monitoring of your Google reviews.",
+        bundleBody: "An AI voice receptionist that answers, handles admin questions and books appointments, online scheduling by appointment type and practitioner, phone alerts when it's the patient's turn and monitoring of your Google reviews.",
         dayInTheLife: [
           { title: "07:45 — Appointments booked overnight", body: "Patients who called after hours were handled by the voice receptionist and their appointments are already in the diary." },
           { title: "10:00 — A free desk for walk-ins", body: "Questions about hours, insurance agreements and test preparation are answered automatically on the phone." },

@@ -70,7 +70,7 @@ export default async function WaitlistJoinPage({ params }: Props) {
         <PublicCard>
           <div className="flex flex-col gap-1">
             <h2 className="display text-[1.7rem] leading-tight">{words.joinTitle}</h2>
-            <p className="text-muted">Espere onde quiser. Este telemóvel avisa quando for a sua vez.</p>
+            <p className="text-muted">Avisamos quando for a sua vez: mantenha a página da senha aberta ou deixe o email.</p>
           </div>
           {settings.message ? <p className="rounded-2xl border border-line bg-surface-2/60 px-4 py-3 text-sm text-text">{settings.message}</p> : null}
           <JoinForm

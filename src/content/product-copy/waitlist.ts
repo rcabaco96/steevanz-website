@@ -6,13 +6,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Lista de Espera",
     tagline: "Os clientes esperam onde quiserem e voltam quando for a vez deles.",
     summary:
-      "Fila virtual por QR code ou NFC, com tempo de espera estimado e aviso por SMS ou WhatsApp quando a mesa ou a vez estiver pronta. Sem aglomerações à porta.",
+      "Fila virtual por QR code ou NFC, com tempo de espera estimado e aviso no telemóvel quando a mesa ou a vez estiver pronta. Sem aglomerações à porta.",
     metaTitle: "Lista de Espera Digital e Fila Virtual | Steevanz",
     metaDescription:
-      "Lista de espera digital para restaurantes, clínicas e salões: o cliente entra na fila por QR code ou NFC e recebe um SMS ou WhatsApp quando chega a sua vez.",
+      "Lista de espera digital para restaurantes, clínicas e salões: o cliente entra na fila por QR code ou NFC e é avisado no telemóvel quando chega a sua vez.",
     heroTitle: "Acabe com a fila à porta",
     heroSubtitle:
-      "O cliente entra na lista de espera com um toque ou uma leitura de QR code, vê o tempo estimado e recebe um SMS ou WhatsApp quando a mesa ou a vez estiver pronta. Pode esperar num café ao lado ou dar uma volta.",
+      "O cliente entra na lista de espera com um toque ou uma leitura de QR code, acompanha a posição e o tempo estimado no telemóvel e é avisado quando a mesa ou a vez estiver pronta. Pode esperar ali perto, sem ficar de pé à porta.",
     problem: {
       title: "A espera à porta afasta clientes",
       body:
@@ -26,11 +26,11 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Uma fila que não obriga ninguém a ficar parado",
       body:
-        "Com a lista de espera digital, cada cliente sabe a sua posição e o tempo estimado, e é avisado no telemóvel quando for a sua vez. A equipa gere tudo num ecrã simples.",
+        "Com a lista de espera digital, cada cliente sabe a sua posição e o tempo estimado, e é avisado no telemóvel quando for a sua vez. A equipa só carrega em «Chamar o seguinte».",
       points: [
         "Entrada na lista por QR code, NFC ou pela equipa",
         "Tempo de espera estimado visível para o cliente",
-        "Aviso automático por SMS ou WhatsApp",
+        "Aviso no telemóvel e por email",
         "Painel simples para chamar o próximo cliente",
       ],
     },
@@ -45,7 +45,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "É avisado no telemóvel",
-        body: "Quando a mesa ou a vez estiver pronta, a equipa carrega num botão e o cliente recebe um SMS ou WhatsApp.",
+        body: "Quando a mesa ou a vez estiver pronta, a equipa carrega num botão: o telemóvel do cliente toca e, se deixou email, recebe também um email."
       },
     ],
     features: [
@@ -58,8 +58,8 @@ export const copy: ProductCopyByLocale = {
         body: "O sistema calcula uma estimativa com base no ritmo real da fila, para o cliente decidir se espera ali perto ou dá uma volta.",
       },
       {
-        title: "Aviso por SMS ou WhatsApp",
-        body: "Uma mensagem automática quando chega a vez, com a indicação de onde se deve dirigir. Sem gritar nomes pela sala.",
+        title: "Aviso no telemóvel",
+        body: "Quando chega a vez, a página da senha toca e mostra para onde se dirigir; quem deixou email recebe também um email. Sem gritar nomes pela sala.",
       },
       {
         title: "Painel para a equipa",
@@ -71,7 +71,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Liga-se às reservas",
-        body: "Se também usar o nosso sistema de reservas, as reservas e a lista de espera convivem na mesma vista, para gerir a sala sem surpresas.",
+        body: "Se também usar o nosso sistema de reservas, a fila e as reservas de hoje ficam lado a lado no Balcão, para gerir a sala sem surpresas.",
       },
     ],
     useCases: [
@@ -94,7 +94,7 @@ export const copy: ProductCopyByLocale = {
     includes: [
       "Configuração da lista de espera à medida do seu espaço",
       "Placa NFC com QR code para a entrada",
-      "Mensagens de aviso por SMS ou WhatsApp personalizadas",
+      "Ecrã de chamada para uma TV à entrada (opcional)",
       "Painel para a equipa em tablet, telemóvel ou computador",
       "Formação rápida da equipa",
       "Suporte por WhatsApp e email",
@@ -106,15 +106,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "E os clientes que não querem usar o telemóvel?",
-        a: "A equipa adiciona-os à lista em segundos, com o nome e o número de telefone, e o aviso chega por SMS da mesma forma.",
+        a: "A equipa adiciona-os à lista em segundos, só com o nome, e chama-os ao balcão quando for a vez.",
       },
       {
         q: "Quão fiável é o tempo estimado?",
-        a: "É uma estimativa baseada no ritmo recente da fila e pode variar. A equipa pode ajustá-la, e o cliente é sempre avisado quando for realmente a sua vez.",
+        a: "É uma estimativa baseada no ritmo recente da fila e pode variar. O cliente é sempre avisado quando for realmente a sua vez.",
       },
       {
         q: "Que dados são guardados?",
-        a: "Apenas o nome e o contacto necessários para avisar o cliente. Os dados são tratados de acordo com o RGPD e não são usados para outros fins sem consentimento.",
+        a: "Apenas o nome (e o email, se o cliente o deixar para ser avisado). Os dados são apagados ao fim de 30 dias, tratados de acordo com o RGPD e não são usados para outros fins.",
       },
       {
         q: "Posso cancelar o plano mensal?",
@@ -127,13 +127,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Waitlist",
     tagline: "Customers wait wherever they like and come back when it's their turn.",
     summary:
-      "A virtual queue by QR code or NFC, with an estimated waiting time and an SMS or WhatsApp alert when the table or turn is ready. No crowd at the door.",
+      "A virtual queue by QR code or NFC, with an estimated waiting time and a phone alert when the table or turn is ready. No crowd at the door.",
     metaTitle: "Digital Waitlist and Virtual Queue | Steevanz",
     metaDescription:
-      "Digital waitlist for restaurants, clinics and salons: customers join the queue by QR code or NFC and get an SMS or WhatsApp message when it's their turn.",
+      "Digital waitlist for restaurants, clinics and salons: customers join the queue by QR code or NFC and are alerted on their phone when it's their turn.",
     heroTitle: "No more queue at the door",
     heroSubtitle:
-      "Customers join the waitlist with a tap or a QR scan, see the estimated wait and get an SMS or WhatsApp message when their table or turn is ready. They can wait at the café next door or go for a walk.",
+      "Customers join the waitlist with a tap or a QR scan, follow their position and estimated wait on their phone and are alerted when their table or turn is ready. They can wait nearby instead of standing at the door.",
     problem: {
       title: "Waiting at the door drives customers away",
       body:
@@ -147,11 +147,11 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "A queue that doesn't keep anyone standing still",
       body:
-        "With a digital waitlist, every customer knows their position and estimated wait, and gets a message on their phone when it's their turn. Your team manages everything on one simple screen.",
+        "With a digital waitlist, every customer knows their position and estimated wait, and is alerted on their phone when it's their turn. Your team just taps «Call next».",
       points: [
         "Join by QR code, NFC or via your staff",
         "Estimated waiting time visible to the customer",
-        "Automatic SMS or WhatsApp alert",
+        "Alert on the phone and by email",
         "Simple dashboard to call the next customer",
       ],
     },
@@ -166,7 +166,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "They're alerted by phone",
-        body: "When the table or turn is ready, your staff press a button and the customer gets an SMS or WhatsApp message.",
+        body: "When the table or turn is ready, your staff press a button: the customer's phone rings and, if they left an email, they get an email too.",
       },
     ],
     features: [
@@ -179,8 +179,8 @@ export const copy: ProductCopyByLocale = {
         body: "The system estimates the wait from the queue's real pace, so customers can decide whether to stay close or pop out.",
       },
       {
-        title: "SMS or WhatsApp alert",
-        body: "An automatic message when it's their turn, telling them where to go. No shouting names across the room.",
+        title: "Alert on the phone",
+        body: "When it's their turn, the ticket page rings and shows where to go; customers who left an email get an email too. No shouting names across the room.",
       },
       {
         title: "Staff dashboard",
@@ -192,7 +192,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Works with bookings",
-        body: "If you also use our booking system, bookings and the waitlist sit side by side, so you can run the floor without surprises.",
+        body: "If you also use our booking system, the queue and today's bookings sit side by side, so you can run the floor without surprises.",
       },
     ],
     useCases: [
@@ -215,7 +215,7 @@ export const copy: ProductCopyByLocale = {
     includes: [
       "Waitlist set up around your space",
       "NFC plate with QR code for the entrance",
-      "Customised SMS or WhatsApp alert messages",
+      "Call screen for a TV at the entrance (optional)",
       "Staff dashboard on tablet, phone or computer",
       "Quick staff training",
       "Support by WhatsApp and email",
@@ -227,15 +227,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "What about customers who don't want to use their phone?",
-        a: "Your staff add them in seconds with a name and phone number, and the alert arrives by SMS just the same.",
+        a: "Your staff add them in seconds with just a name, and call them at the desk when it's their turn.",
       },
       {
         q: "How reliable is the estimated wait?",
-        a: "It's an estimate based on the queue's recent pace and it can vary. Staff can adjust it, and customers are always alerted when it's genuinely their turn.",
+        a: "It's an estimate based on the queue's recent pace and it can vary. Customers are always alerted when it's genuinely their turn.",
       },
       {
         q: "What data is stored?",
-        a: "Only the name and contact needed to alert the customer. Data is handled in line with GDPR and isn't used for anything else without consent.",
+        a: "Only the name (and the email, if the customer leaves one to be alerted). Data is deleted after 30 days, handled in line with GDPR and never used for anything else.",
       },
       {
         q: "Can I cancel the monthly plan?",

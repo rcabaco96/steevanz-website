@@ -78,8 +78,6 @@ for (const slug of slugs) {
     continue;
   }
   const tz = space.time_zone;
-  const restaurant = space.kind === "restaurant";
-  const list = restaurant ? people.restaurant : people.other;
   const [{ data: staff }, { data: services }, { data: settings }, { data: page }, { data: program }] = await Promise.all([
     db.from("establishment_staff").select("*").eq("establishment_id", space.id).eq("active", true).order("sort"),
     db.from("establishment_services").select("*").eq("establishment_id", space.id).eq("active", true).order("sort"),
@@ -88,6 +86,18 @@ for (const slug of slugs) {
     db.from("loyalty_programs").select("*").eq("establishment_id", space.id).maybeSingle(),
   ]);
   const pick = (array, index) => (array?.length ? array[index % array.length] : null);
+  // Restaurants book by people (a "group" service); the others book services one at a time.
+  const groupService = services?.find((item) => item.booking_kind === "group") ?? null;
+  const oneServices = services?.filter((item) => item.booking_kind === "one") ?? [];
+  const restaurant = Boolean(groupService);
+  const list = restaurant ? people.restaurant : people.other;
+  const { data: links } = oneServices.length
+    ? await db.from("establishment_service_staff").select("*").in("service_id", oneServices.map((item) => item.id))
+    : { data: [] };
+  const eligible = (service) => {
+    const chosen = (links ?? []).filter((row) => row.service_id === service.id).map((row) => row.staff_id);
+    return (staff ?? []).filter((person) => !chosen.length || chosen.includes(person.id));
+  };
   console.log(`\n${space.name}`);
 
   // --- Queue: a few served earlier, one being called, five waiting ------------------------------
@@ -116,7 +126,7 @@ for (const slug of slugs) {
     ];
     for (const [index, step] of plan.entries()) {
       const [name, party, notes] = list[index];
-      const service = settings.ask_service ? pick(services, index) : null;
+      const service = settings.ask_service ? pick(oneServices, index) : null;
       const person = settings.ask_staff && index % 3 !== 2 ? pick(staff, index) : null;
       const { data: entry, error: joinError } = await db.rpc("waitlist_join", {
         p_establishment: space.id,
@@ -178,13 +188,14 @@ for (const slug of slugs) {
       const rows = [];
       const add = (start, index, status = "confirmed") => {
         const [name, party, notes] = list[(index + 3) % list.length];
-        const service = restaurant ? null : pick(services, index);
-        const length = restaurant ? page.table_minutes : (service?.duration_minutes ?? 30);
+        const service = restaurant ? groupService : pick(oneServices, index);
+        if (!service) return;
+        const length = restaurant ? 120 : service.duration_minutes + service.buffer_minutes;
         rows.push({
           establishment_id: space.id,
           token: token(),
-          service_id: service?.id ?? null,
-          staff_id: restaurant ? null : (pick(staff, index)?.id ?? null),
+          service_id: service.id,
+          staff_id: restaurant ? null : (pick(eligible(service), index)?.id ?? null),
           party_size: restaurant ? (party ?? 2) : null,
           starts_at: iso(start),
           ends_at: iso(new Date(start.getTime() + length * 60_000)),

@@ -23,7 +23,7 @@ Cada **serviço** tem nome, preço opcional e diz **como se reserva**:
 
 | Tipo | Serviços que já vêm |
 | --- | --- |
-| Restaurante, café ou bar | Mesa (40 lugares por turno, até 8 por reserva) |
+| Restaurante, café ou bar | Reserva (lotação de 40 pessoas por turno, até 8 por reserva). O separador chama-se **Lotação** e não deixa criar serviços |
 | Barbearia | Corte 30 min · Barba 20 min · Corte e barba 45 min |
 | Cabeleireiro ou estética | Corte 45 min · Brushing 30 min · Coloração 90 min · Manicure 45 min |
 | Clínica ou consultório | Primeira consulta 45 min · Consulta 30 min · Tratamento 60 min |
@@ -55,8 +55,8 @@ Cada **serviço** tem nome, preço opcional e diz **como se reserva**:
   - **Nova reserva:** escolhe-se o dia e o serviço (e as pessoas, ou com quem) e aparecem **só as
     horas livres** (sem antecedência mínima). Por telefone podem passar o máximo de pessoas.
   - **Alterar reserva:** hora, pessoas, serviço e contacto, sem mudar o link do cliente.
-  - **Estamos com atraso** (só hoje).
-- **Serviços:** serviços, pessoas e espaços, horários próprios.
+  - **Estamos com atraso** (só hoje, e só em negócios com serviços «um de cada vez»: num restaurante não faz sentido).
+- **Serviços** (ou **Lotação**, num restaurante): serviços, pessoas e espaços, horários próprios. No dia: «Reservas para 12 pessoas · ainda há lugar para 38».
 - **Definições:** reservas online ligadas/desligadas; regras para o cliente (antecedência, até
   quantos dias, tolerância de atraso, cancelar até, última reserva de mesas); avisos e mensagens;
   horário, dias fechados e dados do espaço; fechar reservas num dia ou horário.
@@ -76,7 +76,7 @@ Cada **serviço** tem nome, preço opcional e diz **como se reserva**:
 ## Atrasos, nos dois sentidos
 - **Tolerância de atraso** (do cliente): passado esse tempo a reserva fica «Atrasado»; a equipa
   decide. Nada é cancelado sozinho.
-- **Estamos com atraso** (do espaço): +10/15/30/45 min, para todos ou para uma pessoa ou espaço.
+- **Estamos com atraso** (do espaço, só para serviços «um de cada vez»): +10/15/30/45 min, para todos ou para uma pessoa ou espaço.
   Os clientes das próximas 3 horas com email recebem a hora prevista (só quando aumenta); todos veem
   o aviso na página da reserva. Nenhuma reserva muda de hora.
 

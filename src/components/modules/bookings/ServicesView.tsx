@@ -18,9 +18,9 @@ function minutesLabel(minutes: number): string {
   return rest ? `${hours} h ${rest}` : `${hours} h`;
 }
 
-/** "Um de cada vez · 30 min · Rui, Pedro" / "Várias pessoas · 40 lugares por turno · até 8 por reserva". */
+/** "Um de cada vez · 30 min · Rui, Pedro" / "Várias pessoas · até 40 pessoas por turno · até 8 por reserva". */
 function serviceSummary(service: ServiceRow, bundle: EstablishmentBundle): string {
-  if (service.booking_kind === "group") return `Várias pessoas · ${service.capacity ?? 0} lugares por turno · até ${service.max_party} por reserva`;
+  if (service.booking_kind === "group") return `Várias pessoas · até ${service.capacity ?? 0} pessoas por turno · até ${service.max_party} por reserva`;
   const chosen = bundle.serviceStaff.filter((row) => row.service_id === service.id).map((row) => bundle.staff.find((person) => person.id === row.staff_id)?.name).filter(Boolean);
   return [
     "Um de cada vez",
@@ -186,7 +186,7 @@ function FixedServiceView({ bundle, template, settingsHref }: { bundle: Establis
         <ActionForm action={applyBusinessTemplate}>
           <input type="hidden" name="establishment_id" value={id} />
           <input type="hidden" name="template" value={template.id} />
-          <SubmitButton>Ativar {template.fixed.title.toLowerCase()}</SubmitButton>
+          <SubmitButton>Ativar as reservas</SubmitButton>
         </ActionForm>
       </Panel>
     );
@@ -200,7 +200,7 @@ function FixedServiceView({ bundle, template, settingsHref }: { bundle: Establis
         <input type="hidden" name="booking_kind" value="group" />
         <input type="hidden" name="staff_choice" value="1" />
         <label className={adminLabelClasses}>
-          Lugares por turno
+          Pessoas por turno
           <input name="capacity" type="number" min={1} max={10000} required defaultValue={service.capacity ?? 40} className={input} />
           <span className="text-xs font-normal text-subtle">
             Quantas pessoas aceita com reserva no almoço e no jantar. Ex.: 50. Quando as reservas de um turno somarem 50 pessoas, esse turno fica cheio.
@@ -213,7 +213,7 @@ function FixedServiceView({ bundle, template, settingsHref }: { bundle: Establis
         </label>
         <label className="flex items-center gap-2 text-sm text-text sm:col-span-2">
           <input type="checkbox" name="active" defaultChecked={service.active} className="h-4 w-4 accent-accent" />
-          Aceitar reservas de mesa
+          Aceitar reservas
         </label>
         <p className="text-sm text-muted sm:col-span-2">
           Os turnos (almoço, jantar) são os períodos do horário, em{" "}
@@ -232,7 +232,7 @@ function FixedServiceView({ bundle, template, settingsHref }: { bundle: Establis
 
 /**
  * The services customers book, created by the owner (or started from an example business), and the
- * people or places that do them. A restaurant only sees "Mesa"; people and places show up when a
+ * people or places that do them. A restaurant only sees its capacity; people and places show up when a
  * service is booked one customer at a time.
  */
 export function ServicesView({ bundle, settingsHref }: { bundle: EstablishmentBundle; settingsHref: string }) {

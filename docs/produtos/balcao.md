@@ -31,6 +31,13 @@ Usa as mesmas ações do servidor dos módulos (mesmas regras, permissões e tes
 
 ## Dados de demonstração
 
+Negócios de exemplo: Tasca do Largo (restaurante), Navalha d'Ouro (barbearia) e, criados por
+`scripts/demo-businesses.mjs`, Clínica Sorriso (clínica) e Arena Desportiva (campos). Para os criar:
+
+```
+node --env-file=.env.local scripts/demo-businesses.mjs
+```
+
 Para mostrar o Balcão a um cliente com tudo a acontecer (só nos espaços de exemplo):
 
 ```

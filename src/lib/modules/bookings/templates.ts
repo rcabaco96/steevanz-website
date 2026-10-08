@@ -32,9 +32,9 @@ export const businessTemplates: BusinessTemplate[] = [
   {
     id: "restaurante",
     label: "Restaurante, café ou bar",
-    hint: "Mesas: várias reservas à mesma hora até encher o almoço ou o jantar.",
-    services: [{ name: "Mesa", booking_kind: "group", duration_minutes: 120, capacity: 40, max_party: 8 }],
-    fixed: { label: "Mesas", title: "Reservas de mesa" },
+    hint: "Reservas por número de pessoas, até encher a lotação do almoço ou do jantar.",
+    services: [{ name: "Reserva", booking_kind: "group", duration_minutes: 120, capacity: 40, max_party: 8 }],
+    fixed: { label: "Lotação", title: "Lotação por turno" },
   },
   {
     id: "barbearia",

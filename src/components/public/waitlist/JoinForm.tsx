@@ -119,7 +119,7 @@ export function JoinForm({
       ) : null}
       <label className={publicLabel}>
         Email (opcional)
-        <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" placeholder="Para também ser avisado por email" className={publicInput} />
+        <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" placeholder="Recomendado: avisamos também por email" className={publicInput} />
       </label>
       {state && !state.ok ? (
         <p role="alert" className="flex items-center gap-1.5 text-sm text-danger">
