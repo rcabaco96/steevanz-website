@@ -48,8 +48,14 @@ function value(entry: CompetitorEntry, key: SortKey): number | null {
   return entry.replyRate;
 }
 
+/** No review on Google yet: last on the rating ranking, shown as such rather than "–". */
+function withoutReviews(entry: CompetitorEntry): boolean {
+  return entry.reviewsCount === 0 && (entry.average ?? entry.rating) === null;
+}
+
 function display(entry: CompetitorEntry, key: SortKey): string {
   const current = value(entry, key);
+  if (current === null && key === "rating" && withoutReviews(entry)) return "Sem reviews";
   if (current === null) return "–";
   if (key === "rating") return `${decimal(entry.rating ?? current, 1)}★`;
   if (key === "reviews" || key === "photos") return number.format(current);
@@ -156,7 +162,7 @@ export function CompetitionBoard({
         <span
           className={`text-center text-sm font-semibold ${entry.isSelf ? "text-accent-text" : "text-subtle"}`}
         >
-          {current === null ? "–" : `${rank}.º`}
+          {current === null && !(sort === "rating" && withoutReviews(entry)) ? "–" : `${rank}.º`}
         </span>
         <span className="flex min-w-0 items-center gap-2">
           <a

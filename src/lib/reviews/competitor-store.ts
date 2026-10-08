@@ -251,7 +251,8 @@ export async function loadCompetition(
     ];
   });
   // The customer's own row from its import (rating and total Google shows) until its first snapshot.
-  if (own && own.rating !== null && !entries.some((entry) => entry.isSelf)) {
+  // A customer whose import found no review at all (total 0) is in the comparison too, last.
+  if (own && (own.rating !== null || own.reviewsTotal === 0) && !entries.some((entry) => entry.isSelf)) {
     const selfRow = rows.find((row) => row.is_self);
     entries.push({
       id: selfRow?.id ?? `self:${businessId}`,

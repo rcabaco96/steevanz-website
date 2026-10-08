@@ -86,6 +86,12 @@ export async function openPlace(tab, url) {
       `(() => { const b = [...document.querySelectorAll('button[role=tab]')].find(x => /Críticas|Reviews|Avalia/i.test(x.textContent)); if (!b) return false; b.click(); return true; })()`,
     );
   }
+  if (!opened) {
+    // No reviews tab: either Google's limited view, or a place that has no review at all. The place's
+    // own data tells them apart (no rating = no review); only the latter is a normal answer.
+    const facts = await placeProfile(tab, watch);
+    if (facts && facts.rating === null) return { watch, rating: null, total: 0, distribution: null, photos: facts.photos, profile: facts.profile, noReviews: true };
+  }
   if (!opened) throw new LimitedViewError(`O Google mostrou a vista limitada, sem reviews, ${openAttempts} vezes seguidas. Tente outra vez daqui a pouco.`);
   if (!(await waitFor(tab, "!!document.querySelector('div[data-review-id]')", 15000))) throw new UserError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
 
