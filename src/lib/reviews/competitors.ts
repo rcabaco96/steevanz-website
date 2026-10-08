@@ -286,7 +286,9 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
   const ranked = self !== null && entries.some((entry) => !entry.isSelf);
 
   const rated = entries.filter((entry) => entry.average !== null || entry.rating !== null).sort(byRating);
-  const ratingIndex = !ranked ? -1 : rated.findIndex((entry) => entry.isSelf);
+  // A customer with no review yet has no rating to sort by: it is last, not "loading".
+  const selfWithoutReviews = self !== null && exact(self) === null && self.reviewsCount === 0;
+  const ratingIndex = !ranked ? -1 : selfWithoutReviews ? rated.length : rated.findIndex((entry) => entry.isSelf);
   const byReviews = [...entries].sort((a, b) => b.reviewsCount - a.reviewsCount);
   const reviewsIndex = ranked ? byReviews.findIndex((entry) => entry.isSelf) : -1;
   const paced = entries.filter((entry) => entry.pacePerMonth !== null).sort((a, b) => b.pacePerMonth! - a.pacePerMonth!);

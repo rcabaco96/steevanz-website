@@ -359,9 +359,10 @@ export type PlaceProfile = Record<ProfileItem, boolean>;
  * the same payload inline): the number of photos and which profile fields are filled in. Read
  * from the page the reader opens anyway; no review is read. Positions seen on 2026-10-05:
  * [37][1] photos, [57] owner account (claimed), [7] website, [178] phone, [203] hours,
- * [154] the owner's description. Null when the payload is not a place.
+ * [154] the owner's description, [4][7] the rating (none on a place without reviews). Null when the
+ * payload is not a place.
  */
-export function parsePlaceProfile(body: string): { photos: number | null; profile: PlaceProfile } | null {
+export function parsePlaceProfile(body: string): { rating: number | null; photos: number | null; profile: PlaceProfile } | null {
   let data: unknown;
   try {
     data = JSON.parse(body.replace(/^\)\]\}'\s*/, ""));
@@ -373,7 +374,10 @@ export function parsePlaceProfile(body: string): { photos: number | null; profil
   const at = (value: unknown, index: number): unknown => (Array.isArray(value) ? value[index] : undefined);
   const filled = (value: unknown) => value !== null && value !== undefined && value !== "" && !(Array.isArray(value) && !value.length);
   const photos = at(place[37], 1);
+  // [4][7] is the rating Google shows; a place without any review has no [4] at all.
+  const rating = at(place[4], 7);
   return {
+    rating: typeof rating === "number" && rating >= 1 && rating <= 5 ? rating : null,
     photos: typeof photos === "number" && Number.isInteger(photos) && photos >= 0 ? photos : null,
     profile: {
       claimed: filled(at(place[57], 1)),

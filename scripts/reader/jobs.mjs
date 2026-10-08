@@ -63,6 +63,8 @@ const notSorted = (watch) =>
 /** Without a Google session, Google does not sort reviews (it asks to sign in): only the aggregates are read. */
 const noSortNote =
   "Sem sessão iniciada, o Google não deixa ordenar as reviews: guardámos a nota, o total e as estrelas; a taxa de respostas fica por medir.";
+/** A place with no review at all: Google shows no reviews tab; it is saved as 0 reviews, last in the rankings. */
+const noReviewsNote = "Este negócio ainda não tem reviews no Google.";
 /** Customers linked to Google Business Profile get their reviews from the official API, not from the reader. */
 const linkedNote =
   "Negócio ligado ao Google Business Profile: as reviews chegam pela ligação oficial, por isso o leitor não o leu.";
@@ -176,6 +178,7 @@ async function full(job, tab, store) {
         `  ${shown.total ?? "?"} reviews no Google (${shown.rating ?? "?"}★)`,
       );
     }
+    if (shown.noReviews) break;
     const sorted = await sortByNewest(tab, shown.watch);
     log(
       sorted
@@ -233,6 +236,10 @@ async function full(job, tab, store) {
   });
   // The competitor search is its own job ("discover"), queued next to this one.
   await snapshotOwnPlace(store, business, shown);
+  if (shown.noReviews) {
+    log("  o negócio ainda não tem reviews no Google");
+    return { note: noReviewsNote };
+  }
   log(`  concluída: ${seen.size} reviews em ${pace.pages} páginas`);
   if (shown.total !== null && seen.size < shown.total * 0.98) {
     return {
@@ -420,6 +427,12 @@ async function update(job, tab, store) {
     `atualização: ${business.name} (até ${stopBefore ? stopBefore.toISOString().slice(0, 10) : "ao início do histórico"})`,
   );
   const shown = await openPlace(tab, business.google_maps_url);
+  if (shown.noReviews) {
+    await store.updateBusiness(business.id, { reviews_total: 0, last_synced_at: new Date().toISOString(), last_sync_error: null });
+    await snapshotOwnPlace(store, business, shown);
+    log("  o negócio ainda não tem reviews no Google");
+    return { note: noReviewsNote };
+  }
   if (!(await sortByNewest(tab, shown.watch))) throw notSorted(shown.watch);
 
   const seen = new Set();
@@ -507,13 +520,13 @@ async function competitor(job, tab, store) {
   );
 
   // Reviews of the last 30 days: only the date and whether the owner replied are kept.
-  if (!(await sortByNewest(tab, shown.watch))) {
+  if (shown.noReviews || !(await sortByNewest(tab, shown.watch))) {
     await store.readerPlace(placeId, {
       read_on: today,
       read_at: new Date().toISOString(),
       last_error: null,
     });
-    return { note: noSortNote };
+    return { note: shown.noReviews ? noReviewsNote : noSortNote };
   }
   const now = new Date();
   const since = new Date(now.getTime() - competitorDailyDays * dayMs);
@@ -599,13 +612,13 @@ async function competitorReplies(job, tab, store) {
     `respostas do concorrente ${placeId} (${competitors.length} comparação/ões)`,
   );
   const shown = await openPlace(tab, googleMapsPlaceUrl(placeId));
-  if (!(await sortByNewest(tab, shown.watch))) {
+  if (shown.noReviews || !(await sortByNewest(tab, shown.watch))) {
     if (shown.total !== null) await saveSnapshots(store, competitors, shown);
     await store.readerPlace(placeId, {
       replies_read_on: today,
       last_error: null,
     });
-    return { note: noSortNote };
+    return { note: shown.noReviews ? noReviewsNote : noSortNote };
   }
 
   const now = new Date();

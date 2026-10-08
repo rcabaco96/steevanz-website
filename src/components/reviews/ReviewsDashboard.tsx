@@ -415,6 +415,11 @@ function ThemeServiceCards({ items, theme }: { items: ThemeService[]; theme: str
 
 function competitionNotes(competition: Competition): { tone: "good" | "info"; text: ReactNode }[] {
   const notes: { tone: "good" | "info"; text: ReactNode }[] = [];
+  const self = competition.entries.find((entry) => entry.isSelf);
+  if (self && self.reviewsCount === 0 && (self.average ?? self.rating) === null) {
+    notes.push({ tone: "info", text: "Ainda não tem reviews no Google: a primeira já o tira do último lugar." });
+    return notes;
+  }
   if (competition.ratingRank === 1) notes.push({ tone: "good", text: "É o negócio mais bem avaliado da zona. Agora é manter!" });
   else if (competition.ratingGap) {
     notes.push({

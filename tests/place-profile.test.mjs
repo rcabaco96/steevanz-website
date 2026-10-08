@@ -27,6 +27,11 @@ describe("parsePlaceProfile", () => {
     assert.equal(profileScore(read.profile), 0.2);
   });
 
+  it("reads the rating Google shows, and none on a place without reviews", () => {
+    assert.equal(parsePlaceProfile(payload({ 4: [null, null, null, null, null, null, null, 4.5, null, null, null, null, null, null, 1] })).rating, 4.5);
+    assert.equal(parsePlaceProfile(payload({})).rating, null);
+  });
+
   it("ignores answers that are not a place", () => {
     assert.equal(parsePlaceProfile("not json"), null);
     assert.equal(parsePlaceProfile(`)]}'\n[1,2,3]`), null);

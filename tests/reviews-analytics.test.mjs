@@ -270,6 +270,15 @@ describe("competitors", async () => {
     assert.equal(other.average, 4.5);
   });
 
+  it("puts a customer without any review last, instead of leaving its position unknown", () => {
+    const entry = (id, rating, reviewsCount, isSelf = false) => ({ id, name: id, isSelf, distanceM: 0, rating, average: null, reviewsCount, pacePerMonth: null });
+    const result = computeCompetition([entry("me", null, 0, true), entry("x", 4.6, 300), entry("y", 4.2, 80)], null);
+    assert.equal(result.ratingRank, 3);
+    assert.equal(result.reviewsRank, 3);
+    assert.equal(result.total, 3);
+    assert.equal(result.ratingGap, null);
+  });
+
   it("counts places climbed only among places compared on both days", () => {
     const entry = (id, average, reviewsCount, isSelf = false) => ({ id, name: id, isSelf, distanceM: 0, rating: average, average, reviewsCount, pacePerMonth: null, replyRate: null, replySample: null });
     const then = [entry("me", 4.4, 100, true), entry("x", 4.6, 300), entry("y", 4.5, 50)];
