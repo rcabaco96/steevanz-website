@@ -3,7 +3,8 @@ import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { EmptyState, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { kindWords } from "@/lib/establishments/kinds";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
-import { addEntryByStaff, callEntry, moveEntry, setEntryStatus, setQueueState } from "@/lib/modules/waitlist/actions";
+import { addEntryByStaff, callEntry, callNext, moveEntry, setEntryStatus, setQueueState } from "@/lib/modules/waitlist/actions";
+import { nextScheduleChange } from "@/lib/modules/waitlist/schedule";
 import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
 import {
   entryOutlook,
@@ -15,20 +16,20 @@ import {
   type WaitlistSettingsRow,
 } from "@/lib/modules/waitlist/store";
 import { AutoRefresh } from "../shared/AutoRefresh";
+import { JoinChime } from "./JoinChime";
 
-
-function minutesSince(iso: string, now: number): number {
+export function minutesSince(iso: string, now: number): number {
   return Math.max(0, Math.round((now - Date.parse(iso)) / 60_000));
 }
 
-function ago(iso: string, now: number): string {
+export function ago(iso: string, now: number): string {
   const minutes = minutesSince(iso, now);
   if (minutes < 1) return "agora";
   if (minutes < 60) return `há ${minutes} min`;
   return `há ${Math.floor(minutes / 60)} h ${minutes % 60} min`;
 }
 
-function details(entry: WaitlistEntryRow, bundle: EstablishmentBundle): string {
+export function details(entry: WaitlistEntryRow, bundle: EstablishmentBundle): string {
   const parts: string[] = [];
   if (entry.party_size) parts.push(`${entry.party_size} ${entry.party_size === 1 ? "pessoa" : "pessoas"}`);
   const service = entry.service_id ? bundle.services.find((item) => item.id === entry.service_id) : null;
@@ -113,7 +114,7 @@ function StateButton({
  * The queue's state said in words, with the next actions as plain verbs ("Abrir fila",
  * "Pausar entradas", "Fechar fila") instead of a switch the owner has to decode.
  */
-function StateBanner({ settings, establishmentId }: { settings: WaitlistSettingsRow; establishmentId: string }) {
+function StateBanner({ settings, establishmentId, schedule }: { settings: WaitlistSettingsRow; establishmentId: string; schedule: string | null }) {
   const copy = stateCopy[settings.state];
   const closeConfirm = "Fechar a fila? Ninguém novo entra. Quem já está na fila continua a ser chamado.";
   return (
@@ -126,6 +127,7 @@ function StateBanner({ settings, establishmentId }: { settings: WaitlistSettings
         <div className="min-w-0">
           <p className="text-lg font-semibold text-text">{copy.title}</p>
           <p className="text-sm text-muted">{copy.text}</p>
+          {schedule ? <p className="mt-1 text-xs font-semibold text-muted">{schedule}</p> : null}
         </div>
       </div>
       <div className="flex flex-wrap gap-2 sm:shrink-0 sm:justify-end">
@@ -157,7 +159,76 @@ function StateBanner({ settings, establishmentId }: { settings: WaitlistSettings
   );
 }
 
-function AddForm({ bundle, settings }: { bundle: EstablishmentBundle; settings: WaitlistSettingsRow }) {
+/**
+ * The one thing the team does: "Chamar o seguinte" when a table (or chair) is free. With
+ * professionals, one button each (it calls whoever chose them or "anyone"). The customer doesn't
+ * have to do anything: the call closes on its own as served after the time to show up.
+ */
+function NextPanel({ bundle, settings, called, waiting, now }: { bundle: EstablishmentBundle; settings: WaitlistSettingsRow; called: WaitlistEntryRow[]; waiting: WaitlistEntryRow[]; now: number }) {
+  const establishmentId = bundle.establishment.id;
+  const staff = settings.ask_staff ? bundle.staff.filter((item) => item.active) : [];
+  const lanes = staff.length
+    ? staff.map((person) => ({ id: person.id, name: person.name, next: waiting.find((entry) => !entry.staff_id || entry.staff_id === person.id) ?? null }))
+    : [{ id: "", name: "", next: waiting[0] ?? null }];
+  const latest = [...called].sort((a, b) => Date.parse(b.called_at ?? "") - Date.parse(a.called_at ?? ""))[0];
+  const newest = [...waiting].sort((a, b) => Date.parse(b.joined_at) - Date.parse(a.joined_at))[0];
+  return (
+    <section aria-labelledby="seguinte-title" className="card flex flex-col gap-4 p-4 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 id="seguinte-title" className="text-sm font-semibold text-muted">
+            A chamar agora
+          </h2>
+          {latest ? (
+            <p className="mt-1 flex items-baseline gap-3">
+              <span className="display text-5xl leading-none tabular-nums">{latest.number}</span>
+              <span className="text-lg font-semibold text-text">{latest.name}</span>
+              <span className="text-sm text-muted">{latest.called_at ? ago(latest.called_at, now) : ""}</span>
+            </p>
+          ) : (
+            <p className="mt-1 text-lg text-muted">Ninguém chamado.</p>
+          )}
+        </div>
+        <JoinChime latest={newest?.id ?? null} />
+      </div>
+      <div className={`grid grid-cols-1 gap-3 ${lanes.length > 1 ? "sm:grid-cols-2" : ""}`}>
+        {lanes.map((lane) => (
+          <div key={lane.id || "all"} className="flex flex-col gap-2">
+            {lane.next ? (
+              <ActionForm action={callNext} hideMessage>
+                <input type="hidden" name="establishment_id" value={establishmentId} />
+                {lane.id ? <input type="hidden" name="staff_id" value={lane.id} /> : null}
+                <SubmitButton size="lg" pendingLabel="A chamar…" className="w-full">
+                  {lane.name ? `${lane.name}: chamar o seguinte` : "Chamar o seguinte"}
+                </SubmitButton>
+              </ActionForm>
+            ) : (
+              <div className="flex h-13 items-center justify-center rounded-full border border-dashed border-line-strong px-6 text-sm font-semibold text-subtle">
+                {lane.name ? `${lane.name}: ninguém à espera` : "Ninguém à espera"}
+              </div>
+            )}
+            <p className="text-center text-sm text-muted">
+              {lane.next ? (
+                <>
+                  A seguir: <strong className="font-semibold text-text">N.º {lane.next.number}</strong> · {lane.next.name}
+                  {details(lane.next, bundle) ? ` · ${details(lane.next, bundle)}` : ""}
+                </>
+              ) : (
+                "Quem entrar aparece aqui."
+              )}
+            </p>
+          </div>
+        ))}
+      </div>
+      <p className="border-t border-line pt-3 text-xs text-subtle">
+        O cliente não precisa de fazer nada: a chamada fecha sozinha como atendida ao fim de {settings.grace_minutes} min. Se alguém não aparecer, toque em
+        «Não apareceu»{settings.auto_next ? " e o seguinte é chamado logo" : ""}.
+      </p>
+    </section>
+  );
+}
+
+export function AddForm({ bundle, settings }: { bundle: EstablishmentBundle; settings: WaitlistSettingsRow }) {
   const input = `${adminInputClasses} h-10 text-sm`;
   const services = bundle.services.filter((item) => item.active);
   const staff = bundle.staff.filter((item) => item.active);
@@ -237,11 +308,22 @@ export function QueueBoard({ bundle, settings, queue }: { bundle: EstablishmentB
     now,
   });
 
+  const change = settings.auto_hours
+    ? nextScheduleChange({ hours: bundle.hours, closures: bundle.closures.map((item) => item.day), timeZone: bundle.establishment.time_zone, now })
+    : null;
+  const clock = (at: number) => new Intl.DateTimeFormat("pt-PT", { timeZone: bundle.establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(at));
+  const schedule = settings.auto_hours
+    ? change
+      ? `Automática: ${change.kind === "closes" ? "fecha" : "abre"} às ${clock(change.at)}, com o horário.`
+      : "Automática: sem horário nas próximas horas."
+    : null;
+
   return (
     <div className="flex flex-col gap-5">
       <AutoRefresh intervalMs={8000} />
+      <NextPanel bundle={bundle} settings={settings} called={called} waiting={waiting} now={now} />
       <section className="card flex flex-col gap-5 p-4 sm:p-5">
-        <StateBanner settings={settings} establishmentId={establishmentId} />
+        <StateBanner settings={settings} establishmentId={establishmentId} schedule={schedule} />
         <dl className="grid grid-cols-3 gap-3 border-t border-line pt-4">
           <div>
             <dt className="text-sm text-muted">À espera</dt>
@@ -283,6 +365,11 @@ export function QueueBoard({ bundle, settings, queue }: { bundle: EstablishmentB
                       <span className={`text-xs font-semibold ${late ? "text-danger" : "text-accent-text"}`}>
                         Chamado {entry.called_at ? ago(entry.called_at, now) : ""}
                       </span>
+                      {entry.called_at && !late ? (
+                        <span className="text-xs text-muted">
+                          Fecha sozinha em {Math.max(1, settings.grace_minutes * (entry.reply === "late" ? 2 : 1) - minutesSince(entry.called_at, now))} min
+                        </span>
+                      ) : null}
                       {entry.reply ? (
                         <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-semibold text-text">{replyLabels[entry.reply]}</span>
                       ) : null}
@@ -402,7 +489,8 @@ export function QueueBoard({ bundle, settings, queue }: { bundle: EstablishmentB
         </details>
       ) : null}
       <p className="text-xs text-subtle">
-        A página atualiza-se sozinha. Ao chamar, o telemóvel do cliente toca na página da fila («{words.ready}») e, se deixou email, recebe também um email.
+        A página atualiza-se sozinha. Ao chamar, o telemóvel do cliente toca na página da fila («{words.ready}») e, se deixou email, recebe também um email. Os
+        botões de cada pessoa ficam para as exceções.
       </p>
     </div>
   );

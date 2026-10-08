@@ -6,7 +6,7 @@ import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import { weekdayNames } from "@/lib/establishments/types";
 import { saveWaitlistSettings } from "@/lib/modules/waitlist/actions";
-import { ensureWaitlistSettings, loadQueue, loadStats, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
+import { currentSettings, loadQueue, loadStats, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
 import type { ModuleProps } from "../registry";
 import { EstablishmentSettings } from "../shared/EstablishmentSettings";
 import { Materials } from "../shared/Materials";
@@ -43,9 +43,9 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
           <span className="text-xs font-normal text-subtle">Tempo médio entre duas chamadas. A estimativa ajusta-se ao ritmo real do dia.</span>
         </label>
         <label className={adminLabelClasses}>
-          Minutos para se apresentar
+          Minutos até a chamada fechar
           <input name="grace_minutes" type="number" min={1} max={120} required defaultValue={settings.grace_minutes} className={input} />
-          <span className="text-xs font-normal text-subtle">Depois de chamado. Passado este tempo, a entrada fica em destaque.</span>
+          <span className="text-xs font-normal text-subtle">Depois de chamada, a pessoa conta como atendida passado este tempo, sem ninguém marcar nada. «Vou atrasar-me» dá o dobro.</span>
         </label>
         <label className={adminLabelClasses}>
           Máximo à espera
@@ -55,6 +55,23 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
           Máximo de pessoas por grupo
           <input name="max_party" type="number" min={1} max={100} required defaultValue={settings.max_party} className={input} />
         </label>
+        <fieldset className="flex flex-col gap-3 sm:col-span-2">
+          <legend className="mb-1 text-sm font-medium text-muted">Automático</legend>
+          <label className="flex items-start gap-2 text-sm text-text">
+            <input type="checkbox" name="auto_hours" defaultChecked={settings.auto_hours} className="mt-0.5 h-4.5 w-4.5 accent-accent" />
+            <span>
+              Abrir e fechar a fila com o horário
+              <span className="block text-xs text-subtle">Abre à hora de abertura e fecha à hora de fecho (horário em «Espaço», abaixo). Pode sempre abrir ou fechar à mão.</span>
+            </span>
+          </label>
+          <label className="flex items-start gap-2 text-sm text-text">
+            <input type="checkbox" name="auto_next" defaultChecked={settings.auto_next} className="mt-0.5 h-4.5 w-4.5 accent-accent" />
+            <span>
+              Chamar logo o seguinte ao marcar «Não apareceu»
+              <span className="block text-xs text-subtle">Quando alguém chamado não aparece e marca «Não apareceu», a senha seguinte é chamada sem mais nenhum toque.</span>
+            </span>
+          </label>
+        </fieldset>
         <fieldset className="flex flex-col gap-2 sm:col-span-2">
           <legend className="mb-1 text-sm font-medium text-muted">O que perguntar ao cliente</legend>
           <label className="flex items-center gap-2 text-sm text-text">
@@ -83,11 +100,12 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
 }
 
 export async function WaitlistModule({ userId, viewer, basePath, query, productId }: ModuleProps) {
-  const establishments = await moduleEstablishments(userId);
+  const establishments = await moduleEstablishments(userId, productId);
   const current = pickEstablishment(establishments, query);
   if (!current) return <NoEstablishment productId={productId} viewer={viewer} ownerId={userId} />;
   const view = pickView(query, views);
-  const [bundle, settings] = await Promise.all([loadBundle(current), ensureWaitlistSettings(current)]);
+  const bundle = await loadBundle(current);
+  const settings = await currentSettings(current, bundle);
   const nav = <ModuleNav basePath={basePath} establishments={establishments} current={current} views={views} view={view} />;
 
   if (view === "estatisticas") {
@@ -98,7 +116,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
         {nav}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Tile label="Entraram na fila" value={String(stats.joined)} hint={`Últimos ${stats.days} dias.`} />
-          <Tile label="Atendidos" value={String(stats.served)} hint="Marcados como atendidos pela equipa." />
+          <Tile label="Atendidos" value={String(stats.served)} hint="Fechados pela equipa ou automaticamente, depois de chamados." />
           <Tile
             label="Desistências"
             value={String(left)}
@@ -174,7 +192,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
     );
   }
 
-  const queue = await loadQueue(current);
+  const queue = await loadQueue(current, settings);
   return (
     <div className="flex flex-col gap-6">
       {nav}

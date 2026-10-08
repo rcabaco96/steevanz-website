@@ -83,3 +83,26 @@ describe("sanitizeLines", () => {
     assert.equal(unknown.options.format, "round-sticker");
   });
 });
+
+import { alreadyActive, ownedSpaces } from "../src/lib/cart/ownership.ts";
+
+describe("products the account already has", () => {
+  const owned = [
+    { productId: "ai-reviews", spaces: 1 },
+    { productId: "waitlist", spaces: 2 },
+    { productId: "nfc-menu", spaces: 1 },
+  ];
+  it("leaves out a monthly product already active", () => {
+    assert.equal(alreadyActive("ai-reviews", owned), true);
+    assert.equal(alreadyActive("ai-chatbot", owned), false);
+  });
+  it("lets per-space products add spaces", () => {
+    assert.equal(alreadyActive("waitlist", owned), false);
+    assert.equal(ownedSpaces("waitlist", owned), 2);
+    assert.equal(ownedSpaces("bookings", owned), 0);
+  });
+  it("lets one-off products be bought again", () => {
+    assert.equal(alreadyActive("nfc-menu", owned), false);
+    assert.equal(ownedSpaces("nfc-menu", owned), 0);
+  });
+});

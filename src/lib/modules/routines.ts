@@ -4,7 +4,7 @@ import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { siteUrl } from "@/lib/site";
 import { sendReminder } from "./bookings/notify";
 import type { EstablishmentBookingRow } from "./bookings/store";
-import { staleAfterHours } from "./waitlist/store";
+import { applySchedule, ensureWaitlistSettings, settleQueue, staleAfterHours } from "./waitlist/store";
 
 // Routines of the establishment modules, run by the scheduler tick (every 15 minutes).
 
@@ -76,5 +76,27 @@ export async function runModuleRoutines(client: SupabaseClient, options: { now: 
 
   const { count: expired, error: purgeError } = await client.from("waitlist_entries").delete({ count: "exact" }).lt("joined_at", cutoff);
   if (purgeError) throw new Error(`waitlist retention: ${purgeError.message}`);
-  return { reminders: { due: due.length, sent }, waitlistExpired: expired ?? 0 };
+  const waitlists = await settleWaitlists(client, now);
+  return { reminders: { due: due.length, sent }, waitlistExpired: expired ?? 0, waitlists };
+}
+
+/**
+ * Safety net for the automatic waitlist (the pages already do it whenever someone looks at the
+ * queue): opening hours applied, and calls past the time to show up closed as served.
+ */
+async function settleWaitlists(client: SupabaseClient, now: number) {
+  const [scheduled, overdue] = await Promise.all([
+    client.from("waitlist_settings").select("establishment_id").eq("auto_hours", true).limit(500),
+    client.from("waitlist_entries").select("establishment_id").eq("status", "called").lt("called_at", new Date(now - 60_000).toISOString()).limit(500),
+  ]);
+  if (scheduled.error) throw new Error(`waitlist schedule: ${scheduled.error.message}`);
+  if (overdue.error) throw new Error(`waitlist overdue: ${overdue.error.message}`);
+  const ids = new Set([...(scheduled.data ?? []), ...(overdue.data ?? [])].map((row: { establishment_id: string }) => row.establishment_id));
+  for (const id of ids) {
+    const establishment = await getEstablishment(id);
+    if (!establishment) continue;
+    await applySchedule(establishment, await ensureWaitlistSettings(establishment));
+    await settleQueue(id);
+  }
+  return { establishments: ids.size };
 }

@@ -12,22 +12,32 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 3. Na ficha do cliente ativa-se o produto **Cartão de fidelização** (ou aceita-se a encomenda).
 4. O **espaço** (o restaurante, café ou barbearia) é criado sozinho com o nome do negócio. Edita-se
    em **Editar espaço**.
-5. Define-se o **PIN de carimbo** (Definições) e imprime-se o cartaz com o QR (separador
+5. **Preço por espaço:** cada espaço paga o mesmo. O produto cobre os primeiros N espaços do cliente
+   (campo «Espaços» no produto; numa encomenda, a quantidade é o nº de espaços).
+6. Define-se o **PIN de carimbo** (Definições) e imprime-se o cartaz com o QR (separador
    **Cartaz e link**).
 
 ## Quem faz o quê
 
 ### Admin (Steevanz)
-- Ativa, suspende ou cancela o produto na ficha do cliente.
-- Abre o módulo na ficha do cliente e faz tudo o que o dono faz (configurar, dar apoio).
+- Ativa, suspende, cancela ou remove o produto e define os espaços, na ficha do cliente.
+- Abre o módulo ou o **Balcão** de cada espaço e faz tudo o que o dono faz (configurar, dar apoio).
 - Define as regras e o PIN de carimbo e imprime o cartaz.
+
+### Dono e equipa: o Balcão (`/conta/balcao`, separador **Cartão**)
+- Uma caixa de pesquisa grande (nome, telemóvel ou código do cartão) e os últimos clientes com
+  carimbo, com os carimbos à vista.
+- Com um só resultado, abre o cartão em grande: carimbos, o que falta para a recompensa e os botões
+  **Dar carimbo** e **Entregar recompensa** (quando há).
+- Ler o QR do cartão do cliente com a câmara do aparelho do balcão abre o Balcão já nesse cartão.
+- Retirar um carimbo e Mostrar QR do cartão ficam em botões discretos.
 
 ### Dono do estabelecimento (área de cliente, `/conta/loyalty`)
 - **Dá carimbos** de duas formas:
   - **No telemóvel do cliente:** o funcionário escreve o PIN de carimbo (6 algarismos). Não precisa
     de nenhum aparelho.
-  - **No backoffice** (separador **Carimbar**): lê o QR do cartão com a câmara do telemóvel ou
-    tablet do estabelecimento (abre o cartão no painel), ou procura pelo código do cartão
+  - **No Balcão ou no módulo** (separador **Carimbar**): lê o QR do cartão com a câmara do telemóvel
+    ou tablet do estabelecimento (abre o cartão no Balcão), ou procura pelo código do cartão
     (ex.: `K7P 29Q`), nome, email ou telemóvel, e carrega em **Dar carimbo**.
 - **Entrega a recompensa**: PIN no telemóvel do cliente ou **Entregar recompensa** no backoffice.
 - **Retira um carimbo** dado por engano.
@@ -76,7 +86,8 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 - **Antiabuso por rede**: 20 adesões / 10 min, 30 carimbos ou entregas com PIN / 10 min,
   5 recuperações por email / 30 min; campo-armadilha contra bots.
 - **O QR do cartão só leva o código do cartão** (não é segredo): carimbar por aí exige a sessão do
-  dono ou do admin (`/conta/carimbar`). Sem sessão, pede para entrar primeiro.
+  dono ou do admin (`/conta/carimbar`, que abre o Balcão nesse cartão). Sem sessão, pede para entrar
+  primeiro.
 - **Recuperação por email** responde sempre o mesmo, exista ou não cartão com esse email.
 - **Palavras e recompensa sugerida** adaptam-se ao negócio (café oferecido, corte oferecido…).
 
@@ -88,7 +99,8 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 | Ações (criar, carimbar, entregar, recuperar, painel, definições, PIN) | `src/lib/modules/loyalty/actions.ts` |
 | Leitura de dados, PIN, pesquisa, estatísticas | `src/lib/modules/loyalty/store.ts` |
 | Regras puras (código do cartão, PIN, bloqueio; com testes) | `src/lib/modules/loyalty/rules.ts` |
-| Painel do dono / admin | `src/components/modules/loyalty/LoyaltyModule.tsx` |
+| Balcão (separador Cartão) | `src/components/modules/counter/CardCounter.tsx` |
+| Módulo do dono / admin | `src/components/modules/loyalty/LoyaltyModule.tsx` |
 | Páginas públicas | `src/app/(publico)/cartao/[slug]/` (adesão, cartão, manifest) |
 | Leitura do QR pelo funcionário | `src/app/conta/carimbar/route.ts` |
 | Componentes públicos (cartão, formulários) | `src/components/public/loyalty/` |

@@ -5,6 +5,7 @@ import { PlusIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
+import { euros } from "@/lib/admin/revenue";
 import { listClients, type AdminSearchParams } from "@/lib/admin/queries";
 
 export const metadata: Metadata = { title: "Clientes" };
@@ -55,6 +56,7 @@ export default async function AdminClientsPage({ searchParams }: { searchParams:
                   <p className="truncate text-sm text-muted">{client.email}</p>
                 </div>
                 <span className="text-sm text-muted">
+                  {client.monthlyCents ? <span className="mr-2 rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold tabular-nums text-success">{euros(client.monthlyCents)}/mês</span> : null}
                   <strong className="font-semibold tabular-nums text-text">{client.activeProducts}</strong>{" "}
                   {client.activeProducts === 1 ? "produto ativo" : "produtos ativos"}
                   {client.panels ? (

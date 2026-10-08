@@ -4,31 +4,37 @@ import { notFound } from "next/navigation";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { BrandFrame, Fact, PublicCard } from "@/components/public/BrandFrame";
 import { CallAlert } from "@/components/public/waitlist/CallAlert";
+import { ForgetTicket } from "@/components/public/waitlist/ForgetTicket";
 import { QueueLine } from "@/components/public/waitlist/QueueLine";
 import { ReplyButtons } from "@/components/public/waitlist/ReplyButtons";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
 import { formatWait } from "@/lib/modules/waitlist/eta";
-import { ensureWaitlistSettings, entryOutlook, getEntryByToken, loadQueue } from "@/lib/modules/waitlist/store";
+import { currentSettings, entryOutlook, getEntryByToken, loadQueue } from "@/lib/modules/waitlist/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
-type Props = { params: Promise<{ slug: string; token: string }> };
+type Props = { params: Promise<{ slug: string; token: string }>; searchParams: Promise<{ voltou?: string }> };
 
 export const metadata: Metadata = { title: "A sua senha", referrer: "no-referrer" };
 
 const finished = {
   served: { chip: "Atendido", text: "Foi atendido. Obrigado pela visita!" },
-  no_show: { chip: "Senha expirada", text: "Foi chamado mas não se apresentou a tempo. Se ainda estiver por perto, fale com a equipa." },
+  no_show: { chip: "Senha expirada", text: "Foi chamado mas não se apresentou, por isso a vez passou ao seguinte. Se ainda estiver por perto, fale com a equipa." },
   cancelled: { chip: "Saiu da fila", text: "Já não está na fila." },
 } as const;
 
-export default async function WaitlistTicketPage({ params }: Props) {
+export default async function WaitlistTicketPage({ params, searchParams }: Props) {
   const { slug, token } = await params;
+  const { voltou } = await searchParams;
   const establishment = await publicEstablishment(slug, "waitlist");
   if (!establishment) notFound();
-  const entry = await getEntryByToken(token);
-  if (!entry || entry.establishment_id !== establishment.id) notFound();
-  const [bundle, settings, queue] = await Promise.all([loadBundle(establishment), ensureWaitlistSettings(establishment), loadQueue(establishment)]);
+  const found = await getEntryByToken(token);
+  if (!found || found.establishment_id !== establishment.id) notFound();
+  const bundle = await loadBundle(establishment);
+  const settings = await currentSettings(establishment, bundle);
+  const queue = await loadQueue(establishment, settings);
+  // Settling the queue may have just closed this ticket: read it again.
+  const entry = queue.live.find((item) => item.id === found.id) ?? (await getEntryByToken(token)) ?? found;
   const words = kindWords[establishment.kind];
   const called = entry.status === "called";
   const live = entry.status === "waiting" || called;
@@ -43,10 +49,17 @@ export default async function WaitlistTicketPage({ params }: Props) {
     `entrou às ${joinedAt}`,
   ].filter(Boolean);
   const done = entry.status === "served" || entry.status === "no_show" || entry.status === "cancelled" ? finished[entry.status] : null;
+  const deadline =
+    called && entry.called_at
+      ? new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(
+          new Date(Date.parse(entry.called_at) + settings.grace_minutes * (entry.reply === "late" ? 2 : 1) * 60_000),
+        )
+      : null;
 
   return (
     <BrandFrame establishment={establishment} service="Lista de espera">
       {live ? <AutoRefresh intervalMs={5000} whileHidden /> : null}
+      {done && voltou ? <ForgetTicket slug={establishment.slug} /> : null}
 
       <article
         aria-live="polite"
@@ -67,7 +80,9 @@ export default async function WaitlistTicketPage({ params }: Props) {
           {called ? (
             <div role="alert" className="mt-4 flex flex-col gap-1">
               <p className="display text-[1.7rem] leading-tight">{words.ready}</p>
-              <p className="opacity-85">Tem cerca de {settings.grace_minutes} minutos para se apresentar.</p>
+              <p className="opacity-85">
+                {entry.reply === "late" ? `Avisou que se atrasa: guardamos a vez até às ${deadline}.` : "Não precisa de fazer mais nada."}
+              </p>
             </div>
           ) : null}
         </div>
@@ -89,10 +104,14 @@ export default async function WaitlistTicketPage({ params }: Props) {
 
       <CallAlert slug={establishment.slug} token={entry.token} status={entry.status} calledAt={entry.called_at} title={words.callAction} message={words.ready} />
 
-      {live ? (
+      {called ? (
         <PublicCard>
-          {called ? <h2 className="text-lg font-semibold text-text">Diga à equipa se já vem</h2> : null}
-          <ReplyButtons token={entry.token} called={called} current={entry.reply} />
+          <p className="text-center text-sm text-muted">Só se precisar de avisar a equipa:</p>
+          <ReplyButtons token={entry.token} called current={entry.reply} />
+        </PublicCard>
+      ) : live ? (
+        <PublicCard>
+          <ReplyButtons token={entry.token} called={false} current={entry.reply} />
         </PublicCard>
       ) : (
         <Link href={`/fila/${establishment.slug}`} className="text-center text-sm font-semibold text-muted hover:text-text">

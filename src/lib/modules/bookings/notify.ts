@@ -2,7 +2,7 @@ import { sendOwnerEmail } from "@/lib/booking/email";
 import { googleCalendarUrl } from "@/lib/booking/ics";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
-import { formatBookingWhen, type BookingPageRow, type EstablishmentBookingRow } from "./store";
+import { formatBookingWhen, toleranceText, type BookingPageRow, type EstablishmentBookingRow } from "./store";
 
 /** "Corte de cabelo com o Rui" / "Mesa para 4". */
 export function bookingSummary(booking: EstablishmentBookingRow, bundle: EstablishmentBundle): string {
@@ -45,6 +45,7 @@ export async function sendBookingConfirmation(booking: EstablishmentBookingRow, 
           { label: "Quando", value: when },
           { label: "O quê", value: summary },
           { label: "Nota", value: page.confirmation_note },
+          { label: "Atrasos", value: toleranceText(page) },
           { label: "Calendário", value: googleCalendarUrl(calendarEvent(booking, bundle)) },
           { label: "Política", value: page.policy },
           { label: "Contacto", value: establishment.phone },
@@ -114,6 +115,25 @@ export async function sendCancellationNotice(booking: EstablishmentBookingRow, b
     }
   }
   await Promise.all(tasks);
+}
+
+/** "Estamos com atraso": the expected time, so the customer doesn't arrive early and wait. */
+export async function sendDelayNotice(booking: EstablishmentBookingRow, bundle: EstablishmentBundle, minutes: number, manageUrl: string): Promise<boolean> {
+  if (!booking.email) return false;
+  const { establishment } = bundle;
+  const expected = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(Date.parse(booking.starts_at) + minutes * 60_000));
+  return sendOwnerEmail({
+    to: [booking.email],
+    subject: `${establishment.name}: estamos com cerca de ${minutes} min de atraso`,
+    heading: `Estamos com cerca de ${minutes} minutos de atraso`,
+    rows: [
+      { label: "A sua reserva", value: `${formatBookingWhen(booking.starts_at, establishment.time_zone)} · ${bookingSummary(booking, bundle)}` },
+      { label: "Hora prevista", value: `cerca das ${expected}` },
+      { label: "Contacto", value: establishment.phone },
+    ],
+    adminUrl: manageUrl,
+    linkLabel: "Ver a reserva",
+  });
 }
 
 export async function sendReminder(booking: EstablishmentBookingRow, bundle: EstablishmentBundle, manageUrl: string): Promise<boolean> {

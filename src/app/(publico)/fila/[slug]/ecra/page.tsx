@@ -8,7 +8,7 @@ import { requestOrigin } from "@/lib/booking/request";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
 import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
-import { ensureWaitlistSettings, loadQueue } from "@/lib/modules/waitlist/store";
+import { currentSettings, loadQueue } from "@/lib/modules/waitlist/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -24,7 +24,9 @@ export default async function WaitlistScreenPage({ params }: Props) {
   const { slug } = await params;
   const establishment = await publicEstablishment(slug, "waitlist");
   if (!establishment) notFound();
-  const [bundle, settings, queue, origin] = await Promise.all([loadBundle(establishment), ensureWaitlistSettings(establishment), loadQueue(establishment), requestOrigin()]);
+  const [bundle, origin] = await Promise.all([loadBundle(establishment), requestOrigin()]);
+  const settings = await currentSettings(establishment, bundle);
+  const queue = await loadQueue(establishment, settings);
   const words = kindWords[establishment.kind];
   const called = queue.live.filter((entry) => entry.status === "called").sort((a, b) => Date.parse(b.called_at ?? "") - Date.parse(a.called_at ?? ""));
   const waiting = queue.live.filter((entry) => entry.status === "waiting");

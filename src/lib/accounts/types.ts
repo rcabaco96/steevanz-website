@@ -77,6 +77,8 @@ export interface ClientProductRow {
   order_id: string | null;
   activated_at: string;
   notes: string | null;
+  /** Spaces covered (products sold per space: waitlist, loyalty card, bookings). */
+  spaces: number;
   created_at: string;
   updated_at: string;
 }

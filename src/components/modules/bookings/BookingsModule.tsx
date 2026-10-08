@@ -8,14 +8,18 @@ import { readableTextOn } from "@/lib/establishments/kinds";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
-import { addBlock, removeBlock, rotateCalendarToken, saveBookingPage, setBookingStatus, staffCreateBooking } from "@/lib/modules/bookings/actions";
+import { addBlock, removeBlock, rotateCalendarToken, saveBookingPage, setBookingDelay, setBookingStatus, staffCreateBooking } from "@/lib/modules/bookings/actions";
+import { peakSeated } from "@/lib/modules/bookings/availability";
 import { bookingSummary } from "@/lib/modules/bookings/notify";
 import {
   bookingStatusLabels,
   ensureBookingPage,
+  lateBookingIds,
   loadBookingStats,
+  loadDelays,
   loadDay,
   loadUpcoming,
+  type BookingDelayRow,
   type BookingPageRow,
   type EstablishmentBookingRow,
 } from "@/lib/modules/bookings/store";
@@ -54,7 +58,7 @@ function time(iso: string, timeZone: string): string {
   return new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
 
-function BookingCard({ booking, bundle, showDate = false }: { booking: EstablishmentBookingRow; bundle: EstablishmentBundle; showDate?: boolean }) {
+function BookingCard({ booking, bundle, showDate = false, late = false }: { booking: EstablishmentBookingRow; bundle: EstablishmentBundle; showDate?: boolean; late?: boolean }) {
   const { establishment } = bundle;
   const hidden = (
     <>
@@ -73,7 +77,7 @@ function BookingCard({ booking, bundle, showDate = false }: { booking: Establish
     </ActionForm>
   );
   return (
-    <li className={`card flex flex-col gap-3 border-l-4 p-4 ${statusEdge[booking.status]} ${booking.status === "cancelled" ? "opacity-70" : ""}`}>
+    <li className={`card flex flex-col gap-3 border-l-4 p-4 ${late ? "border-l-danger bg-danger-soft/30" : statusEdge[booking.status]} ${booking.status === "cancelled" ? "opacity-70" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
           <span className="display shrink-0 text-2xl tabular-nums">{time(booking.starts_at, establishment.time_zone)}</span>
@@ -99,7 +103,9 @@ function BookingCard({ booking, bundle, showDate = false }: { booking: Establish
             {booking.notes ? <p className="mt-1 text-sm text-subtle">«{booking.notes}»</p> : null}
           </div>
         </div>
-        <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${statusTone[booking.status]}`}>{bookingStatusLabels[booking.status]}</span>
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${late ? "bg-danger-soft text-danger" : statusTone[booking.status]}`}>
+          {late ? "Atrasado" : bookingStatusLabels[booking.status]}
+        </span>
       </div>
       <div className="flex flex-wrap gap-2">
         {booking.status === "confirmed" ? (
@@ -131,7 +137,7 @@ function BookingCard({ booking, bundle, showDate = false }: { booking: Establish
   );
 }
 
-function NewBookingForm({ bundle, page, date }: { bundle: EstablishmentBundle; page: BookingPageRow; date: string }) {
+export function NewBookingForm({ bundle, page, date }: { bundle: EstablishmentBundle; page: BookingPageRow; date: string }) {
   const input = `${adminInputClasses} h-10 text-sm`;
   const services = bundle.services.filter((item) => item.active);
   const staff = bundle.staff.filter((item) => item.active);
@@ -142,7 +148,7 @@ function NewBookingForm({ bundle, page, date }: { bundle: EstablishmentBundle; p
           <span aria-hidden="true" className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text group-open:rotate-45">
             +
           </span>
-          Nova reserva (telefone ou balcão)
+          {page.mode === "table" ? "Nova reserva (telefone ou balcão)" : "Nova marcação (telefone ou balcão)"}
         </span>
       </summary>
       <ActionForm action={staffCreateBooking} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -218,7 +224,7 @@ function BlockForm({ bundle, date }: { bundle: EstablishmentBundle; date: string
   const staff = bundle.staff.filter((item) => item.active);
   return (
     <details className="card p-4 sm:p-5">
-      <summary className="cursor-pointer text-sm font-semibold text-text">Bloquear um horário</summary>
+      <summary className="cursor-pointer text-sm font-semibold text-text">Fechar as reservas num horário</summary>
       <ActionForm action={addBlock} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
         <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
         <label className={adminLabelClasses}>
@@ -258,73 +264,149 @@ function BlockForm({ bundle, date }: { bundle: EstablishmentBundle; date: string
   );
 }
 
+function Choice({ name, label, value, options, hint }: { name: string; label: string; value: number; options: [number, string][]; hint?: string }) {
+  const known = options.some(([option]) => option === value);
+  return (
+    <label className={adminLabelClasses}>
+      {label}
+      <select name={name} defaultValue={value} className={`${adminInputClasses} h-11`}>
+        {known ? null : <option value={value}>{value}</option>}
+        {options.map(([option, text]) => (
+          <option key={option} value={option}>
+            {text}
+          </option>
+        ))}
+      </select>
+      {hint ? <span className="text-xs font-normal text-subtle">{hint}</span> : null}
+    </label>
+  );
+}
+
 function PageSettings({ page, establishmentId, calendarUrl }: { page: BookingPageRow; establishmentId: string; calendarUrl: string }) {
   const input = `${adminInputClasses} h-11`;
+  const tables = page.mode === "table";
   return (
     <>
-      <Panel title="Página de reservas">
+      <Panel title={tables ? "Reservas de mesa" : "Marcações online"}>
         <ActionForm key={page.updated_at} action={saveBookingPage} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <input type="hidden" name="establishment_id" value={establishmentId} />
           <label className="flex items-center gap-2 text-sm font-semibold text-text sm:col-span-2">
             <input type="checkbox" name="active" defaultChecked={page.active} className="h-4.5 w-4.5 accent-accent" />
-            Aceitar reservas online
+            {tables ? "Aceitar reservas online" : "Aceitar marcações online"}
           </label>
-          <label className={adminLabelClasses}>
-            Tipo de reserva
-            <select name="mode" defaultValue={page.mode} className={input}>
-              <option value="table">Mesas (nº de pessoas e lotação)</option>
-              <option value="service">Serviços (duração e profissional)</option>
-            </select>
-          </label>
-          <label className={adminLabelClasses}>
-            Intervalo entre horários (min)
-            <input name="slot_interval_minutes" type="number" min={5} max={120} step={5} required defaultValue={page.slot_interval_minutes} className={input} />
-          </label>
-          <label className={adminLabelClasses}>
-            Antecedência mínima (horas)
-            <input name="min_notice_hours" inputMode="decimal" required defaultValue={String(page.min_notice_minutes / 60).replace(".", ",")} className={input} />
-          </label>
-          <label className={adminLabelClasses}>
-            Reservas até quantos dias à frente
-            <input name="max_days_ahead" type="number" min={1} max={365} required defaultValue={page.max_days_ahead} className={input} />
-          </label>
-          <fieldset className="grid grid-cols-1 gap-4 rounded-2xl bg-surface-2/60 p-3 sm:col-span-2 sm:grid-cols-3">
-            <legend className="px-1 text-xs font-semibold text-muted">Só para mesas</legend>
-            <label className={adminLabelClasses}>
-              Lugares por horário
-              <input name="seats_per_slot" type="number" min={1} max={1000} required defaultValue={page.seats_per_slot} className={input} />
-            </label>
-            <label className={adminLabelClasses}>
-              Máximo por grupo online
-              <input name="max_party" type="number" min={1} max={100} required defaultValue={page.max_party} className={input} />
-            </label>
-            <label className={adminLabelClasses}>
-              Duração de uma mesa (min)
-              <input name="table_minutes" type="number" min={15} max={480} step={5} required defaultValue={page.table_minutes} className={input} />
-            </label>
-          </fieldset>
-          <label className={adminLabelClasses}>
-            Cancelar/alterar online até (horas antes)
-            <input name="cancel_until_hours" type="number" min={0} max={336} required defaultValue={page.cancel_until_hours} className={input} />
-          </label>
-          <label className="flex items-center gap-2 self-end text-sm text-text">
+          {tables ? (
+            <>
+              <label className={adminLabelClasses}>
+                Lugares para reservas
+                <input name="seats_per_slot" type="number" min={1} max={1000} required defaultValue={page.seats_per_slot} className={input} />
+                <span className="text-xs font-normal text-subtle">Quantas pessoas podem estar sentadas com reserva ao mesmo tempo. Deixe lugares para quem chega sem reserva.</span>
+              </label>
+              <Choice
+                name="table_minutes"
+                label="Duração de uma refeição"
+                value={page.table_minutes}
+                options={[
+                  [60, "1 hora"],
+                  [90, "1 h 30"],
+                  [120, "2 horas"],
+                  [150, "2 h 30"],
+                  [180, "3 horas"],
+                ]}
+                hint="Quanto tempo a mesa fica ocupada. Conta para os lugares livres."
+              />
+              <label className={adminLabelClasses}>
+                Máximo de pessoas por reserva
+                <input name="max_party" type="number" min={1} max={100} required defaultValue={page.max_party} className={input} />
+                <span className="text-xs font-normal text-subtle">Grupos maiores veem o seu contacto para combinar.</span>
+              </label>
+            </>
+          ) : (
+            <>
+              <input type="hidden" name="seats_per_slot" value={page.seats_per_slot} />
+              <input type="hidden" name="table_minutes" value={page.table_minutes} />
+              <input type="hidden" name="max_party" value={page.max_party} />
+              <p className="rounded-2xl bg-surface-2/60 px-4 py-3 text-sm text-muted sm:col-span-2">
+                Os horários saem dos <strong className="font-semibold text-text">serviços</strong> (duração) e dos <strong className="font-semibold text-text">profissionais</strong>, mais abaixo. Quem
+                escolhe «qualquer um» fica com o profissional menos ocupado nesse dia.
+              </p>
+            </>
+          )}
+          <Choice
+            name="min_notice_minutes"
+            label={tables ? "Reservar com pelo menos" : "Marcar com pelo menos"}
+            value={page.min_notice_minutes}
+            options={[
+              [0, "Sem antecedência"],
+              [30, "30 minutos de antecedência"],
+              [60, "1 hora de antecedência"],
+              [120, "2 horas de antecedência"],
+              [240, "4 horas de antecedência"],
+              [1440, "1 dia de antecedência"],
+            ]}
+          />
+          <Choice
+            name="max_days_ahead"
+            label={tables ? "Reservas até" : "Marcações até"}
+            value={page.max_days_ahead}
+            options={[
+              [7, "1 semana à frente"],
+              [14, "2 semanas à frente"],
+              [30, "1 mês à frente"],
+              [60, "2 meses à frente"],
+              [90, "3 meses à frente"],
+              [180, "6 meses à frente"],
+            ]}
+          />
+          <Choice
+            name="late_grace_minutes"
+            label={tables ? "Guardar a mesa durante" : "Tolerância de atraso"}
+            value={page.late_grace_minutes}
+            options={[
+              [0, "Sem tolerância"],
+              [5, "5 minutos"],
+              [10, "10 minutos"],
+              [15, "15 minutos"],
+              [20, "20 minutos"],
+              [30, "30 minutos"],
+            ]}
+            hint="O cliente vê-a ao reservar e na confirmação. Passado esse tempo, a reserva aparece como «Atrasado» para decidir."
+          />
+          <Choice
+            name="cancel_until_hours"
+            label="O cliente cancela ou altera online até"
+            value={page.cancel_until_hours}
+            options={[
+              [0, "À hora marcada"],
+              [1, "1 hora antes"],
+              [2, "2 horas antes"],
+              [4, "4 horas antes"],
+              [24, "1 dia antes"],
+              [48, "2 dias antes"],
+            ]}
+          />
+          <label className="flex items-center gap-2 self-end pb-3 text-sm text-text">
             <input type="checkbox" name="notify_owner" defaultChecked={page.notify_owner} className="h-4.5 w-4.5 accent-accent" />
-            Receber email a cada reserva ou cancelamento
+            Receber um email a cada {tables ? "reserva" : "marcação"} ou cancelamento
           </label>
-          <label className={`${adminLabelClasses} sm:col-span-2`}>
-            Nota na confirmação (opcional)
-            <input name="confirmation_note" maxLength={300} defaultValue={page.confirmation_note ?? ""} placeholder="Ex.: Estacionamento gratuito nas traseiras." className={input} />
-          </label>
-          <label className={`${adminLabelClasses} sm:col-span-2`}>
-            Política de cancelamento (opcional)
-            <textarea name="policy" rows={2} maxLength={600} defaultValue={page.policy ?? ""} placeholder="Ex.: Pedimos que cancele com pelo menos 2 horas de antecedência." className={`${adminInputClasses} py-2`} />
-          </label>
+          <details className="sm:col-span-2">
+            <summary className="cursor-pointer text-sm font-semibold text-muted hover:text-text">Mensagens para o cliente (opcional)</summary>
+            <div className="mt-3 grid grid-cols-1 gap-4">
+              <label className={adminLabelClasses}>
+                Nota na confirmação
+                <input name="confirmation_note" maxLength={300} defaultValue={page.confirmation_note ?? ""} placeholder="Ex.: Estacionamento gratuito nas traseiras." className={input} />
+              </label>
+              <label className={adminLabelClasses}>
+                Política de cancelamento
+                <textarea name="policy" rows={2} maxLength={600} defaultValue={page.policy ?? ""} placeholder="Ex.: Guardamos a mesa 15 minutos." className={`${adminInputClasses} py-2`} />
+              </label>
+            </div>
+          </details>
           <div className="sm:col-span-2">
             <SubmitButton size="sm">Guardar</SubmitButton>
           </div>
         </ActionForm>
       </Panel>
-      <Panel title="Ver as reservas no seu calendário">
+      <Panel title="Ver no calendário do telemóvel">
         <p className="-mt-2 mb-3 text-sm text-muted">
           No Google Calendar: «Outros calendários» → «+» → «A partir de URL» e cole este endereço (Outlook e iPhone também aceitam). Atualiza sozinho; é privado: não o
           partilhe.
@@ -344,6 +426,48 @@ function PageSettings({ page, establishmentId, calendarUrl }: { page: BookingPag
   );
 }
 
+/** "Estamos com atraso" for today: the whole space or one professional. Customers of the next hours are told. */
+export function DelayControl({ bundle, delays }: { bundle: EstablishmentBundle; delays: BookingDelayRow[] }) {
+  const staff = bundle.staff.filter((item) => item.active);
+  const lines = [{ id: "", name: staff.length ? "Todos" : "" }, ...staff.map((item) => ({ id: item.id, name: item.name }))];
+  const current = (id: string) => delays.find((item) => (item.staff_id ?? "") === id)?.minutes ?? 0;
+  return (
+    <details className="card p-4 sm:p-5" open={delays.length > 0}>
+      <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 text-sm font-semibold text-text">
+        <span>Estamos com atraso?</span>
+        {delays.length ? (
+          <span className="rounded-full bg-gold-soft px-2.5 py-0.5 text-xs font-semibold text-gold-text">
+            {delays.map((item) => `${item.staff_id ? (staff.find((person) => person.id === item.staff_id)?.name ?? "") : "Todos"}: +${item.minutes} min`).join(" · ")}
+          </span>
+        ) : (
+          <span className="text-xs font-normal text-muted">Avise os clientes das próximas horas</span>
+        )}
+      </summary>
+      <div className="mt-4 flex flex-col gap-3">
+        {lines.map((line) => (
+          <div key={line.id || "all"} className="flex flex-wrap items-center gap-2">
+            {line.name ? <span className="w-20 shrink-0 text-sm font-semibold text-text">{line.name}</span> : null}
+            {[0, 10, 15, 30, 45].map((minutes) => (
+              <ActionForm key={minutes} action={setBookingDelay} hideMessage className="contents">
+                <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
+                <input type="hidden" name="minutes" value={minutes} />
+                {line.id ? <input type="hidden" name="staff_id" value={line.id} /> : null}
+                <SubmitButton size="sm" variant={current(line.id) === minutes ? "primary" : "secondary"}>
+                  {minutes ? `+${minutes} min` : "Sem atraso"}
+                </SubmitButton>
+              </ActionForm>
+            ))}
+          </div>
+        ))}
+        <p className="text-xs text-subtle">
+          Só para hoje. Os clientes das próximas 3 horas recebem um email com a hora prevista (só quando o atraso aumenta) e todos veem o aviso no link da reserva. Nenhuma
+          reserva muda de hora.
+        </p>
+      </div>
+    </details>
+  );
+}
+
 function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
     <div className="card flex flex-col gap-1 p-4">
@@ -355,7 +479,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
 }
 
 export async function BookingsModule({ userId, viewer, basePath, query, productId }: ModuleProps) {
-  const establishments = await moduleEstablishments(userId);
+  const establishments = await moduleEstablishments(userId, productId);
   const current = pickEstablishment(establishments, query);
   if (!current) return <NoEstablishment productId={productId} viewer={viewer} ownerId={userId} />;
   const view = pickView(query, views);
@@ -369,7 +493,7 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
   const warnings: string[] = [];
   if (!page.active) warnings.push("A página de reservas está fechada: os clientes ainda não conseguem reservar online.");
   if (!bundle.hours.length) warnings.push("Falta o horário: sem ele não há horas para reservar.");
-  if (page.mode === "service" && !bundle.services.some((item) => item.active)) warnings.push("Falta pelo menos um serviço ativo.");
+  if (page.mode === "service" && !bundle.services.some((item) => item.active)) warnings.push("Falta pelo menos um serviço ativo (com a duração).");
   const warningBox = warnings.length ? (
     <div className="rounded-2xl border border-gold/40 bg-gold-soft px-4 py-3 text-sm text-gold-text">
       <ul className="flex flex-col gap-1">
@@ -479,10 +603,60 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
   const today = zonedDateString(new Date(), current.time_zone);
   const requested = queryValue(query, "dia");
   const date = /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
-  const { bookings, blocks } = await loadDay(current, date);
+  const [{ bookings, blocks }, delays] = await Promise.all([loadDay(current, date), loadDelays(current, date)]);
+  const late = lateBookingIds(bookings, page);
   const live = bookings.filter((booking) => booking.status !== "cancelled");
   const covers = live.reduce((sum, booking) => sum + (booking.party_size ?? 0), 0);
   const dayLabel = new Intl.DateTimeFormat("pt-PT", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
+  const localMinutes = (iso: string) => {
+    const [h, m] = time(iso, current.time_zone).split(":").map(Number);
+    return h * 60 + m;
+  };
+  type Group = { key: string; title: string; items: EstablishmentBookingRow[]; meter?: { ratio: number; label: string } };
+  let groups: Group[];
+  if (page.mode === "table") {
+    // By service: lunch and dinner (the opening intervals of the day), with how full each one gets.
+    const weekday = new Date(`${date}T12:00:00Z`).getUTCDay();
+    const intervals = bundle.hours
+      .filter((row) => row.weekday === weekday)
+      .map((row) => ({ opens: Number(row.opens.slice(0, 2)) * 60 + Number(row.opens.slice(3, 5)), closes: Number(row.closes.slice(0, 2)) * 60 + Number(row.closes.slice(3, 5)) }))
+      .sort((x, y) => x.opens - y.opens);
+    const name = (opens: number) => (opens < 16 * 60 ? "Almoço" : "Jantar");
+    groups = intervals.map((interval, index) => ({ key: `i${index}`, title: `${name(interval.opens)} · ${String(Math.floor(interval.opens / 60)).padStart(2, "0")}:${String(interval.opens % 60).padStart(2, "0")}–${String(Math.floor(interval.closes / 60)).padStart(2, "0")}:${String(interval.closes % 60).padStart(2, "0")}`, items: [] as EstablishmentBookingRow[] }));
+    const other: Group = { key: "other", title: "Fora do horário", items: [] };
+    for (const booking of bookings) {
+      const minute = localMinutes(booking.starts_at);
+      const index = intervals.findIndex((interval) => minute >= interval.opens && minute < interval.closes);
+      (index >= 0 ? groups[index] : other).items.push(booking);
+    }
+    for (const group of groups) {
+      const held = group.items.filter((booking) => booking.status === "confirmed" || booking.status === "arrived");
+      const people = held.reduce((sum, booking) => sum + (booking.party_size ?? 1), 0);
+      const peak = peakSeated(
+        held.map((booking) => ({ start: Date.parse(booking.starts_at), end: Date.parse(booking.ends_at), party: booking.party_size ?? 1 })),
+        Math.min(...held.map((booking) => Date.parse(booking.starts_at)), Infinity),
+        Math.max(...held.map((booking) => Date.parse(booking.ends_at)), 0),
+      );
+      group.title += ` · ${people} ${people === 1 ? "pessoa" : "pessoas"}`;
+      if (held.length) group.meter = { ratio: peak / page.seats_per_slot, label: `até ${peak} de ${page.seats_per_slot} lugares ao mesmo tempo` };
+    }
+    groups = [...groups, other].filter((group) => group.items.length);
+  } else {
+    // By professional.
+    const staff = bundle.staff;
+    const byStaff = new Map<string, EstablishmentBookingRow[]>();
+    for (const booking of bookings) {
+      const key = booking.staff_id ?? "none";
+      byStaff.set(key, [...(byStaff.get(key) ?? []), booking]);
+    }
+    groups = [...byStaff.entries()]
+      .map(([key, items]) => ({ key, title: key === "none" ? "Sem profissional" : (staff.find((item) => item.id === key)?.name ?? "Profissional"), items }))
+      .sort((x, y) => x.title.localeCompare(y.title, "pt"));
+    for (const group of groups) {
+      const held = group.items.filter((booking) => booking.status !== "cancelled").length;
+      group.title += ` · ${held} ${held === 1 ? "marcação" : "marcações"}`;
+    }
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -493,11 +667,11 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
         <div>
           <h2 className="display text-2xl first-letter:uppercase">{date === today ? `Hoje, ${dayLabel}` : dayLabel}</h2>
           <p className="text-sm text-muted">
-            {live.length} {live.length === 1 ? "reserva" : "reservas"}
+            {live.length} {page.mode === "table" ? (live.length === 1 ? "reserva" : "reservas") : live.length === 1 ? "marcação" : "marcações"}
             {page.mode === "table" && covers ? ` · ${covers} pessoas` : ""}
           </p>
         </div>
-        <nav aria-label="Dia" className="flex items-center gap-1">
+        <nav aria-label="Dia" className="flex flex-wrap items-center gap-1">
           <Link href={linkTo({ dia: addDaysToDate(date, -1) })} className="rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-text" aria-label="Dia anterior">
             ←
           </Link>
@@ -509,11 +683,11 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
           <Link href={linkTo({ dia: addDaysToDate(date, 1) })} className="rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-text" aria-label="Dia seguinte">
             →
           </Link>
-          <form method="get" action={basePath} className="ml-1 flex items-center gap-1">
+          <form method="get" action={basePath} className="ml-1 flex shrink-0 items-center gap-2">
             {establishments.length > 1 ? <input type="hidden" name="loja" value={current.slug} /> : null}
             <input type="date" name="dia" defaultValue={date} aria-label="Escolher dia" className={`${adminInputClasses} h-9 w-auto text-sm`} />
-            <button type="submit" className="rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-text">
-              Ir
+            <button type="submit" className="h-9 shrink-0 whitespace-nowrap rounded-full border border-line px-4 text-sm font-semibold text-text hover:bg-surface-2">
+              Ver dia
             </button>
           </form>
         </nav>
@@ -540,17 +714,34 @@ export async function BookingsModule({ userId, viewer, basePath, query, productI
         </ul>
       ) : null}
 
+      <NewBookingForm bundle={bundle} page={page} date={date} />
+      {date === today ? <DelayControl bundle={bundle} delays={delays} /> : null}
+
       {bookings.length ? (
-        <ul className="flex flex-col gap-2">
-          {bookings.map((booking) => (
-            <BookingCard key={booking.id} booking={booking} bundle={bundle} />
-          ))}
-        </ul>
+        groups.map((group) => (
+          <section key={group.key} aria-label={group.title} className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-sm font-semibold text-muted">{group.title}</h3>
+              {group.meter ? (
+                <span className="flex items-center gap-2 text-xs text-muted">
+                  <span className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-2">
+                    <span className={`block h-full rounded-full ${group.meter.ratio >= 1 ? "bg-danger" : "bg-accent"}`} style={{ width: `${Math.min(100, group.meter.ratio * 100)}%` }} />
+                  </span>
+                  {group.meter.label}
+                </span>
+              ) : null}
+            </div>
+            <ul className="flex flex-col gap-2">
+              {group.items.map((booking) => (
+                <BookingCard key={booking.id} booking={booking} bundle={bundle} late={late.has(booking.id)} />
+              ))}
+            </ul>
+          </section>
+        ))
       ) : (
-        <EmptyState>Sem reservas neste dia.</EmptyState>
+        <EmptyState>{page.mode === "table" ? "Sem reservas neste dia." : "Sem marcações neste dia."}</EmptyState>
       )}
 
-      <NewBookingForm bundle={bundle} page={page} date={date} />
       <BlockForm bundle={bundle} date={date} />
     </div>
   );

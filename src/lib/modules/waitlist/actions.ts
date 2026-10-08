@@ -5,14 +5,13 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
-import { sendOwnerEmail } from "@/lib/booking/email";
 import { requestOrigin } from "@/lib/booking/request";
 import { accessErrorMessage, requireEstablishmentAccess } from "@/lib/establishments/access";
-import { kindWords } from "@/lib/establishments/kinds";
 import { getEstablishment, getEstablishmentBySlug, isUuid, loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { formText, isBot, isModuleRateLimited, publicToken, startOfLocalDay, tokenPattern } from "../common";
+import { emailCalled } from "./notify";
 import { ensureWaitlistSettings, getEntryByToken, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
 
 function refreshQueue(establishment: EstablishmentRow) {
@@ -107,7 +106,7 @@ export async function replyToCall(_previous: ActionState, formData: FormData): P
     if (!entry || !["waiting", "called"].includes(entry.status)) return { ok: false, message: "Já não está na fila." };
     const now = new Date().toISOString();
     const changes: Partial<WaitlistEntryRow> =
-      reply === "leaving" ? { reply, replied_at: now, status: "cancelled", finished_at: now } : { reply, replied_at: now };
+      reply === "leaving" ? { reply, replied_at: now, status: "cancelled", finished_at: now, close_reason: "left" } : { reply, replied_at: now };
     const { error } = await createServiceClient().from("waitlist_entries").update(changes).eq("id", entry.id);
     if (error) throw new Error(error.message);
     const establishment = await getEstablishment(entry.establishment_id);
@@ -168,25 +167,26 @@ export async function callEntry(_previous: ActionState, formData: FormData): Pro
       .update({ status: "called", called_at: new Date().toISOString(), reply: null, replied_at: null })
       .eq("id", entry.id);
     if (error) throw new Error(error.message);
-    if (entry.email) {
-      const link = `${await requestOrigin()}/fila/${establishment.slug}/${entry.token}`;
-      const words = kindWords[establishment.kind];
-      after(async () => {
-        await sendOwnerEmail({
-          to: [entry.email!],
-          subject: `${establishment.name}: ${words.callAction.toLowerCase()}`,
-          heading: words.ready,
-          rows: [
-            { label: "Onde", value: establishment.name },
-            { label: "Senha", value: `N.º ${entry.number}` },
-          ],
-          adminUrl: link,
-          linkLabel: "Responder à equipa",
-        });
-      });
-    }
+    const origin = await requestOrigin();
+    after(() => emailCalled(establishment, entry, origin));
     refreshQueue(establishment);
     return { ok: true, message: `${entry.name} foi chamado.` };
+  });
+}
+
+/** "Chamar o seguinte": the next ticket in order (for one professional, or anyone). */
+export async function callNext(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return staffGuard(async () => {
+    const { establishment } = await staffAccess(formData);
+    const staff = formText(formData, "staff_id");
+    const { data, error } = await createServiceClient().rpc("waitlist_call_next", { p_establishment: establishment.id, p_staff: isUuid(staff) ? staff : null });
+    if (error) throw new Error(error.message);
+    const entry = ((data ?? []) as WaitlistEntryRow[])[0];
+    if (!entry) return { ok: false, message: "Não há ninguém à espera." };
+    const origin = await requestOrigin();
+    after(() => emailCalled(establishment, entry, origin));
+    refreshQueue(establishment);
+    return { ok: true, message: `Senha ${entry.number} chamada: ${entry.name}.` };
   });
 }
 
@@ -201,9 +201,22 @@ export async function setEntryStatus(_previous: ActionState, formData: FormData)
     const entry = await entryOf(establishment, formData);
     if (!entry) return { ok: false, message: "Entrada não encontrada." };
     const changes =
-      status === "waiting" ? { status, called_at: null, finished_at: null, reply: null, replied_at: null } : { status, finished_at: new Date().toISOString() };
+      status === "waiting"
+        ? { status, called_at: null, finished_at: null, reply: null, replied_at: null, arrived_at: null, close_reason: null }
+        : { status, finished_at: new Date().toISOString(), close_reason: "staff" };
     const { error } = await createServiceClient().from("waitlist_entries").update(changes).eq("id", entry.id);
     if (error) throw new Error(error.message);
+    if (status === "no_show" && entry.status === "called" && (await ensureWaitlistSettings(establishment)).auto_next) {
+      const { data, error: nextError } = await createServiceClient().rpc("waitlist_call_next", { p_establishment: establishment.id, p_staff: entry.staff_id });
+      if (nextError) throw new Error(nextError.message);
+      const next = ((data ?? []) as WaitlistEntryRow[])[0];
+      if (next) {
+        const origin = await requestOrigin();
+        after(() => emailCalled(establishment, next, origin));
+        refreshQueue(establishment);
+        return { ok: true, message: `Não apareceu. Chamada a senha ${next.number}: ${next.name}.` };
+      }
+    }
     refreshQueue(establishment);
     return { ok: true, message: "Fila atualizada." };
   });
@@ -272,6 +285,8 @@ const settingsSchema = z.object({
   ask_party: z.boolean(),
   ask_service: z.boolean(),
   ask_staff: z.boolean(),
+  auto_hours: z.boolean(),
+  auto_next: z.boolean(),
   message: z.string().trim().max(300).transform((text) => text || null),
 });
 
@@ -286,6 +301,8 @@ export async function saveWaitlistSettings(_previous: ActionState, formData: For
       ask_party: formData.get("ask_party") === "on",
       ask_service: formData.get("ask_service") === "on",
       ask_staff: formData.get("ask_staff") === "on",
+      auto_hours: formData.get("auto_hours") === "on",
+      auto_next: formData.get("auto_next") === "on",
       message: formText(formData, "message"),
     });
     if (!parsed.success) return { ok: false, message: "Verifique os valores (minutos e limites)." };

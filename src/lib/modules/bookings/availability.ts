@@ -3,8 +3,9 @@
 // - Service mode (barbers, clinics): start times every `intervalMinutes` inside the opening hours;
 //   the service (plus its buffer) must end before closing, and at least one eligible professional
 //   must be free for the whole time. Without professionals the establishment is one resource.
-// - Table mode (restaurants): arrival times every `intervalMinutes`; the seats already booked for
-//   that arrival time plus the party must fit `seatsPerSlot`.
+// - Table mode (restaurants): arrival times every `intervalMinutes`; for the whole meal (from the
+//   arrival time to its end), the people already seated at the busiest moment plus the party must
+//   fit the seats open to bookings (`seatsPerSlot`).
 // Closed days, establishment-wide blocks and the minimum notice apply to both. Times are local to
 // the establishment (DST-safe through the zoned helpers of the Steevanz booking engine).
 
@@ -49,10 +50,11 @@ export interface BookingAvailabilityInput {
   /** Eligible professionals (service mode). Empty = single resource. */
   staff: string[];
   busy: BusyPeriod[];
+  /** Seats open to bookings (table mode). */
   seatsPerSlot: number;
   partySize: number;
-  /** Seats already booked per arrival time (ISO start). */
-  seatsTaken: Record<string, number>;
+  /** Table bookings that hold seats (table mode). */
+  tables: { start: number; end: number; party: number }[];
 }
 
 export interface BookingSlot {
@@ -88,6 +90,17 @@ function freeStaff(input: BookingAvailabilityInput, start: number, end: number):
   return free.length ? free : null;
 }
 
+/** People seated at the busiest moment of [start, end). */
+export function peakSeated(tables: { start: number; end: number; party: number }[], start: number, end: number): number {
+  const points = [start, ...tables.filter((item) => item.start > start && item.start < end).map((item) => item.start)];
+  let peak = 0;
+  for (const point of points) {
+    const seated = tables.filter((item) => item.start <= point && point < item.end).reduce((sum, item) => sum + item.party, 0);
+    peak = Math.max(peak, seated);
+  }
+  return peak;
+}
+
 export function bookingAvailability(input: BookingAvailabilityInput, options: { from?: string; days?: number } = {}): BookingDay[] {
   const { timeZone, intervalMinutes } = input;
   const today = zonedDateString(new Date(input.now), timeZone);
@@ -118,7 +131,7 @@ export function bookingAvailability(input: BookingAvailabilityInput, options: { 
         let staff: string[] = [];
         if (input.mode === "table") {
           const blocked = input.busy.some((period) => period.kind === "block" && period.staffId === null && overlaps(start, end, period.start, period.end));
-          if (blocked || (input.seatsTaken[iso] ?? 0) + input.partySize > input.seatsPerSlot) continue;
+          if (blocked || peakSeated(input.tables, start, end) + input.partySize > input.seatsPerSlot) continue;
         } else {
           const free = freeStaff(input, start, end);
           if (!free) continue;

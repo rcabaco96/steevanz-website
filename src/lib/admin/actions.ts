@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { isProductId } from "@/content/products";
-import { orderStatuses, subscriptionStatuses } from "@/lib/accounts/types";
+import { orderStatuses, subscriptionStatuses, type ClientProductRow } from "@/lib/accounts/types";
 import type { ActionState } from "@/lib/action-state";
 import { pipelineStatuses } from "@/lib/booking/types";
 import { ensureFirstEstablishment, establishmentProducts } from "@/lib/establishments/provision";
@@ -214,25 +214,54 @@ export async function updateOrder(_previous: AdminActionState, formData: FormDat
     if (!order) return { ok: false, message: "Encomenda não encontrada." };
     const client = createServiceClient();
 
-    if (status !== "accepted") {
+    // Saving an already accepted order again only changes the notes (the products were given once).
+    if (status !== "accepted" || order.status === "accepted") {
       const { error } = await client.from("orders").update({ status, admin_notes }).eq("id", id);
       if (error) throw new Error(error.message);
       revalidatePath("/admin", "layout");
       return { ok: true, message: "Alterações guardadas." };
     }
 
-    // Accepting gives the client access to every product in the order.
+    // Accepting gives the client access to every product in the order. A product the client
+    // already has active keeps its start date: per-space products add the spaces ordered, the
+    // others stay as they are. New (or suspended) products start today.
     const account = await accountForOrder(order);
     if (!account) {
       return { ok: false, message: `Não existe conta com o email ${order.email}. Peça ao cliente para criar conta com esse email e aceite de novo.` };
     }
     const productIds = [...new Set(order.items.map((item) => item.productId).filter(isProductId))];
     if (productIds.length) {
-      const { error } = await client.from("client_products").upsert(
-        productIds.map((product_id) => ({ user_id: account.id, product_id, status: "active", order_id: order.id, activated_at: new Date().toISOString() })),
-        { onConflict: "user_id,product_id" },
-      );
-      if (error) throw new Error(error.message);
+      const { data: current, error: currentError } = await client
+        .from("client_products")
+        .select("product_id, status, spaces")
+        .eq("user_id", account.id)
+        .in("product_id", productIds);
+      if (currentError) throw new Error(currentError.message);
+      const active = new Map(((current ?? []) as Pick<ClientProductRow, "product_id" | "status" | "spaces">[]).filter((row) => row.status === "active").map((row) => [row.product_id, row]));
+      const ordered = (productId: string) => order.items.filter((item) => item.productId === productId).reduce((sum, item) => sum + item.quantity, 0);
+      for (const product_id of productIds) {
+        const existing = active.get(product_id);
+        if (existing) {
+          if (!isEstablishmentProduct(product_id)) continue;
+          const spaces = Math.min(100, Math.max(1, existing.spaces ?? 1) + Math.max(1, ordered(product_id)));
+          const { error } = await client.from("client_products").update({ spaces }).eq("user_id", account.id).eq("product_id", product_id);
+          if (error) throw new Error(error.message);
+          continue;
+        }
+        const { error } = await client.from("client_products").upsert(
+          {
+            user_id: account.id,
+            product_id,
+            status: "active",
+            order_id: order.id,
+            activated_at: new Date().toISOString(),
+            // Products sold per space: the quantity ordered is the number of spaces.
+            spaces: isEstablishmentProduct(product_id) ? Math.max(1, Math.min(100, ordered(product_id))) : 1,
+          },
+          { onConflict: "user_id,product_id" },
+        );
+        if (error) throw new Error(error.message);
+      }
       if (productIds.some(isEstablishmentProduct)) await ensureFirstEstablishment(account.id);
     }
     const { error } = await client.from("orders").update({ status, admin_notes, user_id: account.id }).eq("id", id);
@@ -251,7 +280,25 @@ const clientProductSchema = z.object({
     .trim()
     .max(2000)
     .transform((notes) => (notes.length ? notes : null)),
+  spaces: z.coerce.number().int().min(1).max(100),
 });
+
+/**
+ * Admin: takes a product off a client (e.g. added by mistake). Only the access goes: the client's
+ * spaces and what their modules hold (queue, cards, bookings) stay, in case it is added back.
+ */
+export async function removeClientProduct(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  return guarded(async () => {
+    const userId = uuid.safeParse(value(formData, "user_id"));
+    const productId = value(formData, "product_id");
+    if (!userId.success || !isProductId(productId)) return { ok: false, message: "Pedido inválido." };
+    const { error } = await createServiceClient().from("client_products").delete().eq("user_id", userId.data).eq("product_id", productId);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/clientes", "layout");
+    revalidatePath("/conta", "layout");
+    return { ok: true, message: "Produto removido." };
+  });
+}
 
 export async function saveClientProduct(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
   return guarded(async () => {
@@ -260,6 +307,7 @@ export async function saveClientProduct(_previous: AdminActionState, formData: F
       product_id: value(formData, "product_id"),
       status: value(formData, "status") || "active",
       notes: typeof formData.get("notes") === "string" ? String(formData.get("notes")) : "",
+      spaces: value(formData, "spaces") || "1",
     });
     if (!parsed.success) return { ok: false, message: "Escolha um produto e um estado válidos." };
     const client = createServiceClient();
@@ -271,7 +319,7 @@ export async function saveClientProduct(_previous: AdminActionState, formData: F
       .maybeSingle();
     if (lookupError) throw new Error(lookupError.message);
     const { error } = existing
-      ? await client.from("client_products").update({ status: parsed.data.status, notes: parsed.data.notes }).eq("id", existing.id)
+      ? await client.from("client_products").update({ status: parsed.data.status, notes: parsed.data.notes, spaces: parsed.data.spaces }).eq("id", existing.id)
       : await client.from("client_products").insert(parsed.data);
     if (error) {
       if (error.code === "23503") return { ok: false, message: "Conta não encontrada." };

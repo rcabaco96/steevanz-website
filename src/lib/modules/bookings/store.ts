@@ -23,6 +23,8 @@ export interface BookingPageRow {
   confirmation_note: string | null;
   notify_owner: boolean;
   calendar_token: string;
+  /** How late a customer may arrive (shown to them; past it the team sees the booking as late). */
+  late_grace_minutes: number;
   updated_at: string;
 }
 
@@ -43,7 +45,58 @@ export interface EstablishmentBookingRow {
   source: "online" | "staff";
   reminder_sent_at: string | null;
   cancelled_at: string | null;
+  /** Largest "Estamos com atraso" this customer was emailed about (no repeats). */
+  delay_notified_minutes: number;
   created_at: string;
+}
+
+export interface BookingDelayRow {
+  id: string;
+  establishment_id: string;
+  /** Null: the whole space. */
+  staff_id: string | null;
+  day: string;
+  minutes: number;
+}
+
+/** "Estamos com atraso" set for a local day (the whole space and/or professionals). */
+export async function loadDelays(establishment: EstablishmentRow, day: string): Promise<BookingDelayRow[]> {
+  const { data, error } = await createServiceClient().from("booking_delays").select("*").eq("establishment_id", establishment.id).eq("day", day).gt("minutes", 0);
+  if (error) throw new Error(`loadDelays: ${error.message}`);
+  return (data ?? []) as BookingDelayRow[];
+}
+
+/** The delay that applies to a booking: its professional's own, otherwise the whole space's. */
+export function delayFor(delays: BookingDelayRow[], staffId: string | null): number {
+  const own = staffId ? delays.find((item) => item.staff_id === staffId) : undefined;
+  return own?.minutes ?? delays.find((item) => item.staff_id === null)?.minutes ?? 0;
+}
+
+/** Past the arrival tolerance and nobody marked it: the team decides (arrived or no-show). */
+export function isLate(booking: Pick<EstablishmentBookingRow, "status" | "starts_at">, page: Pick<BookingPageRow, "late_grace_minutes">, now: number): boolean {
+  return booking.status === "confirmed" && now > Date.parse(booking.starts_at) + page.late_grace_minutes * 60_000;
+}
+
+/** The bookings of a list that are late right now. */
+export function lateBookingIds(bookings: Pick<EstablishmentBookingRow, "id" | "status" | "starts_at">[], page: Pick<BookingPageRow, "late_grace_minutes">): Set<string> {
+  const now = Date.now();
+  return new Set(bookings.filter((booking) => isLate(booking, page, now)).map((booking) => booking.id));
+}
+
+/** Today at the counter: the day's bookings, the delays set, which are late and the next one to arrive. */
+export async function todayAgenda(establishment: EstablishmentRow, page: Pick<BookingPageRow, "late_grace_minutes">) {
+  const now = Date.now();
+  const date = zonedDateString(new Date(now), establishment.time_zone);
+  const [{ bookings }, delays] = await Promise.all([loadDay(establishment, date), loadDelays(establishment, date)]);
+  const late = new Set(bookings.filter((booking) => isLate(booking, page, now)).map((booking) => booking.id));
+  const next = bookings.find((booking) => booking.status === "confirmed" && !late.has(booking.id)) ?? null;
+  return { date, now, bookings, delays, late, next };
+}
+
+/** "Guardamos a mesa 10 minutos." / "Tolerância de 10 minutos." (null without tolerance). */
+export function toleranceText(page: Pick<BookingPageRow, "late_grace_minutes" | "mode">): string | null {
+  if (!page.late_grace_minutes) return null;
+  return page.mode === "table" ? `Guardamos a mesa ${page.late_grace_minutes} minutos.` : `Tolerância de atraso: ${page.late_grace_minutes} minutos.`;
 }
 
 export interface BookingBlockRow {
@@ -62,15 +115,28 @@ export const bookingStatusLabels: Record<BookingStatus, string> = {
   cancelled: "Cancelada",
 };
 
+/** Start times are offered every 15 minutes (tables and services alike), as booking sites do. */
+export const slotStepMinutes = 15;
+/** Restaurants take the last table booking one hour before closing. */
+export const lastTableBeforeCloseMinutes = 60;
+
+/**
+ * The booking page. Its kind follows the business (restaurants book tables, the rest book
+ * services), so it is never a setting: a space that changes kind changes kind of booking too.
+ */
 export async function ensureBookingPage(establishment: EstablishmentRow): Promise<BookingPageRow> {
   const client = createServiceClient();
+  const mode = kindDefaults[establishment.kind].bookingMode;
   const { data, error } = await client.from("booking_pages").select("*").eq("establishment_id", establishment.id).maybeSingle();
   if (error) throw new Error(`booking page: ${error.message}`);
-  if (data) return data as BookingPageRow;
-  const mode = kindDefaults[establishment.kind].bookingMode;
+  if (data) {
+    const page = data as BookingPageRow;
+    if (page.mode !== mode) await client.from("booking_pages").update({ mode }).eq("establishment_id", establishment.id);
+    return { ...page, mode };
+  }
   const { data: created, error: insertError } = await client
     .from("booking_pages")
-    .upsert({ establishment_id: establishment.id, mode, slot_interval_minutes: mode === "table" ? 30 : 15 }, { onConflict: "establishment_id" })
+    .upsert({ establishment_id: establishment.id, mode, slot_interval_minutes: slotStepMinutes }, { onConflict: "establishment_id" })
     .select("*")
     .single();
   if (insertError) throw new Error(`booking page insert: ${insertError.message}`);
@@ -112,7 +178,7 @@ export function resolveRequest(bundle: EstablishmentBundle, page: BookingPageRow
   const activeStaff = bundle.staff.filter((item) => item.active);
   if (page.mode === "table") {
     if (request.partySize < 1 || request.partySize > page.max_party) return { error: "party" } as const;
-    return { occupied: page.table_minutes, fit: page.slot_interval_minutes, staff: [] as string[], service: null } as const;
+    return { occupied: page.table_minutes, fit: lastTableBeforeCloseMinutes, staff: [] as string[], service: null } as const;
   }
   const service = bundle.services.find((item) => item.id === request.serviceId && item.active);
   if (!service) return { error: "service" } as const;
@@ -135,8 +201,7 @@ export async function computeDays(bundle: EstablishmentBundle, page: BookingPage
     ...bookings.map((row) => ({ staffId: row.staff_id, start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), kind: "booking" as const })),
     ...blocks.map((row) => ({ staffId: row.staff_id, start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), kind: "block" as const })),
   ];
-  const seatsTaken: Record<string, number> = {};
-  if (page.mode === "table") for (const row of bookings) seatsTaken[new Date(row.starts_at).toISOString()] = (seatsTaken[new Date(row.starts_at).toISOString()] ?? 0) + (row.party_size ?? 1);
+  const tables = page.mode === "table" ? bookings.map((row) => ({ start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), party: row.party_size ?? 1 })) : [];
   return bookingAvailability(
     {
       mode: page.mode,
@@ -144,7 +209,7 @@ export async function computeDays(bundle: EstablishmentBundle, page: BookingPage
       now,
       minNoticeMinutes: page.min_notice_minutes,
       maxDaysAhead: page.max_days_ahead,
-      intervalMinutes: page.slot_interval_minutes,
+      intervalMinutes: slotStepMinutes,
       occupiedMinutes: resolved.occupied,
       fitMinutes: resolved.fit,
       hours: bundle.hours.map((row) => ({ weekday: row.weekday, opens: shortTime(row.opens), closes: shortTime(row.closes) })),
@@ -153,10 +218,23 @@ export async function computeDays(bundle: EstablishmentBundle, page: BookingPage
       busy,
       seatsPerSlot: page.seats_per_slot,
       partySize: request.partySize,
-      seatsTaken,
+      tables,
     },
     { from, days },
   );
+}
+
+/**
+ * "Anyone": the free professionals, least busy that day first (bookings already held), so work is
+ * spread instead of always landing on the first name.
+ */
+export async function leastBusyFirst(establishment: EstablishmentRow, staff: string[], startIso: string): Promise<string[]> {
+  if (staff.length < 2) return staff;
+  const date = zonedDateString(new Date(startIso), establishment.time_zone);
+  const { bookings } = await loadBusy(establishment.id, zonedDateTimeToUtc(date, 0, establishment.time_zone), zonedDateTimeToUtc(addDaysToDate(date, 1), 0, establishment.time_zone));
+  const load = new Map<string, number>();
+  for (const row of bookings) if (row.staff_id) load.set(row.staff_id, (load.get(row.staff_id) ?? 0) + 1);
+  return [...staff].sort((a, b) => (load.get(a) ?? 0) - (load.get(b) ?? 0));
 }
 
 export async function getBookingByToken(token: string): Promise<EstablishmentBookingRow | null> {

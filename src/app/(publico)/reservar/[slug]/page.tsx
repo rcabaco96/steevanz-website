@@ -4,7 +4,7 @@ import { BookingWizard } from "@/components/public/bookings/BookingWizard";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
-import { bookingChangeState, ensureBookingPage, formatBookingWhen, getBookingByToken } from "@/lib/modules/bookings/store";
+import { bookingChangeState, ensureBookingPage, formatBookingWhen, getBookingByToken, toleranceText } from "@/lib/modules/bookings/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -69,7 +69,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
               staff: canReplace ? (replacing?.staff_id ?? null) : first(query.profissional) || null,
               party: (canReplace ? replacing?.party_size : Number(first(query.pessoas))) || 2,
             }}
-            policy={page.policy}
+            policy={[toleranceText(page), page.policy].filter(Boolean).join(" ") || null}
           />
         </>
       )}

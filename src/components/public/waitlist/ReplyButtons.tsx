@@ -20,7 +20,7 @@ function Option({ value, label, primary = false, danger = false }: { value: stri
   );
 }
 
-/** "A caminho" / "Vou atrasar-me" / "Já não venho" (called), or just "Sair da fila" (waiting). */
+/** "Vou atrasar-me" / "Já não venho" (called), or just "Sair da fila" (waiting). Both optional: waiting needs nothing. */
 export function ReplyButtons({ token, called, current }: { token: string; called: boolean; current: string | null }) {
   const [state, formAction] = useActionState(replyToCall, null);
   return (
@@ -35,7 +35,6 @@ export function ReplyButtons({ token, called, current }: { token: string; called
       <input type="hidden" name="token" value={token} />
       {called ? (
         <>
-          <Option value="on_way" label={current === "on_way" ? "✓ A caminho" : "Estou a caminho"} primary />
           <Option value="late" label={current === "late" ? "✓ Vou atrasar-me" : "Vou atrasar-me uns minutos"} />
         </>
       ) : null}

@@ -56,6 +56,23 @@ function StepTitle({ number, children }: { number: number; children: ReactNode }
 
 const pageDays = 14;
 
+/** Slots split by part of the day: lunch and dinner (tables), morning, afternoon and evening (services). */
+function periods<T extends { time: string }>(slots: T[], mode: "table" | "service"): { label: string; slots: T[] }[] {
+  const label = (time: string) => {
+    const hour = Number(time.slice(0, 2));
+    if (mode === "table") return hour < 16 ? "Almoço" : "Jantar";
+    return hour < 13 ? "Manhã" : hour < 20 ? "Tarde" : "Noite";
+  };
+  const groups: { label: string; slots: T[] }[] = [];
+  for (const slot of slots) {
+    const name = label(slot.time);
+    const last = groups[groups.length - 1];
+    if (last && last.label === name) last.slots.push(slot);
+    else groups.push({ label: name, slots: [slot] });
+  }
+  return groups;
+}
+
 export function BookingWizard({
   slug,
   mode,
@@ -167,24 +184,28 @@ export function BookingWizard({
               ))}
             </fieldset>
             {staff.length ? (
-              <label className={publicLabel}>
-                Com quem?
-                <select
-                  value={person}
-                  onChange={(event) => {
-                    setPerson(event.target.value);
-                    setFrom(null);
-                  }}
-                  className={publicInput}
-                >
-                  <option value="">Qualquer profissional (mais horários)</option>
-                  {staff.map((item) => (
-                    <option key={item.id} value={item.id}>
+              <fieldset className="flex flex-col gap-2">
+                <legend className="mb-1 text-sm font-semibold text-text">Com quem?</legend>
+                <div className="flex flex-wrap gap-2">
+                  {[{ id: "", name: "Qualquer um" }, ...staff].map((item) => (
+                    <button
+                      key={item.id || "any"}
+                      type="button"
+                      aria-pressed={person === item.id}
+                      onClick={() => {
+                        setPerson(item.id);
+                        setFrom(null);
+                      }}
+                      className={`h-11 rounded-full border px-4 text-sm font-semibold transition-colors ${
+                        person === item.id ? "border-transparent bg-[var(--brand)] text-[var(--brand-text)]" : "border-line text-text hover:border-line-strong"
+                      }`}
+                    >
                       {item.name}
-                    </option>
+                    </button>
                   ))}
-                </select>
-              </label>
+                </div>
+                {person === "" ? <p className="text-xs text-subtle">Com «qualquer um» vê mais horários.</p> : null}
+              </fieldset>
             ) : null}
           </>
         ) : (
@@ -288,8 +309,11 @@ export function BookingWizard({
             {selectedDay ? (
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-semibold text-text first-letter:uppercase">{longFormat.format(noon(selectedDay.date))}</p>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" role="listbox" aria-label="Hora">
-                  {selectedDay.slots.map((slot) => (
+                {periods(selectedDay.slots, mode).map((period) => (
+                <div key={period.label} className="flex flex-col gap-2">
+                <p className="text-xs font-semibold text-muted">{period.label}</p>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" role="listbox" aria-label={`Hora · ${period.label}`}>
+                  {period.slots.map((slot) => (
                     <button
                       key={slot.start}
                       type="button"
@@ -304,6 +328,8 @@ export function BookingWizard({
                     </button>
                   ))}
                 </div>
+                </div>
+                ))}
               </div>
             ) : (
               <p className="text-sm text-muted">Sem horários livres nestes dias. Veja os dias seguintes.</p>

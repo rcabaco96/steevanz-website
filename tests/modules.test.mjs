@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { kindFromCategory, readableTextOn, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
+import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/schedule.ts";
 import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, rewardInSentence, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 
@@ -85,6 +86,38 @@ describe("waitlist estimate", () => {
   });
 });
 
+describe("waitlist opening hours", () => {
+  // Friday 9 Oct 2026, Lisbon (UTC+1): lunch 12:00–15:00, dinner 19:00–23:00.
+  const hours = [
+    { weekday: 5, opens: "12:00:00", closes: "15:00:00" },
+    { weekday: 5, opens: "19:00:00", closes: "23:00:00" },
+  ];
+  const at = (time) => Date.parse(`2026-10-09T${time}:00+01:00`);
+  const base = { hours, closures: [], timeZone: "Europe/Lisbon" };
+
+  it("opens a closed queue when service starts", () => {
+    assert.equal(scheduledState({ ...base, state: "closed", stateChangedAt: at("11:00"), now: at("12:05") }), "open");
+  });
+  it("leaves it closed when the team closed it during this service", () => {
+    assert.equal(scheduledState({ ...base, state: "closed", stateChangedAt: at("13:00"), now: at("13:30") }), null);
+  });
+  it("closes an open or paused queue after closing time", () => {
+    assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("12:00"), now: at("15:10") }), "closed");
+    assert.equal(scheduledState({ ...base, state: "paused", stateChangedAt: at("14:00"), now: at("16:00") }), "closed");
+  });
+  it("respects a queue opened by hand after closing time", () => {
+    assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("15:20"), now: at("16:00") }), null);
+  });
+  it("does nothing on a closed day or a day without hours", () => {
+    assert.equal(scheduledState({ ...base, closures: ["2026-10-09"], state: "closed", stateChangedAt: 0, now: at("12:30") }), null);
+    assert.equal(scheduledState({ ...base, state: "closed", stateChangedAt: 0, now: Date.parse("2026-10-07T12:30:00+01:00") }), null);
+  });
+  it("tells the next change", () => {
+    assert.deepEqual(nextScheduleChange({ ...base, now: at("13:00") }), { kind: "closes", at: at("15:00") });
+    assert.deepEqual(nextScheduleChange({ ...base, now: at("16:00") }), { kind: "opens", at: at("19:00") });
+  });
+});
+
 describe("loyalty rules", () => {
   it("puts the reward inside a sentence without lowercasing proper nouns", () => {
     assert.equal(rewardInSentence("Pastel de Belém oferecido"), "pastel de Belém oferecido");
@@ -135,7 +168,7 @@ describe("booking availability", () => {
       busy: [],
       seatsPerSlot: 10,
       partySize: 2,
-      seatsTaken: {},
+      tables: [],
       ...overrides,
     };
   }
@@ -183,12 +216,14 @@ describe("booking availability", () => {
     assert.equal(today(bookingAvailability(input({ closures: ["2026-10-07"] }))).slots.length, 0);
   });
 
-  it("counts seats per arrival time in table mode", () => {
-    const tenOClock = "2026-10-07T09:00:00.000Z";
-    const day = today(bookingAvailability(input({ mode: "table", staff: [], seatsTaken: { [tenOClock]: 9 }, partySize: 2 })));
-    assert.equal(day.slots[0].time, "10:30");
-    assert.ok(findBookingSlot([day], "2026-10-07T09:30:00.000Z"));
-    assert.equal(findBookingSlot([day], tenOClock), null);
+  it("counts the people still seated for the whole meal in table mode", () => {
+    // 9 of 10 seats taken from 10:00 to 11:30; a 90-minute meal for 2 only fits from 11:30.
+    const tables = [{ start: Date.parse("2026-10-07T09:00:00Z"), end: Date.parse("2026-10-07T10:30:00Z"), party: 9 }];
+    const day = today(bookingAvailability(input({ mode: "table", staff: [], tables, partySize: 2, occupiedMinutes: 90, fitMinutes: 30 })));
+    assert.deepEqual(day.slots.map((slot) => slot.time), ["11:30"]);
+    assert.equal(findBookingSlot([day], "2026-10-07T09:00:00.000Z"), null);
+    // A party of 1 still fits next to the 9.
+    assert.equal(today(bookingAvailability(input({ mode: "table", staff: [], tables, partySize: 1, occupiedMinutes: 90, fitMinutes: 30 }))).slots[0].time, "10:00");
   });
 
   it("only allows online changes before the limit", () => {

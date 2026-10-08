@@ -1,8 +1,10 @@
 import { kindDefaults } from "@/lib/establishments/kinds";
+import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentBundle, EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { startOfLocalDay, tokenPattern } from "../common";
 import { estimateWait, type EtaEntry } from "./eta";
+import { scheduledState } from "./schedule";
 
 export type QueueState = "open" | "paused" | "closed";
 export type EntryStatus = "waiting" | "called" | "served" | "no_show" | "cancelled";
@@ -19,6 +21,11 @@ export interface WaitlistSettingsRow {
   max_waiting: number;
   grace_minutes: number;
   message: string | null;
+  /** Opens and closes with the establishment's opening hours. */
+  auto_hours: boolean;
+  /** Marking «Não apareceu» calls the next ticket right away. */
+  auto_next: boolean;
+  state_changed_at: string;
   updated_at: string;
 }
 
@@ -41,6 +48,10 @@ export interface WaitlistEntryRow {
   called_at: string | null;
   replied_at: string | null;
   finished_at: string | null;
+  /** Not used today (customers don't check in: a call closes on its own). */
+  arrived_at: string | null;
+  /** Who closed the ticket: the team, the automatic rules or the customer leaving ("arrived" is not used today). */
+  close_reason: "staff" | "arrived" | "auto" | "left" | null;
 }
 
 /** Tickets left waiting or called longer than this (e.g. from yesterday) are no longer part of the queue. */
@@ -75,6 +86,52 @@ export async function ensureWaitlistSettings(establishment: EstablishmentRow): P
   return created as WaitlistSettingsRow;
 }
 
+/**
+ * With "abrir e fechar com o horário", moves the queue to the state its opening hours ask for.
+ * The update only applies if nobody changed the state in the meantime.
+ */
+export async function applySchedule(establishment: EstablishmentRow, settings: WaitlistSettingsRow, bundle?: EstablishmentBundle): Promise<WaitlistSettingsRow> {
+  if (!settings.auto_hours) return settings;
+  const { hours, closures } = bundle ?? (await loadBundle(establishment));
+  const next = scheduledState({
+    state: settings.state,
+    stateChangedAt: Date.parse(settings.state_changed_at),
+    hours,
+    closures: closures.map((item) => item.day),
+    timeZone: establishment.time_zone,
+    now: Date.now(),
+  });
+  if (!next) return settings;
+  const { data, error } = await createServiceClient()
+    .from("waitlist_settings")
+    .update({ state: next })
+    .eq("establishment_id", establishment.id)
+    .eq("state", settings.state)
+    .select("*")
+    .maybeSingle();
+  if (error) throw new Error(`waitlist schedule: ${error.message}`);
+  return (data as WaitlistSettingsRow | null) ?? settings;
+}
+
+/** The queue's settings, with the opening hours applied. What every queue page starts from. */
+export async function currentSettings(establishment: EstablishmentRow, bundle?: EstablishmentBundle): Promise<WaitlistSettingsRow> {
+  return applySchedule(establishment, await ensureWaitlistSettings(establishment), bundle);
+}
+
+/** Called tickets past the time to show up (late answers get twice the time): they close as served. */
+export function overdueCalls(live: WaitlistEntryRow[], settings: WaitlistSettingsRow, now: number): WaitlistEntryRow[] {
+  return live.filter(
+    (entry) => entry.status === "called" && entry.called_at && now - Date.parse(entry.called_at) > settings.grace_minutes * (entry.reply === "late" ? 2 : 1) * 60_000,
+  );
+}
+
+/** Closes overdue calls in the database as served. */
+export async function settleQueue(establishmentId: string): Promise<WaitlistEntryRow[]> {
+  const { data, error } = await createServiceClient().rpc("waitlist_settle", { p_establishment: establishmentId });
+  if (error) throw new Error(`waitlist settle: ${error.message}`);
+  return (data ?? []) as WaitlistEntryRow[];
+}
+
 export interface QueueSnapshot {
   /** Waiting and called, in queue order. */
   live: WaitlistEntryRow[];
@@ -86,7 +143,18 @@ export interface QueueSnapshot {
   now: number;
 }
 
-export async function loadQueue(establishment: EstablishmentRow): Promise<QueueSnapshot> {
+/**
+ * The live queue. With the settings, overdue calls are settled first (closed as served), so every
+ * page that shows the queue keeps it moving on its own.
+ */
+export async function loadQueue(establishment: EstablishmentRow, settings?: WaitlistSettingsRow): Promise<QueueSnapshot> {
+  const snapshot = await readQueue(establishment);
+  if (!settings || !overdueCalls(snapshot.live, settings, snapshot.now).length) return snapshot;
+  await settleQueue(establishment.id);
+  return readQueue(establishment);
+}
+
+async function readQueue(establishment: EstablishmentRow): Promise<QueueSnapshot> {
   const client = createServiceClient();
   const dayStart = startOfLocalDay(establishment.time_zone).toISOString();
   const [live, done, calls] = await Promise.all([

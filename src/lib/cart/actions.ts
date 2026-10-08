@@ -12,6 +12,7 @@ import { honeypotField } from "@/lib/booking/types";
 import type { OrderItem, OrderTotals } from "@/lib/accounts/types";
 import { getSession } from "@/lib/auth/session";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
+import { alreadyActive, ownedSpaces, type OwnedProduct } from "./ownership";
 import { formatCents, priceCart, sanitizeLines, vatRate, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
 
 export type OrderActionState =
@@ -83,6 +84,23 @@ function groupTable(group: CartGroupId, totals: GroupTotals): EmailTable {
   };
 }
 
+/** The products active on the signed-in client's account (the cart marks or removes them). */
+async function ownedProducts(userId: string): Promise<OwnedProduct[]> {
+  const client = tryCreateServiceClient();
+  if (!client) return [];
+  const { data, error } = await client.from("client_products").select("product_id, spaces").eq("user_id", userId).eq("status", "active");
+  if (error) {
+    console.error("[cart] owned products failed:", error.message);
+    return [];
+  }
+  return ((data ?? []) as { product_id: string; spaces: number | null }[]).map((row) => ({ productId: row.product_id, spaces: Math.max(1, row.spaces ?? 1) }));
+}
+
+export async function cartOwnership(): Promise<OwnedProduct[]> {
+  const session = await getSession();
+  return session.state === "client" ? ownedProducts(session.user.id) : [];
+}
+
 export async function submitOrder(_previous: OrderActionState, formData: FormData): Promise<OrderActionState> {
   const raw = formDataToObject(formData, orderFormKeys);
   const honeypot = formData.get(honeypotField);
@@ -92,7 +110,10 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   if (!parsed.success) return { status: "error", code: "validation", fields: fieldErrorsFrom(parsed.error) };
   const data = parsed.data;
 
-  const lines = parseItems(data.items);
+  // A signed-in client never orders again a monthly product already active on the account.
+  const session = await getSession();
+  const owned = session.state === "client" ? await ownedProducts(session.user.id) : [];
+  const lines = parseItems(data.items).filter((line) => !alreadyActive(line.productId, owned));
   if (!lines.length) return { status: "error", code: "empty_cart", fields: [] };
 
   const client = tryCreateServiceClient();
@@ -110,7 +131,6 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
 
   // Orders are stored so they show up in the client area (when signed in) and in
   // the admin panel. A storage failure must not lose the order: the email still goes out.
-  const session = await getSession();
   const userId = session.state === "client" || session.state === "admin" ? session.user.id : null;
   const orderTotals: OrderTotals = { oneTimeCents: totals.oneTime.totalCents, monthlyCents: totals.monthly.totalCents };
   let saved = false;
@@ -139,6 +159,14 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
     rows: [
       { label: "Referência", value: reference },
       { label: "Conta", value: userId ? "Cliente com conta (ver Encomendas no painel)" : "Sem conta" },
+      {
+        label: "Já tem",
+        value:
+          lines
+            .filter((line) => ownedSpaces(line.productId, owned))
+            .map((line) => `${productLabel(line.productId)}: ${ownedSpaces(line.productId, owned)} espaço(s), a encomenda acrescenta ${line.quantity}`)
+            .join(" · ") || null,
+      },
       { label: "Nome", value: data.name },
       { label: "Email", value: data.email },
       { label: "Telemóvel", value: data.phone },

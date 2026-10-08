@@ -8,13 +8,14 @@ import { getProductCopy } from "@/content/product-copy";
 import { getProduct, isProductId } from "@/content/products";
 import { listOwnProducts } from "@/lib/accounts/queries";
 import { getOwnProfile, requireUser } from "@/lib/auth/session";
+import { ownerCounterSpaces } from "@/lib/establishments/counter";
 import { listOwnedPanels } from "@/lib/reviews/access";
 
 export const metadata: Metadata = { title: "Os meus produtos" };
 
 export default async function AccountHomePage() {
   const user = await requireUser();
-  const [profile, owned, panels] = await Promise.all([getOwnProfile(), listOwnProducts(user.id), listOwnedPanels(user.id)]);
+  const [profile, owned, panels, counter] = await Promise.all([getOwnProfile(), listOwnProducts(user.id), listOwnedPanels(user.id), ownerCounterSpaces(user.id)]);
   const items = owned.filter((row) => isProductId(row.product_id));
   const firstName = profile?.full_name?.split(" ")[0];
 
@@ -24,6 +25,32 @@ export default async function AccountHomePage() {
         title={firstName ? `Olá, ${firstName}` : "Os meus produtos"}
         description={profile?.business_name ?? "Gestão dos produtos Steevanz que comprou."}
       />
+      {counter.length ? (
+        <Link
+          href="/conta/balcao"
+          className="card card-interactive flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+        >
+          <span className="flex flex-col gap-1">
+            <span className="text-lg font-semibold text-text">Balcão</span>
+            <span className="text-sm text-muted">
+              {[
+                counter.some((space) => space.products.includes("waitlist")) ? "chamar o seguinte" : null,
+                counter.some((space) => space.products.includes("bookings")) ? "as reservas de hoje" : null,
+                counter.some((space) => space.products.includes("loyalty")) ? "dar carimbos" : null,
+              ]
+                .filter(Boolean)
+                .join(", ")
+                .replace(/, ([^,]*)$/, " e $1")
+                .replace(/^./, (letter) => letter.toUpperCase())}
+              , tudo num só ecrã. Abra-o no telemóvel ou tablet do balcão.
+            </span>
+          </span>
+          <span className={buttonClasses("primary", "md", "shrink-0")}>
+            Abrir o Balcão
+            <ArrowRight size={16} />
+          </span>
+        </Link>
+      ) : null}
       {panels.length ? (
         <section aria-labelledby="paineis-title" className="flex flex-col gap-3">
           <h2 id="paineis-title" className="text-sm font-semibold text-muted">

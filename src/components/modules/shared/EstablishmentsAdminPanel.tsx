@@ -17,7 +17,18 @@ const moduleLinks = [
  * Admin, client page: the client's shops. Each shop has its own waitlist, loyalty card and booking
  * page (for the products the client has active); "Novo espaço" stays folded until needed (the first one is created on its own).
  */
-export function EstablishmentsAdminPanel({ ownerId, establishments, activeProducts }: { ownerId: string; establishments: EstablishmentRow[]; activeProducts: string[] }) {
+export function EstablishmentsAdminPanel({
+  ownerId,
+  establishments,
+  activeProducts,
+  coverage,
+}: {
+  ownerId: string;
+  establishments: EstablishmentRow[];
+  activeProducts: string[];
+  /** Per product: spaces paid for and which spaces they cover. */
+  coverage: Record<string, { spaces: number; ids: string[] }>;
+}) {
   const input = `${adminInputClasses} h-11`;
   const modules = moduleLinks.filter((item) => activeProducts.includes(item.product));
   return (
@@ -31,7 +42,10 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
 
       {establishments.length ? (
         <ul className="flex flex-col gap-3">
-          {establishments.map((establishment) => (
+          {establishments.map((establishment) => {
+            const covered = modules.filter((item) => coverage[item.product]?.ids.includes(establishment.id));
+            const missing = modules.filter((item) => !coverage[item.product]?.ids.includes(establishment.id));
+            return (
             <li key={establishment.id} className="card overflow-hidden">
               <div className="flex">
                 <span aria-hidden="true" className="w-1.5 shrink-0" style={{ backgroundColor: establishment.accent_color }} />
@@ -42,9 +56,14 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
                       <p className="text-sm text-muted">{kindLabels[establishment.kind]}</p>
                     </div>
                     <div className="flex items-center gap-1">
-                      {modules.length ? (
+                      {covered.length ? (
+                        <Link href={`/conta/balcao/${establishment.slug}`} title="O ecrã do dia a dia: fila, reservas de hoje e cartão" className={buttonClasses("primary", "sm")}>
+                          Abrir Balcão
+                        </Link>
+                      ) : null}
+                      {covered.length ? (
                         <Link
-                          href={`/admin/clientes/${ownerId}/${modules[0].product}?${new URLSearchParams({ loja: establishment.slug, vista: "definicoes" })}`}
+                          href={`/admin/clientes/${ownerId}/${covered[0].product}?${new URLSearchParams({ loja: establishment.slug, vista: "definicoes" })}`}
                           title="Nome, cor, tipo de negócio, horário, serviços e equipa"
                           className={buttonClasses("secondary", "sm")}
                         >
@@ -63,9 +82,9 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
                       </ActionForm>
                     </div>
                   </div>
-                  {modules.length ? (
+                  {covered.length ? (
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      {modules.map((item) => (
+                      {covered.map((item) => (
                         <div key={item.product} className="flex items-stretch overflow-hidden rounded-xl border border-line">
                           <Link
                             href={`/admin/clientes/${ownerId}/${item.product}?${new URLSearchParams({ loja: establishment.slug })}`}
@@ -88,13 +107,22 @@ export function EstablishmentsAdminPanel({ ownerId, establishments, activeProduc
                     </div>
                   ) : (
                     <p className="rounded-xl bg-surface-2/60 px-3 py-2.5 text-sm text-muted">
-                      Ative a lista de espera, o cartão ou as reservas em Produtos para gerir este espaço.
+                      {modules.length
+                        ? "Este espaço ainda não tem produtos. Aumente os espaços do produto em Produtos (cada espaço paga o mesmo preço)."
+                        : "Ative a lista de espera, o cartão ou as reservas em Produtos para gerir este espaço."}
                     </p>
                   )}
+                  {covered.length && missing.length ? (
+                    <p className="text-xs text-subtle">
+                      Sem {missing.map((item) => item.label.toLowerCase()).join(", ")} neste espaço: os espaços pagos já estão em uso. Aumente os espaços do
+                      produto para o incluir.
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       ) : (
         <p className="rounded-2xl border border-dashed border-line-strong px-4 py-5 text-sm text-muted">

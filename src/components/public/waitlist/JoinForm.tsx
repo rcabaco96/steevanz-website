@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useSyncExternalStore } from "react";
+import { useActionState, useEffect, useSyncExternalStore } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon } from "@/components/icons";
 import { joinWaitlist } from "@/lib/modules/waitlist/actions";
@@ -56,6 +56,11 @@ export function JoinForm({
 }) {
   const [state, formAction] = useActionState(joinWaitlist, null);
   const saved = useSavedTicket(slug);
+  // Reading the QR again (e.g. at the door when called) goes straight back to the live ticket. The
+  // ticket page forgets it on this phone once the turn is over.
+  useEffect(() => {
+    if (saved) window.location.replace(`/fila/${slug}/${saved}?voltou=1`);
+  }, [saved, slug]);
 
   return (
     <form action={formAction} onSubmit={() => unlockAlerts()} className="flex flex-col gap-4">

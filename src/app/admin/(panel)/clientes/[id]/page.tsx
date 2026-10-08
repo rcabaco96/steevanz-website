@@ -15,11 +15,12 @@ import { buttonClasses } from "@/components/ui/Button";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, isProductId, products } from "@/content/products";
 import { subscriptionStatusLabels, subscriptionStatuses, type ClientProductRow } from "@/lib/accounts/types";
-import { saveClientProduct } from "@/lib/admin/actions";
+import { removeClientProduct, saveClientProduct } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/auth";
 import { lisbonTimestamp } from "@/lib/admin/csv";
+import { clientRevenue, euros, perSpace } from "@/lib/admin/revenue";
 import { getProfile, listClientOrders, listClientPanels, listClientProducts } from "@/lib/admin/queries";
-import { listOwnerEstablishments } from "@/lib/establishments/store";
+import { coveredEstablishmentIds, listOwnerEstablishments } from "@/lib/establishments/store";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -54,7 +55,10 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
           ) : null}
           <div className="min-w-0">
             <p className="font-semibold text-text">{productId ? getProductCopy(productId, "pt").name : row.product_id}</p>
-            <p className="text-xs text-subtle">Desde {lisbonTimestamp(row.activated_at)}</p>
+            <p className="text-xs text-subtle">
+              Desde {lisbonTimestamp(row.activated_at)}
+              {perSpace(row.product_id) ? ` · ${row.spaces} ${row.spaces === 1 ? "espaço" : "espaços"}` : ""}
+            </p>
           </div>
         </div>
         <SubscriptionBadge status={row.status} />
@@ -67,8 +71,12 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
           </Link>
         ) : null}
         <details className="group w-full">
-          <summary className="cursor-pointer list-none text-sm font-semibold text-muted hover:text-text">Alterar estado ou notas</summary>
-          <ActionForm key={`${row.status}:${row.notes ?? ""}`} action={saveClientProduct} className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-end">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-muted hover:text-text">Alterar estado, notas ou remover</summary>
+          <ActionForm
+            key={`${row.status}:${row.notes ?? ""}:${row.spaces}`}
+            action={saveClientProduct}
+            className={`mt-3 grid grid-cols-1 gap-2 sm:items-end ${perSpace(row.product_id) ? "sm:grid-cols-[9rem_6rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[9rem_minmax(0,1fr)_auto]"}`}
+          >
             <input type="hidden" name="user_id" value={ownerId} />
             <input type="hidden" name="product_id" value={row.product_id} />
             <label className={adminLabelClasses}>
@@ -81,12 +89,32 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
                 ))}
               </select>
             </label>
+            {perSpace(row.product_id) ? (
+              <label className={adminLabelClasses}>
+                Espaços
+                <input name="spaces" type="number" min={1} max={100} required defaultValue={row.spaces} className={`${adminInputClasses} h-10`} />
+              </label>
+            ) : (
+              <input type="hidden" name="spaces" value={row.spaces} />
+            )}
             <label className={adminLabelClasses}>
               Notas internas
               <input name="notes" defaultValue={row.notes ?? ""} maxLength={2000} className={`${adminInputClasses} h-10`} />
             </label>
             <SubmitButton size="sm" variant="secondary" pendingLabel="A guardar…">
               Guardar
+            </SubmitButton>
+          </ActionForm>
+          <ActionForm
+            action={removeClientProduct}
+            confirmMessage={`Remover «${productId ? getProductCopy(productId, "pt").name : row.product_id}» deste cliente? Deixa de o ver na área de cliente. Os espaços e os dados (fila, cartões, reservas) ficam guardados.`}
+            className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3"
+          >
+            <input type="hidden" name="user_id" value={ownerId} />
+            <input type="hidden" name="product_id" value={row.product_id} />
+            <span className="text-xs text-subtle">Adicionado por engano? Remova-o: suspender ou cancelar mantém o histórico.</span>
+            <SubmitButton size="sm" variant="ghost" pendingLabel="A remover…" className="text-danger">
+              Remover produto
             </SubmitButton>
           </ActionForm>
         </details>
@@ -107,6 +135,11 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
     listOwnerEstablishments(profile.id),
   ]);
   const ownedIds = new Set(owned.map((row) => row.product_id));
+  const revenue = clientRevenue(owned, orders);
+  const moduleRows = owned.filter((row) => row.status === "active" && perSpace(row.product_id));
+  const coverage = Object.fromEntries(
+    await Promise.all(moduleRows.map(async (row) => [row.product_id, { spaces: row.spaces, ids: await coveredEstablishmentIds(profile.id, row.product_id) }] as const)),
+  );
   const available = products.filter((product) => !ownedIds.has(product.id));
   const active = owned.filter((row) => row.status === "active");
   const displayName = profile.full_name ?? profile.email;
@@ -125,6 +158,11 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             <p className="text-muted">
               {[profile.business_name, `${active.length} ${active.length === 1 ? "produto ativo" : "produtos ativos"}`].filter(Boolean).join(" · ")}
             </p>
+            {revenue.totalCents ? (
+              <p className="mt-1 text-xs text-subtle" title="Estimativa a preços de catálogo: produtos mensais ativos × espaços, mais os valores únicos das encomendas aceites.">
+                <span className="font-semibold text-success">{euros(revenue.monthlyCents)}/mês</span> · ≈ {euros(revenue.totalCents)} faturados até hoje
+              </p>
+            ) : null}
           </div>
         </div>
         <a href={`mailto:${profile.email}`} className={buttonClasses("secondary", "sm", "self-start sm:self-auto")}>
@@ -145,7 +183,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             {available.length ? <AddProduct ownerId={profile.id} available={available.map((product) => product.id)} open={!owned.length} /> : null}
           </section>
 
-          <EstablishmentsAdminPanel ownerId={profile.id} establishments={establishments} activeProducts={active.map((row) => row.product_id)} />
+          <EstablishmentsAdminPanel ownerId={profile.id} establishments={establishments} activeProducts={active.map((row) => row.product_id)} coverage={coverage} />
 
           <section aria-labelledby="paineis-title" className="flex flex-col gap-3">
             <SectionTitle id="paineis-title" title="Painéis de reviews" />

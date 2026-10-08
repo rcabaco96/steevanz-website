@@ -65,6 +65,37 @@ export async function ownerHasProduct(ownerId: string, productId: string): Promi
   return Boolean(data);
 }
 
+/**
+ * The owner's spaces a product covers: the first `spaces` ones created (products are sold per
+ * space). Empty when the product isn't active.
+ */
+export async function coveredEstablishmentIds(ownerId: string, productId: string): Promise<string[]> {
+  const client = createServiceClient();
+  const { data: product, error } = await client
+    .from("client_products")
+    .select("spaces")
+    .eq("user_id", ownerId)
+    .eq("product_id", productId)
+    .eq("status", "active")
+    .maybeSingle<{ spaces: number }>();
+  if (error) throw new Error(`coveredEstablishmentIds: ${error.message}`);
+  if (!product) return [];
+  const { data: rows, error: listError } = await client
+    .from("establishments")
+    .select("id")
+    .eq("owner_id", ownerId)
+    .order("created_at")
+    .order("id")
+    .limit(Math.max(1, product.spaces));
+  if (listError) throw new Error(`coveredEstablishmentIds: ${listError.message}`);
+  return ((rows ?? []) as { id: string }[]).map((row) => row.id);
+}
+
+/** Whether this space has the product (active, and within the spaces the client pays for). */
+export async function establishmentHasProduct(establishment: EstablishmentRow, productId: string): Promise<boolean> {
+  return (await coveredEstablishmentIds(establishment.owner_id, productId)).includes(establishment.id);
+}
+
 /** "HH:MM:SS" → "HH:MM". */
 export function shortTime(value: string): string {
   return value.slice(0, 5);

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BackLink } from "@/components/admin/RecordDetail";
 import { AdminPageHeader } from "@/components/backoffice/ui";
+import { buttonClasses } from "@/components/ui/Button";
 import { ProductModule } from "@/components/modules/registry";
 import { getProductCopy } from "@/content/product-copy";
 import { isProductId } from "@/content/products";
 import { getOwnProduct } from "@/lib/accounts/queries";
 import { requireUser } from "@/lib/auth/session";
+import { counterProducts } from "@/lib/establishments/counter";
 
 type Params = Promise<{ product: string }>;
 
@@ -33,7 +36,17 @@ export default async function AccountProductPage({
   return (
     <>
       <BackLink href="/conta" label="Os meus produtos" />
-      <AdminPageHeader title={copy.name} description={copy.tagline} />
+      <AdminPageHeader
+        title={copy.name}
+        description={copy.tagline}
+        actions={
+          (counterProducts as string[]).includes(product) ? (
+            <Link href="/conta/balcao" className={buttonClasses("primary", "md")}>
+              Abrir o Balcão
+            </Link>
+          ) : null
+        }
+      />
       <ProductModule productId={product} userId={user.id} viewer="client" basePath={`/conta/${product}`} query={query} />
     </>
   );

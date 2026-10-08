@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { CancelBookingForm } from "@/components/public/bookings/CancelBookingForm";
 import { BrandFrame, PublicCard, brandButton, brandSecondaryButton } from "@/components/public/BrandFrame";
 import { googleCalendarUrl } from "@/lib/booking/ics";
+import { zonedDateString } from "@/lib/booking/slots";
 import { loadBundle } from "@/lib/establishments/store";
 import { bookingSummary, calendarEvent } from "@/lib/modules/bookings/notify";
-import { bookingChangeState, ensureBookingPage, getBookingByToken } from "@/lib/modules/bookings/store";
+import { bookingChangeState, delayFor, ensureBookingPage, getBookingByToken, loadDelays, toleranceText } from "@/lib/modules/bookings/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string; token: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -35,6 +36,11 @@ export default async function BookingManagePage({ params, searchParams }: Props)
   const date = new Intl.DateTimeFormat("pt-PT", { timeZone: tz, day: "numeric", month: "long" }).format(start);
   const time = new Intl.DateTimeFormat("pt-PT", { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(start);
   const cancelled = booking.status === "cancelled";
+  const tolerance = toleranceText(page);
+  // "Estamos com atraso" (only ever set for today): the expected time instead of an early wait.
+  const day = zonedDateString(start, tz);
+  const delay = booking.status === "confirmed" && day === zonedDateString(new Date(), tz) ? delayFor(await loadDelays(establishment, day), booking.staff_id) : 0;
+  const expected = delay ? new Intl.DateTimeFormat("pt-PT", { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(new Date(start.getTime() + delay * 60_000)) : null;
 
   return (
     <BrandFrame establishment={establishment} service="A sua reserva">
@@ -42,6 +48,13 @@ export default async function BookingManagePage({ params, searchParams }: Props)
         <div role="status" className="flex flex-col gap-1 text-center">
           <h2 className="display text-[2rem] leading-tight">Está reservado.</h2>
           <p className="text-muted">{booking.email ? `Enviámos a confirmação para ${booking.email}.` : "Guarde esta página: é a sua reserva."}</p>
+        </div>
+      ) : null}
+
+      {expected ? (
+        <div role="status" className="rounded-2xl border border-gold/40 bg-gold-soft px-4 py-3 text-text">
+          <p className="font-semibold">Estamos com cerca de {delay} minutos de atraso.</p>
+          <p className="text-sm text-muted">Hora prevista: cerca das {expected}. Não precisa de fazer nada: a sua reserva mantém-se.</p>
         </div>
       ) : null}
 
@@ -64,6 +77,12 @@ export default async function BookingManagePage({ params, searchParams }: Props)
             <>
               <dt className="text-muted">Onde</dt>
               <dd className="text-text">{establishment.address}</dd>
+            </>
+          ) : null}
+          {tolerance && active ? (
+            <>
+              <dt className="text-muted">Atrasos</dt>
+              <dd className="text-text">{tolerance}</dd>
             </>
           ) : null}
           {booking.notes ? (

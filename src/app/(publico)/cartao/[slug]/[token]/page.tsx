@@ -76,7 +76,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
           <div className="ticket-tear" />
           <div className="flex flex-col gap-3 px-6 pt-5 pb-6">
             <p className="text-sm text-muted">Na altura de usar, mostre este ecrã ao balcão: o funcionário escreve aqui o PIN de carimbo.</p>
-            <RedeemWithCodeForm token={card.token} rewardId={rewards[0].id} reward={program.reward} />
+            <RedeemWithCodeForm token={card.token} rewardId={rewards[0].id} />
           </div>
         </article>
       ) : null}

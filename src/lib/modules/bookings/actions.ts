@@ -14,8 +14,8 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { formText, isBot, isModuleRateLimited, publicToken } from "../common";
 import { publicEstablishment } from "../public";
 import { canChangeOnline, findBookingSlot } from "./availability";
-import { sendBookingConfirmation, sendCancellationNotice } from "./notify";
-import { computeDays, ensureBookingPage, getBooking, getBookingByToken, resolveRequest, type BookingPageRow, type BookingStatus, type EstablishmentBookingRow } from "./store";
+import { sendBookingConfirmation, sendCancellationNotice, sendDelayNotice } from "./notify";
+import { computeDays, ensureBookingPage, getBooking, getBookingByToken, leastBusyFirst, resolveRequest, type BookingPageRow, type BookingStatus, type EstablishmentBookingRow } from "./store";
 
 function refresh(establishment: EstablishmentRow) {
   revalidatePath("/conta", "layout");
@@ -113,7 +113,7 @@ export async function createBooking(_previous: ActionState, formData: FormData):
       bundle,
       page,
       serviceId: resolved.service?.id ?? null,
-      staffCandidates: page.mode === "service" ? slot.staff : [],
+      staffCandidates: page.mode === "service" ? (request.staffId ? slot.staff : await leastBusyFirst(establishment, slot.staff, slot.start)) : [],
       party: page.mode === "table" ? request.partySize : null,
       start: new Date(slot.start),
       end: new Date(slot.end),
@@ -207,7 +207,7 @@ export async function staffCreateBooking(_previous: ActionState, formData: FormD
       minutes = service.duration_minutes + service.buffer_minutes;
       const chosen = formText(formData, "staff");
       const active = bundle.staff.filter((item) => item.active).map((item) => item.id);
-      candidates = chosen && isUuid(chosen) ? [chosen] : active;
+      candidates = chosen && isUuid(chosen) ? [chosen] : await leastBusyFirst(establishment, active, start.toISOString());
     } else {
       party = Number(formText(formData, "party"));
       if (!Number.isInteger(party) || party < 1 || party > 1000) return { ok: false, message: "Indique o número de pessoas." };
@@ -297,8 +297,6 @@ export async function removeBlock(_previous: ActionState, formData: FormData): P
 
 const pageSchema = z.object({
   active: z.boolean(),
-  mode: z.enum(["table", "service"]),
-  slot_interval_minutes: z.coerce.number().int().min(5).max(120),
   min_notice_minutes: z.coerce.number().int().min(0).max(20160),
   max_days_ahead: z.coerce.number().int().min(1).max(365),
   table_minutes: z.coerce.number().int().min(15).max(480),
@@ -308,6 +306,7 @@ const pageSchema = z.object({
   policy: z.string().trim().max(600).transform((text) => text || null),
   confirmation_note: z.string().trim().max(300).transform((text) => text || null),
   notify_owner: z.boolean(),
+  late_grace_minutes: z.coerce.number().int().min(0).max(60),
 });
 
 export async function saveBookingPage(_previous: ActionState, formData: FormData): Promise<ActionState> {
@@ -315,9 +314,7 @@ export async function saveBookingPage(_previous: ActionState, formData: FormData
     const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "bookings");
     const parsed = pageSchema.safeParse({
       active: formData.get("active") === "on",
-      mode: formText(formData, "mode"),
-      slot_interval_minutes: formText(formData, "slot_interval_minutes"),
-      min_notice_minutes: Math.round(Number(formText(formData, "min_notice_hours").replace(",", ".")) * 60),
+      min_notice_minutes: formText(formData, "min_notice_minutes"),
       max_days_ahead: formText(formData, "max_days_ahead"),
       table_minutes: formText(formData, "table_minutes"),
       seats_per_slot: formText(formData, "seats_per_slot"),
@@ -326,6 +323,7 @@ export async function saveBookingPage(_previous: ActionState, formData: FormData
       policy: formText(formData, "policy"),
       confirmation_note: formText(formData, "confirmation_note"),
       notify_owner: formData.get("notify_owner") === "on",
+      late_grace_minutes: formText(formData, "late_grace_minutes") || "10",
     });
     if (!parsed.success) return { ok: false, message: "Verifique os valores das definições." };
     await ensureBookingPage(establishment);
@@ -345,5 +343,62 @@ export async function rotateCalendarToken(_previous: ActionState, formData: Form
     if (error) throw new Error(error.message);
     refresh(establishment);
     return { ok: true, message: "Endereço do calendário renovado. Volte a subscrevê-lo no seu calendário." };
+  });
+}
+
+/** Customers of the next hours hear about a delay (by email); later ones see it on their booking page. */
+const delayNoticeHours = 3;
+
+/**
+ * "Estamos com atraso" for today, for the whole space or one professional. Nothing moves: the
+ * customers of the next hours are told the expected time, once per increase (from 10 minutes).
+ */
+export async function setBookingDelay(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return staffGuard(async () => {
+    const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "bookings");
+    const minutes = Number(formText(formData, "minutes"));
+    if (!Number.isInteger(minutes) || minutes < 0 || minutes > 180) return { ok: false, message: "Pedido inválido." };
+    const staff = formText(formData, "staff_id");
+    const staffId = isUuid(staff) ? staff : null;
+    const day = zonedDateString(new Date(), establishment.time_zone);
+    const client = createServiceClient();
+    let existing = client.from("booking_delays").select("id").eq("establishment_id", establishment.id).eq("day", day);
+    existing = staffId ? existing.eq("staff_id", staffId) : existing.is("staff_id", null);
+    const { data: found, error: findError } = await existing.maybeSingle<{ id: string }>();
+    if (findError) throw new Error(findError.message);
+    const { error } = found
+      ? await client.from("booking_delays").update({ minutes, updated_at: new Date().toISOString() }).eq("id", found.id)
+      : await client.from("booking_delays").insert({ establishment_id: establishment.id, staff_id: staffId, day, minutes });
+    if (error) throw new Error(error.message);
+
+    let told = 0;
+    if (minutes >= 10) {
+      const now = Date.now();
+      let query = client
+        .from("establishment_bookings")
+        .select("*")
+        .eq("establishment_id", establishment.id)
+        .eq("status", "confirmed")
+        .not("email", "is", null)
+        .lt("delay_notified_minutes", minutes)
+        .gte("starts_at", new Date(now).toISOString())
+        .lte("starts_at", new Date(now + delayNoticeHours * 3_600_000).toISOString());
+      if (staffId) query = query.eq("staff_id", staffId);
+      const { data, error: listError } = await query.limit(50);
+      if (listError) throw new Error(listError.message);
+      const affected = (data ?? []) as EstablishmentBookingRow[];
+      if (affected.length) {
+        const bundle = await loadBundle(establishment);
+        const origin = await requestOrigin();
+        await client.from("establishment_bookings").update({ delay_notified_minutes: minutes }).in("id", affected.map((booking) => booking.id));
+        after(async () => {
+          for (const booking of affected) await sendDelayNotice(booking, bundle, minutes, `${origin}/reservar/${establishment.slug}/${booking.token}`);
+        });
+        told = affected.length;
+      }
+    }
+    refresh(establishment);
+    if (!minutes) return { ok: true, message: "Sem atraso." };
+    return { ok: true, message: told ? `Atraso de ${minutes} min. Avisámos ${told} ${told === 1 ? "cliente" : "clientes"} por email.` : `Atraso de ${minutes} min registado.` };
   });
 }

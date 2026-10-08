@@ -1,10 +1,11 @@
+import { perSpaceProducts } from "@/lib/cart/ownership";
 import { createServiceClient } from "@/lib/supabase/service";
 import { kindFromCategory, slugify, type BusinessKind } from "./kinds";
-import { listOwnerEstablishments } from "./store";
+import { coveredEstablishmentIds, listOwnerEstablishments } from "./store";
 import type { EstablishmentRow } from "./types";
 
 /** Products that run inside an establishment (they need one to work). */
-export const establishmentProducts = ["waitlist", "loyalty", "bookings"] as const;
+export const establishmentProducts = perSpaceProducts;
 
 // Opening hours a new establishment starts with (editable straight away).
 export const startingHours: Record<BusinessKind, { weekdays: number[]; intervals: [string, string][] }> = {
@@ -64,12 +65,16 @@ export async function ensureFirstEstablishment(ownerId: string): Promise<void> {
 }
 
 /**
- * The client's establishments for a module page. Clients who had the product before establishments
- * were created on their own get their first one here, the first time the module is opened.
+ * The client's establishments for a module page: the ones this product covers. Clients who had the
+ * product before establishments were created on their own get their first one here.
  */
-export async function moduleEstablishments(ownerId: string): Promise<EstablishmentRow[]> {
-  const establishments = await listOwnerEstablishments(ownerId);
-  if (establishments.length) return establishments;
-  await ensureFirstEstablishment(ownerId);
-  return listOwnerEstablishments(ownerId);
+export async function moduleEstablishments(ownerId: string, productId: string): Promise<EstablishmentRow[]> {
+  let establishments = await listOwnerEstablishments(ownerId);
+  if (!establishments.length) {
+    await ensureFirstEstablishment(ownerId);
+    establishments = await listOwnerEstablishments(ownerId);
+  }
+  // Only the spaces this product covers (it is sold per space).
+  const covered = new Set(await coveredEstablishmentIds(ownerId, productId));
+  return establishments.filter((item) => covered.has(item.id));
 }

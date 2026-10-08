@@ -256,7 +256,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
 }
 
 export async function LoyaltyModule({ userId, viewer, basePath, query, productId }: ModuleProps) {
-  const establishments = await moduleEstablishments(userId);
+  const establishments = await moduleEstablishments(userId, productId);
   const current = pickEstablishment(establishments, query);
   if (!current) return <NoEstablishment productId={productId} viewer={viewer} ownerId={userId} />;
   const view = pickView(query, views);

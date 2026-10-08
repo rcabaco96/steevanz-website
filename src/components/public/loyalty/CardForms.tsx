@@ -143,7 +143,7 @@ export function StampWithCodeForm({ token }: { token: string }) {
   );
 }
 
-export function RedeemWithCodeForm({ token, rewardId, reward }: { token: string; rewardId: string; reward: string }) {
+export function RedeemWithCodeForm({ token, rewardId }: { token: string; rewardId: string }) {
   const [state, formAction] = useActionState(redeemWithCode, null);
   return (
     <form action={formAction} className="flex flex-col gap-3">
@@ -151,7 +151,7 @@ export function RedeemWithCodeForm({ token, rewardId, reward }: { token: string;
       <input type="hidden" name="reward_id" value={rewardId} />
       <CodeInput />
       <Message state={state} />
-      <Submit label={`Entregar: ${reward}`} pendingLabel="A validar…" />
+      <Submit label="Entregar recompensa" pendingLabel="A validar…" />
     </form>
   );
 }

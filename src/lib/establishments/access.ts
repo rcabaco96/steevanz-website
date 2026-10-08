@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/session";
-import { getEstablishment, ownerHasProduct } from "./store";
+import { establishmentHasProduct, getEstablishment } from "./store";
 import type { EstablishmentRow } from "./types";
 
 export type ModuleProduct = "waitlist" | "loyalty" | "bookings";
@@ -27,7 +27,7 @@ export async function requireEstablishmentAccess(establishmentId: string, produc
   if (!establishment) throw new EstablishmentAccessError("denied");
   if (session.state === "admin") return { establishment, viewer: "admin" };
   if (establishment.owner_id !== session.user.id) throw new EstablishmentAccessError("denied");
-  if (product && !(await ownerHasProduct(establishment.owner_id, product))) throw new EstablishmentAccessError("denied");
+  if (product && !(await establishmentHasProduct(establishment, product))) throw new EstablishmentAccessError("denied");
   return { establishment, viewer: "client" };
 }
 

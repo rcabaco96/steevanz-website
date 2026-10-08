@@ -9,7 +9,8 @@ import type { FormField, FormCopy } from "@/content/booking";
 import type { CartCopy } from "@/content/cart";
 import type { ProductIcon } from "@/content/products";
 import type { ProductId } from "@/content/types";
-import { submitOrder, type OrderActionState } from "@/lib/cart/actions";
+import { cartOwnership, submitOrder, type OrderActionState } from "@/lib/cart/actions";
+import { alreadyActive, ownedSpaces, type OwnedProduct } from "@/lib/cart/ownership";
 import { cartGroups, formatCents, maxQuantity, priceCart, vatRate, type CartGroupId, type GroupTotals, type PricedLine } from "@/lib/cart/pricing";
 import { cart, useCart } from "@/lib/cart/store";
 import type { Locale } from "@/lib/i18n";
@@ -44,7 +45,23 @@ type Step = "cart" | "checkout";
 type Money = (cents: number, group: CartGroupId) => string;
 
 export function CartView({ locale, copy, formCopy, catalog, sectors, links }: CartViewProps) {
-  const lines = useCart();
+  const allLines = useCart();
+  // Signed in as a client: what the account already has. Monthly products already active stay out
+  // of the order; per-space products add spaces.
+  const [owned, setOwned] = useState<OwnedProduct[]>([]);
+  useEffect(() => {
+    let alive = true;
+    cartOwnership()
+      .then((list) => {
+        if (alive) setOwned(list);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const blocked = allLines.filter((line) => alreadyActive(line.productId, owned));
+  const lines = blocked.length ? allLines.filter((line) => !blocked.includes(line)) : allLines;
   const [step, setStep] = useState<Step>("cart");
   const [result, setResult] = useState<OrderActionState>({ status: "idle" });
   const [pending, startTransition] = useTransition();
@@ -52,7 +69,17 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
   const summaryBelowFold = useBelowFold(summaryRef, step === "cart" && lines.length > 0);
   const totals = priceCart(lines);
   const catalogById = new Map(catalog.map((item) => [item.id, item]));
-  const available = catalog.filter((item) => !lines.some((line) => line.productId === item.id));
+  const available = catalog.filter((item) => !allLines.some((line) => line.productId === item.id) && !alreadyActive(item.id, owned));
+  const ownedNotice = blocked.length ? (
+    <div role="status" className="card flex flex-col gap-3 border-gold/40 bg-gold-soft/60 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <p className="text-sm text-text">
+        {copy.owned.notice.replace("{names}", [...new Set(blocked.map((line) => catalogById.get(line.productId)?.name ?? line.productId))].join(", "))}
+      </p>
+      <button type="button" onClick={() => blocked.forEach((line) => cart.remove(line.id))} className={buttonClasses("secondary", "sm", "shrink-0")}>
+        {copy.owned.removeAll}
+      </button>
+    </div>
+  ) : null;
   const activeGroups = cartGroups.filter((group) => totals[group].lines.length);
   const money: Money = (cents, group) => `${formatCents(cents, locale)}${group === "monthly" ? copy.perMonth : ""}`;
   const itemCount = totals.oneTime.quantity + totals.monthly.quantity;
@@ -111,6 +138,7 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
   if (!lines.length) {
     return (
       <div className="flex flex-col gap-8">
+        {ownedNotice}
         <div className="card flex flex-col items-center gap-5 px-5 py-10 text-center sm:py-12">
           <span className="grid h-16 w-16 place-items-center rounded-full bg-accent-soft text-accent-text">
             <CartIcon size={28} />
@@ -148,6 +176,7 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
           {step === "cart" ? (
             <>
               <CartToolbar copy={copy} count={itemCount} />
+              {ownedNotice}
               {activeGroups.map((group) => (
                 <section key={group} aria-labelledby={`cart-group-${group}`} className="card overflow-hidden">
                   <header className="flex flex-col gap-0.5 border-b border-line bg-surface-2/60 px-4 py-3.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3 sm:px-6 sm:py-4">
@@ -170,6 +199,13 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
                           copy={copy}
                           money={(cents) => money(cents, group)}
                           showAddVariant={Boolean(item.customization) && lastOfProduct}
+                          ownedNote={
+                            ownedSpaces(line.productId, owned)
+                              ? copy.owned.extraSpaces
+                                  .replace("{owned}", spacesLabel(ownedSpaces(line.productId, owned), locale))
+                                  .replace("{added}", spacesLabel(line.quantity, locale))
+                              : null
+                          }
                         />
                       );
                     })}
@@ -419,9 +455,14 @@ interface CartLineRowProps {
   copy: CartCopy;
   money: (cents: number) => string;
   showAddVariant: boolean;
+  ownedNote: string | null;
 }
 
-function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLineRowProps) {
+function spacesLabel(count: number, locale: Locale): string {
+  return locale === "pt" ? `${count} ${count === 1 ? "espaço" : "espaços"}` : `${count} ${count === 1 ? "space" : "spaces"}`;
+}
+
+function CartLineRow({ locale, line, item, copy, money, showAddVariant, ownedNote }: CartLineRowProps) {
   const formatLabel = item.customization?.formats.find((format) => format.value === line.options?.format)?.label;
   const lineName = formatLabel ? `${item.name} (${formatLabel})` : item.name;
 
@@ -439,6 +480,7 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
           <p className="tabular text-sm text-muted">
             {money(line.unitCents)} {copy.unitPrice}
           </p>
+          {ownedNote ? <p className="mt-1 rounded-lg bg-accent-soft/60 px-2.5 py-1.5 text-sm text-text">{ownedNote}</p> : null}
           {line.lineExtraCents ? (
             <p className="tabular text-sm text-muted">{copy.customize.lineExtra.replace("{price}", money(line.lineExtraCents))}</p>
           ) : null}

@@ -48,7 +48,7 @@ interface SubmitButtonProps {
   children: ReactNode;
   pendingLabel?: string;
   variant?: "primary" | "secondary" | "ghost";
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
   className?: string;
   ariaLabel?: string;
 }
