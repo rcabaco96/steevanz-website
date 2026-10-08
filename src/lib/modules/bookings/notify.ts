@@ -4,13 +4,14 @@ import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { formatBookingWhen, toleranceText, type BookingPageRow, type EstablishmentBookingRow } from "./store";
 
-/** "Corte de cabelo com o Rui" / "Mesa para 4". */
+/** "Corte · Rui" / "Futebol (1 hora) · Campo de futebol 2" / "Mesa para 4 pessoas". */
 export function bookingSummary(booking: EstablishmentBookingRow, bundle: EstablishmentBundle): string {
   const service = booking.service_id ? bundle.services.find((item) => item.id === booking.service_id) : null;
   const staff = booking.staff_id ? bundle.staff.find((item) => item.id === booking.staff_id) : null;
-  if (service) return `${service.name}${staff ? ` com ${staff.name}` : ""}`;
-  if (booking.party_size) return `Mesa para ${booking.party_size} ${booking.party_size === 1 ? "pessoa" : "pessoas"}`;
-  return "Reserva";
+  const people = booking.party_size ? `${booking.party_size} ${booking.party_size === 1 ? "pessoa" : "pessoas"}` : null;
+  if (service && people) return `${service.name} para ${people}`;
+  if (service) return `${service.name}${staff ? ` · ${staff.name}` : ""}`;
+  return people ? `Reserva para ${people}` : "Reserva";
 }
 
 export function calendarEvent(booking: EstablishmentBookingRow, bundle: EstablishmentBundle) {

@@ -52,7 +52,7 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
   const deadline =
     called && entry.called_at
       ? new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(
-          new Date(Date.parse(entry.called_at) + settings.grace_minutes * (entry.reply === "late" ? 2 : 1) * 60_000),
+          new Date(Date.parse(entry.called_at) + settings.grace_minutes * 60_000),
         )
       : null;
 
@@ -81,7 +81,7 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
             <div role="alert" className="mt-4 flex flex-col gap-1">
               <p className="display text-[1.7rem] leading-tight">{words.ready}</p>
               <p className="opacity-85">
-                {entry.reply === "late" ? `Avisou que se atrasa: guardamos a vez até às ${deadline}.` : "Não precisa de fazer mais nada."}
+                Venha já: guardamos a sua vez até às {deadline}.
               </p>
             </div>
           ) : null}
@@ -106,12 +106,12 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
 
       {called ? (
         <PublicCard>
-          <p className="text-center text-sm text-muted">Só se precisar de avisar a equipa:</p>
-          <ReplyButtons token={entry.token} called current={entry.reply} />
+          <p className="text-center text-sm text-muted">Já não pode vir? Avise para chamarmos o seguinte.</p>
+          <ReplyButtons token={entry.token} />
         </PublicCard>
       ) : live ? (
         <PublicCard>
-          <ReplyButtons token={entry.token} called={false} current={entry.reply} />
+          <ReplyButtons token={entry.token} />
         </PublicCard>
       ) : (
         <Link href={`/fila/${establishment.slug}`} className="text-center text-sm font-semibold text-muted hover:text-text">

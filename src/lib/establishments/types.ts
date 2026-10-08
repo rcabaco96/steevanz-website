@@ -23,6 +23,27 @@ export interface ServiceRow {
   price_cents: number | null;
   active: boolean;
   sort: number;
+  /** "one": one customer at a time per person or place; "group": several people until it fills (per turn). */
+  booking_kind: "one" | "group";
+  /** Group: people per turn. */
+  capacity: number | null;
+  /** Group: the most people in one booking (online). */
+  max_party: number;
+}
+
+/** Who (or what) does a service. None for a service = every active person or place. */
+export interface ServiceStaffRow {
+  service_id: string;
+  staff_id: string;
+}
+
+/** A person's or place's own weekly hours (none = the space's hours). */
+export interface StaffHoursRow {
+  id: string;
+  staff_id: string;
+  weekday: number;
+  opens: string;
+  closes: string;
 }
 
 export interface StaffRow {
@@ -56,6 +77,8 @@ export interface EstablishmentBundle {
   staff: StaffRow[];
   hours: HoursRow[];
   closures: ClosureRow[];
+  serviceStaff: ServiceStaffRow[];
+  staffHours: StaffHoursRow[];
 }
 
 export const weekdayNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] as const;

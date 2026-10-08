@@ -84,7 +84,7 @@ describe("sanitizeLines", () => {
   });
 });
 
-import { alreadyActive, ownedSpaces } from "../src/lib/cart/ownership.ts";
+import { alreadyActive } from "../src/lib/cart/ownership.ts";
 
 describe("products the account already has", () => {
   const owned = [
@@ -96,13 +96,11 @@ describe("products the account already has", () => {
     assert.equal(alreadyActive("ai-reviews", owned), true);
     assert.equal(alreadyActive("ai-chatbot", owned), false);
   });
-  it("lets per-space products add spaces", () => {
-    assert.equal(alreadyActive("waitlist", owned), false);
-    assert.equal(ownedSpaces("waitlist", owned), 2);
-    assert.equal(ownedSpaces("bookings", owned), 0);
+  it("leaves out the space products already active too (one business per client)", () => {
+    assert.equal(alreadyActive("waitlist", owned), true);
+    assert.equal(alreadyActive("bookings", owned), false);
   });
   it("lets one-off products be bought again", () => {
     assert.equal(alreadyActive("nfc-menu", owned), false);
-    assert.equal(ownedSpaces("nfc-menu", owned), 0);
   });
 });

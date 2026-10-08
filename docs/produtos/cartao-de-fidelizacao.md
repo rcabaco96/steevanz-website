@@ -12,15 +12,15 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 3. Na ficha do cliente ativa-se o produto **Cartão de fidelização** (ou aceita-se a encomenda).
 4. O **espaço** (o restaurante, café ou barbearia) é criado sozinho com o nome do negócio. Edita-se
    em **Editar espaço**.
-5. **Preço por espaço:** cada espaço paga o mesmo. O produto cobre os primeiros N espaços do cliente
-   (campo «Espaços» no produto; numa encomenda, a quantidade é o nº de espaços).
+5. **Um cliente = um negócio** (por agora): o produto funciona no espaço do cliente. A base de dados
+   aceita vários espaços, para quando for preciso.
 6. Define-se o **PIN de carimbo** (Definições) e imprime-se o cartaz com o QR (separador
    **Cartaz e link**).
 
 ## Quem faz o quê
 
 ### Admin (Steevanz)
-- Ativa, suspende, cancela ou remove o produto e define os espaços, na ficha do cliente.
+- Ativa, suspende, cancela ou remove o produto, na ficha do cliente.
 - Abre o módulo ou o **Balcão** de cada espaço e faz tudo o que o dono faz (configurar, dar apoio).
 - Define as regras e o PIN de carimbo e imprime o cartaz.
 

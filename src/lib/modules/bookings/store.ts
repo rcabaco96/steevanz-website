@@ -1,22 +1,24 @@
-import { kindDefaults } from "@/lib/establishments/kinds";
 import { isUuid, shortTime } from "@/lib/establishments/store";
-import type { EstablishmentBundle, EstablishmentRow } from "@/lib/establishments/types";
+import type { EstablishmentBundle, EstablishmentRow, ServiceRow } from "@/lib/establishments/types";
 import { addDaysToDate, zonedDateString, zonedDateTimeToUtc } from "@/lib/booking/slots";
 import { createServiceClient } from "@/lib/supabase/service";
 import { tokenPattern } from "../common";
-import { bookingAvailability, canChangeOnline, type BookingDay, type BusyPeriod } from "./availability";
+import { bookedInTurn, bookingAvailability, canChangeOnline, turnLabel, type BookingDay, type BusyPeriod } from "./availability";
 
 export type BookingStatus = "confirmed" | "arrived" | "no_show" | "cancelled";
 
 export interface BookingPageRow {
   establishment_id: string;
   active: boolean;
-  mode: "table" | "service";
   slot_interval_minutes: number;
   min_notice_minutes: number;
   max_days_ahead: number;
+  /** Not used any more (restaurants book by turn). */
   table_minutes: number;
+  /** Restaurants: people per turn (lunch, dinner). */
   seats_per_slot: number;
+  /** Restaurants: the last booking starts this long before the turn ends. */
+  last_booking_minutes: number;
   max_party: number;
   cancel_until_hours: number;
   policy: string | null;
@@ -77,26 +79,85 @@ export function isLate(booking: Pick<EstablishmentBookingRow, "status" | "starts
   return booking.status === "confirmed" && now > Date.parse(booking.starts_at) + page.late_grace_minutes * 60_000;
 }
 
-/** The bookings of a list that are late right now. */
-export function lateBookingIds(bookings: Pick<EstablishmentBookingRow, "id" | "status" | "starts_at">[], page: Pick<BookingPageRow, "late_grace_minutes">): Set<string> {
-  const now = Date.now();
-  return new Set(bookings.filter((booking) => isLate(booking, page, now)).map((booking) => booking.id));
+export interface TurnSummary {
+  service: ServiceRow;
+  label: string;
+  start: number;
+  end: number;
+  /** People booked to arrive in this turn for this service (confirmed or arrived). */
+  booked: number;
+  capacity: number;
 }
 
-/** Today at the counter: the day's bookings, the delays set, which are late and the next one to arrive. */
-export async function todayAgenda(establishment: EstablishmentRow, page: Pick<BookingPageRow, "late_grace_minutes">) {
+/** Group services (restaurant tables): each turn of a local day with how many people are booked. */
+export function dayTurns(bundle: EstablishmentBundle, date: string, bookings: Pick<EstablishmentBookingRow, "status" | "starts_at" | "party_size" | "service_id">[]): TurnSummary[] {
+  const timeZone = bundle.establishment.time_zone;
+  const weekday = new Date(`${date}T12:00:00Z`).getUTCDay();
+  const minutes = (value: string) => Number(value.slice(0, 2)) * 60 + Number(value.slice(3, 5));
+  const intervals = bundle.hours
+    .filter((row) => row.weekday === weekday)
+    .map((row) => ({ opens: minutes(row.opens), closes: minutes(row.closes) }))
+    .sort((a, b) => a.opens - b.opens);
+  return bundle.services
+    .filter((service) => service.active && service.booking_kind === "group")
+    .flatMap((service) => {
+      const arrivals = bookings
+        .filter((booking) => booking.service_id === service.id && (booking.status === "confirmed" || booking.status === "arrived"))
+        .map((booking) => ({ start: Date.parse(booking.starts_at), party: booking.party_size ?? 1 }));
+      return intervals.map(({ opens, closes }) => {
+        const start = zonedDateTimeToUtc(date, opens, timeZone).getTime();
+        const end = zonedDateTimeToUtc(date, closes, timeZone).getTime();
+        return { service, label: turnLabel(opens), start, end, booked: bookedInTurn(arrivals, start, end), capacity: service.capacity ?? 1 };
+      });
+    });
+}
+
+/** One day of the agenda: bookings, blocks, delays (today), which are late, and the turns (restaurants). */
+export async function loadAgendaDay(bundle: EstablishmentBundle, page: BookingPageRow, date: string) {
+  const { establishment } = bundle;
   const now = Date.now();
-  const date = zonedDateString(new Date(now), establishment.time_zone);
-  const [{ bookings }, delays] = await Promise.all([loadDay(establishment, date), loadDelays(establishment, date)]);
+  const today = zonedDateString(new Date(now), establishment.time_zone);
+  const [{ bookings, blocks }, delays] = await Promise.all([loadDay(establishment, date), date === today ? loadDelays(establishment, date) : Promise.resolve([])]);
   const late = new Set(bookings.filter((booking) => isLate(booking, page, now)).map((booking) => booking.id));
-  const next = bookings.find((booking) => booking.status === "confirmed" && !late.has(booking.id)) ?? null;
-  return { date, now, bookings, delays, late, next };
+  return { date, today, now, bookings, blocks, delays, late, turns: dayTurns(bundle, date, bookings) };
+}
+
+/** Bookings still on (confirmed or arrived) per local day, for the day picker. */
+export async function bookingCountsByDay(establishment: EstablishmentRow, from: string, days: number): Promise<Map<string, number>> {
+  const { data, error } = await createServiceClient()
+    .from("establishment_bookings")
+    .select("starts_at")
+    .eq("establishment_id", establishment.id)
+    .in("status", ["confirmed", "arrived"])
+    .gte("starts_at", zonedDateTimeToUtc(from, 0, establishment.time_zone).toISOString())
+    .lt("starts_at", zonedDateTimeToUtc(addDaysToDate(from, days), 0, establishment.time_zone).toISOString())
+    .limit(5000);
+  if (error) throw new Error(`bookingCountsByDay: ${error.message}`);
+  const counts = new Map<string, number>();
+  for (const row of (data ?? []) as { starts_at: string }[]) {
+    const day = zonedDateString(new Date(row.starts_at), establishment.time_zone);
+    counts.set(day, (counts.get(day) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/** Blocked periods from today on (Definições). */
+export async function loadUpcomingBlocks(establishment: EstablishmentRow): Promise<BookingBlockRow[]> {
+  const { data, error } = await createServiceClient()
+    .from("booking_blocks")
+    .select("*")
+    .eq("establishment_id", establishment.id)
+    .gt("ends_at", new Date().toISOString())
+    .order("starts_at")
+    .limit(100);
+  if (error) throw new Error(`loadUpcomingBlocks: ${error.message}`);
+  return (data ?? []) as BookingBlockRow[];
 }
 
 /** "Guardamos a mesa 10 minutos." / "Tolerância de 10 minutos." (null without tolerance). */
-export function toleranceText(page: Pick<BookingPageRow, "late_grace_minutes" | "mode">): string | null {
+export function toleranceText(page: Pick<BookingPageRow, "late_grace_minutes">): string | null {
   if (!page.late_grace_minutes) return null;
-  return page.mode === "table" ? `Guardamos a mesa ${page.late_grace_minutes} minutos.` : `Tolerância de atraso: ${page.late_grace_minutes} minutos.`;
+  return `Tolerância de atraso: ${page.late_grace_minutes} minutos.`;
 }
 
 export interface BookingBlockRow {
@@ -109,16 +170,16 @@ export interface BookingBlockRow {
 }
 
 export const bookingStatusLabels: Record<BookingStatus, string> = {
-  confirmed: "Confirmada",
+  confirmed: "Por chegar",
   arrived: "Chegou",
-  no_show: "Não compareceu",
+  no_show: "Não veio",
   cancelled: "Cancelada",
 };
 
 /** Start times are offered every 15 minutes (tables and services alike), as booking sites do. */
 export const slotStepMinutes = 15;
-/** Restaurants take the last table booking one hour before closing. */
-export const lastTableBeforeCloseMinutes = 60;
+/** How long a restaurant booking shows in calendars (it holds a place for the whole turn). */
+const tableCalendarMinutes = 120;
 
 /**
  * The booking page. Its kind follows the business (restaurants book tables, the rest book
@@ -126,17 +187,12 @@ export const lastTableBeforeCloseMinutes = 60;
  */
 export async function ensureBookingPage(establishment: EstablishmentRow): Promise<BookingPageRow> {
   const client = createServiceClient();
-  const mode = kindDefaults[establishment.kind].bookingMode;
   const { data, error } = await client.from("booking_pages").select("*").eq("establishment_id", establishment.id).maybeSingle();
   if (error) throw new Error(`booking page: ${error.message}`);
-  if (data) {
-    const page = data as BookingPageRow;
-    if (page.mode !== mode) await client.from("booking_pages").update({ mode }).eq("establishment_id", establishment.id);
-    return { ...page, mode };
-  }
+  if (data) return data as BookingPageRow;
   const { data: created, error: insertError } = await client
     .from("booking_pages")
-    .upsert({ establishment_id: establishment.id, mode, slot_interval_minutes: slotStepMinutes }, { onConflict: "establishment_id" })
+    .upsert({ establishment_id: establishment.id, slot_interval_minutes: slotStepMinutes }, { onConflict: "establishment_id" })
     .select("*")
     .single();
   if (insertError) throw new Error(`booking page insert: ${insertError.message}`);
@@ -149,7 +205,7 @@ export async function loadBusy(establishmentId: string, from: Date, to: Date) {
   const [bookings, blocks] = await Promise.all([
     client
       .from("establishment_bookings")
-      .select("staff_id, party_size, starts_at, ends_at")
+      .select("id, service_id, staff_id, party_size, starts_at, ends_at")
       .eq("establishment_id", establishmentId)
       .in("status", ["confirmed", "arrived"])
       .lt("starts_at", to.toISOString())
@@ -160,7 +216,7 @@ export async function loadBusy(establishmentId: string, from: Date, to: Date) {
   if (bookings.error) throw new Error(`loadBusy: ${bookings.error.message}`);
   if (blocks.error) throw new Error(`loadBusy blocks: ${blocks.error.message}`);
   return {
-    bookings: (bookings.data ?? []) as Pick<EstablishmentBookingRow, "staff_id" | "party_size" | "starts_at" | "ends_at">[],
+    bookings: (bookings.data ?? []) as Pick<EstablishmentBookingRow, "id" | "service_id" | "staff_id" | "party_size" | "starts_at" | "ends_at">[],
     blocks: (blocks.data ?? []) as Pick<BookingBlockRow, "staff_id" | "starts_at" | "ends_at">[],
   };
 }
@@ -171,54 +227,74 @@ export interface AvailabilityRequest {
   partySize: number;
   from?: string;
   days?: number;
+  /** The team changing a booking: it doesn't count against itself. */
+  excludeId?: string;
+  /** The team booking (phone, counter): no minimum notice. */
+  forStaff?: boolean;
 }
 
-/** What the booking page needs for a request, or why it can't be answered. */
-export function resolveRequest(bundle: EstablishmentBundle, page: BookingPageRow, request: AvailabilityRequest) {
-  const activeStaff = bundle.staff.filter((item) => item.active);
-  if (page.mode === "table") {
-    if (request.partySize < 1 || request.partySize > page.max_party) return { error: "party" } as const;
-    return { occupied: page.table_minutes, fit: lastTableBeforeCloseMinutes, staff: [] as string[], service: null } as const;
-  }
+/** The people or places that can do a service: the chosen ones, or every active one. */
+export function serviceStaff(bundle: EstablishmentBundle, service: ServiceRow): string[] {
+  const active = bundle.staff.filter((item) => item.active).map((item) => item.id);
+  const chosen = bundle.serviceStaff.filter((row) => row.service_id === service.id).map((row) => row.staff_id);
+  return chosen.length ? active.filter((id) => chosen.includes(id)) : active;
+}
+
+/** What a request needs (the service, and who can do it), or why it can't be answered. */
+export function resolveRequest(bundle: EstablishmentBundle, request: AvailabilityRequest) {
   const service = bundle.services.find((item) => item.id === request.serviceId && item.active);
   if (!service) return { error: "service" } as const;
-  if (request.staffId && !activeStaff.some((item) => item.id === request.staffId)) return { error: "staff" } as const;
-  const staff = request.staffId ? [request.staffId] : activeStaff.map((item) => item.id);
-  return { occupied: service.duration_minutes + service.buffer_minutes, fit: service.duration_minutes, staff, service } as const;
+  if (service.booking_kind === "group") {
+    if (request.partySize < 1 || request.partySize > (request.forStaff ? 1000 : service.max_party)) return { error: "party" } as const;
+    return { service, staff: [] as string[] } as const;
+  }
+  const eligible = serviceStaff(bundle, service);
+  if (request.staffId && !eligible.includes(request.staffId)) return { error: "staff" } as const;
+  return { service, staff: request.staffId ? [request.staffId] : eligible } as const;
 }
 
 export async function computeDays(bundle: EstablishmentBundle, page: BookingPageRow, request: AvailabilityRequest, now = Date.now()): Promise<BookingDay[]> {
-  const resolved = resolveRequest(bundle, page, request);
+  const resolved = resolveRequest(bundle, request);
   if ("error" in resolved) return [];
+  const { service } = resolved;
   const { establishment } = bundle;
   const today = zonedDateString(new Date(now), establishment.time_zone);
   const from = request.from && request.from > today ? request.from : today;
-  const days = Math.min(request.days ?? page.max_days_ahead + 1, page.max_days_ahead + 1);
+  const horizon = request.forStaff ? Math.max(page.max_days_ahead, 365) : page.max_days_ahead;
+  const days = Math.min(request.days ?? horizon + 1, horizon + 1);
   const rangeStart = zonedDateTimeToUtc(from, 0, establishment.time_zone);
   const rangeEnd = zonedDateTimeToUtc(addDaysToDate(from, days + 1), 0, establishment.time_zone);
-  const { bookings, blocks } = await loadBusy(establishment.id, rangeStart, rangeEnd);
+  const busyRows = await loadBusy(establishment.id, rangeStart, rangeEnd);
+  const bookings = request.excludeId ? busyRows.bookings.filter((row) => row.id !== request.excludeId) : busyRows.bookings;
+  const groupIds = new Set(bundle.services.filter((item) => item.booking_kind === "group").map((item) => item.id));
   const busy: BusyPeriod[] = [
-    ...bookings.map((row) => ({ staffId: row.staff_id, start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), kind: "booking" as const })),
-    ...blocks.map((row) => ({ staffId: row.staff_id, start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), kind: "block" as const })),
+    // One-at-a-time services only: group bookings (tables) never hold a person or the space.
+    ...bookings
+      .filter((row) => !(row.service_id && groupIds.has(row.service_id)))
+      .map((row) => ({ staffId: row.staff_id, start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), kind: "booking" as const })),
+    ...busyRows.blocks.map((row) => ({ staffId: row.staff_id, start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), kind: "block" as const })),
   ];
-  const tables = page.mode === "table" ? bookings.map((row) => ({ start: Date.parse(row.starts_at), end: Date.parse(row.ends_at), party: row.party_size ?? 1 })) : [];
+  const staffHours: Record<string, { weekday: number; opens: string; closes: string }[]> = {};
+  for (const row of bundle.staffHours) (staffHours[row.staff_id] ??= []).push({ weekday: row.weekday, opens: shortTime(row.opens), closes: shortTime(row.closes) });
   return bookingAvailability(
     {
-      mode: page.mode,
+      kind: service.booking_kind,
       timeZone: establishment.time_zone,
       now,
-      minNoticeMinutes: page.min_notice_minutes,
-      maxDaysAhead: page.max_days_ahead,
+      minNoticeMinutes: request.forStaff ? 0 : page.min_notice_minutes,
+      maxDaysAhead: horizon,
       intervalMinutes: slotStepMinutes,
-      occupiedMinutes: resolved.occupied,
-      fitMinutes: resolved.fit,
+      durationMinutes: service.booking_kind === "group" ? tableCalendarMinutes : service.duration_minutes,
+      bufferMinutes: service.booking_kind === "group" ? 0 : service.buffer_minutes,
+      lastArrivalMinutes: page.last_booking_minutes,
       hours: bundle.hours.map((row) => ({ weekday: row.weekday, opens: shortTime(row.opens), closes: shortTime(row.closes) })),
       closures: bundle.closures.map((row) => row.day),
       staff: resolved.staff,
+      staffHours,
       busy,
-      seatsPerSlot: page.seats_per_slot,
+      capacity: service.capacity ?? 1,
       partySize: request.partySize,
-      tables,
+      arrivals: bookings.filter((row) => row.service_id === service.id).map((row) => ({ start: Date.parse(row.starts_at), party: row.party_size ?? 1 })),
     },
     { from, days },
   );
@@ -263,49 +339,6 @@ export async function loadDay(establishment: EstablishmentRow, date: string) {
   if (bookings.error) throw new Error(`loadDay: ${bookings.error.message}`);
   if (blocks.error) throw new Error(`loadDay blocks: ${blocks.error.message}`);
   return { bookings: (bookings.data ?? []) as EstablishmentBookingRow[], blocks: (blocks.data ?? []) as BookingBlockRow[] };
-}
-
-export async function loadUpcoming(establishment: EstablishmentRow, days = 14): Promise<EstablishmentBookingRow[]> {
-  const { data, error } = await createServiceClient()
-    .from("establishment_bookings")
-    .select("*")
-    .eq("establishment_id", establishment.id)
-    .eq("status", "confirmed")
-    .gte("starts_at", new Date().toISOString())
-    .lt("starts_at", new Date(Date.now() + days * 86_400_000).toISOString())
-    .order("starts_at")
-    .limit(500);
-  if (error) throw new Error(`loadUpcoming: ${error.message}`);
-  return (data ?? []) as EstablishmentBookingRow[];
-}
-
-export interface BookingStats {
-  days: number;
-  total: number;
-  online: number;
-  arrived: number;
-  noShow: number;
-  cancelled: number;
-}
-
-export async function loadBookingStats(establishment: EstablishmentRow, days = 30): Promise<BookingStats> {
-  const { data, error } = await createServiceClient()
-    .from("establishment_bookings")
-    .select("status, source")
-    .eq("establishment_id", establishment.id)
-    .gte("starts_at", new Date(Date.now() - days * 86_400_000).toISOString())
-    .lt("starts_at", new Date().toISOString())
-    .limit(10000);
-  if (error) throw new Error(`loadBookingStats: ${error.message}`);
-  const rows = (data ?? []) as { status: BookingStatus; source: string }[];
-  return {
-    days,
-    total: rows.length,
-    online: rows.filter((row) => row.source === "online").length,
-    arrived: rows.filter((row) => row.status === "arrived").length,
-    noShow: rows.filter((row) => row.status === "no_show").length,
-    cancelled: rows.filter((row) => row.status === "cancelled").length,
-  };
 }
 
 /** Whether a booking still holds a place and can still be changed or cancelled online (now). */

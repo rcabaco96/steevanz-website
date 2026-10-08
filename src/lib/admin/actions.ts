@@ -223,8 +223,7 @@ export async function updateOrder(_previous: AdminActionState, formData: FormDat
     }
 
     // Accepting gives the client access to every product in the order. A product the client
-    // already has active keeps its start date: per-space products add the spaces ordered, the
-    // others stay as they are. New (or suspended) products start today.
+    // already has active stays as it is; new (or suspended) products start today.
     const account = await accountForOrder(order);
     if (!account) {
       return { ok: false, message: `Não existe conta com o email ${order.email}. Peça ao cliente para criar conta com esse email e aceite de novo.` };
@@ -238,16 +237,9 @@ export async function updateOrder(_previous: AdminActionState, formData: FormDat
         .in("product_id", productIds);
       if (currentError) throw new Error(currentError.message);
       const active = new Map(((current ?? []) as Pick<ClientProductRow, "product_id" | "status" | "spaces">[]).filter((row) => row.status === "active").map((row) => [row.product_id, row]));
-      const ordered = (productId: string) => order.items.filter((item) => item.productId === productId).reduce((sum, item) => sum + item.quantity, 0);
       for (const product_id of productIds) {
         const existing = active.get(product_id);
-        if (existing) {
-          if (!isEstablishmentProduct(product_id)) continue;
-          const spaces = Math.min(100, Math.max(1, existing.spaces ?? 1) + Math.max(1, ordered(product_id)));
-          const { error } = await client.from("client_products").update({ spaces }).eq("user_id", account.id).eq("product_id", product_id);
-          if (error) throw new Error(error.message);
-          continue;
-        }
+        if (existing) continue;
         const { error } = await client.from("client_products").upsert(
           {
             user_id: account.id,
@@ -255,8 +247,7 @@ export async function updateOrder(_previous: AdminActionState, formData: FormDat
             status: "active",
             order_id: order.id,
             activated_at: new Date().toISOString(),
-            // Products sold per space: the quantity ordered is the number of spaces.
-            spaces: isEstablishmentProduct(product_id) ? Math.max(1, Math.min(100, ordered(product_id))) : 1,
+            spaces: 1,
           },
           { onConflict: "user_id,product_id" },
         );

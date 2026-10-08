@@ -12,7 +12,7 @@ import { honeypotField } from "@/lib/booking/types";
 import type { OrderItem, OrderTotals } from "@/lib/accounts/types";
 import { getSession } from "@/lib/auth/session";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
-import { alreadyActive, ownedSpaces, type OwnedProduct } from "./ownership";
+import { alreadyActive, type OwnedProduct } from "./ownership";
 import { formatCents, priceCart, sanitizeLines, vatRate, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
 
 export type OrderActionState =
@@ -159,14 +159,6 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
     rows: [
       { label: "Referência", value: reference },
       { label: "Conta", value: userId ? "Cliente com conta (ver Encomendas no painel)" : "Sem conta" },
-      {
-        label: "Já tem",
-        value:
-          lines
-            .filter((line) => ownedSpaces(line.productId, owned))
-            .map((line) => `${productLabel(line.productId)}: ${ownedSpaces(line.productId, owned)} espaço(s), a encomenda acrescenta ${line.quantity}`)
-            .join(" · ") || null,
-      },
       { label: "Nome", value: data.name },
       { label: "Email", value: data.email },
       { label: "Telemóvel", value: data.phone },

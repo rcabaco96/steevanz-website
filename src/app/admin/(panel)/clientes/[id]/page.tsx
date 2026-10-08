@@ -57,7 +57,7 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
             <p className="font-semibold text-text">{productId ? getProductCopy(productId, "pt").name : row.product_id}</p>
             <p className="text-xs text-subtle">
               Desde {lisbonTimestamp(row.activated_at)}
-              {perSpace(row.product_id) ? ` · ${row.spaces} ${row.spaces === 1 ? "espaço" : "espaços"}` : ""}
+
             </p>
           </div>
         </div>
@@ -75,7 +75,7 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
           <ActionForm
             key={`${row.status}:${row.notes ?? ""}:${row.spaces}`}
             action={saveClientProduct}
-            className={`mt-3 grid grid-cols-1 gap-2 sm:items-end ${perSpace(row.product_id) ? "sm:grid-cols-[9rem_6rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[9rem_minmax(0,1fr)_auto]"}`}
+            className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-end"
           >
             <input type="hidden" name="user_id" value={ownerId} />
             <input type="hidden" name="product_id" value={row.product_id} />
@@ -89,14 +89,7 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
                 ))}
               </select>
             </label>
-            {perSpace(row.product_id) ? (
-              <label className={adminLabelClasses}>
-                Espaços
-                <input name="spaces" type="number" min={1} max={100} required defaultValue={row.spaces} className={`${adminInputClasses} h-10`} />
-              </label>
-            ) : (
-              <input type="hidden" name="spaces" value={row.spaces} />
-            )}
+            <input type="hidden" name="spaces" value={row.spaces} />
             <label className={adminLabelClasses}>
               Notas internas
               <input name="notes" defaultValue={row.notes ?? ""} maxLength={2000} className={`${adminInputClasses} h-10`} />
@@ -107,7 +100,7 @@ function ProductCard({ row, ownerId }: { row: ClientProductRow; ownerId: string 
           </ActionForm>
           <ActionForm
             action={removeClientProduct}
-            confirmMessage={`Remover «${productId ? getProductCopy(productId, "pt").name : row.product_id}» deste cliente? Deixa de o ver na área de cliente. Os espaços e os dados (fila, cartões, reservas) ficam guardados.`}
+            confirmMessage={`Remover «${productId ? getProductCopy(productId, "pt").name : row.product_id}» deste cliente? Deixa de o ver na área de cliente. O espaço e os dados (fila, cartões, reservas) ficam guardados.`}
             className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3"
           >
             <input type="hidden" name="user_id" value={ownerId} />

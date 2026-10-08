@@ -4,7 +4,7 @@ import { BookingWizard } from "@/components/public/bookings/BookingWizard";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
-import { bookingChangeState, ensureBookingPage, formatBookingWhen, getBookingByToken, toleranceText } from "@/lib/modules/bookings/store";
+import { bookingChangeState, ensureBookingPage, formatBookingWhen, getBookingByToken, serviceStaff, toleranceText } from "@/lib/modules/bookings/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -34,7 +34,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
 
   const services = bundle.services.filter((item) => item.active);
   const staff = bundle.staff.filter((item) => item.active);
-  const unavailable = !page.active || (page.mode === "service" && !services.length) || !bundle.hours.length;
+  const unavailable = !page.active || !services.length || !bundle.hours.length;
 
   return (
     <BrandFrame establishment={establishment} service={words.bookingTitle}>
@@ -54,15 +54,16 @@ export default async function BookingPage({ params, searchParams }: Props) {
           ) : null}
           <BookingWizard
             slug={establishment.slug}
-            mode={page.mode}
             services={services.map((item) => ({
               id: item.id,
               name: item.name,
               minutes: item.duration_minutes,
               price: item.price_cents === null ? null : price.format(item.price_cents / 100),
+              kind: item.booking_kind,
+              maxParty: item.max_party,
+              staff: item.booking_kind === "one" ? serviceStaff(bundle, item) : [],
             }))}
             staff={staff.map((item) => ({ id: item.id, name: item.name }))}
-            maxParty={page.max_party}
             replaceToken={canReplace && replacing ? replacing.token : null}
             initial={{
               service: canReplace ? (replacing?.service_id ?? null) : first(query.servico) || null,

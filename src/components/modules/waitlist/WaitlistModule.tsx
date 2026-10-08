@@ -44,9 +44,15 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
           <span className="text-xs font-normal text-subtle">Tempo médio entre duas chamadas. A estimativa ajusta-se ao ritmo real do dia.</span>
         </label>
         <label className={adminLabelClasses}>
-          Minutos até a chamada fechar
-          <input name="grace_minutes" type="number" min={1} max={120} required defaultValue={settings.grace_minutes} className={input} />
-          <span className="text-xs font-normal text-subtle">Depois de chamada, a pessoa conta como atendida passado este tempo, sem ninguém marcar nada. «Vou atrasar-me» dá o dobro.</span>
+          Tempo para chegar depois de chamado
+          <select name="grace_minutes" defaultValue={settings.grace_minutes} className={input}>
+            {[2, 3, 5, 10, 15].concat([2, 3, 5, 10, 15].includes(settings.grace_minutes) ? [] : [settings.grace_minutes]).map((minutes) => (
+              <option key={minutes} value={minutes}>
+                {minutes} minutos
+              </option>
+            ))}
+          </select>
+          <span className="text-xs font-normal text-subtle">O cliente vê «venha já» e até que horas guardamos a vez. Depois disso, «Não apareceu» chama o seguinte.</span>
         </label>
         <label className={adminLabelClasses}>
           Máximo à espera

@@ -6,16 +6,18 @@ import { after } from "next/server";
 import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
 import { requestOrigin } from "@/lib/booking/request";
-import { zonedDateString, zonedDateTimeToUtc, parseTimeToMinutes } from "@/lib/booking/slots";
+import { parseTimeToMinutes, zonedDateString, zonedDateTimeToUtc } from "@/lib/booking/slots";
+import { safeNextPath } from "@/lib/auth/session";
 import { accessErrorMessage, requireEstablishmentAccess } from "@/lib/establishments/access";
 import { isUuid, loadBundle } from "@/lib/establishments/store";
-import type { EstablishmentBundle, EstablishmentRow } from "@/lib/establishments/types";
+import type { EstablishmentBundle, EstablishmentRow, ServiceRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { formText, isBot, isModuleRateLimited, publicToken } from "../common";
 import { publicEstablishment } from "../public";
-import { canChangeOnline, findBookingSlot } from "./availability";
+import { canChangeOnline, findBookingSlot, type BookingSlot } from "./availability";
 import { sendBookingConfirmation, sendCancellationNotice, sendDelayNotice } from "./notify";
-import { computeDays, ensureBookingPage, getBooking, getBookingByToken, leastBusyFirst, resolveRequest, type BookingPageRow, type BookingStatus, type EstablishmentBookingRow } from "./store";
+import { businessTemplates } from "./templates";
+import { computeDays, ensureBookingPage, getBooking, getBookingByToken, leastBusyFirst, resolveRequest, type BookingStatus, type EstablishmentBookingRow } from "./store";
 
 function refresh(establishment: EstablishmentRow) {
   revalidatePath("/conta", "layout");
@@ -32,32 +34,36 @@ const contactSchema = z.object({
 
 interface BookParams {
   bundle: EstablishmentBundle;
-  page: BookingPageRow;
-  serviceId: string | null;
+  service: ServiceRow;
   staffCandidates: string[];
   party: number | null;
-  start: Date;
-  end: Date;
+  slot: BookingSlot;
   contact: z.output<typeof contactSchema>;
   source: "online" | "staff";
+  /** The team changing an existing booking (same link for the customer). */
+  bookingId?: string;
 }
 
+/** Books (or rebooks) a free slot. The database checks again, atomically: "taken" when it filled up. */
 async function book(params: BookParams): Promise<EstablishmentBookingRow | "taken"> {
-  const { data, error } = await createServiceClient().rpc("establishment_book", {
-    p_establishment: params.bundle.establishment.id,
-    p_token: publicToken(),
-    p_service: params.serviceId,
+  const shared = {
+    p_service: params.service.id,
     p_staff: params.staffCandidates,
     p_party: params.party,
-    p_starts: params.start.toISOString(),
-    p_ends: params.end.toISOString(),
+    p_starts: params.slot.start,
+    p_ends: params.slot.end,
     p_name: params.contact.name,
     p_email: params.contact.email,
     p_phone: params.contact.phone,
     p_notes: params.contact.notes,
-    p_source: params.source,
-    p_capacity: params.page.mode === "table" ? params.page.seats_per_slot : null,
-  });
+    p_capacity: params.service.booking_kind === "group" ? (params.service.capacity ?? 1) : null,
+    p_turn_start: params.slot.turn?.start ?? null,
+    p_turn_end: params.slot.turn?.end ?? null,
+  };
+  const client = createServiceClient();
+  const { data, error } = params.bookingId
+    ? await client.rpc("establishment_rebook", { p_booking: params.bookingId, ...shared })
+    : await client.rpc("establishment_book", { p_establishment: params.bundle.establishment.id, p_token: publicToken(), p_source: params.source, ...shared });
   if (error) {
     if (error.message.includes("slot_taken")) return "taken";
     throw new Error(error.message);
@@ -100,7 +106,7 @@ export async function createBooking(_previous: ActionState, formData: FormData):
       staffId: formText(formData, "staff") || null,
       partySize: Number(formText(formData, "party")) || 1,
     };
-    const resolved = resolveRequest(bundle, page, request);
+    const resolved = resolveRequest(bundle, request);
     if ("error" in resolved) return { ok: false, message: "Escolha de novo o serviço ou o número de pessoas." };
     const start = formText(formData, "start");
     const startDay = Number.isNaN(Date.parse(start)) ? null : zonedDateString(new Date(start), establishment.time_zone);
@@ -111,12 +117,10 @@ export async function createBooking(_previous: ActionState, formData: FormData):
 
     const result = await book({
       bundle,
-      page,
-      serviceId: resolved.service?.id ?? null,
-      staffCandidates: page.mode === "service" ? (request.staffId ? slot.staff : await leastBusyFirst(establishment, slot.staff, slot.start)) : [],
-      party: page.mode === "table" ? request.partySize : null,
-      start: new Date(slot.start),
-      end: new Date(slot.end),
+      service: resolved.service,
+      staffCandidates: resolved.service.booking_kind === "one" ? (request.staffId ? slot.staff : await leastBusyFirst(establishment, slot.staff, slot.start)) : [],
+      party: resolved.service.booking_kind === "group" ? request.partySize : null,
+      slot,
       contact: contact.data,
       source: "online",
     });
@@ -178,16 +182,17 @@ const dateSchema = z.iso.date();
 const timeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
 
 /**
- * Staff: a booking taken by phone or at the counter. Opening hours are not enforced (the team
- * decides), but a professional can't be double-booked and table capacity still applies.
+ * Staff: a booking taken by phone or at the counter, or a change to one (time, people, service,
+ * contact). Only free times can be picked (the same rules as the booking page, without the minimum
+ * notice); a change never counts the booking against itself and keeps the customer's link.
  */
-export async function staffCreateBooking(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  return staffGuard(async () => {
+export async function staffSaveBooking(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  let target: string | null = null;
+  const outcome = await staffGuard(async () => {
     const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "bookings");
     const [bundle, page] = await Promise.all([loadBundle(establishment), ensureBookingPage(establishment)]);
-    const date = formText(formData, "date");
-    const time = formText(formData, "time");
-    if (!dateSchema.safeParse(date).success || !timeSchema.safeParse(time).success) return { ok: false, message: "Indique o dia e a hora." };
+    const editing = formText(formData, "booking_id") ? await getBooking(establishment.id, formText(formData, "booking_id")) : null;
+    if (formText(formData, "booking_id") && !editing) return { ok: false, message: "Reserva não encontrada." };
     const contact = contactSchema.safeParse({
       name: formText(formData, "name"),
       email: formText(formData, "email"),
@@ -195,44 +200,40 @@ export async function staffCreateBooking(_previous: ActionState, formData: FormD
       notes: formText(formData, "notes"),
     });
     if (!contact.success) return { ok: false, message: "Indique o nome (e um email válido, se o puser)." };
-    const start = zonedDateTimeToUtc(date, parseTimeToMinutes(time), establishment.time_zone);
-    let minutes = page.table_minutes;
-    let serviceId: string | null = null;
-    let candidates: string[] = [];
-    let party: number | null = null;
-    if (page.mode === "service") {
-      const service = bundle.services.find((item) => item.id === formText(formData, "service"));
-      if (!service) return { ok: false, message: "Escolha o serviço." };
-      serviceId = service.id;
-      minutes = service.duration_minutes + service.buffer_minutes;
-      const chosen = formText(formData, "staff");
-      const active = bundle.staff.filter((item) => item.active).map((item) => item.id);
-      candidates = chosen && isUuid(chosen) ? [chosen] : await leastBusyFirst(establishment, active, start.toISOString());
-    } else {
-      party = Number(formText(formData, "party"));
-      if (!Number.isInteger(party) || party < 1 || party > 1000) return { ok: false, message: "Indique o número de pessoas." };
-    }
+    const request = {
+      serviceId: formText(formData, "service") || null,
+      staffId: formText(formData, "staff") || null,
+      partySize: Number(formText(formData, "party")) || 1,
+    };
+    const resolved = resolveRequest(bundle, { ...request, forStaff: true });
+    if ("error" in resolved) return { ok: false, message: resolved.error === "party" ? "Indique o número de pessoas." : "Escolha o serviço." };
+    const start = formText(formData, "start");
+    const startDay = Number.isNaN(Date.parse(start)) ? null : zonedDateString(new Date(start), establishment.time_zone);
+    if (!startDay || !dateSchema.safeParse(startDay).success) return { ok: false, message: "Escolha uma hora." };
+    const days = await computeDays(bundle, page, { ...request, from: startDay, days: 1, excludeId: editing?.id, forStaff: true });
+    const slot = findBookingSlot(days, start);
+    if (!slot) return { ok: false, message: "Essa hora já não está livre. Escolha outra." };
     const result = await book({
       bundle,
-      page,
-      serviceId,
-      staffCandidates: candidates,
-      party,
-      start,
-      end: new Date(start.getTime() + minutes * 60_000),
+      service: resolved.service,
+      staffCandidates: resolved.service.booking_kind === "one" ? (request.staffId ? slot.staff : await leastBusyFirst(establishment, slot.staff, slot.start)) : [],
+      party: resolved.service.booking_kind === "group" ? request.partySize : null,
+      slot,
       contact: contact.data,
       source: "staff",
+      bookingId: editing?.id,
     });
-    if (result === "taken") {
-      return { ok: false, message: page.mode === "table" ? "Não há lugares suficientes para essa hora." : "Esse profissional (ou a agenda) já está ocupado a essa hora." };
-    }
+    if (result === "taken") return { ok: false, message: "Essa hora acabou de ficar ocupada. Escolha outra." };
     if (formData.get("send_confirmation") === "on" && result.email) {
       const manageUrl = `${await requestOrigin()}/reservar/${establishment.slug}/${result.token}`;
-      after(() => sendBookingConfirmation(result, bundle, { ...page, notify_owner: false }, manageUrl, false));
+      after(() => sendBookingConfirmation(result, bundle, { ...page, notify_owner: false }, manageUrl, Boolean(editing)));
     }
     refresh(establishment);
-    return { ok: true, message: `Reserva de ${result.name} guardada.` };
+    target = safeNextPath(formText(formData, "back"), "") || null;
+    return { ok: true, message: editing ? "Reserva alterada." : `Reserva de ${result.name} guardada.` };
   });
+  if (outcome?.ok && target) redirect(target);
+  return outcome;
 }
 
 const statuses: BookingStatus[] = ["confirmed", "arrived", "no_show", "cancelled"];
@@ -299,7 +300,7 @@ const pageSchema = z.object({
   active: z.boolean(),
   min_notice_minutes: z.coerce.number().int().min(0).max(20160),
   max_days_ahead: z.coerce.number().int().min(1).max(365),
-  table_minutes: z.coerce.number().int().min(15).max(480),
+  last_booking_minutes: z.coerce.number().int().min(0).max(240),
   seats_per_slot: z.coerce.number().int().min(1).max(1000),
   max_party: z.coerce.number().int().min(1).max(100),
   cancel_until_hours: z.coerce.number().int().min(0).max(336),
@@ -316,7 +317,7 @@ export async function saveBookingPage(_previous: ActionState, formData: FormData
       active: formData.get("active") === "on",
       min_notice_minutes: formText(formData, "min_notice_minutes"),
       max_days_ahead: formText(formData, "max_days_ahead"),
-      table_minutes: formText(formData, "table_minutes"),
+      last_booking_minutes: formText(formData, "last_booking_minutes") || "60",
       seats_per_slot: formText(formData, "seats_per_slot"),
       max_party: formText(formData, "max_party"),
       cancel_until_hours: formText(formData, "cancel_until_hours"),
@@ -400,5 +401,55 @@ export async function setBookingDelay(_previous: ActionState, formData: FormData
     refresh(establishment);
     if (!minutes) return { ok: true, message: "Sem atraso." };
     return { ok: true, message: told ? `Atraso de ${minutes} min. Avisámos ${told} ${told === 1 ? "cliente" : "clientes"} por email.` : `Atraso de ${minutes} min registado.` };
+  });
+}
+
+/**
+ * Starts the services from an example business (restaurant, barbershop…): its usual services and,
+ * for sports, the pitches each one uses. Existing services stay; names already there are skipped.
+ */
+export async function applyBusinessTemplate(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return staffGuard(async () => {
+    const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "bookings");
+    const template = businessTemplates.find((item) => item.id === formText(formData, "template"));
+    if (!template) return { ok: false, message: "Escolha um exemplo." };
+    const client = createServiceClient();
+    const bundle = await loadBundle(establishment);
+    const places = new Map(bundle.staff.map((item) => [item.name, item.id]));
+    for (const [index, name] of (template.places ?? []).entries()) {
+      if (places.has(name)) continue;
+      const { data, error } = await client.from("establishment_staff").insert({ establishment_id: establishment.id, name, active: true, sort: index }).select("id").single<{ id: string }>();
+      if (error) throw new Error(error.message);
+      places.set(name, data.id);
+    }
+    const existing = new Set(bundle.services.map((item) => item.name.toLowerCase()));
+    let added = 0;
+    for (const [index, service] of template.services.entries()) {
+      if (existing.has(service.name.toLowerCase())) continue;
+      const { data, error } = await client
+        .from("establishment_services")
+        .insert({
+          establishment_id: establishment.id,
+          name: service.name,
+          duration_minutes: service.duration_minutes,
+          buffer_minutes: 0,
+          booking_kind: service.booking_kind,
+          capacity: service.booking_kind === "group" ? (service.capacity ?? 40) : null,
+          max_party: service.max_party ?? 8,
+          active: true,
+          sort: index,
+        })
+        .select("id")
+        .single<{ id: string }>();
+      if (error) throw new Error(error.message);
+      const staffIds = (service.places ?? []).map((name) => places.get(name)).filter((id): id is string => Boolean(id));
+      if (staffIds.length) {
+        const { error: linkError } = await client.from("establishment_service_staff").insert(staffIds.map((staffId) => ({ service_id: data.id, staff_id: staffId })));
+        if (linkError) throw new Error(linkError.message);
+      }
+      added++;
+    }
+    refresh(establishment);
+    return { ok: true, message: added ? `${added} ${added === 1 ? "serviço criado" : "serviços criados"}. Ajuste os nomes, tempos e preços.` : "Esses serviços já existem." };
   });
 }

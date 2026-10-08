@@ -44,7 +44,6 @@ export function EstablishmentsAdminPanel({
         <ul className="flex flex-col gap-3">
           {establishments.map((establishment) => {
             const covered = modules.filter((item) => coverage[item.product]?.ids.includes(establishment.id));
-            const missing = modules.filter((item) => !coverage[item.product]?.ids.includes(establishment.id));
             return (
             <li key={establishment.id} className="card overflow-hidden">
               <div className="flex">
@@ -107,17 +106,9 @@ export function EstablishmentsAdminPanel({
                     </div>
                   ) : (
                     <p className="rounded-xl bg-surface-2/60 px-3 py-2.5 text-sm text-muted">
-                      {modules.length
-                        ? "Este espaço ainda não tem produtos. Aumente os espaços do produto em Produtos (cada espaço paga o mesmo preço)."
-                        : "Ative a lista de espera, o cartão ou as reservas em Produtos para gerir este espaço."}
+                      Ative a lista de espera, o cartão ou as reservas em Produtos para gerir este espaço.
                     </p>
                   )}
-                  {covered.length && missing.length ? (
-                    <p className="text-xs text-subtle">
-                      Sem {missing.map((item) => item.label.toLowerCase()).join(", ")} neste espaço: os espaços pagos já estão em uso. Aumente os espaços do
-                      produto para o incluir.
-                    </p>
-                  ) : null}
                 </div>
               </div>
             </li>
@@ -130,7 +121,8 @@ export function EstablishmentsAdminPanel({
         </p>
       )}
 
-      <details className="group card p-4 sm:p-5" open={!establishments.length}>
+      {establishments.length ? null : (
+      <details className="group card p-4 sm:p-5" open>
         <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-text">
           <span aria-hidden="true" className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text transition-transform group-open:rotate-45">
             +
@@ -165,6 +157,7 @@ export function EstablishmentsAdminPanel({
           </div>
         </ActionForm>
       </details>
+      )}
     </section>
   );
 }

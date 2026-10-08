@@ -16,8 +16,8 @@ cliente não tem de fazer nada depois de tirar a senha: a chamada fecha sozinha.
 3. Na ficha do cliente ativa-se o produto **Lista de espera digital** (ou aceita-se a encomenda).
 4. O **espaço** (o restaurante, café ou barbearia) é criado sozinho com o nome do negócio, o tipo pela
    categoria do Google e um horário inicial. Edita-se em **Editar espaço**.
-5. **Preço por espaço:** cada espaço paga o mesmo. O produto cobre os primeiros N espaços do cliente
-   (campo «Espaços» no produto; numa encomenda, a quantidade é o nº de espaços).
+5. **Um cliente = um negócio** (por agora): o produto funciona no espaço do cliente. A base de dados
+   aceita vários espaços, para quando for preciso.
 6. A fila começa **fechada**: abre-se à mão ou liga-se «Abrir e fechar a fila com o horário».
 
 ## Quem faz o quê
@@ -43,7 +43,7 @@ O mesmo quadro nos dois sítios (ver `balcao.md`):
 - **QR e ecrã**: cartaz para imprimir e o link do ecrã de chamada.
 
 ### Admin (Steevanz)
-- Ativa, suspende, cancela ou remove o produto e define os espaços, na ficha do cliente.
+- Ativa, suspende, cancela ou remove o produto, na ficha do cliente.
 - Abre o módulo ou o **Balcão** de cada espaço («Abrir Balcão» na ficha do cliente) e faz tudo o que
   o dono faz.
 
@@ -61,8 +61,8 @@ carregar uma vez em «Ativar som»).
   (de 5 em 5 s, também com o ecrã bloqueado).
 - Quando é chamado: som, vibração (Android), aviso no ecrã («Mesa pronta» / «É a sua vez») e email,
   se o deixou. **Não precisa de fazer mais nada.**
-- Só se precisar de avisar a equipa: «Vou atrasar-me» (ganha o dobro do tempo) ou «Já não venho»
-  (sai da fila).
+- Quando é chamado vê «Venha já» e até que horas guardamos a vez: tem de vir logo à entrada. Se já
+  não puder vir, toca em «Já não venho» e sai da fila.
 - Fechou a página? Lê o QR outra vez e volta à senha (fica guardada no telemóvel). Se essa senha já
   terminou (ex.: outro dia), o telemóvel esquece-a e mostra logo o formulário para tirar uma nova.
   Cada telemóvel tem a sua senha.
@@ -72,7 +72,7 @@ carregar uma vez em «Ativar som»).
 | Definição | Para quê | Por omissão |
 | --- | --- | --- |
 | Minutos por vez (média) | Base da estimativa | 15 |
-| Minutos até a chamada fechar | Depois de chamada, a pessoa conta como atendida passado este tempo | 10 |
+| Tempo para chegar depois de chamado | 2, 3, 5, 10 ou 15 minutos; o cliente vê até que horas | 5 |
 | Máximo à espera | Com a fila cheia, ninguém entra pelo QR | 60 |
 | Máximo de pessoas por grupo | Limite no formulário | 12 |
 | Abrir e fechar com o horário | A fila abre à hora de abertura e fecha à de fecho | não |
@@ -83,9 +83,9 @@ carregar uma vez em «Ativar som»).
 
 ## Regras automáticas
 
-- **A chamada fecha sozinha como atendida** ao fim dos «minutos até a chamada fechar» (o dobro para
-  quem respondeu «Vou atrasar-me»). Ninguém marca nada. Fecha quando alguém abre o Balcão, o painel,
-  a senha ou o ecrã, e pela rotina de 15 em 15 minutos.
+- **Quem é chamado vem logo.** Passado o tempo para chegar, a equipa marca «Não apareceu» (e, com a opção,
+  o seguinte é chamado). Se ninguém marcar nada, a chamada fecha sozinha como atendida (pela rotina de
+  15 em 15 minutos e sempre que alguém abre o Balcão, o painel, a senha ou o ecrã).
 - **«Não apareceu»** é a única marcação que a equipa faz (para as estatísticas). Com a opção ligada,
   chama logo o seguinte.
 - **Abrir/fechar com o horário**: muda o estado à hora de abertura e de fecho (dias de fecho
@@ -108,7 +108,7 @@ carregar uma vez em «Ativar som»).
 | O quê | Onde |
 | --- | --- |
 | Tabelas e entrada atómica (`waitlist_join`) | `supabase/migrations/20261007120000_establishments_modules.sql` |
-| Automático (`waitlist_call_next`, `waitlist_settle`, horário) | `supabase/migrations/20261008120000_waitlist_automation.sql`, `20261008140000_waitlist_settle_served.sql` |
+| Automático (`waitlist_call_next`, `waitlist_settle`, horário) | `supabase/migrations/20261008120000_waitlist_automation.sql`, `20261009150000_waitlist_come_now.sql` |
 | Ações (entrar, responder, chamar, estados, reordenar, balcão, definições) | `src/lib/modules/waitlist/actions.ts` |
 | Fila, fecho automático e textos | `src/lib/modules/waitlist/store.ts` |
 | Horário (módulo puro, com testes) | `src/lib/modules/waitlist/schedule.ts` |
@@ -118,7 +118,7 @@ carregar uma vez em «Ativar som»).
 | Páginas públicas | `src/app/(publico)/fila/[slug]/` (entrada, senha, ecrã) |
 | Componentes públicos (alerta, respostas, som) | `src/components/public/waitlist/` |
 | Rotinas (fecho automático, horário, senhas esquecidas, 30 dias) | `src/lib/modules/routines.ts`, chamadas por `/api/cron/tick` |
-| Espaços e cobertura por espaço | `src/lib/establishments/provision.ts`, `store.ts` |
+| Espaço (criação automática) | `src/lib/establishments/provision.ts`, `store.ts` |
 | Testes | `tests/modules.test.mjs` |
 
 Tabelas: `waitlist_settings` (uma por espaço) e `waitlist_entries` (estados `waiting`, `called`,

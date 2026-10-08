@@ -253,8 +253,8 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
           <Figure label="Atendidos hoje" value={String(served)} />
         </dl>
         <p className="mt-4 text-xs text-subtle">
-          Ninguém precisa de marcar nada: a chamada fecha sozinha como atendida ao fim de {settings.grace_minutes} min. Se alguém não aparecer, use «Não
-          apareceu»{settings.auto_next ? " e o seguinte é logo chamado" : ""}.
+          Quem é chamado tem {settings.grace_minutes} min para chegar à entrada. Se não aparecer, use «Não apareceu»{settings.auto_next ? " e o seguinte é logo chamado" : ""}; se
+          ninguém marcar nada, a chamada fecha sozinha como atendida.
         </p>
       </Panel>
 
@@ -262,7 +262,7 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
         <Panel title={`Chamados · ${called.length}`}>
           <ul className="-my-3 divide-y divide-line">
             {called.map((entry) => {
-              const limit = settings.grace_minutes * (entry.reply === "late" ? 2 : 1);
+              const limit = settings.grace_minutes;
               const elapsed = entry.called_at ? minutesSince(entry.called_at, now) : 0;
               return (
                 <li key={entry.id} className="flex items-center gap-3 py-3">
@@ -270,7 +270,7 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-text">{entry.name}</p>
                     <p className="truncate text-sm text-muted">
-                      {elapsed >= limit ? "A fechar…" : `Fecha sozinha em ${Math.max(1, limit - elapsed)} min`}
+                      {elapsed >= limit ? "Passou o tempo: não apareceu?" : `Chamado ${ago(entry.called_at ?? "", now)} · tem até ${limit} min`}
                       {entry.reply ? ` · ${replyLabels[entry.reply]}` : ""}
                       {details(entry, bundle) ? ` · ${details(entry, bundle)}` : ""}
                     </p>

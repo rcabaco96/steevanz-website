@@ -21,7 +21,7 @@ export const docs: ProductDocs = {
               "Indica o nome, o número de pessoas e o número de telemóvel.",
               "Vê a sua posição e um **tempo de espera estimado**.",
               "Quando a mesa ou a vez estiver pronta, a equipa carrega num botão e o cliente recebe a mensagem.",
-              "O cliente pode responder que está a caminho, que vai atrasar-se ou que desiste.",
+              "Quando é chamado, o cliente vem logo à entrada; se já não puder vir, sai da fila com um toque.",
             ],
           },
           { type: "h2", id: "para-quem", text: "Para que negócios é indicada" },
@@ -85,7 +85,7 @@ export const docs: ProductDocs = {
               "They enter their name, party size and mobile number.",
               "They see their position and an **estimated wait time**.",
               "When the table or turn is ready, your team taps a button and the customer receives the message.",
-              "The customer can reply that they are on their way, running late or no longer coming.",
+              "Once called, the customer comes straight to the door; if they can no longer come, they leave the queue with one tap.",
             ],
           },
           { type: "h2", id: "who-it-is-for", text: "Which businesses it suits" },
@@ -319,12 +319,12 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "O cliente pode responder com opções simples, como **a caminho**, **vou atrasar-me** ou **já não venho**. A resposta aparece no painel ao lado do nome, para que a equipa decida se guarda a mesa ou passa ao seguinte.",
+            text: "Quando é chamado, o cliente vem logo à entrada: vê até que horas guardamos a vez. Se já não puder vir, toca em **já não venho** e sai da fila, para a equipa chamar o seguinte.",
           },
           { type: "h2", id: "faltas", text: "Regras para quem não aparece" },
           {
             type: "p",
-            text: "Defina quantos minutos o cliente tem para se apresentar depois de ser chamado, por exemplo 10 minutos. Passado esse tempo, a entrada pode ser marcada como falta automaticamente ou ficar em destaque para a equipa decidir. Quem avisou que se atrasa pode ter uma tolerância adicional.",
+            text: "Defina quantos minutos o cliente tem para chegar à entrada depois de ser chamado, por exemplo 5 minutos. O cliente vê até que horas guardamos a vez. Se não aparecer, marque «Não apareceu» e o seguinte é chamado.",
           },
           { type: "h2", id: "rgpd", text: "Privacidade e retenção de dados" },
           {
@@ -384,12 +384,12 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Customers can reply with simple options such as **on my way**, **running late** or **no longer coming**. The reply shows in the dashboard next to their name, so your team can decide whether to hold the table or move to the next person.",
+            text: "Once called, customers come straight to the door: they see until what time their turn is held. If they can no longer come, they tap **no longer coming** and leave the queue, so your team calls the next person.",
           },
           { type: "h2", id: "no-shows", text: "No-show rules" },
           {
             type: "p",
-            text: "Set how many minutes customers have to arrive after being called, for example 10 minutes. After that, the entry can be marked as a no-show automatically or highlighted for your team to decide. Customers who said they are running late can be given extra time.",
+            text: "Set how many minutes customers have to reach the door after being called, for example 5 minutes. Customers see until what time their turn is held. If they don't show up, mark them as a no-show and the next person is called.",
           },
           { type: "h2", id: "gdpr", text: "Privacy and data retention" },
           {
@@ -443,7 +443,7 @@ export const docs: ProductDocs = {
               },
               {
                 title: "Acompanhe a resposta",
-                body: "No painel vê se o cliente respondeu que vem a caminho, que se atrasa ou que desiste.",
+                body: "No painel vê há quanto tempo cada cliente foi chamado e se já passou o tempo para chegar.",
               },
               {
                 title: "Marque a chegada",
@@ -455,7 +455,7 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Quem responde que se atrasa fica assinalado; decida se espera ou chama o seguinte.",
+              "Quem passou o tempo para chegar fica assinalado; marque «Não apareceu» para chamar o seguinte.",
               "Após o tempo de tolerância, a entrada é marcada como falta ou fica em destaque, conforme a configuração.",
               "Pode repor na fila um cliente que chegou pouco depois de ser marcado como falta.",
             ],
@@ -514,7 +514,7 @@ export const docs: ProductDocs = {
               },
               {
                 title: "Follow the reply",
-                body: "In the dashboard you can see whether the customer replied that they are on their way, running late or no longer coming.",
+                body: "In the dashboard you see how long ago each customer was called and whether their time to arrive has passed.",
               },
               {
                 title: "Mark the arrival",
@@ -526,7 +526,7 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Customers who reply that they are running late are flagged; decide whether to wait or call the next party.",
+              "Customers past their time to arrive are flagged; mark them as a no-show to call the next party.",
               "After the grace period, the entry is marked as a no-show or highlighted, depending on your configuration.",
               "You can put a customer back in the queue if they arrive shortly after being marked as a no-show.",
             ],
@@ -694,8 +694,8 @@ export const docs: ProductDocs = {
                 a: "Depois do tempo de tolerância que definir, a entrada é marcada como falta ou fica em destaque para a equipa decidir. Veja a [configuração](/docs/lista-espera-digital/configuracao).",
               },
               {
-                q: "O cliente pode avisar que se atrasa?",
-                a: "Sim. Pode responder que está a caminho, que se atrasa ou que desiste, e a resposta aparece no painel.",
+                q: "O cliente pode avisar que já não vem?",
+                a: "Sim. Com um toque na senha sai da fila, e a equipa chama o seguinte.",
               },
               {
                 q: "Preciso de uma televisão para o ecrã de chamada?",
@@ -763,8 +763,8 @@ export const docs: ProductDocs = {
                 a: "After the grace period you set, the entry is marked as a no-show or highlighted for your team to decide. See [configuration](/en/docs/digital-waitlist/configuration).",
               },
               {
-                q: "Can customers say they are running late?",
-                a: "Yes. They can reply that they are on their way, running late or no longer coming, and the reply appears in the dashboard.",
+                q: "Can customers say they are no longer coming?",
+                a: "Yes. One tap on their ticket takes them out of the queue, and your team calls the next person.",
               },
               {
                 q: "Do I need a TV for the display screen?",

@@ -27,7 +27,7 @@ export interface CartCopy {
   perMonth: string;
   addMore: string;
   /** Signed-in clients: products already active on the account. */
-  owned: { notice: string; removeAll: string; extraSpaces: string };
+  owned: { notice: string; removeAll: string };
   summaryTitle: string;
   subtotal: string;
   vat: string;
@@ -104,7 +104,6 @@ export const cartCopy: Localized<CartCopy> = {
     owned: {
       notice: "Já tem ativo na sua conta: {names}. Não entra nesta encomenda.",
       removeAll: "Tirar do carrinho",
-      extraSpaces: "Já tem este produto em {owned}. Esta encomenda acrescenta {added}.",
     },
     summaryTitle: "Resumo",
     subtotal: "Subtotal",
@@ -186,7 +185,6 @@ export const cartCopy: Localized<CartCopy> = {
     owned: {
       notice: "Already active on your account: {names}. It is left out of this order.",
       removeAll: "Remove from cart",
-      extraSpaces: "You already have this product for {owned}. This order adds {added}.",
     },
     summaryTitle: "Summary",
     subtotal: "Subtotal",

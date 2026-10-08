@@ -1,121 +1,110 @@
 # Reservas online
 
-Reservas e marcações pelo link do negócio (Google, Instagram, site), sem app e sem conta. Há **dois
-modelos**, escolhidos sozinhos pelo tipo de negócio do espaço:
+Reservas pelo link do negócio (Google, Instagram, site), sem app e sem conta, para **qualquer tipo de
+negócio local**. Tudo gira à volta dos **serviços** que o negócio cria: é o que o cliente escolhe ao
+reservar. Custo de funcionamento: zero (emails, sem SMS).
 
-| Tipo de negócio | Modelo | O cliente escolhe |
+## O modelo
+
+Cada **serviço** tem nome, preço opcional e diz **como se reserva**:
+
+| Como se reserva | Para quê | O que se define |
 | --- | --- | --- |
-| Restaurante, café | **Mesas** | Nº de pessoas, dia e hora (almoço / jantar) |
-| Barbearia, cabeleireiro, clínica, estética, loja… | **Marcações** | Serviço, profissional («Qualquer um» primeiro), dia e hora (manhã / tarde / noite) |
+| **Um cliente de cada vez** | Cortes, consultas, tratamentos, campos | Duração, intervalo depois (opcional), quem faz |
+| **Várias pessoas à mesma hora** | Mesas de restaurante | Lugares por turno, máximo de pessoas por reserva |
 
-Custo de funcionamento: zero (emails, sem SMS).
+- **Pessoas e espaços** (opcional): barbeiros, médicos, salas, campos. Cada um atende um cliente de
+  cada vez e pode ter **horário próprio** (sem ele, segue o horário do espaço). Em cada serviço
+  escolhe-se quem o faz; sem escolha, qualquer um.
+- **Turnos** (serviços de várias pessoas): são os períodos do horário (ex.: almoço 12:00–15:00,
+  jantar 19:00–23:00). Quando as reservas de um turno somam os lugares (ex.: 50), esse turno fica
+  cheio. Não há duração de refeição.
+- **Tipos de negócio** com serviços já criados (o admin escolhe o tipo, o dono ajusta tudo):
+
+| Tipo | Serviços que já vêm |
+| --- | --- |
+| Restaurante, café ou bar | Mesa (40 lugares por turno, até 8 por reserva) |
+| Barbearia | Corte 30 min · Barba 20 min · Corte e barba 45 min |
+| Cabeleireiro ou estética | Corte 45 min · Brushing 30 min · Coloração 90 min · Manicure 45 min |
+| Clínica ou consultório | Primeira consulta 45 min · Consulta 30 min · Tratamento 60 min |
+| Espaço desportivo | Futebol (1 hora) nos campos 1 e 2 · Ténis (1 hora) no campo de ténis |
+| Loja ou outro serviço | Nenhum: cria-se de raiz (ou escolhe-se um exemplo) |
+
+  Um tipo novo de negócio = um valor no enum `business_kind`, a entrada em
+  `src/lib/establishments/kinds.ts` (nome, palavras, predefinições) e os serviços em
+  `src/lib/modules/bookings/templates.ts`.
 
 ## Como fica ativo
 
-1. Conta do cliente e espaço como nos outros produtos (o espaço é criado sozinho; edita-se em
-   **Editar espaço**).
-2. Ativa-se **Reservas online** na ficha do cliente (ou aceita-se a encomenda). **Preço por
-   espaço**, como os outros dois módulos.
-3. Em **Definições**: horário do espaço e, nas marcações, serviços (duração, intervalo, preço) e
-   profissionais.
-4. Partilha-se o link (`/reservar/<espaco>`) ou o botão para o site (separador **Link e botão**).
+1. Conta do cliente e espaço como nos outros produtos. Ao criar o espaço, os serviços do tipo de
+   negócio ficam criados. **Um cliente = um negócio** (por agora).
+2. Ativa-se **Reservas online** na ficha do cliente (ou aceita-se a encomenda).
+3. No separador **Serviços** ajustam-se os serviços (ou começa-se por um exemplo) e, se for preciso,
+   as pessoas e espaços.
+4. Em **Definições**: ligar as reservas online, horário, regras.
+5. Partilha-se o link (`/reservar/<espaco>`) ou o cartaz com QR (separador **Partilhar**).
 
 ## Quem faz o quê
 
-### Dono e equipa: o Balcão (`/conta/balcao`, separador **Reservas**)
-Só o dia de hoje, para usar ao balcão:
-- **A seguir**: a hora em grande, o nome, o que reservou e o telefone, com **Chegou** e **Não veio**.
-- **Por chegar**: o resto do dia por ordem. As que passaram a tolerância ficam a vermelho
-  («Atrasado»).
-- **Estamos com atraso?** (ver abaixo).
-- **Nova reserva** por telefone ou ao balcão.
-- **Hoje já tratadas**: as que chegaram, não vieram ou foram canceladas (com «Repor»).
-
-### Dono: o módulo (`/conta/bookings`)
-- **Agenda** de qualquer dia: mesas agrupadas por almoço e jantar com a ocupação máxima ao mesmo
-  tempo; marcações agrupadas por profissional. Chegou, Não compareceu, Cancelar (com aviso por email).
-- **Fechar as reservas num horário** (bloqueios: um evento, uma folga de um profissional).
-- **Próximas**: as reservas dos próximos 14 dias.
-- **Estatísticas**.
-- **Definições** simples (listas, sem números soltos).
-- **Link e botão**: link, cartaz e código para o site; calendário para subscrever (Google, Apple).
+### Dono e equipa (`/conta/bookings`, e o separador Reservas de hoje do Balcão)
+- **Reservas:** os dias da semana com quantas reservas tem cada um; o dia escolhido com a ocupação de
+  cada turno («12 de 50 lugares reservados») e a lista «Por chegar».
+  - Cada linha: hora, nome, o que reservou, contacto. «Chegou» à vista; no «⋯»: Não veio, Alterar
+    reserva, Cancelar (avisa o cliente por email), Ligar. As tratadas ficam numa lista à parte, com
+    «Desfazer».
+  - **Nova reserva:** escolhe-se o dia e o serviço (e as pessoas, ou com quem) e aparecem **só as
+    horas livres** (sem antecedência mínima). Por telefone podem passar o máximo de pessoas.
+  - **Alterar reserva:** hora, pessoas, serviço e contacto, sem mudar o link do cliente.
+  - **Estamos com atraso** (só hoje).
+- **Serviços:** serviços, pessoas e espaços, horários próprios.
+- **Definições:** reservas online ligadas/desligadas; regras para o cliente (antecedência, até
+  quantos dias, tolerância de atraso, cancelar até, última reserva de mesas); avisos e mensagens;
+  horário, dias fechados e dados do espaço; fechar reservas num dia ou horário.
+- **Partilhar:** link, cartaz com QR e o calendário para subscrever no telemóvel.
 
 ### Cliente final
-- Abre o link, escolhe e confirma com nome (email recomendado, telefone e notas opcionais).
-- Fica com a página da reserva (`/reservar/<espaco>/<token>`): hora, dia, o que reservou, a
-  **tolerância de atraso**, o aviso «Estamos com atraso» quando existe, adicionar ao calendário,
-  **trocar a hora** ou **cancelar** (até X horas antes).
-- Recebe a confirmação por email (com a tolerância) e um lembrete na véspera.
+- Abre o link: escolhe o serviço (quando há mais de um), depois **quantas pessoas** (mesas) ou
+  **com quem** (só os que fazem esse serviço, ou «qualquer um»), o dia e a hora. Mesas: as horas
+  aparecem por turno (Almoço, Jantar).
+- Confirma com o nome (e email ou telemóvel). Fica com a página da reserva: hora, o que reservou,
+  tolerância, aviso de atraso, adicionar ao calendário, trocar a hora ou cancelar até X horas antes.
+- Recebe a confirmação por email e um lembrete na véspera.
 
-### Admin (Steevanz)
-- Ativa, suspende, cancela ou remove o produto e define os espaços, na ficha do cliente.
-- Abre o módulo ou o Balcão de cada espaço e faz tudo o que o dono faz.
+### Admin
+- Escolhe o tipo de negócio do espaço, ativa o produto e faz tudo o que o dono faz.
 
 ## Atrasos, nos dois sentidos
-
-- **Tolerância de atraso** (do cliente): quanto tempo se guarda a mesa / se espera pelo cliente (0 a
-  30 min, por omissão 10). Aparece ao reservar, na página da reserva e no email. Passado esse tempo,
-  a reserva fica «Atrasado» no Balcão e na agenda; a equipa decide (Chegou ou Não veio). Nada é
-  cancelado sozinho.
-- **«Estamos com atraso»** (do espaço): no Balcão ou na agenda de hoje, para o espaço todo ou para um
-  profissional: +10, +15, +30 ou +45 min. Nenhuma reserva muda de hora.
-  - Os clientes com reserva nas **próximas 3 horas** e com email recebem um email com a hora prevista
-    (só quando o atraso aumenta, a partir de 10 min; nunca dois emails para o mesmo atraso).
-  - Todos os clientes de hoje veem o aviso e a hora prevista na página da reserva.
-  - Vale só para esse dia.
-- **Porque não há «cascata»** de atrasos nas marcações: cada serviço tem a sua duração e um intervalo
-  opcional entre marcações (folga), a tolerância limita quanto um cliente atrasado pode empurrar, e o
-  aviso «Estamos com atraso» trata dos dias maus.
-
-## Definições (por espaço)
-
-| Definição | Para quê | Por omissão |
-| --- | --- | --- |
-| Reservas online ativas | Liga / desliga o link | desligado até configurar |
-| Lugares (mesas) | Máximo de pessoas sentadas ao mesmo tempo | 20 |
-| Duração de uma refeição (mesas) | Quanto tempo a mesa fica ocupada | 90 min |
-| Máximo de pessoas por reserva (mesas) | Grupos maiores ligam | 8 |
-| Antecedência mínima | Até quando se pode reservar | 1 hora |
-| Até quantos dias | Quanto para a frente | 60 dias |
-| Tolerância de atraso | Ver acima | 10 min |
-| Alterar ou cancelar até | Antes da hora | 2 horas |
-| Avisar o dono por email | Cada reserva nova | sim |
-| Política, nota da confirmação | Textos opcionais | vazio |
+- **Tolerância de atraso** (do cliente): passado esse tempo a reserva fica «Atrasado»; a equipa
+  decide. Nada é cancelado sozinho.
+- **Estamos com atraso** (do espaço): +10/15/30/45 min, para todos ou para uma pessoa ou espaço.
+  Os clientes das próximas 3 horas com email recebem a hora prevista (só quando aumenta); todos veem
+  o aviso na página da reserva. Nenhuma reserva muda de hora.
 
 ## Regras automáticas
-
-- **Horas de 15 em 15 minutos**, dentro do horário do espaço (vários intervalos por dia: almoço e
-  jantar).
-- **Mesas:** a última mesa é 60 minutos antes de fechar. Uma hora está livre se, durante toda a
-  refeição, as pessoas sentadas ao mesmo tempo (pico) mais o novo grupo não passarem os lugares.
-- **Marcações:** o serviço tem de acabar antes do fecho; o profissional fica ocupado a duração mais
-  o intervalo. «Qualquer um» dá a marcação ao profissional livre com menos marcações nesse dia.
-- **Sem reservas duplicadas:** a escolha final é feita na base de dados, com bloqueio
-  (`establishment_book`); se alguém reservou a mesma hora um segundo antes, o cliente escolhe outra.
-- **Lembrete** na véspera (entre 24 h e 2 h antes), pela rotina de 15 em 15 minutos.
-- **Antiabuso:** 10 reservas por rede a cada 10 minutos; campo-armadilha contra bots.
+- Horas de 15 em 15 minutos dentro do horário. Um de cada vez: o serviço tem de acabar antes de
+  fechar e dentro do horário de quem o faz; o intervalo depois fica guardado. Mesas: a última reserva
+  é X antes de fechar (definição).
+- «Qualquer um» fica com quem tiver menos reservas nesse dia.
+- Sem reservas duplicadas nem turnos acima da lotação: a base de dados confirma de forma atómica
+  (`establishment_slot_check`, `establishment_book`, `establishment_rebook`).
+- Lembrete na véspera (24 h a 2 h antes), pela rotina de 15 em 15 minutos.
+- Antiabuso: 10 reservas por rede a cada 10 minutos; campo-armadilha contra bots.
 
 ## Onde está o código
 
 | O quê | Onde |
 | --- | --- |
-| Tabelas, reserva atómica | `supabase/migrations/20261007120000_establishments_modules.sql`, `20261008150000_bookings_simple.sql` |
-| Tolerância e atrasos | `supabase/migrations/20261008160000_booking_delays.sql` |
-| Disponibilidade (módulo puro, com testes) | `src/lib/modules/bookings/availability.ts` |
-| Dados, modelo por tipo de negócio, atrasos | `src/lib/modules/bookings/store.ts` |
-| Ações (reservar, trocar, cancelar, balcão, definições, atraso) | `src/lib/modules/bookings/actions.ts` |
-| Emails (confirmação, cancelamento, lembrete, atraso) | `src/lib/modules/bookings/notify.ts` |
-| Balcão (separador Reservas) | `src/components/modules/counter/BookingsCounter.tsx` |
-| Módulo do dono / admin | `src/components/modules/bookings/BookingsModule.tsx` |
-| Páginas públicas | `src/app/(publico)/reservar/[slug]/` (reservar, a sua reserva, .ics) |
-| Assistente de reserva | `src/components/public/bookings/BookingWizard.tsx` |
+| Serviços, pessoas/espaços, horários próprios, verificação atómica | `supabase/migrations/20261009130000_bookings_services.sql` |
+| Tipos de negócio novos | `supabase/migrations/20261009140000_business_kinds.sql`, `src/lib/establishments/kinds.ts` |
+| Serviços por tipo de negócio | `src/lib/modules/bookings/templates.ts`, `src/lib/establishments/provision.ts` |
+| Horas livres (módulo puro, com testes) | `src/lib/modules/bookings/availability.ts` |
+| Dados, turnos, agenda | `src/lib/modules/bookings/store.ts` |
+| Ações (reservar, alterar, cancelar, definições, atraso, exemplos) | `src/lib/modules/bookings/actions.ts`, `src/lib/establishments/actions.ts` |
+| Ecrã do dono | `src/components/modules/bookings/BookingsModule.tsx`, `ServicesView.tsx`, `ServiceKindFields.tsx` |
+| Páginas públicas | `src/app/(publico)/reservar/[slug]/`, `src/components/public/bookings/BookingWizard.tsx` |
 | Testes | `tests/modules.test.mjs` |
 
-Tabelas: `booking_pages` (uma por espaço), `establishment_bookings` (estados `confirmed`, `arrived`,
-`no_show`, `cancelled`), `booking_blocks` e `booking_delays` (um por espaço ou profissional, por dia).
-
 ## Limitações atuais
-
-- Sem SMS nem WhatsApp: confirmação, lembrete e atraso vão por email.
-- Sem pagamentos nem sinal no momento da reserva.
-- Ainda não há um terceiro modelo para aulas / sessões de grupo (várias pessoas na mesma vaga).
+- Sem SMS nem WhatsApp: confirmação, lembrete e atraso por email.
+- Sem pagamentos nem sinal.
+- Sem aulas com vagas a horas fixas, nem serviços que precisem de duas pessoas ao mesmo tempo.

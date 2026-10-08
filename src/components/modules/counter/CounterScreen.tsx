@@ -5,13 +5,14 @@ import { requestOrigin } from "@/lib/booking/request";
 import type { ModuleProduct } from "@/lib/establishments/access";
 import { ownerCounterSpaces } from "@/lib/establishments/counter";
 import { loadBundle } from "@/lib/establishments/store";
-import { ensureBookingPage, todayAgenda } from "@/lib/modules/bookings/store";
+import { zonedDateString } from "@/lib/booking/slots";
+import { ensureBookingPage, loadAgendaDay } from "@/lib/modules/bookings/store";
 import { availableRewards, ensureProgram, getCard, recentCards, searchCards } from "@/lib/modules/loyalty/store";
 import { currentSettings, loadQueue } from "@/lib/modules/waitlist/store";
 import { AutoRefresh } from "../shared/AutoRefresh";
 import { ModuleNav, pickEstablishment, queryValue, type ModuleQuery } from "../shared/ModuleNav";
 import { JoinChime } from "../waitlist/JoinChime";
-import { BookingsCounter } from "./BookingsCounter";
+import { AgendaDay } from "../bookings/BookingsModule";
 import { CardCounter } from "./CardCounter";
 import { QueueCounter } from "./QueueCounter";
 
@@ -37,8 +38,9 @@ export async function CounterScreen({ ownerId, viewer, basePath, query }: { owne
   }
   const products = spaces.find((space) => space.establishment.id === establishment.id)!.products;
   const active = products.find((product) => tabs[product].id === queryValue(query, "vista")) ?? products[0];
-  const moduleHref = (product: ModuleProduct, view?: string) =>
-    `${viewer === "admin" ? `/admin/clientes/${ownerId}/${product}` : `/conta/${product}`}?${new URLSearchParams({ loja: establishment.slug, ...(view ? { vista: view } : {}) })}`;
+  const moduleHrefWith = (product: ModuleProduct, params: Record<string, string>) =>
+    `${viewer === "admin" ? `/admin/clientes/${ownerId}/${product}` : `/conta/${product}`}?${new URLSearchParams({ loja: establishment.slug, ...params })}`;
+  const moduleHref = (product: ModuleProduct, view?: string) => moduleHrefWith(product, view ? { vista: view } : {});
   // Links inside a tab keep the space (when there are several) and the tab.
   const keep = { ...(spaces.length > 1 ? { loja: establishment.slug } : {}), vista: tabs[active].id };
 
@@ -46,7 +48,7 @@ export async function CounterScreen({ ownerId, viewer, basePath, query }: { owne
   const hasQueue = products.includes("waitlist");
   const [queueData, bookingData] = await Promise.all([
     hasQueue ? currentSettings(establishment, bundle).then(async (settings) => ({ settings, queue: await loadQueue(establishment, settings) })) : null,
-    products.includes("bookings") ? ensureBookingPage(establishment).then(async (page) => ({ page, today: await todayAgenda(establishment, page) })) : null,
+    products.includes("bookings") ? ensureBookingPage(establishment).then(async (page) => ({ page, today: await loadAgendaDay(bundle, page, zonedDateString(new Date(), establishment.time_zone)) })) : null,
   ]);
   const waiting = queueData?.queue.live.filter((entry) => entry.status === "waiting") ?? [];
   const newest = [...waiting].sort((a, b) => Date.parse(b.joined_at) - Date.parse(a.joined_at))[0];
@@ -59,8 +61,20 @@ export async function CounterScreen({ ownerId, viewer, basePath, query }: { owne
   if (active === "waitlist" && queueData) {
     content = <QueueCounter bundle={bundle} settings={queueData.settings} queue={queueData.queue} />;
   } else if (active === "bookings" && bookingData) {
-    const { today, page } = bookingData;
-    content = <BookingsCounter bundle={bundle} page={page} date={today.date} bookings={today.bookings} delays={today.delays} late={today.late} next={today.next} />;
+    const { today } = bookingData;
+    const bookingsHref = (params: Record<string, string>) => moduleHrefWith("bookings", params);
+    content = (
+      <AgendaDay
+        bundle={bundle}
+        agenda={today}
+        links={{
+          day: (date) => bookingsHref({ dia: date }),
+          newBooking: (date) => bookingsHref({ vista: "nova", dia: date }),
+          edit: (bookingId, date) => bookingsHref({ vista: "alterar", reserva: bookingId, dia: date }),
+          settings: bookingsHref({ vista: "definicoes" }),
+        }}
+      />
+    );
   } else if (active === "loyalty") {
     const term = queryValue(query, "q").trim().slice(0, 60);
     const [program, cards, qrCard] = await Promise.all([

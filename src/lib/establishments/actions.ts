@@ -7,7 +7,7 @@ import { formText } from "@/lib/modules/common";
 import { createServiceClient } from "@/lib/supabase/service";
 import { accessErrorMessage, requireAdminSession, requireEstablishmentAccess } from "./access";
 import { businessKinds, slugify } from "./kinds";
-import { addStartingHours } from "./provision";
+import { addStartingHours, addStartingServices } from "./provision";
 import { isUuid } from "./store";
 
 async function guarded(task: () => Promise<ActionState>): Promise<ActionState> {
@@ -65,6 +65,7 @@ export async function createEstablishment(_previous: ActionState, formData: Form
       throw new Error(error.message);
     }
     await addStartingHours(data.id, parsed.data.kind);
+    await addStartingServices(data.id, parsed.data.kind);
     refresh();
     return { ok: true, message: `Espaço «${parsed.data.name}» criado.` };
   });
@@ -130,23 +131,64 @@ const serviceSchema = z.object({
   active: z.boolean(),
 });
 
+/**
+ * Adds or changes a service. From the bookings module it also says how the service is booked (one
+ * at a time, or several people until a turn fills) and who does it (none chosen: everyone).
+ */
 export async function saveService(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"));
+    const kind = formText(formData, "booking_kind") === "group" ? "group" : "one";
     const parsed = serviceSchema.safeParse({
       name: formText(formData, "name"),
-      duration_minutes: formText(formData, "duration_minutes"),
-      buffer_minutes: formText(formData, "buffer_minutes") || "0",
+      duration_minutes: kind === "group" ? "120" : formText(formData, "duration_minutes"),
+      buffer_minutes: kind === "group" ? "0" : formText(formData, "buffer_minutes") || "0",
       price_cents: formText(formData, "price"),
       active: formData.get("active") === "on",
     });
     if (!parsed.success) return { ok: false, message: "Indique o nome e a duração (5 a 480 minutos)." };
+    const changes: Record<string, unknown> = { ...parsed.data };
+    if (formData.has("booking_kind")) {
+      changes.booking_kind = kind;
+      if (kind === "group") {
+        const capacity = Number(formText(formData, "capacity"));
+        const maxParty = Number(formText(formData, "max_party"));
+        if (!Number.isInteger(capacity) || capacity < 1 || capacity > 10000) return { ok: false, message: "Indique quantos lugares há por turno." };
+        if (!Number.isInteger(maxParty) || maxParty < 1 || maxParty > 1000) return { ok: false, message: "Indique o máximo de pessoas por reserva." };
+        changes.capacity = capacity;
+        changes.max_party = maxParty;
+      } else {
+        changes.capacity = null;
+      }
+    }
     const id = formText(formData, "id");
     const client = createServiceClient();
-    const { error } = isUuid(id)
-      ? await client.from("establishment_services").update(parsed.data).eq("id", id).eq("establishment_id", establishment.id)
-      : await client.from("establishment_services").insert({ ...parsed.data, establishment_id: establishment.id, sort: Date.now() % 1_000_000 });
-    if (error) throw new Error(error.message);
+    let serviceId = id;
+    if (isUuid(id)) {
+      const { error } = await client.from("establishment_services").update(changes).eq("id", id).eq("establishment_id", establishment.id);
+      if (error) throw new Error(error.message);
+    } else {
+      const { data, error } = await client
+        .from("establishment_services")
+        .insert({ ...changes, establishment_id: establishment.id, sort: Date.now() % 1_000_000 })
+        .select("id")
+        .single<{ id: string }>();
+      if (error) throw new Error(error.message);
+      serviceId = data.id;
+    }
+    // Who does it: only when the form shows the choice (bookings module).
+    if (formData.has("staff_choice")) {
+      const { data: staff, error: staffError } = await client.from("establishment_staff").select("id").eq("establishment_id", establishment.id);
+      if (staffError) throw new Error(staffError.message);
+      const known = new Set(((staff ?? []) as { id: string }[]).map((row) => row.id));
+      const chosen = kind === "group" ? [] : formData.getAll("staff_ids").map(String).filter((value) => known.has(value));
+      const { error: clearError } = await client.from("establishment_service_staff").delete().eq("service_id", serviceId);
+      if (clearError) throw new Error(clearError.message);
+      if (chosen.length) {
+        const { error: insertError } = await client.from("establishment_service_staff").insert(chosen.map((staffId) => ({ service_id: serviceId, staff_id: staffId })));
+        if (insertError) throw new Error(insertError.message);
+      }
+    }
     refresh();
     return { ok: true, message: isUuid(id) ? "Serviço guardado." : "Serviço adicionado." };
   });
@@ -228,6 +270,39 @@ export async function saveHours(_previous: ActionState, formData: FormData): Pro
     }
     refresh();
     return { ok: true, message: "Horário guardado." };
+  });
+}
+
+/** A person's or place's own weekly hours (fields h{weekday}_{0|1}_opens/closes); empty = the space's hours. */
+export async function saveStaffHours(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"));
+    const staffId = formText(formData, "staff_id");
+    if (!isUuid(staffId)) return { ok: false, message: "Pedido inválido." };
+    const client = createServiceClient();
+    const { data: person, error: personError } = await client.from("establishment_staff").select("id").eq("id", staffId).eq("establishment_id", establishment.id).maybeSingle();
+    if (personError) throw new Error(personError.message);
+    if (!person) return { ok: false, message: "Não encontrado." };
+    const rows: { staff_id: string; weekday: number; opens: string; closes: string }[] = [];
+    for (let weekday = 0; weekday < 7; weekday++) {
+      for (const index of [0, 1]) {
+        const opens = formText(formData, `h${weekday}_${index}_opens`);
+        const closes = formText(formData, `h${weekday}_${index}_closes`);
+        if (!opens && !closes) continue;
+        if (!time.safeParse(opens).success || !time.safeParse(closes).success || closes <= opens) {
+          return { ok: false, message: "Verifique as horas: cada período precisa de início e fim, e o fim depois do início." };
+        }
+        rows.push({ staff_id: staffId, weekday, opens, closes });
+      }
+    }
+    const { error: deleteError } = await client.from("establishment_staff_hours").delete().eq("staff_id", staffId);
+    if (deleteError) throw new Error(deleteError.message);
+    if (rows.length) {
+      const { error } = await client.from("establishment_staff_hours").insert(rows);
+      if (error) throw new Error(error.message);
+    }
+    refresh();
+    return { ok: true, message: rows.length ? "Horário próprio guardado." : "Segue o horário do espaço." };
   });
 }
 

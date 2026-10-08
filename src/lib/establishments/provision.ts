@@ -1,4 +1,5 @@
 import { perSpaceProducts } from "@/lib/cart/ownership";
+import { businessTemplates, kindTemplate } from "@/lib/modules/bookings/templates";
 import { createServiceClient } from "@/lib/supabase/service";
 import { kindFromCategory, slugify, type BusinessKind } from "./kinds";
 import { coveredEstablishmentIds, listOwnerEstablishments } from "./store";
@@ -10,8 +11,10 @@ export const establishmentProducts = perSpaceProducts;
 // Opening hours a new establishment starts with (editable straight away).
 export const startingHours: Record<BusinessKind, { weekdays: number[]; intervals: [string, string][] }> = {
   restaurant: { weekdays: [2, 3, 4, 5, 6, 0], intervals: [["12:00", "15:00"], ["19:00", "23:00"]] },
+  barbershop: { weekdays: [2, 3, 4, 5, 6], intervals: [["09:00", "19:00"]] },
   salon: { weekdays: [2, 3, 4, 5, 6], intervals: [["09:00", "19:00"]] },
   clinic: { weekdays: [1, 2, 3, 4, 5], intervals: [["09:00", "13:00"], ["14:00", "19:00"]] },
+  sports: { weekdays: [1, 2, 3, 4, 5, 6, 0], intervals: [["09:00", "23:00"]] },
   retail: { weekdays: [1, 2, 3, 4, 5, 6], intervals: [["09:00", "19:00"]] },
 };
 
@@ -21,6 +24,42 @@ export async function addStartingHours(establishmentId: string, kind: BusinessKi
   const hours = plan.weekdays.flatMap((weekday) => plan.intervals.map(([opens, closes]) => ({ establishment_id: establishmentId, weekday, opens, closes })));
   const { error } = await createServiceClient().from("establishment_hours").insert(hours);
   if (error) console.error("[establishments] starting hours failed:", error.message);
+}
+
+/**
+ * The services a new establishment starts with, from its kind (a barbershop gets Corte, Barba…), and
+ * for sports the pitches each one uses. Only when it has no services yet; all editable afterwards.
+ */
+export async function addStartingServices(establishmentId: string, kind: BusinessKind): Promise<void> {
+  const template = businessTemplates.find((item) => item.id === kindTemplate[kind]);
+  if (!template) return;
+  const client = createServiceClient();
+  const { count } = await client.from("establishment_services").select("id", { count: "exact", head: true }).eq("establishment_id", establishmentId);
+  if (count) return;
+  const places = new Map<string, string>();
+  for (const [index, name] of (template.places ?? []).entries()) {
+    const { data, error } = await client.from("establishment_staff").insert({ establishment_id: establishmentId, name, active: true, sort: index }).select("id").single<{ id: string }>();
+    if (error) return console.error("[establishments] starting places failed:", error.message);
+    places.set(name, data.id);
+  }
+  for (const [index, service] of template.services.entries()) {
+    const { data, error } = await client
+      .from("establishment_services")
+      .insert({
+        establishment_id: establishmentId,
+        name: service.name,
+        duration_minutes: service.duration_minutes,
+        booking_kind: service.booking_kind,
+        capacity: service.booking_kind === "group" ? (service.capacity ?? 40) : null,
+        max_party: service.max_party ?? 8,
+        sort: index,
+      })
+      .select("id")
+      .single<{ id: string }>();
+    if (error) return console.error("[establishments] starting services failed:", error.message);
+    const staffIds = (service.places ?? []).map((name) => places.get(name)).filter((id): id is string => Boolean(id));
+    if (staffIds.length) await client.from("establishment_service_staff").insert(staffIds.map((staffId) => ({ service_id: data.id, staff_id: staffId })));
+  }
 }
 
 /** A free address for the public pages: "the-sea-wolf", then "the-sea-wolf-2", … */
@@ -62,6 +101,7 @@ export async function ensureFirstEstablishment(ownerId: string): Promise<void> {
     throw new Error(error.message);
   }
   await addStartingHours(data.id, kind);
+  await addStartingServices(data.id, kind);
 }
 
 /**

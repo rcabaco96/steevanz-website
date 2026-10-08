@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/api/reservar
     if (!page.active) return reply({ error: "closed" }, 409);
     const result = await computeDays(bundle, page, { serviceId: service, staffId: staff, partySize: party, from: from ?? undefined, days });
     return reply({
-      days: result.map((day) => ({ date: day.date, weekday: day.weekday, slots: day.slots.map((slot) => ({ start: slot.start, time: slot.time })) })),
+      days: result.map((day) => ({ date: day.date, weekday: day.weekday, slots: day.slots.map((slot) => ({ start: slot.start, time: slot.time, ...(slot.turn ? { turn: slot.turn.label } : {}) })) })),
       maxDaysAhead: page.max_days_ahead,
     });
   } catch (error) {

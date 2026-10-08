@@ -94,9 +94,9 @@ export async function joinWaitlist(_previous: ActionState, formData: FormData): 
   redirect(target);
 }
 
-const replies: EntryReply[] = ["on_way", "late", "leaving"];
+const replies: EntryReply[] = ["leaving"];
 
-/** Public: "a caminho", "vou atrasar-me" or "já não venho" (the last one leaves the queue). */
+/** Public: "já não venho" leaves the queue (once called, the customer comes straight away). */
 export async function replyToCall(_previous: ActionState, formData: FormData): Promise<ActionState> {
   try {
     const token = formText(formData, "token");

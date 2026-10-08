@@ -12,6 +12,11 @@ export interface WizardService {
   name: string;
   minutes: number;
   price: string | null;
+  /** "group": several people at once (asks how many); "one": one at a time (asks with whom). */
+  kind: "one" | "group";
+  maxParty: number;
+  /** People or places that can do it ("one"). */
+  staff: string[];
 }
 
 export interface WizardOption {
@@ -22,7 +27,7 @@ export interface WizardOption {
 interface DaySlots {
   date: string;
   weekday: number;
-  slots: { start: string; time: string }[];
+  slots: { start: string; time: string; turn?: string }[];
 }
 
 const dayFormat = new Intl.DateTimeFormat("pt-PT", { weekday: "short", timeZone: "UTC" });
@@ -56,16 +61,16 @@ function StepTitle({ number, children }: { number: number; children: ReactNode }
 
 const pageDays = 14;
 
-/** Slots split by part of the day: lunch and dinner (tables), morning, afternoon and evening (services). */
-function periods<T extends { time: string }>(slots: T[], mode: "table" | "service"): { label: string; slots: T[] }[] {
-  const label = (time: string) => {
-    const hour = Number(time.slice(0, 2));
-    if (mode === "table") return hour < 16 ? "Almoço" : "Jantar";
+/** Slots split by part of the day: the restaurant's turns (lunch, dinner), or morning, afternoon and evening. */
+function periods<T extends { time: string; turn?: string }>(slots: T[]): { label: string; slots: T[] }[] {
+  const label = (slot: T) => {
+    if (slot.turn) return slot.turn;
+    const hour = Number(slot.time.slice(0, 2));
     return hour < 13 ? "Manhã" : hour < 20 ? "Tarde" : "Noite";
   };
   const groups: { label: string; slots: T[] }[] = [];
   for (const slot of slots) {
-    const name = label(slot.time);
+    const name = label(slot);
     const last = groups[groups.length - 1];
     if (last && last.label === name) last.slots.push(slot);
     else groups.push({ label: name, slots: [slot] });
@@ -75,26 +80,26 @@ function periods<T extends { time: string }>(slots: T[], mode: "table" | "servic
 
 export function BookingWizard({
   slug,
-  mode,
   services,
-  staff,
-  maxParty,
+  staff: allStaff,
   replaceToken,
   initial,
   policy,
 }: {
   slug: string;
-  mode: "table" | "service";
   services: WizardService[];
   staff: WizardOption[];
-  maxParty: number;
   replaceToken: string | null;
   initial: { service: string | null; staff: string | null; party: number };
   policy: string | null;
 }) {
-  const [service, setService] = useState(initial.service ?? services[0]?.id ?? "");
+  const [service, setService] = useState(initial.service && services.some((item) => item.id === initial.service) ? initial.service : (services[0]?.id ?? ""));
   const [person, setPerson] = useState(initial.staff ?? "");
-  const [party, setParty] = useState(Math.min(maxParty, Math.max(1, initial.party)));
+  const [party, setParty] = useState(Math.max(1, initial.party));
+  const chosenService = services.find((item) => item.id === service);
+  const mode: "table" | "service" = chosenService?.kind === "group" ? "table" : "service";
+  const maxParty = chosenService?.maxParty ?? 8;
+  const staff = useMemo(() => (mode === "service" && chosenService ? allStaff.filter((item) => chosenService.staff.includes(item.id)) : []), [mode, chosenService, allStaff]);
   const [from, setFrom] = useState<string | null>(null);
   const [days, setDays] = useState<DaySlots[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,17 +109,16 @@ export function BookingWizard({
   const [state, formAction] = useActionState(createBooking, null);
 
   const query = useMemo(() => {
-    const params = new URLSearchParams({ days: String(pageDays) });
+    const params = new URLSearchParams({ days: String(pageDays), service });
     if (mode === "service") {
-      params.set("service", service);
-      if (person) params.set("staff", person);
-    } else params.set("party", String(party));
+      if (person && staff.some((item) => item.id === person)) params.set("staff", person);
+    } else params.set("party", String(Math.min(party, maxParty)));
     if (from) params.set("from", from);
     return params.toString();
-  }, [mode, service, person, party, from]);
+  }, [mode, service, person, party, from, staff, maxParty]);
 
   useEffect(() => {
-    if (mode === "service" && !service) return;
+    if (!service) return;
     let cancelled = false;
     const controller = new AbortController();
     // Show the skeleton only if the answer takes more than ~300 ms (no flashing).
@@ -142,10 +146,9 @@ export function BookingWizard({
       window.clearTimeout(slow);
       controller.abort();
     };
-  }, [slug, query, mode, service]);
+  }, [slug, query, service]);
 
   const selectedDay = days?.find((day) => day.date === date) ?? null;
-  const chosenService = services.find((item) => item.id === service);
   const chosenSlot = selectedDay?.slots.find((slot) => slot.start === start) ?? null;
   const lastDay = days?.length ? days[days.length - 1].date : null;
   const busy = loading;
@@ -153,86 +156,90 @@ export function BookingWizard({
   return (
     <div className="flex flex-col gap-5">
       <section className="card flex flex-col gap-4 p-5">
-        <StepTitle number={1}>{mode === "service" ? "O que deseja marcar?" : "Quantas pessoas?"}</StepTitle>
-        {mode === "service" ? (
-          <>
-            <fieldset className="flex flex-col gap-2">
-              <legend className="sr-only">Serviço</legend>
-              {services.map((item) => (
-                <label
-                  key={item.id}
-                  className="flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-line bg-surface-2/40 px-4 py-3.5 transition-colors has-[:checked]:border-[var(--brand)] has-[:checked]:bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))]"
+        <StepTitle number={1}>{services.length > 1 ? "O que deseja reservar?" : mode === "table" ? "Quantas pessoas?" : chosenService?.name ?? "Reservar"}</StepTitle>
+        {services.length > 1 ? (
+          <fieldset className="flex flex-col gap-2">
+            <legend className="sr-only">Serviço</legend>
+            {services.map((item) => (
+              <label
+                key={item.id}
+                className="flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-line bg-surface-2/40 px-4 py-3.5 transition-colors has-[:checked]:border-[var(--brand)] has-[:checked]:bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))]"
+              >
+                <span className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="service-choice"
+                    value={item.id}
+                    checked={service === item.id}
+                    onChange={() => {
+                      setService(item.id);
+                      setPerson("");
+                      setFrom(null);
+                    }}
+                    className="h-4.5 w-4.5 accent-[var(--brand)]"
+                  />
+                  <span className="font-semibold text-text">{item.name}</span>
+                </span>
+                <span className="shrink-0 text-sm text-muted">
+                  {item.kind === "one" ? `${item.minutes} min` : ""}
+                  {item.price ? `${item.kind === "one" ? " · " : ""}${item.price}` : ""}
+                </span>
+              </label>
+            ))}
+          </fieldset>
+        ) : null}
+        {mode === "service" && staff.length > 1 ? (
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-1 text-sm font-semibold text-text">Com quem?</legend>
+            <div className="flex flex-wrap gap-2">
+              {[{ id: "", name: "Qualquer um" }, ...staff].map((item) => (
+                <button
+                  key={item.id || "any"}
+                  type="button"
+                  aria-pressed={person === item.id}
+                  onClick={() => {
+                    setPerson(item.id);
+                    setFrom(null);
+                  }}
+                  className={`h-11 rounded-full border px-4 text-sm font-semibold transition-colors ${
+                    person === item.id ? "border-transparent bg-[var(--brand)] text-[var(--brand-text)]" : "border-line text-text hover:border-line-strong"
+                  }`}
                 >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="service-choice"
-                      value={item.id}
-                      checked={service === item.id}
-                      onChange={() => {
-                        setService(item.id);
-                        setFrom(null);
-                      }}
-                      className="h-4.5 w-4.5 accent-[var(--brand)]"
-                    />
-                    <span className="font-semibold text-text">{item.name}</span>
-                  </span>
-                  <span className="shrink-0 text-sm text-muted">
-                    {item.minutes} min{item.price ? ` · ${item.price}` : ""}
-                  </span>
-                </label>
+                  {item.name}
+                </button>
               ))}
-            </fieldset>
-            {staff.length ? (
-              <fieldset className="flex flex-col gap-2">
-                <legend className="mb-1 text-sm font-semibold text-text">Com quem?</legend>
-                <div className="flex flex-wrap gap-2">
-                  {[{ id: "", name: "Qualquer um" }, ...staff].map((item) => (
-                    <button
-                      key={item.id || "any"}
-                      type="button"
-                      aria-pressed={person === item.id}
-                      onClick={() => {
-                        setPerson(item.id);
-                        setFrom(null);
-                      }}
-                      className={`h-11 rounded-full border px-4 text-sm font-semibold transition-colors ${
-                        person === item.id ? "border-transparent bg-[var(--brand)] text-[var(--brand-text)]" : "border-line text-text hover:border-line-strong"
-                      }`}
-                    >
-                      {item.name}
-                    </button>
-                  ))}
-                </div>
-                {person === "" ? <p className="text-xs text-subtle">Com «qualquer um» vê mais horários.</p> : null}
-              </fieldset>
-            ) : null}
-          </>
-        ) : (
-          <div className="flex items-center justify-between gap-3">
-            <button
-              type="button"
-              aria-label="Menos uma pessoa"
-              onClick={() => setParty((value) => Math.max(1, value - 1))}
-              className={`${brandSecondaryButton} !w-14`}
-              disabled={party <= 1}
-            >
-              −
-            </button>
-            <p className="display text-4xl tabular-nums" aria-live="polite">
-              {party} <span className="text-lg text-muted">{party === 1 ? "pessoa" : "pessoas"}</span>
-            </p>
-            <button
-              type="button"
-              aria-label="Mais uma pessoa"
-              onClick={() => setParty((value) => Math.min(maxParty, value + 1))}
-              className={`${brandSecondaryButton} !w-14`}
-              disabled={party >= maxParty}
-            >
-              +
-            </button>
+            </div>
+            {person === "" ? <p className="text-xs text-subtle">Com «qualquer um» vê mais horários.</p> : null}
+          </fieldset>
+        ) : null}
+        {mode === "table" ? (
+          <div className="flex flex-col gap-2">
+            {services.length > 1 ? <p className="text-sm font-semibold text-text">Quantas pessoas?</p> : null}
+            <div className="flex items-center justify-between gap-3">
+              <button
+                type="button"
+                aria-label="Menos uma pessoa"
+                onClick={() => setParty((value) => Math.max(1, Math.min(value, maxParty) - 1))}
+                className={`${brandSecondaryButton} !w-14`}
+                disabled={party <= 1}
+              >
+                −
+              </button>
+              <p className="display text-4xl tabular-nums" aria-live="polite">
+                {Math.min(party, maxParty)} <span className="text-lg text-muted">{Math.min(party, maxParty) === 1 ? "pessoa" : "pessoas"}</span>
+              </p>
+              <button
+                type="button"
+                aria-label="Mais uma pessoa"
+                onClick={() => setParty((value) => Math.min(maxParty, value + 1))}
+                className={`${brandSecondaryButton} !w-14`}
+                disabled={party >= maxParty}
+              >
+                +
+              </button>
+            </div>
           </div>
-        )}
+        ) : null}
         {mode === "table" ? <p className="-mt-2 text-center text-xs text-subtle">Grupos maiores de {maxParty}: contacte-nos diretamente.</p> : null}
       </section>
 
@@ -309,7 +316,7 @@ export function BookingWizard({
             {selectedDay ? (
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-semibold text-text first-letter:uppercase">{longFormat.format(noon(selectedDay.date))}</p>
-                {periods(selectedDay.slots, mode).map((period) => (
+                {periods(selectedDay.slots).map((period) => (
                 <div key={period.label} className="flex flex-col gap-2">
                 <p className="text-xs font-semibold text-muted">{period.label}</p>
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" role="listbox" aria-label={`Hora · ${period.label}`}>
@@ -347,15 +354,15 @@ export function BookingWizard({
             <strong className="first-letter:uppercase">{longFormat.format(noon(selectedDay.date))}</strong>, às <strong>{chosenSlot.time}</strong>
             <br />
             {mode === "service"
-              ? `${chosenService?.name ?? ""}${person ? ` com ${staff.find((item) => item.id === person)?.name ?? ""}` : ""}`
-              : `${party} ${party === 1 ? "pessoa" : "pessoas"}`}
+              ? `${chosenService?.name ?? ""}${person ? ` · ${staff.find((item) => item.id === person)?.name ?? ""}` : ""}`
+              : `${services.length > 1 ? `${chosenService?.name ?? ""} · ` : ""}${Math.min(party, maxParty)} ${Math.min(party, maxParty) === 1 ? "pessoa" : "pessoas"}`}
           </p>
           <form action={formAction} className="flex flex-col gap-4">
             <input type="hidden" name="slug" value={slug} />
             <input type="hidden" name="start" value={chosenSlot.start} />
-            <input type="hidden" name="service" value={mode === "service" ? service : ""} />
+            <input type="hidden" name="service" value={service} />
             <input type="hidden" name="staff" value={mode === "service" ? person : ""} />
-            <input type="hidden" name="party" value={String(party)} />
+            <input type="hidden" name="party" value={String(Math.min(party, maxParty))} />
             {replaceToken ? <input type="hidden" name="replace_token" value={replaceToken} /> : null}
             <div aria-hidden="true" className="hidden">
               <label>
@@ -377,7 +384,7 @@ export function BookingWizard({
             </label>
             <label className={publicLabel}>
               Notas (opcional)
-              <textarea name="notes" rows={2} maxLength={500} placeholder="Alergias, cadeira de bebé, pedidos especiais…" className={`${publicInput} h-auto py-2.5`} />
+              <textarea name="notes" rows={2} maxLength={500} placeholder={mode === "table" ? "Alergias, cadeira de bebé, pedidos especiais…" : "Algo que devamos saber?"} className={`${publicInput} h-auto py-2.5`} />
             </label>
             {policy ? <p className="text-xs text-muted">{policy}</p> : null}
             {state && !state.ok ? (

@@ -13,8 +13,9 @@ describe("establishments", () => {
     assert.equal(kindFromCategory("Restaurante de marisco"), "restaurant");
     assert.equal(kindFromCategory("Seafood restaurant"), "restaurant");
     assert.equal(kindFromCategory("Café"), "restaurant");
-    assert.equal(kindFromCategory("Barbearia"), "salon");
-    assert.equal(kindFromCategory("Barber shop"), "salon");
+    assert.equal(kindFromCategory("Barbearia"), "barbershop");
+    assert.equal(kindFromCategory("Barber shop"), "barbershop");
+    assert.equal(kindFromCategory("Clube de padel"), "sports");
     assert.equal(kindFromCategory("Cabeleireiro"), "salon");
     assert.equal(kindFromCategory("Clínica dentária"), "clinic");
     assert.equal(kindFromCategory("Loja de roupa"), "retail");
@@ -148,21 +149,23 @@ describe("booking availability", () => {
 
   function input(overrides = {}) {
     return {
-      mode: "service",
+      kind: "one",
       timeZone: "Europe/Lisbon",
       now,
       minNoticeMinutes: 60,
       maxDaysAhead: 7,
       intervalMinutes: 30,
-      occupiedMinutes: 30,
-      fitMinutes: 30,
+      durationMinutes: 30,
+      bufferMinutes: 0,
+      lastArrivalMinutes: 60,
       hours: [{ weekday: wednesday, opens: "10:00", closes: "12:00" }],
       closures: [],
       staff: ["rui", "pedro"],
+      staffHours: {},
       busy: [],
-      seatsPerSlot: 10,
+      capacity: 10,
       partySize: 2,
-      tables: [],
+      arrivals: [],
       ...overrides,
     };
   }
@@ -181,7 +184,7 @@ describe("booking availability", () => {
   });
 
   it("drops slots where the service no longer fits", () => {
-    const day = today(bookingAvailability(input({ occupiedMinutes: 50, fitMinutes: 45 })));
+    const day = today(bookingAvailability(input({ durationMinutes: 45, bufferMinutes: 5 })));
     assert.deepEqual(day.slots.map((slot) => slot.time), ["10:00", "10:30", "11:00"]);
   });
 
@@ -210,14 +213,38 @@ describe("booking availability", () => {
     assert.equal(today(bookingAvailability(input({ closures: ["2026-10-07"] }))).slots.length, 0);
   });
 
-  it("counts the people still seated for the whole meal in table mode", () => {
-    // 9 of 10 seats taken from 10:00 to 11:30; a 90-minute meal for 2 only fits from 11:30.
-    const tables = [{ start: Date.parse("2026-10-07T09:00:00Z"), end: Date.parse("2026-10-07T10:30:00Z"), party: 9 }];
-    const day = today(bookingAvailability(input({ mode: "table", staff: [], tables, partySize: 2, occupiedMinutes: 90, fitMinutes: 30 })));
-    assert.deepEqual(day.slots.map((slot) => slot.time), ["11:30"]);
-    assert.equal(findBookingSlot([day], "2026-10-07T09:00:00.000Z"), null);
-    // A party of 1 still fits next to the 9.
-    assert.equal(today(bookingAvailability(input({ mode: "table", staff: [], tables, partySize: 1, occupiedMinutes: 90, fitMinutes: 30 }))).slots[0].time, "10:00");
+  it("fills a restaurant turn by the people booked in it", () => {
+    // A turn 10:00–12:00 for 10 people, the last booking an hour before closing; 9 already booked.
+    const lunch = { kind: "group", staff: [], partySize: 2, durationMinutes: 120, lastArrivalMinutes: 60, arrivals: [{ start: Date.parse("2026-10-07T09:30:00Z"), party: 9 }] };
+    const full = today(bookingAvailability(input(lunch)));
+    assert.equal(full.slots.length, 0);
+    assert.equal(findBookingSlot([full], "2026-10-07T09:00:00.000Z"), null);
+    // One more person still fits, at any time of the turn (no meal length).
+    const one = today(bookingAvailability(input({ ...lunch, partySize: 1 })));
+    assert.deepEqual(one.slots.map((slot) => slot.time), ["10:00", "10:30", "11:00"]);
+    assert.equal(one.slots[0].turn.label, "Manhã");
+    assert.equal(one.slots[0].end, "2026-10-07T11:00:00.000Z");
+  });
+
+  it("counts each turn on its own", () => {
+    // Lunch is full, dinner is free.
+    const hours = [
+      { weekday: wednesday, opens: "12:00", closes: "15:00" },
+      { weekday: wednesday, opens: "19:00", closes: "23:00" },
+    ];
+    const arrivals = [{ start: Date.parse("2026-10-07T12:00:00Z"), party: 10 }];
+    const day = today(bookingAvailability(input({ kind: "group", staff: [], hours, arrivals, partySize: 2, lastArrivalMinutes: 60, durationMinutes: 120 })));
+    assert.ok(day.slots.every((slot) => slot.turn.label === "Jantar"));
+    assert.equal(day.slots[0].time, "19:00");
+    assert.equal(day.slots[day.slots.length - 1].time, "22:00");
+  });
+
+  it("keeps people and places inside their own hours", () => {
+    // Rui only works from 11:00; Pedro follows the space.
+    const staffHours = { rui: [{ weekday: wednesday, opens: "11:00", closes: "12:00" }] };
+    const day = today(bookingAvailability(input({ staffHours })));
+    assert.deepEqual(day.slots[0].staff, ["pedro"]);
+    assert.deepEqual(day.slots.find((slot) => slot.time === "11:00").staff, ["rui", "pedro"]);
   });
 
   it("only allows online changes before the limit", () => {

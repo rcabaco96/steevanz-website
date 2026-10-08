@@ -118,10 +118,10 @@ export async function currentSettings(establishment: EstablishmentRow, bundle?: 
   return applySchedule(establishment, await ensureWaitlistSettings(establishment), bundle);
 }
 
-/** Called tickets past the time to show up (late answers get twice the time): they close as served. */
+/** Called tickets past the time to show up: they close as served. */
 export function overdueCalls(live: WaitlistEntryRow[], settings: WaitlistSettingsRow, now: number): WaitlistEntryRow[] {
   return live.filter(
-    (entry) => entry.status === "called" && entry.called_at && now - Date.parse(entry.called_at) > settings.grace_minutes * (entry.reply === "late" ? 2 : 1) * 60_000,
+    (entry) => entry.status === "called" && entry.called_at && now - Date.parse(entry.called_at) > settings.grace_minutes * 60_000,
   );
 }
 

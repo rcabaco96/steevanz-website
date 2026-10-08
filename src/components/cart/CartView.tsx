@@ -10,7 +10,7 @@ import type { CartCopy } from "@/content/cart";
 import type { ProductIcon } from "@/content/products";
 import type { ProductId } from "@/content/types";
 import { cartOwnership, submitOrder, type OrderActionState } from "@/lib/cart/actions";
-import { alreadyActive, ownedSpaces, type OwnedProduct } from "@/lib/cart/ownership";
+import { alreadyActive, type OwnedProduct } from "@/lib/cart/ownership";
 import { cartGroups, formatCents, maxQuantity, priceCart, vatRate, type CartGroupId, type GroupTotals, type PricedLine } from "@/lib/cart/pricing";
 import { cart, useCart } from "@/lib/cart/store";
 import type { Locale } from "@/lib/i18n";
@@ -199,13 +199,6 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
                           copy={copy}
                           money={(cents) => money(cents, group)}
                           showAddVariant={Boolean(item.customization) && lastOfProduct}
-                          ownedNote={
-                            ownedSpaces(line.productId, owned)
-                              ? copy.owned.extraSpaces
-                                  .replace("{owned}", spacesLabel(ownedSpaces(line.productId, owned), locale))
-                                  .replace("{added}", spacesLabel(line.quantity, locale))
-                              : null
-                          }
                         />
                       );
                     })}
@@ -455,14 +448,9 @@ interface CartLineRowProps {
   copy: CartCopy;
   money: (cents: number) => string;
   showAddVariant: boolean;
-  ownedNote: string | null;
 }
 
-function spacesLabel(count: number, locale: Locale): string {
-  return locale === "pt" ? `${count} ${count === 1 ? "espaço" : "espaços"}` : `${count} ${count === 1 ? "space" : "spaces"}`;
-}
-
-function CartLineRow({ locale, line, item, copy, money, showAddVariant, ownedNote }: CartLineRowProps) {
+function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLineRowProps) {
   const formatLabel = item.customization?.formats.find((format) => format.value === line.options?.format)?.label;
   const lineName = formatLabel ? `${item.name} (${formatLabel})` : item.name;
 
@@ -480,7 +468,6 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant, ownedNot
           <p className="tabular text-sm text-muted">
             {money(line.unitCents)} {copy.unitPrice}
           </p>
-          {ownedNote ? <p className="mt-1 rounded-lg bg-accent-soft/60 px-2.5 py-1.5 text-sm text-text">{ownedNote}</p> : null}
           {line.lineExtraCents ? (
             <p className="tabular text-sm text-muted">{copy.customize.lineExtra.replace("{price}", money(line.lineExtraCents))}</p>
           ) : null}

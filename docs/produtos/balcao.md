@@ -8,7 +8,7 @@ Steevanz do resto do backoffice. Definições, histórico e estatísticas ficam 
 
 - Cliente: **Balcão** no menu da área de cliente (`/conta/balcao`; só aparece a quem tem a fila, as
   reservas ou o cartão), o cartão no topo de «Os meus produtos» e o botão **Abrir o Balcão** em cada
-  módulo. Com vários espaços, escolhe-se o espaço como nos módulos (`?loja=`).
+  módulo.
 - Admin: **Abrir Balcão** em cada espaço na ficha do cliente (`/admin/clientes/<id>/balcao`).
 - Ler o QR do cartão de um cliente com a câmara do aparelho do balcão abre o Balcão nesse cartão.
 

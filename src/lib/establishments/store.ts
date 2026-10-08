@@ -1,5 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/service";
-import type { ClosureRow, EstablishmentBundle, EstablishmentRow, HoursRow, ServiceRow, StaffRow } from "./types";
+import type { ClosureRow, EstablishmentBundle, EstablishmentRow, HoursRow, ServiceRow, ServiceStaffRow, StaffHoursRow, StaffRow } from "./types";
 
 // Reads for establishments. Always through the service role: callers check access first
 // (requireEstablishmentAccess) or only expose what a public page shows.
@@ -43,12 +43,22 @@ export async function loadBundle(establishment: EstablishmentRow): Promise<Estab
     client.from("establishment_closures").select("*").eq("establishment_id", id).gte("day", new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)).order("day"),
   ]);
   for (const result of [services, staff, hours, closures]) if (result.error) throw new Error(`loadBundle: ${result.error.message}`);
+  const serviceIds = ((services.data ?? []) as ServiceRow[]).map((row) => row.id);
+  const staffIds = ((staff.data ?? []) as StaffRow[]).map((row) => row.id);
+  const [serviceStaff, staffHours] = await Promise.all([
+    serviceIds.length ? client.from("establishment_service_staff").select("*").in("service_id", serviceIds) : Promise.resolve({ data: [], error: null }),
+    staffIds.length ? client.from("establishment_staff_hours").select("*").in("staff_id", staffIds).order("weekday").order("opens") : Promise.resolve({ data: [], error: null }),
+  ]);
+  if (serviceStaff.error) throw new Error(`loadBundle service staff: ${serviceStaff.error.message}`);
+  if (staffHours.error) throw new Error(`loadBundle staff hours: ${staffHours.error.message}`);
   return {
     establishment,
     services: (services.data ?? []) as ServiceRow[],
     staff: (staff.data ?? []) as StaffRow[],
     hours: (hours.data ?? []) as HoursRow[],
     closures: (closures.data ?? []) as ClosureRow[],
+    serviceStaff: (serviceStaff.data ?? []) as ServiceStaffRow[],
+    staffHours: (staffHours.data ?? []) as StaffHoursRow[],
   };
 }
 

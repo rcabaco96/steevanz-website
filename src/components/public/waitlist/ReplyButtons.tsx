@@ -3,9 +3,9 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { replyToCall } from "@/lib/modules/waitlist/actions";
-import { brandButton, brandSecondaryButton } from "../BrandFrame";
+import { brandSecondaryButton } from "../BrandFrame";
 
-function Option({ value, label, primary = false, danger = false }: { value: string; label: string; primary?: boolean; danger?: boolean }) {
+function Option({ value, label, danger = false }: { value: string; label: string; danger?: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -13,15 +13,15 @@ function Option({ value, label, primary = false, danger = false }: { value: stri
       name="reply"
       value={value}
       disabled={pending}
-      className={primary ? brandButton : `${brandSecondaryButton} ${danger ? "text-danger" : ""}`}
+      className={`${brandSecondaryButton} ${danger ? "text-danger" : ""}`}
     >
       {label}
     </button>
   );
 }
 
-/** "Vou atrasar-me" / "Já não venho" (called), or just "Sair da fila" (waiting). Both optional: waiting needs nothing. */
-export function ReplyButtons({ token, called, current }: { token: string; called: boolean; current: string | null }) {
+/** "Já não venho": leaves the queue (optional; waiting or being called needs nothing else). */
+export function ReplyButtons({ token }: { token: string }) {
   const [state, formAction] = useActionState(replyToCall, null);
   return (
     <form
@@ -33,11 +33,6 @@ export function ReplyButtons({ token, called, current }: { token: string; called
       className="flex flex-col gap-2"
     >
       <input type="hidden" name="token" value={token} />
-      {called ? (
-        <>
-          <Option value="late" label={current === "late" ? "✓ Vou atrasar-me" : "Vou atrasar-me uns minutos"} />
-        </>
-      ) : null}
       <Option value="leaving" label="Já não venho, sair da fila" danger />
       {state ? (
         <p role={state.ok ? "status" : "alert"} className={`text-center text-sm ${state.ok ? "text-success" : "text-danger"}`}>
