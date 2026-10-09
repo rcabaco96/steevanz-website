@@ -3,6 +3,7 @@ import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backof
 import { requestOrigin } from "@/lib/booking/request";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
+import { kindDefaults, type BusinessKind } from "@/lib/establishments/kinds";
 import { weekdayNames } from "@/lib/establishments/types";
 import { saveWaitlistSettings } from "@/lib/modules/waitlist/actions";
 import { currentSettings, loadQueue, loadStats, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
@@ -14,6 +15,7 @@ import { NoEstablishment } from "../shared/NoEstablishment";
 import { QueueCounter } from "../counter/QueueCounter";
 import { AutoRefresh } from "../shared/AutoRefresh";
 import { JoinChime } from "./JoinChime";
+import { QueueRuleFields } from "./QueueRuleFields";
 
 const views = [
   { id: "fila", label: "Fila" },
@@ -32,36 +34,22 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
   );
 }
 
-function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { settings: WaitlistSettingsRow; establishmentId: string; hasServices: boolean; hasStaff: boolean }) {
-  const input = `${adminInputClasses} h-11`;
+function QueueSettings({ settings, establishmentId, kind, hasServices, hasStaff }: { settings: WaitlistSettingsRow; establishmentId: string; kind: BusinessKind; hasServices: boolean; hasStaff: boolean }) {
+  const suited = kindDefaults[kind].waitlist;
   return (
     <Panel title="Regras da fila">
       <ActionForm key={settings.updated_at} action={saveWaitlistSettings} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={establishmentId} />
-        <label className={adminLabelClasses}>
-          Minutos por vez (média)
-          <input name="avg_minutes" type="number" min={1} max={240} required defaultValue={settings.avg_minutes} className={input} />
-          <span className="text-xs font-normal text-subtle">Tempo médio entre duas chamadas. A estimativa ajusta-se ao ritmo real do dia.</span>
-        </label>
-        <label className={adminLabelClasses}>
-          Tempo para chegar depois de chamado
-          <select name="grace_minutes" defaultValue={settings.grace_minutes} className={input}>
-            {[2, 3, 5, 10, 15].concat([2, 3, 5, 10, 15].includes(settings.grace_minutes) ? [] : [settings.grace_minutes]).map((minutes) => (
-              <option key={minutes} value={minutes}>
-                {minutes} minutos
-              </option>
-            ))}
-          </select>
-          <span className="text-xs font-normal text-subtle">O cliente vê «venha já» e até que horas guardamos a vez. Depois disso, «Não apareceu» chama o seguinte.</span>
-        </label>
-        <label className={adminLabelClasses}>
-          Máximo à espera
-          <input name="max_waiting" type="number" min={1} max={500} required defaultValue={settings.max_waiting} className={input} />
-        </label>
-        <label className={adminLabelClasses}>
-          Máximo de pessoas por grupo
-          <input name="max_party" type="number" min={1} max={100} required defaultValue={settings.max_party} className={input} />
-        </label>
+        <QueueRuleFields
+          avgMinutes={settings.avg_minutes}
+          graceMinutes={settings.grace_minutes}
+          maxWaiting={settings.max_waiting}
+          maxParty={settings.max_party}
+          asks={{ ask_party: settings.ask_party, ask_service: settings.ask_service, ask_staff: settings.ask_staff }}
+          suited={{ ask_party: suited.askParty, ask_service: suited.askService, ask_staff: suited.askStaff }}
+          hasServices={hasServices}
+          hasStaff={hasStaff}
+        />
         <fieldset className="flex flex-col gap-3 sm:col-span-2">
           <legend className="mb-1 text-sm font-medium text-muted">Automático</legend>
           <label className="flex items-start gap-2 text-sm text-text">
@@ -79,24 +67,9 @@ function QueueSettings({ settings, establishmentId, hasServices, hasStaff }: { s
             </span>
           </label>
         </fieldset>
-        <fieldset className="flex flex-col gap-2 sm:col-span-2">
-          <legend className="mb-1 text-sm font-medium text-muted">O que perguntar ao cliente</legend>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="checkbox" name="ask_party" defaultChecked={settings.ask_party} className="h-4.5 w-4.5 accent-accent" />
-            Número de pessoas
-          </label>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="checkbox" name="ask_service" defaultChecked={settings.ask_service} className="h-4.5 w-4.5 accent-accent" />
-            Serviço {hasServices ? "" : <span className="text-subtle">(adicione serviços abaixo)</span>}
-          </label>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="checkbox" name="ask_staff" defaultChecked={settings.ask_staff} className="h-4.5 w-4.5 accent-accent" />
-            Profissional preferido {hasStaff ? "" : <span className="text-subtle">(adicione profissionais abaixo)</span>}
-          </label>
-        </fieldset>
         <label className={`${adminLabelClasses} sm:col-span-2`}>
           Mensagem na página de entrada (opcional)
-          <textarea name="message" maxLength={300} rows={2} defaultValue={settings.message ?? ""} className={`${adminInputClasses} py-2`} placeholder="Ex.: Mesas de 6 ou mais pessoas: fale com a equipa." />
+          <textarea name="message" maxLength={300} rows={2} defaultValue={settings.message ?? ""} className={`${adminInputClasses} py-2`} />
         </label>
         <div className="sm:col-span-2">
           <SubmitButton size="sm">Guardar</SubmitButton>
@@ -160,8 +133,8 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
     return (
       <div className="flex flex-col gap-6">
         {nav}
-        <QueueSettings settings={settings} establishmentId={current.id} hasServices={bundle.services.length > 0} hasStaff={bundle.staff.length > 0} />
-        <EstablishmentSettings bundle={bundle} viewer={viewer} sections={["details", "services", "staff"]} />
+        <QueueSettings settings={settings} establishmentId={current.id} kind={current.kind} hasServices={bundle.services.length > 0} hasStaff={bundle.staff.length > 0} />
+        <EstablishmentSettings bundle={bundle} viewer={viewer} sections={["details", ...(settings.ask_service ? (["services"] as const) : []), ...(settings.ask_staff ? (["staff"] as const) : [])]} />
       </div>
     );
   }

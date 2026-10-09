@@ -4,7 +4,7 @@ export const copy: ProductCopyByLocale = {
   pt: {
     name: "Lista de espera digital",
     shortName: "Lista de Espera",
-    tagline: "Os clientes esperam onde quiserem e voltam quando for a vez deles.",
+    tagline: "Os clientes sabem quanto falta e estão à porta quando chega a vez deles.",
     summary:
       "Fila virtual por QR code ou NFC, com tempo de espera estimado e aviso no telemóvel quando a mesa ou a vez estiver pronta. Sem aglomerações à porta.",
     metaTitle: "Lista de Espera Digital e Fila Virtual | Steevanz",
@@ -12,7 +12,7 @@ export const copy: ProductCopyByLocale = {
       "Lista de espera digital para restaurantes, clínicas e salões: o cliente entra na fila por QR code ou NFC e é avisado no telemóvel quando chega a sua vez.",
     heroTitle: "Acabe com a fila à porta",
     heroSubtitle:
-      "O cliente entra na lista de espera com um toque ou uma leitura de QR code, acompanha a posição e o tempo estimado no telemóvel e é avisado quando a mesa ou a vez estiver pronta. Pode esperar ali perto, sem ficar de pé à porta.",
+      "O cliente entra na lista de espera com um toque ou uma leitura de QR code, acompanha a posição e o tempo estimado no telemóvel e é avisado quando a mesa ou a vez estiver pronta. Sabe quanto falta e, quando é chamado, entra logo.",
     problem: {
       title: "A espera à porta afasta clientes",
       body:
@@ -41,7 +41,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Vê o tempo estimado",
-        body: "Recebe a posição na fila e uma estimativa de espera, e pode sair e voltar.",
+        body: "Recebe a posição na fila e uma estimativa de espera, e sabe a que horas deve estar à porta.",
       },
       {
         title: "É avisado no telemóvel",
@@ -55,7 +55,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Tempo estimado",
-        body: "O sistema calcula uma estimativa com base no ritmo real da fila, para o cliente decidir se espera ali perto ou dá uma volta.",
+        body: "O sistema calcula uma estimativa com base no ritmo da fila, para o cliente saber quanto falta e estar à porta quando chegar a vez.",
       },
       {
         title: "Aviso no telemóvel",
@@ -125,7 +125,7 @@ export const copy: ProductCopyByLocale = {
   en: {
     name: "Digital waitlist",
     shortName: "Waitlist",
-    tagline: "Customers wait wherever they like and come back when it's their turn.",
+    tagline: "Customers know how long is left and are at the door when their turn comes.",
     summary:
       "A virtual queue by QR code or NFC, with an estimated waiting time and a phone alert when the table or turn is ready. No crowd at the door.",
     metaTitle: "Digital Waitlist and Virtual Queue | Steevanz",
@@ -133,7 +133,7 @@ export const copy: ProductCopyByLocale = {
       "Digital waitlist for restaurants, clinics and salons: customers join the queue by QR code or NFC and are alerted on their phone when it's their turn.",
     heroTitle: "No more queue at the door",
     heroSubtitle:
-      "Customers join the waitlist with a tap or a QR scan, follow their position and estimated wait on their phone and are alerted when their table or turn is ready. They can wait nearby instead of standing at the door.",
+      "Customers join the waitlist with a tap or a QR scan, follow their position and estimated wait on their phone and are alerted when their table or turn is ready. They know how long is left and, when called, come straight in.",
     problem: {
       title: "Waiting at the door drives customers away",
       body:
@@ -162,7 +162,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "They see the estimated wait",
-        body: "They get their position in the queue and an estimated wait, and are free to leave and come back.",
+        body: "They get their position in the queue and an estimated wait, and know when to be at the door.",
       },
       {
         title: "They're alerted by phone",
@@ -176,7 +176,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Estimated wait",
-        body: "The system estimates the wait from the queue's real pace, so customers can decide whether to stay close or pop out.",
+        body: "The system estimates the wait from the queue's pace, so customers know how long is left and are at the door when their turn comes.",
       },
       {
         title: "Alert on the phone",
