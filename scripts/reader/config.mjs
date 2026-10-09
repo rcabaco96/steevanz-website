@@ -98,3 +98,14 @@ export class UserError extends Error {}
  * of the whole reader (reader-throttle.ts). Real errors (place not found…) are plain UserErrors.
  */
 export class GoogleLimitError extends UserError {}
+
+/**
+ * Not ready yet, nobody's fault (e.g. the competitor search before the customer's import has read
+ * where the place is): the job goes back to the queue in `seconds`, without counting towards a pause.
+ */
+export class WaitError extends UserError {
+  constructor(message, seconds = 30) {
+    super(message);
+    this.seconds = seconds;
+  }
+}

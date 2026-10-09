@@ -44,11 +44,11 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
   const searchFailed = state.discover?.status === "failed" && competition === null ? state.discover.error : null;
   useBusySignal("sync", refreshing);
 
-  async function start() {
+  async function start(onlyCompetitors = false) {
     setStarting(true);
     setError(null);
     try {
-      const response = await fetch(`/api/painel/${encodeURIComponent(slug)}/import`, { method: "POST", cache: "no-store" });
+      const response = await fetch(`/api/painel/${encodeURIComponent(slug)}/import${onlyCompetitors ? "?only=concorrentes" : ""}`, { method: "POST", cache: "no-store" });
       const body = (await response.json()) as ImportResponse;
       if ("error" in body) setError(body.error);
       else apply(body);
@@ -189,10 +189,15 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
         </div>
       ) : searching ? (
         <p className="border-t border-line pt-3 text-xs text-subtle">
-          {state.discover?.status === "running" ? "A procurar os concorrentes da zona…" : "A procura dos concorrentes da zona começa depois das reviews do negócio."}
+          {state.discover?.status === "running" ? "A procurar os concorrentes da zona…" : "A procura dos concorrentes da zona começa daqui a pouco, ao mesmo tempo que as reviews."}
         </p>
       ) : searchFailed ? (
-        <p className="border-t border-line pt-3 text-xs text-danger">A procura de concorrentes falhou: {searchFailed} Carregue em «Importar outra vez» para tentar de novo.</p>
+        <div className="flex flex-col gap-2 border-t border-line pt-3">
+          <p className="text-xs text-danger">A procura de concorrentes falhou: {searchFailed}</p>
+          <button type="button" onClick={() => void start(true)} disabled={starting} className={buttonClasses("secondary", "sm", "self-start")}>
+            {starting ? "A pedir…" : "Procurar concorrentes outra vez"}
+          </button>
+        </div>
       ) : null}
 
       {!active ? (

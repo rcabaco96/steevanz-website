@@ -8,7 +8,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, openSync, readFileSync, unlinkSync, writeFileSync, closeSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { cronSecret, siteUrl, heartbeatMs, humanPause, log, pollMs, profileDir, readerId, serviceKey, staleJobMs, supabaseUrl, sleep, slots as readerSlots, GoogleLimitError, throttle, UserError, version, dryRun } from "./config.mjs";
+import { cronSecret, siteUrl, heartbeatMs, humanPause, log, pollMs, profileDir, readerId, serviceKey, staleJobMs, supabaseUrl, sleep, slots as readerSlots, GoogleLimitError, throttle, UserError, version, dryRun, WaitError } from "./config.mjs";
 import { acquireTab, closeBrowser, releaseTab } from "./browser.mjs";
 import { handlers } from "./jobs.mjs";
 import { createStore } from "./store.mjs";
@@ -167,6 +167,23 @@ async function retryLater(job, message, store) {
   log(`  pedido ${job.kind} limitado pelo Google: volta à fila às ${lisbonTime(outcome.notBefore)} (tentativa ${outcome.attempts} de ${throttle.limitAttempts})`);
 }
 
+/** Waits of a job that is not ready yet (WaitError) before it fails: ~10 min at 30 s. */
+const waitAttempts = 20;
+
+/** Not ready yet (WaitError): back to the queue in a few seconds, no pause, no Google limit counted. */
+async function waitLater(job, error, store) {
+  const attempts = (job.attempts ?? 0) + 1;
+  if (attempts > waitAttempts) return failJob(job, "Não foi possível saber onde fica o negócio no Google Maps.", store, { attempts });
+  const notBefore = new Date(Date.now() + error.seconds * 1000);
+  const { error: dbError } = await db
+    .from("review_import_jobs")
+    .update({ status: "queued", started_at: null, reader_id: null, attempts, not_before: notBefore.toISOString(), error: error.message, updated_at: now() })
+    .eq("id", job.id)
+    .eq("status", "running");
+  if (dbError) return log("aviso: não foi possível pôr o pedido de volta na fila:", dbError.message);
+  log(`  pedido ${job.kind}: ${error.message} (volta a tentar às ${lisbonTime(notBefore)})`);
+}
+
 /** The reader needs the columns of the throttle migration: without them, stop clearly. */
 async function checkSchema() {
   const [jobs, status, businesses] = await Promise.all([
@@ -280,7 +297,8 @@ async function runJob(job, store) {
     log(`  pedido ${job.kind} concluído em ${((Date.now() - started) / 1000).toFixed(1)} s`);
   } catch (error) {
     const message = userMessage(error).slice(0, 300);
-    if (error instanceof GoogleLimitError) {
+    if (error instanceof WaitError) await waitLater(job, error, store);
+    else if (error instanceof GoogleLimitError) {
       // Not the place's fault: back to the queue for later, and a signal towards a pause.
       log(`  pedido ${job.kind}: o Google limitou a leitura (${message})`);
       noteLimit(message);

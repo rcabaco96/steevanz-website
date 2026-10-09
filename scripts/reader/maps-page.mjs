@@ -100,15 +100,16 @@ export async function openPlace(tab, url) {
   }
   if (!opened) throw new LimitedViewError(`O Google mostrou a vista limitada, sem reviews, ${openAttempts} vezes seguidas. Tente outra vez daqui a pouco.`);
   // Maps sometimes shows the summary and the topics but only asks for the list once the panel is
-  // scrolled (2026-10-09, King Kebab): nudge it after a few seconds, like a visitor would. Still no
-  // list after that: Google is limiting the browser.
+  // scrolled (2026-10-09, King Kebab), and one scroll is sometimes not enough (the panel grows while
+  // it loads): scroll every 1.5 s, like a visitor would, up to ~18 s. Still no list: Google is limiting.
   const reviewShown = "!!document.querySelector('div[data-review-id]')";
-  if (!(await waitFor(tab, reviewShown, 4000))) {
-    await tab.evaluate(
-      `(() => { let el = [...document.querySelectorAll('button')].find((b) => /^\\s*(Tudo|All)\\s*$/.test(b.textContent)) || document.querySelector('button[role=tab][aria-selected=true]'); while (el && !(el.scrollHeight > el.clientHeight + 50 && getComputedStyle(el).overflowY !== "visible")) el = el.parentElement; if (el) el.scrollTop = el.scrollHeight; })()`,
-    );
-    if (!(await waitFor(tab, reviewShown, 11000))) throw new GoogleLimitError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
+  const nudge = `(() => { let el = [...document.querySelectorAll('button')].find((b) => /^\\s*(Tudo|All)\\s*$/.test(b.textContent)) || document.querySelector('button[role=tab][aria-selected=true]'); while (el && !(el.scrollHeight > el.clientHeight + 50 && getComputedStyle(el).overflowY !== "visible")) el = el.parentElement; if (el) el.scrollTop = el.scrollHeight; })()`;
+  let listed = await waitFor(tab, reviewShown, 3000);
+  for (let round = 0; !listed && round < 10; round++) {
+    await tab.evaluate(nudge);
+    listed = await waitFor(tab, reviewShown, 1500);
   }
+  if (!listed) throw new GoogleLimitError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
 
   const distribution = parseDistribution((await tab.evaluate(`[...document.querySelectorAll('tr[role=img]')].map(x => x.getAttribute('aria-label') ?? '')`)) ?? []);
   const distributionTotal = distribution ? Object.values(distribution).reduce((sum, count) => sum + count, 0) : null;
@@ -254,6 +255,9 @@ export async function overviewFacts(tab, url) {
   if (!(await waitFor(tab, "!!document.querySelector('h1') || /consent\\./.test(location.host)", 20000))) return null;
   await tab.evaluate(`[...document.querySelectorAll('button')].find(x => /^\\s*(Aceitar tudo|Accept all)\\s*$/i.test(x.textContent))?.click()`);
   await waitFor(tab, `!!document.querySelector('button[jsaction*="category"]')`, 10000);
+  // Maps puts the coordinates in the address bar a moment after the place shows (opened by place id
+  // or from the Maps app's shared link, which carry none): wait for them (2026-10-09, King Kebab).
+  await waitFor(tab, String.raw`/!3d-?\d|@-?\d+\.\d+,-?\d+\.\d+/.test(decodeURIComponent(location.href))`, 10000);
   return placeFacts(tab);
 }
 

@@ -52,7 +52,8 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/
   try {
     // A job left for a provider that no longer exists would block this customer's imports forever.
     await handRetiredJobsToReader(client, id);
-    await queueFullImport(client, id);
+    // «Procurar concorrentes outra vez» (a failed search): only the search, not the whole history again.
+    if (request.nextUrl.searchParams.get("only") !== "concorrentes") await queueFullImport(client, id);
     await queueCompetitorSearch(client, id);
     return reply(await loadReaderJobs(client, id));
   } catch {

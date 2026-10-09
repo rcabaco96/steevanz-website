@@ -8,10 +8,12 @@ import {
   log,
   sleep,
   UserError,
+  WaitError,
 } from "./config.mjs";
 import {
   openPlace,
   overviewFacts,
+  placeFacts,
   readPages,
   searchPlaces,
   SignInRequiredError,
@@ -84,6 +86,21 @@ const skipped = (note) => ({ note, noGoogle: true });
  * The customer's real name from the place's page (h1), when the stored one is that name plus an
  * address (taken from a Maps link): review_businesses.name and its own row in the comparisons.
  */
+/**
+ * Where the place is, saved as soon as the reader opens it for its stars and reviews (owner's idea,
+ * 2026-10-09): a customer created from the Maps app's shared link has no coordinates until then, and
+ * the competitor search, running next to the import, waits for them (WaitError in discover).
+ */
+async function rememberPlace(tab, store, business) {
+  if (business.lat !== null && business.lng !== null) return;
+  const facts = await placeFacts(tab).catch(() => null);
+  if (facts?.lat == null || facts?.lng == null) return;
+  await store.updateBusiness(business.id, { lat: facts.lat, lng: facts.lng });
+  business.lat = facts.lat;
+  business.lng = facts.lng;
+  log(`  localização guardada: ${facts.lat}, ${facts.lng}`);
+}
+
 async function renameFromPage(store, business, shown) {
   const name = nameFromPage(business.name, shown.title);
   if (!name) return;
@@ -215,6 +232,7 @@ async function full(job, tab, store) {
     }
     shown = await openPlace(tab, customerPlaceUrl(business));
     if (attempt === 1) {
+      await rememberPlace(tab, store, business);
       await renameFromPage(store, business, shown);
       await store.jobProgress(job.id, { reviews_expected: shown.total });
       // The comparison shows the customer as soon as its rating and total are known.
@@ -352,10 +370,9 @@ async function discover(tab, store, business, facts) {
     (business.lat !== null && business.lng !== null
       ? { lat: business.lat, lng: business.lng }
       : null);
-  if (!coords)
-    throw new UserError(
-      "Não foi possível saber onde fica o negócio no Google Maps.",
-    );
+  // Not there yet: the customer's import saves it when it opens the place (rememberPlace). Try again
+  // in 30 s instead of failing; the reader gives up after ~10 min.
+  if (!coords) throw new WaitError("À espera da localização do negócio, que o leitor guarda ao ler as estrelas.", 30);
   const fid = business.google_fid ?? facts.fid;
   let category = facts.category ?? business.category;
   let self = null;
@@ -495,6 +512,7 @@ async function update(job, tab, store) {
     `atualização: ${business.name} (até ${stopBefore ? stopBefore.toISOString().slice(0, 10) : "ao início do histórico"})`,
   );
   const shown = await openPlace(tab, customerPlaceUrl(business));
+  await rememberPlace(tab, store, business);
   await renameFromPage(store, business, shown);
   if (shown.noReviews) {
     await store.updateBusiness(business.id, { reviews_total: 0, last_synced_at: new Date().toISOString(), last_sync_error: null });
