@@ -12,7 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \"tests/**/*.test.mjs\"",
-    "reader": "node scripts/reader/run.mjs"
+    "reader": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/reader/reader.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
