@@ -47,6 +47,8 @@ export default async function WaitlistScreenPage({ params }: Props) {
   });
   const time = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(queue.now));
   const open = settings.state === "open";
+  // Customers pick who serves them: the estimate is for «qualquer barbeiro» (waiting for one in particular can take longer).
+  const anyone = settings.ask_staff && bundle.staff.filter((item) => item.active).length > 1 ? words.who.any.toLowerCase() : null;
 
   return (
     <div style={screenStyle} className="flex h-dvh flex-col overflow-hidden bg-[#120b14] text-white">
@@ -115,8 +117,8 @@ export default async function WaitlistScreenPage({ params }: Props) {
               <p className="mt-[0.6vh] text-[clamp(0.9rem,1.3vw,1.6rem)] text-white/60">{waiting.length === 1 ? "pessoa à espera" : "pessoas à espera"}</p>
             </div>
             <div>
-              <p className="display text-[clamp(1.6rem,3vw,3.8rem)] leading-none">{minutes ? formatWait(minutes).replace("cerca de ", "~ ") : "Sem espera"}</p>
-              <p className="mt-[0.6vh] text-[clamp(0.9rem,1.3vw,1.6rem)] text-white/60">{minutes ? "espera estimada" : "é já a seguir"}</p>
+              <p className="display text-[clamp(1.6rem,3vw,3.8rem)] leading-none">{minutes ? formatWait(minutes).replace("cerca de ", "~ ") : "A seguir"}</p>
+              <p className="mt-[0.6vh] text-[clamp(0.9rem,1.3vw,1.6rem)] text-white/60">{minutes ? (anyone ? `espera estimada com ${anyone}` : "espera estimada") : anyone ? `com ${anyone}, é o próximo a ser chamado` : "quem entrar agora é o próximo a ser chamado"}</p>
             </div>
           </div>
         </aside>

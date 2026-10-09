@@ -117,8 +117,8 @@ function StaffPanel({ bundle }: { bundle: EstablishmentBundle }) {
   return (
     <Panel title="Pessoas e espaços">
       <p className="-mt-2 mb-4 text-sm text-muted">
-        Quem ou o quê faz os serviços «um cliente de cada vez»: barbeiros, médicos, salas, campos. O cliente escolhe um ou «qualquer um». Sem nenhum, o espaço conta como uma
-        só agenda.
+        Os barbeiros, médicos, salas ou campos que atendem um cliente de cada vez. Quem reserva escolhe um deles ou «qualquer um». Se não adicionar nenhum, as reservas
+        ficam todas numa só agenda.
       </p>
       {bundle.staff.length ? (
         <ul className="mb-4 divide-y divide-line">

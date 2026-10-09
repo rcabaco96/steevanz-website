@@ -20,7 +20,7 @@ export const docs: ProductDocs = {
               "O cliente lê o QR code ou toca na placa NFC à entrada. Também pode ser a equipa a adicioná-lo ao balcão.",
               "Escreve o nome e, conforme o negócio, o número de pessoas ou o serviço. O email é opcional.",
               "Fica com uma senha no telemóvel: número, posição na fila e espera estimada, sempre atualizados.",
-              "Quando há mesa ou vez livre, a equipa carrega em «Chamar o seguinte». O telemóvel do cliente toca e, se deixou email, recebe também um email.",
+              "Quando há mesa ou vez livre, a equipa carrega em «Chamar o seguinte». O telemóvel do cliente toca; quem ligou os avisos recebe uma notificação mesmo com a página fechada, e quem deixou email recebe também um email.",
               "O cliente vem logo à entrada: a senha mostra até que horas guardamos a vez.",
             ],
           },
@@ -65,7 +65,7 @@ export const docs: ProductDocs = {
               "Customers scan the QR code or tap the NFC plate at the entrance. Your team can also add them at the desk.",
               "They type their name and, depending on the business, the number of people or the service. Email is optional.",
               "They get a ticket on their phone: number, position and estimated wait, always up to date.",
-              "When a table or turn is free, your team taps «Call next». The customer's phone rings and, if they left an email, they get an email too.",
+              "When a table or turn is free, your team taps «Call next». The customer's phone rings; those who switched alerts on get a notification even with the page closed, and those who left an email get an email too.",
               "The customer comes straight to the entrance: the ticket shows until what time their turn is held.",
             ],
           },
@@ -282,7 +282,7 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "O telemóvel só toca com a página da senha aberta. No iPhone, com o ecrã bloqueado ou noutra app, pode não tocar: recomende deixar o email ou manter a página aberta.",
+              "Com «Ativar avisos», o Android e os computadores recebem uma notificação mesmo com a página fechada. No iPhone isso só funciona com a senha adicionada ao ecrã principal (a página explica como); sem isso, toca só com a página aberta: recomende deixar o email.",
               "Se o cliente deixou email, peça para ver também na pasta de spam.",
               "Chame-o outra vez no «⋯» ou chame pelo número ao balcão.",
             ],
@@ -312,7 +312,7 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "The phone only rings with the ticket page open. On iPhone, with the screen locked or in another app, it may not ring: suggest leaving an email or keeping the page open.",
+              "With «Turn on alerts», Android phones and computers get a notification even with the page closed. On iPhone that only works with the ticket added to the home screen (the page explains how); otherwise it only rings with the page open: suggest leaving an email.",
               "If the customer left an email, ask them to check their spam folder too.",
               "Call them again from the «⋯» or call their number at the desk.",
             ],

@@ -184,6 +184,7 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
         <label className={adminLabelClasses}>
           Recompensa ao completar o cartão
           <input name="reward" required maxLength={120} defaultValue={program.reward} className={input} />
+          <span className="text-xs font-normal text-subtle">Comece por «Um» ou «Uma» (por exemplo «Uma sobremesa oferecida»): fica natural nas frases do cartão.</span>
         </label>
         <fieldset className="flex flex-col gap-2 sm:col-span-2">
           <legend className="mb-1 text-sm font-medium text-muted">Recompensas pelo caminho (opcional)</legend>

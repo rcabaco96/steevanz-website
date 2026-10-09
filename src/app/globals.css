@@ -491,6 +491,48 @@ html.reveal-ready [data-reveal] {
     background: radial-gradient(circle at 12px 0, var(--brand) 11px, transparent 11.5px) 0 0 / 24px 12px repeat-x;
   }
 
+  /* One quiet detail per kind of business, always in the Steevanz colour: the restaurant keeps the
+     scalloped awning above; the others get their own edge or a faint line drawing behind the name. */
+  .awning-barbershop::after {
+    inset: auto 0 -7px;
+    height: 7px;
+    background: repeating-linear-gradient(-55deg, var(--brand) 0 7px, color-mix(in oklab, var(--brand) 40%, white) 7px 14px);
+  }
+  .awning-salon::after {
+    inset: auto 0 -11px;
+    height: 12px;
+    background: var(--brand);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'%3E%3Cpath d='M0 0h48v4c-12 0-12 8-24 8S12 4 0 4Z'/%3E%3C/svg%3E") 0 0 / 48px 12px repeat-x;
+  }
+  .awning-retail::after {
+    inset: auto 0 -9px;
+    height: 10px;
+    background: var(--brand);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M0 0h16v1L8 10 0 1Z'/%3E%3C/svg%3E") 0 0 / 16px 10px repeat-x;
+  }
+  .awning-clinic::after,
+  .awning-sports::after {
+    content: none;
+  }
+  .awning-clinic::before,
+  .awning-sports::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: var(--brand-text);
+    opacity: 0.13;
+  }
+  .awning-clinic::before {
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' fill='none' stroke='black' stroke-width='3'%3E%3Cpath d='M45 15h30v30h30v30H75v30H45V75H15V45h30Z' stroke-linejoin='round'/%3E%3C/svg%3E") right -1.5rem center / auto 85% no-repeat;
+  }
+  .awning-sports::before {
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' fill='none' stroke='black' stroke-width='2.5'%3E%3Cpath d='M100 0v120'/%3E%3Ccircle cx='100' cy='60' r='30'/%3E%3Ccircle cx='100' cy='60' r='2.5' fill='black'/%3E%3Cpath d='M200 25h-30v70h30'/%3E%3C/svg%3E") right -3rem center / auto 110% no-repeat;
+  }
+  .awning > * {
+    position: relative;
+  }
+
   /* Paper ticket ("senha", stamp card, booking slip): a torn line with round notches. */
   .ticket {
     position: relative;

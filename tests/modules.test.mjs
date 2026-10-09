@@ -6,6 +6,7 @@ import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/
 import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, isLocked, isStaffCode, missingText, nextReward, normalizeCardCode, parseEuros, rewardInSentence, rewardsCrossed, rewardsSentence, stampRuleText, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
+import { parseSubscription } from "../src/lib/modules/waitlist/push-rules.ts";
 
 const minute = 60_000;
 
@@ -124,8 +125,12 @@ describe("waitlist opening hours", () => {
 
 describe("loyalty rules", () => {
   it("puts the reward inside a sentence without lowercasing proper nouns", () => {
-    assert.equal(rewardInSentence("Pastel de Belém oferecido"), "pastel de Belém oferecido");
     assert.equal(rewardInSentence("Um corte grátis"), "um corte grátis");
+    assert.equal(rewardInSentence("Uma sobremesa caseira oferecida"), "uma sobremesa caseira oferecida");
+    assert.equal(rewardInSentence("2 cafés"), "2 cafés");
+    // Without an article it would not read ("ganhe sobremesa caseira"): quoted as written.
+    assert.equal(rewardInSentence("Sobremesa caseira oferecida"), "«Sobremesa caseira oferecida»");
+    assert.equal(rewardInSentence("Outro corte"), "«Outro corte»");
   });
 
   it("makes readable 6-character codes", () => {
@@ -336,5 +341,21 @@ describe("loyalty rewards along the way", () => {
     assert.equal(parseEuros(""), null);
     assert.equal(parseEuros("abc"), undefined);
     assert.equal(parseEuros("5,555"), undefined);
+  });
+});
+
+describe("web push subscriptions", () => {
+  const keys = { p256dh: "BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8QcYP7DkM", auth: "tBHItJI5svbpez7KI4CCXg" };
+  it("accepts the browsers' push services", () => {
+    for (const endpoint of ["https://fcm.googleapis.com/fcm/send/abc", "https://updates.push.services.mozilla.com/wpush/v2/abc", "https://web.push.apple.com/abc", "https://wns2-par02p.notify.windows.com/w/?token=abc"]) {
+      assert.deepEqual(parseSubscription({ endpoint, keys, expirationTime: null }), { endpoint, keys });
+    }
+  });
+  it("refuses anything the server should not post to", () => {
+    assert.equal(parseSubscription({ endpoint: "https://evil.example.com/push", keys }), null);
+    assert.equal(parseSubscription({ endpoint: "http://fcm.googleapis.com/fcm/send/abc", keys }), null);
+    assert.equal(parseSubscription({ endpoint: "https://fcm.googleapis.com.evil.com/x", keys }), null);
+    assert.equal(parseSubscription({ endpoint: "https://fcm.googleapis.com/x" }), null);
+    assert.equal(parseSubscription("nope"), null);
   });
 });

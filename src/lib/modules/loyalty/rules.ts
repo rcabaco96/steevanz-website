@@ -53,9 +53,14 @@ export function cooldownMessage(nextAllowedAt: string, timeZone: string): string
       }).format(new Date(nextAllowedAt))}.`;
 }
 
-/** "Pastel de Belém" → "pastel de Belém": the reward inside a sentence, keeping its proper nouns. */
+/**
+ * The reward inside a sentence ("ganhe …", "faltam 3 carimbos para …"). Written with an article or a
+ * number («Uma sobremesa oferecida», «2 cafés») it reads on: "ganhe uma sobremesa oferecida". Without
+ * one («Sobremesa caseira») it would not ("ganhe sobremesa caseira"), so it goes in quotes as written.
+ */
 export function rewardInSentence(reward: string): string {
-  return reward.charAt(0).toLowerCase() + reward.slice(1);
+  if (/^(\d|(um|uma|uns|umas|o|a|os|as|dois|duas|três)(\s|$))/i.test(reward.trim())) return reward.charAt(0).toLowerCase() + reward.slice(1);
+  return `«${reward.trim()}»`;
 }
 
 /** A reward along the way: after `at` stamps (fewer than the full card). */

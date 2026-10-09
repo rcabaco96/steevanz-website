@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import type { EstablishmentRow } from "@/lib/establishments/types";
+import { KindIcon } from "./KindIcon";
 
 /** The Steevanz accent as the pages' brand colour (follows light and dark mode). Never the business's own. */
 export const brandStyle = { "--brand": "var(--accent)", "--brand-text": "var(--accent-contrast)" } as CSSProperties;
@@ -26,15 +27,19 @@ function PinIcon() {
 }
 
 /**
- * Page of an establishment for its customers: the shop's awning in its colour, one calm column
+ * Page of an establishment for its customers: the shop's front in the Steevanz colour, with one quiet
+ * detail of its kind (a restaurant's awning, a barber's pole, a pitch's lines…), one calm column
  * underneath, Steevanz only in small print. `service` names what the page is for.
  */
 export function BrandFrame({ establishment, service, children }: { establishment: EstablishmentRow; service: string; children: ReactNode }) {
   return (
     <div style={brandStyle} className="flex min-h-dvh flex-col">
-      <header className="awning">
+      <header className={`awning awning-${establishment.kind}`}>
         <div className="mx-auto flex w-full max-w-md flex-col gap-2 px-6 pt-9 pb-9">
-          <span className="w-fit rounded-full bg-black/12 px-3 py-1 text-sm font-medium">{service}</span>
+          <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-black/12 px-3 py-1 text-sm font-medium">
+            <KindIcon kind={establishment.kind} />
+            {service}
+          </span>
           <h1 className="display text-[2.35rem] leading-[1.02] text-balance">{establishment.name}</h1>
           {establishment.address ? (
             <p className="flex items-center gap-1.5 text-sm opacity-85">

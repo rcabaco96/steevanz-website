@@ -11,7 +11,8 @@ import { getEstablishment, getEstablishmentBySlug, isUuid, loadBundle } from "@/
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { formText, isBot, isModuleRateLimited, publicToken, startOfLocalDay, tokenPattern } from "../common";
-import { emailCalled } from "./notify";
+import { notifyCalled } from "./notify";
+import { parseSubscription } from "./push-rules";
 import { ensureWaitlistSettings, getEntryByToken, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
 
 function refreshQueue(establishment: EstablishmentRow) {
@@ -118,6 +119,22 @@ export async function replyToCall(_previous: ActionState, formData: FormData): P
   }
 }
 
+/** Public: the ticket page switched notifications on; the phone gets a push when called. */
+export async function savePushSubscription(token: string, subscription: unknown): Promise<{ ok: boolean }> {
+  try {
+    const parsed = parseSubscription(subscription);
+    if (!tokenPattern.test(token) || !parsed) return { ok: false };
+    const entry = await getEntryByToken(token);
+    if (!entry || !["waiting", "called"].includes(entry.status)) return { ok: false };
+    const { error } = await createServiceClient().from("waitlist_entries").update({ push_subscription: parsed }).eq("id", entry.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  } catch (error) {
+    console.error("[waitlist] push subscription failed:", error instanceof Error ? error.message : error);
+    return { ok: false };
+  }
+}
+
 // --- Staff (client area / admin) ---------------------------------------------------------------
 
 async function staffGuard(task: () => Promise<ActionState>): Promise<ActionState> {
@@ -168,7 +185,7 @@ export async function callEntry(_previous: ActionState, formData: FormData): Pro
       .eq("id", entry.id);
     if (error) throw new Error(error.message);
     const origin = await requestOrigin();
-    after(() => emailCalled(establishment, entry, origin));
+    after(() => notifyCalled(establishment, entry, origin));
     refreshQueue(establishment);
     return { ok: true, message: `${entry.name} foi chamado.` };
   });
@@ -184,7 +201,7 @@ export async function callNext(_previous: ActionState, formData: FormData): Prom
     const entry = ((data ?? []) as WaitlistEntryRow[])[0];
     if (!entry) return { ok: false, message: "Não há ninguém à espera." };
     const origin = await requestOrigin();
-    after(() => emailCalled(establishment, entry, origin));
+    after(() => notifyCalled(establishment, entry, origin));
     refreshQueue(establishment);
     return { ok: true, message: `Senha ${entry.number} chamada: ${entry.name}.` };
   });
@@ -212,7 +229,7 @@ export async function setEntryStatus(_previous: ActionState, formData: FormData)
       const next = ((data ?? []) as WaitlistEntryRow[])[0];
       if (next) {
         const origin = await requestOrigin();
-        after(() => emailCalled(establishment, next, origin));
+        after(() => notifyCalled(establishment, next, origin));
         refreshQueue(establishment);
         return { ok: true, message: `Não apareceu. Chamada a senha ${next.number}: ${next.name}.` };
       }

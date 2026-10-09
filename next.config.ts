@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
+      // The queue's service worker: always the latest version, never a cached one.
+      {
+        source: "/fila-sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache" }],
+      },
       {
         source: "/media/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],

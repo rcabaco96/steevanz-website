@@ -59,7 +59,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Aviso no telemóvel",
-        body: "Quando chega a vez, a página da senha toca e mostra para onde se dirigir; quem deixou email recebe também um email. Sem gritar nomes pela sala.",
+        body: "Quando chega a vez, a página da senha toca e mostra para onde se dirigir; quem ligou os avisos recebe uma notificação no telemóvel e quem deixou email recebe também um email. Sem gritar nomes pela sala.",
       },
       {
         title: "Painel para a equipa",

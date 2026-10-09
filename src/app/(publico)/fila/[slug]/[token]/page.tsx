@@ -15,7 +15,16 @@ import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string; token: string }>; searchParams: Promise<{ voltou?: string }> };
 
-export const metadata: Metadata = { title: "A sua senha", referrer: "no-referrer" };
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug, token } = await params;
+  return {
+    title: "A sua senha",
+    referrer: "no-referrer",
+    // Its own manifest, so "Add to Home Screen" opens this ticket (and, on iPhone, allows push).
+    manifest: `/fila/${slug}/${token}/manifest.webmanifest`,
+    appleWebApp: { capable: true, title: "Senha", statusBarStyle: "default" },
+  };
+}
 
 const finished = {
   served: { chip: "Atendido", text: "Foi atendido. Obrigado pela visita!" },
@@ -92,7 +101,7 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
             <>
               <div className="grid grid-cols-2 gap-4">
                 <Fact value={`${outlook.position}.º`} label="na fila" />
-                <Fact value={outlook.minutes ? formatWait(outlook.minutes).replace("cerca de ", "~ ") : "Já"} label={outlook.minutes ? "de espera estimada" : "é a seguir"} />
+                <Fact value={outlook.minutes ? formatWait(outlook.minutes).replace("cerca de ", "~ ") : "A seguir"} label={outlook.minutes ? "de espera estimada" : "é o próximo a ser chamado"} />
               </div>
               <QueueLine ahead={outlook.position - 1} withYou />
             </>
@@ -102,7 +111,16 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
         </div>
       </article>
 
-      <CallAlert slug={establishment.slug} token={entry.token} status={entry.status} calledAt={entry.called_at} title={words.callAction} message={words.ready} />
+      <CallAlert
+        slug={establishment.slug}
+        token={entry.token}
+        status={entry.status}
+        calledAt={entry.called_at}
+        title={words.callAction}
+        message={words.ready}
+        pushKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null}
+        hasPush={Boolean(entry.push_subscription)}
+      />
 
       {called ? (
         <PublicCard>

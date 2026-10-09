@@ -131,6 +131,10 @@ passa pelo servidor com a chave de serviço; as páginas públicas só chegam à
 ## Limitações atuais
 
 - Sem SMS nem WhatsApp: o aviso é na página e por email.
-- No iPhone não vibra, e as notificações só funcionam com a página adicionada ao ecrã principal.
+- **Notificações push (grátis):** «Ativar avisos» na senha subscreve o telemóvel (`/fila-sw.js`, chaves VAPID
+  `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, também na Vercel); ao ser chamado, chega uma
+  notificação mesmo com a página fechada (`waitlist_entries.push_subscription`, `src/lib/modules/waitlist/push.ts`).
+  Android e computadores: sim. iPhone: só com a senha adicionada ao ecrã principal (a senha tem manifest próprio e
+  explica como). No iPhone não vibra.
 - A atualização é por polling (8 s no Balcão e no painel, 5 s na senha e no ecrã), não em tempo
   real.

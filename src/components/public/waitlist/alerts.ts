@@ -60,10 +60,46 @@ export function notificationsSupported(): boolean {
   return typeof window !== "undefined" && "Notification" in window;
 }
 
-export function notify(title: string, body: string): void {
+/** The same tag as the push notification, so a phone that gets both shows one. */
+export function notify(title: string, body: string, tag = "steevanz-fila"): void {
   try {
-    if (notificationsSupported() && Notification.permission === "granted") new Notification(title, { body, tag: "steevanz-fila", requireInteraction: true });
+    if (notificationsSupported() && Notification.permission === "granted") new Notification(title, { body, tag, requireInteraction: true });
   } catch {
     // Some browsers only allow notifications from a service worker: the page itself still alerts.
+  }
+}
+
+/** Web push (a notification even with the page closed): Android, computers, and iPhone from the home screen. */
+export function pushSupported(): boolean {
+  return typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+}
+
+/** iPhone or iPad in the browser (not opened from the home screen): push needs the page added there first. */
+export function iosNeedsHomeScreen(): boolean {
+  if (typeof window === "undefined") return false;
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standalone = (navigator as unknown as { standalone?: boolean }).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+  return ios && !standalone;
+}
+
+function keyBytes(base64: string): Uint8Array<ArrayBuffer> {
+  const padded = (base64 + "=".repeat((4 - (base64.length % 4)) % 4)).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = window.atob(padded);
+  const bytes = new Uint8Array(new ArrayBuffer(raw.length));
+  for (let index = 0; index < raw.length; index++) bytes[index] = raw.charCodeAt(index);
+  return bytes;
+}
+
+/** Subscribes this browser to push for the queue tickets (permission must already be granted). */
+export async function subscribePush(publicKey: string): Promise<PushSubscriptionJSON | null> {
+  try {
+    await navigator.serviceWorker.register("/fila-sw.js", { scope: "/fila/" });
+    const registration = await navigator.serviceWorker.ready;
+    const subscription =
+      (await registration.pushManager.getSubscription()) ??
+      (await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) }));
+    return subscription.toJSON();
+  } catch {
+    return null;
   }
 }

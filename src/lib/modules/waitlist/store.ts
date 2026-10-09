@@ -52,6 +52,8 @@ export interface WaitlistEntryRow {
   arrived_at: string | null;
   /** Who closed the ticket: the team, the automatic rules or the customer leaving ("arrived" is not used today). */
   close_reason: "staff" | "arrived" | "auto" | "left" | null;
+  /** The ticket page's web push subscription, when the customer switched notifications on. */
+  push_subscription: unknown;
 }
 
 /** Tickets left waiting or called longer than this (e.g. from yesterday) are no longer part of the queue. */

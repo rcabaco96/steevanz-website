@@ -253,7 +253,7 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
         <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 sm:grid-cols-4">
           <Figure label="À espera" value={String(waiting.length)} />
           <Figure label="Chamados" value={String(called.length)} />
-          <Figure label="Quem entrar agora" value={newcomerWait ? formatWait(newcomerWait).replace("cerca de ", "~") : "Sem espera"} />
+          <Figure label="Quem entrar agora" value={newcomerWait ? formatWait(newcomerWait).replace("cerca de ", "~") : "É o próximo"} />
           <Figure label="Atendidos hoje" value={String(served)} />
         </dl>
         <p className="mt-4 text-xs text-subtle">

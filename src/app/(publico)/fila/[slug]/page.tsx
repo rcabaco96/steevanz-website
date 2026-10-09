@@ -48,6 +48,8 @@ export default async function WaitlistJoinPage({ params }: Props) {
   const services = settings.ask_service ? bundle.services.filter((item) => item.active) : [];
   const staff = settings.ask_staff ? bundle.staff.filter((item) => item.active) : [];
   const open = settings.state === "open";
+  // Customers pick who serves them: the estimate is for «qualquer barbeiro» (waiting for one in particular can take longer).
+  const anyone = settings.ask_staff && bundle.staff.filter((item) => item.active).length > 1 ? words.who.any.toLowerCase() : null;
 
   return (
     <BrandFrame establishment={establishment} service="Lista de espera">
@@ -59,8 +61,8 @@ export default async function WaitlistJoinPage({ params }: Props) {
               <p className="mt-1 text-sm text-muted">{waiting.length === 1 ? "pessoa à espera" : "pessoas à espera"}</p>
             </div>
             <div className="text-right">
-              <p className="display text-2xl leading-none">{minutes ? formatWait(minutes).replace("cerca de ", "~ ") : "Sem espera"}</p>
-              <p className="mt-1 text-sm text-muted">{minutes ? "espera estimada" : "é já a seguir"}</p>
+              <p className="display text-2xl leading-none">{minutes ? formatWait(minutes).replace("cerca de ", "~ ") : "A seguir"}</p>
+              <p className="mt-1 text-sm text-muted">{minutes ? (anyone ? `espera estimada com ${anyone}` : "espera estimada") : anyone ? `com ${anyone}, é o próximo a ser chamado` : "se entrar agora, é o próximo a ser chamado"}</p>
             </div>
           </div>
           <QueueLine ahead={waiting.length} withYou={open} />
@@ -71,7 +73,7 @@ export default async function WaitlistJoinPage({ params }: Props) {
         <PublicCard>
           <div className="flex flex-col gap-1">
             <h2 className="display text-[1.7rem] leading-tight">{words.joinTitle}</h2>
-            <p className="text-muted">Avisamos quando for a sua vez: mantenha a página da senha aberta ou deixe o email.</p>
+            <p className="text-muted">Avisamos quando for a sua vez: na senha, ative os avisos no telemóvel ou deixe o email.</p>
           </div>
           {settings.message ? <p className="rounded-2xl border border-line bg-surface-2/60 px-4 py-3 text-sm text-text">{settings.message}</p> : null}
           <JoinForm

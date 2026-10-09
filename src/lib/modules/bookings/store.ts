@@ -160,10 +160,10 @@ export async function loadUpcomingBlocks(establishment: EstablishmentRow): Promi
   return (data ?? []) as BookingBlockRow[];
 }
 
-/** "Guardamos a mesa 10 minutos." / "Tolerância de 10 minutos." (null without tolerance). */
+/** "Pode chegar até 10 minutos depois da hora marcada." (null without tolerance). */
 export function toleranceText(page: Pick<BookingPageRow, "late_grace_minutes">): string | null {
   if (!page.late_grace_minutes) return null;
-  return `Tolerância de atraso: ${page.late_grace_minutes} minutos.`;
+  return `Pode chegar até ${page.late_grace_minutes} minutos depois da hora marcada.`;
 }
 
 export interface BookingBlockRow {
