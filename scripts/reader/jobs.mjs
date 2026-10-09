@@ -114,6 +114,13 @@ async function customer(job, store) {
   return store.business({ id: job.business_id });
 }
 
+/**
+ * The customer's place on Google Maps, opened by its place id (like the competitors): the link pasted
+ * in the admin can open a variant of the page whose review list never loads (2026-10-09, King Kebab:
+ * "…/place/<name, address>/…" and "?q=…&ftid=…"). The stored link only when there is no place id.
+ */
+const customerPlaceUrl = (business) => (business.place_id ? googleMapsPlaceUrl(business.place_id) : business.google_maps_url);
+
 async function place(job, store) {
   if (!job.place_id)
     throw new UserError("Pedido sem local do Google associado.");
@@ -206,7 +213,7 @@ async function full(job, tab, store) {
       await sleep(4000 + Math.random() * 3000);
       gated = false;
     }
-    shown = await openPlace(tab, business.google_maps_url);
+    shown = await openPlace(tab, customerPlaceUrl(business));
     if (attempt === 1) {
       await renameFromPage(store, business, shown);
       await store.jobProgress(job.id, { reviews_expected: shown.total });
@@ -314,7 +321,7 @@ async function discoverJob(job, tab, store) {
   // Never next to a customer's own import: the reader starts it only once no customer job is queued
   // or running (gateAllows in reader-throttle.ts), spaced like the other competitor work.
   log(`procura de concorrentes: ${business.name}`);
-  const facts = (await overviewFacts(tab, business.google_maps_url).catch(
+  const facts = (await overviewFacts(tab, customerPlaceUrl(business)).catch(
     () => null,
   )) ?? { lat: null, lng: null, category: null, fid: null };
   const current = await discover(tab, store, business, facts);
@@ -487,7 +494,7 @@ async function update(job, tab, store) {
   log(
     `atualização: ${business.name} (até ${stopBefore ? stopBefore.toISOString().slice(0, 10) : "ao início do histórico"})`,
   );
-  const shown = await openPlace(tab, business.google_maps_url);
+  const shown = await openPlace(tab, customerPlaceUrl(business));
   await renameFromPage(store, business, shown);
   if (shown.noReviews) {
     await store.updateBusiness(business.id, { reviews_total: 0, last_synced_at: new Date().toISOString(), last_sync_error: null });

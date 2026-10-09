@@ -99,8 +99,16 @@ export async function openPlace(tab, url) {
     if (facts && facts.rating === null) return { watch, title, rating: null, total: 0, distribution: null, photos: facts.photos, profile: facts.profile, category: facts.category, noReviews: true };
   }
   if (!opened) throw new LimitedViewError(`O Google mostrou a vista limitada, sem reviews, ${openAttempts} vezes seguidas. Tente outra vez daqui a pouco.`);
-  // Seen when Google limits the browser (2026-10-09): the tab opens but the list never comes.
-  if (!(await waitFor(tab, "!!document.querySelector('div[data-review-id]')", 15000))) throw new GoogleLimitError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
+  // Maps sometimes shows the summary and the topics but only asks for the list once the panel is
+  // scrolled (2026-10-09, King Kebab): nudge it after a few seconds, like a visitor would. Still no
+  // list after that: Google is limiting the browser.
+  const reviewShown = "!!document.querySelector('div[data-review-id]')";
+  if (!(await waitFor(tab, reviewShown, 4000))) {
+    await tab.evaluate(
+      `(() => { let el = [...document.querySelectorAll('button')].find((b) => /^\\s*(Tudo|All)\\s*$/.test(b.textContent)) || document.querySelector('button[role=tab][aria-selected=true]'); while (el && !(el.scrollHeight > el.clientHeight + 50 && getComputedStyle(el).overflowY !== "visible")) el = el.parentElement; if (el) el.scrollTop = el.scrollHeight; })()`,
+    );
+    if (!(await waitFor(tab, reviewShown, 11000))) throw new GoogleLimitError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
+  }
 
   const distribution = parseDistribution((await tab.evaluate(`[...document.querySelectorAll('tr[role=img]')].map(x => x.getAttribute('aria-label') ?? '')`)) ?? []);
   const distributionTotal = distribution ? Object.values(distribution).reduce((sum, count) => sum + count, 0) : null;
