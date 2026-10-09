@@ -7,7 +7,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { getLead } from "@/lib/admin/queries";
 import { kindLabels, productLabel } from "@/lib/booking/labels";
 
-export const metadata: Metadata = { title: "Pedido" };
+export const metadata: Metadata = { title: "Pedido de informação" };
 
 export default async function AdminLeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
@@ -17,7 +17,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
 
   return (
     <>
-      <BackLink href="/admin/leads" label="Pedidos" />
+      <BackLink href="/admin/leads" label="Pedidos de informação" />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
           <p className="eyebrow">{kindLabels[lead.kind]}</p>

@@ -9,7 +9,7 @@ import { formatSlotDate, formatSlotTime } from "@/lib/booking/format";
 import { productLabel } from "@/lib/booking/labels";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Marcação" };
+export const metadata: Metadata = { title: "Demonstração" };
 
 export default async function AdminBookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
@@ -19,7 +19,7 @@ export default async function AdminBookingDetailPage({ params }: { params: Promi
 
   return (
     <>
-      <BackLink href="/admin/bookings" label="Marcações" />
+      <BackLink href="/admin/bookings" label="Demonstrações" />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
           <p className="eyebrow">{productLabel(booking.product_id)}</p>

@@ -3,41 +3,12 @@ import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
 import { AdminPageHeader, EmptyState, Panel, StatusBadge } from "@/components/backoffice/ui";
 import { requireAdmin } from "@/lib/admin/auth";
-import { dashboardStats, type DashboardStats } from "@/lib/admin/queries";
+import { attentionStats, dashboardStats, type DashboardStats } from "@/lib/admin/queries";
 import { formatSlotRange } from "@/lib/booking/format";
-import { kindLabels, productLabel } from "@/lib/booking/labels";
-import { pipelineStatuses } from "@/lib/booking/types";
+import { productLabel } from "@/lib/booking/labels";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Resumo" };
-
-function StatTile({ label, value, detail, href }: { label: string; value: number; detail: string; href: string }) {
-  return (
-    <Link href={href} className="card card-interactive flex flex-col gap-1 p-4 sm:p-5">
-      <span className="text-sm text-muted">{label}</span>
-      <span className="display text-4xl tabular-nums sm:text-5xl">{value}</span>
-      <span className="text-xs text-subtle">{detail}</span>
-    </Link>
-  );
-}
-
-function StatusBreakdown({ counts, basePath }: { counts: DashboardStats["bookings"]["byStatus"]; basePath: string }) {
-  return (
-    <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-      {pipelineStatuses.map((status) => (
-        <li key={status}>
-          <Link
-            href={`${basePath}?status=${status}`}
-            className="flex items-center justify-between gap-2 rounded-xl border border-line px-3 py-2.5 transition-colors hover:bg-surface-2"
-          >
-            <StatusBadge status={status} />
-            <span className="font-semibold tabular-nums text-text">{counts[status]}</span>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
+export const metadata: Metadata = { title: "Início" };
 
 function ProductBars({ rows }: { rows: DashboardStats["byProduct"] }) {
   if (!rows.length) return <EmptyState>Ainda sem dados.</EmptyState>;
@@ -64,22 +35,73 @@ function ProductBars({ rows }: { rows: DashboardStats["byProduct"] }) {
   );
 }
 
+/** One thing to do today: what it is, how many, and where to do it. */
+function TodoRow({ count, label, detail, href, tone = "normal" }: { count: number; label: string; detail?: string; href: string; tone?: "normal" | "danger" }) {
+  return (
+    <li>
+      <Link href={href} className="-mx-2 flex items-center gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-surface-2">
+        <span
+          className={`grid h-11 min-w-11 shrink-0 place-items-center rounded-xl px-2 text-lg font-semibold tabular-nums ${tone === "danger" ? "bg-danger-soft text-danger" : "bg-accent-soft text-accent-text"}`}
+        >
+          {count}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-text">{label}</span>
+          {detail ? <span className="block text-sm text-muted">{detail}</span> : null}
+        </span>
+        <ArrowRight size={16} className="shrink-0 text-muted" />
+      </Link>
+    </li>
+  );
+}
+
+function Figure({ label, value, href }: { label: string; value: number; href: string }) {
+  return (
+    <Link href={href} className="card card-interactive flex flex-col gap-0.5 p-4">
+      <span className="display text-3xl tabular-nums">{value}</span>
+      <span className="text-sm text-muted">{label}</span>
+    </Link>
+  );
+}
+
 export default async function AdminDashboardPage() {
   await requireAdmin();
-  const stats = await dashboardStats();
+  const [stats, attention] = await Promise.all([dashboardStats(), attentionStats()]);
+  const todos = [
+    attention.pendingOrders
+      ? { count: attention.pendingOrders, label: attention.pendingOrders === 1 ? "Encomenda por aceitar" : "Encomendas por aceitar", detail: "Aceitar ativa os produtos na conta do cliente.", href: "/admin/encomendas?status=pending" }
+      : null,
+    stats.bookings.byStatus.new
+      ? { count: stats.bookings.byStatus.new, label: stats.bookings.byStatus.new === 1 ? "Demonstração por confirmar" : "Demonstrações por confirmar", detail: "Marcadas no site, ainda sem contacto.", href: "/admin/bookings?status=new" }
+      : null,
+    stats.leads.byStatus.new
+      ? { count: stats.leads.byStatus.new, label: stats.leads.byStatus.new === 1 ? "Pedido de informação por responder" : "Pedidos de informação por responder", detail: "Formulários de contacto e listas de espera.", href: "/admin/leads?status=new" }
+      : null,
+    attention.readerOfflineHours !== null
+      ? { count: attention.readerOfflineHours, label: "Horas sem sinal do leitor de reviews", detail: "Há leituras à espera. Ligue o leitor no computador do escritório.", href: "/admin/reviews", tone: "danger" as const }
+      : null,
+    attention.failedReads
+      ? { count: attention.failedReads, label: attention.failedReads === 1 ? "Leitura de reviews falhou" : "Leituras de reviews falharam", detail: "Nas últimas 24 horas. O erro está na ficha do negócio.", href: "/admin/reviews", tone: "danger" as const }
+      : null,
+  ].filter((item) => item !== null);
 
   return (
     <>
-      <AdminPageHeader title="Resumo" description="Marcações de demonstração e pedidos de informação." />
+      <AdminPageHeader title="Início" description="O que há para tratar e as próximas demonstrações." />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile label="Marcações · 7 dias" value={stats.bookings.last7} detail={`${stats.bookings.last30} nos últimos 30 dias`} href="/admin/bookings" />
-        <StatTile label="Pedidos · 7 dias" value={stats.leads.last7} detail={`${stats.leads.last30} nos últimos 30 dias`} href="/admin/leads" />
-        <StatTile label="Marcações novas" value={stats.bookings.byStatus.new} detail={`${stats.bookings.total} no total`} href="/admin/bookings?status=new" />
-        <StatTile label="Pedidos novos" value={stats.leads.byStatus.new} detail={`${stats.leads.waitlist} em lista de espera`} href="/admin/leads?status=new" />
-      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[3fr_2fr]">
+        <Panel title="Para tratar">
+          {todos.length ? (
+            <ul className="-my-1 divide-y divide-line">
+              {todos.map((todo) => (
+                <TodoRow key={todo.href + todo.label} {...todo} />
+              ))}
+            </ul>
+          ) : (
+            <EmptyState>Nada por tratar. Encomendas, contactos e leituras de reviews estão em dia.</EmptyState>
+          )}
+        </Panel>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Panel
           title="Próximas demonstrações"
           actions={
@@ -89,7 +111,7 @@ export default async function AdminDashboardPage() {
           }
         >
           {stats.upcoming.length ? (
-            <ul className="divide-y divide-line">
+            <ul className="-my-1 divide-y divide-line">
               {stats.upcoming.map((booking) => (
                 <li key={booking.id}>
                   <Link href={`/admin/bookings/${booking.id}`} className="-mx-2 flex items-center justify-between gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-surface-2">
@@ -108,48 +130,19 @@ export default async function AdminDashboardPage() {
             <EmptyState>Sem demonstrações marcadas.</EmptyState>
           )}
         </Panel>
-
-        <Panel
-          title="Pedidos recentes"
-          actions={
-            <Link href="/admin/leads" className="inline-flex items-center gap-1 text-sm font-semibold text-accent-text">
-              Ver todos <ArrowRight size={15} />
-            </Link>
-          }
-        >
-          {stats.recentLeads.length ? (
-            <ul className="divide-y divide-line">
-              {stats.recentLeads.map((lead) => (
-                <li key={lead.id}>
-                  <Link href={`/admin/leads/${lead.id}`} className="-mx-2 flex items-center justify-between gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-surface-2">
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold text-text">{lead.name}</p>
-                      <p className="truncate text-sm text-muted">
-                        {kindLabels[lead.kind]} · {productLabel(lead.product_id)}
-                      </p>
-                    </div>
-                    <StatusBadge status={lead.status} />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyState>Sem pedidos ainda.</EmptyState>
-          )}
-        </Panel>
-
-        <Panel title="Marcações por estado">
-          <StatusBreakdown counts={stats.bookings.byStatus} basePath="/admin/bookings" />
-        </Panel>
-
-        <Panel title="Pedidos por estado">
-          <StatusBreakdown counts={stats.leads.byStatus} basePath="/admin/leads" />
-        </Panel>
-
-        <Panel title="Interesse por produto" className="lg:col-span-2">
-          <ProductBars rows={stats.byProduct} />
-        </Panel>
       </div>
+
+      <section aria-label="Números" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Figure label="Clientes com produtos ativos" value={attention.activeClients} href="/admin/clientes" />
+        <Figure label="Encomendas nos últimos 30 dias" value={attention.ordersLast30} href="/admin/encomendas" />
+        <Figure label="Demonstrações marcadas nos últimos 30 dias" value={stats.bookings.last30} href="/admin/bookings" />
+        <Figure label="Pedidos de informação nos últimos 30 dias" value={stats.leads.last30} href="/admin/leads" />
+      </section>
+
+      <Panel title="Interesse por produto">
+        <p className="-mt-2 mb-4 text-sm text-muted">Demonstrações e pedidos de informação, por produto, desde sempre.</p>
+        <ProductBars rows={stats.byProduct} />
+      </Panel>
     </>
   );
 }

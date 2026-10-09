@@ -2,6 +2,7 @@ import { isProductId } from "@/content/products";
 import { isOrderStatus, type ClientProductRow, type OrderRow, type OrderStatus, type ProfileRow } from "@/lib/accounts/types";
 import { addDaysToDate, zonedDateTimeToUtc } from "@/lib/booking/slots";
 import { isLeadKind, isPipelineStatus, type BookingRow, type LeadKind, type LeadRow, type PipelineStatus } from "@/lib/booking/types";
+import { readerOfflineAfterHours } from "@/lib/reviews/reader-queue";
 import { site } from "@/lib/site";
 import { adminEmails } from "@/lib/supabase/env";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -201,6 +202,43 @@ export async function dashboardStats(now = new Date()): Promise<DashboardStats> 
     byProduct,
     upcoming: (upcomingResult.data ?? []) as BookingRow[],
     recentLeads: (recentLeadsResult.data ?? []) as LeadRow[],
+  };
+}
+
+/** What needs the team today, for the admin home: orders to accept, contacts to answer, the reader. */
+export interface AttentionStats {
+  pendingOrders: number;
+  ordersLast30: number;
+  activeClients: number;
+  /** Hours since the reviews reader was last seen, when that is past the alert time; else null. */
+  readerOfflineHours: number | null;
+  /** Reader requests that failed in the last 24 hours. */
+  failedReads: number;
+}
+
+export async function attentionStats(now = new Date()): Promise<AttentionStats> {
+  const client = createServiceClient();
+  const since30 = new Date(now.getTime() - 30 * 86_400_000).toISOString();
+  const since24h = new Date(now.getTime() - 86_400_000).toISOString();
+  const [pending, recentOrders, clients, reader, failed, readerJobs] = await Promise.all([
+    client.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    client.from("orders").select("id", { count: "exact", head: true }).gte("created_at", since30),
+    client.from("client_products").select("user_id").eq("status", "active").limit(exportLimit),
+    client.from("review_reader_status").select("last_seen_at").order("last_seen_at", { ascending: false }).limit(1).maybeSingle<{ last_seen_at: string }>(),
+    client.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("status", "failed").gte("finished_at", since24h),
+    client.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("provider", "reader").in("status", ["queued", "running"]),
+  ]);
+  const error = pending.error ?? recentOrders.error ?? clients.error ?? reader.error ?? failed.error ?? readerJobs.error;
+  if (error) throw new Error(`attentionStats: ${error.message}`);
+  const hours = reader.data ? (now.getTime() - Date.parse(reader.data.last_seen_at)) / 3_600_000 : null;
+  // Only worth a line when something waits for the reader and it has been quiet past the alert time.
+  const readerOffline = (readerJobs.count ?? 0) > 0 && (hours === null || hours > readerOfflineAfterHours);
+  return {
+    pendingOrders: pending.count ?? 0,
+    ordersLast30: recentOrders.count ?? 0,
+    activeClients: new Set(((clients.data ?? []) as { user_id: string }[]).map((row) => row.user_id)).size,
+    readerOfflineHours: readerOffline ? Math.round(hours ?? 0) : null,
+    failedReads: failed.count ?? 0,
   };
 }
 

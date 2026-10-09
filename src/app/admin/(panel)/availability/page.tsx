@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { ContactsTabs } from "@/components/admin/ContactsTabs";
 import { AdminPageHeader, adminInputClasses, adminLabelClasses, EmptyState, Panel } from "@/components/backoffice/ui";
 import { CloseIcon } from "@/components/icons";
 import { createBlockedDate, createBreak, deleteAvailabilityItem, saveRule, saveSettings } from "@/lib/admin/actions";
@@ -10,7 +11,7 @@ import { computeAvailability, zonedDateString } from "@/lib/booking/slots";
 import { site } from "@/lib/site";
 import { createServiceClient } from "@/lib/supabase/service";
 
-export const metadata: Metadata = { title: "Disponibilidade" };
+export const metadata: Metadata = { title: "Horário das demonstrações" };
 
 const weekdayOrder = [1, 2, 3, 4, 5, 6, 0];
 const weekdayNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -95,9 +96,10 @@ export default async function AdminAvailabilityPage() {
   return (
     <>
       <AdminPageHeader
-        title="Disponibilidade"
+        title="Contactos"
         description="Horários em que os clientes podem marcar demonstrações (hora de Lisboa)."
       />
+      <ContactsTabs current="availability" />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-6">

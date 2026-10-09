@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ContactsTabs } from "@/components/admin/ContactsTabs";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { AdminPageHeader, EmptyState, StatusBadge } from "@/components/backoffice/ui";
 import { buttonClasses } from "@/components/ui/Button";
@@ -9,7 +10,7 @@ import { formatSlotDate, formatSlotTime } from "@/lib/booking/format";
 import { productLabel } from "@/lib/booking/labels";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Marcações" };
+export const metadata: Metadata = { title: "Demonstrações" };
 
 function hasEnded(iso: string): boolean {
   return new Date(iso).getTime() < Date.now();
@@ -23,15 +24,17 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
   return (
     <>
       <AdminPageHeader
-        title="Marcações"
-        description={`${bookings.length} ${bookings.length === 1 ? "resultado" : "resultados"}`}
+        title="Contactos"
+        description="Demonstrações marcadas no site e pedidos de informação."
         actions={
           <a href={`/admin/export/bookings${filtersToQuery(filters)}`} className={buttonClasses("secondary", "sm")}>
             Exportar CSV
           </a>
         }
       />
+      <ContactsTabs current="bookings" />
       <FilterBar basePath="/admin/bookings" filters={filters} dateLabel="Demonstração" />
+      <p className="-mt-2 text-sm text-muted">{`${bookings.length} ${bookings.length === 1 ? "demonstração" : "demonstrações"}`}</p>
 
       {bookings.length ? (
         <ul className="card divide-y divide-line overflow-hidden">
@@ -63,7 +66,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
           })}
         </ul>
       ) : (
-        <EmptyState>Nenhuma marcação encontrada.</EmptyState>
+        <EmptyState>Nenhuma demonstração encontrada.</EmptyState>
       )}
     </>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ContactsTabs } from "@/components/admin/ContactsTabs";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { AdminPageHeader, EmptyState, StatusBadge } from "@/components/backoffice/ui";
 import { buttonClasses } from "@/components/ui/Button";
@@ -8,7 +9,7 @@ import { lisbonTimestamp } from "@/lib/admin/csv";
 import { filtersToQuery, listLeads, parseFilters, type AdminSearchParams } from "@/lib/admin/queries";
 import { kindLabels, productLabel } from "@/lib/booking/labels";
 
-export const metadata: Metadata = { title: "Pedidos" };
+export const metadata: Metadata = { title: "Pedidos de informação" };
 
 export default async function AdminLeadsPage({ searchParams }: { searchParams: Promise<AdminSearchParams> }) {
   await requireAdmin();
@@ -18,15 +19,17 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
   return (
     <>
       <AdminPageHeader
-        title="Pedidos"
-        description={`${leads.length} ${leads.length === 1 ? "resultado" : "resultados"}`}
+        title="Contactos"
+        description="Demonstrações marcadas no site e pedidos de informação."
         actions={
           <a href={`/admin/export/leads${filtersToQuery(filters)}`} className={buttonClasses("secondary", "sm")}>
             Exportar CSV
           </a>
         }
       />
+      <ContactsTabs current="leads" />
       <FilterBar basePath="/admin/leads" filters={filters} dateLabel="Recebido" showKind />
+      <p className="-mt-2 text-sm text-muted">{`${leads.length} ${leads.length === 1 ? "pedido" : "pedidos"}`}</p>
 
       {leads.length ? (
         <ul className="card divide-y divide-line overflow-hidden">
