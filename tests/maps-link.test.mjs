@@ -25,6 +25,19 @@ describe("parseMapsPlaceLink", () => {
     assert.equal(place.fid, "0xd1acdcaf56a5a53:0xd09a04caf1c7ec58");
   });
 
+  it("reads the link shared from the Maps app (maps.app.goo.gl/…?g_st=ic → ?q=…&ftid=…, 2026-10-09)", () => {
+    const place = parseMapsPlaceLink(
+      "https://www.google.com/maps?q=King+Kebab+Arma%C3%A7%C3%A3o+P%C3%AAra,+R.+%C3%81lvaro+Gomes+lote+4+loja+C,+8365-111+Arma%C3%A7%C3%A3o+de+P%C3%AAra&ftid=0xd1ad1b960c347b7:0x1533ce0fcd97cf8e&entry=gps&shh=CAE",
+    );
+    assert.equal(place.name, "King Kebab Armação Pêra");
+    assert.equal(place.fid, "0xd1ad1b960c347b7:0x1533ce0fcd97cf8e");
+    assert.equal(place.lat, null);
+    assert.equal(place.lng, null);
+    assert.equal(place.cleanUrl, "https://www.google.com/maps?q=King%20Kebab%20Arma%C3%A7%C3%A3o%20P%C3%AAra&ftid=0xd1ad1b960c347b7:0x1533ce0fcd97cf8e");
+    assert.equal(parseMapsPlaceLink("https://maps.google.com/?q=Algo&ftid=nope"), null);
+    assert.equal(parseMapsPlaceLink("https://example.com/?q=Algo&ftid=0x1:0x2"), null);
+  });
+
   it("refuses links that are not a place", () => {
     assert.equal(parseMapsPlaceLink("https://www.google.com/maps/@37.1,-8.2,12z"), null);
     assert.equal(parseMapsPlaceLink("https://www.google.com/maps/search/sushi/@37.1,-8.2,12z"), null);

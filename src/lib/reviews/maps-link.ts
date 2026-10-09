@@ -8,8 +8,9 @@ export interface MapsPlaceLink {
   name: string;
   /** Google's feature id "0x…:0x…". */
   fid: string;
-  lat: number;
-  lng: number;
+  /** Null for a link shared from the Maps app ("?q=…&ftid=…"): the reader reads them on the place's page. */
+  lat: number | null;
+  lng: number | null;
   /** Google's knowledge-graph id ("/g/…"), when the link carries it. */
   kgId: string | null;
   /** The place alone, without the places visited before. */
@@ -58,6 +59,18 @@ export function nameFromPage(stored: string, title: string | null | undefined): 
   return withAddress && related ? shown : null;
 }
 
+/**
+ * «Partilhar» → «Copiar» in the Google Maps app gives maps.app.goo.gl/…?g_st=ic, which redirects to
+ * "maps.google.com/?q=<name, address>&ftid=0x…:0x…": the place's feature id and name, no coordinates.
+ */
+function appShareLink(parsed: URL): MapsPlaceLink | null {
+  const fid = parsed.searchParams.get("ftid");
+  if (!/(^|\.)google\.[a-z.]+$/i.test(parsed.hostname) || !fid || !/^0x[0-9a-f]+:0x[0-9a-f]+$/i.test(fid)) return null;
+  const name = stripAddress(parsed.searchParams.get("q") ?? "");
+  if (!name) return null;
+  return { name, fid, lat: null, lng: null, kgId: null, cleanUrl: `https://www.google.com/maps?q=${encodeURIComponent(name)}&ftid=${fid}` };
+}
+
 export function parseMapsPlaceLink(url: string): MapsPlaceLink | null {
   let parsed: URL;
   try {
@@ -66,7 +79,7 @@ export function parseMapsPlaceLink(url: string): MapsPlaceLink | null {
     return null;
   }
   const rawName = parsed.pathname.match(/\/maps\/place\/([^/]+)/)?.[1];
-  if (!rawName) return null;
+  if (!rawName) return appShareLink(parsed);
   let name: string;
   try {
     name = decodeURIComponent(rawName.replace(/\+/g, " ")).trim();
