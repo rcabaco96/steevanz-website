@@ -5,6 +5,7 @@ import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/li
 import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/schedule.ts";
 import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, rewardInSentence, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
+import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
 
 const minute = 60_000;
 
@@ -251,5 +252,35 @@ describe("booking availability", () => {
     const start = new Date(now + 3 * 60 * minute).toISOString();
     assert.ok(canChangeOnline(start, 2, now));
     assert.ok(!canChangeOnline(start, 4, now));
+  });
+});
+
+describe("phone numbers", () => {
+  it("Portuguese: 9 digits starting with 9, 2 or 3, with or without +351", () => {
+    assert.equal(normalizePhone("912345678"), "+351 912 345 678");
+    assert.equal(normalizePhone("912 345 678"), "+351 912 345 678");
+    assert.equal(normalizePhone("+351 912 345 678"), "+351 912 345 678");
+    assert.equal(normalizePhone("00351912345678"), "+351 912 345 678");
+    assert.equal(normalizePhone("213555010"), "+351 213 555 010");
+    assert.equal(normalizePhone("91234567"), null);
+    assert.equal(normalizePhone("9123456789"), null);
+    assert.equal(normalizePhone("812345678"), null);
+    assert.equal(normalizePhone("+351 12345"), null);
+    assert.equal(normalizePhone("91234567a"), null);
+    assert.equal(normalizePhone("   "), null);
+  });
+  it("other countries: the chosen code and the number, without the leading 0", () => {
+    assert.equal(normalizePhone("07700 900123", "44"), "+44 7700900123");
+    assert.equal(normalizePhone("612 34 56 78", "34"), "+34 612345678");
+    assert.equal(normalizePhone("12345", "34"), null);
+    assert.equal(normalizePhone("+44 7700 900123", "351"), "+447700900123");
+    assert.equal(normalizePhone("+81 90 1234 5678", ""), "+819012345678");
+    assert.equal(normalizePhone("90 1234 5678", ""), null);
+  });
+  it("splits a stored number back into country and number", () => {
+    assert.deepEqual(splitPhone("+351 912 345 678"), { dial: "351", number: "912 345 678" });
+    assert.deepEqual(splitPhone("+44 7700900123"), { dial: "44", number: "7700900123" });
+    assert.deepEqual(splitPhone("912345678"), { dial: "351", number: "912345678" });
+    assert.deepEqual(splitPhone(null), { dial: "351", number: "" });
   });
 });

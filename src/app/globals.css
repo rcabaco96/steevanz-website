@@ -237,6 +237,52 @@ select:not([multiple]):not([size]):not(.appearance-none) {
   background-repeat: no-repeat;
 }
 
+/* The open list in our colours, where the browser allows it (Chrome and Edge 135+); elsewhere the
+   system list (on phones, the system picker, which is the easiest to use there). */
+@supports (appearance: base-select) {
+  select:not([multiple]):not([size]):not(.appearance-none),
+  select:not([multiple]):not([size]):not(.appearance-none)::picker(select) {
+    appearance: base-select;
+  }
+
+  select:not([multiple]):not([size]):not(.appearance-none)::picker-icon {
+    display: none;
+  }
+
+  ::picker(select) {
+    margin-block: 0.375rem;
+    padding: 0.25rem;
+    max-height: 18rem;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 12px 32px -12px rgb(var(--shadow-color) / 0.35);
+  }
+
+  select option {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    background: var(--surface-2);
+    outline: none;
+  }
+
+  select option:checked {
+    font-weight: 600;
+  }
+
+  select option::checkmark {
+    order: 1;
+    margin-inline-start: auto;
+    color: var(--accent-text);
+  }
+}
+
 @layer components {
   .container-page {
     width: 100%;

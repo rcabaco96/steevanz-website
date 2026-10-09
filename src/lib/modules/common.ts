@@ -1,3 +1,4 @@
+import { normalizePhone, phoneError } from "@/lib/phone";
 import { randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { clientIp, hashIp } from "@/lib/booking/request";
@@ -59,4 +60,16 @@ export function isBot(formData: FormData): boolean {
 /** Start of today in the establishment's time zone, as an instant. */
 export function startOfLocalDay(timeZone: string, now = new Date()): Date {
   return zonedDateTimeToUtc(zonedDateString(now, timeZone), 0, timeZone);
+}
+
+/**
+ * The phone typed in a form with its country ("phone" and "phone_country"): "+351 912 345 678",
+ * null when left empty, or the message to show when it is not a valid number.
+ */
+export function phoneFrom(formData: FormData): { phone: string | null } | { error: string } {
+  const typed = formText(formData, "phone");
+  if (!typed) return { phone: null };
+  const dial = formData.has("phone_country") ? formText(formData, "phone_country") : "351";
+  const phone = normalizePhone(typed, dial);
+  return phone ? { phone } : { error: phoneError(dial) };
 }

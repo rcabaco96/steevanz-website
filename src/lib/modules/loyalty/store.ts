@@ -132,11 +132,14 @@ export async function searchCards(establishmentId: string, term: string): Promis
   }
   const clean = term.replace(/[%,()*]/g, " ").trim().slice(0, 60);
   if (clean.length < 2) return [];
+  // Phones are stored as "+351 912 345 678": "912345678" or "912 345" still find them.
+  const digits = clean.replace(/\D/g, "");
+  const phoneLike = /^[\d\s+.-]+$/.test(clean) && digits.length >= 3 ? digits.split("").join("%") : clean;
   const { data, error } = await client
     .from("loyalty_cards")
     .select("*")
     .eq("establishment_id", establishmentId)
-    .or(`name.ilike.%${clean}%,email.ilike.%${clean}%,phone.ilike.%${clean}%`)
+    .or(`name.ilike.%${clean}%,email.ilike.%${clean}%,phone.ilike.%${phoneLike}%`)
     .order("last_stamp_at", { ascending: false, nullsFirst: false })
     .limit(20);
   if (error) throw new Error(`searchCards: ${error.message}`);

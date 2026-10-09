@@ -12,7 +12,7 @@ import { accessErrorMessage, requireEstablishmentAccess } from "@/lib/establishm
 import { isUuid, loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentBundle, EstablishmentRow, ServiceRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
-import { formText, isBot, isModuleRateLimited, publicToken } from "../common";
+import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken } from "../common";
 import { publicEstablishment } from "../public";
 import { canChangeOnline, findBookingSlot, type BookingSlot } from "./availability";
 import { sendBookingConfirmation, sendCancellationNotice, sendDelayNotice } from "./notify";
@@ -86,10 +86,13 @@ export async function createBooking(_previous: ActionState, formData: FormData):
     const contact = contactSchema.safeParse({
       name: formText(formData, "name"),
       email: formText(formData, "email"),
-      phone: formText(formData, "phone"),
+      phone: "",
       notes: formText(formData, "notes"),
     });
     if (!contact.success) return { ok: false, message: contact.error.issues[0]?.path[0] === "email" ? "Indique um email válido." : "Indique o seu nome." };
+    const typedPhone = phoneFrom(formData);
+    if ("error" in typedPhone) return { ok: false, message: typedPhone.error };
+    contact.data.phone = typedPhone.phone;
     if (!contact.data.email && !contact.data.phone) return { ok: false, message: "Indique o email ou o telemóvel, para o estabelecimento o poder contactar." };
     const client = createServiceClient();
     if (await isModuleRateLimited(client, "booking_module")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
@@ -196,10 +199,13 @@ export async function staffSaveBooking(_previous: ActionState, formData: FormDat
     const contact = contactSchema.safeParse({
       name: formText(formData, "name"),
       email: formText(formData, "email"),
-      phone: formText(formData, "phone"),
+      phone: "",
       notes: formText(formData, "notes"),
     });
     if (!contact.success) return { ok: false, message: "Indique o nome (e um email válido, se o puser)." };
+    const typedPhone = phoneFrom(formData);
+    if ("error" in typedPhone) return { ok: false, message: typedPhone.error };
+    contact.data.phone = typedPhone.phone;
     const request = {
       serviceId: formText(formData, "service") || null,
       staffId: formText(formData, "staff") || null,

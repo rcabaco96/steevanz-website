@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon } from "@/components/icons";
+import { PhoneField } from "@/components/shared/PhoneField";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { createBooking } from "@/lib/modules/bookings/actions";
 import { brandButton, brandSecondaryButton, publicInput, publicLabel } from "../BrandFrame";
@@ -378,10 +379,7 @@ export function BookingWizard({
               Email
               <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" placeholder="Para receber a confirmação" className={publicInput} />
             </label>
-            <label className={publicLabel}>
-              Telemóvel
-              <input name="phone" type="tel" maxLength={40} autoComplete="tel" className={publicInput} />
-            </label>
+            <PhoneField label="Telemóvel" labelClassName={publicLabel} inputClassName={publicInput} />
             <label className={publicLabel}>
               Notas (opcional)
               <textarea name="notes" rows={2} maxLength={500} placeholder={mode === "table" ? "Alergias, cadeira de bebé, pedidos especiais…" : "Algo que devamos saber?"} className={`${publicInput} h-auto py-2.5`} />

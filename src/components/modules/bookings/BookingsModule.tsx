@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { PhoneField } from "@/components/shared/PhoneField";
 import { buttonClasses } from "@/components/ui/Button";
 import { requestOrigin } from "@/lib/booking/request";
 import { addDaysToDate, zonedDateString } from "@/lib/booking/slots";
@@ -500,10 +501,7 @@ async function BookingFormView({
               Nome
               <input name="name" required maxLength={80} defaultValue={booking?.name ?? ""} className={input} />
             </label>
-            <label className={adminLabelClasses}>
-              Telefone
-              <input name="phone" type="tel" maxLength={40} defaultValue={booking?.phone ?? ""} className={input} />
-            </label>
+            <PhoneField label="Telefone" defaultValue={booking?.phone} labelClassName={adminLabelClasses} inputClassName={input} />
             <label className={adminLabelClasses}>
               Email (opcional)
               <input name="email" type="email" maxLength={200} defaultValue={booking?.email ?? ""} className={input} />

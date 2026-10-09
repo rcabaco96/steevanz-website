@@ -133,7 +133,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "lotacao", text: "Restaurantes: lotação" },
           {
             type: "p",
-            text: "No separador **Lotação**: quantas pessoas aceita com reserva em cada turno e o máximo de pessoas por reserva online. Os turnos são os períodos do horário (ex.: almoço 12:00–15:00, jantar 19:00–23:00). Várias reservas podem ser para a mesma hora; o turno só fica cheio quando as reservas somam a lotação.",
+            text: "No separador **Lotação**: quantas pessoas aceita com reserva em cada turno e o máximo de pessoas por reserva online. Os turnos são os períodos do horário (ex.: almoço 12:00–15:00, jantar 19:00–23:00). Várias reservas podem ser para a mesma hora; o turno só fica cheio quando as reservas somam a lotação. A conta é feita ao turno inteiro, sem tentar adivinhar quem sai mais cedo: se costuma ter rotação de mesas, ponha uma lotação um pouco acima dos lugares. Quem chega sem reserva entra se houver lugar, como sempre.",
           },
           { type: "h2", id: "servicos", text: "Outros negócios: serviços, pessoas e espaços" },
           {
@@ -176,7 +176,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "capacity", text: "Restaurants: capacity" },
           {
             type: "p",
-            text: "In the **Capacity** tab: how many people you accept with a booking per sitting and the most people per online booking. Sittings are your opening periods (e.g. lunch 12:00–15:00, dinner 19:00–23:00). Several bookings can share a time; a sitting is only full when bookings add up to its capacity.",
+            text: "In the **Capacity** tab: how many people you accept with a booking per sitting and the most people per online booking. Sittings are your opening periods (e.g. lunch 12:00–15:00, dinner 19:00–23:00). Several bookings can share a time; a sitting is only full when bookings add up to its capacity. It counts the whole sitting, without guessing who leaves early: if tables usually turn over, set the capacity a little above your seats. Walk-ins still get a table when there is room.",
           },
           { type: "h2", id: "services", text: "Other businesses: services, people and places" },
           {

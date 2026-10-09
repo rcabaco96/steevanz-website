@@ -11,7 +11,7 @@ import { accessErrorMessage, requireEstablishmentAccess } from "@/lib/establishm
 import { getEstablishment, isUuid } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
-import { formText, isBot, isModuleRateLimited, publicToken, tokenPattern } from "../common";
+import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken, tokenPattern } from "../common";
 import { publicEstablishment } from "../public";
 import { codeLockMinutes, cooldownMessage, isLocked, isStaffCode, maxCodeAttempts } from "./rules";
 import {
@@ -94,13 +94,16 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
     const parsed = joinSchema.safeParse({
       name: formText(formData, "name"),
       email: formText(formData, "email"),
-      phone: formText(formData, "phone"),
+      phone: "",
       consent: formData.get("consent") === "on",
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? "");
       return { ok: false, message: field === "consent" ? "Para criar o cartão tem de aceitar o tratamento dos dados." : field === "email" ? "Indique um email válido." : "Indique o seu nome." };
     }
+    const typedPhone = phoneFrom(formData);
+    if ("error" in typedPhone) return { ok: false, message: typedPhone.error };
+    parsed.data.phone = typedPhone.phone;
     const client = createServiceClient();
     if (await isModuleRateLimited(client, "loyalty")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
     const program = await ensureProgram(establishment);

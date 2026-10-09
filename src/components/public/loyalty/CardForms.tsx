@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useSyncExternalStore } from "react";
+import { PhoneField } from "@/components/shared/PhoneField";
 import { useFormStatus } from "react-dom";
 import { AlertIcon, Check } from "@/components/icons";
 import type { ActionState } from "@/lib/action-state";
@@ -81,11 +82,12 @@ export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; term
         <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" className={publicInput} />
         <span className="text-xs font-normal text-subtle">Enviamos-lhe o link do cartão: é assim que o recupera se mudar de telemóvel.</span>
       </label>
-      <label className={publicLabel}>
-        Telemóvel (opcional)
-        <input name="phone" type="tel" maxLength={40} autoComplete="tel" className={publicInput} />
-        <span className="text-xs font-normal text-subtle">Se um dia vier sem telemóvel, diga o número ao balcão e recebe o carimbo na mesma.</span>
-      </label>
+      <PhoneField
+        label="Telemóvel (opcional)"
+        hint="Se um dia vier sem telemóvel, diga o número ao balcão e recebe o carimbo na mesma."
+        labelClassName={publicLabel}
+        inputClassName={publicInput}
+      />
       <label className="flex items-start gap-2.5 text-sm text-muted">
         <input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--brand)]" />
         <span>{terms}</span>
