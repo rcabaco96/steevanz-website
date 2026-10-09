@@ -222,6 +222,22 @@ async function resolveMapsLink(url: string): Promise<string> {
 }
 
 /**
+ * «Novo negócio»: a short Maps link (maps.app.goo.gl…, e.g. «Partilhar» in the Maps app) pasted →
+ * the place's name and the NFC plate link, shown before saving. Admins only; only Google's short hosts.
+ */
+export async function previewMapsLink(link: string): Promise<{ name: string; plateLink: string } | null> {
+  try {
+    await requireAdmin();
+  } catch {
+    return null;
+  }
+  if (!isShortMapsLink(link)) return null;
+  const place = parseMapsPlaceLink(await resolveMapsLink(link).catch(() => link));
+  const placeId = place ? placeIdFromFid(place.fid) : null;
+  return place && placeId ? { name: place.name, plateLink: writeReviewLink(placeId) } : null;
+}
+
+/**
  * «Novo negócio» from its Google Maps link alone: name, Google id and coordinates come from the link
  * (the last place in it), the rest from the first import, queued here for the reader (reviews, rating,
  * category and the zone's competitors).
