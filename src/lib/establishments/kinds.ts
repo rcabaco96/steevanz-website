@@ -43,6 +43,8 @@ export interface KindWords {
   joinTitle: string;
   /** Booking page title. */
   bookingTitle: string;
+  /** Choosing who or what does it: «Com quem?» / «Qualquer barbeiro»; for pitches «Que campo?». */
+  who: { question: string; any: string; preferred: string };
 }
 
 export const kindWords: Record<BusinessKind, KindWords> = {
@@ -51,36 +53,42 @@ export const kindWords: Record<BusinessKind, KindWords> = {
     callAction: "Mesa pronta",
     joinTitle: "Entrar na lista de espera",
     bookingTitle: "Reservar mesa",
+    who: { question: "Com quem?", any: "Qualquer um", preferred: "Profissional preferido" },
   },
   barbershop: {
     ready: "É a sua vez. Dirija-se à cadeira.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Marcar corte",
+    who: { question: "Com quem?", any: "Qualquer barbeiro", preferred: "Barbeiro preferido" },
   },
   salon: {
     ready: "É a sua vez. Dirija-se à receção.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Marcar serviço",
+    who: { question: "Com quem?", any: "Qualquer profissional", preferred: "Profissional preferido" },
   },
   clinic: {
     ready: "É a sua vez. Dirija-se à receção.",
     callAction: "É a sua vez",
     joinTitle: "Tirar senha",
     bookingTitle: "Marcar consulta",
+    who: { question: "Com quem?", any: "Qualquer profissional", preferred: "Profissional preferido" },
   },
   sports: {
     ready: "É a sua vez. Dirija-se à receção.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Reservar campo",
+    who: { question: "Que campo?", any: "Qualquer campo", preferred: "Campo preferido" },
   },
   retail: {
     ready: "É a sua vez. Dirija-se ao balcão.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Reservar",
+    who: { question: "Com quem?", any: "Qualquer um", preferred: "Profissional preferido" },
   },
 };
 

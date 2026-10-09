@@ -5,6 +5,7 @@ import { PhoneField } from "@/components/shared/PhoneField";
 import { buttonClasses } from "@/components/ui/Button";
 import { requestOrigin } from "@/lib/booking/request";
 import { addDaysToDate, zonedDateString } from "@/lib/booking/slots";
+import { kindWords } from "@/lib/establishments/kinds";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentBundle, EstablishmentRow } from "@/lib/establishments/types";
@@ -440,9 +441,9 @@ async function BookingFormView({
             </label>
           ) : eligible.length > 1 ? (
             <label className={adminLabelClasses}>
-              Com quem
+              {kindWords[bundle.establishment.kind].who.question.replace("?", "")}
               <select name="profissional" defaultValue={person} className={input}>
-                <option value="">Qualquer um</option>
+                <option value="">{kindWords[bundle.establishment.kind].who.any}</option>
                 {eligible.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.name}

@@ -3,7 +3,7 @@ import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backof
 import { requestOrigin } from "@/lib/booking/request";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
-import { kindDefaults, type BusinessKind } from "@/lib/establishments/kinds";
+import { kindDefaults, kindWords, type BusinessKind } from "@/lib/establishments/kinds";
 import { weekdayNames } from "@/lib/establishments/types";
 import { saveWaitlistSettings } from "@/lib/modules/waitlist/actions";
 import { currentSettings, loadQueue, loadStats, type WaitlistSettingsRow } from "@/lib/modules/waitlist/store";
@@ -49,6 +49,7 @@ function QueueSettings({ settings, establishmentId, kind, hasServices, hasStaff 
           suited={{ ask_party: suited.askParty, ask_service: suited.askService, ask_staff: suited.askStaff }}
           hasServices={hasServices}
           hasStaff={hasStaff}
+          staffLabel={kindWords[kind].who.preferred}
         />
         <fieldset className="flex flex-col gap-3 sm:col-span-2">
           <legend className="mb-1 text-sm font-medium text-muted">Automático</legend>

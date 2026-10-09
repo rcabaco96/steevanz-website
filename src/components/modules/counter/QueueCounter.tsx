@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
+import { kindWords } from "@/lib/establishments/kinds";
 import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { addEntryByStaff, callEntry, callNext, moveEntry, setEntryStatus, setQueueState } from "@/lib/modules/waitlist/actions";
 import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
@@ -25,7 +26,7 @@ function details(entry: WaitlistEntryRow, bundle: EstablishmentBundle): string {
   const service = entry.service_id ? bundle.services.find((item) => item.id === entry.service_id) : null;
   if (service) parts.push(service.name);
   const staff = entry.staff_id ? bundle.staff.find((item) => item.id === entry.staff_id) : null;
-  if (entry.service_id || entry.staff_id) parts.push(staff ? `com ${staff.name}` : "qualquer profissional");
+  if (entry.service_id || entry.staff_id) parts.push(staff ? `com ${staff.name}` : kindWords[bundle.establishment.kind].who.any.toLowerCase());
   if (entry.source === "staff") parts.push("adicionado ao balcão");
   return parts.join(" · ");
 }
@@ -129,7 +130,7 @@ function AddForm({ bundle, settings }: { bundle: EstablishmentBundle; settings: 
           <label className={adminLabelClasses}>
             Profissional
             <select name="staff" className={input} defaultValue="">
-              <option value="">Qualquer um</option>
+              <option value="">{kindWords[bundle.establishment.kind].who.any}</option>
               {staff.map((person) => (
                 <option key={person.id} value={person.id}>
                   {person.name}
@@ -182,6 +183,7 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
     })),
     avgMinutes: settings.avg_minutes,
     activeStaff: bundle.staff.filter((item) => item.active).length,
+    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
     recentCalls: queue.recentCalls,
     now,
   });

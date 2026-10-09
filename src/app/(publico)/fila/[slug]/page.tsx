@@ -41,6 +41,7 @@ export default async function WaitlistJoinPage({ params }: Props) {
     })),
     avgMinutes: settings.avg_minutes,
     activeStaff: bundle.staff.filter((item) => item.active).length,
+    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
     recentCalls: queue.recentCalls,
     now: queue.now,
   });
@@ -80,6 +81,7 @@ export default async function WaitlistJoinPage({ params }: Props) {
             services={services.map((service) => ({ id: service.id, label: `${service.name} (${service.duration_minutes} min)` }))}
             staff={staff.map((person) => ({ id: person.id, label: person.name }))}
             submitLabel={words.joinTitle}
+            who={words.who}
           />
         </PublicCard>
       ) : (

@@ -45,7 +45,7 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
   const details = [
     entry.party_size ? `${entry.party_size} ${entry.party_size === 1 ? "pessoa" : "pessoas"}` : null,
     service?.name ?? null,
-    entry.service_id || entry.staff_id ? `com ${staff?.name ?? "qualquer profissional"}` : null,
+    entry.service_id || entry.staff_id ? (staff ? `com ${staff.name}` : kindWords[establishment.kind].who.any.toLowerCase()) : null,
     `entrou às ${joinedAt}`,
   ].filter(Boolean);
   const done = entry.status === "served" || entry.status === "no_show" || entry.status === "cancelled" ? finished[entry.status] : null;

@@ -41,6 +41,7 @@ export default async function WaitlistScreenPage({ params }: Props) {
     })),
     avgMinutes: settings.avg_minutes,
     activeStaff: bundle.staff.filter((item) => item.active).length,
+    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
     recentCalls: queue.recentCalls,
     now: queue.now,
   });

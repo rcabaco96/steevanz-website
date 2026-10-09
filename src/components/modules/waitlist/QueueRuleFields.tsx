@@ -29,6 +29,7 @@ export function QueueRuleFields({
   suited,
   hasServices,
   hasStaff,
+  staffLabel = "Profissional preferido",
 }: {
   avgMinutes: number;
   graceMinutes: number;
@@ -39,6 +40,8 @@ export function QueueRuleFields({
   suited: Record<Ask, boolean>;
   hasServices: boolean;
   hasStaff: boolean;
+  /** «Barbeiro preferido», «Campo preferido»… */
+  staffLabel?: string;
 }) {
   const [on, setOn] = useState(asks);
   const all: Ask[] = ["ask_party", "ask_service", "ask_staff"];
@@ -58,7 +61,7 @@ export function QueueRuleFields({
         onChange={(event) => setOn((current) => ({ ...current, [ask]: event.target.checked }))}
         className="h-4.5 w-4.5 accent-accent"
       />
-      {askLabels[ask]}
+      {ask === "ask_staff" ? staffLabel : askLabels[ask]}
       {on[ask] && missing[ask] ? <span className="text-subtle">({missing[ask]})</span> : null}
     </label>
   );

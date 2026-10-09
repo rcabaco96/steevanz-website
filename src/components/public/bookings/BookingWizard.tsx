@@ -86,8 +86,11 @@ export function BookingWizard({
   replaceToken,
   initial,
   policy,
+  who,
 }: {
   slug: string;
+  /** «Com quem?» / «Qualquer barbeiro», or «Que campo?» for pitches. */
+  who: { question: string; any: string };
   services: WizardService[];
   staff: WizardOption[];
   replaceToken: string | null;
@@ -191,9 +194,9 @@ export function BookingWizard({
         ) : null}
         {mode === "service" && staff.length > 1 ? (
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-sm font-semibold text-text">Com quem?</legend>
+            <legend className="mb-1 text-sm font-semibold text-text">{who.question}</legend>
             <div className="flex flex-wrap gap-2">
-              {[{ id: "", name: "Qualquer um" }, ...staff].map((item) => (
+              {[{ id: "", name: who.any }, ...staff].map((item) => (
                 <button
                   key={item.id || "any"}
                   type="button"
@@ -210,7 +213,7 @@ export function BookingWizard({
                 </button>
               ))}
             </div>
-            {person === "" ? <p className="text-xs text-subtle">Com «qualquer um» vê mais horários.</p> : null}
+            {person === "" ? <p className="text-xs text-subtle">Com «{who.any.toLowerCase()}» vê mais horários.</p> : null}
           </fieldset>
         ) : null}
         {mode === "table" ? (

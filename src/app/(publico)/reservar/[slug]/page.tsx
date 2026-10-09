@@ -54,6 +54,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
           ) : null}
           <BookingWizard
             slug={establishment.slug}
+            who={kindWords[establishment.kind].who}
             services={services.map((item) => ({
               id: item.id,
               name: item.name,

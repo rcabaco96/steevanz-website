@@ -54,13 +54,21 @@ describe("waitlist estimate", () => {
     assert.equal(observedPace(calls, now), null);
   });
 
-  it("shares service time between professionals", () => {
+  it("hands the people ahead to the professional free first", () => {
     const ahead = [
       { serviceMinutes: 30, staffId: null },
       { serviceMinutes: 30, staffId: null },
       { serviceMinutes: 15, staffId: null },
     ];
-    assert.equal(estimateWait({ ahead, avgMinutes: 20, activeStaff: 3, recentCalls: [], now }), 25);
+    assert.equal(estimateWait({ ahead, avgMinutes: 20, activeStaff: 3, recentCalls: [], now }), 15);
+    assert.equal(estimateWait({ ahead, avgMinutes: 20, activeStaff: 1, recentCalls: [], now }), 75);
+  });
+
+  it("no wait for anyone while a professional is free, even with a queue for another one", () => {
+    const ahead = [{ serviceMinutes: 45, staffId: "tiago" }];
+    const staffIds = ["rui", "tiago", "andre"];
+    assert.equal(estimateWait({ ahead, avgMinutes: 20, activeStaff: 3, staffIds, recentCalls: [], now }), 0);
+    assert.equal(estimateWait({ ahead, self: { serviceMinutes: 30, staffId: "tiago" }, avgMinutes: 20, activeStaff: 3, staffIds, recentCalls: [], now }), 45);
   });
 
   it("only counts people for the same professional (or anyone) when waiting for one", () => {
@@ -69,7 +77,7 @@ describe("waitlist estimate", () => {
       { serviceMinutes: 30, staffId: "pedro" },
       { serviceMinutes: 15, staffId: null },
     ];
-    assert.equal(estimateWait({ ahead, self: { serviceMinutes: 30, staffId: "rui" }, avgMinutes: 20, activeStaff: 2, recentCalls: [], now }), 45);
+    assert.equal(estimateWait({ ahead, self: { serviceMinutes: 30, staffId: "rui" }, avgMinutes: 20, activeStaff: 2, staffIds: ["rui", "pedro"], recentCalls: [], now }), 45);
   });
 
   it("rounds and formats", () => {

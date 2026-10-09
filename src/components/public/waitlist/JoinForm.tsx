@@ -46,8 +46,10 @@ export function JoinForm({
   services,
   staff,
   submitLabel,
+  who,
 }: {
   slug: string;
+  who: { question: string; any: string };
   askParty: boolean;
   maxParty: number;
   services: JoinOption[];
@@ -106,9 +108,9 @@ export function JoinForm({
       ) : null}
       {staff.length ? (
         <label className={publicLabel}>
-          Com quem?
+          {who.question}
           <select name="staff" defaultValue="" className={publicInput}>
-            <option value="">Qualquer profissional (mais rápido)</option>
+            <option value="">{who.any} (mais rápido)</option>
             {staff.map((person) => (
               <option key={person.id} value={person.id}>
                 {person.label}

@@ -205,6 +205,7 @@ export function entryOutlook(entry: WaitlistEntryRow, queue: QueueSnapshot, bund
     self: etaEntry(entry, bundle, settings),
     avgMinutes: settings.avg_minutes,
     activeStaff: bundle.staff.filter((item) => item.active).length,
+    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
     recentCalls: queue.recentCalls,
     now: queue.now,
   });

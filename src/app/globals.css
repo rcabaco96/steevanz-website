@@ -255,6 +255,13 @@ select:not([multiple]):not([size]):not(.appearance-none) {
     display: none;
   }
 
+  /* The chosen option centred in the field, like the text of an input (Tailwind's `block` would
+     otherwise put it at the top). Widths still come from the classes. */
+  select:not([multiple]):not([size]):not(.appearance-none):not(.hidden) {
+    display: inline-flex;
+    align-items: center;
+  }
+
   ::picker(select) {
     margin-block: 0.375rem;
     padding: 0.25rem;
