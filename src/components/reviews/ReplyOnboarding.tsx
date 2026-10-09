@@ -8,8 +8,10 @@ import { isNegative } from "@/lib/reviews/analytics";
 import { saveReplySettingsAction } from "@/lib/reviews/reply-actions";
 import { addressOptions, autoLimitOptions, lengthOptions, maxTones, toneOptions, type ReplySettings } from "@/lib/reviews/replies";
 import { formatDate } from "@/lib/reviews/format";
+import { inferMinReplies, ownerReplyMinChars } from "@/lib/reviews/owner-replies";
 import type { TrainingReview } from "@/lib/reviews/reply-store";
 import { AutoReplyChoice } from "./AutoReplyChoice";
+import { InfoTip } from "./InfoTip";
 import { ReviewText } from "./ReviewText";
 import { Stars } from "./Stars";
 
@@ -53,14 +55,49 @@ function Choice({ selected, onClick, title, detail }: { selected: boolean; onCli
   );
 }
 
+/** What the first setup took from the owner's replies on Google (inferReplySettings). */
+export interface ReplyPrefill {
+  /** Form fields filled from the replies. */
+  fields: string[];
+  replies: number;
+  portuguese: number;
+  /** Replies whose sentences are learned when the form is saved. */
+  learnable: number;
+}
+
+/** Form fields on each step that can come from the owner's replies. */
+const prefillSteps: Record<number, string[]> = {
+  0: ["addressForm", "length", "emojis", "signature"],
+  2: ["emptyPositive", "emptyNegative"],
+  3: ["negativeContact"],
+};
+
+/** «Preenchido a partir das suas respostas no Google», with how each answer was worked out (rule 7). */
+function PrefillNote({ prefill }: { prefill: ReplyPrefill }) {
+  return (
+    <p className="flex items-start gap-1.5 rounded-xl bg-accent-soft p-3 text-sm text-text">
+      <span>Preenchido a partir das suas respostas no Google — confirme ou mude.</span>
+      <InfoTip label="Preenchido a partir das suas respostas no Google">
+        Lemos as {prefill.replies} respostas que deu no Google ({prefill.portuguese} em português). Tratamento: «Tu» ou «Você» se uma forma aparece em pelo menos 2 respostas
+        em português com 6 ou mais palavras e o dobro das vezes da outra; «Sem tratamento» se menos de 1 em 5 dessas respostas fala diretamente com a pessoa. Tamanho: «Média» se
+        a resposta típica (a mediana) tem 4 ou mais frases. Emojis: se pelo menos 1 em 3 respostas a reviews positivas tem um. Assinatura: a última linha repetida em pelo menos
+        3 respostas. Contacto: um email ou telefone dado em pelo menos 2 respostas a reviews negativas. Reviews só com estrelas: a resposta que mais repetiu, pelo menos 2 vezes.
+        Com menos de {inferMinReplies} respostas, nada disto é adivinhado; o tom também não. Nada fica guardado até confirmar no fim.
+      </InfoTip>
+    </p>
+  );
+}
+
 interface ReplyOnboardingProps {
   slug: string;
   initial: ReplySettings;
+  /** First setup only: answers taken from the owner's replies on Google. */
+  prefilled?: ReplyPrefill | null;
   candidates: TrainingReview[];
   editing: boolean;
 }
 
-export function ReplyOnboarding({ slug, initial, candidates, editing }: ReplyOnboardingProps) {
+export function ReplyOnboarding({ slug, initial, prefilled = null, candidates, editing }: ReplyOnboardingProps) {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [settings, setSettings] = useState(initial);
@@ -73,6 +110,7 @@ export function ReplyOnboarding({ slug, initial, candidates, editing }: ReplyOnb
   const [saving, startSaving] = useTransition();
   const set = <K extends keyof ReplySettings>(key: K, value: ReplySettings[K]) => setSettings((current) => ({ ...current, [key]: value }));
   const last = step === steps.length - 1;
+  const prefilledHere = Boolean(prefilled && (prefillSteps[step] ?? []).some((field) => prefilled.fields.includes(field)));
 
   function toggleTone(id: string) {
     const has = settings.tone.includes(id);
@@ -133,6 +171,13 @@ export function ReplyOnboarding({ slug, initial, candidates, editing }: ReplyOnb
       </ol>
 
       <div className="card flex flex-col gap-6 p-4 sm:p-6">
+        {prefilled && prefilledHere ? <PrefillNote prefill={prefilled} /> : null}
+        {step === 1 && prefilled?.learnable ? (
+          <p className="rounded-xl bg-accent-soft p-3 text-sm text-text">
+            Já tem {prefilled.learnable} {prefilled.learnable === 1 ? "resposta" : "respostas"} no Google em português com pelo menos {ownerReplyMinChars} caracteres: as frases
+            delas entram nas suas frases quando guardar, por isso essas reviews não aparecem aqui.
+          </p>
+        ) : null}
         {step === 0 ? (
           <>
             <Field label="Tom" hint={`Escolha até ${maxTones}.`}>

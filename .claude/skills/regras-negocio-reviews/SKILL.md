@@ -195,6 +195,32 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
 - **Treinar**: o sistema escolhe reviews **reais** do negócio (regra 1) cujas situações as frases
   do cliente ainda não cobrem; o cliente responde e a resposta é partida em frases arrumadas por
   tipo (abertura, tema, contacto, fecho). O cliente pode retirar frases.
+- **As respostas que o cliente já deu no Google ensinam sozinhas** (dono, 2026-10-09: «ao leres as
+  reviews do cliente, já treinas as respostas IA com as respostas que o próprio cliente já deu»).
+  `google_reviews.owner_reply` é a voz real do dono: as frases de cada resposta em português com
+  pelo menos 25 caracteres sem a assinatura (`learnableOwnerReply`, `ownerReplyMinChars` em
+  `src/lib/reviews/owner-replies.ts`; «Obrigado!» não ensina frases) entram na biblioteca do tom
+  atual com `source = 'google'`, sem «Treinar». Quando: no fim de cada `full` / `update` do leitor
+  (uma passagem por pedido, `learnFromOwner`), ao abrir o separador Respostas e antes de cada
+  preparação de respostas (apanha também o Perfil da Empresa) — `learnOwnerReplies` em
+  `reply-store.ts`, o mesmo código no leitor e no site. Idempotente: cada resposta fica marcada por
+  tom em `review_reply_google_learned` (reivindicada antes de gravar as frases, por isso o leitor e o
+  site ao mesmo tempo nunca a aprendem duas vezes); se o dono **editar a resposta no Google**, o
+  texto novo é aprendido outra vez (as frases antigas ficam: nunca apagar aprendizagem). Uma frase já
+  na biblioteca do tom, **mesmo retirada pelo cliente**, não volta a entrar por aqui. **Sem tom ainda**
+  (formulário nunca guardado): nada é gravado; as respostas ficam em `google_reviews` e são aprendidas
+  quando o formulário cria o tom. **Cada tom novo (ou antigo reposto) aprende-as também**: são dados
+  de origem, não reações dadas noutro tom, por isso não é «misturar». As reviews cujas respostas no
+  Google foram aprendidas não aparecem no «Treinar» (contam como treinadas).
+- **Formulário pré-preenchido pelas respostas no Google** (só na primeira configuração; nada é
+  guardado até o cliente confirmar): `inferReplySettings` (`owner-replies.ts`) — tratamento (tu/você
+  em ≥ 2 respostas em português com ≥ 6 palavras e o dobro do outro; «sem tratamento» se < 1 em 5
+  fala diretamente com a pessoa), tamanho («Média» se a mediana tem ≥ 4 frases), emojis (≥ 1 em 3
+  respostas a positivas), assinatura (última linha repetida em ≥ 3 respostas e ≥ 1/3 das que têm
+  substância), contacto (email/telefone em ≥ 2 respostas a negativas e ≥ 1/3 delas), respostas a
+  reviews só com estrelas (a mais repetida, ≥ 2 vezes). Com menos de 3 respostas nada se adivinha;
+  **os tons nunca são adivinhados**. O formulário mostra «Preenchido a partir das suas respostas no
+  Google — confirme ou mude» com (i).
 - **Tudo o que é aprendido fica guardado por tom.** Um tom é o conjunto de respostas do
   formulário de definições que definem como as respostas soam (tratamento, tons, tamanho, emojis,
   respostas a reviews só com estrelas) — tabela `review_reply_profiles`. **A assinatura e o

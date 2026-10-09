@@ -2,6 +2,7 @@
 // every write is only printed (never review texts, names or anything personal).
 import { cronSecret, log, siteUrl } from "./config.mjs";
 import { matchStoredReviews, sameReviewToleranceMs } from "../../src/lib/reviews/maps-reader.ts";
+import { learnOwnerReplies } from "../../src/lib/reviews/reply-store.ts";
 
 const now = () => new Date().toISOString();
 
@@ -134,6 +135,18 @@ export function createStore(db, { dryRun }) {
     },
 
     // --- writes --------------------------------------------------------------------------------
+    /**
+     * Rule 11: the owner's replies on Google just stored teach the AI replies (current tone; with no
+     * tone yet they are learned when the replies form is saved). Same code as the site.
+     */
+    async learnOwnerReplies(businessId) {
+      if (dryRun) {
+        print("frases das respostas do dono no Google", `negócio ${businessId}`);
+        return null;
+      }
+      return learnOwnerReplies(db, businessId);
+    },
+
     async jobProgress(jobId, fields) {
       if (dryRun) return print("progresso", fields);
       check(await db.from("review_import_jobs").update({ ...fields, updated_at: now() }).eq("id", jobId));

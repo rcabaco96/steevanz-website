@@ -1,7 +1,7 @@
 /**
  * Replies built by rules, with no paid AI. A reply is assembled from sentences:
  * opening → one sentence per theme the review mentions → contact (negatives) → closing → signature.
- * Each sentence comes from the owner's own library (learned in "Treinar" and from edits) and,
+ * Each sentence comes from the owner's own library (learned from his replies on Google, in "Treinar" and from edits) and,
  * while that library has nothing for the case, from the Steevanz base sentences below.
  * Reviews in another language are answered in that language (reply-languages.ts) with the base
  * sentences translated in reply-translations.ts, plus the same reply in Portuguese for the owner.

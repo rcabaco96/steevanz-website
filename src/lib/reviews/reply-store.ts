@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isNegative } from "./analytics.ts";
+import { inferSignature, learnableOwnerReply, ownerReplySnippets, type OwnerReply } from "./owner-replies.ts";
 import { isReplyLanguage, replyLanguage, type ReplyLanguage } from "./reply-languages.ts";
 import { composeDistinct, composeOptions, learnFromAnswer, ownTextKeys, replyKey, translateToPortuguese, type ComposedReply, type Snippet } from "./reply-rules.ts";
 import { normalize, themesIn, type ThemeId } from "./text.ts";
@@ -332,12 +333,15 @@ interface SnippetRow {
   sentiment: Snippet["sentiment"];
   theme: ThemeId | null;
   text: string;
-  source: "training" | "edit";
+  source: SnippetSource;
   accepted: number;
   rejected: number;
 }
 
-export type LibrarySnippet = Snippet & { source: "training" | "edit" };
+/** Where a sentence was learned: «Treinar», a reply edited before approving, or a reply on Google. */
+export type SnippetSource = "training" | "edit" | "google";
+
+export type LibrarySnippet = Snippet & { source: SnippetSource };
 
 const snippetColumns = "id, kind, sentiment, theme, text, source, accepted, rejected";
 
@@ -373,10 +377,12 @@ export const trainingBatch = 3;
 /**
  * Picks real reviews of the business (never invented) that teach the most: the ones whose
  * sentiment and themes the owner's library covers least, mixing positives and negatives. Only
- * reviews answered in Portuguese: the library is the owner's Portuguese voice.
+ * reviews answered in Portuguese: the library is the owner's Portuguese voice. Reviews whose reply on
+ * Google was already learned (learnOwnerReplies) count as trained; before the first tone exists,
+ * the ones it will learn when the form is saved are left out too.
  */
 export async function loadTrainingQueue(client: SupabaseClient, businessId: string, profileId: string | null, limit = trainingBatch): Promise<TrainingReview[]> {
-  const [reviews, done, library] = await Promise.all([
+  const [reviews, done, library, fromGoogle] = await Promise.all([
     readAllOrThrow<{ review_id: string; rating: number; text: string; language: string | null; published_at: string; owner_reply: string | null }>((from, to) =>
       client
         .from("google_reviews")
@@ -393,8 +399,13 @@ export async function loadTrainingQueue(client: SupabaseClient, businessId: stri
         )
       : Promise.resolve([]),
     loadLibrary(client, businessId, profileId),
+    profileId ? loadGoogleLearned(client, profileId) : Promise.resolve(null),
   ]);
   const seen = new Set(done.map((row) => row.review_id));
+  if (fromGoogle) for (const reviewId of fromGoogle.keys()) seen.add(reviewId);
+  // No tone yet: saving the form learns these replies (only when the learning table exists).
+  const learnsOnSave = !profileId && (await googleLearningReady(client));
+  for (const row of learnsOnSave ? reviews : []) if (row.owner_reply && learnableOwnerReply(row.owner_reply)) seen.add(row.review_id);
   const covered = new Map<string, number>();
   for (const snippet of library) {
     const key = `${snippet.sentiment}:${snippet.kind === "theme" ? snippet.theme : snippet.kind}`;
@@ -490,6 +501,158 @@ export async function skipTrainingReview(client: SupabaseClient, businessId: str
     .from("review_reply_training")
     .upsert({ business_id: businessId, profile_id: profileId, review_id: reviewId, skipped: true }, { onConflict: "business_id,profile_id,review_id" });
   if (error) throw new Error(error.message);
+}
+
+// ---------------------------------------------------------------------------------------------
+// Replies the owner already gave on Google (google_reviews.owner_reply)
+
+/**
+ * review_reply_google_learned and the 'google' snippet source come from
+ * supabase/migrations/20261010110000_reply_learn_google.sql. Until it is applied this learning is
+ * skipped and everything else works as before.
+ */
+function missingLearningTable(error: { code?: string; message: string } | null): boolean {
+  return Boolean(error && (error.code === "42P01" || error.code === "PGRST205"));
+}
+
+/** Reviews whose Google reply was learned under this tone → replyKey of the reply learned; null without the migration. */
+async function loadGoogleLearned(client: SupabaseClient, profileId: string): Promise<Map<string, string> | null> {
+  const { data, error } = await readAll<{ review_id: string; reply_key: string }>((from, to) =>
+    client.from("review_reply_google_learned").select("review_id, reply_key").eq("profile_id", profileId).order("review_id").range(from, to),
+  );
+  if (missingLearningTable(error)) return null;
+  if (error) throw new Error(error.message);
+  return new Map(data.map((row) => [row.review_id, row.reply_key]));
+}
+
+/** Whether the migration of this learning is applied. */
+export async function googleLearningReady(client: SupabaseClient): Promise<boolean> {
+  // A plain read: a head request on a missing table comes back without an error.
+  const { error } = await client.from("review_reply_google_learned").select("review_id").limit(1);
+  if (missingLearningTable(error)) return false;
+  if (error) throw new Error(error.message);
+  return true;
+}
+
+/** Every stored review with an owner reply on Google, newest first (the whole history, in pages). */
+export async function loadOwnerReplies(client: SupabaseClient, businessId: string): Promise<OwnerReply[]> {
+  const rows = await readAllOrThrow<{ review_id: string; rating: number; text: string | null; owner_reply: string }>((from, to) =>
+    client
+      .from("google_reviews")
+      .select("review_id, rating, text, owner_reply")
+      .eq("business_id", businessId)
+      .not("owner_reply", "is", null)
+      .order("published_at", { ascending: false })
+      .order("review_id")
+      .range(from, to),
+  );
+  return rows.filter((row) => row.owner_reply.trim()).map((row) => ({ reviewId: row.review_id, rating: row.rating, reviewText: row.text, reply: row.owner_reply }));
+}
+
+export interface OwnerLearning {
+  /** False while the business has no tone yet (replies never configured): nothing is learned until the form is saved. */
+  tone: boolean;
+  /** Replies on Google learned now (new ones and ones the owner edited on Google). */
+  replies: number;
+  /** New sentences added to the tone's library. */
+  sentences: number;
+}
+
+/**
+ * Business rule (rule 11): the owner's replies on Google teach the AI replies by themselves. Learns
+ * the sentences of every stored reply not yet learned under the current tone (only Portuguese
+ * replies with some substance: see learnableOwnerReply), and again the replies the owner edited on
+ * Google. Idempotent: a reply is claimed in review_reply_google_learned before its sentences are
+ * stored, so two runs at the same time (the reader and the site) never learn it twice. A sentence
+ * already in the tone's library — even one the owner removed — is not added again. Each tone
+ * learns them on its own (they are source data, not feedback given under another tone): the
+ * reader calls this after every import, the site when the replies page opens and before drafting.
+ */
+export async function learnOwnerReplies(client: SupabaseClient, businessId: string, given?: ReplySettings): Promise<OwnerLearning> {
+  const settings = given ?? (await loadReplySettings(client, businessId));
+  const profileId = settings.profileId;
+  if (!profileId) return { tone: false, replies: 0, sentences: 0 };
+  const [learned, replies] = await Promise.all([loadGoogleLearned(client, profileId), loadOwnerReplies(client, businessId)]);
+  if (!learned) return { tone: true, replies: 0, sentences: 0 };
+
+  const signature = inferSignature(replies.map((reply) => reply.reply));
+  const todo = replies
+    .filter((reply) => learned.get(reply.reviewId) !== replyKey(reply.reply))
+    .map((reply) => ({ reply, snippets: ownerReplySnippets(reply, settings, signature) }))
+    .filter((item) => item.snippets.length);
+  if (!todo.length) return { tone: true, replies: 0, sentences: 0 };
+
+  // Claim: new replies are inserted (a row already there belongs to another run); edited ones move
+  // from the key learned before to the new one.
+  const claimed = new Set<string>();
+  const fresh = todo.filter((item) => !learned.has(item.reply.reviewId));
+  for (let index = 0; index < fresh.length; index += 500) {
+    const { data, error } = await client
+      .from("review_reply_google_learned")
+      .upsert(
+        fresh.slice(index, index + 500).map((item) => ({ profile_id: profileId, review_id: item.reply.reviewId, business_id: businessId, reply_key: replyKey(item.reply.reply) })),
+        { onConflict: "profile_id,review_id", ignoreDuplicates: true },
+      )
+      .select("review_id");
+    if (error) throw new Error(error.message);
+    for (const row of data ?? []) claimed.add(row.review_id as string);
+  }
+  const edited = todo.filter((item) => learned.has(item.reply.reviewId));
+  for (const item of edited) {
+    const { data, error } = await client
+      .from("review_reply_google_learned")
+      .update({ reply_key: replyKey(item.reply.reply), learned_at: new Date().toISOString() })
+      .eq("profile_id", profileId)
+      .eq("review_id", item.reply.reviewId)
+      .eq("reply_key", learned.get(item.reply.reviewId)!)
+      .select("review_id");
+    if (error) throw new Error(error.message);
+    if (data?.length) claimed.add(item.reply.reviewId);
+  }
+  if (!claimed.size) return { tone: true, replies: 0, sentences: 0 };
+
+  // Every sentence of the tone, removed ones too: a sentence the owner took out never comes back this way.
+  const existing = await readAllOrThrow<{ text: string }>((from, to) =>
+    client.from("review_reply_snippets").select("text").eq("business_id", businessId).eq("profile_id", profileId).order("id").range(from, to),
+  );
+  const known = new Set(existing.map((row) => replyKey(row.text)));
+  const rows = todo
+    .filter((item) => claimed.has(item.reply.reviewId))
+    .flatMap((item) =>
+      item.snippets.flatMap((snippet) => {
+        const key = replyKey(snippet.text);
+        if (!key || known.has(key)) return [];
+        known.add(key);
+        return [{ business_id: businessId, profile_id: profileId, ...snippet, source: "google", from_review_id: item.reply.reviewId }];
+      }),
+    );
+  try {
+    for (let index = 0; index < rows.length; index += 500) {
+      const { error } = await client.from("review_reply_snippets").insert(rows.slice(index, index + 500));
+      if (error) throw new Error(error.message);
+    }
+  } catch (error) {
+    // Not learned after all: the claims go, so the next run tries again (best effort).
+    const freshClaimed = fresh.map((item) => item.reply.reviewId).filter((id) => claimed.has(id));
+    for (let index = 0; index < freshClaimed.length; index += 100) {
+      await client.from("review_reply_google_learned").delete().eq("profile_id", profileId).in("review_id", freshClaimed.slice(index, index + 100));
+    }
+    for (const item of edited.filter((entry) => claimed.has(entry.reply.reviewId))) {
+      await client.from("review_reply_google_learned").update({ reply_key: learned.get(item.reply.reviewId)! }).eq("profile_id", profileId).eq("review_id", item.reply.reviewId);
+    }
+    throw error;
+  }
+  return { tone: true, replies: claimed.size, sentences: rows.length };
+}
+
+/** learnOwnerReplies for the site: a failure is logged and never stops the page or the drafts. */
+export async function learnOwnerRepliesSafely(client: SupabaseClient, businessId: string, settings?: ReplySettings): Promise<OwnerLearning | null> {
+  try {
+    return await learnOwnerReplies(client, businessId, settings);
+  } catch (error) {
+    console.error("[replies] learning from the owner's Google replies failed:", error instanceof Error ? error.message : error);
+    return null;
+  }
 }
 
 /** Stops using a sentence. It stays recorded: all learning is kept (business rule). */
@@ -633,6 +796,9 @@ export async function draftMissingReplies(client: SupabaseClient, business: Repl
     .eq("business_id", business.id)
     .eq("status", "generating")
     .lt("created_at", new Date(Date.now() - staleClaimMinutes * 60_000).toISOString());
+
+  // Replies the owner gave on Google since the last run (or a tone just created) teach first.
+  await learnOwnerRepliesSafely(client, business.id, settings);
 
   // Every stored review without an owner reply (all of google_reviews, in pages), newest first.
   const [reviews, live, library, ownKeys] = await Promise.all([
@@ -891,6 +1057,8 @@ export interface ToneHistoryEntry {
   current: boolean;
   sentences: number;
   trained: number;
+  /** Replies on Google whose sentences were learned under this tone. */
+  google: number;
   accepted: number;
   edited: number;
   rejected: number;
@@ -900,7 +1068,7 @@ export interface ToneHistoryEntry {
 export async function loadToneHistory(client: SupabaseClient, businessId: string, currentProfileId: string | null): Promise<ToneHistoryEntry[]> {
   type ProfileRef = { profile_id: string | null };
   type DraftStat = ProfileRef & { status: string; approved_by: string | null; edited: boolean };
-  const [profiles, snippets, training, draftRows] = await Promise.all([
+  const [profiles, snippets, training, draftRows, google] = await Promise.all([
     client.from("review_reply_profiles").select("id, settings, created_at").eq("business_id", businessId).order("created_at", { ascending: false }).limit(100),
     readAllOrThrow<ProfileRef>((from, to) => client.from("review_reply_snippets").select("profile_id").eq("business_id", businessId).eq("disabled", false).order("id").range(from, to)),
     readAllOrThrow<ProfileRef>((from, to) =>
@@ -909,8 +1077,12 @@ export async function loadToneHistory(client: SupabaseClient, businessId: string
     readAllOrThrow<DraftStat>((from, to) =>
       client.from("review_reply_drafts").select("profile_id, status, approved_by, edited").eq("business_id", businessId).in("status", ["approved", "rejected"]).order("id").range(from, to),
     ),
+    readAll<ProfileRef>((from, to) =>
+      client.from("review_reply_google_learned").select("profile_id").eq("business_id", businessId).order("profile_id").order("review_id").range(from, to),
+    ),
   ]);
   if (profiles.error) throw new Error(profiles.error.message);
+  if (google.error && !missingLearningTable(google.error)) throw new Error(google.error.message);
   const count = <T extends ProfileRef>(rows: T[], id: string, test: (row: T) => boolean = () => true) => rows.filter((row) => row.profile_id === id && test(row)).length;
   const entries = (profiles.data ?? []).map((profile) => ({
     id: profile.id as string,
@@ -919,6 +1091,7 @@ export async function loadToneHistory(client: SupabaseClient, businessId: string
     current: profile.id === currentProfileId,
     sentences: count(snippets, profile.id as string),
     trained: count(training, profile.id as string),
+    google: count(google.data, profile.id as string),
     accepted: count(draftRows, profile.id as string, (row) => row.status === "approved" && row.approved_by === "client" && !row.edited),
     edited: count(draftRows, profile.id as string, (row) => row.status === "approved" && row.edited),
     rejected: count(draftRows, profile.id as string, (row) => row.status === "rejected"),

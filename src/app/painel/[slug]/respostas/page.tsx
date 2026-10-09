@@ -11,7 +11,19 @@ import { DraftMoreButton, ReplyRunner } from "@/components/reviews/ReplyRunner";
 import { ReplyLibrary, ReplyTraining } from "@/components/reviews/ReplyTraining";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDate, formatPercent } from "@/lib/reviews/format";
-import { loadInbox, loadLibrary, loadReplyBusiness, loadReplySettings, loadToneHistory, loadTrainingQueue, type ToneHistoryEntry } from "@/lib/reviews/reply-store";
+import { inferReplySettings, ownerReplyMinChars } from "@/lib/reviews/owner-replies";
+import {
+  googleLearningReady,
+  learnOwnerRepliesSafely,
+  loadInbox,
+  loadLibrary,
+  loadOwnerReplies,
+  loadReplyBusiness,
+  loadReplySettings,
+  loadToneHistory,
+  loadTrainingQueue,
+  type ToneHistoryEntry,
+} from "@/lib/reviews/reply-store";
 import { describeTone, draftsPerRun } from "@/lib/reviews/replies";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 
@@ -47,7 +59,8 @@ function ToneHistory({ history }: { history: ToneHistoryEntry[] }) {
         <InfoTip label="Evolução por tom">
           Um tom é o conjunto de respostas do formulário de definições que definem como as respostas soam (a assinatura e o contacto não contam). Tudo o que é aprendido (treino, frases, aceitações, edições e rejeições) fica guardado no tom em que
           aconteceu e nunca se mistura com outros. Se mudar as definições, começa um tom novo; se voltar a escolher exatamente as mesmas respostas, o tom antigo volta com
-          tudo o que aprendeu. «Aceites à primeira» conta as respostas aprovadas por si sem edição, a dividir por todas as que decidiu (aceites, editadas e rejeitadas); só
+          tudo o que aprendeu. As respostas que deu no Google (em português, com pelo menos {ownerReplyMinChars} caracteres) são a sua voz real: cada tom, novo ou antigo, aprende sozinho as frases delas
+          («respostas do Google»). «Aceites à primeira» conta as respostas aprovadas por si sem edição, a dividir por todas as que decidiu (aceites, editadas e rejeitadas); só
           aparece com pelo menos {minDecided} decisões.
         </InfoTip>
       </h2>
@@ -65,6 +78,7 @@ function ToneHistory({ history }: { history: ToneHistoryEntry[] }) {
                 {[
                   count(entry.sentences, "frase", "frases"),
                   count(entry.trained, "treino", "treinos"),
+                  count(entry.google, "resposta do Google", "respostas do Google"),
                   count(entry.accepted, "aceite", "aceites"),
                   count(entry.edited, "editada", "editadas"),
                   count(entry.rejected, "rejeitada", "rejeitadas"),
@@ -90,10 +104,31 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
   const settings = await loadReplySettings(client, business.id);
 
   if (!settings.onboardedAt || editing) {
-    const candidates = await loadTrainingQueue(client, business.id, settings.profileId);
-    return <ReplyOnboarding slug={slug} initial={settings} candidates={candidates} editing={Boolean(settings.onboardedAt)} />;
+    const [candidates, ownerReplies, learningReady] = await Promise.all([
+      loadTrainingQueue(client, business.id, settings.profileId),
+      settings.onboardedAt ? Promise.resolve(null) : loadOwnerReplies(client, business.id),
+      googleLearningReady(client),
+    ]);
+    // Never configured: the form starts from what the owner's replies on Google show (nothing is
+    // saved until the owner confirms the form).
+    const inference = ownerReplies ? inferReplySettings(ownerReplies) : null;
+    return (
+      <ReplyOnboarding
+        slug={slug}
+        initial={inference ? { ...settings, ...inference.suggested } : settings}
+        prefilled={
+          inference
+            ? { fields: Object.keys(inference.suggested), replies: inference.replies, portuguese: inference.portuguese, learnable: learningReady ? inference.learnable : 0 }
+            : null
+        }
+        candidates={candidates}
+        editing={Boolean(settings.onboardedAt)}
+      />
+    );
   }
 
+  // Replies the owner gave on Google that are not learned yet (e.g. from the Business Profile sync) teach now.
+  await learnOwnerRepliesSafely(client, business.id, settings);
   const [inbox, library, queue, history] = await Promise.all([
     loadInbox(client, business.id, settings),
     loadLibrary(client, business.id, settings.profileId),

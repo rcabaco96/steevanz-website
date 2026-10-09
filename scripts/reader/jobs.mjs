@@ -196,6 +196,21 @@ async function snapshotOwnPlace(store, business, shown) {
 }
 
 /**
+ * Rule 11: once a customer's reviews are stored, the owner's replies on Google teach the AI replies
+ * (one pass per job, at the end). A failure is only logged: the import itself is done.
+ */
+async function learnFromOwner(store, business) {
+  try {
+    const learned = await store.learnOwnerReplies(business.id);
+    if (!learned) return;
+    if (!learned.tone) log("  respostas do dono: ainda sem tom nas respostas IA; aprendem-se quando o cliente guardar as definições");
+    else if (learned.replies) log(`  respostas do dono: ${learned.replies} aprendidas, ${learned.sentences} frases novas`);
+  } catch (error) {
+    log("  aviso: não foi possível aprender com as respostas do dono:", error instanceof Error ? error.message : error);
+  }
+}
+
+/**
  * First import of a customer: every review Google shows a visitor without a session (newest first
  * when Google lets the list be sorted), in two phases: the first ~50 page by page (the panel is
  * useful within seconds), the rest in batches. 100% of the history or nothing: only a read that
@@ -314,6 +329,7 @@ async function full(job, tab, store) {
   });
   // The competitor search is its own job ("discover"), queued next to this one.
   await snapshotOwnPlace(store, business, shown);
+  await learnFromOwner(store, business);
   if (shown.noReviews) {
     log("  o negócio ainda não tem reviews no Google");
     return { note: noReviewsNote };
@@ -556,6 +572,7 @@ async function update(job, tab, store) {
     last_sync_error: null,
   });
   await snapshotOwnPlace(store, business, shown);
+  await learnFromOwner(store, business);
   log(
     `  concluída: ${seen.size} reviews lidas, ${fresh.length} novas, ${pace.pages} páginas`,
   );
