@@ -336,7 +336,7 @@ export function BusinessDetail({
           <h2 className="font-semibold text-text">Concorrência</h2>
           <p className="text-sm text-subtle">
             {business.competitors_refreshed_at
-              ? `Categoria${business.category ? ` «${business.category}»` : ""}, procurados num raio de ${radiusLabel(toRadiusKm(business.competitors_search_radius_km))} a ${formatDateTime(business.competitors_refreshed_at)}.${searchedRadius !== radius ? ` O raio mudou para ${radiusLabel(radius)}: a nova procura está na fila do leitor.` : (business.competitors_rule_version ?? 1) < competitorRuleVersion ? " Escolhidos com a regra antiga (sem filtrar a categoria): o leitor procura outra vez, sozinho, depois das reviews dos clientes." : rediscoveryDue(business) ? " Passaram 90 dias: vale a pena procurar outra vez." : ""}`
+              ? `Categoria${business.category ? ` «${business.category}»` : ""}, procurados num raio de ${radiusLabel(toRadiusKm(business.competitors_search_radius_km))} a ${formatDateTime(business.competitors_refreshed_at)}.${searchedRadius !== radius ? ` O raio mudou para ${radiusLabel(radius)}: a nova procura está na fila do leitor.` : (business.competitors_rule_version ?? 1) < competitorRuleVersion ? " Escolhidos com a regra antiga (sem filtrar a categoria): o leitor procura outra vez sozinho." : rediscoveryDue(business) ? " Passaram 90 dias: vale a pena procurar outra vez." : ""}`
               : "Ainda não procurados: o leitor procura-os na primeira importação, ou agora com o botão."}
           </p>
         </div>

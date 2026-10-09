@@ -45,11 +45,12 @@ describe("reader queue", () => {
     assert.equal(readerJobKey({ business_id: null, place_id: "p1" }), "place:p1");
   });
 
-  it("keeps the last free slot for priority 1 and stops when all slots are busy", () => {
-    const routine = [queued[0], queued[2]];
-    assert.equal(pickReaderJob(routine, new Set(), 2, 4).id, "c");
-    assert.equal(pickReaderJob(routine, new Set(), 3, 4), null);
-    assert.equal(pickReaderJob(queued, new Set(), 3, 4).id, "d");
+  it("keeps the last free tab for the customers' own reviews and stops when all slots are busy", () => {
+    const competitor = { ...queued[0], kind: "competitor" };
+    assert.equal(pickReaderJob([competitor], new Set(), 2, 4).id, "a");
+    assert.equal(pickReaderJob([competitor], new Set(), 3, 4), null);
+    // A customer's import (priority 3) gets the last tab, competitor work never does.
+    assert.equal(pickReaderJob([competitor, queued[2]], new Set(), 3, 4).id, "c");
     assert.equal(pickReaderJob(queued, new Set(), 4, 4), null);
   });
 });

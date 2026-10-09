@@ -37,9 +37,10 @@ describe("settings", () => {
     assert.equal(custom.cooldownMinutes, 15);
     assert.equal(custom.cooldownMaxMinutes, 45);
     assert.equal(custom.limitAttempts, 4);
-    // Never more competitor slots than the reader has; nonsense falls back to the default.
-    assert.equal(throttleFrom({ READER_COMPETITOR_SLOTS: "8" }, 4).competitorSlots, 4);
-    assert.equal(throttleFrom({ READER_COMPETITOR_SLOTS: "abc", READER_COOLDOWN_MIN: "-3" }, 10).competitorSlots, 3);
+    // One tab always stays for the customers; nonsense falls back to every other tab.
+    assert.equal(throttleFrom({ READER_COMPETITOR_SLOTS: "8" }, 4).competitorSlots, 3);
+    assert.equal(throttleFrom({ READER_COMPETITOR_SLOTS: "abc", READER_COOLDOWN_MIN: "-3" }, 10).competitorSlots, 9);
+    assert.equal(throttleFrom({}, 1).competitorSlots, 1);
     assert.equal(throttleFrom({ READER_COOLDOWN_MIN: "-3" }, 10).cooldownMinutes, 3);
   });
 
@@ -59,11 +60,13 @@ describe("customer first, competitors capped", () => {
     job("full", "full", 3, 0, { business_id: "king" }),
   ];
 
-  it("starts the customer's import alone: no competitor work while a customer job is queued or running", () => {
-    const gate = { now: t0, clientJobsActive: true, competitorRunning: 0, competitorSlots: 3, competitorReady: true };
+  it("runs the competitor work next to the customer's import, never in the customers' tab", () => {
+    const gate = { now: t0, competitorRunning: 0, competitorSlots: 9, competitorReady: true };
     assert.equal(pickReaderJob(queued, new Set(), 0, 10, gate).id, "full");
-    // The import is running: the discover and the reads wait.
-    assert.equal(pickReaderJob(queued.slice(0, 3), new Set(["business:king"]), 1, 10, gate), null);
+    // The import is running: the competitor search starts next to it.
+    assert.equal(pickReaderJob(queued.slice(0, 3), new Set(["business:king"]), 1, 10, gate).id, "discover");
+    // The last free tab is the customers': competitor work never takes it.
+    assert.equal(pickReaderJob(queued.slice(0, 3), new Set(), 9, 10, { ...gate, competitorRunning: 8 }), null);
   });
 
   it("then the competitor work, capped and spaced", () => {

@@ -4,7 +4,7 @@
  * profile links of who wrote a review.
  */
 
-import { gateAllows, type ClaimGate } from "./reader-throttle.ts";
+import { gateAllows, isClientJob, type ClaimGate } from "./reader-throttle.ts";
 
 export interface MapsReview {
   review_id: string;
@@ -124,23 +124,23 @@ export interface QueuedReaderJob {
 
 /** What a job reads: a customer (business) or a Google place. At most one job per target at a time. */
 export function readerJobKey(job: Pick<QueuedReaderJob, "business_id" | "place_id"> & { kind?: string }): string {
-  // The competitor search has its own key (it never runs next to the customer's import: see gateAllows).
+  // The competitor search has its own key, so it runs next to the customer's import.
   if (job.kind === "discover") return `discover:${job.business_id}`;
   return job.business_id ? `business:${job.business_id}` : `place:${job.place_id}`;
 }
 
 /**
  * Next job to claim: lowest priority number first, then the oldest request. Skips targets already
- * being read. The last free slot is kept for priority 1 (someone waiting in the panel), so routine
- * work never makes a customer wait for a whole import to finish. With a gate (reader-throttle.ts):
- * jobs waiting for a later time stay, and competitor work waits while any customer's own job is
- * queued or running, beyond the competitor slots and until the pause between competitor starts passed.
+ * being read. The last free slot (tab) is kept for the customers' own reviews (full/update): the
+ * competitor work runs in parallel in the other tabs and never makes a customer wait (owner,
+ * 2026-10-09). With a gate (reader-throttle.ts): jobs waiting for a later time stay, and competitor
+ * work waits beyond the competitor slots, during a Google pause and the short gap between starts.
  */
 export function pickReaderJob(queued: QueuedReaderJob[], busyKeys: ReadonlySet<string>, running: number, slots = readerSlots, gate: ClaimGate = {}): QueuedReaderJob | null {
   if (running >= slots) return null;
-  const urgentOnly = running >= slots - 1;
+  const customersOnly = running >= slots - 1;
   const ordered = [...queued].sort((a, b) => a.priority - b.priority || Date.parse(a.requested_at) - Date.parse(b.requested_at));
-  return ordered.find((job) => !busyKeys.has(readerJobKey(job)) && (!urgentOnly || job.priority <= 1) && gateAllows(job, gate)) ?? null;
+  return ordered.find((job) => !busyKeys.has(readerJobKey(job)) && (!customersOnly || isClientJob(job.kind)) && gateAllows(job, gate)) ?? null;
 }
 
 /** "update": margin behind the newest stored review (late indexing, time zones). */

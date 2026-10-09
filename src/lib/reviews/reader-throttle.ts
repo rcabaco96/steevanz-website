@@ -1,7 +1,7 @@
 /**
  * How the free reader (scripts/reader) paces itself so Google does not start limiting its browser:
- * the customer's own reads first and alone, competitor reads capped and spaced, a global pause
- * (cool-down) when Google limits, and jobs hit by a limit put back in the queue for later instead of
+ * one tab always kept for the customers' own reviews, competitor reads in parallel in the other tabs
+ * (a short gap between starts), a pause of the competitor work when Google limits, and jobs hit by a limit put back in the queue for later instead of
  * failing. Pure module (no imports), tested with node --test (tests/reader-throttle.test.mjs).
  *
  * Evidence (2026-10-09): a new customer's discover + ~35 competitor reads in parallel with its own
@@ -10,16 +10,16 @@
 
 const minuteMs = 60_000;
 
-/** A customer's own reads: they run before, and never next to, any competitor work. */
+/** A customer's own reads: one tab is always kept for them; they never wait for competitor work. */
 export const clientJobKinds = ["full", "update"] as const;
-/** Competitor work: zone search and reads of competitor places. Capped, spaced, after the customers. */
+/** Competitor work: zone search and reads of competitor places. In parallel in the other tabs. */
 export const competitorJobKinds = ["discover", "competitor", "competitor_replies"] as const;
 
 export const isClientJob = (kind: string): boolean => (clientJobKinds as readonly string[]).includes(kind);
 export const isCompetitorWork = (kind: string): boolean => (competitorJobKinds as readonly string[]).includes(kind);
 
 export interface ThrottleConfig {
-  /** Competitor jobs (discover, competitor, competitor_replies) at once on one reader. */
+  /** Competitor jobs (discover, competitor, competitor_replies) at once: by default every tab but the customers' one. */
   competitorSlots: number;
   /** Minimum pause between two competitor job starts (each pause is this to twice this, at random). */
   competitorPauseMs: number;
@@ -38,8 +38,8 @@ export interface ThrottleConfig {
 
 /** The reader is always there for the customers: short cool-downs, and only competitor work waits. */
 export const defaultThrottle: ThrottleConfig = {
-  competitorSlots: 3,
-  competitorPauseMs: 5000,
+  competitorSlots: 9,
+  competitorPauseMs: 1000,
   limitSignals: 2,
   limitWindowMs: 5 * minuteMs,
   cooldownMinutes: 3,
@@ -55,14 +55,14 @@ function intFrom(value: string | undefined, fallback: number, min: number, max: 
 
 /**
  * Settings from the environment (.env.local of the reader), each with a sensible default:
- * READER_COMPETITOR_SLOTS (3), READER_COMPETITOR_PAUSE_MS (5000), READER_COOLDOWN_MIN (3),
- * READER_COOLDOWN_MAX_MIN (30), READER_LIMIT_ATTEMPTS (5). Competitor slots never exceed the reader's slots.
+ * READER_COMPETITOR_SLOTS (every tab but one), READER_COMPETITOR_PAUSE_MS (1000), READER_COOLDOWN_MIN (3),
+ * READER_COOLDOWN_MAX_MIN (30), READER_LIMIT_ATTEMPTS (5). One tab always stays for the customers.
  */
 export function throttleFrom(env: Record<string, string | undefined>, slots: number): ThrottleConfig {
   const cooldownMinutes = intFrom(env.READER_COOLDOWN_MIN, defaultThrottle.cooldownMinutes, 1, 24 * 60);
   return {
     ...defaultThrottle,
-    competitorSlots: Math.min(slots, intFrom(env.READER_COMPETITOR_SLOTS, defaultThrottle.competitorSlots, 1, 20)),
+    competitorSlots: Math.max(1, Math.min(slots - 1, intFrom(env.READER_COMPETITOR_SLOTS, slots - 1, 1, 20))),
     competitorPauseMs: intFrom(env.READER_COMPETITOR_PAUSE_MS, defaultThrottle.competitorPauseMs, 0, 10 * minuteMs),
     cooldownMinutes,
     cooldownMaxMinutes: Math.max(cooldownMinutes, intFrom(env.READER_COOLDOWN_MAX_MIN, defaultThrottle.cooldownMaxMinutes, 1, 24 * 60)),
@@ -157,8 +157,6 @@ export const pausedText = (pausedUntil: number | string | Date): string =>
 export interface ClaimGate {
   /** Now (ms): jobs with a later not_before still wait. */
   now?: number;
-  /** A customer's own job (full/update) is queued (even waiting for later) or running, on any reader. */
-  clientJobsActive?: boolean;
   /** Competitor jobs running on this reader. */
   competitorRunning?: number;
   competitorSlots?: number;
@@ -172,7 +170,7 @@ export interface ClaimGate {
 export function gateAllows(job: { kind: string; not_before?: string | null }, gate: ClaimGate): boolean {
   if (job.not_before && gate.now !== undefined && Date.parse(job.not_before) > gate.now) return false;
   if (!isCompetitorWork(job.kind)) return true;
-  if (gate.paused || gate.clientJobsActive) return false;
+  if (gate.paused) return false;
   if (gate.competitorReady === false) return false;
   return gate.competitorSlots === undefined || (gate.competitorRunning ?? 0) < gate.competitorSlots;
 }

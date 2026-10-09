@@ -261,11 +261,11 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
 - **Ritmo e limites do Google** (2026-10-09: a concorrência de um cliente novo lida em paralelo com a
   importação dele fez o Google limitar o leitor e a importação falhou; regras puras em
   `src/lib/reviews/reader-throttle.ts`):
-  - **Cliente primeiro e sozinho:** com um `full`/`update` de qualquer cliente na fila ou a correr, o
-    leitor não começa `discover`, `competitor` nem `competitor_replies`. Cliente novo: histórico →
-    procura → concorrentes. Os pedidos dos clientes vão à velocidade de sempre.
-  - **Concorrência com calma:** no máximo 3 ao mesmo tempo (`READER_COMPETITOR_SLOTS`) e 5–10 s entre
-    cada um que começa (`READER_COMPETITOR_PAUSE_MS`).
+  - **1 separador sempre livre para os clientes** (dono, 2026-10-09: «basta 1 separador para as
+    reviews do cliente e os outros para a concorrência em paralelo»): `full`/`update` nunca esperam
+    pela concorrência e a concorrência **nunca espera** pelas reviews dos clientes.
+  - **Concorrência em paralelo** nos outros separadores (`READER_COMPETITOR_SLOTS`, por omissão
+    `READER_SLOTS` − 1), 1–2 s entre cada um que começa (`READER_COMPETITOR_PAUSE_MS`).
   - **Pausa:** sinais de limite (vista limitada, pedido de sessão, reviews que não carregam, ordenação
     recusada, lista que pára a meio): 2 em 5 min → nenhuma leitura de concorrentes nova durante 3 min, depois 9, 27, máx. 30
     se continuar (`READER_COOLDOWN_MIN` / `READER_COOLDOWN_MAX_MIN`); uma leitura boa volta aos 3. **Os pedidos dos clientes nunca param** (dono: o leitor está sempre disponível para os clientes).

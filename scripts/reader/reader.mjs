@@ -19,7 +19,6 @@ import {
   clientJobKinds,
   competitorPause,
   initialCooldown,
-  isClientJob,
   isCompetitorWork,
   isPaused,
   limitFailNote,
@@ -310,34 +309,30 @@ const dueFilter = () => `not_before.is.null,not_before.lte."${now()}"`;
 const clientKindsList = `(${clientJobKinds.join(",")})`;
 
 /**
- * Fills the free slots with queued jobs: priority first, never two jobs for the same target. The
- * customers' own jobs (full/update) come first and alone: while one is queued or running (on any
- * reader), no competitor work starts. Competitor work is capped (READER_COMPETITOR_SLOTS) and spaced
- * (READER_COMPETITOR_PAUSE_MS). While Google limits the reader (a pause), no competitor work starts;
+ * Fills the free slots with queued jobs: priority first, never two jobs for the same target. One tab
+ * is always kept for the customers' own jobs (full/update, pickReaderJob); competitor work runs in
+ * parallel in the others (READER_COMPETITOR_SLOTS) with a short gap between starts
+ * (READER_COMPETITOR_PAUSE_MS) and never waits for the customers' reviews. While Google limits the reader (a pause), no competitor work starts;
  * the customers' jobs still do, so the reader is always there for them.
  */
 async function fillSlots(store) {
   endPauseIfOver();
   if (running.size >= readerSlots) return;
   // Customers' jobs and the rest apart, so a long competitor queue never hides a customer's job.
-  const [clients, others, active, clientsWaiting] = await Promise.all([
+  const [clients, others, active] = await Promise.all([
     db.from("review_import_jobs").select(jobColumns).eq("status", "queued").eq("provider", "reader").in("kind", [...clientJobKinds]).or(dueFilter()).order("priority").order("requested_at").limit(50),
     db.from("review_import_jobs").select(jobColumns).eq("status", "queued").eq("provider", "reader").not("kind", "in", clientKindsList).or(dueFilter()).order("priority").order("requested_at").limit(50),
     // Targets being read right now, here or by another reader.
     db.from("review_import_jobs").select("kind, business_id, place_id").eq("status", "running"),
-    // Customers' jobs queued (also those waiting for later) or running, on any reader.
-    db.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("provider", "reader").in("status", ["queued", "running"]).in("kind", [...clientJobKinds]),
   ]);
-  const error = clients.error ?? others.error ?? active.error ?? clientsWaiting.error;
+  const error = clients.error ?? others.error ?? active.error;
   if (error) return log("aviso:", error.message);
   let candidates = [...(clients.data ?? []), ...(others.data ?? [])];
   if (!candidates.length) return;
   const busy = new Set([...running.keys(), ...(active.data ?? []).map(readerJobKey)]);
-  let clientJobsActive = (clientsWaiting.count ?? 0) > 0;
   while (running.size < readerSlots) {
     const gate = {
       now: Date.now(),
-      clientJobsActive,
       competitorRunning: [...running.values()].filter((job) => isCompetitorWork(job.kind)).length,
       competitorSlots: throttle.competitorSlots,
       competitorReady: Date.now() >= competitorReadyAt,
@@ -348,7 +343,6 @@ async function fillSlots(store) {
     candidates = candidates.filter((candidate) => candidate.id !== job.id);
     const claimed = await claim(job);
     if (!claimed) continue;
-    if (isClientJob(claimed.kind)) clientJobsActive = true;
     if (isCompetitorWork(claimed.kind)) competitorReadyAt = Date.now() + competitorPause(throttle.competitorPauseMs, Math.random());
     const key = readerJobKey(claimed);
     busy.add(key);
@@ -430,7 +424,7 @@ async function main() {
   await checkSchema();
   log(`leitor Steevanz ${version} ligado (${readerId}, processo ${process.pid}). Até ${readerSlots} pedidos ao mesmo tempo. À espera de pedidos…`);
   log(
-    `ritmo: clientes primeiro e sozinhos; concorrência no máximo ${throttle.competitorSlots} de cada vez, ${throttle.competitorPauseMs / 1000}–${(2 * throttle.competitorPauseMs) / 1000} s entre leituras; ` +
+    `ritmo: 1 separador sempre livre para os clientes; concorrência em paralelo, até ${throttle.competitorSlots} de cada vez, ${throttle.competitorPauseMs / 1000}–${(2 * throttle.competitorPauseMs) / 1000} s entre leituras; ` +
       `com ${throttle.limitSignals} sinais de limite do Google em ${Math.round(throttle.limitWindowMs / 60_000)} min, pausa de ${throttle.cooldownMinutes} a ${throttle.cooldownMaxMinutes} min; ` +
       `pedidos limitados voltam à fila (${throttle.limitAttempts} tentativas)`,
   );

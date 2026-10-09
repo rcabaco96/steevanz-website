@@ -49,12 +49,11 @@ Regras em `src/lib/reviews/reader-throttle.ts` (testes em `tests/reader-throttle
 um cliente novo teve a procura e ~35 leituras de concorrentes em paralelo com a sua importação; o
 Google limitou o navegador e a importação do cliente e todas as tentativas falharam. Por isso:
 
-- **Cliente primeiro e sozinho:** enquanto houver um pedido `full`/`update` de qualquer cliente na fila
-  (mesmo à espera de hora) ou a correr, o leitor não começa `discover`, `competitor` nem
-  `competitor_replies` (os que já correm terminam). Cliente novo: histórico → procura → concorrentes.
-- **Concorrência com calma:** no máximo `READER_COMPETITOR_SLOTS` (3) pedidos de concorrência ao mesmo
-  tempo e uma pausa de `READER_COMPETITOR_PAUSE_MS` a 2× (5–10 s) entre cada um que começa. Os pedidos
-  dos clientes vão à velocidade de sempre.
+- **1 separador sempre livre para os clientes** (dono, 2026-10-09): os pedidos `full`/`update` nunca
+  esperam pela concorrência, e a concorrência nunca espera pelas reviews dos clientes.
+- **Concorrência em paralelo** nos outros separadores (`READER_COMPETITOR_SLOTS`, por omissão todos menos
+  um), com uma folga de `READER_COMPETITOR_PAUSE_MS` a 2× (1–2 s) entre cada um que começa, para não
+  abrir tudo no mesmo instante. Os pedidos dos clientes vão à velocidade de sempre.
 - **Pausa quando o Google limita:** vista limitada, pedido para iniciar sessão, reviews que não
   carregam, ordenação recusada ou listas que param a meio contam como sinais. 2 sinais em 5 min →
   nenhuma leitura de concorrentes nova durante 3 min (`READER_COOLDOWN_MIN`), depois 9, 27 e no máximo 30 (`READER_COOLDOWN_MAX_MIN`)
@@ -106,7 +105,7 @@ Como serviço, um `systemd` com `ExecStart=/usr/bin/xvfb-run -a -s "-screen 0 19
 | `READER_BROWSER_ARGS` | Opções extra do navegador, ex. `--no-sandbox` se correr como root.       |
 | `READER_PROFILE_DIR`  | Pasta do perfil do navegador (por omissão `~/.steevanz-reader`).         |
 | `READER_PORT`         | Porta DevTools (por omissão 9350).                                       |
-| `READER_COMPETITOR_SLOTS` | Pedidos de concorrência ao mesmo tempo (por omissão 3; nunca mais do que `READER_SLOTS`). |
+| `READER_COMPETITOR_SLOTS` | Pedidos de concorrência ao mesmo tempo (por omissão `READER_SLOTS` − 1: um separador fica sempre para os clientes). |
 | `READER_COMPETITOR_PAUSE_MS` | Pausa mínima entre dois pedidos de concorrência que começam (por omissão 5000; a pausa real vai até ao dobro). |
 | `READER_COOLDOWN_MIN` | Primeira pausa das leituras de concorrentes quando o Google limita (por omissão 3 min; depois 3× maior). |
 | `READER_COOLDOWN_MAX_MIN` | Pausa máxima (por omissão 30 min). |
