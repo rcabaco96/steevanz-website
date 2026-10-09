@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { JoinCardForm, RecoverForm } from "@/components/public/loyalty/CardForms";
 import { StampCard } from "@/components/public/loyalty/StampCard";
-import { rewardInSentence } from "@/lib/modules/loyalty/rules";
+import { cardRewards, nextReward, rewardsSentence, stampRuleText } from "@/lib/modules/loyalty/rules";
 import { ensureProgram } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
@@ -26,12 +26,19 @@ export default async function LoyaltyJoinPage({ params }: Props) {
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
       <div className="flex flex-col gap-2">
-        <h2 className="display text-[1.9rem] leading-tight text-balance">
-          Junte {program.stamps_required} carimbos e ganhe {rewardInSentence(program.reward)}.
-        </h2>
-        <p className="text-muted">O cartão fica no seu telemóvel: sem aplicação, sem papel para perder.</p>
+        <h2 className="display text-[1.9rem] leading-tight text-balance">{rewardsSentence(program)}</h2>
+        <p className="text-muted">
+          {stampRuleText(program.min_spend_cents)}. O cartão fica no seu telemóvel: sem aplicação, sem papel para perder.
+        </p>
       </div>
-      <StampCard name={establishment.name} holder="O seu nome" stamps={program.welcome_stamp ? 1 : 0} required={program.stamps_required} reward={program.reward} />
+      <StampCard
+        name={establishment.name}
+        holder="O seu nome"
+        stamps={program.welcome_stamp ? 1 : 0}
+        required={program.stamps_required}
+        reward={nextReward(program.welcome_stamp ? 1 : 0, program).reward}
+        rewardAt={cardRewards(program).map((item) => item.at)}
+      />
       {program.active ? (
         <PublicCard>
           <h2 className="text-lg font-semibold text-text">{program.welcome_stamp ? "Crie o cartão e ganhe já o primeiro carimbo" : "Crie o seu cartão"}</h2>

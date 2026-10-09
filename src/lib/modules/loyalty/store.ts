@@ -1,16 +1,20 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { kindWords } from "@/lib/establishments/kinds";
+import { kindDefaults } from "@/lib/establishments/kinds";
 import { isUuid } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { tokenPattern } from "../common";
-import { cardCodeFrom, normalizeCardCode } from "./rules";
+import { cardCodeFrom, normalizeCardCode, type Milestone } from "./rules";
 
 export interface LoyaltyProgramRow {
   establishment_id: string;
   active: boolean;
   stamps_required: number;
   reward: string;
+  /** Rewards along the way, before the full card (up to 3). */
+  milestones: Milestone[];
+  /** «1 carimbo por visita a partir de X €»: shown to customers and staff, applied by the team. */
+  min_spend_cents: number | null;
   welcome_stamp: boolean;
   cooldown_minutes: number;
   reward_valid_days: number | null;
@@ -44,6 +48,10 @@ export interface LoyaltyRewardRow {
   earned_at: string;
   expires_at: string | null;
   redeemed_at: string | null;
+  /** The reward's text when it was earned (changing the rewards later never changes it). */
+  label: string | null;
+  /** The stamp that gave it (a milestone or the full card). */
+  at_stamp: number | null;
 }
 
 export async function ensureProgram(establishment: EstablishmentRow): Promise<LoyaltyProgramRow> {
@@ -53,7 +61,16 @@ export async function ensureProgram(establishment: EstablishmentRow): Promise<Lo
   if (data) return data as LoyaltyProgramRow;
   const { data: created, error: insertError } = await client
     .from("loyalty_programs")
-    .upsert({ establishment_id: establishment.id, reward: kindWords[establishment.kind].rewardExample }, { onConflict: "establishment_id" })
+    .upsert(
+      (({ stampsRequired, reward, milestones, minSpendCents }) => ({
+        establishment_id: establishment.id,
+        stamps_required: stampsRequired,
+        reward,
+        milestones,
+        min_spend_cents: minSpendCents,
+      }))(kindDefaults[establishment.kind].loyalty),
+      { onConflict: "establishment_id" },
+    )
     .select("*")
     .single();
   if (insertError) throw new Error(`loyalty program insert: ${insertError.message}`);

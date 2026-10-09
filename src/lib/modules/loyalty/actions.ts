@@ -13,7 +13,20 @@ import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken, tokenPattern } from "../common";
 import { publicEstablishment } from "../public";
-import { codeLockMinutes, cooldownMessage, isLocked, isStaffCode, maxCodeAttempts } from "./rules";
+import {
+  cardRewards,
+  codeLockMinutes,
+  cooldownMessage,
+  isLocked,
+  isStaffCode,
+  maxCodeAttempts,
+  maxMilestones,
+  missingText,
+  parseEuros,
+  rewardsCrossed,
+  stampRuleText,
+  type Milestone,
+} from "./rules";
 import {
   ensureProgram,
   getCard,
@@ -47,11 +60,15 @@ async function stamp(cardId: string, amount: number, source: "staff_code" | "sta
   return row;
 }
 
-function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, establishment: EstablishmentRow): ActionState {
+/** After a stamp: the reward it gave (a milestone or the full card), or what is missing for the next. */
+function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, establishment: EstablishmentRow, before: number): ActionState {
   if (result.outcome === "cooldown") return { ok: false, message: cooldownMessage(result.next_allowed_at!, establishment.time_zone) };
-  if (result.rewards_earned > 0) return { ok: true, message: `Cartão completo! Ganhou: ${program.reward}. Mostre à equipa quando quiser usar.` };
-  const left = program.stamps_required - result.stamps;
-  return { ok: true, message: `Carimbo dado. ${left === 1 ? "Falta 1" : `Faltam ${left}`} para: ${program.reward}.` };
+  const reached = rewardsCrossed(before, 1, program)[0];
+  if (reached) {
+    const full = reached.at === program.stamps_required;
+    return { ok: true, message: `${full ? "Cartão completo! " : ""}Ganhou: ${reached.reward}. Mostre à equipa quando quiser usar.` };
+  }
+  return { ok: true, message: `Carimbo dado. ${missingText(result.stamps, program)}` };
 }
 
 async function cardLink(establishment: EstablishmentRow, card: LoyaltyCardRow): Promise<string> {
@@ -67,7 +84,8 @@ function sendCardEmail(establishment: EstablishmentRow, card: LoyaltyCardRow, pr
       heading: welcome ? `Bem-vindo ao cartão de cliente ${establishment.name}` : `O seu cartão ${establishment.name}`,
       rows: [
         { label: "Cartão", value: `${card.name} · código ${card.code.slice(0, 3)} ${card.code.slice(3)}` },
-        { label: "Recompensa", value: `Ao fim de ${program.stamps_required} carimbos: ${program.reward}` },
+        { label: "Recompensas", value: cardRewards(program).map((item) => `${item.at} carimbos: ${item.reward}`).join(" · ") },
+        { label: "Carimbos", value: stampRuleText(program.min_spend_cents) },
         { label: "Dica", value: "Abra o link no telemóvel e escolha «Adicionar ao ecrã principal» para ter o cartão sempre à mão." },
       ],
       adminUrl: link,
@@ -186,7 +204,7 @@ export async function stampWithCode(_previous: ActionState, formData: FormData):
     if (refused) return refused;
     const result = await stamp(card.id, 1, "staff_code", true);
     refresh(establishment);
-    return stampMessage(result, program, establishment);
+    return stampMessage(result, program, establishment, card.stamps);
   } catch (error) {
     console.error("[loyalty] stamp failed:", error instanceof Error ? error.message : error);
     return { ok: false, message: "Não foi possível dar o carimbo. Tente novamente." };
@@ -206,15 +224,16 @@ export async function redeemWithCode(_previous: ActionState, formData: FormData)
     if (!redeemed) return { ok: false, message: "Esta recompensa já foi usada ou expirou." };
     await createServiceClient().from("loyalty_cards").update({ failed_code_attempts: 0 }).eq("id", card.id);
     refresh(establishment);
-    return { ok: true, message: `Recompensa entregue: ${program.reward}. Bom proveito!` };
+    return { ok: true, message: `Recompensa entregue: ${redeemed.label ?? program.reward}. Bom proveito!` };
   } catch (error) {
     console.error("[loyalty] redeem failed:", error instanceof Error ? error.message : error);
     return { ok: false, message: "Não foi possível registar. Tente novamente." };
   }
 }
 
-async function redeemReward(card: LoyaltyCardRow, rewardId: string): Promise<boolean> {
-  if (!isUuid(rewardId)) return false;
+/** Marks a reward as handed over; returns it (with the text it was earned with), or null if it was used or expired. */
+async function redeemReward(card: LoyaltyCardRow, rewardId: string): Promise<{ label: string | null } | null> {
+  if (!isUuid(rewardId)) return null;
   const now = new Date().toISOString();
   const { data, error } = await createServiceClient()
     .from("loyalty_rewards")
@@ -223,11 +242,11 @@ async function redeemReward(card: LoyaltyCardRow, rewardId: string): Promise<boo
     .eq("card_id", card.id)
     .is("redeemed_at", null)
     .or(`expires_at.is.null,expires_at.gt.${now}`)
-    .select("id");
+    .select("id, label");
   if (error) throw new Error(error.message);
-  if (!data?.length) return false;
+  if (!data?.length) return null;
   await createServiceClient().from("loyalty_events").insert({ card_id: card.id, establishment_id: card.establishment_id, kind: "reward_redeemed", amount: 1 });
-  return true;
+  return data[0] as { label: string | null };
 }
 
 /** Public: "perdi o cartão" — emails the link (same answer whether or not the email has a card). */
@@ -280,7 +299,7 @@ export async function staffStamp(_previous: ActionState, formData: FormData): Pr
     if (!program.active) return paused;
     const result = await stamp(card.id, 1, "staff_panel", true);
     refresh(establishment);
-    const outcome = stampMessage(result, program, establishment)!;
+    const outcome = stampMessage(result, program, establishment, card.stamps)!;
     return { ok: outcome.ok, message: `${card.name}: ${outcome.message}` };
   });
 }
@@ -312,9 +331,10 @@ export async function staffMigrateStamps(_previous: ActionState, formData: FormD
     if (!program.active) return paused;
     const amount = Number(formText(formData, "amount"));
     if (!Number.isInteger(amount) || amount < 1 || amount > program.stamps_required * 3) return { ok: false, message: "Indique quantos carimbos tinha no cartão de papel." };
-    const result = await stamp(card.id, amount, "migration", false);
+    await stamp(card.id, amount, "migration", false);
     refresh(establishment);
-    return { ok: true, message: `${amount} carimbos do cartão de papel passados para ${card.name}.${result.rewards_earned ? " Completou o cartão!" : ""}` };
+    const reached = rewardsCrossed(card.stamps, amount, program).map((item) => item.reward);
+    return { ok: true, message: `${amount} carimbos do cartão de papel passados para ${card.name}.${reached.length ? ` Ganhou: ${reached.join(", ")}.` : ""}` };
   });
 }
 
@@ -334,9 +354,10 @@ export async function staffRedeem(_previous: ActionState, formData: FormData): P
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
-    if (!(await redeemReward(card, formText(formData, "reward_id")))) return { ok: false, message: "Esta recompensa já foi usada ou expirou." };
+    const redeemed = await redeemReward(card, formText(formData, "reward_id"));
+    if (!redeemed) return { ok: false, message: "Esta recompensa já foi usada ou expirou." };
     refresh(establishment);
-    return { ok: true, message: `Recompensa entregue a ${card.name}: ${program.reward}.` };
+    return { ok: true, message: `Recompensa entregue a ${card.name}: ${redeemed.label ?? program.reward}.` };
   });
 }
 
@@ -354,6 +375,22 @@ const programSchema = z.object({
   terms: z.string().trim().max(600).transform((text) => text || null),
 });
 
+/** The rewards along the way typed in the settings (milestone_at_N / milestone_reward_N), checked. */
+function milestonesFrom(formData: FormData, required: number): { list: Milestone[] } | { error: string } {
+  const list: Milestone[] = [];
+  for (let index = 1; index <= maxMilestones; index++) {
+    const reward = formText(formData, `milestone_reward_${index}`).slice(0, 120);
+    const at = formText(formData, `milestone_at_${index}`);
+    if (!reward && !at) continue;
+    const stamps = Number(at);
+    if (!reward || !Number.isInteger(stamps)) return { error: "Em cada recompensa pelo caminho, indique o carimbo e a recompensa." };
+    if (stamps < 2 || stamps >= required) return { error: `As recompensas pelo caminho ficam entre o 2.º e o ${required - 1}.º carimbo (o ${required}.º é o cartão completo).` };
+    if (list.some((item) => item.at === stamps)) return { error: "Duas recompensas pelo caminho no mesmo carimbo: escolha carimbos diferentes." };
+    list.push({ at: stamps, reward });
+  }
+  return { list: list.sort((a, b) => a.at - b.at) };
+}
+
 export async function saveProgram(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "loyalty");
@@ -367,9 +404,16 @@ export async function saveProgram(_previous: ActionState, formData: FormData): P
       terms: formText(formData, "terms"),
     });
     if (!parsed.success) return { ok: false, message: "Verifique os valores (carimbos entre 2 e 50, recompensa preenchida)." };
+    const minSpend = parseEuros(formText(formData, "min_spend"));
+    if (minSpend === undefined) return { ok: false, message: "Indique o consumo mínimo em euros (por exemplo 5 ou 7,50), ou deixe vazio." };
+    const milestones = milestonesFrom(formData, parsed.data.stamps_required);
+    if ("error" in milestones) return { ok: false, message: milestones.error };
     await ensureProgram(establishment);
     const client = createServiceClient();
-    const { error } = await client.from("loyalty_programs").update(parsed.data).eq("establishment_id", establishment.id);
+    const { error } = await client
+      .from("loyalty_programs")
+      .update({ ...parsed.data, min_spend_cents: minSpend, milestones: milestones.list })
+      .eq("establishment_id", establishment.id);
     if (error) throw new Error(error.message);
     // Fewer stamps needed: cards that already have enough are completed now, not at their next stamp.
     const { data: completed, error: settleError } = await client.rpc("loyalty_settle_program", { p_establishment: establishment.id });

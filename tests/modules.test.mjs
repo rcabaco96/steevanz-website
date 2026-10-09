@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { kindFromCategory, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
 import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/schedule.ts";
-import { cardCodeFrom, codeAlphabet, formatCardCode, isLocked, isStaffCode, normalizeCardCode, rewardInSentence, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
+import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, isLocked, isStaffCode, missingText, nextReward, normalizeCardCode, parseEuros, rewardInSentence, rewardsCrossed, rewardsSentence, stampRuleText, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
 
@@ -282,5 +282,51 @@ describe("phone numbers", () => {
     assert.deepEqual(splitPhone("+44 7700900123"), { dial: "44", number: "7700900123" });
     assert.deepEqual(splitPhone("912345678"), { dial: "351", number: "912345678" });
     assert.deepEqual(splitPhone(null), { dial: "351", number: "" });
+  });
+});
+
+describe("loyalty rewards along the way", () => {
+  const restaurant = {
+    stamps_required: 10,
+    reward: "Um prato do dia oferecido",
+    milestones: [
+      { at: 6, reward: "Uma sobremesa oferecida" },
+      { at: 3, reward: "Um café oferecido" },
+    ],
+  };
+  const barber = { stamps_required: 10, reward: "Um corte oferecido", milestones: [] };
+
+  it("lists the rewards in order, ignoring the ones that do not fit the card", () => {
+    assert.deepEqual(cardRewards(restaurant).map((item) => item.at), [3, 6, 10]);
+    assert.deepEqual(cardRewards({ ...restaurant, milestones: [{ at: 1, reward: "x" }, { at: 10, reward: "y" }, { at: 12, reward: "z" }, { at: 4, reward: " " }] }).map((item) => item.at), [10]);
+    assert.deepEqual(cardRewards(barber), [{ at: 10, reward: "Um corte oferecido" }]);
+  });
+  it("says what the next reward is and how many stamps are missing", () => {
+    assert.deepEqual(nextReward(0, restaurant), { at: 3, reward: "Um café oferecido", left: 3 });
+    assert.deepEqual(nextReward(3, restaurant), { at: 6, reward: "Uma sobremesa oferecida", left: 3 });
+    assert.equal(nextReward(9, restaurant).left, 1);
+    assert.equal(missingText(2, restaurant), "Falta 1 carimbo para um café oferecido.");
+    assert.equal(missingText(4, barber), "Faltam 6 carimbos para um corte oferecido.");
+  });
+  it("finds the rewards reached by new stamps, also when the card starts again", () => {
+    assert.deepEqual(rewardsCrossed(2, 1, restaurant).map((item) => item.at), [3]);
+    assert.deepEqual(rewardsCrossed(3, 1, restaurant), []);
+    assert.deepEqual(rewardsCrossed(0, 12, restaurant).map((item) => item.at), [3, 6, 10]);
+    assert.deepEqual(rewardsCrossed(8, 5, restaurant).map((item) => item.at), [10, 3]);
+  });
+  it("writes the rewards and the stamp rule for customers", () => {
+    assert.equal(rewardsSentence(barber), "Junte 10 carimbos e ganhe um corte oferecido.");
+    assert.equal(rewardsSentence(restaurant), "Ganhe um café oferecido ao 3.º carimbo, uma sobremesa oferecida ao 6.º e um prato do dia oferecido ao 10.º.");
+    assert.equal(stampRuleText(null), "1 carimbo por visita");
+    assert.equal(stampRuleText(1000), "1 carimbo por visita, a partir de 10 € de consumo");
+    assert.equal(eurosText(750), "7,50 €");
+  });
+  it("reads the minimum spend typed by the owner", () => {
+    assert.equal(parseEuros("5"), 500);
+    assert.equal(parseEuros("7,50 €"), 750);
+    assert.equal(parseEuros("7.5"), 750);
+    assert.equal(parseEuros(""), null);
+    assert.equal(parseEuros("abc"), undefined);
+    assert.equal(parseEuros("5,555"), undefined);
   });
 });

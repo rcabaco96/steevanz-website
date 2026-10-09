@@ -7,7 +7,7 @@ import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { saveProgram, setStaffCode, staffDeleteCard, staffMigrateStamps, staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
-import { formatCardCode, rewardInSentence } from "@/lib/modules/loyalty/rules";
+import { cardRewards, formatCardCode, maxMilestones, missingText, rewardsSentence } from "@/lib/modules/loyalty/rules";
 import {
   availableRewards,
   ensureProgram,
@@ -58,6 +58,8 @@ function CardRow({
       <input type="hidden" name="card_id" value={card.id} />
     </>
   );
+  // Circles that give a reward (the milestones and the last one) are outlined in gold.
+  const rewardStamps = new Set(cardRewards(program).map((item) => item.at));
   return (
     <li className="flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -68,12 +70,14 @@ function CardRow({
             {card.email ? ` · ${card.email}` : ""}
             {card.phone ? ` · ${card.phone}` : ""}
           </p>
-          <p className="text-xs text-subtle">Última visita: {lastVisit(card, establishment.time_zone)}</p>
+          <p className="text-xs text-subtle">
+            Última visita: {lastVisit(card, establishment.time_zone)} · {missingText(card.stamps, program)}
+          </p>
           <div aria-hidden="true" className="mt-2 flex flex-wrap gap-1">
             {Array.from({ length: program.stamps_required }, (_, index) => (
               <span
                 key={index}
-                className={`h-2.5 w-2.5 rounded-full ${index < card.stamps ? "bg-gold" : index === program.stamps_required - 1 ? "border border-gold" : "bg-surface-2"}`}
+                className={`h-2.5 w-2.5 rounded-full ${index < card.stamps ? "bg-gold" : rewardStamps.has(index + 1) ? "border border-gold" : "bg-surface-2"}`}
               />
             ))}
           </div>
@@ -98,11 +102,11 @@ function CardRow({
           </SubmitButton>
         </ActionForm>
         {rewards.length ? (
-          <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${program.reward}» a ${card.name}?`}>
+          <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${rewards[0].label ?? program.reward}» a ${card.name}?`}>
             {hidden}
             <input type="hidden" name="reward_id" value={rewards[0].id} />
             <SubmitButton size="sm" variant="secondary">
-              Entregar recompensa
+              Entregar: {rewards[0].label ?? program.reward}
             </SubmitButton>
           </ActionForm>
         ) : null}
@@ -178,8 +182,46 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
           <input name="stamps_required" type="number" min={2} max={50} required defaultValue={program.stamps_required} className={input} />
         </label>
         <label className={adminLabelClasses}>
-          Recompensa
+          Recompensa ao completar o cartão
           <input name="reward" required maxLength={120} defaultValue={program.reward} className={input} />
+        </label>
+        <fieldset className="flex flex-col gap-2 sm:col-span-2">
+          <legend className="mb-1 text-sm font-medium text-muted">Recompensas pelo caminho (opcional)</legend>
+          <p className="-mt-1 text-xs text-subtle">
+            Uma recompensa pequena cedo faz o cliente voltar; a grande fica no fim. Por exemplo: ao 3.º carimbo um café, ao 6.º uma sobremesa. Deixe vazio para ter só a recompensa final.
+          </p>
+          {Array.from({ length: maxMilestones }, (_, index) => {
+            const milestone = program.milestones[index];
+            return (
+              <div key={index} className="flex items-center gap-2">
+                <label className="flex shrink-0 items-center gap-2 text-sm text-muted">
+                  Ao
+                  <input
+                    name={`milestone_at_${index + 1}`}
+                    type="number"
+                    min={2}
+                    max={49}
+                    defaultValue={milestone?.at ?? ""}
+                    aria-label={`Recompensa pelo caminho ${index + 1}: número do carimbo`}
+                    className={`${adminInputClasses} h-10 w-18 text-sm`}
+                  />
+                  .º carimbo
+                </label>
+                <input
+                  name={`milestone_reward_${index + 1}`}
+                  maxLength={120}
+                  defaultValue={milestone?.reward ?? ""}
+                  aria-label={`Recompensa pelo caminho ${index + 1}`}
+                  className={`${adminInputClasses} h-10 min-w-0 flex-1 text-sm`}
+                />
+              </div>
+            );
+          })}
+        </fieldset>
+        <label className={adminLabelClasses}>
+          Consumo mínimo para carimbar (€, opcional)
+          <input name="min_spend" inputMode="decimal" maxLength={8} defaultValue={program.min_spend_cents ? (program.min_spend_cents / 100).toString().replace(".", ",") : ""} placeholder="Sem mínimo" className={input} />
+          <span className="text-xs font-normal text-subtle">1 carimbo por visita a partir deste valor. Aparece no cartão do cliente e no Balcão; a equipa aplica.</span>
         </label>
         <label className={adminLabelClasses}>
           Tempo mínimo entre carimbos (minutos)
@@ -364,7 +406,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
         url={url}
         hint="Os clientes aderem por este link. Imprima o cartaz para o balcão, ou peça-nos a placa NFC já programada."
         poster={{
-          heading: `Junte ${program.stamps_required} carimbos, ganhe ${rewardInSentence(program.reward)}.`,
+          heading: rewardsSentence(program),
           sub: "Aponte a câmara ao código. O cartão fica no seu telemóvel, sem aplicação.",
           name: current.name,
         }}

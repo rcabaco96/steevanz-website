@@ -63,7 +63,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Recompensas automáticas",
-        body: "Define a regra uma vez e o sistema trata do resto: conta os carimbos, mostra a recompensa no cartão e marca-a como usada.",
+        body: "Define as regras uma vez e o sistema trata do resto: conta os carimbos, mostra cada recompensa no cartão (também as pequenas pelo caminho, como um café ao 3.º carimbo) e marca-a como usada.",
       },
       {
         title: "Controlo contra abusos",
@@ -192,7 +192,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Automatic rewards",
-        body: "Set the rule once and the system does the rest: counts stamps, shows the reward on the card and marks it as used.",
+        body: "Set the rules once and the system does the rest: counts stamps, shows each reward on the card (small ones along the way too, like a coffee at the 3rd stamp) and marks it as used.",
       },
       {
         title: "Protection from abuse",

@@ -43,8 +43,6 @@ export interface KindWords {
   joinTitle: string;
   /** Booking page title. */
   bookingTitle: string;
-  /** Example reward for a new loyalty program. */
-  rewardExample: string;
 }
 
 export const kindWords: Record<BusinessKind, KindWords> = {
@@ -53,56 +51,58 @@ export const kindWords: Record<BusinessKind, KindWords> = {
     callAction: "Mesa pronta",
     joinTitle: "Entrar na lista de espera",
     bookingTitle: "Reservar mesa",
-    rewardExample: "Um café oferecido",
   },
   barbershop: {
     ready: "É a sua vez. Dirija-se à cadeira.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Marcar corte",
-    rewardExample: "Um corte oferecido",
   },
   salon: {
     ready: "É a sua vez. Dirija-se à receção.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Marcar serviço",
-    rewardExample: "Um serviço oferecido",
   },
   clinic: {
     ready: "É a sua vez. Dirija-se à receção.",
     callAction: "É a sua vez",
     joinTitle: "Tirar senha",
     bookingTitle: "Marcar consulta",
-    rewardExample: "Uma oferta da casa",
   },
   sports: {
     ready: "É a sua vez. Dirija-se à receção.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Reservar campo",
-    rewardExample: "Uma hora de campo oferecida",
   },
   retail: {
     ready: "É a sua vez. Dirija-se ao balcão.",
     callAction: "É a sua vez",
     joinTitle: "Entrar na fila",
     bookingTitle: "Reservar",
-    rewardExample: "Uma oferta da casa",
   },
 };
 
 /** Sensible starting settings per kind (all can be changed afterwards). */
 export const kindDefaults: Record<
   BusinessKind,
-  { waitlist: { askParty: boolean; askService: boolean; askStaff: boolean; avgMinutes: number } }
+  {
+    waitlist: { askParty: boolean; askService: boolean; askStaff: boolean; avgMinutes: number };
+    /**
+     * The loyalty card a new space starts with. Rewards along the way only where visits are frequent
+     * and cheap enough (restaurants, cafés): an early small reward brings people back, the big one
+     * stays at the end. Elsewhere a single reward (a free haircut) is clearer.
+     */
+    loyalty: { stampsRequired: number; reward: string; milestones: { at: number; reward: string }[]; minSpendCents: number | null };
+  }
 > = {
-  restaurant: { waitlist: { askParty: true, askService: false, askStaff: false, avgMinutes: 15 } },
-  barbershop: { waitlist: { askParty: false, askService: true, askStaff: true, avgMinutes: 30 } },
-  salon: { waitlist: { askParty: false, askService: true, askStaff: true, avgMinutes: 30 } },
-  clinic: { waitlist: { askParty: false, askService: true, askStaff: false, avgMinutes: 20 } },
-  sports: { waitlist: { askParty: false, askService: false, askStaff: false, avgMinutes: 15 } },
-  retail: { waitlist: { askParty: false, askService: false, askStaff: false, avgMinutes: 5 } },
+  restaurant: { waitlist: { askParty: true, askService: false, askStaff: false, avgMinutes: 15 }, loyalty: { stampsRequired: 10, reward: "Um prato do dia oferecido", milestones: [{ at: 3, reward: "Um café oferecido" }, { at: 6, reward: "Uma sobremesa oferecida" }], minSpendCents: 1000 } },
+  barbershop: { waitlist: { askParty: false, askService: true, askStaff: true, avgMinutes: 30 }, loyalty: { stampsRequired: 10, reward: "Um corte oferecido", milestones: [], minSpendCents: null } },
+  salon: { waitlist: { askParty: false, askService: true, askStaff: true, avgMinutes: 30 }, loyalty: { stampsRequired: 10, reward: "Um serviço oferecido", milestones: [], minSpendCents: null } },
+  clinic: { waitlist: { askParty: false, askService: true, askStaff: false, avgMinutes: 20 }, loyalty: { stampsRequired: 10, reward: "Uma oferta da casa", milestones: [], minSpendCents: null } },
+  sports: { waitlist: { askParty: false, askService: false, askStaff: false, avgMinutes: 15 }, loyalty: { stampsRequired: 10, reward: "Uma hora de campo oferecida", milestones: [], minSpendCents: null } },
+  retail: { waitlist: { askParty: false, askService: false, askStaff: false, avgMinutes: 5 }, loyalty: { stampsRequired: 10, reward: "Uma oferta da casa", milestones: [], minSpendCents: 1000 } },
 };
 
 /** "Café Central" → "cafe-central" (letters, numbers and hyphens, at most 60 characters). */

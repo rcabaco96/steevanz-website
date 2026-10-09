@@ -71,7 +71,9 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 | Definição | Para quê | Por omissão |
 | --- | --- | --- |
 | Carimbos para completar | 2 a 50 | 10 |
-| Recompensa | Texto (ex.: "Um café oferecido") | sugerida pelo tipo de negócio |
+| Recompensa ao completar o cartão | Texto | sugerida pelo tipo de negócio |
+| Recompensas pelo caminho | Até 3, antes do último carimbo (`loyalty_programs.milestones`) | restaurante: 3.º café, 6.º sobremesa; outros: nenhuma |
+| Consumo mínimo para carimbar | «1 carimbo por visita a partir de X €» (`min_spend_cents`); a equipa aplica | restaurante e loja: 10 €; outros: sem mínimo |
 | Tempo mínimo entre carimbos | Antifraude: um carimbo por visita | 120 min |
 | Validade da recompensa | Em dias; vazio = sem validade | sem validade |
 | Primeiro carimbo na adesão | Oferece 1 carimbo ao criar o cartão | sim |

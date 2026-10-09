@@ -5,11 +5,12 @@ import { ArrowRight } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
-import { formatCardCode } from "@/lib/modules/loyalty/rules";
+import { cardRewards, formatCardCode, missingText, stampRuleText } from "@/lib/modules/loyalty/rules";
 import type { LoyaltyCardRow, LoyaltyProgramRow, LoyaltyRewardRow } from "@/lib/modules/loyalty/store";
 import { QrCode } from "../shared/QrCode";
 
-function Stamps({ stamps, required, large = false }: { stamps: number; required: number; large?: boolean }) {
+/** The card's circles; the ones that give a reward (milestones and the last) are outlined in gold. */
+function Stamps({ stamps, required, rewardAt, large = false }: { stamps: number; required: number; rewardAt: Set<number>; large?: boolean }) {
   return (
     <div
       aria-label={`${stamps} de ${required} carimbos`}
@@ -18,7 +19,7 @@ function Stamps({ stamps, required, large = false }: { stamps: number; required:
     >
       {Array.from({ length: required }, (_, index) => {
         const filled = index < stamps;
-        const last = index === required - 1;
+        const last = rewardAt.has(index + 1);
         return (
           <span
             key={index}
@@ -48,11 +49,11 @@ function CardActions({ card, establishment, rewards, program, qrHref }: { card: 
         </SubmitButton>
       </ActionForm>
       {rewards.length ? (
-        <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${program.reward}» a ${card.name}?`}>
+        <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${rewards[0].label ?? program.reward}» a ${card.name}?`}>
           {hidden}
           <input type="hidden" name="reward_id" value={rewards[0].id} />
           <SubmitButton size="md" variant="secondary">
-            Entregar recompensa
+            Entregar: {rewards[0].label ?? program.reward}
           </SubmitButton>
         </ActionForm>
       ) : null}
@@ -97,6 +98,7 @@ export function CardCounter({
   qrUrl: string | null;
   settingsHref: string;
 }) {
+  const rewardAt = new Set(cardRewards(program).map((item) => item.at));
   const rewardsOf = (cardId: string) => rewards.filter((reward) => reward.card_id === cardId);
   const hrefWith = (extra: Record<string, string>) => `${basePath}?${new URLSearchParams({ ...keep, ...(term ? { q: term } : {}), ...extra })}`;
   const focus = term && cards.length === 1 ? cards[0] : null;
@@ -176,16 +178,16 @@ export function CardCounter({
               <span className="text-base text-muted">/{program.stamps_required}</span>
             </p>
           </div>
-          <Stamps stamps={focus.stamps} required={program.stamps_required} large />
+          <Stamps stamps={focus.stamps} required={program.stamps_required} rewardAt={rewardAt} large />
           {rewardsOf(focus.id).length ? (
             <p className="rounded-xl bg-gold-soft px-3 py-2 text-sm font-semibold text-gold-text">
-              Tem {rewardsOf(focus.id).length === 1 ? "uma recompensa" : `${rewardsOf(focus.id).length} recompensas`} por usar: {program.reward}.
+              {rewardsOf(focus.id).length === 1 ? "Recompensa por usar" : `${rewardsOf(focus.id).length} recompensas por usar`}:{" "}
+              {rewardsOf(focus.id).map((reward) => reward.label ?? program.reward).join(", ")}.
             </p>
-          ) : (
-            <p className="text-sm text-muted">
-              {program.stamps_required - focus.stamps === 1 ? "Falta 1 carimbo" : `Faltam ${Math.max(0, program.stamps_required - focus.stamps)} carimbos`} para: {program.reward}.
-            </p>
-          )}
+          ) : null}
+          <p className="text-sm text-muted">
+            {missingText(focus.stamps, program)} <span className="text-subtle">{stampRuleText(program.min_spend_cents)}.</span>
+          </p>
           <CardActions card={focus} establishment={establishment} rewards={rewardsOf(focus.id)} program={program} qrHref={hrefWith({ qr: focus.id })} />
         </section>
       ) : null}
@@ -194,17 +196,17 @@ export function CardCounter({
         <Panel title={term ? `${list.length} cartões para «${term}»` : "Últimos clientes com carimbo"}>
           <ul className="-my-3 divide-y divide-line">
             {list.map((card) => {
-              const cardRewards = rewardsOf(card.id).length;
+              const unused = rewardsOf(card.id).length;
               return (
                 <li key={card.id}>
                   <Link href={`${basePath}?${new URLSearchParams({ ...keep, q: card.code })}`} className="-mx-2 flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-surface-2">
                   <span className="flex min-w-0 flex-1 flex-col gap-1.5 px-1">
                     <span className="flex items-center gap-2">
                       <span className="truncate font-semibold text-text">{card.name}</span>
-                      {cardRewards ? <span className="shrink-0 rounded-full bg-gold-soft px-2 py-0.5 text-xs font-semibold text-gold-text">Recompensa</span> : null}
+                      {unused ? <span className="shrink-0 rounded-full bg-gold-soft px-2 py-0.5 text-xs font-semibold text-gold-text">Recompensa</span> : null}
                     </span>
                     <span className="flex items-center gap-2">
-                      <Stamps stamps={card.stamps} required={program.stamps_required} />
+                      <Stamps stamps={card.stamps} required={program.stamps_required} rewardAt={rewardAt} />
                       <span className="text-xs tabular-nums text-muted">
                         {card.stamps}/{program.stamps_required}
                       </span>

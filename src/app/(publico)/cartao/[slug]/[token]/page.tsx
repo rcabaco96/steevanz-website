@@ -7,7 +7,7 @@ import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { RedeemWithCodeForm, RememberCard, StampWithCodeForm } from "@/components/public/loyalty/CardForms";
 import { StampCard } from "@/components/public/loyalty/StampCard";
 import { requestOrigin } from "@/lib/booking/request";
-import { formatCardCode, rewardInSentence } from "@/lib/modules/loyalty/rules";
+import { cardRewards, formatCardCode, missingText, nextReward, stampRuleText } from "@/lib/modules/loyalty/rules";
 import { availableRewards, ensureProgram, getCardByToken, recentlyRedeemed } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
@@ -47,17 +47,29 @@ export default async function LoyaltyCardPage({ params }: Props) {
   if (!card || card.establishment_id !== establishment.id) notFound();
   const [program, rewards, redeemed, origin] = await Promise.all([ensureProgram(establishment), availableRewards([card.id]), recentlyRedeemed(card.id), requestOrigin()]);
   const format = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, day: "numeric", month: "long" });
-  const left = program.stamps_required - card.stamps;
+  const rewardAt = cardRewards(program).map((item) => item.at);
 
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
       <RememberCard slug={establishment.slug} token={card.token} />
       {/* A stamp given from the staff panel shows up while the customer is at the counter. */}
       <AutoRefresh intervalMs={10_000} />
-      <StampCard name={establishment.name} holder={card.name} stamps={card.stamps} required={program.stamps_required} reward={program.reward} code={card.code} />
-      <p className="-mt-1 text-center text-muted">
-        {card.stamps === 0 ? `Junte ${program.stamps_required} carimbos para ${rewardInSentence(program.reward)}.` : `${left === 1 ? "Falta 1 carimbo" : `Faltam ${left} carimbos`} para ${rewardInSentence(program.reward)}.`}
-      </p>
+      <StampCard
+        name={establishment.name}
+        holder={card.name}
+        stamps={card.stamps}
+        required={program.stamps_required}
+        reward={nextReward(card.stamps, program).reward}
+        rewardAt={rewardAt}
+        code={card.code}
+      />
+      <div className="-mt-1 flex flex-col gap-1 text-center">
+        <p className="text-muted">{missingText(card.stamps, program)}</p>
+        <p className="text-sm text-subtle">{stampRuleText(program.min_spend_cents)}.</p>
+        {rewardAt.length > 1 ? (
+          <p className="text-sm text-subtle">{cardRewards(program).map((item) => `${item.at}.º carimbo: ${item.reward}`).join(" · ")}</p>
+        ) : null}
+      </div>
 
       {redeemed?.redeemed_at ? (
         <p role="status" className="rounded-2xl border border-success/30 bg-success-soft px-4 py-3 text-center font-semibold text-success">
@@ -70,7 +82,8 @@ export default async function LoyaltyCardPage({ params }: Props) {
         <article className="ticket overflow-hidden">
           <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
             <p className="text-sm text-muted">{rewards.length === 1 ? "Tem uma recompensa à espera" : `Tem ${rewards.length} recompensas à espera`}</p>
-            <p className="display mt-1 text-[1.9rem] leading-tight">{program.reward}</p>
+            <p className="display mt-1 text-[1.9rem] leading-tight">{rewards[0].label ?? program.reward}</p>
+            {rewards.length > 1 ? <p className="mt-1 text-sm text-muted">Depois: {rewards.slice(1).map((reward) => reward.label ?? program.reward).join(", ")}.</p> : null}
             {rewards[0].expires_at ? <p className="mt-1 text-sm text-muted">Válida até {format.format(new Date(rewards[0].expires_at))}.</p> : null}
           </div>
           <div className="ticket-tear" />

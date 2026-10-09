@@ -18,8 +18,8 @@ export const docs: ProductDocs = {
             items: [
               "O cliente lê o QR code ou toca na placa NFC ao balcão e cria o cartão só com o nome (o email é recomendado, o telemóvel é opcional).",
               "O cartão abre no telemóvel e pode ficar no ecrã principal, como uma app.",
-              "A cada visita, a equipa dá o carimbo: escreve o PIN de carimbo no telemóvel do cliente, ou lê o QR do cartão com o telemóvel do balcão.",
-              "Quando o cartão fica completo, a recompensa aparece no cartão. A equipa entrega-a da mesma forma.",
+              "A cada visita, a equipa dá o carimbo: lê o QR do cartão com o telemóvel do balcão, ou escreve o PIN de carimbo no telemóvel do cliente.",
+              "Ao chegar a uma recompensa (pelo caminho ou com o cartão completo), ela aparece no cartão. A equipa entrega-a da mesma forma. Uma recompensa já ganha não muda, mesmo que o dono mude as recompensas depois.",
             ],
           },
           {
@@ -47,8 +47,8 @@ export const docs: ProductDocs = {
             items: [
               "Customers scan the QR code or tap the NFC plate at the counter and create their card with just a name (email recommended, phone optional).",
               "The card opens on the phone and can sit on the home screen, like an app.",
-              "At every visit, your staff give the stamp: they type the stamp PIN on the customer's phone, or scan the card's QR with the counter phone.",
-              "When the card is full, the reward appears on the card. Your staff hand it over the same way.",
+              "At every visit, your staff give the stamp: they scan the card's QR with the counter phone, or type the stamp PIN on the customer's phone.",
+              "When a reward is reached (along the way or with a full card), it appears on the card. Your staff hand it over the same way. A reward already earned never changes, even if the owner changes the rewards later.",
             ],
           },
           {
@@ -112,7 +112,9 @@ export const docs: ProductDocs = {
             head: ["Definição", "Para quê"],
             rows: [
               ["Carimbos para completar", "De 2 a 50 (por omissão 10). Se baixar o número, os cartões que já têm carimbos suficientes ficam logo completos."],
-              ["Recompensa", "O que o cliente ganha, ex.: «um café oferecido»."],
+              ["Recompensa ao completar o cartão", "O que o cliente ganha no último carimbo, ex.: «um prato do dia oferecido»."],
+              ["Recompensas pelo caminho", "Até 3, antes do cartão completo (ex.: ao 3.º carimbo um café, ao 6.º uma sobremesa). A primeira chega cedo e faz voltar; a grande fica no fim. Nos restaurantes vêm sugeridas; nos outros negócios fica só a final."],
+              ["Consumo mínimo para carimbar", "«1 carimbo por visita a partir de X €». Aparece no cartão do cliente e no Balcão; a equipa aplica. Vazio = sem mínimo."],
               ["Tempo mínimo entre carimbos", "Antifraude: um carimbo por visita."],
               ["Validade da recompensa", "Em dias; vazio = sem validade."],
               ["Primeiro carimbo na adesão", "Oferece 1 carimbo ao criar o cartão."],
@@ -157,7 +159,9 @@ export const docs: ProductDocs = {
             head: ["Setting", "What it's for"],
             rows: [
               ["Stamps to complete", "From 2 to 50 (10 by default). If you lower it, cards that already have enough stamps are completed straight away."],
-              ["Reward", "What the customer gets, e.g. «a free coffee»."],
+              ["Reward for a full card", "What the customer gets on the last stamp, e.g. «a free dish of the day»."],
+              ["Rewards along the way", "Up to 3 before the card is full (e.g. a coffee at the 3rd stamp, a dessert at the 6th). The first comes early and brings people back; the big one stays at the end. Suggested for restaurants; other businesses keep only the final one."],
+              ["Minimum spend per stamp", "«1 stamp per visit from X €». Shown on the customer's card and in the Balcão; your staff apply it. Empty = no minimum."],
               ["Minimum time between stamps", "Anti-fraud: one stamp per visit."],
               ["Reward validity", "In days; empty = no expiry."],
               ["First stamp on joining", "Gives 1 stamp when the card is created."],

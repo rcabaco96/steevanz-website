@@ -18,8 +18,8 @@ function GiftMark() {
 }
 
 /**
- * The loyalty card in the shop's colours: gold stamps, the reward in the last circle and the card
- * code the team can search. The newest stamp is keyed by the count, so it lands again (animation)
+ * The loyalty card in the shop's colours: gold stamps, a gift in each circle that gives a reward (the
+ * rewards along the way and the last one) and the card code the team can search. The newest stamp is keyed by the count, so it lands again (animation)
  * every time a stamp is added.
  */
 export function StampCard({
@@ -28,13 +28,17 @@ export function StampCard({
   stamps,
   required,
   reward,
+  rewardAt = [required],
   code,
 }: {
   name: string;
   holder: string;
   stamps: number;
   required: number;
+  /** The next reward. */
   reward: string;
+  /** Circles (1 = first) that give a reward. */
+  rewardAt?: number[];
   /** Shown once the card exists (staff can look it up by this code). */
   code?: string;
 }) {
@@ -61,7 +65,7 @@ export function StampCard({
 
       <ol aria-hidden="true" className="mt-6 grid gap-2.5" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
         {slots.map((filled, index) => {
-          const last = index === slots.length - 1;
+          const last = rewardAt.includes(index + 1);
           const newest = filled && index === stamps - 1;
           return (
             <li key={newest ? `stamp-${stamps}` : index} className="aspect-square">
@@ -90,7 +94,7 @@ export function StampCard({
             <span className="text-base opacity-70"> de {required}</span>
           </p>
           <p className="mt-1 text-sm opacity-85">
-            Recompensa: <strong className="font-semibold">{reward}</strong>
+            {rewardAt.length > 1 ? "Próxima recompensa" : "Recompensa"}: <strong className="font-semibold">{reward}</strong>
           </p>
         </div>
         <p className="shrink-0 truncate text-right text-sm opacity-80">{holder}</p>
