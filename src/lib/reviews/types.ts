@@ -16,6 +16,8 @@ export interface ReviewBusiness {
   category: string | null;
   /** Google's place identifier (fid), to link each review straight on Google Maps. */
   googleFid: string | null;
+  /** Competitors are searched and shown within this radius (5 or 10 km, chosen by an admin). */
+  competitorRadiusKm: number;
 }
 
 export interface GoogleReview {

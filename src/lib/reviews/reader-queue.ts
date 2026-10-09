@@ -1,9 +1,9 @@
 /**
- * Queue of review reads (review_import_jobs). Each job has a provider: "dataforseo" (hosted, the
- * normal path), "reader" (the free local reader on the owner's computer, fallback only) or
- * "google" (official API of verified customers). Planning never reads Google: it only queues jobs
- * (contracts in supabase/migrations/20261004130000_reader_queue.sql and 20261004170000_dataforseo.sql;
- * rules in .claude/skills/regras-negocio-reviews).
+ * Queue of review reads (review_import_jobs), run by the free Steevanz reader (scripts/reader), the
+ * only source of reviews besides the official Google API of verified customers. Every job is
+ * inserted with provider = 'reader' (the reader only claims those). Planning never reads Google: it
+ * only queues jobs (contract in supabase/migrations/20261004130000_reader_queue.sql; rules in
+ * .claude/skills/regras-negocio-reviews).
  *
  * Kinds: "full" (whole history of a customer), "update" (new reviews + recent replies),
  * "competitor" (one Google place, shared by every customer that has it as competitor),
@@ -14,27 +14,23 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { OwnerEmail } from "../booking/email.ts";
-import { needsSlotRead, previousCompetitionUpdate, slotBefore } from "./competition-schedule.ts";
+import { needsSlotRead, previousCompetitionUpdate } from "./competition-schedule.ts";
 import { dailySyncFor, lisbonDay, needsFullSync } from "./sync-rules.ts";
 
 export type ReaderJobKind = "full" | "update" | "competitor" | "competitor_replies" | "discover";
 export type JobRequester = "panel" | "cron" | "admin";
-/** Who runs a job (review_import_jobs.provider). */
-export type JobProvider = "dataforseo" | "google" | "reader";
-
-/** Provider of the jobs created by planning: DataForSEO when configured (final solution), else the local reader. */
-export function planningProvider(dataForSeoConfigured: boolean): JobProvider {
-  return dataForSeoConfigured ? "dataforseo" : "reader";
-}
+/**
+ * review_import_jobs.provider of every job queued: the reader only claims these. The column's
+ * database default is still an old provider, so inserts always set it.
+ */
+export const readerProvider = "reader";
 
 /** Lower runs first: someone waiting in the panel/admin, then first imports, then the routine. */
 export const jobPriority = { waiting: 1, firstImport: 3, routine: 5 } as const;
 /**
- * Business rule: replies are checked every day, for competitors too. The daily "competitor" read
- * covers the last 7 days with DataForSEO (30 days with the local reader): new reviews + replies to
- * recent ones. "competitor_replies" (12 months, max 2000 reviews) runs only once per place, when
- * its reply rate was never measured. With DataForSEO the star numbers of competitors come from the
- * zone snapshot (one Maps request per customer at 10:00 and 19:00, see tick.ts).
+ * Business rule: replies are checked every day, for competitors too. The "competitor" read covers
+ * the last 30 days: the place's numbers, new reviews + replies to recent ones. "competitor_replies"
+ * (12 months, max 2000 reviews) runs only once per place, when its reply rate was never measured.
  */
 /** At most this many first 12-month reads queued per day (each reads up to 2000 reviews). */
 export const competitorRepliesPerDay = 60;
@@ -51,8 +47,6 @@ export interface ReaderJob {
   place_id: string | null;
   priority: number;
   requested_by: JobRequester;
-  /** Omitted: the database default ("dataforseo"). */
-  provider?: JobProvider;
 }
 
 export interface PlanBusiness {
@@ -127,22 +121,16 @@ export function repliesDue(places: string[], readerPlaces: ReaderPlace[], _today
   return places.filter((placeId) => !measured.has(placeId)).slice(0, limit);
 }
 
-/** Sets the provider of planned jobs (left to the database default when not given). */
-function withProvider(jobs: ReaderJob[], provider: JobProvider | undefined): ReaderJob[] {
-  return provider ? jobs.map((job) => ({ ...job, provider })) : jobs;
-}
-
 /**
  * The customers' daily routine (22:00 Portuguese time, scheduler tick): "full" on the first import
  * only, else "update" unless the customer already updated that day. Verified customers are left out
  * (official Google API). Competitor places are planned per slot (planCompetitionSlot).
  */
-export function planDailyJobs(businesses: PlanBusiness[], now: Date = new Date(), provider?: JobProvider): ReaderJob[] {
-  const jobs = businesses
+export function planDailyJobs(businesses: PlanBusiness[], now: Date = new Date()): ReaderJob[] {
+  return businesses
     .map((business) => customerDailyJob(business, now))
     .filter((job) => job !== null)
     .sort((a, b) => a.priority - b.priority);
-  return withProvider(jobs, provider);
 }
 
 /** Customers' own places updated since a moment (their "Atualizar", a reader read, a Google sync). */
@@ -163,44 +151,36 @@ export function placesUpdatedSince(businesses: PlanBusiness[], since: Date): Set
  * moment — neither a read of the place (reader_places.read_at) nor its own customer (last_synced_at).
  * Plus the one-off 12-month "competitor_replies" for places never measured (max 60 per slot).
  *
- * Reference moment:
- * - "reader" (no provider): the slot that just passed. The reader's read is also where the star
- *   numbers come from, so every place is read at every slot (30-day window).
- * - "dataforseo": the slot before the one that just passed. The star numbers come from the zone
- *   snapshot (tick.ts), so the 7-day reply check runs about once a day per place (~30 reads per
- *   distinct place per month).
+ * Reference moment: the slot that just passed. The reader's read is also where the star numbers
+ * come from, so every place is read at every slot (30-day window).
  */
 export function planCompetitionSlot(
   businesses: PlanBusiness[],
   competitors: PlanCompetitor[],
   readerPlaces: ReaderPlace[],
   now: Date = new Date(),
-  options: { provider?: JobProvider } = {},
 ): ReaderJob[] {
   const places = comparedPlaces(competitors);
   const readAt = new Map(readerPlaces.map((row) => [row.place_id, row.read_at ?? (row.read_on ? `${row.read_on}T00:00:00Z` : null)]));
-  const slot = previousCompetitionUpdate(now);
-  const since = options.provider === "dataforseo" ? slotBefore(slot) : slot;
+  const since = previousCompetitionUpdate(now);
   const updated = placesUpdatedSince(businesses, since);
   const placeJob = (kind: ReaderJobKind, placeId: string): ReaderJob => ({ kind, business_id: null, place_id: placeId, priority: jobPriority.routine, requested_by: "cron" });
-  const jobs = [
+  return [
     ...places.filter((placeId) => needsSlotRead(readAt.get(placeId) ?? null, since) && !updated.has(placeId)).map((placeId) => placeJob("competitor", placeId)),
     ...repliesDue(places, readerPlaces, lisbonDay(now)).map((placeId) => placeJob("competitor_replies", placeId)),
   ];
-  return withProvider(jobs, options.provider);
 }
 
 /** Places of newly discovered competitors that the reader should read now (sharing: skip places already read today). */
-export function newPlaceJobs(placeIds: string[], readerPlaces: ReaderPlace[], requestedBy: JobRequester, now: Date = new Date(), provider?: JobProvider): ReaderJob[] {
+export function newPlaceJobs(placeIds: string[], readerPlaces: ReaderPlace[], requestedBy: JobRequester, now: Date = new Date()): ReaderJob[] {
   const today = lisbonDay(now);
   const places = [...new Set(placeIds)].sort();
   const known = new Map(readerPlaces.map((row) => [row.place_id, row]));
   const job = (kind: ReaderJobKind, placeId: string): ReaderJob => ({ kind, business_id: null, place_id: placeId, priority: jobPriority.firstImport, requested_by: requestedBy });
-  const jobs = [
+  return [
     ...places.filter((placeId) => known.get(placeId)?.read_on !== today).map((placeId) => job("competitor", placeId)),
     ...repliesDue(places, readerPlaces, today).map((placeId) => job("competitor_replies", placeId)),
   ];
-  return withProvider(jobs, provider);
 }
 
 /** Same key as the unique "one active job per target and kind" indexes. */
@@ -226,7 +206,6 @@ export function readerOfflineEmail(lastSeenAt: string | null, queued: number, ad
       { label: "Último sinal", value: seen },
       { label: "Pedidos à espera", value: String(queued) },
       { label: "O que fazer", value: "Ligue o computador do leitor e corra «npm run reader» na pasta do site. Enquanto estiver desligado, as reviews dos clientes e a concorrência não são atualizadas." },
-      { label: "Plano B", value: "Em caso de urgência, «Ler com o Apify» no admin (pago)." },
     ],
     adminUrl,
     linkLabel: "Abrir o admin",
@@ -293,7 +272,7 @@ export interface EnqueueResult {
 export async function enqueueJobs(client: Client, jobs: ReaderJob[], now: Date = new Date()): Promise<EnqueueResult> {
   const active = await activeJobKeys(client);
   const fresh = jobs.filter((job) => !active.has(jobKey(job)));
-  const rows = fresh.map((job, index) => ({ ...job, requested_at: new Date(now.getTime() + index).toISOString() }));
+  const rows = fresh.map((job, index) => ({ ...job, provider: readerProvider, requested_at: new Date(now.getTime() + index).toISOString() }));
   let queued = 0;
   for (let index = 0; index < rows.length; index += 100) {
     const batch = rows.slice(index, index + 100);
@@ -314,20 +293,39 @@ export async function enqueueJobs(client: Client, jobs: ReaderJob[], now: Date =
 }
 
 /** After a competitor search: asks the reader for the details of the customer's compared places right away. */
-export async function queueNewCompetitorReads(client: Client, businessId: string, requestedBy: JobRequester, provider?: JobProvider): Promise<EnqueueResult> {
+export async function queueNewCompetitorReads(client: Client, businessId: string, requestedBy: JobRequester): Promise<EnqueueResult> {
   const { data, error } = await client.from("competitors").select("place_id").eq("business_id", businessId).eq("excluded", false).eq("is_self", false);
   if (error) throw new Error(error.message);
   const placeIds = (data ?? []).map((row) => row.place_id as string);
   if (!placeIds.length) return { queued: 0, alreadyActive: 0 };
-  return enqueueJobs(client, newPlaceJobs(placeIds, await loadReaderPlaces(client, placeIds), requestedBy, new Date(), provider));
+  return enqueueJobs(client, newPlaceJobs(placeIds, await loadReaderPlaces(client, placeIds), requestedBy, new Date()));
 }
 
 /** Queues one job; "active" when the same target already has one of that kind queued or running. */
 export async function queueReaderJob(client: Client, job: ReaderJob): Promise<"queued" | "active"> {
-  const { error } = await client.from("review_import_jobs").insert(job);
+  const { error } = await client.from("review_import_jobs").insert({ ...job, provider: readerProvider });
   if (!error) return "queued";
   if (error.code === "23505") return "active";
   throw new Error(error.message);
+}
+
+/**
+ * Jobs of providers that no longer exist (the paid services removed on 2026-10-09: anything other
+ * than the reader or Google's official API). Queued before (the column's database default, or old
+ * code), they would wait forever: the reader only claims provider = 'reader', and while one waits no
+ * new job of that kind can be queued for the same target. Hands them to the reader, back in the
+ * queue (also those left "running"); only one customer's when `businessId` is given. Returns how many.
+ */
+export async function handRetiredJobsToReader(client: Client, businessId?: string): Promise<number> {
+  let query = client
+    .from("review_import_jobs")
+    .update({ provider: readerProvider, status: "queued", started_at: null, reader_id: null, updated_at: new Date().toISOString() })
+    .in("status", ["queued", "running"])
+    .not("provider", "in", `(${readerProvider},google)`);
+  if (businessId) query = query.eq("business_id", businessId);
+  const { data, error } = await query.select("id");
+  if (error) throw new Error(error.message);
+  return data?.length ?? 0;
 }
 
 /** Last time any reader reported (null when none ever did). */

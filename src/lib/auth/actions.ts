@@ -3,12 +3,23 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
-import { requestOrigin } from "@/lib/booking/request";
 import { createAuthClient } from "@/lib/supabase/server";
+import { tryCreateServiceClient } from "@/lib/supabase/service";
+import {
+  claimAuthEmail,
+  cooldownMessage,
+  deliverLater,
+  linkOrigin,
+  releaseAuthEmail,
+  sendRecoveryLink,
+  sendSignInLink,
+  sendSignupConfirmation,
+} from "./email-links";
 import { minPasswordLength } from "./password";
 import { isAdminUser, safeNextPath } from "./session";
 
 const unconfigured: ActionState = { ok: false, message: "O acesso a contas ainda não está configurado." };
+const sendFailed: ActionState = { ok: false, message: "Não foi possível enviar o email. Tente novamente daqui a pouco." };
 const weakPassword: ActionState = { ok: false, message: "Esta palavra-passe é demasiado fraca ou já foi exposta. Escolha outra." };
 const shortPassword = `A palavra-passe tem de ter pelo menos ${minPasswordLength} caracteres.`;
 
@@ -54,11 +65,6 @@ const signUpMessages: Record<string, string> = {
   terms: "Tem de aceitar os termos e a política de privacidade.",
 };
 
-async function callbackUrl(next: string): Promise<string> {
-  const origin = await requestOrigin();
-  return `${origin}/conta/auth/callback?next=${encodeURIComponent(next)}`;
-}
-
 export async function signUp(_previous: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = signUpSchema.safeParse({
     full_name: value(formData, "full_name"),
@@ -75,24 +81,21 @@ export async function signUp(_previous: ActionState, formData: FormData): Promis
   }
   const { email, password: secret, full_name, business_name, phone } = parsed.data;
 
-  const supabase = await createAuthClient();
-  if (!supabase) return unconfigured;
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password: secret,
-    options: {
-      emailRedirectTo: await callbackUrl("/conta"),
-      data: { full_name, business_name, phone },
-    },
-  });
-  if (error) {
-    if (error.code === "weak_password") return weakPassword;
-    if (error.code === "over_email_send_rate_limit") return { ok: false, message: "Demasiados pedidos. Aguarde um minuto e tente novamente." };
-    console.error("[auth] signUp failed:", error.code, error.message);
-    return { ok: false, message: "Não foi possível criar a conta. Tente novamente." };
+  // The account and its confirmation link are made with the service role, so Supabase sends no
+  // email: ours goes through Resend and its link works on any device.
+  const client = tryCreateServiceClient();
+  if (!client) return unconfigured;
+  const wait = await claimAuthEmail(client, email);
+  if (wait) return { ok: false, message: cooldownMessage(wait) };
+  const origin = await linkOrigin();
+  const details = { email, password: secret, fullName: full_name, data: { full_name, business_name, phone } };
+  let outcome = await sendSignupConfirmation(client, details, origin);
+  // An email that already has an account gets a sign-in link instead; the page says the same either way.
+  if (outcome === "exists") outcome = (await sendSignInLink(client, email, { origin, next: "", variant: "existing" })) === "failed" ? "failed" : "sent";
+  if (outcome !== "sent") {
+    await releaseAuthEmail(client, email);
+    return outcome === "weak_password" ? weakPassword : sendFailed;
   }
-  // With email confirmation disabled Supabase signs the user in straight away.
-  if (data.session) redirect("/conta");
   redirect(`/conta/verificar-email?email=${encodeURIComponent(email)}`);
 }
 
@@ -111,7 +114,7 @@ export async function signIn(_previous: ActionState, formData: FormData): Promis
   if (error || !data.user) {
     console.error("[auth] signIn failed:", error?.code, error?.message);
     if (error?.code === "email_not_confirmed") {
-      return { ok: false, message: "Ainda não confirmou o seu email. Procure a mensagem de confirmação na sua caixa de correio." };
+      return { ok: false, message: "Ainda não confirmou o seu email. Procure a mensagem de confirmação na sua caixa de correio ou peça um link de entrada por email." };
     }
     return { ok: false, message: "Email ou palavra-passe incorretos." };
   }
@@ -122,25 +125,28 @@ export async function signIn(_previous: ActionState, formData: FormData): Promis
 export async function requestSignInLink(_previous: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = z.email().safeParse(value(formData, "email").toLowerCase());
   if (!parsed.success) return { ok: false, message: "Indique um email válido." };
-  const supabase = await createAuthClient();
-  if (!supabase) return unconfigured;
-  const { error } = await supabase.auth.signInWithOtp({
-    email: parsed.data,
-    options: { shouldCreateUser: false, emailRedirectTo: await callbackUrl(safeNextPath(value(formData, "next"), "")) },
-  });
-  if (error?.code === "over_email_send_rate_limit") return { ok: false, message: "Demasiados pedidos. Aguarde um minuto e tente novamente." };
-  // Unknown emails also fail here: the answer stays the same so it doesn't reveal which emails have an account.
-  if (error) console.error("[auth] signInWithOtp failed:", error.code, error.message);
-  return { ok: true, message: "Se existir uma conta com este email, vai receber um link para entrar. Abra-o neste mesmo navegador." };
+  const email = parsed.data;
+  const client = tryCreateServiceClient();
+  if (!client) return unconfigured;
+  // The minute between emails counts for unknown emails too, and the email goes out after the answer:
+  // nothing here reveals which emails have an account.
+  const wait = await claimAuthEmail(client, email);
+  if (wait) return { ok: false, message: cooldownMessage(wait) };
+  const options = { origin: await linkOrigin(), next: safeNextPath(value(formData, "next"), "") };
+  deliverLater(client, email, () => sendSignInLink(client, email, options));
+  return { ok: true, message: "Se existir uma conta com este email, vai receber um link para entrar. Pode abri-lo em qualquer dispositivo." };
 }
 
 export async function requestPasswordReset(_previous: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = z.email().safeParse(value(formData, "email").toLowerCase());
   if (!parsed.success) return { ok: false, message: "Indique um email válido." };
-  const supabase = await createAuthClient();
-  if (!supabase) return unconfigured;
-  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, { redirectTo: await callbackUrl("/conta/nova-password") });
-  if (error) console.error("[auth] resetPasswordForEmail failed:", error.code, error.message);
+  const email = parsed.data;
+  const client = tryCreateServiceClient();
+  if (!client) return unconfigured;
+  const wait = await claimAuthEmail(client, email);
+  if (wait) return { ok: false, message: cooldownMessage(wait) };
+  const origin = await linkOrigin();
+  deliverLater(client, email, () => sendRecoveryLink(client, email, origin));
   return { ok: true, message: "Se existir uma conta com este email, vai receber um link para definir uma nova palavra-passe." };
 }
 

@@ -5,7 +5,7 @@ description: Regra de interface da Steevanz para estados de carregamento. Usar s
 
 # Skeletons e atualizações parciais
 
-O site corre do lado do servidor e algumas ações demoram (importações do Google, Apify,
+O site corre do lado do servidor e algumas ações demoram (leituras do Google pelo leitor,
 Supabase). O utilizador tem de perceber **que algo está a acontecer e que partes da página
 estão a mudar**, sem ecrãs em branco nem spinners soltos.
 

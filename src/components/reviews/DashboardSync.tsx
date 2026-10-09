@@ -32,7 +32,6 @@ export function UpdateProgress({ job, reader }: { job: ImportJob; reader: Reader
         O leitor está desligado: o pedido fica em espera <InfoTip label="Leitor desligado">{readerTexts.reader}</InfoTip>
       </span>
     );
-  if (reader.service === "dataforseo") return <span>A ler o Google… (normalmente menos de 1 minuto)</span>;
   return <span>{reader.busy ? "À espera do leitor… (está a terminar outro pedido)" : "À espera do leitor…"}</span>;
 }
 

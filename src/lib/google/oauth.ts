@@ -35,9 +35,26 @@ export function googleOAuthConfig(env: Record<string, string | undefined> = proc
   return { clientId, clientSecret, tokenKey };
 }
 
-/** True when the three env vars are set (and the key is 32 bytes): the panel can offer "Ligar ao Google". */
+/**
+ * True when the three env vars are set (and the key is 32 bytes): "Ligar ao Google" reaches Google.
+ * The button is never disabled: without this, /api/google/connect returns to the panel's Google page
+ * with an explanation (estado=indisponivel).
+ */
 export function googleOAuthConfigured(): boolean {
   return googleOAuthConfig() !== null;
+}
+
+/**
+ * What is missing for the connection, shown to admins only (names, never values): each missing env
+ * var, and GOOGLE_TOKEN_KEY when it is set but is not 32 bytes in base64. Empty = configured.
+ */
+export function googleOAuthMissing(env: Record<string, string | undefined> = process.env): string[] {
+  const missing: string[] = [];
+  if (!env.GOOGLE_OAUTH_CLIENT_ID?.trim()) missing.push("GOOGLE_OAUTH_CLIENT_ID");
+  if (!env.GOOGLE_OAUTH_CLIENT_SECRET?.trim()) missing.push("GOOGLE_OAUTH_CLIENT_SECRET");
+  if (!env.GOOGLE_TOKEN_KEY?.trim()) missing.push("GOOGLE_TOKEN_KEY");
+  else if (!parseTokenKey(env.GOOGLE_TOKEN_KEY)) missing.push("GOOGLE_TOKEN_KEY (inválida: tem de ter 32 bytes em base64)");
+  return missing;
 }
 
 export class GoogleNotConfiguredError extends Error {

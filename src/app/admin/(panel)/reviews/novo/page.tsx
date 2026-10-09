@@ -5,6 +5,7 @@ import { MapsLinkField } from "@/components/admin/MapsLinkField";
 import { AdminPageHeader, adminInputClasses, adminLabelClasses, Panel } from "@/components/backoffice/ui";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createBusinessFromMapsLink } from "@/lib/admin/review-actions";
+import { competitorLimit, competitorRadiusKm, competitorRadiusOptions, radiusLabel } from "@/lib/reviews/competitors";
 
 export const metadata: Metadata = { title: "Novo negócio" };
 
@@ -28,6 +29,17 @@ export default async function NewReviewBusinessPage() {
             O nome e o endereço do painel saem do link, e a primeira importação vai buscar as reviews, a nota, a categoria e a concorrência. O resto (email de
             alertas, placas, serviços) acrescenta-se depois, na página do negócio.
           </p>
+          <label className={adminLabelClasses}>
+            Raio da concorrência
+            <select name="competitor_radius_km" defaultValue={competitorRadiusKm} className={`${adminInputClasses} h-11 w-full sm:w-48`}>
+              {competitorRadiusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {radiusLabel(option)}
+                </option>
+              ))}
+            </select>
+            <span className="text-xs font-normal text-subtle">Até {competitorLimit} concorrentes da mesma categoria neste raio. Depois, só um admin o pode mudar, na página do negócio.</span>
+          </label>
           <fieldset className="flex flex-col gap-3 rounded-2xl border border-line p-4">
             <legend className="px-1 text-sm font-semibold text-text">Dono do negócio (opcional)</legend>
             <p className="-mt-1 text-xs text-subtle">

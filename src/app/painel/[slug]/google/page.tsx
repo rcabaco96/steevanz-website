@@ -9,7 +9,8 @@ import { AlertIcon, Check, ClockIcon, GoogleG, SparkleIcon } from "@/components/
 import { InfoTip } from "@/components/reviews/InfoTip";
 import { buttonClasses } from "@/components/ui/Button";
 import { emptyGoogleLink, loadGoogleLink, type GoogleLink } from "@/lib/google/connection";
-import { googleOAuthConfigured } from "@/lib/google/oauth";
+import { getSession } from "@/lib/auth/session";
+import { googleOAuthConfigured, googleOAuthMissing } from "@/lib/google/oauth";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDateTime } from "@/lib/reviews/format";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
@@ -62,7 +63,7 @@ function Notice({ tone, children }: { tone: "success" | "gold" | "danger"; child
   );
 }
 
-function EstadoNotice({ estado, link }: { estado: Estado | null; link: GoogleLink }) {
+function EstadoNotice({ estado, link, missing }: { estado: Estado | null; link: GoogleLink; missing: string[] | null }) {
   if (estado === "ligado" && link.status === "connected")
     return (
       <Notice tone="success">
@@ -85,7 +86,16 @@ function EstadoNotice({ estado, link }: { estado: Estado | null; link: GoogleLin
   if (estado === "indisponivel")
     return (
       <Notice tone="gold">
-        <strong>A ligação ao Google ainda não está ativa.</strong> A Steevanz está a ativá-la; assim que estiver pronta, pode ligar aqui o seu perfil.
+        <strong>A ligação ao Google ainda não está ativa.</strong> A Steevanz ainda está a concluir a configuração da ligação com a Google, por isso não o
+        enviámos para o ecrã de autorização. Não precisa de fazer nada: o seu painel continua a funcionar e, assim que a ligação estiver ativa, este mesmo
+        botão leva-o diretamente ao Google (demora menos de um minuto).
+        {missing?.length ? (
+          // Admins only: what the server is missing (names of the env vars, never their values).
+          <span className="mt-2 block text-sm text-muted">
+            <strong className="text-text">Só para administradores:</strong> faltam no servidor {missing.join(", ")}. Defina-as na Vercel (Settings → Environment
+            Variables, Production e Preview) e faça um novo deploy.
+          </span>
+        ) : null}
       </Notice>
     );
   if (estado === "cancelado" && link.status !== "connected")
@@ -123,25 +133,24 @@ const headlines: Record<GoogleLink["status"], { title: string; lead: string }> =
   },
 };
 
+/**
+ * Always clickable while the customer isn't connected. A plain navigation: the route redirects to
+ * Google's consent screen and back here; while the connection isn't set up on the server it comes
+ * straight back with estado=indisponivel, which explains why.
+ */
 function ConnectButton({ slug, configured, label = "Ligar com o Google" }: { slug: string; configured: boolean; label?: string }) {
-  if (!configured)
-    return (
-      <div className="flex flex-col gap-2">
-        <button type="button" disabled aria-describedby="google-unavailable" className={buttonClasses("primary", "lg", "w-full sm:w-auto sm:self-start")}>
-          <GoogleG size={18} />
-          {label}
-        </button>
-        <p id="google-unavailable" className="text-sm text-muted">
-          A ligação ao Google está a ser ativada pela Steevanz. Assim que estiver pronta, este botão fica disponível e a ligação demora menos de um minuto.
-        </p>
-      </div>
-    );
-  return (
-    // A plain navigation: the route redirects to Google's consent screen and back here.
+  const button = (
     <a href={googleConnectPath(slug)} className={buttonClasses("primary", "lg", "w-full sm:w-auto sm:self-start")}>
       <GoogleG size={18} />
       {label}
     </a>
+  );
+  if (configured) return button;
+  return (
+    <div className="flex flex-col gap-2">
+      {button}
+      <p className="text-sm text-muted">A Steevanz ainda está a concluir a ligação com a Google. Pode carregar no botão: explicamos em que ponto está.</p>
+    </div>
   );
 }
 
@@ -280,12 +289,14 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
   if (!data) notFound();
   const { link, name } = data;
   const configured = googleOAuthConfigured();
+  // An admin sees the customer's page as is, plus which server settings are missing.
+  const missing = !configured && (await getSession()).state === "admin" ? googleOAuthMissing() : null;
   const headline = headlines[link.status];
   const pill = statusPill[link.status];
 
   return (
     <div className="flex flex-col gap-10 sm:gap-14">
-      <EstadoNotice estado={estado} link={link} />
+      <EstadoNotice estado={estado} link={link} missing={missing} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_27rem] lg:items-start lg:gap-10">
         <section aria-labelledby="google-title" className="flex min-w-0 flex-col gap-5">
@@ -308,7 +319,7 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
           </div>
           <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">{headline.lead}</p>
           {link.status === "not_connected" ? <ConnectButton slug={slug} configured={configured} /> : null}
-          {link.status === "pending_location" && configured ? (
+          {link.status === "pending_location" ? (
             <a href={googleConnectPath(slug)} className="self-start text-sm font-semibold text-accent-text underline-offset-4 hover:underline">
               Usar outra conta Google
             </a>

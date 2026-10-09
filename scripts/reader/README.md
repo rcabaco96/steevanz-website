@@ -1,8 +1,23 @@
 # Leitor de reviews Steevanz
 
 Programa que lê as reviews do Google Maps num navegador **visível** (Edge no Windows; Chrome ou
-Chromium num servidor Linux) e as grava no Supabase. Substitui o Apify. Vai buscando os pedidos à
-fila `review_import_jobs` (painel e rotina diária).
+Chromium num servidor Linux) e as grava no Supabase. É a única fonte de reviews (grátis; sem
+serviços pagos), além da API oficial da Google para os clientes com o Perfil de Empresa ligado. Vai
+buscando os pedidos à fila `review_import_jobs` (painel, admin e rotinas): só os que têm
+`provider = 'reader'`; pedidos antigos de fornecedores que já não existem passam para o leitor.
+
+## Com que frequência vê a fila
+
+- **A cada ~2 s** quando tem vagas livres: depois de cada verificação espera 2 s (`pollMs`) e volta
+  a ver os pedidos `queued` (até 50, por prioridade e antiguidade). Sem vagas livres não pergunta.
+  Sem backoff, sem long-poll e sem realtime.
+- **Sinal de vida** em `review_reader_status` a cada 5 s (`heartbeatMs`) e sempre que começa ou
+  acaba um pedido. O painel conta o leitor como ligado com um sinal nos últimos 30 s.
+- **Ao arrancar:** pedidos deixados a meio voltam à fila (uma vez) e pedidos de fornecedores antigos
+  passam para o leitor (também a cada minuto).
+- **A cada minuto** vê se passou uma hora da concorrência (10:00 / 19:00) e, se sim, chama
+  `READER_SITE_URL/api/cron/competition` (nova tentativa 5 min depois de uma falha).
+- `READER_SLOTS` (por omissão 4) = pedidos ao mesmo tempo, um separador cada.
 
 ```
 npm run reader
@@ -62,7 +77,7 @@ Como serviço, um `systemd` com `ExecStart=/usr/bin/xvfb-run -a -s "-screen 0 19
 | `READER_BROWSER_ARGS` | Opções extra do navegador, ex. `--no-sandbox` se correr como root.       |
 | `READER_PROFILE_DIR`  | Pasta do perfil do navegador (por omissão `~/.steevanz-reader`).         |
 | `READER_PORT`         | Porta DevTools (por omissão 9350).                                       |
-| `READER_SITE_URL`     | Site que envia os alertas por email e põe a concorrência na fila (por omissão `https://steevanz.com`; em testes `http://localhost:3000`). |
+| `READER_SITE_URL`     | Site que envia os alertas por email e põe a concorrência na fila (por omissão `https://steevanz.com`). Tem de ser o site em uso (ex.: o preview do ramo `login-page`); `http://localhost:3000` só com o `next dev` a correr. A fila em si é lida diretamente do Supabase. |
 
 ## Testar sem mexer em nada
 

@@ -17,7 +17,7 @@ const tones: Record<"invite" | "pending" | "error", Tone> = {
  * their Google Business Profile (business rule: the panel always encourages connecting). One line
  * on phones (short message + button), the full pitch from sm. Hidden on the 404 page.
  */
-export function GoogleConnectBanner({ slug, status, configured }: { slug: string; status: Exclude<GoogleLinkStatus, "connected">; configured: boolean }) {
+export function GoogleConnectBanner({ slug, status }: { slug: string; status: Exclude<GoogleLinkStatus, "connected"> }) {
   const page = googlePagePath(slug);
 
   const content =
@@ -47,9 +47,10 @@ export function GoogleConnectBanner({ slug, status, configured }: { slug: string
             mid: "Verifique o seu perfil: ligue o Perfil de Empresa Google",
             long: "Verifique o seu perfil: ligue o Google e ganhe o selo «Perfil verificado», atualizações em segundos e respostas publicadas diretamente",
             action: "Ligar Google",
-            // Straight to Google's consent screen; while the connection isn't active yet, to the explanation.
-            href: configured ? googleConnectPath(slug) : page,
-            external: configured,
+            // Straight to Google's consent screen; while the connection isn't set up yet, the route
+            // returns to the Google page with the explanation (estado=indisponivel).
+            href: googleConnectPath(slug),
+            external: true,
           };
 
   const buttonClass = `inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full px-3.5 text-sm font-semibold whitespace-nowrap transition-[background-color,opacity] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring min-[360px]:px-4 ${content.tone.button}`;

@@ -65,14 +65,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
   // Figures: what the running import has read, or what we already have (idle, queued).
   let figures = stored.count ? saved : "Ainda não há reviews importadas para este negócio.";
   let detail: string | null = stored.newestAt ? `A mais recente é de ${formatDate(stored.newestAt)}.` : null;
-  const hosted = job?.provider === "dataforseo" || job?.provider === "apify";
-  if (job?.status === "running" && job.provider === "apify") {
-    figures = job.reviewsDone ? `A importar… ${number.format(job.reviewsDone)} reviews lidas` : "A importar todas as reviews do Google…";
-    detail = readerTexts.apify;
-  } else if (job?.status === "running" && hosted) {
-    figures = "A importar todas as reviews do Google…";
-    detail = readerTexts.hosted;
-  } else if (job?.status === "running" && progress.total === null) {
+  if (job?.status === "running" && progress.total === null) {
     figures = "A abrir o Google Maps…";
     detail = `${number.format(job.reviewsDone)} reviews lidas`;
   } else if (job?.status === "running") {
@@ -89,14 +82,11 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
   // What the reader is doing with this customer's full import.
   let status: string | null = null;
   if (job?.status === "queued")
-    status =
-      hosted || reader.service === "dataforseo"
-        ? "Pedido recebido. A enviar ao Google…"
-        : !reader.online
-          ? "O leitor está desligado: o pedido fica em espera."
-          : reader.busy
-            ? "O leitor está a terminar outro pedido; esta importação vem a seguir."
-            : "Pedido recebido. O leitor vai começar…";
+    status = !reader.online
+      ? "O leitor está desligado: o pedido fica em espera."
+      : reader.busy
+        ? "O leitor está a terminar outro pedido; esta importação vem a seguir."
+        : "Pedido recebido. O leitor vai começar…";
   else if (job?.status === "done")
     status = `Última importação completa${job.finishedAt && now ? ` ${relativeTime(job.finishedAt, now)}` : ""}: ${number.format(job.reviewsDone)} reviews${elapsed !== null ? ` em ${duration(elapsed)}` : ""}.${job.error ? ` ${job.error}` : ""}`;
   else if (job?.status === "failed") status = `A última importação falhou. ${job.error ?? "Tente outra vez."}`;
@@ -127,7 +117,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
             aria-valuenow={progress.ratio !== null ? Math.round(progress.ratio * 100) : undefined}
             className="relative h-3 overflow-hidden rounded-full bg-surface-2"
           >
-            {progress.ratio !== null && !(job?.status === "running" && (job.reviewsDone === 0 || hosted)) ? (
+            {progress.ratio !== null && !(job?.status === "running" && job.reviewsDone === 0) ? (
               <div
                 className={`h-full rounded-full transition-[width] duration-700 ease-out ${active ? "bg-accent" : "bg-success/70"}`}
                 style={{ width: `${Math.max(2, progress.ratio * 100)}%` }}
@@ -143,7 +133,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
               {figures}{" "}
               {stored.count || active ? <InfoTip label="Reviews guardadas e tempo que falta">{readerTexts.progress}</InfoTip> : null}
             </span>
-            {active && progress.ratio !== null && !hosted ? <span className="font-semibold">{Math.round(progress.ratio * 100)}%</span> : null}
+            {active && progress.ratio !== null ? <span className="font-semibold">{Math.round(progress.ratio * 100)}%</span> : null}
           </p>
           {detail ? <p className="text-xs text-subtle">{detail}</p> : null}
         </div>
@@ -160,7 +150,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
             </a>
           </div>
         ) : null}
-        {job?.status === "running" && elapsed !== null && !hosted ? (
+        {job?.status === "running" && elapsed !== null ? (
           <p className="text-xs text-subtle">
             {duration(elapsed)} decorridos · {number.format(job.pagesDone)} pedidos ao Google
             {job.avgPageMs ? ` · ${decimal.format(job.avgPageMs / 1000)} s por pedido` : ""}
@@ -191,7 +181,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
           </p>
           <p className="text-xs text-subtle">
             Faltam ~{number.format(competition.pending)} (~{duration(competition.pending * 25)}). A tabela de concorrência vai-se preenchendo.
-            {!reader.online && reader.service === "reader" ? " O leitor está desligado: continua quando for ligado." : ""}
+            {!reader.online ? " O leitor está desligado: continua quando for ligado." : ""}
           </p>
         </div>
       ) : searching ? (
@@ -212,7 +202,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
           >
             {starting ? "A pedir…" : job?.status === "done" ? "Importar outra vez" : "Importar histórico completo"}
           </button>
-          {!reader.online && reader.service === "reader" ? <p className="text-xs text-subtle">O pedido fica em espera até o leitor ser ligado.</p> : null}
+          {!reader.online ? <p className="text-xs text-subtle">O pedido fica em espera até o leitor ser ligado.</p> : null}
           {error ? (
             <p role="alert" className="text-sm text-danger">
               {error}

@@ -1,4 +1,3 @@
-import { googleOAuthConfigured } from "@/lib/google/oauth";
 import { panelAccess } from "@/lib/reviews/access";
 import { GoogleConnectBanner } from "./GoogleConnectBanner";
 import { GoogleLinkBadge } from "./GoogleLinkBadge";
@@ -14,7 +13,7 @@ export async function GoogleBarSlot({ slug }: { slug: string }) {
   if ((await panelAccess(slug)) !== "allowed") return null;
   const status = await getPanelGoogleStatus(slug);
   if (!status || status === "connected") return null;
-  return <GoogleConnectBanner slug={slug} status={status} configured={googleOAuthConfigured()} />;
+  return <GoogleConnectBanner slug={slug} status={status} />;
 }
 
 /** "Google ligado ✓" next to the theme toggle once it is connected. */

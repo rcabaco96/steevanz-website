@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { autoRemaining, defaultReplySettings, replyWindowStart, shouldAutoApprove, toneFingerprint } from "../src/lib/reviews/replies.ts";
+import { autoRemaining, defaultReplySettings, inAutoReplyWindow, replyWindowStart, shouldAutoApprove, toneFingerprint } from "../src/lib/reviews/replies.ts";
 import { detectLanguage, replyLanguage } from "../src/lib/reviews/reply-languages.ts";
 import {
   applyAddress,
@@ -40,10 +40,15 @@ describe("automatic replies", () => {
   });
 });
 
-describe("reply window", () => {
-  it("only reaches 30 days before the setup, so old unanswered reviews are left out", () => {
+describe("automatic approval window", () => {
+  it("reaches 30 days before the setup", () => {
     assert.equal(replyWindowStart("2026-10-03T12:00:00.000Z")?.toISOString(), "2026-09-03T12:00:00.000Z");
     assert.equal(replyWindowStart(null), null);
+  });
+  it("auto-approves only recent reviews: replies to the older stored history wait for the owner", () => {
+    assert.equal(inAutoReplyWindow("2026-10-03T12:00:00.000Z", "2026-09-03T12:00:00.000Z"), true);
+    assert.equal(inAutoReplyWindow("2026-10-03T12:00:00.000Z", "2026-09-03T11:59:59.000Z"), false);
+    assert.equal(inAutoReplyWindow(null, "2026-10-01T00:00:00.000Z"), false);
   });
 });
 

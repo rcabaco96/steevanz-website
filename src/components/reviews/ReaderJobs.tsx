@@ -1,16 +1,11 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useEffectEvent, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { isActive, type ImportResponse, type ReaderJobsState } from "@/lib/reviews/import-jobs";
+import { maxPollMs, nextPollDelay, pollFingerprint, pollingNeeded, type ImportResponse, type ReaderJobsState } from "@/lib/reviews/import-jobs";
 
-/**
- * While the reader works on a job of this customer the panel checks every second; while a job only
- * waits in the queue (reader busy or switched off) every 5 s; otherwise every 10 s (heartbeat).
- */
-const activePollMs = 1000;
-const queuedPollMs = 5000;
-const idlePollMs = 10_000;
 const clockTickMs = 5000;
+/** Idle: one check when the tab becomes visible again, if the last one is older than this. */
+const idleRecheckMs = 60_000;
 
 type Listener = (previous: ReaderJobsState, next: ReaderJobsState) => void;
 
@@ -38,14 +33,18 @@ function subscribeVisibility(onChange: () => void) {
 /**
  * Shares the reader's jobs of one customer between the cards that show them ("Atualizar reviews",
  * "Histórico completo", "Atualizar" in Respostas) with a single poll of GET /import, which only
- * reads Supabase. No polling while the tab is hidden; one check as soon as it is visible again.
+ * reads Supabase. It polls only while a job of the customer is queued or running (pollingNeeded):
+ * every ~1.5 s while the reader works on it, every ~4 s while it waits, and 1.5× longer after each
+ * check that brings nothing new (up to 30 s). It stops when the jobs are done or failed, pauses while
+ * the tab is hidden and checks once as soon as it is visible again.
  */
 export function ReaderJobsProvider({ slug, initial, children }: { slug: string; initial: ReaderJobsState; children: ReactNode }) {
   const [state, setState] = useState(initial);
   const current = useRef(initial);
   const listeners = useRef(new Set<Listener>());
   const inFlight = useRef(false);
-  const skipFirstPoll = useRef(true);
+  /** When the state last came from the server (render, poll or POST); 0 until mounted. */
+  const freshAt = useRef(0);
   const url = `/api/painel/${encodeURIComponent(slug)}/import`;
   const visible = useSyncExternalStore(subscribeVisibility, () => document.visibilityState === "visible", () => true);
   const now = useSyncExternalStore(
@@ -57,6 +56,7 @@ export function ReaderJobsProvider({ slug, initial, children }: { slug: string; 
   const apply = useCallback((next: ReaderJobsState) => {
     const previous = current.current;
     current.current = next;
+    freshAt.current = Date.now();
     setState(next);
     for (const listener of listeners.current) listener(previous, next);
   }, []);
@@ -68,34 +68,60 @@ export function ReaderJobsProvider({ slug, initial, children }: { slug: string; 
     };
   }, []);
 
-  const active = isActive(state.full) || isActive(state.update);
-  const running = state.full?.status === "running" || state.update?.status === "running";
-  const pollMs = running ? activePollMs : active ? queuedPollMs : idlePollMs;
+  /** One check of GET /import; false when it failed (the last known state is kept). */
+  const check = useEffectEvent(async (): Promise<boolean> => {
+    if (inFlight.current) return true;
+    inFlight.current = true;
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      const body = (await response.json()) as ImportResponse;
+      if (!response.ok || "error" in body) return false;
+      apply(body);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      inFlight.current = false;
+    }
+  });
+
+  // The page was just rendered with fresh data.
+  useEffect(() => {
+    freshAt.current = Date.now();
+  }, []);
+
+  const needed = pollingNeeded(state);
   useEffect(() => {
     if (!visible) return;
+    if (!needed) {
+      // Nothing to wait for: no polling, only one check when coming back to a tab left a while.
+      if (freshAt.current && Date.now() - freshAt.current > idleRecheckMs) void check();
+      return;
+    }
     let cancelled = false;
-    const poll = async () => {
-      if (inFlight.current) return;
-      inFlight.current = true;
-      try {
-        const response = await fetch(url, { cache: "no-store" });
-        const body = (await response.json()) as ImportResponse;
-        if (!cancelled && response.ok && !("error" in body)) apply(body);
-      } catch {
-        // Keep the last known state; the next poll retries.
-      } finally {
-        inFlight.current = false;
-      }
+    let timer: number | undefined;
+    let delay: number | null = null;
+    const step = async () => {
+      const before = pollFingerprint(current.current);
+      const ok = await check();
+      if (cancelled) return;
+      // Done or failed: the effect stops (it runs again with needed = false).
+      if (!pollingNeeded(current.current)) return;
+      delay = ok ? nextPollDelay(current.current, delay, pollFingerprint(current.current) !== before) : Math.min(maxPollMs, (delay ?? 2000) * 2);
+      timer = window.setTimeout(() => void step(), delay);
     };
-    // The page was just rendered with fresh data; afterwards (tab visible again, job started) check at once.
-    if (skipFirstPoll.current) skipFirstPoll.current = false;
-    else void poll();
-    const timer = window.setInterval(() => void poll(), pollMs);
+    // Fresh data (just rendered, or a job just queued): wait one interval; otherwise (tab visible again) check now.
+    const first = nextPollDelay(current.current, null, true);
+    const age = Date.now() - freshAt.current;
+    if (age < first) {
+      delay = first;
+      timer = window.setTimeout(() => void step(), first - age);
+    } else void step();
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      window.clearTimeout(timer);
     };
-  }, [pollMs, apply, url, visible]);
+  }, [needed, visible]);
 
   const value = useMemo(() => ({ state, now, apply, subscribe }), [state, now, apply, subscribe]);
   return <Context.Provider value={value}>{children}</Context.Provider>;

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { describe, it } from "node:test";
 import { createState, decryptSecret, encryptSecret, parseTokenKey, sameState, signState, verifyState } from "../src/lib/google/crypto.ts";
-import { buildAuthUrl, emailFromIdToken, googleOAuthConfig, grantedScopes, redirectUriFor } from "../src/lib/google/oauth.ts";
+import { buildAuthUrl, emailFromIdToken, googleOAuthConfig, googleOAuthMissing, grantedScopes, redirectUriFor } from "../src/lib/google/oauth.ts";
 
 const key = randomBytes(32);
 const otherKey = randomBytes(32);
@@ -86,6 +86,15 @@ describe("OAuth request", () => {
     assert.notEqual(googleOAuthConfig(env), null);
     assert.equal(googleOAuthConfig({ ...env, GOOGLE_OAUTH_CLIENT_SECRET: "" }), null);
     assert.equal(googleOAuthConfig({ ...env, GOOGLE_TOKEN_KEY: "short" }), null);
+  });
+
+  it("names what is missing (for admins), never the values", () => {
+    const env = { GOOGLE_OAUTH_CLIENT_ID: "id", GOOGLE_OAUTH_CLIENT_SECRET: "secret", GOOGLE_TOKEN_KEY: key.toString("base64") };
+    assert.deepEqual(googleOAuthMissing(env), []);
+    assert.deepEqual(googleOAuthMissing({}), ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET", "GOOGLE_TOKEN_KEY"]);
+    const [invalid] = googleOAuthMissing({ ...env, GOOGLE_TOKEN_KEY: "short" });
+    assert.match(invalid, /^GOOGLE_TOKEN_KEY \(inválida/);
+    assert.ok(!invalid.includes("short"));
   });
 
   it("reads the email from the id_token and the granted scopes", () => {

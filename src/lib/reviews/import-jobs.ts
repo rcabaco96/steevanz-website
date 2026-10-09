@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { importSecondsLeft } from "./maps-reader.ts";
+import { readerProvider } from "./reader-queue.ts";
 
 /**
  * Jobs of the Steevanz reader (scripts/reader, on a local computer) as seen by the panel. The
@@ -22,8 +23,6 @@ export interface ImportJob {
   id: string;
   kind: JobKind;
   status: JobStatus;
-  /** Who runs it: DataForSEO (results all at once, ~30 s on the priority queue), Apify (full import, a few minutes), Google's API or the local reader. */
-  provider: "dataforseo" | "apify" | "google" | "reader";
   priority: number;
   reviewsExpected: number | null;
   reviewsDone: number;
@@ -37,9 +36,8 @@ export interface ImportJob {
   finishedAt: string | null;
 }
 
+/** The Steevanz reader, the only one that reads Google for non-verified customers. */
 export interface ReaderStatus {
-  /** Who reads Google: DataForSEO (hosted, always available) or the local reader (fallback). */
-  service: "dataforseo" | "reader";
   online: boolean;
   lastSeenAt: string | null;
   /** Working on a job right now (maybe another customer's). */
@@ -64,6 +62,8 @@ export interface CompetitionProgress {
   read: number;
   /** Still waiting for the reader or being read. */
   pending: number;
+  /** Of the pending, those with a read queued or running right now (the others have no job yet). */
+  active: number;
 }
 
 /** Everything the panel needs about the reader for one customer (polled while a job runs). */
@@ -92,7 +92,7 @@ export type ImportResponse = ReaderJobsState | { error: string };
 export const emptyReaderJobs: ReaderJobsState = {
   full: null,
   update: null,
-  reader: { service: "reader", online: false, lastSeenAt: null, busy: false },
+  reader: { online: false, lastSeenAt: null, busy: false },
   lastSyncedAt: null,
   stored: { count: 0, googleTotal: null, newestAt: null },
   competition: null,
@@ -119,11 +119,42 @@ export function competitionProgress(placeIds: string[], jobs: { place_id: string
     if (!known || job.requested_at > known.requested_at) latest.set(job.place_id, job);
   }
   const places = [...new Set(placeIds)];
-  const read = places.filter((placeId) => {
-    const status = latest.get(placeId)?.status;
-    return status === "done" || status === "failed";
-  }).length;
-  return { total: places.length, read, pending: places.length - read };
+  const statuses = places.map((placeId) => latest.get(placeId)?.status);
+  const read = statuses.filter((status) => status === "done" || status === "failed").length;
+  const active = statuses.filter((status) => status === "queued" || status === "running").length;
+  return { total: places.length, read, pending: places.length - read, active };
+}
+
+// --- Polling of the panel (ReaderJobs.tsx) -----------------------------------------------------------
+
+/** First check while the reader works on a job (progress changes every page, ~1–2 s). */
+export const runningPollMs = 1500;
+/** First check while a job only waits in the queue. */
+export const queuedPollMs = 4000;
+/** Checks that see no change wait 1.5× longer each time, up to this. */
+export const maxPollMs = 30_000;
+export const pollBackoff = 1.5;
+
+/**
+ * The panel only polls while a job of this customer is queued or running: the full import, an
+ * update, the competitor search, or reads of its competitors. Nothing to wait for: no polling.
+ */
+export function pollingNeeded(state: ReaderJobsState): boolean {
+  return isActive(state.full) || isActive(state.update) || isActive(state.discover) || (state.competition?.active ?? 0) > 0;
+}
+
+/** Delay before the next check: the base while things change, longer and longer while they don't. */
+export function nextPollDelay(state: ReaderJobsState, previousDelay: number | null, changed: boolean): number {
+  const running = state.full?.status === "running" || state.update?.status === "running" || state.discover?.status === "running";
+  const base = running ? runningPollMs : queuedPollMs;
+  if (changed || previousDelay === null) return base;
+  return Math.min(maxPollMs, Math.max(base, Math.round(previousDelay * pollBackoff)));
+}
+
+/** What the panel shows from a state (to tell whether a check brought anything new). */
+export function pollFingerprint(state: ReaderJobsState): string {
+  const job = (value: ImportJob | null) => (value ? [value.id, value.status, value.reviewsDone, value.reviewsNew, value.pagesDone, value.reviewsExpected] : null);
+  return JSON.stringify([job(state.full), job(state.update), job(state.discover), state.competition, state.reader.online, state.reader.busy, state.lastSyncedAt, state.stored.count]);
 }
 
 /** Minutes since the last sync when it is within the 15-minute rule, else null (a new read is allowed). */
@@ -193,7 +224,6 @@ interface JobRow {
   id: string;
   kind: JobKind;
   status: JobStatus;
-  provider: ImportJob["provider"];
   priority: number;
   reviews_expected: number | null;
   reviews_done: number;
@@ -206,14 +236,13 @@ interface JobRow {
   finished_at: string | null;
 }
 
-const jobColumns = "id, kind, status, provider, priority, reviews_expected, reviews_done, reviews_new, pages_done, avg_page_ms, error, requested_at, started_at, finished_at";
+const jobColumns = "id, kind, status, priority, reviews_expected, reviews_done, reviews_new, pages_done, avg_page_ms, error, requested_at, started_at, finished_at";
 
 function toJob(row: JobRow): ImportJob {
   return {
     id: row.id,
     kind: row.kind,
     status: row.status,
-    provider: row.provider ?? "reader",
     priority: row.priority,
     reviewsExpected: row.reviews_expected,
     reviewsDone: row.reviews_done,
@@ -261,15 +290,10 @@ export async function loadReaderJobs(client: SupabaseClient, businessId: string)
   if (business.error) throw new Error(business.error.message);
   const lastSeenAt = reader.data?.last_seen_at ?? null;
   const online = isReaderOnline(lastSeenAt, Date.now());
-  // Same checks as dataForSeoConfigured() and fullImportSource(), inlined to keep this module test-friendly:
-  // the reader's status shows unless DataForSEO runs the imports.
-  const viaDataForSeo = Boolean(process.env.DATA_FOR_SEO_LOGIN && process.env.DATA_FOR_SEO_PASSWORD) && process.env.REVIEWS_FULL_IMPORT_SOURCE?.trim().toLowerCase() === "dataforseo";
   return {
     full,
     update,
-    reader: viaDataForSeo
-      ? { service: "dataforseo", online: true, lastSeenAt: null, busy: false }
-      : { service: "reader", online, lastSeenAt, busy: online && Boolean(reader.data?.busy) },
+    reader: { online, lastSeenAt, busy: online && Boolean(reader.data?.busy) },
     lastSyncedAt: business.data?.last_synced_at ?? null,
     stored: { count: count.count ?? 0, googleTotal: business.data?.reviews_total ?? null, newestAt: newest.data?.published_at ?? null },
     competition: await loadCompetitionProgress(client, businessId, business.data?.competitors_refreshed_at ?? null),
@@ -282,7 +306,7 @@ async function loadCompetitionProgress(client: SupabaseClient, businessId: strin
   const { data: places, error } = await client.from("competitors").select("place_id").eq("business_id", businessId).eq("is_self", false).eq("excluded", false);
   if (error) throw new Error(error.message);
   const placeIds = ((places ?? []) as { place_id: string }[]).map((row) => row.place_id);
-  if (!placeIds.length) return { total: 0, read: 0, pending: 0 };
+  if (!placeIds.length) return { total: 0, read: 0, pending: 0, active: 0 };
   // Reads asked for from a minute before the search (the search queues them right after saving).
   const since = new Date(Date.parse(searchedAt) - 60_000).toISOString();
   const { data: jobs, error: jobsError } = await client
@@ -303,7 +327,7 @@ async function loadCompetitionProgress(client: SupabaseClient, businessId: strin
 export async function queueJob(client: SupabaseClient, businessId: string, kind: JobKind, priority: number): Promise<ImportJob> {
   const { data, error } = await client
     .from("review_import_jobs")
-    .insert({ business_id: businessId, kind, priority, requested_by: "panel" })
+    .insert({ business_id: businessId, kind, priority, requested_by: "panel", provider: readerProvider })
     .select(jobColumns)
     .single<JobRow>();
   if (!error) return toJob(data);
@@ -330,7 +354,7 @@ export async function queueCompetitorSearch(client: SupabaseClient, businessId: 
   const { data, error } = await client.from("review_businesses").select("competitors_refreshed_at").eq("id", businessId).maybeSingle<{ competitors_refreshed_at: string | null }>();
   if (error) throw new Error(error.message);
   if (!data || data.competitors_refreshed_at) return false;
-  const insert = await client.from("review_import_jobs").insert({ business_id: businessId, kind: "discover", priority: jobPriority.firstImport, requested_by: requestedBy, provider: "reader" });
+  const insert = await client.from("review_import_jobs").insert({ business_id: businessId, kind: "discover", priority: jobPriority.firstImport, requested_by: requestedBy, provider: readerProvider });
   if (insert.error && insert.error.code !== "23505") throw new Error(insert.error.message);
   return !insert.error;
 }

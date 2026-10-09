@@ -7,7 +7,6 @@ import {
   newPlaceJobs,
   planCompetitionSlot,
   planDailyJobs,
-  planningProvider,
   readerAlertDue,
   repliesDue,
 } from "../src/lib/reviews/reader-queue.ts";
@@ -71,26 +70,15 @@ describe("competitor jobs (slots at 10:00 and 19:00 in Portugal)", () => {
     );
   });
 
-  it("with DataForSEO, checks each place's replies about once a day (numbers come from the zone snapshot)", () => {
-    // Slot 19:00 (18:00Z) handled at 19:00: the reference is the previous slot, 10:00 (09:00Z).
-    const at = new Date("2026-10-03T18:00:00Z");
-    const customers = [{ ...business("x", "2026-10-03T12:00:00Z"), place_id: "p4" }];
+  it("reads every place not read since the slot itself (numbers come from that read)", () => {
+    const at = new Date("2026-10-03T18:00:00Z"); // 19:00 slot
     const jobs = planCompetitionSlot(
-      customers,
-      [competitor("p1"), competitor("p2"), competitor("p3"), competitor("p4")],
-      [read("p1", "2026-10-03T09:20:00Z"), read("p2", "2026-10-03T08:00:00Z"), read("p3", null), read("p4", "2026-10-02T09:20:00Z")],
+      [],
+      [competitor("p1"), competitor("p2")],
+      [read("p1", "2026-10-03T09:20:00Z"), read("p2", "2026-10-03T18:05:00Z")],
       at,
-      { provider: "dataforseo" },
     );
-    assert.deepEqual(
-      jobs.map((job) => `${job.kind}:${job.place_id}:${job.provider}`),
-      ["competitor:p2:dataforseo", "competitor:p3:dataforseo"],
-    );
-    // The reader (no provider) still reads every place not read since the slot itself.
-    assert.deepEqual(
-      planCompetitionSlot(customers, [competitor("p1")], [read("p1", "2026-10-03T09:20:00Z")], at).map((job) => [job.place_id, job.provider]),
-      [["p1", undefined]],
-    );
+    assert.deepEqual(jobs.filter((job) => job.kind === "competitor").map((job) => job.place_id), ["p1"]);
   });
 
   it("reads 12 months of reviews only for places never measured, capped per slot", () => {
@@ -113,17 +101,11 @@ describe("competitor jobs (slots at 10:00 and 19:00 in Portugal)", () => {
     );
   });
 
-  it("planned jobs carry the provider: DataForSEO when configured, else the local reader", () => {
-    assert.equal(planningProvider(true), "dataforseo");
-    assert.equal(planningProvider(false), "reader");
-    const jobs = planDailyJobs([business("old", "2026-10-01T10:00:00Z"), { ...business("ver", null, null), google_link_status: "connected" }], now, planningProvider(true));
+  it("verified customers are left to the official Google API", () => {
+    const jobs = planDailyJobs([business("old", "2026-10-01T10:00:00Z"), { ...business("ver", null, null), google_link_status: "connected" }], now);
     assert.deepEqual(
-      jobs.map((job) => `${job.kind}:${job.business_id}:${job.provider}`),
-      ["update:old:dataforseo"],
-    );
-    assert.deepEqual(
-      newPlaceJobs(["p9"], [], "cron", now, "reader").map((job) => job.provider),
-      ["reader", "reader"],
+      jobs.map((job) => `${job.kind}:${job.business_id}`),
+      ["update:old"],
     );
   });
 

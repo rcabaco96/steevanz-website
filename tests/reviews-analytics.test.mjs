@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { computeAnalytics, computeRatingGoal, filterReviews, isNegative, isPositive, zonedParts } from "../src/lib/reviews/analytics.ts";
+import { computeAnalytics, computeRatingGoal, filterReviews, hasPlatesProduct, isNegative, isPositive, zonedParts } from "../src/lib/reviews/analytics.ts";
 import { themeSentences, themesIn, significantWords } from "../src/lib/reviews/text.ts";
 
 function review(id, publishedAt, rating = 5, extra = {}) {
@@ -89,9 +89,19 @@ describe("computeAnalytics", () => {
   });
 
   it("measures the effect of the plates on monthly reviews", () => {
-    const analytics = computeAnalytics(source, "all", now);
+    const withPlates = { ...source, business: { ...source.business, activeServices: ["nfc-google-reviews"] } };
+    const analytics = computeAnalytics(withPlates, "all", now);
     assert.ok(analytics.beforeAfter);
     assert.ok(analytics.beforeAfter.upliftPct > 100, `uplift ${analytics.beforeAfter.upliftPct}`);
+  });
+
+  it("has no before/after without the plates product, even with an install date", () => {
+    assert.equal(hasPlatesProduct(source.business), false);
+    const analytics = computeAnalytics(source, "all", now);
+    assert.equal(analytics.beforeAfter, null);
+    assert.equal(analytics.beforeAfterGap, "no-plates");
+    const otherProducts = { ...source, business: { ...source.business, activeServices: ["ai-reviews", "nfc-social"] } };
+    assert.equal(computeAnalytics(otherProducts, "all", now).beforeAfterGap, "no-plates");
   });
 
   it("reports the monthly pace of the last 90 days against the 90 days before, whatever the filter", () => {
@@ -158,7 +168,7 @@ describe("sample-size guards", () => {
   it("does not compare on a handful of data points", () => {
     const now = new Date("2026-10-02T12:00:00Z");
     const source = {
-      business: { id: "b", slug: "b", name: "B", googleMapsUrl: "", reviewUrl: "", platesInstalledOn: "2026-09-25", ratingTotal: 5, reviewsTotal: 2, lastSyncedAt: null, activeServices: [], category: null },
+      business: { id: "b", slug: "b", name: "B", googleMapsUrl: "", reviewUrl: "", platesInstalledOn: "2026-09-25", ratingTotal: 5, reviewsTotal: 2, lastSyncedAt: null, activeServices: ["nfc-google-reviews"], category: null },
       competition: null,
       reviews: [review("x", "2026-09-30T12:10:00Z", 5), review("y", "2025-09-01T12:00:00Z", 4)],
     };
@@ -228,6 +238,28 @@ describe("competitors", async () => {
   it("keeps places inside the radius, same category first, most reviewed first", () => {
     const picked = selectCompetitors(home, [place("far", "Marisqueira", 0.1, 900), place("a", "Marisqueira", 0.001, 100), place("b", "Pizzaria", 0.002, 5000), place("c", "Marisqueira", 0.003, 300), place("self", "Marisqueira", 0, 999)]);
     assert.deepEqual(picked.map((p) => p.placeId), ["c", "a", "b"]);
+  });
+
+  it("searches within the radius chosen per customer (5 or 10 km) and searches again when it changes", async () => {
+    const { discoveryDue, searchZoomFor, toRadiusKm, withinRadius } = await import("../src/lib/reviews/competitors.ts");
+    // ~0.06° of latitude ≈ 6.7 km: inside 10 km, outside 5 km.
+    const places = [place("near", "Marisqueira", 0.01, 100), place("mid", "Marisqueira", 0.06, 200)];
+    assert.deepEqual(selectCompetitors(home, places, 10).map((p) => p.placeId), ["mid", "near"]);
+    assert.deepEqual(selectCompetitors(home, places, 5).map((p) => p.placeId), ["near"]);
+    assert.equal(toRadiusKm(5), 5);
+    assert.equal(toRadiusKm("5"), 5);
+    assert.equal(toRadiusKm(null), 10);
+    assert.equal(toRadiusKm(7), 10);
+    assert.equal(searchZoomFor(10), 13);
+    assert.equal(searchZoomFor(5), 14);
+    assert.equal(withinRadius(4999, 5), true);
+    assert.equal(withinRadius(6700, 5), false);
+    assert.equal(withinRadius(null, 5), true);
+    const searched = "2026-10-01T10:00:00Z";
+    assert.equal(discoveryDue({ competitors_refreshed_at: null, competitor_radius_km: 10 }), true);
+    assert.equal(discoveryDue({ competitors_refreshed_at: searched, competitor_radius_km: 10, competitors_search_radius_km: null }), false);
+    assert.equal(discoveryDue({ competitors_refreshed_at: searched, competitor_radius_km: 5, competitors_search_radius_km: 10 }), true);
+    assert.equal(discoveryDue({ competitors_refreshed_at: searched, competitor_radius_km: 5, competitors_search_radius_km: 5 }), false);
   });
 
   it("orders same category, then category-search matches, then the broader search", () => {

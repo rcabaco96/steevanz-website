@@ -7,29 +7,27 @@ import {
   claimSchedulerKey,
   loadSchedulerState,
   restoreSchedulerKey,
-  runCollect,
   runCompetitionSlot,
   runCustomerJobs,
-  runDispatch,
   runReaderAlert,
+  runRetiredJobsHandover,
   runVerifiedSyncs,
   type PlanInputs,
 } from "../_scheduler/routines";
 
 export const maxDuration = 300;
 
-/** Last moment to start new zone snapshots / verified syncs, so dispatching still fits in 300 s. */
+/** Last moment to start new verified syncs, so the rest of the tick still fits in 300 s. */
 const planningBudgetMs = 150_000;
-/** At most this long collecting results of lost postbacks per tick (the rest waits for the next tick). */
-const collectBudgetMs = 45_000;
 
 /**
  * Scheduler tick, called every 15 minutes by Supabase pg_cron (pg_net; SQL in
  * supabase/migrations/20261004190000_scheduler.sql) and once a day by the Vercel cron as a safety
  * net. Decisions in src/lib/reviews/tick.ts (Portuguese time):
- * - 10:00 and 19:00: competitor work of the slot (zone snapshots + reply checks per distinct place);
- * - 22:00: customers' daily jobs, verified customers through the official Google API, reader alert;
- * - every tick: results of lost postbacks are collected and queued DataForSEO jobs are dispatched.
+ * - 10:00 and 19:00: competitor reads of the slot for the reader (one per distinct place);
+ * - 22:00: customers' daily jobs for the reader, verified customers through the official Google API,
+ *   reader-offline alert;
+ * - every tick: jobs left for a provider that no longer exists are handed to the reader.
  *
  * `?dry=1` (or READER_QUEUE_DRY_RUN=1) returns the decisions and plans without side effects;
  * with `?dry=1&at=<ISO>` the tick is evaluated at that moment.
@@ -96,17 +94,11 @@ export async function GET(request: NextRequest) {
     errors.push(`plan: ${errorText(error)}`);
   }
 
-  // Every tick, even when planning failed: finished tasks whose postback was lost, then the queue.
+  // Every tick, even when planning failed.
   try {
-    const left = 240_000 - (Date.now() - started);
-    response.collect = await runCollect(client, { dryRun, deadlineMs: Math.min(collectBudgetMs, Math.max(10_000, left)) });
+    response.retiredJobs = await runRetiredJobsHandover(client, { dryRun });
   } catch (error) {
-    errors.push(`collect: ${errorText(error)}`);
-  }
-  try {
-    response.dispatch = await runDispatch(client, { dryRun });
-  } catch (error) {
-    errors.push(`dispatch: ${errorText(error)}`);
+    errors.push(`retired jobs: ${errorText(error)}`);
   }
   // Establishment modules: booking reminders (day before) and waitlist data retention.
   try {

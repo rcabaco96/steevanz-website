@@ -11,9 +11,10 @@ function reply(body: ReplyRunResponse, status = 200) {
 }
 
 /**
- * Builds replies (by rules, free) for the recent reviews without one, from the reviews already in
- * Supabase. New reviews come from the local reader: the Respostas tab's "Atualizar" first queues an
- * update (POST /sync) and waits for it, then calls this. Vercel never reads Google.
+ * Builds replies (by rules, free) for the stored reviews without one: always and only from the
+ * reviews already in Supabase for this business (the whole stored history, in pages). It never
+ * reads Google nor waits for the reader or any other source; new reviews arrive through the
+ * panel's review update and the daily routine.
  */
 export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/[slug]/respostas">) {
   const { slug } = await ctx.params;
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/
 
   try {
     const result = await draftMissingReplies(client, business);
-    // "synced" is kept for the response shape: the import is now the reader's job.
+    // "synced" is kept for the response shape: this route never imports reviews.
     return reply({ status: "done", synced: false, ...result });
   } catch (error) {
     console.error("[replies] run failed:", error instanceof Error ? error.message : error);

@@ -6,7 +6,7 @@ import { normalize, themesIn, type ThemeId } from "./text.ts";
 import {
   defaultReplySettings,
   draftsPerRun,
-  replyWindowStart,
+  inAutoReplyWindow,
   shouldAutoApprove,
   staleClaimMinutes,
   toneFingerprint,
@@ -18,6 +18,34 @@ import {
   type ToneSettings,
 } from "./replies.ts";
 
+/**
+ * Business rule: the replies always work from every review stored in Supabase for the business
+ * (google_reviews, whatever source saved it: the reader, the Google Business Profile, older
+ * imports). Nothing here reads Google. Supabase returns at most 1000 rows per request, so every
+ * list is read in pages until the end (a plain .limit() above 1000 silently cuts the list).
+ */
+const pageSize = 1000;
+
+type PageResult = { data: unknown; error: { code?: string; message: string } | null };
+
+/** Reads every row of a query in pages of 1000. The query needs a stable order (a unique last key). */
+async function readAll<T>(build: (from: number, to: number) => PromiseLike<PageResult>): Promise<{ data: T[]; error: PageResult["error"] }> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await build(from, from + pageSize - 1);
+    if (error) return { data: rows, error };
+    const page = (data ?? []) as T[];
+    rows.push(...page);
+    if (page.length < pageSize) return { data: rows, error: null };
+  }
+}
+
+/** readAll, throwing on error. */
+async function readAllOrThrow<T>(build: (from: number, to: number) => PromiseLike<PageResult>): Promise<T[]> {
+  const { data, error } = await readAll<T>(build);
+  if (error) throw new Error(error.message);
+  return data;
+}
 
 interface SettingsRow {
   business_id: string;
@@ -259,31 +287,40 @@ function toInboxItem(row: DraftRow, settings: TranslationSettings): InboxItem | 
 
 export interface ReplyInbox {
   items: InboxItem[];
-  /** Recent unanswered reviews (inside the reply window) that still have no draft. */
+  /** Stored reviews without an owner reply that still have no draft (the whole stored history). */
   backlog: number;
-  /** Unanswered reviews older than the window: never sent to the AI. */
-  olderUnanswered: number;
+  /** Every review stored for the business: what the replies are built from. */
+  stored: number;
 }
 
-/** Live drafts (pending and approved), newest reviews first. */
+/** Live drafts (pending and approved), newest reviews first, and what is still to prepare. */
 export async function loadInbox(client: SupabaseClient, businessId: string, settings: ReplySettings): Promise<ReplyInbox> {
-  const since = (replyWindowStart(settings.onboardedAt) ?? new Date()).toISOString();
-  const [drafts, unanswered, older] = await Promise.all([
-    withLanguageColumns((stored) =>
-      client.from("review_reply_drafts").select(draftColumns(stored)).eq("business_id", businessId).in("status", ["pending", "approved", "generating"]).limit(1000),
+  const [drafts, unanswered, stored] = await Promise.all([
+    withLanguageColumns((withLanguage) =>
+      readAll<DraftRow>((from, to) =>
+        client
+          .from("review_reply_drafts")
+          .select(draftColumns(withLanguage))
+          .eq("business_id", businessId)
+          .in("status", ["pending", "approved", "generating"])
+          .order("id")
+          .range(from, to),
+      ),
     ),
-    client.from("google_reviews").select("review_id").eq("business_id", businessId).is("owner_reply", null).gte("published_at", since).limit(5000),
-    client.from("google_reviews").select("review_id", { count: "exact", head: true }).eq("business_id", businessId).is("owner_reply", null).lt("published_at", since),
+    readAll<{ review_id: string }>((from, to) =>
+      client.from("google_reviews").select("review_id").eq("business_id", businessId).is("owner_reply", null).order("review_id").range(from, to),
+    ),
+    client.from("google_reviews").select("review_id", { count: "exact", head: true }).eq("business_id", businessId),
   ]);
   if (drafts.error) throw new Error(drafts.error.message);
   if (unanswered.error) throw new Error(unanswered.error.message);
-  if (older.error) throw new Error(older.error.message);
-  const items = (drafts.data as unknown as DraftRow[])
+  if (stored.error) throw new Error(stored.error.message);
+  const items = drafts.data
     .map((row) => toInboxItem(row, settings))
     .filter((item): item is InboxItem => item !== null)
     .sort((a, b) => Date.parse(b.review.publishedAt) - Date.parse(a.review.publishedAt));
   const drafted = new Set(items.map((item) => item.review.id));
-  return { items, backlog: (unanswered.data ?? []).filter((row) => !drafted.has(row.review_id)).length, olderUnanswered: older.count ?? 0 };
+  return { items, backlog: unanswered.data.filter((row) => !drafted.has(row.review_id)).length, stored: stored.count ?? 0 };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -307,16 +344,18 @@ const snippetColumns = "id, kind, sentiment, theme, text, source, accepted, reje
 /** The owner's sentences learned under one tone (never mixed with other tones). */
 export async function loadLibrary(client: SupabaseClient, businessId: string, profileId: string | null): Promise<LibrarySnippet[]> {
   if (!profileId) return [];
-  const { data, error } = await client
-    .from("review_reply_snippets")
-    .select(snippetColumns)
-    .eq("business_id", businessId)
-    .eq("profile_id", profileId)
-    .eq("disabled", false)
-    .order("created_at", { ascending: false })
-    .limit(1000);
-  if (error) throw new Error(error.message);
-  return (data as SnippetRow[]).map((row) => ({ ...row }));
+  const rows = await readAllOrThrow<SnippetRow>((from, to) =>
+    client
+      .from("review_reply_snippets")
+      .select(snippetColumns)
+      .eq("business_id", businessId)
+      .eq("profile_id", profileId)
+      .eq("disabled", false)
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range(from, to),
+  );
+  return rows.map((row) => ({ ...row }));
 }
 
 export interface TrainingReview {
@@ -338,27 +377,30 @@ export const trainingBatch = 3;
  */
 export async function loadTrainingQueue(client: SupabaseClient, businessId: string, profileId: string | null, limit = trainingBatch): Promise<TrainingReview[]> {
   const [reviews, done, library] = await Promise.all([
-    client
-      .from("google_reviews")
-      .select("review_id, rating, text, language, published_at, owner_reply")
-      .eq("business_id", businessId)
-      .not("text", "is", null)
-      .order("published_at", { ascending: false })
-      .limit(1000),
+    readAllOrThrow<{ review_id: string; rating: number; text: string; language: string | null; published_at: string; owner_reply: string | null }>((from, to) =>
+      client
+        .from("google_reviews")
+        .select("review_id, rating, text, language, published_at, owner_reply")
+        .eq("business_id", businessId)
+        .not("text", "is", null)
+        .order("published_at", { ascending: false })
+        .order("review_id")
+        .range(from, to),
+    ),
     profileId
-      ? client.from("review_reply_training").select("review_id").eq("business_id", businessId).eq("profile_id", profileId).limit(5000)
-      : Promise.resolve({ data: [] as { review_id: string }[], error: null }),
+      ? readAllOrThrow<{ review_id: string }>((from, to) =>
+          client.from("review_reply_training").select("review_id").eq("business_id", businessId).eq("profile_id", profileId).order("review_id").range(from, to),
+        )
+      : Promise.resolve([]),
     loadLibrary(client, businessId, profileId),
   ]);
-  if (reviews.error) throw new Error(reviews.error.message);
-  if (done.error) throw new Error(done.error.message);
-  const seen = new Set((done.data ?? []).map((row) => row.review_id as string));
+  const seen = new Set(done.map((row) => row.review_id));
   const covered = new Map<string, number>();
   for (const snippet of library) {
     const key = `${snippet.sentiment}:${snippet.kind === "theme" ? snippet.theme : snippet.kind}`;
     covered.set(key, (covered.get(key) ?? 0) + 1);
   }
-  const candidates = (reviews.data ?? [])
+  const candidates = reviews
     .filter(
       (row) =>
         !seen.has(row.review_id as string) &&
@@ -476,15 +518,18 @@ async function scoreSnippets(client: SupabaseClient, businessId: string, ids: st
  */
 async function loadOwnTextKeys(client: SupabaseClient, businessId: string, settings: ReplySettings): Promise<Set<string>> {
   const [training, edited, google] = await Promise.all([
-    client.from("review_reply_training").select("answer").eq("business_id", businessId).neq("answer", "").limit(5000),
-    client.from("review_reply_drafts").select("reply").eq("business_id", businessId).eq("edited", true).limit(5000),
-    client.from("google_reviews").select("owner_reply").eq("business_id", businessId).not("owner_reply", "is", null).limit(5000),
+    readAllOrThrow<{ answer: string }>((from, to) =>
+      client.from("review_reply_training").select("answer").eq("business_id", businessId).neq("answer", "").order("profile_id").order("review_id").range(from, to),
+    ),
+    readAllOrThrow<{ reply: string }>((from, to) => client.from("review_reply_drafts").select("reply").eq("business_id", businessId).eq("edited", true).order("id").range(from, to)),
+    readAllOrThrow<{ owner_reply: string }>((from, to) =>
+      client.from("google_reviews").select("owner_reply").eq("business_id", businessId).not("owner_reply", "is", null).order("review_id").range(from, to),
+    ),
   ]);
-  for (const result of [training, edited, google]) if (result.error) throw new Error(result.error.message);
   const texts = [
-    ...(training.data ?? []).map((row) => row.answer as string),
-    ...(edited.data ?? []).map((row) => row.reply as string),
-    ...(google.data ?? []).map((row) => row.owner_reply as string),
+    ...training.map((row) => row.answer),
+    ...edited.map((row) => row.reply),
+    ...google.map((row) => row.owner_reply),
     settings.emptyPositive,
     settings.emptyNegative,
   ];
@@ -514,6 +559,7 @@ interface ReviewToDraft {
   text: string | null;
   /** Google's language code: the reply is written in the review's language. */
   language: string | null;
+  published_at: string;
 }
 
 const toComposeReview = (review: ReviewToDraft) => ({ id: review.review_id, rating: review.rating, text: review.text, language: review.language });
@@ -588,29 +634,34 @@ export async function draftMissingReplies(client: SupabaseClient, business: Repl
     .eq("status", "generating")
     .lt("created_at", new Date(Date.now() - staleClaimMinutes * 60_000).toISOString());
 
-  const [{ data: reviews, error }, { data: live, error: liveError }, library, ownKeys] = await Promise.all([
-    client
-      .from("google_reviews")
-      .select("review_id, rating, text, language")
-      .eq("business_id", business.id)
-      .is("owner_reply", null)
-      .gte("published_at", replyWindowStart(settings.onboardedAt)!.toISOString())
-      .order("published_at", { ascending: false })
-      .limit(5000),
-    client.from("review_reply_drafts").select("review_id").eq("business_id", business.id).in("status", ["generating", "pending", "approved"]).limit(5000),
+  // Every stored review without an owner reply (all of google_reviews, in pages), newest first.
+  const [reviews, live, library, ownKeys] = await Promise.all([
+    readAllOrThrow<ReviewToDraft>((from, to) =>
+      client
+        .from("google_reviews")
+        .select("review_id, rating, text, language, published_at")
+        .eq("business_id", business.id)
+        .is("owner_reply", null)
+        .order("published_at", { ascending: false })
+        .order("review_id")
+        .range(from, to),
+    ),
+    readAllOrThrow<{ review_id: string }>((from, to) =>
+      client.from("review_reply_drafts").select("review_id").eq("business_id", business.id).in("status", ["generating", "pending", "approved"]).order("id").range(from, to),
+    ),
     loadLibrary(client, business.id, settings.profileId),
     loadOwnTextKeys(client, business.id, settings),
   ]);
-  if (error) throw new Error(error.message);
-  if (liveError) throw new Error(liveError.message);
-  const drafted = new Set((live ?? []).map((row) => row.review_id as string));
-  const missing = (reviews as ReviewToDraft[]).filter((review) => !drafted.has(review.review_id));
+  const drafted = new Set(live.map((row) => row.review_id));
+  const missing = reviews.filter((review) => !drafted.has(review.review_id));
   const batch = missing.slice(0, draftsPerRun);
 
   const outcomes: string[] = [];
   for (const review of batch) {
     const draftId = await claim(client, business.id, review.review_id, settings.profileId);
-    outcomes.push(draftId ? await fillDraft(client, draftId, review, settings, library, ownKeys, business.id) : "skipped");
+    // Automatic approval only for recent reviews; older ones always wait for the owner.
+    const allowAuto = inAutoReplyWindow(settings.onboardedAt, review.published_at);
+    outcomes.push(draftId ? await fillDraft(client, draftId, review, settings, library, ownKeys, business.id, { allowAuto }) : "skipped");
   }
   const count = (value: string) => outcomes.filter((outcome) => outcome === value).length;
   return {
@@ -847,24 +898,27 @@ export interface ToneHistoryEntry {
 
 /** Each tone the owner used, with what it learned and how its replies were received. */
 export async function loadToneHistory(client: SupabaseClient, businessId: string, currentProfileId: string | null): Promise<ToneHistoryEntry[]> {
-  const [profiles, snippets, training, drafts] = await Promise.all([
+  type ProfileRef = { profile_id: string | null };
+  type DraftStat = ProfileRef & { status: string; approved_by: string | null; edited: boolean };
+  const [profiles, snippets, training, draftRows] = await Promise.all([
     client.from("review_reply_profiles").select("id, settings, created_at").eq("business_id", businessId).order("created_at", { ascending: false }).limit(100),
-    client.from("review_reply_snippets").select("profile_id").eq("business_id", businessId).eq("disabled", false).limit(10000),
-    client.from("review_reply_training").select("profile_id").eq("business_id", businessId).eq("skipped", false).limit(10000),
-    client.from("review_reply_drafts").select("profile_id, status, approved_by, edited").eq("business_id", businessId).in("status", ["approved", "rejected"]).limit(10000),
+    readAllOrThrow<ProfileRef>((from, to) => client.from("review_reply_snippets").select("profile_id").eq("business_id", businessId).eq("disabled", false).order("id").range(from, to)),
+    readAllOrThrow<ProfileRef>((from, to) =>
+      client.from("review_reply_training").select("profile_id").eq("business_id", businessId).eq("skipped", false).order("profile_id").order("review_id").range(from, to),
+    ),
+    readAllOrThrow<DraftStat>((from, to) =>
+      client.from("review_reply_drafts").select("profile_id, status, approved_by, edited").eq("business_id", businessId).in("status", ["approved", "rejected"]).order("id").range(from, to),
+    ),
   ]);
-  for (const result of [profiles, snippets, training, drafts]) if (result.error) throw new Error(result.error.message);
-  const count = <T extends { profile_id: string | null }>(rows: T[] | null, id: string, test: (row: T) => boolean = () => true) =>
-    (rows ?? []).filter((row) => row.profile_id === id && test(row)).length;
-  type DraftStat = { profile_id: string | null; status: string; approved_by: string | null; edited: boolean };
-  const draftRows = drafts.data as DraftStat[] | null;
+  if (profiles.error) throw new Error(profiles.error.message);
+  const count = <T extends ProfileRef>(rows: T[], id: string, test: (row: T) => boolean = () => true) => rows.filter((row) => row.profile_id === id && test(row)).length;
   const entries = (profiles.data ?? []).map((profile) => ({
     id: profile.id as string,
     settings: profile.settings as ToneSettings,
     createdAt: profile.created_at as string,
     current: profile.id === currentProfileId,
-    sentences: count(snippets.data as { profile_id: string | null }[] | null, profile.id as string),
-    trained: count(training.data as { profile_id: string | null }[] | null, profile.id as string),
+    sentences: count(snippets, profile.id as string),
+    trained: count(training, profile.id as string),
     accepted: count(draftRows, profile.id as string, (row) => row.status === "approved" && row.approved_by === "client" && !row.edited),
     edited: count(draftRows, profile.id as string, (row) => row.status === "approved" && row.edited),
     rejected: count(draftRows, profile.id as string, (row) => row.status === "rejected"),

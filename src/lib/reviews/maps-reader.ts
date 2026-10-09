@@ -1,7 +1,7 @@
 /**
  * Google Maps' own review data, as read by the local reader (scripts/reader). Pure module so it can
  * be tested with node --test. Only the fields we store are extracted: never names, photos or
- * profile links of who wrote a review (same rule as the Apify import, personalData: false).
+ * profile links of who wrote a review.
  */
 
 export interface MapsReview {
@@ -177,7 +177,7 @@ export function replySampleFrom(reviews: Pick<MapsReview, "published_at" | "owne
   return reviews.map((review) => ({ publishedAt: review.published_at, replied: Boolean(review.owner_reply || review.owner_replied_at) }));
 }
 
-/** Star counts in the format stored in competitor_snapshots.distribution (same as Apify's). */
+/** Star counts in the format stored in competitor_snapshots.distribution (StarDistribution in place-types.ts). */
 export function toStarDistribution(counts: Record<1 | 2 | 3 | 4 | 5, number>) {
   return { oneStar: counts[1], twoStar: counts[2], threeStar: counts[3], fourStar: counts[4], fiveStar: counts[5] };
 }

@@ -1,29 +1,25 @@
 import type { PlaceProfile } from "./maps-reader";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { fetchPlaceByUrl, searchPlacesNear, type ApifyPlaceItem, type StarDistribution } from "./apify";
 import {
-  competitorLimit,
   competitorRadiusKm,
   computeCompetition,
-  distributionAverage,
+  discoveryDue,
   googleMapsPlaceUrl,
   paceFromDates,
   paceFromSnapshots,
   replyRateFrom,
-  selectCompetitors,
   shownReplyRate,
+  withinRadius,
   type Competition,
   type CompetitorEntry,
+  type DiscoveryState,
   competitionTrend,
   entryMonthAgo,
   trendDays,
 } from "./competitors";
+import { jobPriority, type JobRequester } from "./reader-queue";
 import type { GoogleReview } from "./types";
-import { dataForSeoConfigured } from "../dataforseo/client";
-import { fetchOwnPlace, searchZone } from "../dataforseo/discover";
-import { cidFromFid } from "../dataforseo/rules";
 
-const searchResultsPerTerm = 60;
 const rediscoverAfterDays = 90;
 
 export interface CompetitorRow {
@@ -46,126 +42,17 @@ interface SnapshotRow {
   rating: number | null;
   average: number | null;
   reviews_count: number;
-  photos_count: number | null;
   profile: PlaceProfile | null;
 }
 
-function snapshotFrom(place: ApifyPlaceItem) {
-  const distribution = place.reviewsDistribution ?? null;
-  const average = distributionAverage(distribution);
-  return {
-    rating: place.totalScore ?? null,
-    average: average === null ? null : Math.round(average * 1000) / 1000,
-    reviews_count: place.reviewsCount ?? 0,
-    distribution: distribution as StarDistribution | null,
-  };
-}
-
-async function saveSnapshots(client: SupabaseClient, rows: { competitor_id: string; place: ApifyPlaceItem }[]) {
-  if (!rows.length) return;
-  const today = new Date().toISOString().slice(0, 10);
-  const { error } = await client
-    .from("competitor_snapshots")
-    .upsert(rows.map(({ competitor_id, place }) => ({ competitor_id, taken_on: today, ...snapshotFrom(place) })), { onConflict: "competitor_id,taken_on" });
-  if (error) throw new Error(error.message);
-}
-
-/** "…!1s0xd1acdcaf56a5a53:0xd09a04caf1c7ec58!…" in a Google Maps link → the feature id. */
-function fidFromMapsUrl(url: string): string | null {
-  return decodeURIComponent(url).match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i)?.[1] ?? null;
-}
-
-/** Where the places come from: DataForSEO when configured (~1 cent per customer), else Apify (paid). */
-async function placeSource(client: SupabaseClient, business: { id: string; google_maps_url: string }) {
-  if (!dataForSeoConfigured()) {
-    return {
-      self: () => fetchPlaceByUrl(business.google_maps_url),
-      near: (term: string, lat: number, lng: number) => searchPlacesNear([term], lat, lng, competitorRadiusKm, searchResultsPerTerm),
-    };
-  }
-  const { data } = await client.from("review_businesses").select("place_id, google_fid").eq("id", business.id).maybeSingle<{ place_id: string | null; google_fid: string | null }>();
-  const fid = data?.google_fid ?? fidFromMapsUrl(business.google_maps_url);
-  return {
-    self: () => fetchOwnPlace({ placeId: data?.place_id ?? null, cid: cidFromFid(fid) }),
-    near: (term: string, lat: number, lng: number) => searchZone(term, lat, lng),
-  };
-}
-
 /**
- * Finds the customer's own place on Google, then the most visible places of the same category
- * within the radius. Places an admin excluded stay excluded across rediscoveries.
+ * The search of competitors is the free reader's "discover" job (scripts/reader/jobs.mjs), never a
+ * paid provider (discoveryDue: never searched, or the radius changed). A new search every 90 days is
+ * manual, from the admin. Ratings, star distributions, new reviews and reply rates are read by the
+ * reader too (reader-queue.ts), once per Google place for every customer that compares with it.
  */
-export async function discoverCompetitors(client: SupabaseClient, business: { id: string; google_maps_url: string }): Promise<number> {
-  const source = await placeSource(client, business);
-  const self = await source.self();
-  if (!self?.placeId || !self.location || !self.categoryName) throw new Error("Não foi possível encontrar o negócio no Google Maps.");
-  const origin = { placeId: self.placeId, category: self.categoryName, lat: self.location.lat, lng: self.location.lng };
-
-  let places = await source.near(origin.category, origin.lat, origin.lng);
-  let chosen = selectCompetitors(origin, places);
-  const broader = origin.category.split(" ")[0];
-  if (chosen.length < competitorLimit && broader && broader !== origin.category) {
-    places = [...places, ...(await source.near(broader, origin.lat, origin.lng))];
-    chosen = selectCompetitors(origin, places);
-  }
-
-  const { error: businessError } = await client
-    .from("review_businesses")
-    .update({ place_id: origin.placeId, lat: origin.lat, lng: origin.lng, category: origin.category })
-    .eq("id", business.id);
-  if (businessError) throw new Error(businessError.message);
-
-  const rows = [
-    { place_id: origin.placeId, name: self.title ?? "", category: origin.category, address: self.address ?? null, url: self.url ?? null, lat: origin.lat, lng: origin.lng, distance_m: 0, is_self: true },
-    ...chosen.map((candidate) => ({
-      place_id: candidate.placeId,
-      name: candidate.name,
-      category: candidate.category,
-      address: candidate.address,
-      url: candidate.url,
-      lat: candidate.lat,
-      lng: candidate.lng,
-      distance_m: candidate.distanceM,
-      is_self: false,
-    })),
-  ].map((row) => ({ ...row, business_id: business.id }));
-
-  const { data: saved, error } = await client.from("competitors").upsert(rows, { onConflict: "business_id,place_id" }).select("id, place_id");
-  if (error) throw new Error(error.message);
-
-  // Places that dropped out of the selection go, unless an admin excluded them on purpose.
-  const keep = rows.map((row) => row.place_id);
-  const { error: pruneError } = await client
-    .from("competitors")
-    .delete()
-    .eq("business_id", business.id)
-    .eq("excluded", false)
-    .not("place_id", "in", `(${keep.map((id) => `"${id}"`).join(",")})`);
-  if (pruneError) throw new Error(pruneError.message);
-
-  const byPlace = new Map((saved ?? []).map((row) => [row.place_id as string, row.id as string]));
-  const placeData = new Map<string, ApifyPlaceItem>([[origin.placeId, self], ...places.filter((place) => place.placeId).map((place) => [place.placeId!, place] as const)]);
-  await saveSnapshots(
-    client,
-    keep.flatMap((placeId) => (byPlace.has(placeId) && placeData.has(placeId) ? [{ competitor_id: byPlace.get(placeId)!, place: placeData.get(placeId)! }] : [])),
-  );
-
-  const now = new Date().toISOString();
-  // DataForSEO's search brings each place's star distribution (the snapshots above are complete);
-  // Apify's listing has none: the per-place reads fill it next (reader-queue.ts).
-  const { error: doneError } = await client.from("review_businesses").update({ competitors_refreshed_at: now, competitors_snapshot_at: dataForSeoConfigured() ? now : null }).eq("id", business.id);
-  if (doneError) throw new Error(doneError.message);
-  return chosen.length;
-}
-
-/**
- * The daily cron only searches competitors (Apify, paid) for customers that never had them
- * searched. A new search every 90 days is manual, from the admin. Ratings, star
- * distributions, new reviews and reply rates are read by the free local reader (reader-queue.ts),
- * once per Google place for every customer that compares with it.
- */
-export function needsDiscovery(business: { competitors_refreshed_at: string | null }): boolean {
-  return !business.competitors_refreshed_at;
+export function needsDiscovery(business: DiscoveryState): boolean {
+  return discoveryDue(business);
 }
 
 /** When a new competitor search is suggested in the admin (manual). */
@@ -173,21 +60,40 @@ export function rediscoveryDue(business: { competitors_refreshed_at?: string | n
   return !business.competitors_refreshed_at || now.getTime() - Date.parse(business.competitors_refreshed_at) > rediscoverAfterDays * 86_400_000;
 }
 
-/** Everything the dashboard needs, from stored rows only: never calls Apify. */
+/**
+ * Queues the reader's competitor search ("discover", free) for one customer. The reader reads the
+ * customer's radius when the job starts. False when a search is already queued or running.
+ */
+export async function queueCompetitorDiscovery(
+  client: SupabaseClient,
+  businessId: string,
+  requestedBy: JobRequester,
+  priority: number = jobPriority.firstImport,
+): Promise<boolean> {
+  const { error } = await client.from("review_import_jobs").insert({ business_id: businessId, kind: "discover", priority, requested_by: requestedBy, provider: "reader" });
+  if (error && error.code !== "23505") throw new Error(error.message);
+  return !error;
+}
+
+/** Everything the dashboard needs, from stored rows only: never reads Google. */
 export async function loadCompetition(
   client: SupabaseClient,
   businessId: string,
   ownReviews: GoogleReview[],
   now = new Date(),
   own: { name: string; placeId: string | null; rating: number | null; reviewsTotal: number | null } | null = null,
+  radiusKm: number = competitorRadiusKm,
 ): Promise<Competition | null> {
-  const { data: competitors, error } = await client
+  const { data, error } = await client
     .from("competitors")
     .select("id, place_id, name, category, distance_m, is_self, excluded, pace_per_month, pace_measured_at, reply_rate, reply_sample")
     .eq("business_id", businessId)
     .eq("excluded", false);
   if (error) throw new Error(error.message);
-  if (!competitors?.length) return null;
+  // After an admin shrinks the radius, places outside it stop showing at once (the reader's new
+  // search then replaces the list; nothing of the shared place data is deleted here).
+  const competitors = ((data ?? []) as CompetitorRow[]).filter((row) => row.is_self || withinRadius(row.distance_m, radiusKm));
+  if (!competitors.length) return null;
   // Nothing to compare before the competitor search (the customer's own row alone is no competition).
   if (!competitors.some((row) => !row.is_self)) return null;
 
@@ -197,7 +103,7 @@ export async function loadCompetition(
   for (let from = 0; ; from += 1000) {
     const { data: page, error: snapshotError } = await client
       .from("competitor_snapshots")
-      .select("competitor_id, taken_on, rating, average, reviews_count, photos_count, profile")
+      .select("competitor_id, taken_on, rating, average, reviews_count, profile")
       .in(
         "competitor_id",
         competitors.map((row) => row.id),
@@ -211,7 +117,7 @@ export async function loadCompetition(
     if (!page || page.length < 1000) break;
   }
 
-  const rows = competitors as CompetitorRow[];
+  const rows = competitors;
   const ownPace = paceFromDates(
     ownReviews.map((review) => review.publishedAt),
     now,
@@ -244,8 +150,7 @@ export async function loadCompetition(
         pacePerMonth: row.is_self ? (ownReviews.length ? ownPace : null) : (measured ?? (row.pace_per_month === null ? null : Number(row.pace_per_month))),
         replyRate: shownReplyRate(replyRate, replySample),
         replySample,
-        // From the newest read that had them (a page without them keeps the last known values).
-        photos: own.filter((snapshot) => snapshot.photos_count !== null).at(-1)?.photos_count ?? null,
+        // From the newest read that had it (a page without it keeps the last known values).
         profile: own.filter((snapshot) => snapshot.profile !== null).at(-1)?.profile ?? null,
       },
     ];

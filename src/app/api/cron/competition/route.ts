@@ -10,8 +10,8 @@ export const maxDuration = 120;
 /**
  * Update slot of the shared competition base (10:00 and 19:00 Portuguese time), on demand. The
  * scheduler tick (/api/cron/tick, pg_cron every 15 minutes) normally runs it; this route remains
- * for the local reader service and manual runs. Same planning as the tick (zone snapshots + reply
- * checks per distinct place) and the same scheduler_state, so a slot is never planned twice:
+ * for the local reader service and manual runs. Same planning as the tick (one reader read per
+ * distinct place) and the same scheduler_state, so a slot is never planned twice:
  * when the tick already handled it, nothing happens unless `?force=1`. Never reads Google itself.
  * `?dry=1` returns the plan without side effects.
  */

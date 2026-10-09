@@ -1,5 +1,6 @@
+import { claimAuthEmail, generateEmailLink, linkOrigin, releaseAuthEmail } from "@/lib/auth/email-links";
+import { authLinkValidityText } from "@/lib/auth/link-validity";
 import { sendOwnerEmail } from "@/lib/booking/email";
-import { requestOrigin } from "@/lib/booking/request";
 import { isAdminEmail } from "@/lib/supabase/env";
 import type { createServiceClient } from "@/lib/supabase/service";
 import { findProfileByEmail } from "./queries";
@@ -63,21 +64,23 @@ export async function loadOwnerAccount(client: Client, ownerId: string): Promise
   return { email: data.user.email, lastSignInAt: data.user.last_sign_in_at ?? null };
 }
 
+export type InviteResult = { sent: true } | { sent: false; waitSeconds?: number };
+
 /**
- * Sends the owner a Steevanz email with a sign-in link that opens their panel (no password needed;
- * it works on any device). The link expires with Supabase's email link lifetime.
+ * Sends the owner a Steevanz email (from noreply@) with a sign-in link that opens their panel (no
+ * password needed; it works on any device). Supabase only makes the token and sends nothing.
  */
-export async function sendPanelInvite(client: Client, business: { name: string; slug: string }, email: string): Promise<boolean> {
-  const { data, error } = await client.auth.admin.generateLink({ type: "magiclink", email });
-  if (error || !data.properties?.hashed_token) throw new Error(`generateLink: ${error?.message ?? "no token"}`);
-  const query = new URLSearchParams({
-    token_hash: data.properties.hashed_token,
-    type: data.properties.verification_type || "magiclink",
-    next: `/painel/${business.slug}`,
-  });
-  const origin = await requestOrigin();
-  const link = `${origin}/conta/auth/callback?${query}`;
-  return sendOwnerEmail({
+export async function sendPanelInvite(client: Client, business: { name: string; slug: string }, email: string): Promise<InviteResult> {
+  const wait = await claimAuthEmail(client, email);
+  if (wait) return { sent: false, waitSeconds: wait };
+  const origin = await linkOrigin();
+  const link = await generateEmailLink(client, { type: "magiclink", email }, origin, `/painel/${business.slug}`);
+  if (!link.ok) {
+    await releaseAuthEmail(client, email);
+    throw new Error(`generateLink: ${link.code}`);
+  }
+  const sent = await sendOwnerEmail({
+    from: "noreply",
     to: [email],
     subject: `O painel de reviews de ${business.name} está pronto`,
     heading: "O seu painel de reviews Steevanz",
@@ -85,10 +88,14 @@ export async function sendPanelInvite(client: Client, business: { name: string; 
       { label: "Negócio", value: business.name },
       {
         label: "Como entrar",
-        value: `Carregue no botão para entrar no painel, sem palavra-passe. O link é pessoal e válido durante 24 horas. Depois, entre sempre que quiser em ${origin}/conta/entrar com «Receber link de entrada por email».`,
+        value: `Carregue no botão para entrar no painel, sem palavra-passe. O link é pessoal. Depois, entre sempre que quiser em ${origin}/conta/entrar com «Receber link de entrada por email».`,
       },
     ],
-    adminUrl: link,
+    adminUrl: link.url,
     linkLabel: "Entrar no seu painel",
+    note: `${authLinkValidityText} Pode abri-lo em qualquer dispositivo.`,
+    showUrl: true,
   });
+  if (!sent) await releaseAuthEmail(client, email);
+  return sent ? { sent: true } : { sent: false };
 }

@@ -19,12 +19,14 @@ import {
 import { isNegative } from "../../src/lib/reviews/analytics.ts";
 import {
   competitorLimit,
-  competitorRadiusKm,
+  discoveryDue,
   distributionAverage,
   googleMapsPlaceUrl,
   paceFromDates,
   replyRateFrom,
+  searchZoomFor,
   selectCompetitors,
+  toRadiusKm,
 } from "../../src/lib/reviews/competitors.ts";
 import { previousCompetitionUpdate } from "../../src/lib/reviews/competition-schedule.ts";
 import { placeIdFromFid } from "../../src/lib/reviews/maps-link.ts";
@@ -144,9 +146,11 @@ async function snapshotOwnPlace(store, business, shown) {
 /**
  * First import of a customer: every review Google shows a visitor without a session (newest first
  * when Google lets the list be sorted), in two phases: the first ~50 page by page (the panel is
- * useful within seconds), the rest in batches. When Google shows only part of the history, what it
- * showed is kept and the job says how much. Then, for a customer without competitors, the zone
- * search (discover).
+ * useful within seconds), the rest in batches. 100% of the history or nothing: only a read that
+ * reaches the end of Google's list counts as the import (full_synced_at). When Google stops halfway
+ * (sign-in gate, no answer) the place is opened once more; if it stops again the job fails, the
+ * import stays not done (the routine asks for it again) and the reviews read stay saved (upserted
+ * by id, so the next import only completes them). The competitor search is its own job (discover).
  */
 async function full(job, tab, store) {
   const business = await customer(job, store);
@@ -162,12 +166,17 @@ async function full(job, tab, store) {
     await store.saveReviews(business.id, rows);
   };
   let shown = null;
-  // A first open sometimes gets no review at all from Google (seen while another tab opened the same
-  // place): the place is opened again once before giving up.
+  /** The read reached the end of Google's list (the whole history Google shows). */
+  let finished = false;
+  /** Google asked to sign in before showing more. */
+  let gated = false;
+  // A first open sometimes gets no review at all, or Google stops halfway (seen while another tab
+  // opened the same place): the place is opened again once before giving up.
   for (let attempt = 1; attempt <= 2; attempt++) {
     if (attempt > 1) {
-      log("  nenhuma review na 1.ª tentativa; a abrir o negócio outra vez");
+      log(seen.size ? `  o Google parou ao fim de ${seen.size} reviews; a abrir o negócio outra vez` : "  nenhuma review na 1.ª tentativa; a abrir o negócio outra vez");
       await sleep(4000 + Math.random() * 3000);
+      gated = false;
     }
     shown = await openPlace(tab, business.google_maps_url);
     if (attempt === 1) {
@@ -178,7 +187,10 @@ async function full(job, tab, store) {
         `  ${shown.total ?? "?"} reviews no Google (${shown.rating ?? "?"}★)`,
       );
     }
-    if (shown.noReviews) break;
+    if (shown.noReviews) {
+      finished = true;
+      break;
+    }
     const sorted = await sortByNewest(tab, shown.watch);
     log(
       sorted
@@ -186,7 +198,7 @@ async function full(job, tab, store) {
         : "  o Google não deixou ordenar por mais recentes (sem sessão); a ler pela ordem do Google",
     );
     try {
-      await readPages(tab, shown.watch, {
+      const result = await readPages(tab, shown.watch, {
         newestOnly: sorted,
         onPage: async (page, ms) => {
           for (const review of page.reviews) {
@@ -212,19 +224,30 @@ async function full(job, tab, store) {
           return true;
         },
       });
+      finished = result.finished;
     } catch (error) {
       // Google's sign-in gate ends what it shows a visitor without a session: keep what was read.
       if (!(error instanceof SignInRequiredError)) throw error;
+      gated = true;
     } finally {
       // What was read is kept even when Google stops answering halfway.
       await flush();
     }
-    if (seen.size || !shown.total) break;
+    if (finished || !shown.total) break;
   }
   if (!seen.size && shown.total)
     throw new UserError(
       "O Google não mostrou nenhuma review deste negócio. Tente outra vez daqui a pouco.",
     );
+  if (!finished && shown.total) {
+    // 100% of the history or nothing: not marked as imported (full_synced_at stays as it was).
+    const of = `${seen.size} de ${shown.total}`;
+    throw new UserError(
+      gated
+        ? `O Google pediu para iniciar sessão ao fim de ${of} reviews, por isso o histórico ficou incompleto e a importação não conta como feita. As reviews lidas ficaram guardadas; tente outra vez mais tarde.`
+        : `O Google deixou de responder ao fim de ${of} reviews, por isso o histórico ficou incompleto e a importação não conta como feita. As reviews lidas ficaram guardadas; tente outra vez daqui a pouco.`,
+    );
+  }
 
   const now = new Date().toISOString();
   await store.updateBusiness(business.id, {
@@ -241,21 +264,22 @@ async function full(job, tab, store) {
     return { note: noReviewsNote };
   }
   log(`  concluída: ${seen.size} reviews em ${pace.pages} páginas`);
-  if (shown.total !== null && seen.size < shown.total * 0.98) {
+  if (shown.total !== null && seen.size < shown.total) {
+    // The list ended (no next page) before Google's total: Google counts reviews it does not list.
     return {
-      note: `O Google só mostra ${seen.size} de ${shown.total} reviews a quem não tem sessão iniciada; guardámos as ${seen.size}.`,
+      note: `Lemos a lista de reviews do Google até ao fim: ${seen.size} reviews (o Google indica ${shown.total} no total, mas só lista estas).`,
     };
   }
 }
 
 /**
- * "discover": the competitor search of a customer without competitors, in its own tab while the
- * customer's reviews are read. Category from the place's overview, then the zone search; queues the
+ * "discover": the competitor search of a customer without competitors (or whose radius an admin
+ * changed: discoveryDue), in its own tab while the customer's reviews are read. Category from the place's overview, then the zone search; queues the
  * reads of every chosen place and of the customer's own place (its row in the comparison).
  */
 async function discoverJob(job, tab, store) {
   const business = await customer(job, store);
-  if (business.competitors_refreshed_at)
+  if (!discoveryDue(business))
     return { note: "Este negócio já tem concorrentes; nada a procurar." };
   log(`procura de concorrentes: ${business.name}`);
   // The customer's own import opens the same place right now in another tab: start a little later,
@@ -278,7 +302,9 @@ async function discoverJob(job, tab, store) {
 
 /**
  * The customer's competitors from a Google Maps search of its category around it, as any visitor
- * sees it (no paid provider): same rules as before (within 10 km, same category first, at most 30).
+ * sees it (no paid provider): within the customer's radius (5 or 10 km, chosen by an admin), same
+ * category first, at most 30. Rows that drop out go (admin exclusions stay); the shared per-place
+ * base (reader_places, other customers' rows) is untouched.
  * Their rating, total and stars come from the reader's competitor reads, queued here.
  */
 async function discover(tab, store, business, facts) {
@@ -301,8 +327,10 @@ async function discover(tab, store, business, facts) {
     throw new UserError(
       "Não foi possível ler a categoria do negócio no Google Maps.",
     );
+  const radiusKm = toRadiusKm(business.competitor_radius_km);
+  const zoom = searchZoomFor(radiusKm);
   log(
-    `  a procurar concorrentes: «${category}» num raio de ${competitorRadiusKm} km`,
+    `  a procurar concorrentes: «${category}» num raio de ${radiusKm} km`,
   );
   const asCandidate = (place, searchString) => ({
     placeId: place.placeId,
@@ -321,7 +349,7 @@ async function discover(tab, store, business, facts) {
   // The customer itself never competes with itself: dropped by its Google feature id too.
   const others = (places) =>
     places.filter((place) => !(fid && place.fid === fid));
-  const found = await searchPlaces(tab, category, coords.lat, coords.lng);
+  const found = await searchPlaces(tab, category, coords.lat, coords.lng, 60, zoom);
   self ??= found.find((place) => fid && place.fid === fid) ?? null;
   if (!self && !business.place_id) {
     await sleep(1500 + Math.random() * 1500);
@@ -347,17 +375,17 @@ async function discover(tab, store, business, facts) {
     lng: coords.lng,
   };
   let candidates = others(found).map((place) => asCandidate(place, category));
-  let chosen = selectCompetitors(origin, candidates);
+  let chosen = selectCompetitors(origin, candidates, radiusKm);
   const broader = category.split(" ")[0];
   if (chosen.length < competitorLimit && broader && broader !== category) {
     await sleep(2000 + Math.random() * 1500);
     candidates = [
       ...candidates,
-      ...others(await searchPlaces(tab, broader, coords.lat, coords.lng)).map(
+      ...others(await searchPlaces(tab, broader, coords.lat, coords.lng, 60, zoom)).map(
         (place) => asCandidate(place, broader),
       ),
     ];
-    chosen = selectCompetitors(origin, candidates);
+    chosen = selectCompetitors(origin, candidates, radiusKm);
   }
   await store.saveCompetitors(business.id, [
     {
@@ -389,6 +417,7 @@ async function discover(tab, store, business, facts) {
     lng: coords.lng,
     category,
     competitors_refreshed_at: new Date().toISOString(),
+    competitors_search_radius_km: radiusKm,
     competitors_snapshot_at: null,
   });
   // Supabase first: places read since the last update (for any customer) are reused, not read again.

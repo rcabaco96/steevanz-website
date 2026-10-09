@@ -1,5 +1,5 @@
 import { significantWords, themeIds, themeSentences, themesIn, type ThemeId } from "./text.ts";
-import type { DashboardSource, GoogleReview } from "./types.ts";
+import type { DashboardSource, GoogleReview, ReviewBusiness } from "./types.ts";
 
 export const periodIds = ["30d", "90d", "12m", "all"] as const;
 export type PeriodId = (typeof periodIds)[number];
@@ -50,8 +50,24 @@ export interface BeforeAfter {
   upliftPct: number | null;
 }
 
-/** Why the before/after comparison is missing, so the dashboard can say so instead of hiding it. */
-export type BeforeAfterGap = "no-install-date" | "too-early" | "no-history" | null;
+/**
+ * Why the before/after comparison is missing, so the dashboard can say so instead of hiding it.
+ * `no-plates`: the client doesn't have the NFC plates product, so the comparison (and its section)
+ * doesn't exist for them at all.
+ */
+export type BeforeAfterGap = "no-plates" | "no-install-date" | "too-early" | "no-history" | null;
+
+/** The product the «Antes e depois das placas» comparison belongs to: the NFC plates for Google reviews. */
+export const platesProductId = "nfc-google-reviews";
+
+/**
+ * Whether the client has the NFC plates product (their account's active products, or the manual list
+ * for a business without an account). Follows the client, never who is looking: an admin opening the
+ * panel sees exactly what the client sees.
+ */
+export function hasPlatesProduct(business: Pick<ReviewBusiness, "activeServices">): boolean {
+  return business.activeServices?.includes(platesProductId) ?? false;
+}
 
 export interface ThemeExample {
   reviewId: string;
@@ -441,7 +457,10 @@ export function computeAnalytics(source: DashboardSource, period: PeriodId, now 
     };
   });
 
-  const beforeAfter = computeBeforeAfter(source, now);
+  // Without the plates product there is nothing to compare: not computed, and the section stays hidden.
+  const beforeAfter: { value: BeforeAfter | null; gap: BeforeAfterGap } = hasPlatesProduct(source.business)
+    ? computeBeforeAfter(source, now)
+    : { value: null, gap: "no-plates" };
 
   return {
     period: { id: period, start: startDate?.toISOString() ?? null, end: now.toISOString(), granularity },

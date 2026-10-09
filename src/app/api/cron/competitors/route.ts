@@ -1,24 +1,18 @@
 import type { NextRequest } from "next/server";
-import { dataForSeoConfigured } from "@/lib/dataforseo/client";
-import { apifyToken } from "@/lib/reviews/apify";
-import { discoverCompetitors, needsDiscovery } from "@/lib/reviews/competitor-store";
-import { planningProvider, queueNewCompetitorReads } from "@/lib/reviews/reader-queue";
+import { needsDiscovery, queueCompetitorDiscovery } from "@/lib/reviews/competitor-store";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { runReaderAlert } from "../_scheduler/routines";
 
 export const maxDuration = 300;
 
-/** No search starts after this point, so the last one can finish before the 300 s limit. */
-const startBudgetMs = 170_000;
-
 /**
- * Daily (vercel.json, 06:00 UTC). The search of competitors for customers that never had them
- * searched (competitors_refreshed_at null): DataForSEO when configured (~1 cent), else Apify (paid).
- * The panel normally does it at the first import (competition-start.ts); this catches the rest. The new places are
- * then queued (DataForSEO, or the local reader when DataForSEO is not configured) for ratings,
- * star distributions, new reviews and reply rates; the scheduler tick keeps them current (zone
- * snapshots at 10:00 and 19:00). A new search every 90 days is manual, from the admin. Also emails
- * the owner when the local reader has been offline for 12+ hours, only while jobs still use it.
+ * Daily (vercel.json, 06:00 UTC). Queues the free reader's competitor search ("discover") for every
+ * customer that needs one: never searched (competitors_refreshed_at null), or searched with another
+ * radius than the one an admin chose (5 or 10 km per customer). The reader reads each customer's
+ * radius when the job starts, then queues the reads of the places it chose; the scheduler tick keeps
+ * them current. Nothing here reads Google or calls a paid provider. A new search every 90 days is
+ * manual, from the admin. Also emails the owner when the local reader has been offline for 12+ hours,
+ * only while jobs still use it.
  */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET?.trim();
@@ -31,25 +25,24 @@ export async function GET(request: NextRequest) {
 
   const reader = await runReaderAlert(client, { now: new Date(), dryRun });
 
-  const { data, error } = await client.from("review_businesses").select("id, slug, google_maps_url, competitors_refreshed_at").is("competitors_refreshed_at", null).order("created_at");
+  const { data, error } = await client
+    .from("review_businesses")
+    .select("id, slug, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km")
+    .order("created_at")
+    .range(0, 999);
   if (error) return Response.json({ error: error.message }, { status: 500 });
   const pending = (data ?? []).filter(needsDiscovery);
   if (dryRun) return Response.json({ dryRun: true, discover: pending.map((business) => business.slug), reader });
-  if (pending.length && !dataForSeoConfigured() && !apifyToken()) return Response.json({ error: "APIFY_TOKEN is not configured", pending: pending.map((business) => business.slug), reader }, { status: 500 });
 
-  const started = Date.now();
-  const results: { slug: string; found?: number; queued?: number; error?: string }[] = [];
+  const results: { slug: string; queued?: boolean; error?: string }[] = [];
   for (const business of pending) {
-    if (Date.now() - started > startBudgetMs) break;
     try {
-      const found = await discoverCompetitors(client, business);
-      const { queued } = await queueNewCompetitorReads(client, business.id, "cron", planningProvider(dataForSeoConfigured()));
-      results.push({ slug: business.slug, found, queued });
+      results.push({ slug: business.slug, queued: await queueCompetitorDiscovery(client, business.id, "cron") });
     } catch (failure) {
       const message = failure instanceof Error ? failure.message : String(failure);
-      console.error(`[competitors] discovery failed for ${business.slug}:`, message);
+      console.error(`[competitors] queuing the search failed for ${business.slug}:`, message);
       results.push({ slug: business.slug, error: message });
     }
   }
-  return Response.json({ results, reader, seconds: Math.round((Date.now() - started) / 1000) });
+  return Response.json({ results, reader });
 }

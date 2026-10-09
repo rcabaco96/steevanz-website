@@ -4,20 +4,20 @@ import Link from "next/link";
 import { getProductCopy } from "@/content/product-copy";
 import { isProductId, products } from "@/content/products";
 import { accessLabels, accessState, type AccessState, type OwnerAccount } from "@/lib/admin/client-access";
+import { authLinkValidity } from "@/lib/auth/link-validity";
 import {
   deleteReviewBusiness,
   queueReaderReviews,
-  refreshCompetitors,
   removeBusinessAccess,
   saveBusinessAccess,
+  saveCompetitorRadius,
   saveReviewBusiness,
   sendBusinessInvite,
   searchCompetitorsWithReader,
-  syncReviewsNow,
   toggleCompetitor,
 } from "@/lib/admin/review-actions";
 import { rediscoveryDue } from "@/lib/reviews/competitor-store";
-import { competitorRadiusKm } from "@/lib/reviews/competitors";
+import { competitorRadiusOptions, radiusLabel, toRadiusKm, withinRadius } from "@/lib/reviews/competitors";
 import { formatDateTime } from "@/lib/reviews/format";
 import { readerOfflineAfterHours, type JobRequester, type ReaderJobKind } from "@/lib/reviews/reader-queue";
 import type { BusinessRow } from "@/lib/reviews/store";
@@ -26,7 +26,7 @@ import type { createServiceClient } from "@/lib/supabase/service";
 type Client = ReturnType<typeof createServiceClient>;
 
 export const businessColumns =
-  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, category, full_synced_at, owner_id, contact_name, contact_phone, invite_sent_at, created_at";
+  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, category, full_synced_at, owner_id, contact_name, contact_phone, invite_sent_at, created_at";
 
 export interface CompetitorAdminRow {
   id: string;
@@ -142,7 +142,7 @@ function ClientAccess({ business, owner, ownerProducts }: { business: BusinessRo
           : state === "not_invited"
             ? `Conta criada para ${owner?.email ?? "o dono"}. Envie o convite quando o negócio for cliente.`
             : state === "invited"
-              ? `Convite enviado a ${owner?.email ?? "o dono"} em ${business.invite_sent_at ? formatDateTime(business.invite_sent_at) : "–"}. O link vale 24 horas; reenvie se expirar.`
+              ? `Convite enviado a ${owner?.email ?? "o dono"} em ${business.invite_sent_at ? formatDateTime(business.invite_sent_at) : "–"}. O link vale ${authLinkValidity}; reenvie se expirar.`
               : `${owner?.email ?? "O dono"} já entrou no painel (último acesso: ${owner?.lastSignInAt ? formatDateTime(owner.lastSignInAt) : "–"}).`}
       </p>
       <ActionForm key={`${business.contact_name ?? ""}:${business.contact_phone ?? ""}:${business.owner_id ?? ""}`} action={saveBusinessAccess} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -274,6 +274,8 @@ export function BusinessDetail({
   owner: OwnerAccount | null;
   ownerProducts: string[];
 }) {
+  const radius = toRadiusKm(business.competitor_radius_km);
+  const searchedRadius = toRadiusKm(business.competitors_search_radius_km);
   return (
     <div className="flex flex-col gap-6">
       <ClientAccess business={business} owner={owner} ownerProducts={ownerProducts} />
@@ -286,7 +288,8 @@ export function BusinessDetail({
             {business.last_synced_at ? `Última sincronização: ${formatDateTime(business.last_synced_at)}` : "Nunca sincronizado"}
             {business.full_synced_at ? ` · histórico lido a ${formatDateTime(business.full_synced_at)}` : ""}
           </p>
-          {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}        </div>
+          {business.last_sync_error ? <p className="mt-1 text-danger">Erro: {business.last_sync_error}</p> : null}
+        </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
           <ActionForm action={queueReaderReviews} className="flex flex-col items-start gap-1 sm:items-end">
             <input type="hidden" name="id" value={business.id} />
@@ -308,39 +311,6 @@ export function BusinessDetail({
       <div className="flex flex-col gap-3">
         <h2 className="font-semibold text-text">Pedidos ao leitor</h2>
         <ReaderJobs jobs={jobs} />
-        <details className="group">
-          <summary className="inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-muted hover:text-text [&::-webkit-details-marker]:hidden">
-            Plano B: Apify (pago)
-            <span aria-hidden="true" className="transition-transform group-open:rotate-180">⌄</span>
-          </summary>
-          <p className="mt-1 text-sm text-subtle">Só quando o leitor não consegue ler. Cada leitura gasta crédito do Apify.</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <ActionForm action={syncReviewsNow} className="flex flex-col items-start gap-1">
-              <input type="hidden" name="id" value={business.id} />
-              <input type="hidden" name="mode" value="refresh" />
-              <SubmitButton variant="secondary" size="sm" pendingLabel="A ler com o Apify…">
-                Ler com o Apify (pago)
-              </SubmitButton>
-            </ActionForm>
-            <ActionForm
-              action={syncReviewsNow}
-              confirmMessage="Ler todo o histórico de reviews com o Apify? É pago e gasta bastante crédito."
-              className="flex flex-col items-start gap-1"
-            >
-              <input type="hidden" name="id" value={business.id} />
-              <input type="hidden" name="mode" value="full" />
-              <SubmitButton variant="ghost" size="sm" pendingLabel="A ler com o Apify… (até 5 min)">
-                Histórico completo com o Apify (pago)
-              </SubmitButton>
-            </ActionForm>
-            <ActionForm action={refreshCompetitors} confirmMessage="Procurar concorrentes com o Apify? É pago (~1 $)." className="flex flex-col items-start gap-1">
-              <input type="hidden" name="id" value={business.id} />
-              <SubmitButton variant="ghost" size="sm" pendingLabel="A procurar… (1–2 min)">
-                Procurar concorrentes com o Apify (pago)
-              </SubmitButton>
-            </ActionForm>
-          </div>
-        </details>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -348,10 +318,27 @@ export function BusinessDetail({
           <h2 className="font-semibold text-text">Concorrência</h2>
           <p className="text-sm text-subtle">
             {business.competitors_refreshed_at
-              ? `Categoria${business.category ? ` «${business.category}»` : ""}, num raio de ${String(competitorRadiusKm).replace(".", ",")} km. Procurados a ${formatDateTime(business.competitors_refreshed_at)}.${rediscoveryDue(business) ? " Passaram 90 dias: vale a pena procurar outra vez." : ""}`
+              ? `Categoria${business.category ? ` «${business.category}»` : ""}, procurados num raio de ${radiusLabel(toRadiusKm(business.competitors_search_radius_km))} a ${formatDateTime(business.competitors_refreshed_at)}.${searchedRadius !== radius ? ` O raio mudou para ${radiusLabel(radius)}: a nova procura está na fila do leitor.` : rediscoveryDue(business) ? " Passaram 90 dias: vale a pena procurar outra vez." : ""}`
               : "Ainda não procurados: o leitor procura-os na primeira importação, ou agora com o botão."}
           </p>
         </div>
+        <ActionForm key={radius} action={saveCompetitorRadius} className="flex flex-wrap items-end gap-2">
+          <input type="hidden" name="id" value={business.id} />
+          <label className={adminLabelClasses}>
+            Raio da concorrência
+            <select name="competitor_radius_km" defaultValue={radius} className={`${adminInputClasses} h-11 w-36`}>
+              {competitorRadiusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {radiusLabel(option)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <SubmitButton variant="secondary" size="sm" pendingLabel="A guardar…">
+            Guardar raio
+          </SubmitButton>
+          <span className="basis-full text-xs text-subtle">Só os admins mudam o raio. Com um raio diferente, o leitor procura os concorrentes outra vez (grátis).</span>
+        </ActionForm>
         {competitors.length ? (
           <details className="group">
             <summary className="inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-accent-text [&::-webkit-details-marker]:hidden">
@@ -360,11 +347,12 @@ export function BusinessDetail({
             </summary>
             <ul className="mt-2 flex flex-col divide-y divide-line rounded-2xl border border-line">
               {competitors.map((row) => (
-                <li key={row.id} className={`flex items-center justify-between gap-3 p-3 ${row.excluded ? "opacity-60" : ""}`}>
+                <li key={row.id} className={`flex items-center justify-between gap-3 p-3 ${row.excluded || !withinRadius(row.distance_m, radius) ? "opacity-60" : ""}`}>
                   <div className="flex min-w-0 flex-col">
                     <p className={`font-medium text-text ${row.excluded ? "line-through" : ""}`}>{row.name}</p>
                     <p className="text-xs text-subtle">
                       {row.category ?? "Sem categoria"} · {row.distance_m ?? "?"} m
+                      {withinRadius(row.distance_m, radius) ? "" : ` · fora do raio de ${radiusLabel(radius)}, não aparece ao cliente`}
                     </p>
                   </div>
                   <ActionForm action={toggleCompetitor} hideMessage>

@@ -13,6 +13,7 @@ import { acquireTab, closeBrowser, releaseTab } from "./browser.mjs";
 import { handlers } from "./jobs.mjs";
 import { createStore } from "./store.mjs";
 import { pickReaderJob, readerJobKey } from "../../src/lib/reviews/maps-reader.ts";
+import { handRetiredJobsToReader } from "../../src/lib/reviews/reader-queue.ts";
 import { previousCompetitionUpdate, slotLabel } from "../../src/lib/reviews/competition-schedule.ts";
 
 // --- One reader per computer (per profile folder) ----------------------------------------------
@@ -96,7 +97,7 @@ const resumedNote = "Retomado: o leitor parou a meio e voltou a pegar neste pedi
 /**
  * Jobs this reader's kind left "running" when it stopped halfway (closed window, crash): back to
  * the queue once (they resume from what is stored, no gaps); a job that was already resumed fails.
- * Only the reader's own jobs (DataForSEO and Google jobs are not touched).
+ * Only the reader's own jobs (jobs of Google's official API are not touched).
  */
 async function failStaleJobs() {
   const { data, error } = await db
@@ -177,6 +178,19 @@ async function runJob(job, store) {
     await finishJob(job, { status: "failed", error: message });
   } finally {
     if (tab) await releaseTab(tab);
+  }
+}
+
+/**
+ * Jobs queued for a provider that no longer exists (the old paid services) are taken over: nothing
+ * else runs them, and while one waits no new job of that kind can be queued for the same target.
+ */
+async function takeOverRetiredJobs() {
+  try {
+    const handed = await handRetiredJobsToReader(db);
+    if (handed) log(`${handed} pedido(s) de um fornecedor antigo passado(s) para o leitor`);
+  } catch (error) {
+    log("aviso:", error instanceof Error ? error.message : error);
   }
 }
 
@@ -275,6 +289,8 @@ async function main() {
   const store = createStore(db, { dryRun: false });
   log(`leitor Steevanz ${version} ligado (${readerId}, processo ${process.pid}). Até ${readerSlots} pedidos ao mesmo tempo. À espera de pedidos…`);
   await failStaleJobs();
+  await takeOverRetiredJobs();
+  setInterval(() => void takeOverRetiredJobs(), 60_000);
   await heartbeat();
   setInterval(() => void heartbeat(), heartbeatMs);
   void triggerCompetitionSlot();

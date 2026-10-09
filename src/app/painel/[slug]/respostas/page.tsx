@@ -5,16 +5,14 @@ import { notFound } from "next/navigation";
 import { AutoReplyPanel } from "@/components/reviews/AutoReplyPanel";
 import { DashboardBusyProvider } from "@/components/reviews/DashboardBusy";
 import { InfoTip } from "@/components/reviews/InfoTip";
-import { ReaderJobsProvider } from "@/components/reviews/ReaderJobs";
 import { ReplyInbox } from "@/components/reviews/ReplyInbox";
 import { ReplyOnboarding } from "@/components/reviews/ReplyOnboarding";
 import { DraftMoreButton, ReplyRunner } from "@/components/reviews/ReplyRunner";
 import { ReplyLibrary, ReplyTraining } from "@/components/reviews/ReplyTraining";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDate, formatPercent } from "@/lib/reviews/format";
-import { emptyReaderJobs, loadReaderJobs } from "@/lib/reviews/import-jobs";
 import { loadInbox, loadLibrary, loadReplyBusiness, loadReplySettings, loadToneHistory, loadTrainingQueue, type ToneHistoryEntry } from "@/lib/reviews/reply-store";
-import { describeTone, draftsPerRun, replyWindowDays } from "@/lib/reviews/replies";
+import { describeTone, draftsPerRun } from "@/lib/reviews/replies";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 
 export async function generateMetadata({ params }: PageProps<"/painel/[slug]/respostas">): Promise<Metadata> {
@@ -96,12 +94,11 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
     return <ReplyOnboarding slug={slug} initial={settings} candidates={candidates} editing={Boolean(settings.onboardedAt)} />;
   }
 
-  const [inbox, library, queue, history, readerJobs] = await Promise.all([
+  const [inbox, library, queue, history] = await Promise.all([
     loadInbox(client, business.id, settings),
     loadLibrary(client, business.id, settings.profileId),
     loadTrainingQueue(client, business.id, settings.profileId),
     loadToneHistory(client, business.id, settings.profileId),
-    loadReaderJobs(client, business.id).catch(() => emptyReaderJobs),
   ]);
   const pending = inbox.items.filter((item) => item.status === "pending" && !item.review.ownerReply).length;
   const approved = inbox.items.filter((item) => item.status === "approved").length;
@@ -128,9 +125,17 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
           Google Business Profile, as respostas aprovadas passam a ser publicadas sozinhas.
         </p>
 
-        <ReaderJobsProvider slug={slug} initial={readerJobs}>
-          <ReplyRunner runUrl={runUrl} syncUrl={`/api/painel/${slug}/sync`} />
-        </ReaderJobsProvider>
+        <div className="flex flex-col gap-2">
+          <ReplyRunner runUrl={runUrl} />
+          <p className="text-sm text-subtle">
+            Respostas preparadas a partir das {inbox.stored} reviews guardadas deste negócio
+            {business.lastSyncedAt ? `, lidas do Google pela última vez a ${formatDate(business.lastSyncedAt)}` : ""}. As reviews novas chegam com «Atualizar» no separador{" "}
+            <Link href={`/painel/${slug}`} className="font-semibold text-accent-text hover:underline">
+              Análise Google
+            </Link>{" "}
+            e com a leitura diária.
+          </p>
+        </div>
 
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <Stat label="Por aprovar" value={pending} info="Respostas preparadas à espera da sua decisão. As de reviews negativas (1 a 3★) aparecem primeiro." />
@@ -138,9 +143,7 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
           <Stat
             label="Sem resposta"
             value={inbox.backlog}
-            info={`Reviews recentes (desde ${replyWindowDays} dias antes da configuração) ainda sem resposta do dono e sem resposta preparada. Cada «Atualizar» prepara até ${draftsPerRun}. ${
-              inbox.olderUnanswered ? `As ${inbox.olderUnanswered} reviews mais antigas sem resposta ficam de fora.` : ""
-            }`}
+            info={`Todas as reviews guardadas deste negócio (todo o histórico) ainda sem resposta do dono e sem resposta preparada. Cada «Atualizar» prepara até ${draftsPerRun}, das mais recentes para as mais antigas.`}
           />
         </div>
 

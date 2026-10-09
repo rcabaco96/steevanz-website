@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createState, signState, stateTtlSeconds } from "@/lib/google/crypto";
-import { buildAuthUrl, callbackPath, googleOAuthConfig, redirectUriFor, stateCookieName } from "@/lib/google/oauth";
+import { buildAuthUrl, callbackPath, googleOAuthConfig, googleOAuthMissing, redirectUriFor, stateCookieName } from "@/lib/google/oauth";
 import { panelAccess } from "@/lib/reviews/access";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 
@@ -20,7 +20,11 @@ export async function GET(request: NextRequest) {
   const panel = (estado: string) => NextResponse.redirect(new URL(`/painel/${slug}/google?estado=${estado}`, request.nextUrl.origin));
 
   const config = googleOAuthConfig();
-  if (!config) return panel("indisponivel");
+  if (!config) {
+    // The button never stays disabled: the Google page explains (and tells admins which env vars are missing).
+    console.warn(`[google] connect for ${slug} without configuration: missing ${googleOAuthMissing().join(", ")}`);
+    return panel("indisponivel");
+  }
 
   const client = tryCreateServiceClient();
   if (!client) return panel("indisponivel");

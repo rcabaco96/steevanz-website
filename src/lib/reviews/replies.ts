@@ -131,15 +131,22 @@ export const autoLimitOptions = [5, 10, 25, 50];
 /** Replies built per "Atualizar" (rules are free; this only keeps each click quick). */
 export const draftsPerRun = 25;
 /**
- * Business rule: the AI only answers recent reviews (published since the setup, plus this many
- * days before it). The history of old unanswered reviews never goes to the AI: it would cost a
- * lot for replies nobody reads any more.
+ * Business rule: replies are prepared for every stored review without an owner reply (the whole
+ * history in Supabase, newest first, `draftsPerRun` per click; rules cost nothing). Automatic
+ * approval only applies to recent reviews (published since the setup, plus this many days before
+ * it): replies to the old history always wait for the owner.
  */
 export const replyWindowDays = 30;
 
-/** Oldest publication date the AI answers, or null before the setup. */
+/** Oldest publication date automatic approval applies to, or null before the setup. */
 export function replyWindowStart(onboardedAt: string | null): Date | null {
   return onboardedAt ? new Date(Date.parse(onboardedAt) - replyWindowDays * 86_400_000) : null;
+}
+
+/** Whether a review is recent enough for automatic approval (see replyWindowDays). */
+export function inAutoReplyWindow(onboardedAt: string | null, publishedAt: string): boolean {
+  const start = replyWindowStart(onboardedAt);
+  return start !== null && Date.parse(publishedAt) >= start.getTime();
 }
 
 /** A "generating" claim older than this belongs to a request that died; it can be retried. */

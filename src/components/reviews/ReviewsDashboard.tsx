@@ -13,6 +13,7 @@ import { whatsappUrl } from "@/lib/site";
 import {
   bucketKey,
   filterReviews,
+  hasPlatesProduct,
   minSample,
   type Comparison,
   type DashboardAnalytics,
@@ -22,7 +23,7 @@ import {
   type ReviewStarFilter,
 } from "@/lib/reviews/analytics";
 import { formatBucket, formatDate, formatDateTime, formatHours, formatInt, formatPercent, formatRating, formatSignedPercent, weekdayLong } from "@/lib/reviews/format";
-import { competitorLimit, competitorRadiusKm, type Competition } from "@/lib/reviews/competitors";
+import { competitorLimit, radiusLabel, type Competition } from "@/lib/reviews/competitors";
 import type { ThemeId } from "@/lib/reviews/text";
 import type { DashboardSource } from "@/lib/reviews/types";
 import { BarList, ColumnChart, DataTable, RatingDots, RatingLineChart, type ColumnDatum } from "./charts";
@@ -39,7 +40,6 @@ import { Stars } from "./Stars";
 import { ThemeReviews } from "./ThemeReviews";
 
 export const periodLabels: Record<PeriodId, string> = { "30d": "30 dias", "90d": "90 dias", "12m": "12 meses", all: "Tudo" };
-const radiusLabel = `${String(competitorRadiusKm).replace(".", ",")} km`;
 
 /** Hidden for now at the owner's request; the charts and data stay ready for later. */
 const showEvolutionSection = false;
@@ -64,8 +64,8 @@ const infoTexts = {
   avgRating:
     "Média das estrelas das reviews publicadas no período escolhido. A comparação é com o período anterior de igual duração e só aparece com pelo menos 5 reviews nesse período.",
   reviews: "Reviews publicadas no Google no período escolhido, comparadas com o período anterior de igual duração (mínimo de 5 reviews para comparar).",
-  competition:
-    `Até ${competitorLimit} negócios num raio de ${radiusLabel}: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
+  competition: (radiusKm: number) =>
+    `Até ${competitorLimit} negócios num raio de ${radiusLabel(radiusKm)}: primeiro os da mesma categoria do Google (os com mais reviews), depois os que o Google associa a essa pesquisa. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
   competitionReplies:
     "Percentagem das reviews recentes de cada negócio que têm resposta do dono no Google. Contamos as reviews mais recentes (até 60) publicadas nos últimos 12 meses, sem as dos últimos 7 dias, para dar tempo a responder. Nos concorrentes, é medida uma vez, quando entram na comparação, com as mesmas reviews usadas para o ritmo; no seu negócio, com as suas reviews importadas e a mesma regra. Com menos de 5 reviews contadas não mostramos valor («–»). Empates: primeiro quem tem mais reviews contadas. É uma estimativa: guardamos só a percentagem e o número de reviews contadas, nunca os textos.",
   pace: "Média de reviews por mês nos últimos 3 meses, comparada com os 3 meses antes. Não depende do filtro de período: mostra sempre o ritmo atual.",
@@ -479,7 +479,8 @@ function RankTrendLine({ places, change, since }: { places: number | null; chang
   );
 }
 
-function CompetitionSummary({ competition }: { competition: Competition | null }) {
+function CompetitionSummary({ competition, radiusKm }: { competition: Competition | null; radiusKm: number }) {
+  const radius = radiusLabel(radiusKm);
   const notes = competition ? competitionNotes(competition) : [];
   const trend = competition?.trend ?? null;
   const ranks = [
@@ -491,10 +492,10 @@ function CompetitionSummary({ competition }: { competition: Competition | null }
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="competition-summary-title" className="flex items-center gap-1.5 font-semibold text-text">
           Na sua zona
-          <InfoTip label="Na sua zona">{infoTexts.competition}</InfoTip>
+          <InfoTip label="Na sua zona">{infoTexts.competition(radiusKm)}</InfoTip>
         </h2>
         <span className="text-xs text-subtle">
-          {competition ? `${plural(competition.competitors, "concorrente", "concorrentes")} até ${radiusLabel}` : `concorrentes até ${radiusLabel}`}
+          {competition ? `${plural(competition.competitors, "concorrente", "concorrentes")} até ${radius}` : `concorrentes até ${radius}`}
         </span>
       </div>
       <dl className="grid grid-cols-2 gap-2">
@@ -548,13 +549,13 @@ function CompetitionSummary({ competition }: { competition: Competition | null }
   );
 }
 
-function CompetitionSection({ competition, category }: { competition: Competition; category: string | null }) {
+function CompetitionSection({ competition, category, radiusKm }: { competition: Competition; category: string | null; radiusKm: number }) {
   return (
     <Section
       id="competition"
       title="Como está face à concorrência"
-      info={infoTexts.competition}
-      lead={`${plural(competition.competitors, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel}. Dados públicos do Google, atualizados duas vezes por dia${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
+      info={infoTexts.competition(radiusKm)}
+      lead={`${plural(competition.competitors, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel(radiusKm)}. Dados públicos do Google, atualizados duas vezes por dia${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
     >
       <Card>
         <CompetitionBoard entries={competition.entries} replyInfo={infoTexts.competitionReplies} />
@@ -569,8 +570,8 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics): st
   if (competition?.ratingRank) {
     items.push(
       competition.ratingRank === 1
-        ? `É o mais bem avaliado entre ${competition.total} negócios da mesma categoria num raio de ${radiusLabel}.`
-        : `Está em ${competition.ratingRank}.º de ${competition.total} na avaliação entre os negócios da mesma categoria num raio de ${radiusLabel}. Veja abaixo quanto falta para subir.`,
+        ? `É o mais bem avaliado entre ${competition.total} negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}.`
+        : `Está em ${competition.ratingRank}.º de ${competition.total} na avaliação entre os negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}. Veja abaixo quanto falta para subir.`,
     );
   }
   const { beforeAfter, weekdays, themes, kpis } = analytics;
@@ -622,9 +623,11 @@ export function ReviewsDashboard({
 }) {
   const { business } = source;
   const { kpis, series, period } = analytics;
+  // Everything about the NFC plates (install date, chart marker, «Antes e depois») only for clients who have them.
+  const hasPlates = hasPlatesProduct(business);
   const insights = insightsFor(source, analytics);
   const granularityLabel = period.granularity === "month" ? "mês" : period.granularity === "week" ? "semana" : "dia";
-  const markerKey = business.platesInstalledOn ? bucketKey(`${business.platesInstalledOn}T12:00:00Z`, period.granularity) : null;
+  const markerKey = hasPlates && business.platesInstalledOn ? bucketKey(`${business.platesInstalledOn}T12:00:00Z`, period.granularity) : null;
   const marker = markerKey && series.some((bucket) => bucket.key === markerKey) ? { key: markerKey, label: "Placas" } : undefined;
   const lastKey = series[series.length - 1]?.key;
   const longLabel = (key: string) =>
@@ -659,7 +662,7 @@ export function ReviewsDashboard({
           <div className="flex flex-col gap-2">
             <p className="eyebrow">Análise de reviews Google</p>
             <BusinessName name={business.name} mapsUrl={business.googleMapsUrl} />
-            {business.platesInstalledOn ? (
+            {hasPlates && business.platesInstalledOn ? (
               <p className="text-sm text-subtle">Placas instaladas a {formatDate(`${business.platesInstalledOn}T12:00:00Z`)}</p>
             ) : null}
           </div>
@@ -670,7 +673,7 @@ export function ReviewsDashboard({
         </div>
         <div className="flex flex-col gap-4 lg:w-[27rem] lg:shrink-0">
           <Refreshable scopes={["sync"]}>
-            <CompetitionSummary competition={source.competition} />
+            <CompetitionSummary competition={source.competition} radiusKm={business.competitorRadiusKm} />
           </Refreshable>
           <Refreshable scopes={["sync"]}>
             {analytics.ratingGoal ? (
@@ -719,7 +722,7 @@ export function ReviewsDashboard({
       </Refreshable>
 
       <Refreshable scopes={["sync"]}>
-  {source.competition ? <CompetitionSection competition={source.competition} category={business.category} /> : null}
+  {source.competition ? <CompetitionSection competition={source.competition} category={business.category} radiusKm={business.competitorRadiusKm} /> : null}
       </Refreshable>
 
       <Refreshable scopes={["sync","period"]}>
@@ -852,6 +855,7 @@ export function ReviewsDashboard({
         </Section>
       </Refreshable>
 
+      {hasPlates ? (
       <Refreshable scopes={["sync"]}>
   <Section id="before-after" info={infoTexts.beforeAfter} title="Antes e depois das placas" lead="Compara o tempo desde a instalação com igual período anterior (independente do filtro).">
           {analytics.beforeAfter ? (
@@ -902,6 +906,7 @@ export function ReviewsDashboard({
           )}
         </Section>
       </Refreshable>
+      ) : null}
 
       {showEvolutionSection ? (
       <Section id="evolution" title="Evolução" lead={`Reviews e avaliação por ${granularityLabel} no período escolhido.`}>
@@ -930,7 +935,7 @@ export function ReviewsDashboard({
 
       <Refreshable scopes={["sync","period"]}>
   {suggestions.length ? (
-          <Section id="recommended" info={infoTexts.recommendations} title="Recomendado para o seu negócio" lead="Sugestões a partir do que as suas reviews e placas mostram.">
+          <Section id="recommended" info={infoTexts.recommendations} title="Recomendado para o seu negócio" lead={hasPlates ? "Sugestões a partir do que as suas reviews e placas mostram." : "Sugestões a partir do que as suas reviews mostram."}>
             <RecommendationCards items={suggestions} />
           </Section>
         ) : null}

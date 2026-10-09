@@ -3,12 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { startReviewSync, syncBusinessReviews, syncTargetColumns, type SyncTarget } from "@/lib/reviews/store";
 import { isProductId } from "@/content/products";
-import { apifyToken } from "@/lib/reviews/apify";
-import { discoverCompetitors } from "@/lib/reviews/competitor-store";
-import { jobPriority, queueNewCompetitorReads, queueReaderJob } from "@/lib/reviews/reader-queue";
-import { fullImportSource } from "@/lib/reviews/import-source";
+import { queueCompetitorDiscovery } from "@/lib/reviews/competitor-store";
+import { radiusLabel, toRadiusKm } from "@/lib/reviews/competitors";
+import { handRetiredJobsToReader, jobPriority, queueReaderJob, readerProvider } from "@/lib/reviews/reader-queue";
 import { queueCompetitorSearch } from "@/lib/reviews/import-jobs";
 import { isShortMapsLink, parseMapsPlaceLink, placeIdFromFid, writeReviewLink } from "@/lib/reviews/maps-link";
 import { isAdminEmail } from "@/lib/supabase/env";
@@ -186,7 +184,9 @@ export async function sendBusinessInvite(_previous: AdminActionState, formData: 
     if (!business.owner_id) return { ok: false, message: "Acrescente primeiro o email do dono." };
     const owner = await loadOwnerAccount(client, business.owner_id);
     if (!owner) return { ok: false, message: "A conta deste negócio já não existe. Retire o acesso e volte a pôr o email." };
-    if (!(await sendPanelInvite(client, business, owner.email))) return { ok: false, message: "O email não foi enviado. Tente novamente daqui a pouco." };
+    const invite = await sendPanelInvite(client, business, owner.email);
+    if (!invite.sent && invite.waitSeconds) return { ok: false, message: `Acabou de ser enviado um email para ${owner.email}. Aguarde ${invite.waitSeconds} s para enviar outro.` };
+    if (!invite.sent) return { ok: false, message: "O email não foi enviado. Tente novamente daqui a pouco." };
     const { error } = await client.from("review_businesses").update({ invite_sent_at: new Date().toISOString() }).eq("id", business.id);
     if (error) throw new Error(error.message);
     revalidatePath("/admin/reviews", "layout");
@@ -269,6 +269,8 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
           lng: place.lng,
           contact_name: contact.data.contact_name,
           contact_phone: contact.data.contact_phone,
+          // Competitor search radius (5 or 10 km; 10 by default), read by the reader's search.
+          competitor_radius_km: toRadiusKm(value(formData, "competitor_radius_km")),
         })
         .select("id, slug")
         .single<{ id: string; slug: string }>();
@@ -293,14 +295,13 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
       }
     }
 
-    let queued = false;
-    if (fullImportSource() === "reader") {
-      const { error } = await client.from("review_import_jobs").insert({ business_id: saved.id, kind: "full", priority: jobPriority.firstImport, requested_by: "admin", provider: "reader" });
-      if (error && error.code !== "23505") throw new Error(error.message);
-      queued = !error;
-      // The competitor search goes in parallel (another reader tab).
-      await queueCompetitorSearch(client, saved.id, "admin");
-    }
+    const { error: queueError } = await client
+      .from("review_import_jobs")
+      .insert({ business_id: saved.id, kind: "full", priority: jobPriority.firstImport, requested_by: "admin", provider: readerProvider });
+    if (queueError && queueError.code !== "23505") throw new Error(queueError.message);
+    const queued = !queueError;
+    // The competitor search goes in parallel (another reader tab).
+    await queueCompetitorSearch(client, saved.id, "admin");
     revalidatePath("/admin/reviews", "layout");
     created = saved.id;
     return {
@@ -313,30 +314,31 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
   return result;
 }
 
-/** After a search, the free local reader reads each new place (star distribution, reviews, reply rate). */
-async function completeCompetitors(client: ReturnType<typeof createServiceClient>, businessId: string) {
-  try {
-    await queueNewCompetitorReads(client, businessId, "admin");
-  } catch (error) {
-    console.error("[competitors] queuing reader jobs failed:", error instanceof Error ? error.message : error);
-  }
-}
-
-export async function refreshCompetitors(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
+/**
+ * Competitor search radius (5 or 10 km), admins only. A different radius queues a new zone search
+ * by the free reader right away (it reads the radius when the job starts); places outside a smaller
+ * radius stop showing at once (loadCompetition). The same radius changes nothing.
+ */
+export async function saveCompetitorRadius(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
   return guarded(async () => {
     const id = uuid.safeParse(value(formData, "id"));
-    if (!id.success) return { ok: false, message: "Pedido inválido." };
-    if (!apifyToken()) return { ok: false, message: "Falta configurar o APIFY_TOKEN." };
+    const submitted = Number(value(formData, "competitor_radius_km"));
+    if (!id.success || toRadiusKm(submitted) !== submitted) return { ok: false, message: "Pedido inválido." };
+    const radius = toRadiusKm(submitted);
     const client = createServiceClient();
-    const { data, error } = await client.from("review_businesses").select("id, slug, google_maps_url").eq("id", id.data).maybeSingle();
+    const { data, error } = await client.from("review_businesses").select("id, slug, competitor_radius_km").eq("id", id.data).maybeSingle<{ id: string; slug: string; competitor_radius_km: number | null }>();
     if (error) throw new Error(error.message);
     if (!data) return { ok: false, message: "Negócio não encontrado." };
-    const found = await discoverCompetitors(client, data as { id: string; google_maps_url: string });
-    // Star distributions, pace and reply rates are read by the local reader.
-    await completeCompetitors(client, data.id as string);
+    if (toRadiusKm(data.competitor_radius_km) === radius) return { ok: true, message: `O raio já era de ${radiusLabel(radius)}. Nada mudou.` };
+    const { error: saveError } = await client.from("review_businesses").update({ competitor_radius_km: radius }).eq("id", data.id);
+    if (saveError) throw new Error(saveError.message);
+    const queued = await queueCompetitorDiscovery(client, data.id, "admin", jobPriority.waiting);
     revalidatePath("/admin/reviews", "layout");
     revalidatePath(`/painel/${data.slug}`);
-    return { ok: true, message: `${found} concorrentes encontrados. O leitor lê a média exata, o ritmo e as respostas de cada um assim que estiver ligado.` };
+    return {
+      ok: true,
+      message: `Raio guardado: ${radiusLabel(radius)}. ${queued ? "Nova procura de concorrentes na fila do leitor." : "Já havia uma procura na fila do leitor: se ainda não começou, usa o raio novo; se já começou, a rotina diária procura outra vez com o raio novo."}`,
+    };
   });
 }
 
@@ -364,28 +366,7 @@ export async function deleteReviewBusiness(_previous: AdminActionState, formData
   });
 }
 
-/** Plan B (paid): reads the reviews right now through Apify, when the local reader cannot. */
-export async function syncReviewsNow(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  return guarded(async () => {
-    const id = uuid.safeParse(value(formData, "id"));
-    if (!id.success) return { ok: false, message: "Pedido inválido." };
-    if (!apifyToken()) return { ok: false, message: "Falta configurar o APIFY_TOKEN." };
-    const client = createServiceClient();
-    const { data, error } = await client.from("review_businesses").select(syncTargetColumns).eq("id", id.data).maybeSingle<SyncTarget>();
-    if (error) throw new Error(error.message);
-    if (!data) return { ok: false, message: "Negócio não encontrado." };
-    if ((await startReviewSync(client, data.id, 0)) === "running") return { ok: false, message: "Já está a decorrer uma leitura deste negócio. Aguarde um minuto." };
-    const mode = value(formData, "mode") === "full" ? "full" : "refresh";
-    const result = await syncBusinessReviews(client, data, mode);
-    revalidatePath("/admin/reviews", "layout");
-    revalidatePath(`/painel/${data.slug}`);
-    return result.ok
-      ? { ok: true, message: mode === "full" ? `Apify: ${result.imported} reviews lidas, incluindo respostas a reviews antigas.` : `Apify: ${result.imported} reviews recebidas do Google.` }
-      : { ok: false, message: `A leitura com o Apify falhou: ${result.error?.slice(0, 160)}` };
-  });
-}
-
-/** Normal path (free): asks the local reader for an update or the whole history, ahead of the routine. */
+/** Asks the Steevanz reader (free, the only source) for an update or the whole history, ahead of the routine. */
 export async function queueReaderReviews(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
   return guarded(async () => {
     const id = uuid.safeParse(value(formData, "id"));
@@ -395,6 +376,8 @@ export async function queueReaderReviews(_previous: AdminActionState, formData: 
     const { data, error } = await client.from("review_businesses").select("id, slug").eq("id", id.data).maybeSingle<{ id: string; slug: string }>();
     if (error) throw new Error(error.message);
     if (!data) return { ok: false, message: "Negócio não encontrado." };
+    // A job left for a provider that no longer exists would block this business's reads forever.
+    await handRetiredJobsToReader(client, data.id);
     const result = await queueReaderJob(client, { kind, business_id: data.id, place_id: null, priority: jobPriority.waiting, requested_by: "admin" });
     revalidatePath("/admin/reviews", "layout");
     if (result === "active") return { ok: true, message: "Já há um pedido igual na fila do leitor." };

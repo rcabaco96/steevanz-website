@@ -243,12 +243,12 @@ export async function overviewFacts(tab, url) {
 }
 
 /**
- * A Google Maps search around a point, as a visitor sees it: scrolls the result list (at most
- * `max` places, human pauses) and returns the places it shows (parseSearchResult). Empty when
+ * A Google Maps search around a point, as a visitor sees it (`zoom`: how much of the area is on
+ * screen, searchZoomFor in competitors.ts): scrolls the result list (at most `max` places, human pauses) and returns the places it shows (parseSearchResult). Empty when
  * Google jumps straight to one place or shows nothing.
  */
-export async function searchPlaces(tab, keyword, lat, lng, max = 60) {
-  await tab.send("Page.navigate", { url: `https://www.google.com/maps/search/${encodeURIComponent(keyword)}/@${lat},${lng},13z?hl=pt-PT` });
+export async function searchPlaces(tab, keyword, lat, lng, max = 60, zoom = 13) {
+  await tab.send("Page.navigate", { url: `https://www.google.com/maps/search/${encodeURIComponent(keyword)}/@${lat},${lng},${zoom}z?hl=pt-PT` });
   const listed = `!!document.querySelector('div[role=feed] a[href*="/maps/place/"]')`;
   if (!(await waitFor(tab, `${listed} || !!document.querySelector('h1') || /consent\./.test(location.host)`, 20000))) return [];
   await tab.evaluate(`[...document.querySelectorAll('button')].find(x => /^\s*(Aceitar tudo|Accept all)\s*$/i.test(x.textContent))?.click()`);

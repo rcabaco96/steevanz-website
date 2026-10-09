@@ -8,6 +8,10 @@ let audio: AudioContext | null = null;
 
 export function unlockAlerts(): void {
   try {
+    // iPhone mutes Web Audio with the ring/silent switch unless the page asks for "playback"
+    // (Safari 17+), like a video would; older iPhones ignore this and stay muted on silent.
+    const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
+    if (session && session.type !== "playback") session.type = "playback";
     const Context = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Context) return;
     audio ??= new Context();
@@ -29,6 +33,8 @@ export function playChime(): void {
   try {
     if (!audio) unlockAlerts();
     if (!audio) return;
+    // iOS suspends the audio while the page was in the background: wake it before the beeps.
+    if (audio.state !== "running") void audio.resume();
     const start = audio.currentTime + 0.05;
     [660, 880, 1100].forEach((frequency, index) => {
       const oscillator = audio!.createOscillator();

@@ -4,6 +4,7 @@ import { AdminPageHeader, EmptyState } from "@/components/backoffice/ui";
 import { buttonClasses } from "@/components/ui/Button";
 import { ArrowUpRight } from "@/components/icons";
 import { requireAdmin } from "@/lib/admin/auth";
+import { toRadiusKm } from "@/lib/reviews/competitors";
 import type { BusinessRow } from "@/lib/reviews/store";
 import { createServiceClient } from "@/lib/supabase/service";
 import { accessState, loadOwnerAccount } from "@/lib/admin/client-access";
@@ -23,7 +24,16 @@ export default async function ReviewsAdminPage({ searchParams }: PageProps<"/adm
   const ownerIds = [...new Set(businesses.flatMap((business) => (business.owner_id ? [business.owner_id] : [])))];
   const [competitorCounts, jobsResult, owners] = await Promise.all([
     Promise.all(
-      ids.map((id) => client.from("competitors").select("id", { count: "exact", head: true }).eq("business_id", id).eq("is_self", false).eq("excluded", false)),
+      // Counted as the client sees them: within the radius an admin chose.
+      businesses.map((business) =>
+        client
+          .from("competitors")
+          .select("id", { count: "exact", head: true })
+          .eq("business_id", business.id)
+          .eq("is_self", false)
+          .eq("excluded", false)
+          .or(`distance_m.is.null,distance_m.lte.${toRadiusKm(business.competitor_radius_km) * 1000}`),
+      ),
     ),
     ids.length
       ? client.from("review_import_jobs").select(jobColumns).in("business_id", ids).order("requested_at", { ascending: false }).limit(Math.min(1000, ids.length * 10))

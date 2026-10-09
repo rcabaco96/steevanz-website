@@ -1,9 +1,57 @@
 import type { PlaceProfile } from "./maps-reader.ts";
-import type { ApifyPlaceItem, StarDistribution } from "./apify.ts";
+import type { GooglePlace, StarDistribution } from "./place-types.ts";
 
-/** Business rule: competitors are searched within 10 km (see regras-negocio-reviews, rule 5). */
-export const competitorRadiusKm = 10;
+/**
+ * Business rule (regras-negocio-reviews, rule 5): competitors are searched within 5 or 10 km, chosen
+ * per customer by an admin (review_businesses.competitor_radius_km); 10 km by default.
+ */
+export const competitorRadiusOptions = [5, 10] as const;
+export type CompetitorRadiusKm = (typeof competitorRadiusOptions)[number];
+export const competitorRadiusKm: CompetitorRadiusKm = 10;
 export const competitorLimit = 30;
+
+/** A stored or submitted radius as one of the options (anything else: the default, 10 km). */
+export function toRadiusKm(value: unknown): CompetitorRadiusKm {
+  const radius = Number(value);
+  return competitorRadiusOptions.find((option) => option === radius) ?? competitorRadiusKm;
+}
+
+/** "10 km", "5 km". */
+export function radiusLabel(radiusKm: number): string {
+  return `${String(radiusKm).replace(".", ",")} km`;
+}
+
+/**
+ * Zoom of the reader's Google Maps zone search: Maps lists the places of the area on screen, so a
+ * smaller radius needs a closer view (13z ≈ 10 km around the point, 14z ≈ 5 km).
+ */
+export function searchZoomFor(radiusKm: number): number {
+  return radiusKm <= 5 ? 14 : 13;
+}
+
+/** Whether a compared place is within the customer's radius (unknown distance: kept). */
+export function withinRadius(distanceM: number | null, radiusKm: number): boolean {
+  return distanceM === null || distanceM <= radiusKm * 1000;
+}
+
+/** What decides whether a customer's competitors must be searched (again). */
+export interface DiscoveryState {
+  competitors_refreshed_at: string | null;
+  /** Radius chosen by an admin (5 or 10 km). */
+  competitor_radius_km?: number | null;
+  /** Radius the current list was searched with (null: before radii existed, i.e. 10 km). */
+  competitors_search_radius_km?: number | null;
+}
+
+/**
+ * The competitor search (the free reader's "discover" job) is due for a customer that never had
+ * competitors searched, or whose radius an admin changed since the last search.
+ */
+export function discoveryDue(business: DiscoveryState): boolean {
+  if (!business.competitors_refreshed_at) return true;
+  return toRadiusKm(business.competitors_search_radius_km ?? competitorRadiusKm) !== toRadiusKm(business.competitor_radius_km);
+}
+
 /** How many recent reviews per place are read once to estimate the monthly pace. */
 export const paceSampleSize = 60;
 const dayMs = 86_400_000;
@@ -49,7 +97,7 @@ export interface CompetitorCandidate {
  */
 export function selectCompetitors(
   self: { placeId: string; category: string; lat: number; lng: number },
-  places: ApifyPlaceItem[],
+  places: GooglePlace[],
   radiusKm = competitorRadiusKm,
   limit = competitorLimit,
 ): CompetitorCandidate[] {
@@ -179,8 +227,7 @@ export interface CompetitorEntry {
   replyRate: number | null;
   /** Reviews the reply rate was measured on; null when not measured yet. */
   replySample: number | null;
-  /** Photos on Google and the filled profile fields, from the place's page (null until read). */
-  photos?: number | null;
+  /** Filled profile fields, from the place's page (null until read). */
   profile?: PlaceProfile | null;
   /**
    * «Perfil verificado» (business rule 14): the place belongs to a Steevanz customer whose Google

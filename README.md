@@ -36,8 +36,7 @@ Anyone can create an account at `/conta/registar` (email + password). Orders sen
 Supabase dashboard settings (Authentication):
 
 - Email provider: enable **Confirm email** (required: admin rights depend on a confirmed email, so with confirmation off anyone could register an `ADMIN_EMAILS` address); minimum password length 10; enable leaked password protection.
-- URL configuration: Site URL = production URL; add `<site>/conta/auth/callback` (and `http://localhost:3000/conta/auth/callback`) to Redirect URLs.
-- Email templates: translate confirm signup and reset password to Portuguese.
+- Emails: Supabase sends none. Sign-in, confirmation and password emails are built by the site and sent through Resend from `noreply@steevanz.com`; their links open `/conta/auth/confirm` and work on any device. Settings (link lifetime, Send Email Hook, URLs): [docs/auth-email-config.md](docs/auth-email-config.md).
 - Admin accounts: register at `/conta/registar` with an email listed in `ADMIN_EMAILS` and confirm it. Admins who used the old magic-link login have no password yet: use `/conta/recuperar` once to set one.
 
 ## Prices

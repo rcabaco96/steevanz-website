@@ -1,6 +1,22 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { duration, emptyReaderJobs, finishedJob, fullImportProgress, isActive, isReaderOnline, recentSyncMinutes, relativeTime, updateIntervalMinutes } from "../src/lib/reviews/import-jobs.ts";
+import {
+  competitionProgress,
+  duration,
+  emptyReaderJobs,
+  finishedJob,
+  fullImportProgress,
+  isActive,
+  isReaderOnline,
+  maxPollMs,
+  nextPollDelay,
+  pollingNeeded,
+  queuedPollMs,
+  recentSyncMinutes,
+  relativeTime,
+  runningPollMs,
+  updateIntervalMinutes,
+} from "../src/lib/reviews/import-jobs.ts";
 
 const now = Date.parse("2026-10-03T12:00:00Z");
 const ago = (ms) => new Date(now - ms).toISOString();
@@ -88,5 +104,35 @@ describe("texts", () => {
     assert.equal(relativeTime(ago(20_000), now), "agora mesmo");
     assert.equal(relativeTime(ago(3 * 60_000), now), "há 3 min");
     assert.equal(relativeTime(ago(26 * 3_600_000), now), "há 1 dia");
+  });
+});
+
+describe("Panel polling", () => {
+  it("polls only while a job of the customer is queued or running", () => {
+    assert.equal(pollingNeeded(emptyReaderJobs), false);
+    assert.equal(pollingNeeded({ ...emptyReaderJobs, update: job({ status: "done" }), full: job({ kind: "full", status: "failed" }) }), false);
+    assert.equal(pollingNeeded({ ...emptyReaderJobs, update: job() }), true);
+    assert.equal(pollingNeeded({ ...emptyReaderJobs, discover: job({ kind: "discover", status: "running" }) }), true);
+    // Competitors still to read but no read queued (nothing will change by itself): no polling.
+    assert.equal(pollingNeeded({ ...emptyReaderJobs, competition: { total: 3, read: 1, pending: 2, active: 0 } }), false);
+    assert.equal(pollingNeeded({ ...emptyReaderJobs, competition: { total: 3, read: 1, pending: 2, active: 1 } }), true);
+  });
+
+  it("backs off while nothing changes, back to the base on a change", () => {
+    const queued = { ...emptyReaderJobs, update: job() };
+    const running = { ...emptyReaderJobs, update: job({ status: "running" }) };
+    assert.equal(nextPollDelay(running, null, false), runningPollMs);
+    assert.equal(nextPollDelay(queued, null, false), queuedPollMs);
+    assert.equal(nextPollDelay(queued, queuedPollMs, false), queuedPollMs * 1.5);
+    assert.equal(nextPollDelay(queued, 25_000, false), maxPollMs);
+    assert.equal(nextPollDelay(running, 20_000, true), runningPollMs);
+  });
+
+  it("counts competitor reads queued or running", () => {
+    const rows = [
+      { place_id: "a", status: "done", requested_at: ago(2000) },
+      { place_id: "b", status: "queued", requested_at: ago(1000) },
+    ];
+    assert.deepEqual(competitionProgress(["a", "b", "c"], rows), { total: 3, read: 1, pending: 2, active: 1 });
   });
 });

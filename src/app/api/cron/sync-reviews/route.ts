@@ -8,9 +8,9 @@ export const maxDuration = 300;
 /**
  * Customers' daily routine, on demand. The scheduler tick (/api/cron/tick) runs it every day at
  * 22:00 Portuguese time; this route remains for manual runs. Never reads Google for non-verified
- * customers: it queues "full" (first import) / "update" (not updated today) jobs for DataForSEO
- * (local reader when DataForSEO is not configured). Verified customers not synced today are synced
- * through the official Google API. The reader-offline email is checked only while jobs use the reader.
+ * customers: it queues "full" (first import) / "update" (not updated today) jobs for the Steevanz
+ * reader. Verified customers not synced today are synced through the official Google API. Then the
+ * reader-offline email is checked.
  * Jobs are deduplicated, so running it twice is harmless; it does not mark the tick's routine as done.
  *
  * `?dry=1` (or READER_QUEUE_DRY_RUN=1) returns the plan without queuing anything or sending email.

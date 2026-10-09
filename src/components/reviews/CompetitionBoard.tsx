@@ -13,14 +13,13 @@ import { profileItems, profileScore, type ProfileItem } from "@/lib/reviews/maps
 import { CompetitionCountdown } from "./CompetitionCountdown";
 import { InfoTip } from "./InfoTip";
 
-// "Reviews por mês" left the table on 2026-10-04 (owner's decision, for now).
-type SortKey = "rating" | "reviews" | "replies" | "photos" | "profile";
+// "Reviews por mês" left the table on 2026-10-04 and "Fotos" on 2026-10-09 (owner's decisions).
+type SortKey = "rating" | "reviews" | "replies" | "profile";
 
 const tabs: { key: SortKey; label: string }[] = [
   { key: "rating", label: "Avaliação" },
   { key: "reviews", label: "Total de reviews" },
   { key: "replies", label: "Respondidas" },
-  { key: "photos", label: "Fotos" },
   { key: "profile", label: "Perfil" },
 ];
 
@@ -43,7 +42,6 @@ const decimal = (value: number, digits: number) =>
 function value(entry: CompetitorEntry, key: SortKey): number | null {
   if (key === "rating") return entry.average ?? entry.rating;
   if (key === "reviews") return entry.reviewsCount;
-  if (key === "photos") return entry.photos ?? null;
   if (key === "profile") return entry.profile ? profileScore(entry.profile) : null;
   return entry.replyRate;
 }
@@ -58,7 +56,7 @@ function display(entry: CompetitorEntry, key: SortKey): string {
   if (current === null && key === "rating" && withoutReviews(entry)) return "Sem reviews";
   if (current === null) return "–";
   if (key === "rating") return `${decimal(entry.rating ?? current, 1)}★`;
-  if (key === "reviews" || key === "photos") return number.format(current);
+  if (key === "reviews") return number.format(current);
   return formatPercent(current);
 }
 
@@ -112,11 +110,9 @@ export function CompetitionBoard({
   )
     ? tabs
     : tabs.filter((tab) => tab.key !== "replies");
-  // Photos and profile appear once the reader has read them for some place.
+  // The profile appears once the reader has read it for some place.
   const readTabs = shownTabs.filter(
-    (tab) =>
-      (tab.key !== "photos" || entries.some((entry) => entry.photos != null)) &&
-      (tab.key !== "profile" || entries.some((entry) => entry.profile)),
+    (tab) => tab.key !== "profile" || entries.some((entry) => entry.profile),
   );
   const sorted = [...entries].sort(
     (a, b) =>
@@ -342,8 +338,6 @@ export function CompetitionBoard({
             (estimativa). «–»: ainda sem medição ou menos de {replyMinSample}{" "}
             reviews. <InfoTip label="Respondidas">{replyInfo}</InfoTip>
           </>
-        ) : sort === "photos" ? (
-          "Fotos do negócio no Google (do dono e dos clientes). Mais fotos recentes ajudam a aparecer nas pesquisas e a convencer quem procura."
         ) : sort === "profile" ? (
           "Barras de 0 a 100%. Campos preenchidos no perfil Google: perfil reivindicado pelo dono, site, telefone, horário e descrição. «–»: ainda não lido."
         ) : (

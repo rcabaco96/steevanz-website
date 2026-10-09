@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { setAutoModeAction } from "@/lib/reviews/reply-actions";
-import { autoLimitOptions, type AutoMode } from "@/lib/reviews/replies";
+import { autoLimitOptions, replyWindowDays, type AutoMode } from "@/lib/reviews/replies";
 import { AutoReplyChoice, type AutoReplyValue } from "./AutoReplyChoice";
 import { InfoTip } from "./InfoTip";
 
@@ -46,7 +46,8 @@ export function AutoReplyPanel({ slug, mode, limit, used, negative }: AutoReplyP
         <InfoTip label="Resposta automática">
           Quando está ligada, cada resposta nova preparada pelo sistema fica logo aprovada, sem esperar por si. «Só as próximas» aprova um número fixo de respostas e depois volta a
           pedir a sua aprovação; mudar o número recomeça a contagem. As reviews negativas (1 a 3★) e as respostas reescritas depois de uma rejeição esperam sempre por si, a não
-          ser que inclua as negativas. Enquanto o Google não estiver ligado, «aprovada» não publica nada.
+          ser que inclua as negativas. As respostas a reviews antigas (publicadas mais de {replyWindowDays} dias antes de configurar as respostas) também esperam sempre por si.
+          Enquanto o Google não estiver ligado, «aprovada» não publica nada.
         </InfoTip>
       </div>
       <AutoReplyChoice {...value} limits={autoLimitOptions} hideLegend sidebar onChange={change} />

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { lisbonTimeOfDay, slotBefore } from "../src/lib/reviews/competition-schedule.ts";
-import { decideTick, planZoneSnapshots, tickMaxJobs, zoneSnapshotZoom } from "../src/lib/reviews/tick.ts";
+import { decideTick } from "../src/lib/reviews/tick.ts";
 
 const empty = { competitionSlot: null, customerDay: null };
 
@@ -74,23 +74,5 @@ describe("scheduler tick: customers' routine (22:00 in Portugal)", () => {
     assert.equal(tick.day, "2026-10-04");
     assert.equal(tick.customers.due, false);
     assert.equal(tick.customers.verified, false);
-  });
-
-  it("always dispatches queued jobs", () => {
-    assert.equal(decideTick(new Date("2026-10-03T03:00:00Z"), empty).dispatch.maxJobs, tickMaxJobs);
-  });
-});
-
-describe("zone snapshots", () => {
-  const customer = (id, extra = {}) => ({ id, last_synced_at: null, full_synced_at: null, lat: 38.7, lng: -9.1, category: "Restaurante", ...extra });
-  const competitor = (business_id, place_id, extra = {}) => ({ business_id, place_id, excluded: false, is_self: false, ...extra });
-
-  it("one per customer with competitors, around the customer, searching its category", () => {
-    const { snapshots, skipped } = planZoneSnapshots(
-      [customer("a"), customer("b"), customer("c", { lat: null }), customer("d", { category: " " }), customer("e")],
-      [competitor("a", "p1"), competitor("a", "p2"), competitor("b", "p1", { excluded: true }), competitor("c", "p3"), competitor("d", "p4"), competitor("e", "p5", { is_self: true })],
-    );
-    assert.deepEqual(snapshots, [{ businessId: "a", keyword: "Restaurante", lat: 38.7, lng: -9.1, zoom: zoneSnapshotZoom }]);
-    assert.deepEqual(skipped, ["c", "d"]);
   });
 });

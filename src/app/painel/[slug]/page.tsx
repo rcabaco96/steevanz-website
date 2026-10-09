@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPanelGoogleStatus, googleConnectPath, googlePagePath } from "@/components/google/header-status";
+import { getPanelGoogleStatus, googleConnectPath } from "@/components/google/header-status";
 import { ReviewsDashboard, reviewsPageSize, type DashboardQuery } from "@/components/reviews/ReviewsDashboard";
-import { googleOAuthConfigured } from "@/lib/google/oauth";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { computeAnalytics, reviewStarFilters, type PeriodId, type ReviewStarFilter } from "@/lib/reviews/analytics";
 import { emptyReaderJobs, loadReaderJobs } from "@/lib/reviews/import-jobs";
@@ -53,10 +52,10 @@ export default async function DashboardPage({ params, searchParams }: PageProps<
   // Only reads Supabase (jobs of the local reader); opening the page never reads Google.
   const readerJobs = client ? await loadReaderJobs(client, source.business.id).catch(() => emptyReaderJobs) : emptyReaderJobs;
 
-  // «Ligar Google» under a partial import: straight to Google's consent when the connection is set up.
+  // «Ligar Google» under a partial import: straight to Google's consent (or, while the connection
+  // isn't set up yet, back to the Google page with the explanation).
   const googleStatus = await getPanelGoogleStatus(slug);
-  const configured = googleOAuthConfigured();
-  const googleConnect = googleStatus === "connected" ? null : { href: configured ? googleConnectPath(slug) : googlePagePath(slug), external: configured };
+  const googleConnect = googleStatus === "connected" ? null : { href: googleConnectPath(slug), external: true };
   return (
     <ReviewsDashboard
       source={source}
