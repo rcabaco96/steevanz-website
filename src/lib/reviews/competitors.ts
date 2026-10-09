@@ -367,6 +367,15 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
   };
 }
 
+/** The place on Google Maps for the reader's own browser (desktop Maps understands it). */
 export function googleMapsPlaceUrl(placeId: string): string {
   return `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(placeId)}`;
+}
+
+/**
+ * The place on Google Maps for people: Google's documented Maps URL, which also opens the Maps app
+ * on Android and iPhone (the "place_id:" form above opens the app on an empty search).
+ */
+export function googleMapsLink(placeId: string, name: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
 }
