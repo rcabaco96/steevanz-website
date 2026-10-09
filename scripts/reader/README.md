@@ -35,6 +35,8 @@ Precisa do `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_K
 | `competitor_replies` | Uma vez por local: % de reviews respondidas em 12 meses (máx. 2000 reviews) e ritmo mensal. |
 | `discover`           | Procura de concorrentes de um cliente: só lugares da mesma categoria do Google ou de uma muito parecida (regra 5); guarda a categoria de cada um. |
 
+No fim de cada `full` / `update`, as respostas do dono no Google ainda não aprendidas ensinam as respostas IA do tom atual (`learnOwnerReplies`, regra 11; sem tom configurado, ficam para quando o cliente guardar as definições das respostas).
+
 - Até 4 pedidos ao mesmo tempo (uma janela cada), nunca 2 do mesmo negócio/local; a última vaga
   fica sempre para a prioridade 1 (alguém à espera no painel).
 - Nunca guarda nomes, fotos ou perfis de quem escreveu; da concorrência só guarda números.

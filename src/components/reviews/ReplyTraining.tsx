@@ -7,6 +7,7 @@ import { buttonClasses } from "@/components/ui/Button";
 import { isNegative } from "@/lib/reviews/analytics";
 import { formatDate } from "@/lib/reviews/format";
 import { removeSnippetAction, skipTrainingAction, trainAction } from "@/lib/reviews/reply-actions";
+import { ownerReplyMinChars } from "@/lib/reviews/owner-replies";
 import { snippetKindLabels, themeNames } from "@/lib/reviews/reply-rules";
 import type { LibrarySnippet, TrainingReview } from "@/lib/reviews/reply-store";
 import { InfoTip } from "./InfoTip";
@@ -16,9 +17,9 @@ import { Stars } from "./Stars";
 const fieldClasses =
   "w-full rounded-xl border border-line-strong bg-surface px-3.5 py-3 text-[0.95rem] leading-relaxed text-text placeholder:text-subtle focus-visible:outline-2 focus-visible:outline-ring";
 
-export function snippetLabel(snippet: Pick<LibrarySnippet, "kind" | "theme" | "sentiment">): string {
+export function snippetLabel(snippet: Pick<LibrarySnippet, "kind" | "theme" | "sentiment"> & { source?: LibrarySnippet["source"] }): string {
   const kind = snippet.kind === "theme" && snippet.theme ? `Sobre ${themeNames[snippet.theme]}` : snippetKindLabels[snippet.kind];
-  return `${kind} · ${snippet.sentiment === "positive" ? "positivas" : "negativas"}`;
+  return [kind, snippet.sentiment === "positive" ? "positivas" : "negativas", snippet.source === "google" ? "das suas respostas no Google" : null].filter(Boolean).join(" · ");
 }
 
 function SnippetChip({ slug, snippet, onRemoved }: { slug: string; snippet: LibrarySnippet; onRemoved: () => void }) {
@@ -90,7 +91,9 @@ export function ReplyTraining({ slug, queue }: { slug: string; queue: TrainingRe
         <h2 id="treinar-title" className="flex items-center gap-1.5 font-semibold text-text">
           Treinar as respostas
           <InfoTip label="Treinar as respostas">
-            Escolhemos reviews reais do seu negócio sobre situações que as suas frases ainda não cobrem (por exemplo, uma queixa da espera). A sua resposta é partida em frases:
+            Escolhemos reviews reais do seu negócio sobre situações que as suas frases ainda não cobrem (por exemplo, uma queixa da espera). As reviews a que já respondeu no
+            Google em português (com pelo menos {ownerReplyMinChars} caracteres) não aparecem: as frases dessas respostas são aprendidas sozinhas, sempre que as reviews são
+            lidas do Google. A sua resposta é partida em frases:
             a primeira serve de abertura, as que falam de um tema (atendimento, qualidade, preço, espera, limpeza, ambiente, localização) ficam associadas a esse tema, os
             convites ao contacto ficam como contacto e as restantes como fecho. As respostas novas usam as suas frases primeiro e só recorrem às frases-base da Steevanz quando
             ainda não há uma sua para o caso.
@@ -211,7 +214,10 @@ export function ReplyLibrary({ slug, library }: { slug: string; library: Library
             </ul>
           </>
         ) : (
-          <p className="text-sm text-muted">Ainda não há frases suas. Use «Treinar as respostas» ou edite uma resposta antes de a aceitar.</p>
+          <p className="text-sm text-muted">
+            Ainda não há frases suas. Aprendemos sozinhos com as respostas que der no Google em português; pode também usar «Treinar as respostas» ou editar uma resposta antes
+            de a aceitar.
+          </p>
         )}
       </div>
     </details>
