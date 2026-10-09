@@ -221,7 +221,10 @@ export async function getEntryByToken(token: string): Promise<WaitlistEntryRow |
 export interface WaitlistStats {
   days: number;
   joined: number;
+  /** Marked as served by the team (or the customer's «Cheguei»). */
   served: number;
+  /** Called and closed on their own once the time to show up passed (nobody marked anything). */
+  autoClosed: number;
   noShow: number;
   cancelled: number;
   /** Median minutes between joining and being called. */
@@ -234,12 +237,12 @@ export async function loadStats(establishment: EstablishmentRow, days = 30): Pro
   const since = new Date(Date.now() - days * 86_400_000).toISOString();
   const { data, error } = await createServiceClient()
     .from("waitlist_entries")
-    .select("status, joined_at, called_at")
+    .select("status, joined_at, called_at, close_reason")
     .eq("establishment_id", establishment.id)
     .gte("joined_at", since)
     .limit(5000);
   if (error) throw new Error(`loadStats: ${error.message}`);
-  const rows = (data ?? []) as { status: EntryStatus; joined_at: string; called_at: string | null }[];
+  const rows = (data ?? []) as { status: EntryStatus; joined_at: string; called_at: string | null; close_reason: WaitlistEntryRow["close_reason"] }[];
   const waits = rows
     .filter((row) => row.called_at)
     .map((row) => (Date.parse(row.called_at!) - Date.parse(row.joined_at)) / 60_000)
@@ -258,7 +261,8 @@ export async function loadStats(establishment: EstablishmentRow, days = 30): Pro
   return {
     days,
     joined: rows.length,
-    served: rows.filter((row) => row.status === "served").length,
+    served: rows.filter((row) => row.status === "served" && row.close_reason !== "auto").length,
+    autoClosed: rows.filter((row) => row.status === "served" && row.close_reason === "auto").length,
     noShow: rows.filter((row) => row.status === "no_show").length,
     cancelled: rows.filter((row) => row.status === "cancelled").length,
     medianWait: median,

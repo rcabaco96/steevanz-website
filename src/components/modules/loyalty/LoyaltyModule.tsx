@@ -292,7 +292,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
               name="q"
               defaultValue={term}
               aria-label="Procurar cartão"
-              placeholder="Código do cartão (ex.: K7P 29Q), nome, email ou telemóvel"
+              placeholder="Código do cartão, nome, email ou telemóvel"
               autoFocus={!term}
               className={`${adminInputClasses} h-12 flex-1`}
             />

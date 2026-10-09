@@ -644,11 +644,11 @@ function PageSettings({ page, establishmentId, hasGroup }: { page: BookingPageRo
           </label>
           <label className={adminLabelClasses}>
             Nota na confirmação (opcional)
-            <input name="confirmation_note" maxLength={300} defaultValue={page.confirmation_note ?? ""} placeholder="Ex.: Estacionamento gratuito nas traseiras." className={input} />
+            <input name="confirmation_note" maxLength={300} defaultValue={page.confirmation_note ?? ""} className={input} />
           </label>
           <label className={adminLabelClasses}>
             Regras de cancelamento (opcional)
-            <textarea name="policy" rows={2} maxLength={600} defaultValue={page.policy ?? ""} placeholder="Ex.: Grupos de mais de 8 pessoas: ligue-nos." className={`${adminInputClasses} py-2`} />
+            <textarea name="policy" rows={2} maxLength={600} defaultValue={page.policy ?? ""} className={`${adminInputClasses} py-2`} />
           </label>
         </div>
       </Panel>

@@ -96,7 +96,11 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
         {nav}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Tile label="Entraram na fila" value={String(stats.joined)} hint={`Últimos ${stats.days} dias.`} />
-          <Tile label="Atendidos" value={String(stats.served)} hint="Fechados pela equipa ou automaticamente, depois de chamados." />
+          <Tile
+            label="Atendidos"
+            value={String(stats.served)}
+            hint={`Marcados como atendidos. ${stats.autoClosed ? `Mais ${stats.autoClosed} ${stats.autoClosed === 1 ? "chamado que fechou sozinho" : "chamados que fecharam sozinhos"} (ninguém marcou nada).` : "Nenhum chamado fechou sozinho."}`}
+          />
           <Tile
             label="Desistências"
             value={String(left)}
@@ -116,7 +120,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
                   <span className="text-text">
                     {weekdayNames[slot.weekday]}, {String(slot.hour).padStart(2, "0")}:00–{String(slot.hour + 1).padStart(2, "0")}:00
                   </span>
-                  <span className="tabular-nums text-muted">{slot.count} entradas</span>
+                  <span className="tabular-nums text-muted">{slot.count} {slot.count === 1 ? "entrada" : "entradas"}</span>
                 </li>
               ))}
             </ol>

@@ -140,7 +140,7 @@ function AddForm({ bundle, settings }: { bundle: EstablishmentBundle; settings: 
         ) : null}
         <label className={`${adminLabelClasses} sm:col-span-2`}>
           Nota (opcional)
-          <input name="notes" maxLength={200} placeholder="Ex.: prefere esplanada" className={input} />
+          <input name="notes" maxLength={200} className={input} />
         </label>
         <div className="sm:col-span-2">
           <SubmitButton size="sm">Adicionar à fila</SubmitButton>
@@ -188,6 +188,8 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
   const change = settings.auto_hours ? nextScheduleChange({ hours: bundle.hours, closures: bundle.closures.map((item) => item.day), timeZone, now }) : null;
   const clock = (at: number) => new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(at));
   const served = queue.doneToday.filter((entry) => entry.status === "served").length;
+  // Groups of different sizes: a free table for 2 goes to the first group that fits, not the next in line.
+  const pickByParty = settings.ask_party;
   const stateTitle = settings.state === "open" ? "Fila aberta" : settings.state === "paused" ? "Entradas em pausa" : "Fila fechada";
   const dot = settings.state === "open" ? "bg-success" : settings.state === "paused" ? "bg-gold" : "bg-subtle";
 
@@ -331,12 +333,21 @@ export function QueueCounter({ bundle, settings, queue }: { bundle: Establishmen
                       {entry.notes ? ` · «${entry.notes}»` : ""}
                     </p>
                   </div>
-                  <More label={`Mais opções para ${entry.name}`}>
+                  {pickByParty && index > 0 ? (
                     <EntryAction action={callEntry} establishmentId={establishmentId} entryId={entry.id}>
-                      <SubmitButton size="sm" variant="ghost" className={menuItem} pendingLabel="A chamar…">
-                        Chamar já (fora da ordem)
+                      <SubmitButton size="sm" variant="secondary" pendingLabel="A chamar…" ariaLabel={`Chamar ${entry.name} (${details(entry, bundle)})`}>
+                        Chamar
                       </SubmitButton>
                     </EntryAction>
+                  ) : null}
+                  <More label={`Mais opções para ${entry.name}`}>
+                    {pickByParty ? null : (
+                      <EntryAction action={callEntry} establishmentId={establishmentId} entryId={entry.id}>
+                        <SubmitButton size="sm" variant="ghost" className={menuItem} pendingLabel="A chamar…">
+                          Chamar já (fora da ordem)
+                        </SubmitButton>
+                      </EntryAction>
+                    )}
                     {index > 0 ? (
                       <EntryAction action={moveEntry} establishmentId={establishmentId} entryId={entry.id} fields={{ direction: "up" }}>
                         <SubmitButton size="sm" variant="ghost" className={menuItem}>

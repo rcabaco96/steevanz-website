@@ -31,7 +31,9 @@ O mesmo quadro nos dois sítios (ver `balcao.md`):
 - Estado da fila: **Abrir**, **Pausar entradas**, **Fechar** (fechar pede confirmação).
 - Listas «Chamados» e «À espera». As exceções ficam no «⋯» de cada pessoa:
   - chamados: **Não apareceu**, Já foi atendido, Chamar outra vez, Voltar à fila;
-  - à espera: Chamar já (fora da ordem), Subir, Descer, Desistiu.
+  - à espera: Chamar já (fora da ordem), Subir, Descer, Desistiu. Quando se pergunta o número de pessoas
+    (restaurantes), «Chamar» fica à vista em cada grupo, para dar a mesa livre ao primeiro grupo que cabe.
+  - Estatísticas: «Atendidos» só conta os marcados; os chamados que fecharam sozinhos aparecem à parte.
 - **Adicionar alguém ao balcão** (quem não tem telemóvel). Funciona mesmo com a fila fechada.
 - **Som de novas entradas** (liga-se uma vez em cada aparelho).
 
@@ -75,8 +77,8 @@ carregar uma vez em «Ativar som»).
 | Tempo para chegar depois de chamado | 2, 3, 5, 10 ou 15 minutos; o cliente vê até que horas | 5 |
 | Máximo à espera | Com a fila cheia, ninguém entra pelo QR | 60 |
 | Máximo de pessoas por grupo | Limite no formulário | 12 |
-| Abrir e fechar com o horário | A fila abre à hora de abertura e fecha à de fecho | não |
-| Chamar logo o seguinte ao marcar «Não apareceu» | Um toque em vez de dois | não |
+| Abrir e fechar com o horário | A fila abre à hora de abertura e fecha à de fecho | sim (espaços novos) |
+| Chamar logo o seguinte ao marcar «Não apareceu» | Um toque em vez de dois | sim |
 | Perguntar nº de pessoas / serviço / profissional | Restaurantes / barbeiros, clínicas | pessoas: sim |
 | Mensagem na página de entrada | Texto para o cliente final | vazio |
 | Serviços e profissionais | Estimativa por serviço e botões por profissional | vazio |
