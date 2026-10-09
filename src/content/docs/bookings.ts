@@ -224,7 +224,7 @@ export const docs: ProductDocs = {
             items: [
               { title: "Reserva por telefone", body: "«Nova reserva»: escolha o dia e as pessoas (ou o serviço), e aparecem só as horas livres. Escolha uma, escreva o nome e guarde." },
               { title: "Alterar", body: "No «⋯» da reserva, «Alterar reserva»: muda a hora, as pessoas, o serviço ou o contacto. O link do cliente mantém-se e pode avisá-lo por email." },
-              { title: "Chegou ou não veio", body: "«Chegou» quando o cliente chega; «Não veio» no «⋯». Passada a tolerância, a reserva aparece como «Atrasado»." },
+              { title: "Chegou ou não veio", body: "«Chegou» quando o cliente chega; «Não veio» no «⋯». Passada a tolerância, a reserva aparece como «Atrasado»; quando a hora reservada acaba sem nada marcado, como «Passou a hora: chegou?», com «Chegou» e «Não veio» à vista." },
               { title: "Cancelar", body: "No «⋯», «Cancelar reserva». Se o cliente deixou email, recebe um aviso." },
             ],
           },
@@ -246,7 +246,7 @@ export const docs: ProductDocs = {
             items: [
               { title: "Phone booking", body: "«New booking»: choose the day and the people (or the service), and only free times appear. Pick one, type the name and save." },
               { title: "Change", body: "In the booking's «⋯», «Change booking»: change the time, people, service or contact. The customer's link stays the same and you can email them." },
-              { title: "Arrived or no-show", body: "«Arrived» when the customer comes in; «No-show» in the «⋯». Past the lateness allowance, the booking shows as «Late»." },
+              { title: "Arrived or no-show", body: "«Arrived» when the customer comes in; «No-show» in the «⋯». Past the lateness allowance, the booking shows as «Late»; once the booked time is over with nothing marked, as «Time's up: did they come?», with «Arrived» and «No-show» in view." },
               { title: "Cancel", body: "In the «⋯», «Cancel booking». If the customer left an email, they are told." },
             ],
           },

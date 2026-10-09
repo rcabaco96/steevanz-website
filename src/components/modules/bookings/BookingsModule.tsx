@@ -93,17 +93,18 @@ function StatusForm({ bundle, booking, status, label, className = "", confirm, n
 }
 
 /** One booking in the day list: what matters at a glance, the actions behind "⋯". */
-function BookingRow({ booking, bundle, late, canArrive, editHref }: { booking: EstablishmentBookingRow; bundle: EstablishmentBundle; late: boolean; canArrive: boolean; editHref: string }) {
+function BookingRow({ booking, bundle, late, overdue, canArrive, editHref }: { booking: EstablishmentBookingRow; bundle: EstablishmentBundle; late: boolean; overdue: boolean; canArrive: boolean; editHref: string }) {
   const tz = bundle.establishment.time_zone;
   const open = booking.status === "confirmed";
   const contact = [booking.phone, booking.email].filter(Boolean).join(" · ");
   return (
     <li className={`flex items-center gap-3 py-3 ${open ? "" : "opacity-70"}`}>
-      <span className={`w-12 shrink-0 font-semibold tabular-nums ${late ? "text-danger" : "text-text"}`}>{clock(booking.starts_at, tz)}</span>
+      <span className={`w-12 shrink-0 font-semibold tabular-nums ${late ? "text-danger" : overdue ? "text-gold-text" : "text-text"}`}>{clock(booking.starts_at, tz)}</span>
       <div className="min-w-0 flex-1">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className={`font-semibold text-text ${booking.status === "cancelled" ? "line-through" : ""}`}>{booking.name}</span>
           {late ? <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-semibold text-danger">Atrasado</span> : null}
+          {overdue ? <span className="rounded-full bg-gold-soft px-2 py-0.5 text-xs font-semibold text-gold-text">Passou a hora: chegou?</span> : null}
           {!open ? <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${doneTone[booking.status]}`}>{doneLabel[booking.status]}</span> : null}
         </p>
         <p className="truncate text-sm text-muted">
@@ -119,8 +120,20 @@ function BookingRow({ booking, bundle, late, canArrive, editHref }: { booking: E
             <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
             <input type="hidden" name="booking_id" value={booking.id} />
             <input type="hidden" name="status" value="arrived" />
-            <SubmitButton size="sm" variant={late ? "primary" : "secondary"}>
+            <SubmitButton size="sm" variant={late || overdue ? "primary" : "secondary"}>
               Chegou
+            </SubmitButton>
+          </ActionForm>
+        </div>
+      ) : null}
+      {open && overdue ? (
+        <div className="hidden shrink-0 sm:block">
+          <ActionForm action={setBookingStatus} hideMessage className="contents">
+            <input type="hidden" name="establishment_id" value={bundle.establishment.id} />
+            <input type="hidden" name="booking_id" value={booking.id} />
+            <input type="hidden" name="status" value="no_show" />
+            <SubmitButton size="sm" variant="ghost" className="text-danger">
+              Não veio
             </SubmitButton>
           </ActionForm>
         </div>
@@ -215,7 +228,7 @@ export interface AgendaLinks {
 export function AgendaDay({ bundle, agenda, links }: { bundle: EstablishmentBundle; agenda: Awaited<ReturnType<typeof loadAgendaDay>>; links: AgendaLinks }) {
   const { establishment } = bundle;
   const tz = establishment.time_zone;
-  const { date, today, bookings, blocks, delays, late, turns } = agenda;
+  const { date, today, bookings, blocks, delays, late, overdue, turns } = agenda;
   const open = bookings.filter((booking) => booking.status === "confirmed");
   const done = bookings.filter((booking) => booking.status !== "confirmed");
   const held = bookings.filter((booking) => booking.status === "confirmed" || booking.status === "arrived");
@@ -224,7 +237,7 @@ export function AgendaDay({ bundle, agenda, links }: { bundle: EstablishmentBund
   const partySum = held.reduce((sum, booking) => sum + (booking.party_size ?? 0), 0);
   const groupServices = new Set(turns.map((turn) => turn.service.id)).size;
   const row = (booking: EstablishmentBookingRow) => (
-    <BookingRow key={booking.id} booking={booking} bundle={bundle} late={late.has(booking.id)} canArrive={canArrive} editHref={links.edit(booking.id, date)} />
+    <BookingRow key={booking.id} booking={booking} bundle={bundle} late={late.has(booking.id)} overdue={overdue.has(booking.id)} canArrive={canArrive} editHref={links.edit(booking.id, date)} />
   );
 
   return (
@@ -617,7 +630,7 @@ function PageSettings({ page, establishmentId, hasGroup }: { page: BookingPageRo
               [20, "20 minutos"],
               [30, "30 minutos"],
             ]}
-            hint="O cliente vê-a ao reservar. Passado esse tempo, a reserva aparece como «Atrasado»."
+            hint="O cliente vê-a ao reservar. Passado esse tempo, a reserva aparece como «Atrasado»; quando a hora reservada acaba, como «Passou a hora: chegou?»."
           />
           <Choice
             name="cancel_until_hours"

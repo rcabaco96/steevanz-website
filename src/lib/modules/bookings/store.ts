@@ -74,9 +74,14 @@ export function delayFor(delays: BookingDelayRow[], staffId: string | null): num
   return own?.minutes ?? delays.find((item) => item.staff_id === null)?.minutes ?? 0;
 }
 
-/** Past the arrival tolerance and nobody marked it: the team decides (arrived or no-show). */
-export function isLate(booking: Pick<EstablishmentBookingRow, "status" | "starts_at">, page: Pick<BookingPageRow, "late_grace_minutes">, now: number): boolean {
-  return booking.status === "confirmed" && now > Date.parse(booking.starts_at) + page.late_grace_minutes * 60_000;
+/** Past the arrival tolerance, while the booked time is still running: the customer may still come. */
+export function isLate(booking: Pick<EstablishmentBookingRow, "status" | "starts_at" | "ends_at">, page: Pick<BookingPageRow, "late_grace_minutes">, now: number): boolean {
+  return booking.status === "confirmed" && now > Date.parse(booking.starts_at) + page.late_grace_minutes * 60_000 && !isOverdue(booking, now);
+}
+
+/** The booked time is over and nobody marked it: no longer late, the team says what happened. */
+export function isOverdue(booking: Pick<EstablishmentBookingRow, "status" | "ends_at">, now: number): boolean {
+  return booking.status === "confirmed" && now > Date.parse(booking.ends_at);
 }
 
 export interface TurnSummary {
@@ -112,14 +117,15 @@ export function dayTurns(bundle: EstablishmentBundle, date: string, bookings: Pi
     });
 }
 
-/** One day of the agenda: bookings, blocks, delays (today), which are late, and the turns (restaurants). */
+/** One day of the agenda: bookings, blocks, delays (today), which are late or past their time, and the turns (restaurants). */
 export async function loadAgendaDay(bundle: EstablishmentBundle, page: BookingPageRow, date: string) {
   const { establishment } = bundle;
   const now = Date.now();
   const today = zonedDateString(new Date(now), establishment.time_zone);
   const [{ bookings, blocks }, delays] = await Promise.all([loadDay(establishment, date), date === today ? loadDelays(establishment, date) : Promise.resolve([])]);
   const late = new Set(bookings.filter((booking) => isLate(booking, page, now)).map((booking) => booking.id));
-  return { date, today, now, bookings, blocks, delays, late, turns: dayTurns(bundle, date, bookings) };
+  const overdue = new Set(bookings.filter((booking) => isOverdue(booking, now)).map((booking) => booking.id));
+  return { date, today, now, bookings, blocks, delays, late, overdue, turns: dayTurns(bundle, date, bookings) };
 }
 
 /** Bookings still on (confirmed or arrived) per local day, for the day picker. */

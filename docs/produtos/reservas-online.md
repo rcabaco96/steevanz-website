@@ -74,8 +74,9 @@ Cada **serviço** tem nome, preço opcional e diz **como se reserva**:
 - Escolhe o tipo de negócio do espaço, ativa o produto e faz tudo o que o dono faz.
 
 ## Atrasos, nos dois sentidos
-- **Tolerância de atraso** (do cliente): passado esse tempo a reserva fica «Atrasado»; a equipa
-  decide. Nada é cancelado sozinho.
+- **Tolerância de atraso** (do cliente): passado esse tempo a reserva fica «Atrasado»; quando a hora
+  reservada acaba sem nada marcado, fica «Passou a hora: chegou?», com «Chegou» e «Não veio» à vista.
+  A equipa decide: nada é cancelado sozinho.
 - **Estamos com atraso** (do espaço, só para serviços «um de cada vez»): +10/15/30/45 min, para todos ou para uma pessoa ou espaço.
   Os clientes das próximas 3 horas com email recebem a hora prevista (só quando aumenta); todos veem
   o aviso na página da reserva. Nenhuma reserva muda de hora.
