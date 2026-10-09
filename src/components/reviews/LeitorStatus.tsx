@@ -18,7 +18,7 @@ export const readerTexts = {
       minutesAgo < 1 ? "há menos de 1 minuto" : `há ${minutesAgo} min`
     }, por isso as reviews mostradas já são as mais recentes. Pode voltar a atualizar daqui a ${updateIntervalMinutes - minutesAgo} min.`,
   limited:
-    "Quando o Google mostra sinais de estar a limitar o leitor (reviews que não carregam, pedidos para iniciar sessão, listas que param a meio), o leitor faz uma pausa de 10 minutos (até 60 se continuar) e volta a tentar este pedido mais tarde, até 5 vezes ao longo de cerca de 3 horas. As reviews já lidas ficam guardadas e a leitura continua a partir da última guardada.",
+    "Quando o Google mostra sinais de estar a limitar o leitor (reviews que não carregam, pedidos para iniciar sessão, listas que param a meio), o leitor volta a tentar este pedido daí a poucos minutos (2, 5, 10 e 20), até 5 vezes; só as leituras de concorrentes fazem uma pausa maior. As reviews já lidas ficam guardadas e a leitura continua a partir da última guardada.",
   progress: `«Guardadas» são as reviews deste negócio que já temos. O total é o número de reviews que o Google mostra no perfil (o da última leitura). O leitor da Steevanz lê o Google Maps: o Google entrega ${mapsPageSize} reviews de cada vez (~${seconds(defaultPageMs)} s por pedido e ~${seconds(importSetupMs)} s para abrir o Google Maps). O tempo que falta é uma estimativa feita com esse ritmo.`,
 };
 

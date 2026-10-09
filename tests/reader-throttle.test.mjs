@@ -40,7 +40,7 @@ describe("settings", () => {
     // Never more competitor slots than the reader has; nonsense falls back to the default.
     assert.equal(throttleFrom({ READER_COMPETITOR_SLOTS: "8" }, 4).competitorSlots, 4);
     assert.equal(throttleFrom({ READER_COMPETITOR_SLOTS: "abc", READER_COOLDOWN_MIN: "-3" }, 10).competitorSlots, 3);
-    assert.equal(throttleFrom({ READER_COOLDOWN_MIN: "-3" }, 10).cooldownMinutes, 10);
+    assert.equal(throttleFrom({ READER_COOLDOWN_MIN: "-3" }, 10).cooldownMinutes, 3);
   });
 
   it("spaces competitor starts by the pause to twice the pause", () => {
@@ -88,15 +88,15 @@ describe("customer first, competitors capped", () => {
 });
 
 describe("cool-down when Google limits", () => {
-  it("pauses after 2 signals within 5 minutes, 10 min the first time", () => {
+  it("pauses after 2 signals within 5 minutes, 3 min the first time", () => {
     let { state, started } = recordLimit(initialCooldown, t0, defaultThrottle);
     assert.equal(started, null);
     assert.equal(isPaused(state, t0), false);
     ({ state, started } = recordLimit(state, t0 + 2 * minute, defaultThrottle));
-    assert.equal(started, 10);
-    assert.equal(state.pausedUntil, t0 + 12 * minute);
-    assert.equal(isPaused(state, t0 + 11 * minute), true);
-    assert.equal(isPaused(state, t0 + 12 * minute), false);
+    assert.equal(started, 3);
+    assert.equal(state.pausedUntil, t0 + 5 * minute);
+    assert.equal(isPaused(state, t0 + 4 * minute), true);
+    assert.equal(isPaused(state, t0 + 5 * minute), false);
   });
 
   it("signals far apart do not pause", () => {
@@ -106,19 +106,19 @@ describe("cool-down when Google limits", () => {
     assert.equal(second.state.signals.length, 1);
   });
 
-  it("grows to 30 and 60 minutes while it keeps happening, back to 10 after a good read", () => {
-    assert.deepEqual([1, 2, 3, 4].map((level) => cooldownMinutesFor(level, defaultThrottle)), [10, 30, 60, 60]);
+  it("grows to 9, 27 and 30 minutes while it keeps happening, back to 3 after a good read", () => {
+    assert.deepEqual([1, 2, 3, 4].map((level) => cooldownMinutesFor(level, defaultThrottle)), [3, 9, 27, 30]);
     let state = { signals: [t0], level: 1, pausedUntil: null };
     let started;
     ({ state, started } = recordLimit(state, t0 + minute, defaultThrottle));
-    assert.equal(started, 30);
+    assert.equal(started, 9);
     // Signals during a pause change nothing.
     assert.equal(recordLimit(state, t0 + 2 * minute, defaultThrottle).started, null);
     state = recordSuccess(state);
     assert.equal(state.level, 0);
     assert.equal(isPaused(state, t0 + 2 * minute), true, "the current pause stays");
     const after = recordLimit({ ...state, pausedUntil: null, signals: [t0 + 40 * minute] }, t0 + 41 * minute, defaultThrottle);
-    assert.equal(after.started, 10);
+    assert.equal(after.started, 3);
   });
 
   it("a pause survives a restart of the reader", () => {
@@ -145,6 +145,22 @@ describe("jobs hit by a limit", () => {
 
   it("never before the reader's pause ends", () => {
     assert.equal(limitOutcome(0, t0, t0 + 30 * minute, defaultThrottle).notBefore, t0 + 30 * minute);
+  });
+
+  it("keeps the reader there for customers: their jobs retry in minutes and the pause doesn't hold them", () => {
+    const now = Date.parse("2026-10-09T21:00:00Z");
+    const pausedUntil = now + 30 * 60_000;
+    const first = limitOutcome(0, now, pausedUntil, defaultThrottle, "update");
+    assert.deepEqual(first, { action: "requeue", attempts: 1, notBefore: now + 2 * 60_000 });
+    assert.equal(limitOutcome(3, now, pausedUntil, defaultThrottle, "full").notBefore, now + 20 * 60_000);
+    assert.equal(limitOutcome(4, now, pausedUntil, defaultThrottle, "full").action, "fail");
+    // Competitor work never comes back before the pause ends.
+    assert.equal(limitOutcome(0, now, pausedUntil, defaultThrottle, "competitor").notBefore, pausedUntil);
+    // While paused, only competitor work waits.
+    assert.equal(gateAllows({ kind: "update" }, { now, paused: true }), true);
+    assert.equal(gateAllows({ kind: "full" }, { now, paused: true }), true);
+    assert.equal(gateAllows({ kind: "competitor" }, { now, paused: true }), false);
+    assert.equal(gateAllows({ kind: "discover" }, { now, paused: true }), false);
   });
 
   it("says when it is tried again, in Portugal's time", () => {

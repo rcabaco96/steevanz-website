@@ -57,12 +57,12 @@ Google limitou o navegador e a importação do cliente e todas as tentativas fal
   dos clientes vão à velocidade de sempre.
 - **Pausa quando o Google limita:** vista limitada, pedido para iniciar sessão, reviews que não
   carregam, ordenação recusada ou listas que param a meio contam como sinais. 2 sinais em 5 min →
-  nenhum pedido novo durante 10 min (`READER_COOLDOWN_MIN`), depois 30 e 60 (`READER_COOLDOWN_MAX_MIN`)
-  se continuar; uma leitura que corre bem volta aos 10. A pausa fica em
+  nenhuma leitura de concorrentes nova durante 3 min (`READER_COOLDOWN_MIN`), depois 9, 27 e no máximo 30 (`READER_COOLDOWN_MAX_MIN`)
+  se continuar; uma leitura que corre bem volta aos 3. **Os pedidos dos clientes nunca param**: o leitor está sempre disponível para eles. A pausa fica em
   `review_reader_status.paused_until` / `pause_reason` (o admin e o painel mostram «O Google está a
   limitar o leitor; retoma às HH:MM») e sobrevive a um reinício.
 - **De volta à fila em vez de falhar:** um pedido apanhado por um limite volta a `queued` com
-  `not_before` (10, 30, 60, 90 min; nunca antes do fim da pausa) e `attempts`; à 5.ª vez
+  `not_before` e `attempts`: os dos clientes ao fim de 2, 5, 10 e 20 min; os de concorrentes ao fim de 10, 30, 60 e 90 min, nunca antes do fim da pausa; à 5.ª vez
   (`READER_LIMIT_ATTEMPTS`) falha com uma mensagem clara. Erros reais (negócio inexistente, sem
   categoria…) falham logo. As reviews lidas ficam guardadas; a importação só conta quando chega ao fim.
 - **Nome do negócio:** se o nome guardado for «nome, morada» (vindo do link do Maps), o leitor troca-o
@@ -108,8 +108,8 @@ Como serviço, um `systemd` com `ExecStart=/usr/bin/xvfb-run -a -s "-screen 0 19
 | `READER_PORT`         | Porta DevTools (por omissão 9350).                                       |
 | `READER_COMPETITOR_SLOTS` | Pedidos de concorrência ao mesmo tempo (por omissão 3; nunca mais do que `READER_SLOTS`). |
 | `READER_COMPETITOR_PAUSE_MS` | Pausa mínima entre dois pedidos de concorrência que começam (por omissão 5000; a pausa real vai até ao dobro). |
-| `READER_COOLDOWN_MIN` | Primeira pausa quando o Google limita (por omissão 10 min; depois 3× maior). |
-| `READER_COOLDOWN_MAX_MIN` | Pausa máxima (por omissão 60 min). |
+| `READER_COOLDOWN_MIN` | Primeira pausa das leituras de concorrentes quando o Google limita (por omissão 3 min; depois 3× maior). |
+| `READER_COOLDOWN_MAX_MIN` | Pausa máxima (por omissão 30 min). |
 | `READER_LIMIT_ATTEMPTS` | Vezes que um pedido pode ser limitado antes de falhar (por omissão 5). |
 | `READER_SITE_URL`     | Site que envia os alertas por email e põe a concorrência na fila (por omissão `https://steevanz.com`). Tem de ser o site em uso (ex.: o preview do ramo `login-page`); `http://localhost:3000` só com o `next dev` a correr. A fila em si é lida diretamente do Supabase. |
 

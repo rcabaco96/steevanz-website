@@ -267,11 +267,11 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
   - **Concorrência com calma:** no máximo 3 ao mesmo tempo (`READER_COMPETITOR_SLOTS`) e 5–10 s entre
     cada um que começa (`READER_COMPETITOR_PAUSE_MS`).
   - **Pausa:** sinais de limite (vista limitada, pedido de sessão, reviews que não carregam, ordenação
-    recusada, lista que pára a meio): 2 em 5 min → nenhum pedido novo durante 10 min, depois 30 e 60
-    se continuar (`READER_COOLDOWN_MIN` / `READER_COOLDOWN_MAX_MIN`); uma leitura boa volta aos 10.
+    recusada, lista que pára a meio): 2 em 5 min → nenhuma leitura de concorrentes nova durante 3 min, depois 9, 27, máx. 30
+    se continuar (`READER_COOLDOWN_MIN` / `READER_COOLDOWN_MAX_MIN`); uma leitura boa volta aos 3. **Os pedidos dos clientes nunca param** (dono: o leitor está sempre disponível para os clientes).
     Fica em `review_reader_status.paused_until` / `pause_reason`; admin e painel dizem «O Google
     está a limitar o leitor; retoma às HH:MM».
-  - **De volta à fila em vez de falhar:** um pedido limitado volta a `queued` com `not_before` (10,
+  - **De volta à fila em vez de falhar:** um pedido limitado volta a `queued` com `not_before` (clientes: 2, 5, 10, 20 min; concorrentes: 10,
     30, 60, 90 min, nunca antes do fim da pausa); à 5.ª vez (`READER_LIMIT_ATTEMPTS`) falha com uma
     mensagem clara. Erros reais (negócio inexistente…) falham logo. O «Atualizar reviews» com um
     pedido destes à espera (ou com um `full` ativo) não cria outro: mostra «À espera: o Google está a
