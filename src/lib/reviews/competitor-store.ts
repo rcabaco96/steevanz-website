@@ -68,7 +68,7 @@ export async function queueCompetitorDiscovery(
   client: SupabaseClient,
   businessId: string,
   requestedBy: JobRequester,
-  priority: number = jobPriority.firstImport,
+  priority: number = jobPriority.competitionStart,
 ): Promise<boolean> {
   const { error } = await client.from("review_import_jobs").insert({ business_id: businessId, kind: "discover", priority, requested_by: requestedBy, provider: "reader" });
   if (error && error.code !== "23505") throw new Error(error.message);

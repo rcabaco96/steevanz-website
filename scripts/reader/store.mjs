@@ -27,7 +27,7 @@ export function createStore(db, { dryRun }) {
     async business(match) {
       const query = db
         .from("review_businesses")
-        .select("id, slug, name, google_maps_url, review_url, alert_email, place_id, google_place_id, google_link_status, google_fid, lat, lng, category, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km");
+        .select("id, slug, name, google_maps_url, review_url, alert_email, place_id, google_place_id, google_link_status, google_fid, lat, lng, category, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, competitors_rule_version");
       const { data, error } = await (match.id ? query.eq("id", match.id) : query.eq("slug", match.slug)).maybeSingle();
       if (error) throw new Error(error.message);
       if (!data) throw new Error("O negócio deste pedido já não existe.");
@@ -66,7 +66,7 @@ export function createStore(db, { dryRun }) {
     },
 
     async competitorsForPlace(placeId) {
-      const { data, error } = await db.from("competitors").select("id, business_id, is_self, reply_rate, reply_sample, replies_window_days").eq("place_id", placeId);
+      const { data, error } = await db.from("competitors").select("id, business_id, is_self, category, reply_rate, reply_sample, replies_window_days").eq("place_id", placeId);
       if (error) throw new Error(error.message);
       return data ?? [];
     },
@@ -153,6 +153,12 @@ export function createStore(db, { dryRun }) {
     async updateCompetitors(placeId, fields) {
       if (dryRun) return print(`competitors com place_id ${placeId}`, fields);
       check(await db.from("competitors").update(fields).eq("place_id", placeId));
+    },
+
+    /** The customer's own row in its comparison (is_self) after its name was corrected. */
+    async renameOwnPlace(businessId, name) {
+      if (dryRun) return print(`competitors (próprio) de ${businessId}`, { name });
+      check(await db.from("competitors").update({ name }).eq("business_id", businessId).eq("is_self", true));
     },
 
     async updateCompetitor(id, fields) {

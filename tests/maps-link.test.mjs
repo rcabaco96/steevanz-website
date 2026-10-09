@@ -55,3 +55,34 @@ describe("plate links", async () => {
     assert.equal(plateLink({ fid: "0xd1acc2320613189:0x7f15843ead7247d7" }), "https://search.google.com/local/writereview?placeid=ChIJiTFhICPMGg0R10dyrT6EFX8");
   });
 });
+
+describe("place names with an address", async () => {
+  const { nameFromPage, stripAddress } = await import("../src/lib/reviews/maps-link.ts");
+  const kingKebab =
+    "https://www.google.com/maps/place/King+Kebab+Arma%C3%A7%C3%A3o+P%C3%AAra%2C+R.+%C3%81lvaro+Gomes+lote+4+loja+C%2C+8365-111+Arma%C3%A7%C3%A3o+de+P%C3%AAra/@37.1032799,-8.3609201,17z/data=!4m6!3m5!1s0xd1ad1b960c347b7:0x1533ce0fcd97cf8e!8m2!3d37.1032799!4d-8.3609201!16s%2Fg%2F11fq12kdjx";
+
+  it("keeps the name only when the link carries the address (2026-10-09, King Kebab)", () => {
+    const place = parseMapsPlaceLink(kingKebab);
+    assert.equal(place.name, "King Kebab Armação Pêra");
+    assert.equal(place.fid, "0xd1ad1b960c347b7:0x1533ce0fcd97cf8e");
+    assert.ok(place.cleanUrl.startsWith("https://www.google.com/maps/place/King+Kebab+Arma%C3%A7%C3%A3o+P%C3%AAra/@"));
+  });
+
+  it("cuts at the street or the postal code, never a name with a plain comma", () => {
+    assert.equal(stripAddress("Café Central, Rua Direita 12, Faro"), "Café Central");
+    assert.equal(stripAddress("Pastelaria Doce, Av. da Liberdade 3"), "Pastelaria Doce");
+    assert.equal(stripAddress("O Lugar, Albufeira, 8200-001 Albufeira"), "O Lugar");
+    assert.equal(stripAddress("Bar, Restaurante & Grill"), "Bar, Restaurante & Grill");
+    assert.equal(stripAddress("Fish Tail"), "Fish Tail");
+  });
+
+  it("the reader corrects a stored name+address from the page title, never an admin's name", () => {
+    const stored = "King Kebab Armação Pêra, R. Álvaro Gomes lote 4 loja C, 8365-111 Armação de Pêra";
+    assert.equal(nameFromPage(stored, "King Kebab Armação Pêra"), "King Kebab Armação Pêra");
+    assert.equal(nameFromPage(stored, "  King Kebab   Armação Pêra "), "King Kebab Armação Pêra");
+    assert.equal(nameFromPage("King Kebab Armação Pêra", "King Kebab Armação Pêra"), null);
+    assert.equal(nameFromPage("King Kebab (centro)", "King Kebab Armação Pêra"), null);
+    assert.equal(nameFromPage(stored, null), null);
+    assert.equal(nameFromPage(stored, "Resultados"), null);
+  });
+});

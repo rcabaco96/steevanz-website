@@ -10,9 +10,9 @@ import { needsDiscovery, queueCompetitorDiscovery } from "./competitor-store";
 export async function startCompetitionIfMissing(client: SupabaseClient, businessId: string): Promise<boolean> {
   const { data, error } = await client
     .from("review_businesses")
-    .select("id, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km")
+    .select("id, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, competitors_rule_version")
     .eq("id", businessId)
-    .maybeSingle<{ id: string; competitors_refreshed_at: string | null; competitor_radius_km: number | null; competitors_search_radius_km: number | null }>();
+    .maybeSingle<{ id: string; competitors_refreshed_at: string | null; competitor_radius_km: number | null; competitors_search_radius_km: number | null; competitors_rule_version: number | null }>();
   if (error) throw new Error(error.message);
   if (!data || !needsDiscovery(data)) return false;
   return queueCompetitorDiscovery(client, businessId, "panel");

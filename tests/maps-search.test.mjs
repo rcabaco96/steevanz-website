@@ -48,3 +48,19 @@ describe("coordinatesFromMapsUrl", () => {
     assert.equal(coordinatesFromMapsUrl("https://maps.app.goo.gl/abc"), null);
   });
 });
+
+describe("searchCardCategory", async () => {
+  const { searchCardCategory } = await import("../src/lib/reviews/maps-reader.ts");
+  it("finds the category after the rating, with or without a count and a price", () => {
+    assert.equal(searchCardCategory(fishTail.text), "Restaurante japonês");
+    assert.equal(searchCardCategory("Kebab Armação\n4,6(321) · €10–20\nRestaurante de kebab · R. Álvaro Gomes 4\nAberto ⋅ Fecha às 23:00"), "Restaurante de kebab");
+    assert.equal(searchCardCategory("Kebab Armação 4,6(321) · €€ Restaurante de kebab · R. X"), "Restaurante de kebab");
+    assert.equal(searchCardCategory("Kebab Armação\n4,6(1.321)\n10-20 €\nRestaurante de kebab · R. X"), "Restaurante de kebab");
+    assert.equal(searchCardCategory("Barbearia X\n4,9(88)\nBarbearia · Rua Y 2"), "Barbearia");
+  });
+
+  it("gives up rather than guess (no rating, or an address in its place)", () => {
+    assert.equal(searchCardCategory("Novo lugar\nRestaurante · R. X"), null);
+    assert.equal(searchCardCategory("Lugar 4,5(10) · R. Direita 12"), null);
+  });
+});

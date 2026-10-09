@@ -1,20 +1,20 @@
 // Google Maps in one tab: open a place, its reviews tab sorted by newest, and read Maps' own review
 // responses page by page. Pages can only be fetched by letting Maps load them (each request carries
 // a one-time key signed by Maps), so the reader scrolls the list and reads the network responses.
-import { log, pageTimeoutMs, sleep, UserError } from "./config.mjs";
+import { GoogleLimitError, log, pageTimeoutMs, sleep } from "./config.mjs";
 import { parseDistribution, parseMapsReviewPage, parsePlaceProfile, parseSearchResult, reviewRequestSort } from "../../src/lib/reviews/maps-reader.ts";
 
 /** Opening attempts before giving up on Google's "limited view" (first try + 3 reloads). */
 const openAttempts = 4;
 
-export class LimitedViewError extends UserError {}
+export class LimitedViewError extends GoogleLimitError {}
 
 /**
  * Google asks to sign in before sorting or loading more reviews (seen on browser profiles that are
  * not signed in, after a few reads). The reader never tries to get around it: someone signs in once
  * in the reader's browser window.
  */
-export class SignInRequiredError extends UserError {
+export class SignInRequiredError extends GoogleLimitError {
   constructor() {
     super("O Google pediu para iniciar sessão para mostrar mais reviews. Abra a janela do navegador do leitor, inicie sessão numa conta Google e tente outra vez.");
   }
@@ -50,6 +50,9 @@ function watchReviewResponses(tab) {
   return watch;
 }
 
+/** The place's name in its page header (the first non-empty h1). */
+const placeTitleScript = `[...document.querySelectorAll('h1')].map((el) => el.textContent.replace(/\\s+/g, ' ').trim()).find(Boolean) || null`;
+
 const shownRatingScript = `(() => {
   const labels = [...document.querySelectorAll('[role=img][aria-label]')].filter((el) => el.tagName !== 'TR').map((el) => el.getAttribute('aria-label'));
   const label = labels.map((t) => t.match(/^\\s*([1-5],\\d)\\s+estrelas?/)).find(Boolean);
@@ -72,6 +75,7 @@ export async function openPlace(tab, url) {
   const watch = watchReviewResponses(tab);
   const separator = url.includes("?") ? "&" : "?";
   let opened = false;
+  let title = null;
   for (let attempt = 0; attempt < openAttempts && !opened; attempt++) {
     if (attempt) {
       log(`  vista limitada do Google, a recarregar (${attempt}/${openAttempts - 1})…`);
@@ -81,6 +85,8 @@ export async function openPlace(tab, url) {
     if (!(await waitFor(tab, "!!document.querySelector('h1')", 20000))) continue;
     await tab.evaluate(`[...document.querySelectorAll('button')].find(x => /Aceitar tudo|Accept all/i.test(x.textContent))?.click()`);
     await waitFor(tab, "!!document.querySelector('button[role=tab]')", 5000);
+    // The place's own title, as Google shows it (read before the reviews list replaces the header).
+    title = (await tab.evaluate(placeTitleScript).catch(() => null)) || title;
     await dismissDialogs(tab);
     opened = await tab.evaluate(
       `(() => { const b = [...document.querySelectorAll('button[role=tab]')].find(x => /Críticas|Reviews|Avalia/i.test(x.textContent)); if (!b) return false; b.click(); return true; })()`,
@@ -90,10 +96,11 @@ export async function openPlace(tab, url) {
     // No reviews tab: either Google's limited view, or a place that has no review at all. The place's
     // own data tells them apart (no rating = no review); only the latter is a normal answer.
     const facts = await placeProfile(tab, watch);
-    if (facts && facts.rating === null) return { watch, rating: null, total: 0, distribution: null, photos: facts.photos, profile: facts.profile, noReviews: true };
+    if (facts && facts.rating === null) return { watch, title, rating: null, total: 0, distribution: null, photos: facts.photos, profile: facts.profile, category: facts.category, noReviews: true };
   }
   if (!opened) throw new LimitedViewError(`O Google mostrou a vista limitada, sem reviews, ${openAttempts} vezes seguidas. Tente outra vez daqui a pouco.`);
-  if (!(await waitFor(tab, "!!document.querySelector('div[data-review-id]')", 15000))) throw new UserError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
+  // Seen when Google limits the browser (2026-10-09): the tab opens but the list never comes.
+  if (!(await waitFor(tab, "!!document.querySelector('div[data-review-id]')", 15000))) throw new GoogleLimitError("As reviews não carregaram no Google Maps. Tente outra vez daqui a pouco.");
 
   const distribution = parseDistribution((await tab.evaluate(`[...document.querySelectorAll('tr[role=img]')].map(x => x.getAttribute('aria-label') ?? '')`)) ?? []);
   const distributionTotal = distribution ? Object.values(distribution).reduce((sum, count) => sum + count, 0) : null;
@@ -102,7 +109,7 @@ export async function openPlace(tab, url) {
   const total = shownTotal && (!distributionTotal || Math.abs(shownTotal - distributionTotal) <= distributionTotal * 0.1) ? shownTotal : distributionTotal;
   const rating = await tab.evaluate(shownRatingScript);
   const facts = await placeProfile(tab, watch);
-  return { watch, rating: typeof rating === "number" ? rating : null, total, distribution, photos: facts?.photos ?? null, profile: facts?.profile ?? null };
+  return { watch, title, rating: typeof rating === "number" ? rating : null, total, distribution, photos: facts?.photos ?? null, profile: facts?.profile ?? null, category: facts?.category ?? null };
 }
 
 /**

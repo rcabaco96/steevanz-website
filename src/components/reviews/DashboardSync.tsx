@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { buttonClasses } from "@/components/ui/Button";
-import { finishedJob, isActive, relativeTime, updateIntervalMinutes, type ImportJob, type ReaderStatus, type UpdateResponse } from "@/lib/reviews/import-jobs";
+import { finishedJob, isActive, limitWaitText, limitWaitUntil, relativeTime, updateIntervalMinutes, type ImportJob, type ReaderStatus, type UpdateResponse } from "@/lib/reviews/import-jobs";
 import { useBusySignal } from "./DashboardBusy";
 import { InfoTip } from "./InfoTip";
 import { readerTexts } from "./LeitorStatus";
@@ -18,8 +18,12 @@ export const newReviewsLabel = (count: number) => `${number.format(count)} ${cou
 /** Why an update failed, in Portuguese (the reader already writes its errors in Portuguese). */
 export const updateFailedText = (job: ImportJob) => `A leitura do Google falhou. ${job.error ?? "Tente outra vez daqui a pouco."}`;
 
-/** Progress of an update job while it waits for or runs on the reader, with the (i) that explains it. */
-export function UpdateProgress({ job, reader }: { job: ImportJob; reader: ReaderStatus }) {
+/**
+ * Progress of an update job (or of the customer's full import, which reads the new reviews too) while
+ * it waits for or runs on the reader, with the (i) that explains it.
+ */
+export function UpdateProgress({ job, reader, now = null }: { job: ImportJob; reader: ReaderStatus; now?: number | null }) {
+  if (job.status === "running" && job.kind === "full") return <span>A importar o histórico completo do Google…</span>;
   if (job.status === "running")
     return (
       <span>
@@ -30,6 +34,13 @@ export function UpdateProgress({ job, reader }: { job: ImportJob; reader: Reader
     return (
       <span>
         O leitor está desligado: o pedido fica em espera <InfoTip label="Leitor desligado">{readerTexts.reader}</InfoTip>
+      </span>
+    );
+  const limited = now === null ? null : limitWaitUntil(job, reader, now);
+  if (limited)
+    return (
+      <span>
+        {limitWaitText(limited)} <InfoTip label="O Google está a limitar o leitor">{readerTexts.limited}</InfoTip>
       </span>
     );
   return <span>{reader.busy ? "À espera do leitor… (está a terminar outro pedido)" : "À espera do leitor…"}</span>;
@@ -47,7 +58,8 @@ export function DashboardSync({ syncUrl, lastSyncedLabel }: { syncUrl: string; l
   const [requesting, setRequesting] = useState(false);
   const [message, setMessage] = useState<Message | null>(null);
   const [refreshing, startRefresh] = useTransition();
-  const job = state.update;
+  // The customer's full import, while it waits or runs, stands for the update (it reads the new reviews too).
+  const job = isActive(state.update) || !isActive(state.full) ? state.update : state.full;
   const waiting = isActive(job);
 
   useReaderJobsListener((previous, next) => {
@@ -101,7 +113,7 @@ export function DashboardSync({ syncUrl, lastSyncedLabel }: { syncUrl: string; l
   let status;
   if (refreshing) status = "A mostrar as reviews atualizadas…";
   else if (requesting) status = "A pedir ao Google…";
-  else if (job && waiting) status = <UpdateProgress job={job} reader={state.reader} />;
+  else if (job && waiting) status = <UpdateProgress job={job} reader={state.reader} now={now} />;
   else status = state.lastSyncedAt ? `Reviews atualizadas ${now ? relativeTime(state.lastSyncedAt, now) : lastSyncedLabel}` : state.stored.count
       ? "Ainda não foi atualizado"
       : "Ainda sem reviews importadas";

@@ -1,11 +1,12 @@
 // Settings of the local reader: command line, .env.local and fixed limits.
 import { existsSync, readFileSync } from "node:fs";
 import { readerSlotsFrom } from "../../src/lib/reviews/maps-reader.ts";
+import { throttleFrom } from "../../src/lib/reviews/reader-throttle.ts";
 import { homedir, hostname } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 
-export const version = "2";
+export const version = "3";
 
 function loadEnv() {
   const file = join(import.meta.dirname, "../../.env.local");
@@ -39,6 +40,12 @@ export const dryRun = args["dry-run"]
 export const readerId = hostname();
 /** Tabs at once: READER_SLOTS in .env.local or the server's environment, else 4. */
 export const slots = readerSlotsFrom(process.env.READER_SLOTS);
+/**
+ * Pacing against Google's limits (defaults in reader-throttle.ts): READER_COMPETITOR_SLOTS (3),
+ * READER_COMPETITOR_PAUSE_MS (5000), READER_COOLDOWN_MIN (10), READER_COOLDOWN_MAX_MIN (60),
+ * READER_LIMIT_ATTEMPTS (5).
+ */
+export const throttle = throttleFrom(process.env, slots);
 /** Chrome, Chromium or Edge. CHROME_PATH (or EDGE_PATH) wins; otherwise the usual places per system. */
 function findBrowser() {
   const configured = process.env.CHROME_PATH ?? process.env.EDGE_PATH;
@@ -84,3 +91,10 @@ export const log = (...parts) => console.log(new Date().toLocaleTimeString("pt-P
 
 /** An error whose message is meant for the customer (Portuguese); others are stored as a generic message. */
 export class UserError extends Error {}
+
+/**
+ * Google is limiting this browser (limited view, sign-in gate, reviews that do not load, sort refused,
+ * a list that stops early): the job goes back to the queue for later and counts towards a cool-down
+ * of the whole reader (reader-throttle.ts). Real errors (place not found…) are plain UserErrors.
+ */
+export class GoogleLimitError extends UserError {}

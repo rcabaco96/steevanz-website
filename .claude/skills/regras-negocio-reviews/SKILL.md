@@ -47,9 +47,9 @@ já guardada:
 - A data da última leitura completa fica em `review_businesses.full_synced_at`.
 - **100% do histórico ou nada:** uma `full` só conta como feita (`full_synced_at`) quando o leitor
   chega ao fim da lista de reviews do Google. Se o Google parar a meio (pedido de início de sessão,
-  sem resposta), o leitor abre o negócio mais uma vez; se voltar a parar, o pedido falha, a
-  importação fica por fazer (a rotina volta a pedi-la) e as reviews lidas ficam guardadas (upsert:
-  a próxima só completa). Se a lista do Google acabar antes do total que o Google indica, conta como
+  sem resposta), o leitor abre o negócio mais uma vez; se voltar a parar, o pedido **volta à fila
+  para mais tarde** (limite do Google, regra 12; à 5.ª vez falha), a importação fica por fazer e as
+  reviews lidas ficam guardadas (upsert: a próxima só completa). Se a lista do Google acabar antes do total que o Google indica, conta como
   feita, com uma nota (o Google conta reviews que não lista).
 - **Sem buracos:** as reviews novas lêem-se **sempre** a continuar a partir da última review
   gravada no Supabase — nunca só «as N mais recentes». O leitor lê das mais recentes para trás até
@@ -88,12 +88,24 @@ já guardada:
   aparecer (filtro por `distance_m` em `loadCompetition`); a procura nova substitui a lista.
 - **Procura (leitor próprio, grátis — job `discover`):** o leitor lê o raio do cliente quando o
   pedido começa e grava o raio usado (`competitors_search_radius_km`). Automática para clientes
-  sem concorrentes procurados ou com o raio mudado desde a última procura (`discoveryDue`;
+  sem concorrentes procurados, com o raio mudado desde a última procura ou com a lista feita com
+  uma regra de escolha antiga (`competitors_rule_version` < `competitorRuleVersion`) (`discoveryDue`;
   `/api/cron/competitors`, 06:00 UTC, só põe pedidos na fila). Nova procura de 90 em 90 dias é
   **manual**, com «Procurar concorrentes com o leitor» no admin (o admin avisa quando passaram
   90 dias). Nunca DataForSEO nem Apify.
-- Escolha automática: mesma categoria do Google primeiro (os com mais reviews), depois os que o
-  Google associa à pesquisa da categoria, depois a pesquisa mais larga. O admin pode excluir.
+- **Só a mesma categoria ou uma muito parecida** (dono, 2026-10-09; `categoryMatch` em
+  `src/lib/reviews/competitor-category.ts`): igual à categoria do Google do cliente, ou com uma
+  palavra com significado em comum (sem maiúsculas nem acentos; palavras genéricas como restaurante,
+  de, do, da, bar, café, loja, serviço, clínica não contam). «Restaurante de doner kebab» ~ «Restaurante de kebab» ~
+  «Kebab», mas nunca «Restaurante», «Restaurante português» ou «Marisqueira». Cliente com categoria
+  só genérica («Restaurante») → só lugares exatamente dessa categoria. Lugar com categoria
+  desconhecida → só se veio da pesquisa da categoria do cliente **e** o nome partilha uma palavra
+  com significado. Ordem: mesma categoria, parecida, pelo nome (os com mais reviews primeiro).
+  **Menos de 30 não faz mal: nunca se enche a lista com lugares sem relação.** A 2.ª pesquisa usa só
+  as palavras com significado («doner kebab»), nunca «Restaurante». A procura guarda a categoria de
+  cada lugar (`competitors.category`; a leitura do lugar completa-a com a da página). Mudar a
+  regra = subir `competitorRuleVersion`: as listas antigas são procuradas outra vez pelo leitor.
+  O admin pode excluir.
 - **Os números de cada lugar são uma base partilhada por `place_id`** (lugar do Google), não por
   cliente. Uma leitura serve todos os clientes que comparam com esse lugar, e o lugar de um
   cliente é também um lugar que outros clientes podem ter como concorrente. **Custo e frequência
@@ -108,7 +120,7 @@ já guardada:
     lugar). Regra em `planCompetitionSlot` (`src/lib/reviews/reader-queue.ts`).
   - `competitor_replies`: % de reviews respondidas sobre os últimos 12 meses (máx. 2000 reviews),
     **uma única vez por lugar** (nunca medido). No máximo 60 por horário.
-  - Concorrentes novos (depois de uma procura) entram logo na fila com prioridade 3.
+  - Concorrentes novos (depois de uma procura) entram logo na fila com prioridade 4.
 - Só dados públicos agregados (nota, total de reviews, distribuição de estrelas, % de reviews
   respondidas com o nº de reviews contadas, nº de fotos e campos do perfil preenchidos). Nunca
   guardar textos de reviews de concorrentes.
@@ -225,6 +237,7 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
 - **Com que frequência vê a fila:** a cada ~2 s quando tem vagas livres (`pollMs`; sem backoff,
   long-poll nem realtime); sinal de vida a cada 5 s (`heartbeatMs`); `READER_SLOTS` pedidos ao
   mesmo tempo (4 por omissão, 10 num servidor). Lê e escreve a fila diretamente no Supabase;
+  ritmo contra os limites do Google em `src/lib/reviews/reader-throttle.ts` (abaixo);
   `READER_SITE_URL` só serve para pedir a concorrência das 10:00/19:00 e os alertas de negativas,
   e tem de ser o site em uso.
 - **O painel** (`ReaderJobs.tsx`) só consulta `GET /api/painel/[slug]/import` enquanto há um pedido
@@ -237,13 +250,35 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
   `supabase/migrations/20261004130000_reader_queue.sql`):
   - tipos `full` (histórico completo de um cliente), `update` (reviews novas + respostas
     recentes), `competitor` (um lugar do Google), `competitor_replies` (% respondidas de um lugar);
-  - prioridade **1** = alguém à espera no painel ou no admin, **3** = primeira importação (e
-    concorrentes acabados de procurar), **5** = rotina;
+  - prioridade **1** = alguém à espera no painel ou no admin, **3** = primeira importação, **4** =
+    procura e primeiras leituras da concorrência de um cliente novo, **5** = rotina;
+  - `not_before` / `attempts`: pedido limitado pelo Google, à espera da hora de nova tentativa;
   - `requested_by`: `panel`, `cron` ou `admin`; alvo `business_id` (clientes) ou `place_id`
     (concorrentes); no máximo um pedido ativo por alvo e tipo (índices únicos; ao pôr na fila,
     o erro 23505 ignora-se: `enqueueJobs` / `queueReaderJob` em `src/lib/reviews/reader-queue.ts`).
 - **Horário:** o mesmo tick da regra 15 (clientes às 22:00, concorrentes às 10:00 e 19:00 de
   Portugal).
+- **Ritmo e limites do Google** (2026-10-09: a concorrência de um cliente novo lida em paralelo com a
+  importação dele fez o Google limitar o leitor e a importação falhou; regras puras em
+  `src/lib/reviews/reader-throttle.ts`):
+  - **Cliente primeiro e sozinho:** com um `full`/`update` de qualquer cliente na fila ou a correr, o
+    leitor não começa `discover`, `competitor` nem `competitor_replies`. Cliente novo: histórico →
+    procura → concorrentes. Os pedidos dos clientes vão à velocidade de sempre.
+  - **Concorrência com calma:** no máximo 3 ao mesmo tempo (`READER_COMPETITOR_SLOTS`) e 5–10 s entre
+    cada um que começa (`READER_COMPETITOR_PAUSE_MS`).
+  - **Pausa:** sinais de limite (vista limitada, pedido de sessão, reviews que não carregam, ordenação
+    recusada, lista que pára a meio): 2 em 5 min → nenhum pedido novo durante 10 min, depois 30 e 60
+    se continuar (`READER_COOLDOWN_MIN` / `READER_COOLDOWN_MAX_MIN`); uma leitura boa volta aos 10.
+    Fica em `review_reader_status.paused_until` / `pause_reason`; admin e painel dizem «O Google
+    está a limitar o leitor; retoma às HH:MM».
+  - **De volta à fila em vez de falhar:** um pedido limitado volta a `queued` com `not_before` (10,
+    30, 60, 90 min, nunca antes do fim da pausa); à 5.ª vez (`READER_LIMIT_ATTEMPTS`) falha com uma
+    mensagem clara. Erros reais (negócio inexistente…) falham logo. O «Atualizar reviews» com um
+    pedido destes à espera (ou com um `full` ativo) não cria outro: mostra «À espera: o Google está a
+    limitar o leitor, tentamos outra vez às HH:MM».
+  - Funciona com e sem sessão Google iniciada na janela do leitor.
+  - **Nome:** um nome guardado como «nome, morada» (do link do Maps) é cortado ao criar o cliente
+    (`stripAddress`) e o leitor troca-o pelo título da página do Google (`nameFromPage`).
 - **Alertas de negativas:** depois de uma `update`, o leitor chama `POST /api/reader/alerts`
   (`Authorization: Bearer CRON_SECRET`, corpo `{ businessId, reviewIds }`) com as reviews novas.
   Só seguem as de 1–3★ publicadas nos últimos 7 dias, com o email de sempre.

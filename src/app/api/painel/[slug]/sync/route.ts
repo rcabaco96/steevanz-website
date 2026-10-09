@@ -40,7 +40,7 @@ export async function GET(_request: NextRequest, ctx: RouteContext<"/api/painel/
  * "Atualizar reviews" (and "Atualizar" in Respostas): queues an update for the Steevanz reader,
  * which reads Google; Vercel never reads Google. Verified customers are updated right here through
  * Google's official API. If the customer was synced less than 15 minutes ago nothing is queued; if
- * an update is already waiting or running, that one is returned.
+ * an update or a full import is already waiting or running, that one is shown (no duplicates).
  */
 export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/[slug]/sync">) {
   const { slug } = await ctx.params;
@@ -64,7 +64,9 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/
     // A job left for a provider that no longer exists would block this customer's updates forever.
     await handRetiredJobsToReader(client, id);
     const state = await loadReaderJobs(client, id);
-    if (isActive(state.update)) return reply({ ...state, recentMinutes: null });
+    // An update already waiting (maybe until a set time, while Google limits the reader) or a full
+    // import of this customer (it reads the new reviews too): never a second job, the panel shows it.
+    if (isActive(state.update) || isActive(state.full)) return reply({ ...state, recentMinutes: null });
     const recentMinutes = recentSyncMinutes(state.lastSyncedAt, Date.now());
     if (recentMinutes !== null) return reply({ ...state, recentMinutes });
     await queueUpdate(client, id);

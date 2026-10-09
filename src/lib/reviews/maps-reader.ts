@@ -4,6 +4,8 @@
  * profile links of who wrote a review.
  */
 
+import { gateAllows, type ClaimGate } from "./reader-throttle.ts";
+
 export interface MapsReview {
   review_id: string;
   rating: number;
@@ -116,11 +118,13 @@ export interface QueuedReaderJob {
   place_id: string | null;
   priority: number;
   requested_at: string;
+  /** Not claimed before this (a job put back after a Google limit); null = now. */
+  not_before?: string | null;
 }
 
 /** What a job reads: a customer (business) or a Google place. At most one job per target at a time. */
 export function readerJobKey(job: Pick<QueuedReaderJob, "business_id" | "place_id"> & { kind?: string }): string {
-  // The competitor search runs next to the customer's own import (another tab).
+  // The competitor search has its own key (it never runs next to the customer's import: see gateAllows).
   if (job.kind === "discover") return `discover:${job.business_id}`;
   return job.business_id ? `business:${job.business_id}` : `place:${job.place_id}`;
 }
@@ -128,13 +132,15 @@ export function readerJobKey(job: Pick<QueuedReaderJob, "business_id" | "place_i
 /**
  * Next job to claim: lowest priority number first, then the oldest request. Skips targets already
  * being read. The last free slot is kept for priority 1 (someone waiting in the panel), so routine
- * work never makes a customer wait for a whole import to finish.
+ * work never makes a customer wait for a whole import to finish. With a gate (reader-throttle.ts):
+ * jobs waiting for a later time stay, and competitor work waits while any customer's own job is
+ * queued or running, beyond the competitor slots and until the pause between competitor starts passed.
  */
-export function pickReaderJob(queued: QueuedReaderJob[], busyKeys: ReadonlySet<string>, running: number, slots = readerSlots): QueuedReaderJob | null {
+export function pickReaderJob(queued: QueuedReaderJob[], busyKeys: ReadonlySet<string>, running: number, slots = readerSlots, gate: ClaimGate = {}): QueuedReaderJob | null {
   if (running >= slots) return null;
   const urgentOnly = running >= slots - 1;
   const ordered = [...queued].sort((a, b) => a.priority - b.priority || Date.parse(a.requested_at) - Date.parse(b.requested_at));
-  return ordered.find((job) => !busyKeys.has(readerJobKey(job)) && (!urgentOnly || job.priority <= 1)) ?? null;
+  return ordered.find((job) => !busyKeys.has(readerJobKey(job)) && (!urgentOnly || job.priority <= 1) && gateAllows(job, gate)) ?? null;
 }
 
 /** "update": margin behind the newest stored review (late indexing, time zones). */
@@ -322,7 +328,7 @@ export function parseSearchResult(raw: { name?: string | null; href?: string | n
   const ratingText = ratingLabel?.match(/(\d)[,.](\d)/);
   const countMatch = ratingLabel?.match(/(\d[\d\s.  ]*)\s+(críticas?|reviews?|avaliaç)/i) ?? text.match(/\d[,.]\d\s*\((\d[\d\s.  ]*)\)/);
   const count = countMatch ? Number(countMatch[1].replace(/[^\d]/g, "")) : NaN;
-  const category = text.match(/\d[,.]\d(?:\s*\([\d\s.  ]+\))?\s+([^·]+?)\s+·/)?.[1]?.trim() ?? null;
+  const category = searchCardCategory(raw.text ?? "");
   return {
     placeId,
     fid: href.match(/!1s(0x[0-9a-f]+:0x[0-9a-f]+)/i)?.[1] ?? null,
@@ -331,10 +337,31 @@ export function parseSearchResult(raw: { name?: string | null; href?: string | n
     lng,
     rating: ratingText ? Number(`${ratingText[1]}.${ratingText[2]}`) : null,
     reviewsCount: Number.isFinite(count) && count > 0 ? count : null,
-    category: category && category.length <= 80 ? category : null,
+    category,
     permanentlyClosed: /encerrado permanentemente|fechado permanentemente|permanently closed/i.test(text),
     temporarilyClosed: /temporariamente encerrado|temporariamente fechado|temporarily closed/i.test(text),
   };
+}
+
+/** A price level as Maps shows it before the category: "€€", "€10–20", "10-20 €", "Mais de 100 €". */
+const pricePrefix = /^(?:mais de\s*\d+\s*[€$£]|[€$£]{1,4}(?:\s*\d[\d.,]*(?:\s*[–-]\s*\d[\d.,]*)?\+?)?|\d[\d.,]*(?:\s*[–-]\s*\d[\d.,]*)?\s*[€$£]\+?)\s*/i;
+
+/**
+ * The Google category in a search result card's text (innerText, with its line breaks): the first
+ * piece after the rating (and its "(count)") that is not a price, cut at the "·" separators and at
+ * line breaks. Seen as "4,8 Restaurante japonês · R. …"; with a price, "4,6(321) · €10–20" on the
+ * rating's line and the category on the next. Null when there is no rating to start from or the
+ * piece looks like an address (digits).
+ */
+export function searchCardCategory(cardText: string): string | null {
+  const rating = cardText.match(/\d[,.]\d(?:\s*\([\d\s.  ]+\))?/);
+  if (!rating || rating.index === undefined) return null;
+  for (const piece of cardText.slice(rating.index + rating[0].length).split(/[·⋅\n]/)) {
+    const candidate = piece.replace(/\s+/g, " ").trim().replace(pricePrefix, "").trim();
+    if (!candidate) continue;
+    return candidate.length <= 80 && !/\d/.test(candidate) ? candidate : null;
+  }
+  return null;
 }
 
 /** Coordinates in a Google Maps place link ("!3d<lat>!4d<lng>", else "@<lat>,<lng>"). */
@@ -359,10 +386,11 @@ export type PlaceProfile = Record<ProfileItem, boolean>;
  * the same payload inline): the number of photos and which profile fields are filled in. Read
  * from the page the reader opens anyway; no review is read. Positions seen on 2026-10-05:
  * [37][1] photos, [57] owner account (claimed), [7] website, [178] phone, [203] hours,
- * [154] the owner's description, [4][7] the rating (none on a place without reviews). Null when the
+ * [154] the owner's description, [4][7] the rating (none on a place without reviews), [13] the
+ * categories (main one first; the position common Maps scrapers use, not yet seen in a capture of ours). Null when the
  * payload is not a place.
  */
-export function parsePlaceProfile(body: string): { rating: number | null; photos: number | null; profile: PlaceProfile } | null {
+export function parsePlaceProfile(body: string): { rating: number | null; photos: number | null; profile: PlaceProfile; category: string | null } | null {
   let data: unknown;
   try {
     data = JSON.parse(body.replace(/^\)\]\}'\s*/, ""));
@@ -376,7 +404,10 @@ export function parsePlaceProfile(body: string): { rating: number | null; photos
   const photos = at(place[37], 1);
   // [4][7] is the rating Google shows; a place without any review has no [4] at all.
   const rating = at(place[4], 7);
+  // [13] the place's Google categories, the main one first (e.g. ["Restaurante de doner kebab", …]).
+  const category = at(place[13], 0);
   return {
+    category: typeof category === "string" && category.trim() && category.length <= 80 ? category.trim() : null,
     rating: typeof rating === "number" && rating >= 1 && rating <= 5 ? rating : null,
     photos: typeof photos === "number" && Number.isInteger(photos) && photos >= 0 ? photos : null,
     profile: {

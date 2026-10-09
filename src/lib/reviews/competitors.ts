@@ -1,4 +1,5 @@
 import type { PlaceProfile } from "./maps-reader.ts";
+import { categoryMatch, competitorRuleVersion, matchRank } from "./competitor-category.ts";
 import type { GooglePlace, StarDistribution } from "./place-types.ts";
 
 /**
@@ -41,14 +42,22 @@ export interface DiscoveryState {
   competitor_radius_km?: number | null;
   /** Radius the current list was searched with (null: before radii existed, i.e. 10 km). */
   competitors_search_radius_km?: number | null;
+  /**
+   * Selection rule the current list was chosen with (null: rule 1, which padded the list with the
+   * broader search). Left out of a query (undefined): not checked.
+   */
+  competitors_rule_version?: number | null;
 }
 
 /**
  * The competitor search (the free reader's "discover" job) is due for a customer that never had
- * competitors searched, or whose radius an admin changed since the last search.
+ * competitors searched, whose radius an admin changed since the last search, or whose list was
+ * chosen with an older selection rule (competitorRuleVersion: lists made before the category rule
+ * are searched again, by the reader, at its competitor pace).
  */
 export function discoveryDue(business: DiscoveryState): boolean {
   if (!business.competitors_refreshed_at) return true;
+  if (business.competitors_rule_version !== undefined && (business.competitors_rule_version ?? 1) < competitorRuleVersion) return true;
   return toRadiusKm(business.competitors_search_radius_km ?? competitorRadiusKm) !== toRadiusKm(business.competitor_radius_km);
 }
 
@@ -91,9 +100,11 @@ export interface CompetitorCandidate {
 }
 
 /**
- * Picks the places a customer would be compared with: same Google category first (the most
- * reviewed, i.e. the most visible), then places Google matched to the category search, then the
- * rest of the broader search, until the limit is reached.
+ * Picks the places a customer would be compared with (rule 5, competitor-category.ts): only places of
+ * the same Google category or a very similar one (a meaningful word in common), and places of
+ * unknown category from the search of the customer's own category whose name shares such a word.
+ * Same category first, then similar, then those matched by name; the most reviewed first within each.
+ * Fewer than the limit is fine: the list is never padded with unrelated places.
  */
 export function selectCompetitors(
   self: { placeId: string; category: string; lat: number; lng: number },
@@ -108,10 +119,11 @@ export function selectCompetitors(
     if (place.permanentlyClosed || place.temporarilyClosed || !place.reviewsCount) continue;
     const distanceM = distanceMeters(self, place.location);
     if (distanceM > radiusKm * 1000) continue;
+    const match = categoryMatch(self.category, { category: place.categoryName, name: place.title, fromCategorySearch: place.searchString === self.category });
+    if (!match) continue;
     seen.add(place.placeId);
     candidates.push({
-      // 0: same Google category, 1: matched to the category search, 2: the broader search (e.g. "Restaurante").
-      rank: place.categoryName === self.category ? 0 : place.searchString === self.category ? 1 : 2,
+      rank: matchRank[match],
       candidate: {
         placeId: place.placeId,
         name: place.title.trim(),
