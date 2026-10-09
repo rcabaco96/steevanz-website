@@ -52,8 +52,12 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/
   try {
     // A job left for a provider that no longer exists would block this customer's imports forever.
     await handRetiredJobsToReader(client, id);
-    // «Procurar concorrentes outra vez» (a failed search): only the search, not the whole history again.
-    if (request.nextUrl.searchParams.get("only") !== "concorrentes") await queueFullImport(client, id);
+    if (request.nextUrl.searchParams.get("only") === "concorrentes") {
+      // «Procurar concorrentes outra vez» (after the first import; the customer's own reviews have
+      // «Atualizar reviews»): forgets the last search, like the admin's button, and queues a new one.
+      const { error } = await client.from("review_businesses").update({ competitors_refreshed_at: null }).eq("id", id);
+      if (error) throw new Error(error.message);
+    } else await queueFullImport(client, id);
     await queueCompetitorSearch(client, id);
     return reply(await loadReaderJobs(client, id));
   } catch {

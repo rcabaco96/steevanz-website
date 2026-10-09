@@ -42,6 +42,8 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
   // The reader's competitor search runs after the first import (the customer's history first).
   const searching = isActive(state.discover) && competition === null;
   const searchFailed = state.discover?.status === "failed" && competition === null ? state.discover.error : null;
+  // The whole history was imported (or reviews are stored without a job left to say so).
+  const historyDone = job?.status === "done" || (!job && stored.count > 0);
   useBusySignal("sync", refreshing);
 
   async function start(onlyCompetitors = false) {
@@ -200,15 +202,17 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
         </div>
       ) : null}
 
-      {!active ? (
+      {/* Once the history is in, this button only searches the competitors again: the customer's own
+          reviews have «Atualizar reviews». While a search runs (or failed, with its own button) it hides. */}
+      {!active && !(historyDone && (isActive(state.discover) || searchFailed)) ? (
         <div className="flex flex-col gap-2">
           <button
             type="button"
-            onClick={() => void start()}
+            onClick={() => void start(historyDone)}
             disabled={starting}
             className={buttonClasses(stored.count ? "secondary" : "primary", "md", "self-start")}
           >
-            {starting ? "A pedir…" : job?.status === "done" ? "Importar outra vez" : "Importar histórico completo"}
+            {starting ? "A pedir…" : historyDone ? "Procurar concorrentes outra vez" : "Importar histórico completo"}
           </button>
           {!reader.online ? <p className="text-xs text-subtle">O pedido fica em espera até o leitor ser ligado.</p> : null}
           {error ? (
