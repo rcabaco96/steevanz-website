@@ -232,9 +232,10 @@ export async function readPages(tab, watch, { newestOnly, onPage }) {
 /**
  * What the open place page says about the place itself: category (the button under its name) and
  * feature id/coordinates from the page's link. Read before the reviews list replaces the header.
+ * String.raw: in a plain template literal "\d" turns into "d" and the coordinates were never found.
  */
 export async function placeFacts(tab) {
-  return tab.evaluate(`(() => {
+  return tab.evaluate(String.raw`(() => {
     let href = location.href;
     try { href = decodeURIComponent(href); } catch {}
     const num = (m) => (m ? Number(m[1]) : NaN);
