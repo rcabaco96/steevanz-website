@@ -25,6 +25,11 @@ npm run reader
 
 Precisa do `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `CRON_SECRET`.
 
+**Reinicia sozinho com código novo** (`scripts/reader/run.mjs`): a cada minuto o leitor vê se os
+ficheiros dele ou de `src/lib` mudaram (um `git pull`, um merge). Se mudaram, deixa de pegar em
+pedidos novos, acaba os que tem a meio e volta a arrancar com o código novo, na mesma janela. Se
+rebentar, volta a arrancar ao fim de 10 s. Nunca é preciso reiniciá-lo à mão depois de uma alteração.
+
 ## O que faz cada pedido
 
 | Tipo                 | O quê                                                                                     |

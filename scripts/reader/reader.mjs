@@ -5,7 +5,7 @@
 // Business rules (.claude/skills/regras-negocio-reviews): never the name, photo or profile of who
 // wrote a review; for competitors only aggregates, never review texts.
 import { execFileSync } from "node:child_process";
-import { mkdirSync, openSync, readFileSync, unlinkSync, writeFileSync, closeSync } from "node:fs";
+import { mkdirSync, openSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync, closeSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { cronSecret, siteUrl, heartbeatMs, humanPause, log, pollMs, profileDir, readerId, serviceKey, staleJobMs, supabaseUrl, sleep, slots as readerSlots, GoogleLimitError, throttle, UserError, version, dryRun, WaitError } from "./config.mjs";
@@ -55,6 +55,51 @@ function processAlive(pid) {
   }
 }
 
+// --- Restart with new code -------------------------------------------------------------------------
+// Exit codes understood by the supervisor (scripts/reader/run.mjs, what `npm run reader` starts):
+// 75 = the code changed, start again now; 2 = cannot run (another reader, missing setup), do not retry.
+const exitNewCode = 75;
+const exitFatal = 2;
+const repoRoot = join(import.meta.dirname, "..", "..");
+
+/** A fingerprint of the code the reader runs (its own files and src/lib): newest change, count and size. */
+function codeFingerprint() {
+  let newest = 0;
+  let files = 0;
+  let bytes = 0;
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (/\.(mjs|ts|tsx)$/.test(entry.name)) {
+        const stat = statSync(path);
+        newest = Math.max(newest, stat.mtimeMs);
+        files++;
+        bytes += stat.size;
+      }
+    }
+  };
+  try {
+    walk(join(repoRoot, "scripts", "reader"));
+    walk(join(repoRoot, "src", "lib"));
+  } catch {
+    return null;
+  }
+  return `${newest}:${files}:${bytes}`;
+}
+
+const startedCode = codeFingerprint();
+/** New code on disk: no new job is claimed and the reader restarts once the running ones finish. */
+let restartPending = false;
+
+function checkNewCode() {
+  if (restartPending || !startedCode) return;
+  const current = codeFingerprint();
+  if (!current || current === startedCode) return;
+  restartPending = true;
+  log(running.size ? `código novo do leitor: reinicia quando acabar os ${running.size} pedido(s) em curso (não pega em novos)` : "código novo do leitor: a reiniciar…");
+}
+
 function takeLock() {
   mkdirSync(profileDir, { recursive: true });
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -72,7 +117,7 @@ function takeLock() {
         `O leitor Steevanz já está a correr neste computador (processo ${pid}). Feche essa janela (ou termine o processo ${pid}) antes de abrir outro.\n` +
           `Se tiver a certeza de que não está a correr, apague o ficheiro ${lockFile}.`,
       );
-      process.exit(1);
+      process.exit(exitFatal);
     }
     // Left behind by a reader that stopped without cleaning up.
     try {
@@ -91,7 +136,7 @@ function releaseLock() {
 // --- Supabase -------------------------------------------------------------------------------------
 if (!supabaseUrl || !serviceKey) {
   console.error("Faltam NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no .env.local");
-  process.exit(1);
+  process.exit(exitFatal);
 }
 const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const jobColumns = "id, kind, business_id, place_id, priority, requested_at, not_before, attempts";
@@ -194,7 +239,7 @@ async function checkSchema() {
   const error = jobs.error ?? status.error ?? businesses.error;
   if (error) {
     console.error(`Falta aplicar a migração ${throttleMigration} no Supabase (${error.message}). Aplique-a e volte a ligar o leitor.`);
-    process.exit(1);
+    process.exit(exitFatal);
   }
   // A pause from before a restart still holds (Google does not forget because the reader restarted).
   cooldown = restoreCooldown(status.data?.paused_until, Date.now());
@@ -334,6 +379,10 @@ const clientKindsList = `(${clientJobKinds.join(",")})`;
  * the customers' jobs still do, so the reader is always there for them.
  */
 async function fillSlots(store) {
+  if (restartPending) {
+    if (!running.size) await shutdown(exitNewCode);
+    return;
+  }
   endPauseIfOver();
   if (running.size >= readerSlots) return;
   // Customers' jobs and the rest apart, so a long competitor queue never hides a customer's job.
@@ -453,6 +502,7 @@ async function main() {
   setInterval(() => void heartbeat(), heartbeatMs);
   void triggerCompetitionSlot();
   setInterval(() => void triggerCompetitionSlot(), 60_000);
+  setInterval(checkNewCode, 60_000);
   for (;;) {
     await fillSlots(store).catch((error) => log("aviso:", error instanceof Error ? error.message : error));
     await sleep(pollMs);
