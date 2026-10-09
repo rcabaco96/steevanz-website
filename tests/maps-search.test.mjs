@@ -31,6 +31,11 @@ describe("parseSearchResult", () => {
     assert.equal(parseSearchResult({ ...fishTail, labels: ["4,8 estrelas 1.339 críticas"] }).reviewsCount, 1339);
   });
 
+  it("drops the browser's «Link visitado» from the name (2026-10-10)", () => {
+    assert.equal(parseSearchResult({ ...fishTail, name: "Döner Kebab·Link visitado" }).title, "Döner Kebab");
+    assert.equal(parseSearchResult({ ...fishTail, name: "Fish Tail · Visited link" }).title, "Fish Tail");
+  });
+
   it("flags closed places and drops results without a place id", () => {
     assert.equal(parseSearchResult({ ...fishTail, text: `${fishTail.text} Encerrado permanentemente` }).permanentlyClosed, true);
     assert.equal(parseSearchResult({ ...fishTail, text: `${fishTail.text} Temporariamente encerrado` }).temporarilyClosed, true);

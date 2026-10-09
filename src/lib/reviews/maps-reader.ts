@@ -321,7 +321,8 @@ export function parseSearchResult(raw: { name?: string | null; href?: string | n
   const placeId = href.match(/!19s(ChIJ[\w-]+)/)?.[1];
   const lat = Number(href.match(/!3d(-?\d+(?:\.\d+)?)/)?.[1]);
   const lng = Number(href.match(/!4d(-?\d+(?:\.\d+)?)/)?.[1]);
-  const title = raw.name?.trim();
+  // The browser adds "·Link visitado" / "· Visited link" to the label of a place opened before.
+  const title = raw.name?.replace(/\s*·\s*(Link visitado|Visited link)\s*$/i, "").trim();
   if (!placeId || !title || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   const text = (raw.text ?? "").replace(/\s+/g, " ");
   const ratingLabel = (raw.labels ?? []).find((label): label is string => typeof label === "string" && /estrelas?|stars?/i.test(label)) ?? null;

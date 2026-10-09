@@ -365,8 +365,8 @@ async function discoverJob(job, tab, store) {
       [current.place_id],
       previousCompetitionUpdate(new Date()),
     );
-    if (fresh.size) await store.reuseSnapshots([current.place_id]);
-    else await store.queuePlaceReads([current.place_id]);
+    const reused = fresh.size ? await store.reuseSnapshots([current.place_id]) : new Set();
+    if (!reused.size) await store.queuePlaceReads([current.place_id]);
   }
 }
 
@@ -498,12 +498,13 @@ async function discover(tab, store, business, facts) {
     placeIds,
     previousCompetitionUpdate(new Date()),
   );
-  if (fresh.size) await store.reuseSnapshots([...fresh]);
+  // Only places whose numbers are still stored are reused; the others are read.
+  const reused = fresh.size ? await store.reuseSnapshots([...fresh]) : new Set();
   const queued = await store.queuePlaceReads(
-    placeIds.filter((placeId) => !fresh.has(placeId)),
+    placeIds.filter((placeId) => !reused.has(placeId)),
   );
   log(
-    `  ${chosen.length} concorrentes escolhidos; ${fresh.size} reaproveitados (já lidos desde a última atualização); ${queued} leituras na fila`,
+    `  ${chosen.length} concorrentes escolhidos; ${reused.size} reaproveitados (já lidos desde a última atualização); ${queued} leituras na fila`,
   );
   return { ...business, place_id: selfPlaceId };
 }

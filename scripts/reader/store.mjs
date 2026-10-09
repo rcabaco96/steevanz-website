@@ -201,11 +201,16 @@ export function createStore(db, { dryRun }) {
     /**
      * Shared base per place: the newest snapshot of each place (from any customer's row) goes onto
      * the rows of that place that have none yet, and a finished read is recorded for each place (so
-     * the panel's progress counts it). Nothing is read from Google.
+     * the panel's progress counts it). Nothing is read from Google. Returns the places it could serve:
+     * a place "read today" whose numbers are gone (e.g. its panel was deleted) is not reused, the
+     * caller queues a real read for it (2026-10-10: 12 of 18 competitors had no numbers).
      */
     async reuseSnapshots(placeIds) {
-      if (!placeIds.length) return 0;
-      if (dryRun) return print("competitor_snapshots (reaproveitadas)", `${placeIds.length} locais`);
+      if (!placeIds.length) return new Set();
+      if (dryRun) {
+        print("competitor_snapshots (reaproveitadas)", `${placeIds.length} locais`);
+        return new Set();
+      }
       const { data: rows, error } = await db.from("competitors").select("id, place_id").in("place_id", placeIds);
       if (error) throw new Error(error.message);
       const placeOf = new Map((rows ?? []).map((row) => [row.id, row.place_id]));
@@ -227,10 +232,12 @@ export function createStore(db, { dryRun }) {
         .filter((row) => !withSnapshot.has(row.id) && newest.has(row.place_id))
         .map((row) => ({ ...newest.get(row.place_id), competitor_id: row.id }));
       if (copies.length) check(await db.from("competitor_snapshots").upsert(copies, { onConflict: "competitor_id,taken_on" }));
+      const reused = new Set(placeIds.filter((placeId) => newest.has(placeId)));
+      if (!reused.size) return reused;
       const at = now();
       check(
         await db.from("review_import_jobs").insert(
-          placeIds.map((placeId) => ({
+          [...reused].map((placeId) => ({
             kind: "competitor",
             place_id: placeId,
             priority: 3,
@@ -244,7 +251,7 @@ export function createStore(db, { dryRun }) {
           })),
         ),
       );
-      return copies.length;
+      return reused;
     },
 
     /** Reads of these places for the reader (rating, total, stars), skipping ones already waiting. */
