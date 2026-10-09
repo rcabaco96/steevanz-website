@@ -237,6 +237,12 @@ select:not([multiple]):not([size]):not(.appearance-none) {
   background-repeat: no-repeat;
 }
 
+/* The team's PIN typed on a customer's phone: digits masked without a password field (which phones
+   offer to save). */
+.pin-mask {
+  -webkit-text-security: disc;
+}
+
 /* The open list in our colours, where the browser allows it (Chrome and Edge 135+); elsewhere the
    system list (on phones, the system picker, which is the easiest to use there). */
 @supports (appearance: base-select) {

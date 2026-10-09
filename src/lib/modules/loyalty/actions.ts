@@ -32,7 +32,8 @@ function refresh(establishment: EstablishmentRow) {
 }
 
 interface StampOutcome {
-  outcome: "ok" | "cooldown";
+  /** "nothing": a stamp to remove from an empty card with no unused reward to take back. */
+  outcome: "ok" | "cooldown" | "nothing";
   stamps: number;
   rewards_earned: number;
   next_allowed_at: string | null;
@@ -290,10 +291,16 @@ export async function staffRemoveStamp(_previous: ActionState, formData: FormDat
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
     if (!program.active) return paused;
-    if (card.stamps === 0) return { ok: false, message: "Este cartão não tem carimbos para retirar." };
-    await stamp(card.id, -1, "staff_panel", false);
+    const result = await stamp(card.id, -1, "staff_panel", false);
+    if (result.outcome === "nothing") return { ok: false, message: "Este cartão não tem carimbos para retirar." };
     refresh(establishment);
-    return { ok: true, message: `Carimbo retirado do cartão de ${card.name}.` };
+    return {
+      ok: true,
+      message:
+        result.rewards_earned < 0
+          ? `Carimbo retirado do cartão de ${card.name}: a recompensa que tinha ganho com ele foi anulada.`
+          : `Carimbo retirado do cartão de ${card.name}.`,
+    };
   });
 }
 
@@ -361,10 +368,20 @@ export async function saveProgram(_previous: ActionState, formData: FormData): P
     });
     if (!parsed.success) return { ok: false, message: "Verifique os valores (carimbos entre 2 e 50, recompensa preenchida)." };
     await ensureProgram(establishment);
-    const { error } = await createServiceClient().from("loyalty_programs").update(parsed.data).eq("establishment_id", establishment.id);
+    const client = createServiceClient();
+    const { error } = await client.from("loyalty_programs").update(parsed.data).eq("establishment_id", establishment.id);
     if (error) throw new Error(error.message);
+    // Fewer stamps needed: cards that already have enough are completed now, not at their next stamp.
+    const { data: completed, error: settleError } = await client.rpc("loyalty_settle_program", { p_establishment: establishment.id });
+    if (settleError) throw new Error(settleError.message);
     refresh(establishment);
-    return { ok: true, message: "Regras guardadas. Valem para todos os cartões a partir de agora." };
+    const count = Number(completed) || 0;
+    return {
+      ok: true,
+      message: count
+        ? `Regras guardadas. ${count === 1 ? "1 cartão já tinha" : `${count} cartões já tinham`} os carimbos necessários e ${count === 1 ? "ficou completo" : "ficaram completos"}.`
+        : "Regras guardadas. Valem para todos os cartões a partir de agora.",
+    };
   });
 }
 

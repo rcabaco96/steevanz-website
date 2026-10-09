@@ -117,16 +117,22 @@ function CodeInput() {
   return (
     <label className={publicLabel}>
       PIN de carimbo <span className="font-normal text-subtle">(escrito pelo funcionário)</span>
+      {/* Text with the digits masked, not a password field: the customer's phone must never offer to save the team's PIN. */}
       <input
         name="code"
-        type="password"
+        type="text"
         inputMode="numeric"
         pattern="\d{6}"
         maxLength={6}
         required
         autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
+        data-1p-ignore
+        data-lpignore="true"
+        data-form-type="other"
         placeholder="••••••"
-        className={`${publicInput} text-center text-2xl tracking-[0.5em]`}
+        className={`${publicInput} pin-mask text-center text-2xl tracking-[0.5em]`}
       />
     </label>
   );

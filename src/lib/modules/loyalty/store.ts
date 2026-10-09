@@ -189,6 +189,8 @@ export async function loadLoyaltyStats(establishmentId: string, days = 30): Prom
       stamps += row.amount;
       stampsByCard.set(row.card_id, (stampsByCard.get(row.card_id) ?? 0) + 1);
     }
+    // A stamp removed by mistake no longer counts.
+    if (row.kind === "adjust" && row.amount < 0 && row.source !== "migration") stamps += row.amount;
     if (row.kind === "reward_earned") earned += row.amount;
     if (row.kind === "reward_redeemed") redeemed += row.amount;
   }

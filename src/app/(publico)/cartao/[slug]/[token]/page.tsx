@@ -94,8 +94,12 @@ export default async function LoyaltyCardPage({ params }: Props) {
               </div>
               <p className="text-sm text-muted">O funcionário lê este código com o telemóvel ou tablet do estabelecimento.</p>
             </div>
-            <p className="flex items-center gap-3 text-sm text-subtle before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line">ou</p>
-            <StampWithCodeForm token={card.token} />
+            <details className="group text-sm">
+              <summary className="cursor-pointer text-center font-medium text-muted hover:text-text">Sem leitor de QR? O funcionário escreve o PIN</summary>
+              <div className="mt-4">
+                <StampWithCodeForm token={card.token} />
+              </div>
+            </details>
           </>
         ) : (
           <p className="text-muted">Os carimbos estão em pausa de momento.</p>

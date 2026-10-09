@@ -111,7 +111,7 @@ export const docs: ProductDocs = {
             type: "table",
             head: ["Definição", "Para quê"],
             rows: [
-              ["Carimbos para completar", "De 2 a 50 (por omissão 10)."],
+              ["Carimbos para completar", "De 2 a 50 (por omissão 10). Se baixar o número, os cartões que já têm carimbos suficientes ficam logo completos."],
               ["Recompensa", "O que o cliente ganha, ex.: «um café oferecido»."],
               ["Tempo mínimo entre carimbos", "Antifraude: um carimbo por visita."],
               ["Validade da recompensa", "Em dias; vazio = sem validade."],
@@ -156,7 +156,7 @@ export const docs: ProductDocs = {
             type: "table",
             head: ["Setting", "What it's for"],
             rows: [
-              ["Stamps to complete", "From 2 to 50 (10 by default)."],
+              ["Stamps to complete", "From 2 to 50 (10 by default). If you lower it, cards that already have enough stamps are completed straight away."],
               ["Reward", "What the customer gets, e.g. «a free coffee»."],
               ["Minimum time between stamps", "Anti-fraud: one stamp per visit."],
               ["Reward validity", "In days; empty = no expiry."],
@@ -202,8 +202,8 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**No telemóvel do cliente:** o cliente mostra o cartão e a equipa escreve o PIN de carimbo. Não precisa de mais nada.",
-              "**No Balcão:** leia o QR do cartão com a câmara do telemóvel ou tablet do balcão (o cartão abre no Balcão), ou procure pelo nome, telemóvel ou código, e carregue em «Dar carimbo».",
+              "**Com o QR (a forma principal):** leia o QR do cartão com a câmara do telemóvel ou tablet do balcão. O cartão abre no Balcão: carregue em «Dar carimbo». Também pode procurar pelo nome, telemóvel ou código.",
+              "**Com o PIN, no telemóvel do cliente:** em «Sem leitor de QR?», a equipa escreve o PIN de carimbo. O telemóvel do cliente não se oferece para o guardar.",
             ],
           },
           { type: "h2", id: "recompensa", text: "Entregar a recompensa" },
@@ -217,8 +217,8 @@ export const docs: ProductDocs = {
             ],
           },
           { type: "h2", id: "papel", text: "Carimbos do cartão de papel" },
-          { type: "p", text: "Nos clientes do módulo, em «Mais», passe os carimbos que o cliente tinha no papel. Não contam para o tempo mínimo entre carimbos." },
-          { type: "callout", tone: "tip", text: "Errou um carimbo? «Retirar um carimbo» no cartão do cliente." },
+          { type: "p", text: "Nos clientes do módulo, em «Mais», passe os carimbos que o cliente tinha no papel. Não contam para o tempo mínimo entre carimbos, por isso o carimbo da visita de hoje pode ser dado logo." },
+          { type: "callout", tone: "tip", text: "Errou um carimbo? «Retirar carimbo» no cartão do cliente. Também liberta o tempo mínimo entre carimbos e, se esse carimbo tinha completado o cartão, anula a recompensa por usar." },
         ],
       },
       en: {
@@ -229,8 +229,8 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**On the customer's phone:** the customer shows the card and your staff type the stamp PIN. Nothing else needed.",
-              "**At the Balcão:** scan the card's QR with the counter phone or tablet camera (the card opens in the Balcão), or search by name, phone or code, and tap «Give stamp».",
+              "**With the QR (the main way):** scan the card's QR with the counter phone or tablet camera. The card opens in the Balcão: tap «Give stamp». You can also search by name, phone or code.",
+              "**With the PIN, on the customer's phone:** under «No QR reader?», your staff type the stamp PIN. The customer's phone does not offer to save it.",
             ],
           },
           { type: "h2", id: "reward", text: "Handing over the reward" },
@@ -244,8 +244,8 @@ export const docs: ProductDocs = {
             ],
           },
           { type: "h2", id: "paper", text: "Stamps from a paper card" },
-          { type: "p", text: "In the module's customers, under «More», move the stamps the customer had on paper. They don't count towards the minimum time between stamps." },
-          { type: "callout", tone: "tip", text: "Stamped by mistake? «Remove a stamp» on the customer's card." },
+          { type: "p", text: "In the module's customers, under «More», move the stamps the customer had on paper. They don't count towards the minimum time between stamps, so today's visit can be stamped straight away." },
+          { type: "callout", tone: "tip", text: "Stamped by mistake? «Remove stamp» on the customer's card. It also frees the minimum time between stamps and, if that stamp completed the card, takes back the unused reward." },
         ],
       },
     },

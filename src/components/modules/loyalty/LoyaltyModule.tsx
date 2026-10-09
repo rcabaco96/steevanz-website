@@ -171,7 +171,7 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
   const input = `${adminInputClasses} h-11`;
   return (
     <Panel title="Regras do cartão">
-      <ActionForm key={program.updated_at} action={saveProgram} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <ActionForm resetKey={program.updated_at} action={saveProgram} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={establishmentId} />
         <label className={adminLabelClasses}>
           Carimbos para completar

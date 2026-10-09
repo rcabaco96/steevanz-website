@@ -38,7 +38,7 @@ function QueueSettings({ settings, establishmentId, kind, hasServices, hasStaff 
   const suited = kindDefaults[kind].waitlist;
   return (
     <Panel title="Regras da fila">
-      <ActionForm key={settings.updated_at} action={saveWaitlistSettings} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <ActionForm resetKey={settings.updated_at} action={saveWaitlistSettings} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input type="hidden" name="establishment_id" value={establishmentId} />
         <QueueRuleFields
           avgMinutes={settings.avg_minutes}

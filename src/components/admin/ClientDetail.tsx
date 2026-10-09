@@ -72,7 +72,7 @@ export function AccountCard({ profile }: { profile: Profile }) {
             <span className="hidden group-open:inline">Cancelar</span>
           </span>
         </summary>
-        <ActionForm key={profile.updated_at} action={updateClientProfile} className="mt-4 flex flex-col gap-3">
+        <ActionForm resetKey={profile.updated_at} action={updateClientProfile} className="mt-4 flex flex-col gap-3">
           <input type="hidden" name="id" value={profile.id} />
           <label className={adminLabelClasses}>
             Nome

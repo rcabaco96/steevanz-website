@@ -34,14 +34,20 @@ recompensa. Sem app e sem conta. Custo de funcionamento: zero.
 
 ### Dono do estabelecimento (área de cliente, `/conta/loyalty`)
 - **Dá carimbos** de duas formas:
-  - **No telemóvel do cliente:** o funcionário escreve o PIN de carimbo (6 algarismos). Não precisa
-    de nenhum aparelho.
-  - **No Balcão ou no módulo** (separador **Carimbar**): lê o QR do cartão com a câmara do telemóvel
-    ou tablet do estabelecimento (abre o cartão no Balcão), ou procura pelo código do cartão
-    (ex.: `K7P 29Q`), nome, email ou telemóvel, e carrega em **Dar carimbo**.
+  - **Com o QR (forma principal)** no Balcão ou no módulo (separador **Carimbar**): lê o QR do
+    cartão com a câmara do telemóvel ou tablet do estabelecimento (abre o cartão no Balcão), ou
+    procura pelo código do cartão, nome, email ou telemóvel (qualquer espaçamento), e carrega em
+    **Dar carimbo**.
+  - **Com o PIN no telemóvel do cliente** (em «Sem leitor de QR?»): o funcionário escreve o PIN de
+    carimbo (6 algarismos). O campo não é de palavra-passe (algarismos escondidos por CSS), para o
+    telemóvel do cliente nunca se oferecer para guardar o PIN.
 - **Entrega a recompensa**: PIN no telemóvel do cliente ou **Entregar recompensa** no backoffice.
-- **Retira um carimbo** dado por engano.
-- **Passa os carimbos do cartão de papel** antigo para o digital (sem tempo mínimo).
+- **Retira um carimbo** dado por engano: liberta o tempo mínimo e, se esse carimbo completou o
+  cartão, anula a recompensa por usar (o cartão volta a ter todos os carimbos menos um).
+- **Passa os carimbos do cartão de papel** antigo para o digital (sem tempo mínimo, e não contam
+  para o tempo mínimo: o carimbo da visita de hoje pode ser dado logo).
+- **Baixar os carimbos necessários** completa logo os cartões que já têm carimbos suficientes
+  (`loyalty_settle_program`).
 - **Mostrar QR do cartão**: para quem mudou de telemóvel; o cliente lê o QR e o cartão volta a abrir.
 - **Apaga um cartão** a pedido do cliente (proteção de dados), com todo o histórico.
 - **Clientes**: os 100 cartões mais recentes, com carimbos, recompensas e última visita.

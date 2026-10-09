@@ -27,7 +27,7 @@ function Details({ bundle, viewer }: { bundle: EstablishmentBundle; viewer: "cli
   const { establishment } = bundle;
   return (
     <Panel title="Espaço">
-      <ActionForm key={establishment.updated_at} action={updateEstablishment} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <ActionForm resetKey={establishment.updated_at} action={updateEstablishment} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Hidden id={establishment.id} />
         <label className={adminLabelClasses}>
           Nome

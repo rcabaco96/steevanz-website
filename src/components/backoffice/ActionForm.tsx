@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
+import { Fragment, useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon, Check } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
@@ -14,9 +14,14 @@ interface ActionFormProps {
   className?: string;
   confirmMessage?: string;
   hideMessage?: boolean;
+  /**
+   * Refills the fields from the saved values when it changes (e.g. the row's updated_at), while the
+   * form, and so the «Guardado» message, stays. A key on the form itself would wipe the message.
+   */
+  resetKey?: string;
 }
 
-export function ActionForm({ action, children, className = "", confirmMessage, hideMessage = false }: ActionFormProps) {
+export function ActionForm({ action, children, className = "", confirmMessage, hideMessage = false, resetKey }: ActionFormProps) {
   const [state, formAction] = useActionState(action, null);
   return (
     <form
@@ -26,7 +31,7 @@ export function ActionForm({ action, children, className = "", confirmMessage, h
       }}
       className={className}
     >
-      {children}
+      <Fragment key={resetKey}>{children}</Fragment>
       {state && !(hideMessage && state.ok) ? <FormMessage ok={state.ok} message={state.message} /> : null}
     </form>
   );

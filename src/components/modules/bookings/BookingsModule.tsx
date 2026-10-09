@@ -548,7 +548,7 @@ function Choice({ name, label, value, options, hint }: { name: string; label: st
 function PageSettings({ page, establishmentId, hasGroup }: { page: BookingPageRow; establishmentId: string; hasGroup: boolean }) {
   const input = `${adminInputClasses} h-11`;
   return (
-    <ActionForm key={page.updated_at} action={saveBookingPage} className="flex flex-col gap-6">
+    <ActionForm resetKey={page.updated_at} action={saveBookingPage} className="flex flex-col gap-6">
       <input type="hidden" name="establishment_id" value={establishmentId} />
       <input type="hidden" name="seats_per_slot" value={page.seats_per_slot} />
       <input type="hidden" name="max_party" value={page.max_party} />
