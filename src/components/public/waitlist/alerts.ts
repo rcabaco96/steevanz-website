@@ -66,10 +66,23 @@ export function notificationsSupported(): boolean {
   return typeof window !== "undefined" && "Notification" in window;
 }
 
-/** The same tag as the push notification, so a phone that gets both shows one. */
+/**
+ * The same tag as the push notification, so a phone that gets both shows one. Through the service
+ * worker when there is one (Android Chrome and iPhone from the home screen refuse `new Notification`).
+ */
 export function notify(title: string, body: string, tag = "steevanz-fila"): void {
   try {
-    if (notificationsSupported() && Notification.permission === "granted") new Notification(title, { body, tag, requireInteraction: true });
+    if (!notificationsSupported() || Notification.permission !== "granted") return;
+    const options = { body, tag, requireInteraction: true, icon: "/apple-icon.png", badge: "/fila-badge.png" };
+    const worker = "serviceWorker" in navigator ? navigator.serviceWorker.getRegistration("/fila/") : Promise.resolve(undefined);
+    worker
+      .then((registration) => {
+        if (registration) return registration.showNotification(title, options);
+        new Notification(title, options);
+      })
+      .catch(() => {
+        // Some browsers allow neither: the page itself still alerts.
+      });
   } catch {
     // Some browsers only allow notifications from a service worker: the page itself still alerts.
   }
@@ -96,16 +109,92 @@ function keyBytes(base64: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
-/** Subscribes this browser to push for the queue tickets (permission must already be granted). */
-export async function subscribePush(publicKey: string): Promise<PushSubscriptionJSON | null> {
+const workerPath = "/fila-sw.js";
+const workerScope = "/fila/";
+
+/**
+ * Registers the queue's service worker ahead of the tap on "Ativar avisos", so subscribing right
+ * after the permission prompt is quick (iPhone ties the subscription to that tap).
+ */
+export function registerQueueWorker(): void {
   try {
-    await navigator.serviceWorker.register("/fila-sw.js", { scope: "/fila/" });
-    const registration = await navigator.serviceWorker.ready;
-    const subscription =
-      (await registration.pushManager.getSubscription()) ??
-      (await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) }));
-    return subscription.toJSON();
+    if (pushSupported()) void navigator.serviceWorker.register(workerPath, { scope: workerScope }).catch(() => {});
   } catch {
-    return null;
+    // Subscribing tries again and reports the error.
+  }
+}
+
+/** Why switching push on failed, for the message on the ticket page. */
+export type PushFailure = "unsupported" | "denied" | "worker" | "subscribe" | "save";
+
+export type PushOutcome = { ok: true; subscription: PushSubscriptionJSON } | { ok: false; reason: PushFailure; detail?: string };
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new Error("timeout")), ms);
+    promise.then(
+      (value) => {
+        window.clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        window.clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
+function sameBytes(a: Uint8Array, b: Uint8Array): boolean {
+  return a.length === b.length && a.every((byte, index) => byte === b[index]);
+}
+
+function errorText(error: unknown): string {
+  return error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+}
+
+/**
+ * Subscribes this browser to push for the queue tickets (permission must already be granted), and
+ * says why when it can't. The ticket (/fila/slug/token) is inside the worker's scope (/fila/), so
+ * the registration becomes active for it; it is awaited directly, with a time limit, instead of
+ * waiting forever on `navigator.serviceWorker.ready`.
+ */
+export async function subscribePush(publicKey: string): Promise<PushOutcome> {
+  if (!pushSupported()) return { ok: false, reason: "unsupported" };
+  if (Notification.permission === "denied") return { ok: false, reason: "denied" };
+  let registration: ServiceWorkerRegistration;
+  try {
+    registration = (await navigator.serviceWorker.getRegistration(workerScope)) ?? (await navigator.serviceWorker.register(workerPath, { scope: workerScope }));
+    if (!registration.active) {
+      const worker = registration.installing ?? registration.waiting;
+      if (worker) {
+        await withTimeout(
+          new Promise<void>((resolve) => {
+            worker.addEventListener("statechange", () => {
+              if (worker.state === "activated") resolve();
+            });
+          }),
+          10_000,
+        );
+      }
+    }
+  } catch (error) {
+    return { ok: false, reason: "worker", detail: errorText(error) };
+  }
+  try {
+    const key = keyBytes(publicKey);
+    let subscription = await registration.pushManager.getSubscription();
+    // A subscription made with another server key can't receive our pushes: replace it.
+    const previousKey = subscription?.options.applicationServerKey;
+    if (subscription && previousKey && !sameBytes(new Uint8Array(previousKey), key)) {
+      await subscription.unsubscribe();
+      subscription = null;
+    }
+    subscription ??= await withTimeout(registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key }), 20_000);
+    return { ok: true, subscription: subscription.toJSON() };
+  } catch (error) {
+    // The permission may have been turned off meanwhile (TypeScript remembers the earlier check).
+    if ((Notification.permission as NotificationPermission) === "denied") return { ok: false, reason: "denied", detail: errorText(error) };
+    return { ok: false, reason: "subscribe", detail: errorText(error) };
   }
 }

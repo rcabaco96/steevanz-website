@@ -11,8 +11,10 @@ import {
   updateEstablishment,
 } from "@/lib/establishments/actions";
 import { businessKinds, kindLabels } from "@/lib/establishments/kinds";
+import { iconUrl } from "@/lib/establishments/logo-rules";
 import { shortTime } from "@/lib/establishments/store";
 import { weekdayNames, weekdayOrder, type EstablishmentBundle } from "@/lib/establishments/types";
+import { LogoForm } from "./LogoForm";
 
 export type SettingsSection = "details" | "services" | "staff" | "hours" | "closures";
 
@@ -65,6 +67,9 @@ function Details({ bundle, viewer }: { bundle: EstablishmentBundle; viewer: "cli
           <SubmitButton size="sm">Guardar</SubmitButton>
         </div>
       </ActionForm>
+      <div className="mt-5 border-t border-line pt-5">
+        <LogoForm establishmentId={establishment.id} hasLogo={Boolean(establishment.logo_path)} iconSrc={iconUrl(establishment.slug, 192, establishment.logo_path)} />
+      </div>
     </Panel>
   );
 }

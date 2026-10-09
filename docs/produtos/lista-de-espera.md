@@ -134,7 +134,14 @@ passa pelo servidor com a chave de serviço; as páginas públicas só chegam à
 - **Notificações push (grátis):** «Ativar avisos» na senha subscreve o telemóvel (`/fila-sw.js`, chaves VAPID
   `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, também na Vercel); ao ser chamado, chega uma
   notificação mesmo com a página fechada (`waitlist_entries.push_subscription`, `src/lib/modules/waitlist/push.ts`).
-  Android e computadores: sim. iPhone: só com a senha adicionada ao ecrã principal (a senha tem manifest próprio e
-  explica como). No iPhone não vibra.
+  Android e computadores: sim. iPhone (iOS 16.4+): só com a senha adicionada ao ecrã principal e aberta a partir do
+  ícone (no iOS 26 com «Abrir como app web» ligado); num separador do Safari a senha mostra os 3 passos. No iPhone não
+  vibra. Se ligar os avisos falhar, a senha diz porquê e mostra «Tentar de novo»; com os avisos ligados há
+  «Enviar notificação de teste» (só à espera, uma vez a cada 30 s por senha, `waitlist_entries.push_test_at`).
+- **Logótipo do espaço:** em Definições › Espaço (dono ou admin), PNG/JPEG/WebP até 2 MB (o WebP é convertido em PNG
+  no navegador). Fica no bucket público `establishment-logos` (`<id>/<aleatório>.png`, `establishments.logo_path`);
+  o anterior é apagado. `/fila/[slug]/icon/[96|180|192|512]` desenha o ícone (logótipo sobre branco, ou as iniciais na
+  cor do espaço; `?m=1` versão maskable) e é usado no apple-touch-icon e no manifest da senha e no ícone da
+  notificação (no iPhone a notificação mostra o ícone do ecrã principal). O badge do Android é `/fila-badge.png`.
 - A atualização é por polling (8 s no Balcão e no painel, 5 s na senha e no ecrã), não em tempo
   real.

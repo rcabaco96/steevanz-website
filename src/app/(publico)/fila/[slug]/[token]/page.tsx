@@ -8,6 +8,7 @@ import { ForgetTicket } from "@/components/public/waitlist/ForgetTicket";
 import { QueueLine } from "@/components/public/waitlist/QueueLine";
 import { ReplyButtons } from "@/components/public/waitlist/ReplyButtons";
 import { kindWords } from "@/lib/establishments/kinds";
+import { iconUrl } from "@/lib/establishments/logo-rules";
 import { loadBundle } from "@/lib/establishments/store";
 import { formatWait } from "@/lib/modules/waitlist/eta";
 import { currentSettings, entryOutlook, getEntryByToken, loadQueue } from "@/lib/modules/waitlist/store";
@@ -17,12 +18,20 @@ type Props = { params: Promise<{ slug: string; token: string }>; searchParams: P
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, token } = await params;
+  const establishment = await publicEstablishment(slug, "waitlist");
   return {
     title: "A sua senha",
     referrer: "no-referrer",
     // Its own manifest, so "Add to Home Screen" opens this ticket (and, on iPhone, allows push).
     manifest: `/fila/${slug}/${token}/manifest.webmanifest`,
     appleWebApp: { capable: true, title: "Senha", statusBarStyle: "default" },
+    // The home-screen icon is the establishment's: on iPhone it is also the notifications' icon.
+    icons: establishment
+      ? {
+          icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+          apple: [{ url: iconUrl(slug, 180, establishment.logo_path), sizes: "180x180", type: "image/png" }],
+        }
+      : undefined,
   };
 }
 

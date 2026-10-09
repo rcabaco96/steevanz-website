@@ -282,7 +282,8 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "Com «Ativar avisos», o Android e os computadores recebem uma notificação mesmo com a página fechada. No iPhone isso só funciona com a senha adicionada ao ecrã principal (a página explica como); sem isso, toca só com a página aberta: recomende deixar o email.",
+              "Com «Ativar avisos», o Android e os computadores recebem uma notificação mesmo com a página fechada. No iPhone isso só funciona com a senha adicionada ao ecrã principal e aberta a partir desse ícone (a página mostra os passos); sem isso, toca só com a página aberta: recomende deixar o email.",
+              "Com os avisos ligados, «Enviar notificação de teste» na senha confirma que a notificação chega a esse telemóvel.",
               "Se o cliente deixou email, peça para ver também na pasta de spam.",
               "Chame-o outra vez no «⋯» ou chame pelo número ao balcão.",
             ],
@@ -312,7 +313,8 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "With «Turn on alerts», Android phones and computers get a notification even with the page closed. On iPhone that only works with the ticket added to the home screen (the page explains how); otherwise it only rings with the page open: suggest leaving an email.",
+              "With «Turn on alerts», Android phones and computers get a notification even with the page closed. On iPhone that only works with the ticket added to the home screen and opened from that icon (the page shows the steps); otherwise it only rings with the page open: suggest leaving an email.",
+              "With alerts on, «Send a test notification» on the ticket confirms the notification reaches that phone.",
               "If the customer left an email, ask them to check their spam folder too.",
               "Call them again from the «⋯» or call their number at the desk.",
             ],

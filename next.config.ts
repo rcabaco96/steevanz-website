@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
     globalNotFound: true,
     optimizePackageImports: ["motion"],
     inlineCss: true,
+    // The establishment's logo is sent through a server action (up to 2 MB, plus the form's own bytes).
+    serverActions: { bodySizeLimit: "3mb" },
   },
   async headers() {
     return [

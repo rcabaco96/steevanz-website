@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
@@ -7,6 +8,7 @@ import { formText } from "@/lib/modules/common";
 import { createServiceClient } from "@/lib/supabase/service";
 import { accessErrorMessage, requireAdminSession, requireEstablishmentAccess } from "./access";
 import { businessKinds, slugify } from "./kinds";
+import { imageTypeOf, logoBucket, logoMaxBytes, logoPathFor, ownsLogoPath } from "./logo-rules";
 import { addStartingHours, addStartingServices } from "./provision";
 import { isUuid } from "./store";
 
@@ -77,8 +79,10 @@ export async function deleteEstablishment(_previous: ActionState, formData: Form
     await requireAdminSession();
     const id = formText(formData, "id");
     if (!isUuid(id)) return { ok: false, message: "Pedido inválido." };
-    const { error } = await createServiceClient().from("establishments").delete().eq("id", id);
+    const client = createServiceClient();
+    const { error } = await client.from("establishments").delete().eq("id", id);
     if (error) throw new Error(error.message);
+    await removeLogoFiles(client, id);
     refresh();
     return { ok: true, message: "Espaço removido." };
   });
@@ -116,6 +120,82 @@ export async function updateEstablishment(_previous: ActionState, formData: Form
     }
     refresh();
     return { ok: true, message: "Dados guardados." };
+  });
+}
+
+// Logo ----------------------------------------------------------------------------------------
+
+type ServiceClient = ReturnType<typeof createServiceClient>;
+
+/** Deletes logo files from Storage; a failure only leaves an orphan file, never blocks the change. */
+async function removeLogoFiles(client: ServiceClient, establishmentId: string, paths?: string[]) {
+  try {
+    let targets = paths;
+    if (!targets) {
+      const { data } = await client.storage.from(logoBucket).list(establishmentId, { limit: 100 });
+      targets = (data ?? []).map((file) => `${establishmentId}/${file.name}`);
+    }
+    const own = targets.filter((path) => ownsLogoPath(establishmentId, path));
+    if (own.length) {
+      const { error } = await client.storage.from(logoBucket).remove(own);
+      if (error) throw new Error(error.message);
+    }
+  } catch (error) {
+    console.error("[establishments] logo cleanup failed:", error instanceof Error ? error.message : error);
+  }
+}
+
+function refreshLogo(slug: string) {
+  refresh();
+  revalidatePath(`/fila/${slug}`, "layout");
+}
+
+/**
+ * The establishment's logo (the queue ticket's icon on the home screen and in notifications).
+ * PNG or JPEG up to 2 MB, checked by its first bytes; the settings page turns WebP into PNG first.
+ * The new file gets a new random name, so phones fetch the new icon; the old file is deleted.
+ */
+export async function uploadEstablishmentLogo(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"));
+    const file = formData.get("logo");
+    if (!(file instanceof File) || file.size === 0) return { ok: false, message: "Escolha uma imagem." };
+    if (file.size > logoMaxBytes) return { ok: false, message: "A imagem tem mais de 2 MB. Escolha uma mais pequena." };
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const type = imageTypeOf(bytes);
+    if (type === "webp") return { ok: false, message: "Envie a imagem em PNG ou JPEG." };
+    if (!type) return { ok: false, message: "Escolha uma imagem PNG, JPEG ou WebP." };
+    const client = createServiceClient();
+    const path = logoPathFor(establishment.id, randomBytes(9).toString("base64url"), type);
+    const upload = await client.storage.from(logoBucket).upload(path, bytes, {
+      contentType: type === "png" ? "image/png" : "image/jpeg",
+      // Every logo has its own name, so the file never changes.
+      cacheControl: "31536000",
+      upsert: false,
+    });
+    if (upload.error) throw new Error(upload.error.message);
+    const { error } = await client.from("establishments").update({ logo_path: path }).eq("id", establishment.id);
+    if (error) {
+      await removeLogoFiles(client, establishment.id, [path]);
+      throw new Error(error.message);
+    }
+    if (establishment.logo_path && establishment.logo_path !== path) await removeLogoFiles(client, establishment.id, [establishment.logo_path]);
+    refreshLogo(establishment.slug);
+    return { ok: true, message: "Logótipo guardado." };
+  });
+}
+
+/** Back to the initials on the establishment's colour. */
+export async function removeEstablishmentLogo(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"));
+    if (!establishment.logo_path) return { ok: true, message: "Sem logótipo." };
+    const client = createServiceClient();
+    const { error } = await client.from("establishments").update({ logo_path: null }).eq("id", establishment.id);
+    if (error) throw new Error(error.message);
+    await removeLogoFiles(client, establishment.id, [establishment.logo_path]);
+    refreshLogo(establishment.slug);
+    return { ok: true, message: "Logótipo removido." };
   });
 }
 

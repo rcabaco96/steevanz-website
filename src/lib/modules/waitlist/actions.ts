@@ -12,6 +12,7 @@ import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
 import { formText, isBot, isModuleRateLimited, publicToken, startOfLocalDay, tokenPattern } from "../common";
 import { notifyCalled } from "./notify";
+import { pushTest } from "./push";
 import { parseSubscription } from "./push-rules";
 import { ensureWaitlistSettings, getEntryByToken, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
 
@@ -132,6 +133,41 @@ export async function savePushSubscription(token: string, subscription: unknown)
   } catch (error) {
     console.error("[waitlist] push subscription failed:", error instanceof Error ? error.message : error);
     return { ok: false };
+  }
+}
+
+const pushTestSeconds = 30;
+
+/**
+ * Public: "Enviar notificação de teste" on the ticket page, so the customer (or the owner trying it)
+ * sees the notification arrive. Only while waiting, and once every 30 seconds per ticket.
+ */
+export async function sendTestPush(token: string): Promise<{ ok: boolean; message: string; gone?: boolean }> {
+  try {
+    if (!tokenPattern.test(token)) return { ok: false, message: "Pedido inválido." };
+    const entry = await getEntryByToken(token);
+    if (!entry || entry.status !== "waiting") return { ok: false, message: "O teste só está disponível enquanto espera pela sua vez." };
+    if (!entry.push_subscription) return { ok: false, message: "Os avisos não estão ligados neste telemóvel. Ative-os de novo.", gone: true };
+    const now = new Date();
+    // Claims the slot in one statement, so two quick taps send one notification.
+    const { data, error } = await createServiceClient()
+      .from("waitlist_entries")
+      .update({ push_test_at: now.toISOString() })
+      .eq("id", entry.id)
+      .eq("status", "waiting")
+      .or(`push_test_at.is.null,push_test_at.lt.${new Date(now.getTime() - pushTestSeconds * 1000).toISOString()}`)
+      .select("id");
+    if (error) throw new Error(error.message);
+    if (!data?.length) return { ok: false, message: "Acabou de enviar um teste. Aguarde 30 segundos." };
+    const establishment = await getEstablishment(entry.establishment_id);
+    if (!establishment) return { ok: false, message: "Esta fila já não existe." };
+    const result = await pushTest(establishment, entry, await requestOrigin());
+    if (result === "sent") return { ok: true, message: "Enviada. Deve chegar dentro de segundos, mesmo com o ecrã bloqueado." };
+    if (result === "gone") return { ok: false, message: "Este telemóvel deixou de aceitar os avisos. Ative-os de novo.", gone: true };
+    return { ok: false, message: "Não foi possível enviar a notificação. Tente de novo daqui a pouco." };
+  } catch (error) {
+    console.error("[waitlist] test push failed:", error instanceof Error ? error.message : error);
+    return { ok: false, message: "Não foi possível enviar a notificação. Tente de novo daqui a pouco." };
   }
 }
 

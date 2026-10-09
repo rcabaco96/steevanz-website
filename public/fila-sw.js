@@ -13,6 +13,8 @@ self.addEventListener("push", (event) => {
     data = { body: event.data ? event.data.text() : "" };
   }
   const title = data.title || "É a sua vez";
+  // icon: the establishment's (logo or initials); badge: the white bell of Android's status bar.
+  // iPhone shows the home-screen icon instead and ignores vibrate and requireInteraction.
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || "Dirija-se à entrada.",
@@ -20,8 +22,8 @@ self.addEventListener("push", (event) => {
       renotify: true,
       requireInteraction: true,
       vibrate: [300, 150, 300, 150, 300],
-      icon: "/apple-icon.png",
-      badge: "/apple-icon.png",
+      icon: data.icon || "/apple-icon.png",
+      badge: data.badge || "/fila-badge.png",
       data: { url: data.url || "/" },
     }),
   );

@@ -7,6 +7,8 @@ export interface EstablishmentRow {
   name: string;
   kind: BusinessKind;
   accent_color: string;
+  /** The logo in Storage ("<id>/<random>.png"), drawn into the queue ticket's icon. */
+  logo_path: string | null;
   phone: string | null;
   address: string | null;
   time_zone: string;

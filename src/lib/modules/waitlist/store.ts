@@ -54,6 +54,8 @@ export interface WaitlistEntryRow {
   close_reason: "staff" | "arrived" | "auto" | "left" | null;
   /** The ticket page's web push subscription, when the customer switched notifications on. */
   push_subscription: unknown;
+  /** Last "Enviar notificação de teste" from the ticket page (at most one every 30 seconds). */
+  push_test_at: string | null;
 }
 
 /** Tickets left waiting or called longer than this (e.g. from yesterday) are no longer part of the queue. */

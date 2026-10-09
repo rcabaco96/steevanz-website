@@ -7,6 +7,7 @@ import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, isL
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
 import { parseSubscription } from "../src/lib/modules/waitlist/push-rules.ts";
+import { iconColor, iconSize, iconUrl, imageTypeOf, initialsOf, logoPathFor, logoVersion, ownsLogoPath } from "../src/lib/establishments/logo-rules.ts";
 
 const minute = 60_000;
 
@@ -357,5 +358,53 @@ describe("web push subscriptions", () => {
     assert.equal(parseSubscription({ endpoint: "https://fcm.googleapis.com.evil.com/x", keys }), null);
     assert.equal(parseSubscription({ endpoint: "https://fcm.googleapis.com/x" }), null);
     assert.equal(parseSubscription("nope"), null);
+  });
+});
+
+describe("establishment logo and icon", () => {
+  const id = "0f8fad5b-d9cb-469f-a165-70867728950e";
+  it("tells the image type by its first bytes", () => {
+    assert.equal(imageTypeOf(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0])), "png");
+    assert.equal(imageTypeOf(new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0x10])), "jpeg");
+    assert.equal(imageTypeOf(new Uint8Array([0x52, 0x49, 0x46, 0x46, 1, 2, 3, 4, 0x57, 0x45, 0x42, 0x50, 0x56])), "webp");
+    assert.equal(imageTypeOf(new TextEncoder().encode("<svg xmlns=")), null);
+    assert.equal(imageTypeOf(new Uint8Array([0x89, 0x50])), null);
+    assert.equal(imageTypeOf(new Uint8Array([0x52, 0x49, 0x46, 0x46, 1, 2, 3, 4, 0x57, 0x41, 0x56, 0x45])), null);
+  });
+  it("keeps logos in the establishment's own folder", () => {
+    const path = logoPathFor(id, "aB3_x-9", "png");
+    assert.equal(path, `${id}/aB3_x-9.png`);
+    assert.equal(logoPathFor(id, "r", "jpeg"), `${id}/r.jpg`);
+    assert.ok(ownsLogoPath(id, path));
+    assert.equal(ownsLogoPath("11111111-2222-4333-8444-555555555555", path), false);
+    assert.equal(ownsLogoPath(id, `${id}/../x.png`), false);
+    assert.equal(ownsLogoPath(id, `${id}/x.svg`), false);
+    assert.equal(ownsLogoPath(id, null), false);
+  });
+  it("versions the icon by the logo file", () => {
+    assert.equal(logoVersion(`${id}/aB3_x-9.png`), "aB3_x-9");
+    assert.equal(logoVersion(null), "0");
+    assert.equal(iconUrl("tasca-ze", 192, `${id}/aB3.png`), "/fila/tasca-ze/icon/192?v=aB3");
+    assert.equal(iconUrl("tasca-ze", 512, null, true), "/fila/tasca-ze/icon/512?v=0&m=1");
+  });
+  it("only draws the known sizes", () => {
+    assert.equal(iconSize("192"), 192);
+    assert.equal(iconSize("180"), 180);
+    assert.equal(iconSize("200"), null);
+    assert.equal(iconSize("192.0abc"), null);
+  });
+  it("makes initials from the name", () => {
+    assert.equal(initialsOf("Barbearia do Zé"), "BZ");
+    assert.equal(initialsOf("Tasca"), "T");
+    assert.equal(initialsOf("café central — lisboa"), "CC");
+    assert.equal(initialsOf("O Galo"), "G");
+    assert.equal(initialsOf("o e"), "OE");
+    assert.equal(initialsOf("123 Padel"), "1P");
+    assert.equal(initialsOf("  ## "), "?");
+  });
+  it("falls back to the Steevanz colour", () => {
+    assert.equal(iconColor("#12ab34"), "#12ab34");
+    assert.equal(iconColor("red"), "#7a2d60");
+    assert.equal(iconColor(null), "#7a2d60");
   });
 });
