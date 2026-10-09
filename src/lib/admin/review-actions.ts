@@ -300,7 +300,7 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
       .insert({ business_id: saved.id, kind: "full", priority: jobPriority.firstImport, requested_by: "admin", provider: readerProvider });
     if (queueError && queueError.code !== "23505") throw new Error(queueError.message);
     const queued = !queueError;
-    // The competitor search goes in parallel (another reader tab).
+    // Queued after the import: the reader starts it once the customer's own history was read.
     await queueCompetitorSearch(client, saved.id, "admin");
     revalidatePath("/admin/reviews", "layout");
     created = saved.id;

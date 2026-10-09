@@ -37,3 +37,10 @@ describe("parsePlaceProfile", () => {
     assert.equal(parsePlaceProfile(`)]}'\n[1,2,3]`), null);
   });
 });
+
+describe("place category", () => {
+  it("reads the main Google category of the place", () => {
+    assert.equal(parsePlaceProfile(payload({ 13: ["Restaurante de doner kebab", "Restaurante"] })).category, "Restaurante de doner kebab");
+    assert.equal(parsePlaceProfile(payload({})).category, null);
+  });
+});

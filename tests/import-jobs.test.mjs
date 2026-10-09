@@ -136,3 +136,17 @@ describe("Panel polling", () => {
     assert.deepEqual(competitionProgress(["a", "b", "c"], rows), { total: 3, read: 1, pending: 2, active: 1 });
   });
 });
+
+describe("waiting while Google limits the reader", async () => {
+  const { limitWaitText, limitWaitUntil } = await import("../src/lib/reviews/import-jobs.ts");
+  const later = (minutes) => new Date(now + minutes * 60_000).toISOString();
+  it("shows the job's own retry time, or the reader's pause, whichever is later", () => {
+    const reader = { pausedUntil: null };
+    assert.equal(limitWaitUntil(job({ notBefore: later(20) }), reader, now), later(20));
+    assert.equal(limitWaitUntil(job({ notBefore: later(20) }), { pausedUntil: later(30) }, now), later(30));
+    assert.equal(limitWaitUntil(job(), { pausedUntil: later(5) }, now), later(5));
+    assert.equal(limitWaitUntil(job({ notBefore: later(-1) }), reader, now), null);
+    assert.equal(limitWaitUntil(job({ status: "running", notBefore: later(20) }), reader, now), null);
+    assert.equal(limitWaitText("2026-10-09T21:40:00Z"), "À espera: o Google está a limitar o leitor, tentamos outra vez às 22:40");
+  });
+});

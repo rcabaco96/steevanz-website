@@ -235,9 +235,9 @@ describe("competitors", async () => {
     assert.equal(distributionAverage(null), null);
   });
 
-  it("keeps places inside the radius, same category first, most reviewed first", () => {
+  it("keeps places inside the radius and of the same category, most reviewed first", () => {
     const picked = selectCompetitors(home, [place("far", "Marisqueira", 0.1, 900), place("a", "Marisqueira", 0.001, 100), place("b", "Pizzaria", 0.002, 5000), place("c", "Marisqueira", 0.003, 300), place("self", "Marisqueira", 0, 999)]);
-    assert.deepEqual(picked.map((p) => p.placeId), ["c", "a", "b"]);
+    assert.deepEqual(picked.map((p) => p.placeId), ["c", "a"]);
   });
 
   it("searches within the radius chosen per customer (5 or 10 km) and searches again when it changes", async () => {
@@ -262,10 +262,29 @@ describe("competitors", async () => {
     assert.equal(discoveryDue({ competitors_refreshed_at: searched, competitor_radius_km: 5, competitors_search_radius_km: 5 }), false);
   });
 
-  it("orders same category, then category-search matches, then the broader search", () => {
-    const places = ["a", "b"].map((id, i) => place(id, "Marisqueira", 0.001 * (i + 1), 100 + i));
-    const picked = selectCompetitors(home, [...places, place("fish", "Restaurante de peixe", 0.001, 9000), place("kebab", "Kebab", 0.002, 9000, "Restaurante")]);
-    assert.deepEqual(picked.map((p) => p.placeId), ["b", "a", "fish", "kebab"]);
+  it("searches again lists chosen with an older selection rule", async () => {
+    const { discoveryDue } = await import("../src/lib/reviews/competitors.ts");
+    const { competitorRuleVersion } = await import("../src/lib/reviews/competitor-category.ts");
+    const searched = { competitors_refreshed_at: "2026-10-01T10:00:00Z", competitor_radius_km: 10, competitors_search_radius_km: 10 };
+    assert.equal(discoveryDue({ ...searched, competitors_rule_version: null }), true);
+    assert.equal(discoveryDue({ ...searched, competitors_rule_version: competitorRuleVersion - 1 }), true);
+    assert.equal(discoveryDue({ ...searched, competitors_rule_version: competitorRuleVersion }), false);
+    // A query that does not select the column does not trigger searches.
+    assert.equal(discoveryDue(searched), false);
+  });
+
+  it("orders same category, then similar ones, then unknown ones named like it; never unrelated places", () => {
+    const kebabHome = { placeId: "self", category: "Restaurante de doner kebab", lat: 37.1, lng: -8.35 };
+    const found = [
+      place("same", "Restaurante de doner kebab", 0.001, 50, "Restaurante de doner kebab"),
+      place("similar", "Restaurante de kebab", 0.001, 900, "Restaurante de doner kebab"),
+      { ...place("named", null, 0.002, 9000, "Restaurante de doner kebab"), title: "Vento kebab pizza" },
+      { ...place("named-broad", null, 0.002, 9000, "Restaurante"), title: "Garry kebab" },
+      place("olivalmar", "Restaurante", 0.001, 9000, "Restaurante de doner kebab"),
+      place("tasca", "Restaurante português", 0.001, 9000, "Restaurante"),
+      place("unknown", null, 0.001, 9000, "Restaurante de doner kebab"),
+    ];
+    assert.deepEqual(selectCompetitors(kebabHome, found).map((p) => p.placeId), ["same", "similar", "named"]);
   });
 
   it("measures monthly pace from recent review dates and from weekly snapshots", () => {

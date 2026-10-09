@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { GoogleG } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import { formatDate } from "@/lib/reviews/format";
-import { duration, finishedJob, fullImportProgress, isActive, relativeTime, type ImportResponse } from "@/lib/reviews/import-jobs";
+import { duration, finishedJob, fullImportProgress, isActive, limitWaitText, limitWaitUntil, relativeTime, type ImportResponse } from "@/lib/reviews/import-jobs";
 import { useBusySignal } from "./DashboardBusy";
 import { InfoTip } from "./InfoTip";
 import { LeitorStatus, readerTexts } from "./LeitorStatus";
@@ -39,7 +39,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
     if (after && (!before || after.read > before.read) && (!before || before.read === 0 || after.pending === 0 || Math.floor(after.read / 5) > Math.floor(before.read / 5))) startRefresh(() => router.refresh());
   });
   const competition = state.competition;
-  // The reader's competitor search runs next to the first import (another tab).
+  // The reader's competitor search runs after the first import (the customer's history first).
   const searching = isActive(state.discover) && competition === null;
   const searchFailed = state.discover?.status === "failed" && competition === null ? state.discover.error : null;
   useBusySignal("sync", refreshing);
@@ -81,10 +81,13 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
 
   // What the reader is doing with this customer's full import.
   let status: string | null = null;
+  const limited = now === null ? null : limitWaitUntil(job, reader, now);
   if (job?.status === "queued")
     status = !reader.online
       ? "O leitor está desligado: o pedido fica em espera."
-      : reader.busy
+      : limited
+        ? `${limitWaitText(limited)}. As reviews já lidas ficam guardadas.`
+        : reader.busy
         ? "O leitor está a terminar outro pedido; esta importação vem a seguir."
         : "Pedido recebido. O leitor vai começar…";
   else if (job?.status === "done")
@@ -100,8 +103,8 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
           <InfoTip label="Histórico completo">
             O leitor da Steevanz lê no Google Maps as reviews do negócio, das mais recentes para as mais antigas. Sem sessão iniciada, o Google só mostra
             parte do histórico; com o Perfil de Empresa Google ligado, chegam todas. Guarda nota, texto, data e resposta do dono; nunca o nome nem o perfil
-            de quem escreveu. As reviews que já temos são atualizadas, nunca duplicadas. Na primeira importação procura também os concorrentes da zona e
-            lê a nota, o total e as estrelas de cada um.
+            de quem escreveu. As reviews que já temos são atualizadas, nunca duplicadas. Depois da primeira importação procura os concorrentes da zona da
+            mesma categoria e lê a nota, o total e as estrelas de cada um.
           </InfoTip>
         </h2>
         <LeitorStatus />
@@ -186,7 +189,7 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
         </div>
       ) : searching ? (
         <p className="border-t border-line pt-3 text-xs text-subtle">
-          {state.discover?.status === "running" ? "A procurar os concorrentes da zona…" : "A procura dos concorrentes da zona vai começar."} Corre em paralelo com as reviews.
+          {state.discover?.status === "running" ? "A procurar os concorrentes da zona…" : "A procura dos concorrentes da zona começa depois das reviews do negócio."}
         </p>
       ) : searchFailed ? (
         <p className="border-t border-line pt-3 text-xs text-danger">A procura de concorrentes falhou: {searchFailed} Carregue em «Importar outra vez» para tentar de novo.</p>

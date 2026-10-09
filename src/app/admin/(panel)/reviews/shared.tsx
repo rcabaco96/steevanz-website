@@ -16,6 +16,8 @@ import {
   searchCompetitorsWithReader,
   toggleCompetitor,
 } from "@/lib/admin/review-actions";
+import { competitorRuleVersion } from "@/lib/reviews/competitor-category";
+import { pausedText } from "@/lib/reviews/reader-throttle";
 import { rediscoveryDue } from "@/lib/reviews/competitor-store";
 import { competitorRadiusOptions, radiusLabel, toRadiusKm, withinRadius } from "@/lib/reviews/competitors";
 import { formatDateTime } from "@/lib/reviews/format";
@@ -26,7 +28,7 @@ import type { createServiceClient } from "@/lib/supabase/service";
 type Client = ReturnType<typeof createServiceClient>;
 
 export const businessColumns =
-  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, category, full_synced_at, owner_id, contact_name, contact_phone, invite_sent_at, created_at";
+  "id, slug, name, google_maps_url, review_url, plates_installed_on, rating_total, reviews_total, last_synced_at, last_sync_error, alert_email, active_services, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, competitors_rule_version, category, full_synced_at, owner_id, contact_name, contact_phone, invite_sent_at, created_at";
 
 export interface CompetitorAdminRow {
   id: string;
@@ -62,6 +64,11 @@ export const jobKindLabels: Record<ReaderJobKind, string> = {
 export const jobStatusLabels: Record<ReaderJobRow["status"], string> = { queued: "Na fila", running: "A ler", done: "Concluído", failed: "Falhou" };
 const requesterLabels: Record<JobRequester, string> = { panel: "painel", cron: "rotina", admin: "admin" };
 
+/** Whether the reader's pause (Google limiting it) is still on; outside the components so render stays pure. */
+function pausedNow(pausedUntil: string): boolean {
+  return Date.parse(pausedUntil) > Date.now();
+}
+
 /** Reader state for the header; outside the components so render stays pure. */
 function readerState(lastSeenAt: string | null): { online: boolean; offlineTooLong: boolean } {
   const age = lastSeenAt ? Date.now() - Date.parse(lastSeenAt) : Number.POSITIVE_INFINITY;
@@ -71,19 +78,30 @@ function readerState(lastSeenAt: string | null): { online: boolean; offlineTooLo
 /** The reader's heartbeat and queue, at the top of the list and of each business. */
 export async function ReaderBanner({ client }: { client: Client }) {
   const [readerResult, queuedResult] = await Promise.all([
-    client.from("review_reader_status").select("id, last_seen_at, busy").order("last_seen_at", { ascending: false }).limit(1).maybeSingle<{ id: string; last_seen_at: string; busy: boolean }>(),
+    client
+      .from("review_reader_status")
+      .select("id, last_seen_at, busy, paused_until, pause_reason")
+      .order("last_seen_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<{ id: string; last_seen_at: string; busy: boolean; paused_until: string | null; pause_reason: string | null }>(),
     client.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("status", "queued").eq("provider", "reader"),
   ]);
   if (readerResult.error) throw new Error(readerResult.error.message);
   const reader = readerResult.data;
   const state = readerState(reader?.last_seen_at ?? null);
   const queued = queuedResult.count ?? 0;
+  const paused = state.online && reader?.paused_until && pausedNow(reader.paused_until) ? reader.paused_until : null;
   return (
     <div className={`rounded-2xl border px-4 py-3 text-sm ${state.offlineTooLong ? "border-danger/30 bg-danger-soft text-danger" : "border-line bg-surface-2/60 text-text"}`}>
       <p className="font-semibold">Leitor de reviews: {state.online ? (reader?.busy ? "ligado, a ler" : "ligado") : "desligado"}</p>
       <p className={state.offlineTooLong ? "" : "text-subtle"}>
         {reader ? `Último sinal a ${formatDateTime(reader.last_seen_at)} (${reader.id})` : "Nunca se ligou"} · {queued} {queued === 1 ? "pedido" : "pedidos"} na fila
       </p>
+      {paused ? (
+        <p className="font-medium text-danger">
+          {pausedText(paused)} {reader?.pause_reason ? <span className="font-normal text-subtle">{reader.pause_reason}</span> : null}
+        </p>
+      ) : null}
       <p className={state.offlineTooLong ? "" : "text-subtle"}>
         Lê as reviews e a concorrência de graça no computador do escritório («npm run reader»). Com {readerOfflineAfterHours} h sem sinal, chega um email.
       </p>
@@ -318,7 +336,7 @@ export function BusinessDetail({
           <h2 className="font-semibold text-text">Concorrência</h2>
           <p className="text-sm text-subtle">
             {business.competitors_refreshed_at
-              ? `Categoria${business.category ? ` «${business.category}»` : ""}, procurados num raio de ${radiusLabel(toRadiusKm(business.competitors_search_radius_km))} a ${formatDateTime(business.competitors_refreshed_at)}.${searchedRadius !== radius ? ` O raio mudou para ${radiusLabel(radius)}: a nova procura está na fila do leitor.` : rediscoveryDue(business) ? " Passaram 90 dias: vale a pena procurar outra vez." : ""}`
+              ? `Categoria${business.category ? ` «${business.category}»` : ""}, procurados num raio de ${radiusLabel(toRadiusKm(business.competitors_search_radius_km))} a ${formatDateTime(business.competitors_refreshed_at)}.${searchedRadius !== radius ? ` O raio mudou para ${radiusLabel(radius)}: a nova procura está na fila do leitor.` : (business.competitors_rule_version ?? 1) < competitorRuleVersion ? " Escolhidos com a regra antiga (sem filtrar a categoria): o leitor procura outra vez, sozinho, depois das reviews dos clientes." : rediscoveryDue(business) ? " Passaram 90 dias: vale a pena procurar outra vez." : ""}`
               : "Ainda não procurados: o leitor procura-os na primeira importação, ou agora com o botão."}
           </p>
         </div>

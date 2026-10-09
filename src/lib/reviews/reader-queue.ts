@@ -25,8 +25,13 @@ export type JobRequester = "panel" | "cron" | "admin";
  */
 export const readerProvider = "reader";
 
-/** Lower runs first: someone waiting in the panel/admin, then first imports, then the routine. */
-export const jobPriority = { waiting: 1, firstImport: 3, routine: 5 } as const;
+/**
+ * Lower runs first: someone waiting in the panel/admin, then first imports, then a new customer's
+ * competition (zone search and first reads of its places), then the routine. On top of this, the
+ * reader never starts competitor work while any customer's own job (full/update) is queued or
+ * running (gateAllows in reader-throttle.ts): the customer's history comes first and alone.
+ */
+export const jobPriority = { waiting: 1, firstImport: 3, competitionStart: 4, routine: 5 } as const;
 /**
  * Business rule: replies are checked every day, for competitors too. The "competitor" read covers
  * the last 30 days: the place's numbers, new reviews + replies to recent ones. "competitor_replies"
@@ -176,7 +181,7 @@ export function newPlaceJobs(placeIds: string[], readerPlaces: ReaderPlace[], re
   const today = lisbonDay(now);
   const places = [...new Set(placeIds)].sort();
   const known = new Map(readerPlaces.map((row) => [row.place_id, row]));
-  const job = (kind: ReaderJobKind, placeId: string): ReaderJob => ({ kind, business_id: null, place_id: placeId, priority: jobPriority.firstImport, requested_by: requestedBy });
+  const job = (kind: ReaderJobKind, placeId: string): ReaderJob => ({ kind, business_id: null, place_id: placeId, priority: jobPriority.competitionStart, requested_by: requestedBy });
   return [
     ...places.filter((placeId) => known.get(placeId)?.read_on !== today).map((placeId) => job("competitor", placeId)),
     ...repliesDue(places, readerPlaces, today).map((placeId) => job("competitor_replies", placeId)),

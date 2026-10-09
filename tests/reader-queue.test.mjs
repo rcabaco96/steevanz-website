@@ -113,7 +113,7 @@ describe("competitor jobs (slots at 10:00 and 19:00 in Portugal)", () => {
     const jobs = newPlaceJobs(["p1", "p2", "p2"], [place("p1", "2026-10-03", "2026-10-02")], "admin", now);
     assert.deepEqual(
       jobs.map((job) => `${job.kind}:${job.place_id}:${job.priority}:${job.requested_by}`),
-      ["competitor:p2:3:admin", "competitor_replies:p2:3:admin"],
+      ["competitor:p2:4:admin", "competitor_replies:p2:4:admin"],
     );
   });
 

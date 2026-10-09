@@ -18,6 +18,46 @@ export interface MapsPlaceLink {
 
 const lastMatch = (text: string, pattern: RegExp) => [...text.matchAll(pattern)].at(-1) ?? null;
 
+/** A postal code (Portugal "8365-111", or 5 digits elsewhere in Europe). */
+const postalCode = /(^|\s)(\d{4}-\d{3}|\d{5})(\s|$)/;
+/** The start of a street address: "R. Álvaro Gomes", "Rua…", "Av.…", "EN125", "Estrada…", "Street"… */
+const streetStart =
+  /^(r\.|rua|av\.?|avenida|estr\.?|estrada|lg\.?|largo|pç\.?|praça|praceta|tv\.?|trav\.?|travessa|calçada|cç\.?|beco|rotunda|urb\.?|urbanização|alameda|caminho|bairro|sítio|lugar|zona industrial|en\s?\d|n\s?\d|estrada nacional|edifício|ed\.|loja|lote|street|st\.|road|rd\.|avenue|ave\.)(\s|$|\d)/i;
+
+/**
+ * The place's name without the address Google sometimes puts in the link: a place reached through an
+ * address search gets "/maps/place/King Kebab Armação Pêra, R. Álvaro Gomes lote 4 loja C, 8365-111
+ * Armação de Pêra/…". Cut at the first comma after which the rest looks like an address (a street
+ * word right after it, or a postal code further on). Names with commas but no address stay as they are.
+ */
+export function stripAddress(name: string): string {
+  const parts = name.split(/\s*,\s*/);
+  for (let index = 1; index < parts.length; index++) {
+    const rest = parts.slice(index);
+    if (streetStart.test(parts[index]) || rest.some((part) => postalCode.test(part))) {
+      const kept = parts.slice(0, index).join(", ").trim();
+      return kept || name.trim();
+    }
+  }
+  return name.trim();
+}
+
+/**
+ * The name to store when the reader sees the place's real title (the page's h1): only when the stored
+ * name is that title plus an address (taken from a link), never over a name an admin chose. Null when
+ * nothing should change.
+ */
+export function nameFromPage(stored: string, title: string | null | undefined): string | null {
+  const shown = title?.replace(/\s+/g, " ").trim();
+  if (!shown || shown.length > 160 || shown === stored.trim()) return null;
+  const withAddress = stripAddress(stored) !== stored.trim() || stored.startsWith(`${shown},`);
+  // The title must be about the same place (a word in common), never a stray heading of the page.
+  const words = (text: string) => new Set(text.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(/[^a-z0-9]+/).filter((word) => word.length >= 2));
+  const storedWords = words(stripAddress(stored));
+  const related = [...words(shown)].some((word) => storedWords.has(word));
+  return withAddress && related ? shown : null;
+}
+
 export function parseMapsPlaceLink(url: string): MapsPlaceLink | null {
   let parsed: URL;
   try {
@@ -33,6 +73,8 @@ export function parseMapsPlaceLink(url: string): MapsPlaceLink | null {
   } catch {
     name = rawName.replace(/\+/g, " ").trim();
   }
+  // "Name, street, postal code town" (a place reached through an address search): the name alone.
+  name = stripAddress(name);
   let path = parsed.pathname;
   try {
     path = decodeURIComponent(path);

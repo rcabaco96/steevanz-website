@@ -8,13 +8,28 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, openSync, readFileSync, unlinkSync, writeFileSync, closeSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { cronSecret, siteUrl, heartbeatMs, humanPause, log, pollMs, profileDir, readerId, serviceKey, staleJobMs, supabaseUrl, sleep, slots as readerSlots, UserError, version, dryRun } from "./config.mjs";
+import { cronSecret, siteUrl, heartbeatMs, humanPause, log, pollMs, profileDir, readerId, serviceKey, staleJobMs, supabaseUrl, sleep, slots as readerSlots, GoogleLimitError, throttle, UserError, version, dryRun } from "./config.mjs";
 import { acquireTab, closeBrowser, releaseTab } from "./browser.mjs";
 import { handlers } from "./jobs.mjs";
 import { createStore } from "./store.mjs";
 import { pickReaderJob, readerJobKey } from "../../src/lib/reviews/maps-reader.ts";
 import { handRetiredJobsToReader } from "../../src/lib/reviews/reader-queue.ts";
 import { previousCompetitionUpdate, slotLabel } from "../../src/lib/reviews/competition-schedule.ts";
+import {
+  clientJobKinds,
+  competitorPause,
+  initialCooldown,
+  isClientJob,
+  isCompetitorWork,
+  isPaused,
+  limitFailNote,
+  limitOutcome,
+  limitWaitNote,
+  lisbonTime,
+  recordLimit,
+  recordSuccess,
+  restoreCooldown,
+} from "../../src/lib/reviews/reader-throttle.ts";
 
 // --- One reader per computer (per profile folder) ----------------------------------------------
 const lockFile = join(profileDir, "reader.lock");
@@ -80,15 +95,96 @@ if (!supabaseUrl || !serviceKey) {
   process.exit(1);
 }
 const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-const jobColumns = "id, kind, business_id, place_id, priority, requested_at";
+const jobColumns = "id, kind, business_id, place_id, priority, requested_at, not_before, attempts";
 const now = () => new Date().toISOString();
+/** The migration this reader needs (not_before/attempts in the queue, paused_until in the status, competitors_rule_version). */
+const throttleMigration = "supabase/migrations/20261010100000_reader_throttle.sql";
 
-/** Jobs this process is running, by target (business or place). */
+/** Jobs this process is running, by target (business or place): { id, kind }. */
 const running = new Map();
 
+// --- Pacing against Google's limits (rules in src/lib/reviews/reader-throttle.ts) -------------------
+/** Limit signals and the global pause: while paused, no new job is claimed (running ones finish). */
+let cooldown = initialCooldown;
+/** Why the reader is paused (pt-PT, stored in review_reader_status.pause_reason). */
+let pauseReason = null;
+/** No competitor job starts before this (a random pause between competitor starts). */
+let competitorReadyAt = 0;
+
+const pausedNow = () => isPaused(cooldown, Date.now());
+
 async function heartbeat() {
-  const { error } = await db.from("review_reader_status").upsert({ id: readerId, last_seen_at: now(), version: `${version} · pid ${process.pid}`, busy: running.size > 0 });
+  const paused = pausedNow();
+  const { error } = await db.from("review_reader_status").upsert({
+    id: readerId,
+    last_seen_at: now(),
+    version: `${version} · pid ${process.pid}`,
+    busy: running.size > 0,
+    paused_until: paused ? new Date(cooldown.pausedUntil).toISOString() : null,
+    pause_reason: paused ? pauseReason : null,
+  });
   if (error) log("aviso: heartbeat falhou:", error.message);
+}
+
+/**
+ * A sign that Google is limiting this browser. With enough of them in a short time the reader stops
+ * claiming new jobs for a while (10 min, then 30, then 60 while it keeps happening).
+ */
+function noteLimit(message) {
+  const { state, started } = recordLimit(cooldown, Date.now(), throttle);
+  cooldown = state;
+  if (!started) {
+    if (!pausedNow()) log(`  sinal de limite do Google (${cooldown.signals.length} de ${throttle.limitSignals} em ${Math.round(throttle.limitWindowMs / 60_000)} min antes de uma pausa)`);
+    return;
+  }
+  pauseReason = `O Google está a limitar o leitor. Último sinal: ${message}`.slice(0, 300);
+  log(`O Google está a limitar o leitor: pausa de ${started} min sem pegar em pedidos novos (os que estão a meio terminam); retoma às ${lisbonTime(cooldown.pausedUntil)}. Último sinal: ${message}`);
+  void heartbeat();
+}
+
+/** Logs the end of a pause once and clears it from the status. */
+function endPauseIfOver() {
+  if (cooldown.pausedUntil === null || pausedNow()) return;
+  cooldown = { ...cooldown, pausedUntil: null };
+  pauseReason = null;
+  log("pausa terminada: o leitor volta a pegar em pedidos");
+  void heartbeat();
+}
+
+/**
+ * Jobs hit by a Google limit go back to the queue for later (never before the pause ends), with an
+ * attempts counter; after the last attempt they fail with a clear message.
+ */
+async function retryLater(job, message, store) {
+  const outcome = limitOutcome(job.attempts ?? 0, Date.now(), cooldown.pausedUntil, throttle);
+  if (outcome.action === "fail") return failJob(job, limitFailNote(outcome.attempts, message), store, { attempts: outcome.attempts });
+  const { error } = await db
+    .from("review_import_jobs")
+    .update({ status: "queued", started_at: null, reader_id: null, attempts: outcome.attempts, not_before: new Date(outcome.notBefore).toISOString(), error: limitWaitNote(outcome.notBefore), updated_at: now() })
+    .eq("id", job.id)
+    .eq("status", "running");
+  if (error) return log("aviso: não foi possível pôr o pedido de volta na fila:", error.message);
+  log(`  pedido ${job.kind} limitado pelo Google: volta à fila às ${lisbonTime(outcome.notBefore)} (tentativa ${outcome.attempts} de ${throttle.limitAttempts})`);
+}
+
+/** The reader needs the columns of the throttle migration: without them, stop clearly. */
+async function checkSchema() {
+  const [jobs, status, businesses] = await Promise.all([
+    db.from("review_import_jobs").select("not_before, attempts").limit(1),
+    db.from("review_reader_status").select("id, paused_until, pause_reason").eq("id", readerId).maybeSingle(),
+    db.from("review_businesses").select("competitors_rule_version").limit(1),
+  ]);
+  const error = jobs.error ?? status.error ?? businesses.error;
+  if (error) {
+    console.error(`Falta aplicar a migração ${throttleMigration} no Supabase (${error.message}). Aplique-a e volte a ligar o leitor.`);
+    process.exit(1);
+  }
+  // A pause from before a restart still holds (Google does not forget because the reader restarted).
+  cooldown = restoreCooldown(status.data?.paused_until, Date.now());
+  if (pausedNow()) {
+    pauseReason = status.data?.pause_reason ?? "O Google está a limitar o leitor.";
+    log(`O Google estava a limitar o leitor antes de reiniciar: sem pedidos novos até às ${lisbonTime(cooldown.pausedUntil)}`);
+  }
 }
 
 /** Note on a job put back in the queue after a reader stopped halfway (a second stop fails it). */
@@ -135,10 +231,18 @@ async function claim(job) {
     .eq("id", job.id)
     .eq("status", "queued")
     .eq("provider", "reader")
+    .or(dueFilter())
     .select(jobColumns)
     .maybeSingle();
   if (error) throw new Error(error.message);
   return data;
+}
+
+async function failJob(job, message, store, extra = {}) {
+  log(`  pedido ${job.kind} falhou:`, message);
+  if (job.place_id) await store.readerPlace(job.place_id, { last_error: message }).catch(() => {});
+  else if (job.business_id) await store.updateBusiness(job.business_id, { last_sync_error: message }).catch(() => {});
+  await finishJob(job, { status: "failed", error: message, ...extra });
 }
 
 async function finishJob(job, fields) {
@@ -168,14 +272,20 @@ async function runJob(job, store) {
     // A note (e.g. a customer linked to Google Business Profile, not read) is kept in the job.
     const result = await handler(job, tab, store);
     if (result?.note) log(`  ${result.note}`);
+    // Done with what Google showed, but Google limited it: a signal towards a pause. A read that
+    // went well makes the next pause short again.
+    if (result?.limited) noteLimit(result.note ?? "O Google parou de mostrar reviews a meio.");
+    else if (!result?.noGoogle) cooldown = recordSuccess(cooldown);
     await finishJob(job, { status: "done", error: result?.note ?? null });
     log(`  pedido ${job.kind} concluído em ${((Date.now() - started) / 1000).toFixed(1)} s`);
   } catch (error) {
     const message = userMessage(error).slice(0, 300);
-    log(`  pedido ${job.kind} falhou:`, message);
-    if (job.place_id) await store.readerPlace(job.place_id, { last_error: message }).catch(() => {});
-    else if (job.business_id) await store.updateBusiness(job.business_id, { last_sync_error: message }).catch(() => {});
-    await finishJob(job, { status: "failed", error: message });
+    if (error instanceof GoogleLimitError) {
+      // Not the place's fault: back to the queue for later, and a signal towards a pause.
+      log(`  pedido ${job.kind}: o Google limitou a leitura (${message})`);
+      noteLimit(message);
+      await retryLater(job, message, store);
+    } else await failJob(job, message, store);
   } finally {
     if (tab) await releaseTab(tab);
   }
@@ -194,27 +304,54 @@ async function takeOverRetiredJobs() {
   }
 }
 
-/** Fills the free slots with queued jobs: priority first, never two jobs for the same target. */
+/** Queued jobs whose time has come (not_before empty or past). */
+const dueFilter = () => `not_before.is.null,not_before.lte."${now()}"`;
+const clientKindsList = `(${clientJobKinds.join(",")})`;
+
+/**
+ * Fills the free slots with queued jobs: priority first, never two jobs for the same target. The
+ * customers' own jobs (full/update) come first and alone: while one is queued or running (on any
+ * reader), no competitor work starts. Competitor work is capped (READER_COMPETITOR_SLOTS) and spaced
+ * (READER_COMPETITOR_PAUSE_MS). While Google limits the reader (a pause), nothing new starts.
+ */
 async function fillSlots(store) {
-  if (running.size >= readerSlots) return;
-  const { data: queued, error } = await db.from("review_import_jobs").select(jobColumns).eq("status", "queued").eq("provider", "reader").order("priority").order("requested_at").limit(50);
+  endPauseIfOver();
+  if (running.size >= readerSlots || pausedNow()) return;
+  // Customers' jobs and the rest apart, so a long competitor queue never hides a customer's job.
+  const [clients, others, active, clientsWaiting] = await Promise.all([
+    db.from("review_import_jobs").select(jobColumns).eq("status", "queued").eq("provider", "reader").in("kind", [...clientJobKinds]).or(dueFilter()).order("priority").order("requested_at").limit(50),
+    db.from("review_import_jobs").select(jobColumns).eq("status", "queued").eq("provider", "reader").not("kind", "in", clientKindsList).or(dueFilter()).order("priority").order("requested_at").limit(50),
+    // Targets being read right now, here or by another reader.
+    db.from("review_import_jobs").select("kind, business_id, place_id").eq("status", "running"),
+    // Customers' jobs queued (also those waiting for later) or running, on any reader.
+    db.from("review_import_jobs").select("id", { count: "exact", head: true }).eq("provider", "reader").in("status", ["queued", "running"]).in("kind", [...clientJobKinds]),
+  ]);
+  const error = clients.error ?? others.error ?? active.error ?? clientsWaiting.error;
   if (error) return log("aviso:", error.message);
-  if (!queued?.length) return;
-  // Targets being read right now, here or by another reader.
-  const { data: active, error: activeError } = await db.from("review_import_jobs").select("kind, business_id, place_id").eq("status", "running");
-  if (activeError) return log("aviso:", activeError.message);
-  const busy = new Set([...running.keys(), ...(active ?? []).map(readerJobKey)]);
-  let candidates = queued;
+  let candidates = [...(clients.data ?? []), ...(others.data ?? [])];
+  if (!candidates.length) return;
+  const busy = new Set([...running.keys(), ...(active.data ?? []).map(readerJobKey)]);
+  let clientJobsActive = (clientsWaiting.count ?? 0) > 0;
   while (running.size < readerSlots) {
-    const job = pickReaderJob(candidates, busy, running.size, readerSlots);
+    const gate = {
+      now: Date.now(),
+      clientJobsActive,
+      competitorRunning: [...running.values()].filter((job) => isCompetitorWork(job.kind)).length,
+      competitorSlots: throttle.competitorSlots,
+      competitorReady: Date.now() >= competitorReadyAt,
+    };
+    const job = pickReaderJob(candidates, busy, running.size, readerSlots, gate);
     if (!job) break;
     candidates = candidates.filter((candidate) => candidate.id !== job.id);
     const claimed = await claim(job);
     if (!claimed) continue;
+    if (isClientJob(claimed.kind)) clientJobsActive = true;
+    if (isCompetitorWork(claimed.kind)) competitorReadyAt = Date.now() + competitorPause(throttle.competitorPauseMs, Math.random());
     const key = readerJobKey(claimed);
     busy.add(key);
-    running.set(key, claimed.id);
-    log(`pedido ${claimed.kind} (prioridade ${claimed.priority}) — ${running.size}/${readerSlots} em curso`);
+    running.set(key, { id: claimed.id, kind: claimed.kind });
+    const retry = claimed.attempts ? `, tentativa ${claimed.attempts + 1} de ${throttle.limitAttempts}` : "";
+    log(`pedido ${claimed.kind} (prioridade ${claimed.priority}${retry}) — ${running.size}/${readerSlots} em curso`);
     void heartbeat();
     void runJob(claimed, store).finally(() => {
       running.delete(key);
@@ -265,7 +402,7 @@ async function shutdown(code = 0) {
       db
         .from("review_import_jobs")
         .update({ status: "failed", error: "O leitor foi desligado a meio. Tente outra vez.", finished_at: now(), updated_at: now() })
-        .in("id", [...running.values()])
+        .in("id", [...running.values()].map((job) => job.id))
         .eq("status", "running"),
       sleep(3000),
     ]);
@@ -287,7 +424,13 @@ async function main() {
   if (dryRun) return runDryRun();
 
   const store = createStore(db, { dryRun: false });
+  await checkSchema();
   log(`leitor Steevanz ${version} ligado (${readerId}, processo ${process.pid}). Até ${readerSlots} pedidos ao mesmo tempo. À espera de pedidos…`);
+  log(
+    `ritmo: clientes primeiro e sozinhos; concorrência no máximo ${throttle.competitorSlots} de cada vez, ${throttle.competitorPauseMs / 1000}–${(2 * throttle.competitorPauseMs) / 1000} s entre leituras; ` +
+      `com ${throttle.limitSignals} sinais de limite do Google em ${Math.round(throttle.limitWindowMs / 60_000)} min, pausa de ${throttle.cooldownMinutes} a ${throttle.cooldownMaxMinutes} min; ` +
+      `pedidos limitados voltam à fila (${throttle.limitAttempts} tentativas)`,
+  );
   await failStaleJobs();
   await takeOverRetiredJobs();
   setInterval(() => void takeOverRetiredJobs(), 60_000);

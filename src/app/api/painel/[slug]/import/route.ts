@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest, ctx: RouteContext<"/api/painel/
 
 /**
  * "Importar histórico completo": queues a full import for the Steevanz reader and, for a customer
- * without competitors, the reader's competitor search (another tab, in parallel with the reviews).
+ * without competitors, the reader's competitor search (it starts after the customer's reviews).
  */
 export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/[slug]/import">) {
   const { slug } = await ctx.params;

@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { importSecondsLeft } from "./maps-reader.ts";
 import { readerProvider } from "./reader-queue.ts";
+import { lisbonTime } from "./reader-throttle.ts";
 
 /**
  * Jobs of the Steevanz reader (scripts/reader, on a local computer) as seen by the panel. The
@@ -12,8 +13,8 @@ import { readerProvider } from "./reader-queue.ts";
 export const readerOnlineSeconds = 30;
 /** "Atualizar" reads Google at most once every 15 minutes per customer (any sync counts). */
 export const updateIntervalMinutes = 15;
-/** Queue priorities: someone waiting in the panel, a first import, routine work. */
-export const jobPriority = { waiting: 1, firstImport: 3, routine: 5 } as const;
+/** Queue priorities (same as reader-queue.ts): someone waiting, a first import, a new customer's competition, routine work. */
+export const jobPriority = { waiting: 1, firstImport: 3, competitionStart: 4, routine: 5 } as const;
 
 /** Jobs of one customer shown in the panel (competitor jobs are routine and not shown). */
 export type JobKind = "full" | "update" | "discover";
@@ -34,6 +35,10 @@ export interface ImportJob {
   requestedAt: string;
   startedAt: string | null;
   finishedAt: string | null;
+  /** A job Google limited waits in the queue until this time (null: as soon as the reader is free). */
+  notBefore?: string | null;
+  /** Times Google limited this job (it fails after 5). */
+  attempts?: number;
 }
 
 /** The Steevanz reader, the only one that reads Google for non-verified customers. */
@@ -42,6 +47,8 @@ export interface ReaderStatus {
   lastSeenAt: string | null;
   /** Working on a job right now (maybe another customer's). */
   busy: boolean;
+  /** While Google limits the reader it takes no new job until this time (null: not paused). */
+  pausedUntil?: string | null;
 }
 
 /** What Supabase already holds for a customer, known before and while the reader runs. */
@@ -92,7 +99,7 @@ export type ImportResponse = ReaderJobsState | { error: string };
 export const emptyReaderJobs: ReaderJobsState = {
   full: null,
   update: null,
-  reader: { online: false, lastSeenAt: null, busy: false },
+  reader: { online: false, lastSeenAt: null, busy: false, pausedUntil: null },
   lastSyncedAt: null,
   stored: { count: 0, googleTotal: null, newestAt: null },
   competition: null,
@@ -153,9 +160,22 @@ export function nextPollDelay(state: ReaderJobsState, previousDelay: number | nu
 
 /** What the panel shows from a state (to tell whether a check brought anything new). */
 export function pollFingerprint(state: ReaderJobsState): string {
-  const job = (value: ImportJob | null) => (value ? [value.id, value.status, value.reviewsDone, value.reviewsNew, value.pagesDone, value.reviewsExpected] : null);
-  return JSON.stringify([job(state.full), job(state.update), job(state.discover), state.competition, state.reader.online, state.reader.busy, state.lastSyncedAt, state.stored.count]);
+  const job = (value: ImportJob | null) => (value ? [value.id, value.status, value.reviewsDone, value.reviewsNew, value.pagesDone, value.reviewsExpected, value.notBefore ?? null] : null);
+  return JSON.stringify([job(state.full), job(state.update), job(state.discover), state.competition, state.reader.online, state.reader.busy, state.reader.pausedUntil ?? null, state.lastSyncedAt, state.stored.count]);
 }
+
+/**
+ * When a queued job will be tried again because Google is limiting the reader: the job's own
+ * not_before (it was limited and put back), else the reader's pause. Null when it is not waiting for that.
+ */
+export function limitWaitUntil(job: Pick<ImportJob, "status" | "notBefore"> | null | undefined, reader: Pick<ReaderStatus, "pausedUntil">, now: number): string | null {
+  if (job?.status !== "queued") return null;
+  const later = [job.notBefore, reader.pausedUntil].filter((at): at is string => Boolean(at) && Date.parse(at as string) > now);
+  return later.sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null;
+}
+
+/** «À espera: o Google está a limitar o leitor, tentamos outra vez às 22:40». */
+export const limitWaitText = (until: string) => `À espera: o Google está a limitar o leitor, tentamos outra vez às ${lisbonTime(until)}`;
 
 /** Minutes since the last sync when it is within the 15-minute rule, else null (a new read is allowed). */
 export function recentSyncMinutes(lastSyncedAt: string | null, now: number): number | null {
@@ -234,9 +254,11 @@ interface JobRow {
   requested_at: string;
   started_at: string | null;
   finished_at: string | null;
+  not_before: string | null;
+  attempts: number;
 }
 
-const jobColumns = "id, kind, status, priority, reviews_expected, reviews_done, reviews_new, pages_done, avg_page_ms, error, requested_at, started_at, finished_at";
+const jobColumns = "id, kind, status, priority, reviews_expected, reviews_done, reviews_new, pages_done, avg_page_ms, error, requested_at, started_at, finished_at, not_before, attempts";
 
 function toJob(row: JobRow): ImportJob {
   return {
@@ -253,6 +275,8 @@ function toJob(row: JobRow): ImportJob {
     requestedAt: row.requested_at,
     startedAt: row.started_at,
     finishedAt: row.finished_at,
+    notBefore: row.not_before,
+    attempts: row.attempts,
   };
 }
 
@@ -275,7 +299,12 @@ export async function loadReaderJobs(client: SupabaseClient, businessId: string)
     latestJob(client, businessId, "full"),
     latestJob(client, businessId, "update"),
     latestJob(client, businessId, "discover"),
-    client.from("review_reader_status").select("last_seen_at, busy").order("last_seen_at", { ascending: false }).limit(1).maybeSingle<{ last_seen_at: string; busy: boolean }>(),
+    client
+      .from("review_reader_status")
+      .select("last_seen_at, busy, paused_until")
+      .order("last_seen_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<{ last_seen_at: string; busy: boolean; paused_until: string | null }>(),
     client
       .from("review_businesses")
       .select("last_synced_at, reviews_total, competitors_refreshed_at")
@@ -293,7 +322,7 @@ export async function loadReaderJobs(client: SupabaseClient, businessId: string)
   return {
     full,
     update,
-    reader: { online, lastSeenAt, busy: online && Boolean(reader.data?.busy) },
+    reader: { online, lastSeenAt, busy: online && Boolean(reader.data?.busy), pausedUntil: online ? (reader.data?.paused_until ?? null) : null },
     lastSyncedAt: business.data?.last_synced_at ?? null,
     stored: { count: count.count ?? 0, googleTotal: business.data?.reviews_total ?? null, newestAt: newest.data?.published_at ?? null },
     competition: await loadCompetitionProgress(client, businessId, business.data?.competitors_refreshed_at ?? null),
@@ -347,14 +376,15 @@ export async function queueJob(client: SupabaseClient, businessId: string, kind:
 }
 
 /**
- * The reader's competitor search for a customer without competitors, queued next to its first import
- * (it runs in parallel, in another tab). Nothing when the customer has competitors or one is waiting.
+ * The reader's competitor search for a customer without competitors, queued after its first import:
+ * the reader starts it only once the customer's own reviews were read (no competitor work runs while
+ * a customer's job is queued or running). Nothing when the customer has competitors or one is waiting.
  */
 export async function queueCompetitorSearch(client: SupabaseClient, businessId: string, requestedBy: "panel" | "admin" = "panel"): Promise<boolean> {
   const { data, error } = await client.from("review_businesses").select("competitors_refreshed_at").eq("id", businessId).maybeSingle<{ competitors_refreshed_at: string | null }>();
   if (error) throw new Error(error.message);
   if (!data || data.competitors_refreshed_at) return false;
-  const insert = await client.from("review_import_jobs").insert({ business_id: businessId, kind: "discover", priority: jobPriority.firstImport, requested_by: requestedBy, provider: readerProvider });
+  const insert = await client.from("review_import_jobs").insert({ business_id: businessId, kind: "discover", priority: jobPriority.competitionStart, requested_by: requestedBy, provider: readerProvider });
   if (insert.error && insert.error.code !== "23505") throw new Error(insert.error.message);
   return !insert.error;
 }

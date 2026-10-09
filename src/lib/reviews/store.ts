@@ -36,6 +36,8 @@ export interface BusinessRow {
   competitor_radius_km?: number | null;
   /** Radius the current competitor list was searched with. */
   competitors_search_radius_km?: number | null;
+  /** Selection rule the current competitor list was chosen with (null: the first rule). */
+  competitors_rule_version?: number | null;
   created_at: string;
 }
 

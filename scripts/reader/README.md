@@ -33,6 +33,7 @@ Precisa do `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_K
 | `update`             | Reviews novas e respostas do dono às reviews sem resposta dos últimos 30 dias. Avisa por email de negativas novas (1–3★, últimos 7 dias). |
 | `competitor`         | Às 10:00 e 19:00 (hora de Portugal), por local: nota, total, distribuição de estrelas (fotografia do dia) e reviews dos últimos 30 dias para atualizar a % de respondidas (aproximação, ver `slideReplyRate`). |
 | `competitor_replies` | Uma vez por local: % de reviews respondidas em 12 meses (máx. 2000 reviews) e ritmo mensal. |
+| `discover`           | Procura de concorrentes de um cliente: só lugares da mesma categoria do Google ou de uma muito parecida (regra 5); guarda a categoria de cada um. |
 
 - Até 4 pedidos ao mesmo tempo (uma janela cada), nunca 2 do mesmo negócio/local; a última vaga
   fica sempre para a prioridade 1 (alguém à espera no painel).
@@ -42,8 +43,36 @@ Precisa do `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_K
   `GET /api/cron/competition`, que põe na fila os concorrentes por ler desde a hora anterior.
 - Só pode haver um leitor por computador (ficheiro `reader.lock` na pasta do perfil).
 
-**Se o Google pedir para iniciar sessão** (o pedido falha com essa mensagem): abra a janela do
-navegador do leitor, inicie sessão numa conta Google uma vez, e volte a pedir.
+## Ritmo e limites do Google
+
+Regras em `src/lib/reviews/reader-throttle.ts` (testes em `tests/reader-throttle.test.mjs`). A 2026-10-09
+um cliente novo teve a procura e ~35 leituras de concorrentes em paralelo com a sua importação; o
+Google limitou o navegador e a importação do cliente e todas as tentativas falharam. Por isso:
+
+- **Cliente primeiro e sozinho:** enquanto houver um pedido `full`/`update` de qualquer cliente na fila
+  (mesmo à espera de hora) ou a correr, o leitor não começa `discover`, `competitor` nem
+  `competitor_replies` (os que já correm terminam). Cliente novo: histórico → procura → concorrentes.
+- **Concorrência com calma:** no máximo `READER_COMPETITOR_SLOTS` (3) pedidos de concorrência ao mesmo
+  tempo e uma pausa de `READER_COMPETITOR_PAUSE_MS` a 2× (5–10 s) entre cada um que começa. Os pedidos
+  dos clientes vão à velocidade de sempre.
+- **Pausa quando o Google limita:** vista limitada, pedido para iniciar sessão, reviews que não
+  carregam, ordenação recusada ou listas que param a meio contam como sinais. 2 sinais em 5 min →
+  nenhum pedido novo durante 10 min (`READER_COOLDOWN_MIN`), depois 30 e 60 (`READER_COOLDOWN_MAX_MIN`)
+  se continuar; uma leitura que corre bem volta aos 10. A pausa fica em
+  `review_reader_status.paused_until` / `pause_reason` (o admin e o painel mostram «O Google está a
+  limitar o leitor; retoma às HH:MM») e sobrevive a um reinício.
+- **De volta à fila em vez de falhar:** um pedido apanhado por um limite volta a `queued` com
+  `not_before` (10, 30, 60, 90 min; nunca antes do fim da pausa) e `attempts`; à 5.ª vez
+  (`READER_LIMIT_ATTEMPTS`) falha com uma mensagem clara. Erros reais (negócio inexistente, sem
+  categoria…) falham logo. As reviews lidas ficam guardadas; a importação só conta quando chega ao fim.
+- **Nome do negócio:** se o nome guardado for «nome, morada» (vindo do link do Maps), o leitor troca-o
+  pelo título que o Google mostra na página (h1).
+
+Precisa da migração `supabase/migrations/20261010100000_reader_throttle.sql`: sem ela o leitor v3 não arranca.
+
+**Se o Google pedir para iniciar sessão** (o pedido volta à fila e o leitor faz uma pausa): pode abrir
+a janela do navegador do leitor e iniciar sessão numa conta Google uma vez. O leitor funciona com e
+sem sessão iniciada.
 
 ## Arrancar com o Windows
 
@@ -77,6 +106,11 @@ Como serviço, um `systemd` com `ExecStart=/usr/bin/xvfb-run -a -s "-screen 0 19
 | `READER_BROWSER_ARGS` | Opções extra do navegador, ex. `--no-sandbox` se correr como root.       |
 | `READER_PROFILE_DIR`  | Pasta do perfil do navegador (por omissão `~/.steevanz-reader`).         |
 | `READER_PORT`         | Porta DevTools (por omissão 9350).                                       |
+| `READER_COMPETITOR_SLOTS` | Pedidos de concorrência ao mesmo tempo (por omissão 3; nunca mais do que `READER_SLOTS`). |
+| `READER_COMPETITOR_PAUSE_MS` | Pausa mínima entre dois pedidos de concorrência que começam (por omissão 5000; a pausa real vai até ao dobro). |
+| `READER_COOLDOWN_MIN` | Primeira pausa quando o Google limita (por omissão 10 min; depois 3× maior). |
+| `READER_COOLDOWN_MAX_MIN` | Pausa máxima (por omissão 60 min). |
+| `READER_LIMIT_ATTEMPTS` | Vezes que um pedido pode ser limitado antes de falhar (por omissão 5). |
 | `READER_SITE_URL`     | Site que envia os alertas por email e põe a concorrência na fila (por omissão `https://steevanz.com`). Tem de ser o site em uso (ex.: o preview do ramo `login-page`); `http://localhost:3000` só com o `next dev` a correr. A fila em si é lida diretamente do Supabase. |
 
 ## Testar sem mexer em nada
