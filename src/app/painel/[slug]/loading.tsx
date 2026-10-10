@@ -11,12 +11,12 @@ function CardSkeleton({ lines = 3, className = "" }: { lines?: number; className
   );
 }
 
-function SectionSkeleton({ cards = 2 }: { cards?: number }) {
+function SectionSkeleton({ cards = 2, wide = false }: { cards?: number; wide?: boolean }) {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="h-7 w-64 max-w-full" />
       <Skeleton className="h-3 w-80 max-w-full" />
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className={`grid gap-4 ${wide ? "" : "lg:grid-cols-2"}`}>
         {Array.from({ length: cards }, (_, index) => (
           <CardSkeleton key={index} lines={index ? 4 : 5} />
         ))}
@@ -76,7 +76,8 @@ export default function DashboardLoading() {
       </div>
 
       <CardSkeleton lines={4} />
-      <SectionSkeleton />
+      {/* «Temas mais falados» (one wide list), then «O que dizem os clientes» (two cards). */}
+      <SectionSkeleton cards={1} wide />
       <SectionSkeleton />
     </div>
   );

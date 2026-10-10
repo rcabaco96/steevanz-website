@@ -75,7 +75,6 @@ const infoTexts = {
   weekdayRating: "Média das estrelas das reviews publicadas em cada dia da semana (hora de Lisboa). Dias com menos de 5 reviews não mostram valor.",
   themes:
     "Detetamos os temas no texto das reviews com listas de palavras em português e inglês (ex.: «espera», «demora», «fila» para Tempo de espera). «Ponto forte»: pelo menos 5 menções, média acima da média geral e 80% ou mais positivas (4–5★). «A melhorar»: pelo menos 5 menções e 30% ou mais negativas (1–3★), ou média 0,4★ abaixo da geral.",
-  words: "Palavras mais repetidas nas reviews positivas (4–5★) e negativas (1–3★), sem palavras comuns como «muito» ou «bom». Cada palavra conta uma vez por review e só aparece se surgir em pelo menos 2.",
   beforeAfter:
     "Compara o tempo desde a instalação das placas com igual número de meses antes (mínimo 3 meses). Reviews por mês = reviews no intervalo ÷ meses. Só aparece com pelo menos 1 mês de placas e 3 reviews antes. Não depende do filtro de período.",
   replies:
@@ -726,64 +725,6 @@ export function ReviewsDashboard({
       </Refreshable>
 
       <Refreshable scopes={["sync","period"]}>
-  <Section id="feedback" title="O que dizem os clientes" lead="Estrelas, dias da semana e palavras mais usadas nas reviews do período.">
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Card title="Distribuição de estrelas" info={infoTexts.sentiment}>
-              <BarList
-                rows={analytics.starDistribution.map((row) => ({
-                  key: String(row.stars),
-                  label: (
-                    <span className="inline-flex items-center gap-1.5">
-                      {row.stars}
-                      <StarFilled size={14} className="text-star" />
-                    </span>
-                  ),
-                  value: row.count,
-                  display: formatPercent(row.share),
-                  detail: `(${row.count})`,
-                }))}
-              />
-              {kpis.reviews.current ? (
-                <p className="mt-4 text-sm text-muted">
-                  <strong className="text-success">{formatPercent(analytics.sentiment.positive / kpis.reviews.current)} positivas</strong> (4–5★) ·{" "}
-                  <strong className="text-danger">{formatPercent(analytics.sentiment.negative / kpis.reviews.current)} negativas</strong> (1–3★)
-                </p>
-              ) : null}
-            </Card>
-            <Card title="Avaliação por dia da semana" info={infoTexts.weekdayRating} subtitle={`Ajuda a detetar dias com problemas (equipa, movimento). «–»: menos de ${minSample.reviews} reviews.`}>
-              <RatingDots
-                rows={analytics.weekdays.map((day) => ({
-                  key: String(day.weekday),
-                  label: weekdayLong[day.weekday].replace("-feira", ""),
-                  rating: day.enoughReviews ? day.avgRating : null,
-                  count: day.reviews,
-                }))}
-              />
-            </Card>
-            {(["positive", "negative"] as const).map((tone) => (
-              <Card key={tone} info={infoTexts.words} title={tone === "positive" ? "Palavras nas reviews positivas" : "Palavras nas reviews negativas"}>
-                {analytics.words[tone].length ? (
-                  <ul className="flex flex-wrap gap-2">
-                    {analytics.words[tone].map((entry) => (
-                      <li
-                        key={entry.word}
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${tone === "positive" ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}
-                      >
-                        {entry.word}
-                        <span className="tabular text-xs opacity-75">{entry.count}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted">Sem dados suficientes neste período.</p>
-                )}
-              </Card>
-            ))}
-          </div>
-        </Section>
-      </Refreshable>
-
-      <Refreshable scopes={["sync","period"]}>
   <Section id="themes" info={infoTexts.themes} title="Temas mais falados" lead="Avaliação média das reviews que mencionam cada tema. Toque num tema para ler o que os clientes escreveram.">
           <Card>
             {analytics.themes.length ? (
@@ -852,6 +793,45 @@ export function ReviewsDashboard({
               <p className="text-sm text-muted">Ainda não há reviews com texto suficiente.</p>
             )}
           </Card>
+        </Section>
+      </Refreshable>
+
+      <Refreshable scopes={["sync","period"]}>
+  <Section id="feedback" title="O que dizem os clientes" lead="Estrelas e dias da semana nas reviews do período.">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card title="Distribuição de estrelas" info={infoTexts.sentiment}>
+              <BarList
+                rows={analytics.starDistribution.map((row) => ({
+                  key: String(row.stars),
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      {row.stars}
+                      <StarFilled size={14} className="text-star" />
+                    </span>
+                  ),
+                  value: row.count,
+                  display: formatPercent(row.share),
+                  detail: `(${row.count})`,
+                }))}
+              />
+              {kpis.reviews.current ? (
+                <p className="mt-4 text-sm text-muted">
+                  <strong className="text-success">{formatPercent(analytics.sentiment.positive / kpis.reviews.current)} positivas</strong> (4–5★) ·{" "}
+                  <strong className="text-danger">{formatPercent(analytics.sentiment.negative / kpis.reviews.current)} negativas</strong> (1–3★)
+                </p>
+              ) : null}
+            </Card>
+            <Card title="Avaliação por dia da semana" info={infoTexts.weekdayRating} subtitle={`Ajuda a detetar dias com problemas (equipa, movimento). «–»: menos de ${minSample.reviews} reviews.`}>
+              <RatingDots
+                rows={analytics.weekdays.map((day) => ({
+                  key: String(day.weekday),
+                  label: weekdayLong[day.weekday].replace("-feira", ""),
+                  rating: day.enoughReviews ? day.avgRating : null,
+                  count: day.reviews,
+                }))}
+              />
+            </Card>
+          </div>
         </Section>
       </Refreshable>
 
