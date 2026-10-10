@@ -93,19 +93,41 @@ já guardada:
   `/api/cron/competitors`, 06:00 UTC, só põe pedidos na fila). Nova procura de 90 em 90 dias é
   **manual**, com «Procurar concorrentes com o leitor» no admin (o admin avisa quando passaram
   90 dias). Nunca DataForSEO nem Apify.
-- **Só a mesma categoria ou uma muito parecida** (dono, 2026-10-09; `categoryMatch` em
-  `src/lib/reviews/competitor-category.ts`): igual à categoria do Google do cliente, ou com uma
-  palavra com significado em comum (sem maiúsculas nem acentos; palavras genéricas como restaurante,
-  de, do, da, bar, café, loja, serviço, clínica não contam). «Restaurante de doner kebab» ~ «Restaurante de kebab» ~
-  «Kebab», mas nunca «Restaurante», «Restaurante português» ou «Marisqueira». Cliente com categoria
-  só genérica («Restaurante») → só lugares exatamente dessa categoria. Lugar com categoria
-  desconhecida → só se veio da pesquisa da categoria do cliente **e** o nome partilha uma palavra
-  com significado. Ordem: mesma categoria, parecida, pelo nome (os com mais reviews primeiro).
-  **Menos de 30 não faz mal: nunca se enche a lista com lugares sem relação.** A 2.ª pesquisa usa só
-  as palavras com significado («doner kebab»), nunca «Restaurante». A procura guarda a categoria de
-  cada lugar (`competitors.category`; a leitura do lugar completa-a com a da página). Mudar a
-  regra = subir `competitorRuleVersion`: as listas antigas são procuradas outra vez pelo leitor.
-  O admin pode excluir.
+- **Só a mesma categoria ou uma muito parecida** (dono, 2026-10-09; regra 3 de 2026-10-10;
+  `categoryMatch` em `src/lib/reviews/competitor-category.ts`):
+  - **Todas as categorias do Google do cliente contam** (a principal e as secundárias), lidas dos
+    dados que a página do lugar carrega (`place[13]`, `parsePlaceProfile`) e guardadas em
+    `review_businesses.categories` (principal primeiro; `category` continua a ser a principal). O
+    leitor guarda-as ao ler as reviews do cliente e na procura.
+  - Um lugar entra se a categoria dele é **igual** a uma do cliente; ou da **mesma família** de uma
+    delas (lista curta e conservadora, `categoryFamilies`: ginásio / health club / centro de fitness /
+    CrossFit / treinador pessoal; barbearia / cabeleireiro para homem; cabeleireiro / salão de
+    beleza; estética / salão de beleza; veterinário / clínica veterinária; dentista / clínica
+    dentária; kebab / doner / shawarma; pizaria / pizzaria; sushi / restaurante japonês;
+    hamburgueria; pastelaria / padaria / confeitaria; alojamento local / guest house; imobiliária —
+    só quando um cliente escolheria mesmo entre elas: nada de yoga/pilates nos ginásios, café nas
+    pastelarias, hotel no alojamento local nem cabeleireiro nas barbearias); ou **muito parecida**:
+    partilha uma palavra com significado **e** as palavras de uma estão todas na outra (sem
+    maiúsculas nem acentos; palavras genéricas como restaurante, de, do, da, bar, café, loja,
+    serviço, clínica, centro, bem-estar não contam). «Restaurante de doner kebab» ~ «Restaurante de
+    kebab» ~ «Kebab»; **«Treinador pessoal» ≁ «Treinador de animais de estimação»** (cada uma diz algo
+    que a outra não diz); nunca «Restaurante», «Restaurante português» ou «Marisqueira».
+  - **O nome do cliente** conta como categoria quando diz claramente o tipo (lista curta de
+    palavras inteiras por família: «Gym», «Ginásio», «Fitness», «Health club», «Barbearia», «Kebab»,
+    «Pizzaria», «Sushi»…): «Urban Gym Health Club» (principal «Treinador pessoal») → ginásios também.
+  - Categoria só genérica («Restaurante», «Centro de bem-estar») → só lugares exatamente dessa
+    categoria (salvo as outras categorias ou o nome). Lugar com categoria desconhecida → só se veio
+    de uma pesquisa de categoria do cliente **e** o nome partilha uma palavra com significado (ou diz
+    o tipo de uma família do cliente). Ordem: mesma categoria, parecida/família, pelo nome (os com
+    mais reviews primeiro). **Menos de 30 não faz mal: nunca se enche a lista com lugares sem
+    relação.**
+  - **Pesquisas** (`categorySearches`): no máximo 3 por categoria, sem repetir — a principal, a da
+    família que o nome diz («Ginásio»), as secundárias, as famílias das categorias — e por fim as
+    palavras com significado da principal («doner kebab»), nunca «Restaurante». Só se faz a seguinte
+    enquanto houver menos de 30; os resultados juntam-se.
+  - A procura guarda a categoria de cada lugar (`competitors.category`; a leitura do lugar
+    completa-a com a da página). Mudar a regra = subir `competitorRuleVersion` (agora 3): as listas
+    antigas são procuradas outra vez pelo leitor (rotina das 06:00, grátis). O admin pode excluir.
 - **Os números de cada lugar são uma base partilhada por `place_id`** (lugar do Google), não por
   cliente. Uma leitura serve todos os clientes que comparam com esse lugar, e o lugar de um
   cliente é também um lugar que outros clientes podem ter como concorrente. **Custo e frequência

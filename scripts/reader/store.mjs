@@ -28,7 +28,7 @@ export function createStore(db, { dryRun }) {
     async business(match) {
       const query = db
         .from("review_businesses")
-        .select("id, slug, name, google_maps_url, review_url, alert_email, place_id, google_place_id, google_link_status, google_fid, lat, lng, category, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, competitors_rule_version");
+        .select("id, slug, name, google_maps_url, review_url, alert_email, place_id, google_place_id, google_link_status, google_fid, lat, lng, category, categories, competitors_refreshed_at, competitor_radius_km, competitors_search_radius_km, competitors_rule_version");
       const { data, error } = await (match.id ? query.eq("id", match.id) : query.eq("slug", match.slug)).maybeSingle();
       if (error) throw new Error(error.message);
       if (!data) throw new Error("O negócio deste pedido já não existe.");

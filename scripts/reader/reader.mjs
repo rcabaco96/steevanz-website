@@ -96,8 +96,9 @@ if (!supabaseUrl || !serviceKey) {
 const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const jobColumns = "id, kind, business_id, place_id, priority, requested_at, not_before, attempts";
 const now = () => new Date().toISOString();
-/** The migration this reader needs (not_before/attempts in the queue, paused_until in the status, competitors_rule_version). */
+/** The migrations this reader needs (not_before/attempts in the queue, paused_until in the status, competitors_rule_version; categories). */
 const throttleMigration = "supabase/migrations/20261010100000_reader_throttle.sql";
+const categoriesMigration = "supabase/migrations/20261010160000_business_categories.sql";
 
 /** Jobs this process is running, by target (business or place): { id, kind }. */
 const running = new Map();
@@ -194,6 +195,11 @@ async function checkSchema() {
   const error = jobs.error ?? status.error ?? businesses.error;
   if (error) {
     console.error(`Falta aplicar a migração ${throttleMigration} no Supabase (${error.message}). Aplique-a e volte a ligar o leitor.`);
+    process.exit(1);
+  }
+  const categories = await db.from("review_businesses").select("categories").limit(1);
+  if (categories.error) {
+    console.error(`Falta aplicar a migração ${categoriesMigration} no Supabase (${categories.error.message}). Aplique-a e volte a ligar o leitor.`);
     process.exit(1);
   }
   // A pause from before a restart still holds (Google does not forget because the reader restarted).
