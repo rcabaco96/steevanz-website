@@ -13,6 +13,7 @@ import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDate, formatPercent } from "@/lib/reviews/format";
 import { inferReplySettings, ownerReplyMinChars } from "@/lib/reviews/owner-replies";
 import {
+  draftMissingReplies,
   googleLearningReady,
   learnOwnerRepliesSafely,
   loadInbox,
@@ -22,6 +23,7 @@ import {
   loadReplySettings,
   loadToneHistory,
   loadTrainingQueue,
+  saveReplySettings,
   type ToneHistoryEntry,
 } from "@/lib/reviews/reply-store";
 import { describeTone, draftsPerRun } from "@/lib/reviews/replies";
@@ -101,9 +103,23 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
   if (!client) notFound();
   const business = await loadReplyBusiness(client, slug);
   if (!business) notFound();
-  const settings = await loadReplySettings(client, business.id);
+  let settings = await loadReplySettings(client, business.id);
 
-  if (!settings.onboardedAt || editing) {
+  // The page opens on the replies, never on the tone form (owner, 2026-10-10): the first time, the
+  // tone is set from the owner's replies on Google (or the defaults) and the first replies are
+  // prepared. «Definições do tom e do contacto» changes it whenever the owner wants.
+  let autoSetup: { fromGoogle: boolean } | null = null;
+  if (!settings.onboardedAt && !editing) {
+    const inference = inferReplySettings(await loadOwnerReplies(client, business.id));
+    const suggested = inference?.suggested ?? {};
+    await saveReplySettings(client, business.id, { ...settings, ...suggested }, settings);
+    settings = await loadReplySettings(client, business.id);
+    await learnOwnerRepliesSafely(client, business.id, settings);
+    await draftMissingReplies(client, business);
+    autoSetup = { fromGoogle: Object.keys(suggested).length > 0 };
+  }
+
+  if (editing) {
     const [candidates, ownerReplies, learningReady] = await Promise.all([
       loadTrainingQueue(client, business.id, settings.profileId),
       settings.onboardedAt ? Promise.resolve(null) : loadOwnerReplies(client, business.id),
@@ -154,6 +170,19 @@ export default async function RepliesPage({ params, searchParams }: PageProps<"/
             Definições do tom e do contacto
           </Link>
         </div>
+
+        {autoSetup ? (
+          <p className="rounded-2xl border border-line bg-surface-2/60 p-3.5 text-sm text-text">
+            {autoSetup.fromGoogle
+              ? "Preparámos as respostas com o tom das suas respostas no Google."
+              : "Preparámos as respostas com um tom simples e simpático."}{" "}
+            Pode mudar o tratamento, o tamanho, os emojis e a assinatura em{" "}
+            <Link href={`/painel/${slug}/respostas?editar=1`} className="font-semibold text-accent-text hover:underline">
+              Definições do tom e do contacto
+            </Link>
+            .
+          </p>
+        ) : null}
 
         <p className="rounded-2xl border border-gold/40 bg-gold-soft p-3.5 text-sm text-gold-text">
           <strong>Modo de demonstração.</strong> Ainda não está ligado ao seu perfil Google: aceitar marca a resposta como aprovada, mas não a publica. Quando ligarmos o

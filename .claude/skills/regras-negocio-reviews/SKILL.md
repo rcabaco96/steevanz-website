@@ -212,8 +212,11 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
   quando o formulário cria o tom. **Cada tom novo (ou antigo reposto) aprende-as também**: são dados
   de origem, não reações dadas noutro tom, por isso não é «misturar». As reviews cujas respostas no
   Google foram aprendidas não aparecem no «Treinar» (contam como treinadas).
-- **Formulário pré-preenchido pelas respostas no Google** (só na primeira configuração; nada é
-  guardado até o cliente confirmar): `inferReplySettings` (`owner-replies.ts`) — tratamento (tu/você
+- **O separador Respostas abre sempre nas respostas, nunca no formulário do tom** (dono,
+  2026-10-10). Na primeira abertura o tom é criado sozinho com o que as respostas do dono no Google
+  mostram (abaixo) ou com os valores por defeito, as respostas dele são aprendidas e as primeiras
+  respostas preparadas; um aviso diz como foi feito e leva a «Definições do tom e do contacto».
+- **Tom tirado das respostas no Google**: `inferReplySettings` (`owner-replies.ts`) — tratamento (tu/você
   em ≥ 2 respostas em português com ≥ 6 palavras e o dobro do outro; «sem tratamento» se < 1 em 5
   fala diretamente com a pessoa), tamanho («Média» se a mediana tem ≥ 4 frases), emojis (≥ 1 em 3
   respostas a positivas), assinatura (última linha repetida em ≥ 3 respostas e ≥ 1/3 das que têm
