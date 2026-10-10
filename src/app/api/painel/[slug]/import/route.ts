@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { getSession } from "@/lib/auth/session";
 import { panelApiDenied } from "@/lib/reviews/access";
 import { loadReaderJobs, queueCompetitorSearch, queueFullImport, type ImportResponse } from "@/lib/reviews/import-jobs";
 import { handRetiredJobsToReader } from "@/lib/reviews/reader-queue";
@@ -53,6 +54,8 @@ export async function POST(request: NextRequest, ctx: RouteContext<"/api/painel/
     // A job left for a provider that no longer exists would block this customer's imports forever.
     await handRetiredJobsToReader(client, id);
     if (request.nextUrl.searchParams.get("only") === "concorrentes") {
+      // Admins only (the panel shows the button only to them).
+      if ((await getSession()).state !== "admin") return reply({ error: "Só a Steevanz pode procurar os concorrentes outra vez." }, 403);
       // «Procurar concorrentes outra vez» (after the first import; the customer's own reviews have
       // «Atualizar reviews»): forgets the last search, like the admin's button, and queues a new one.
       const { error } = await client.from("review_businesses").update({ competitors_refreshed_at: null }).eq("id", id);

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPanelGoogleStatus, googleConnectPath } from "@/components/google/header-status";
 import { ReviewsDashboard, reviewsPageSize, type DashboardQuery } from "@/components/reviews/ReviewsDashboard";
+import { getSession } from "@/lib/auth/session";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { computeAnalytics, reviewStarFilters, type PeriodId, type ReviewStarFilter } from "@/lib/reviews/analytics";
 import { emptyReaderJobs, loadReaderJobs } from "@/lib/reviews/import-jobs";
@@ -56,6 +57,8 @@ export default async function DashboardPage({ params, searchParams }: PageProps<
   // isn't set up yet, back to the Google page with the explanation).
   const googleStatus = await getPanelGoogleStatus(slug);
   const googleConnect = googleStatus === "connected" ? null : { href: googleConnectPath(slug), external: true };
+  // Searching the competitors again is an admin's call (owner, 2026-10-10); the customer never sees it.
+  const isAdmin = (await getSession()).state === "admin";
   return (
     <ReviewsDashboard
       source={source}
@@ -64,6 +67,7 @@ export default async function DashboardPage({ params, searchParams }: PageProps<
       query={query}
       readerJobs={readerJobs}
       googleConnect={googleConnect}
+      isAdmin={isAdmin}
     />
   );
 }

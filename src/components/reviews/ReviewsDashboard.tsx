@@ -611,6 +611,7 @@ export function ReviewsDashboard({
   query,
   readerJobs,
   googleConnect = null,
+  isAdmin = false,
 }: {
   source: DashboardSource;
   analytics: DashboardAnalytics;
@@ -619,6 +620,8 @@ export function ReviewsDashboard({
   readerJobs: ReaderJobsState;
   /** Where «Ligar Google» goes; null when the Business Profile is already connected. */
   googleConnect?: { href: string; external: boolean } | null;
+  /** An admin is looking (as the customer would, plus the admin-only «Procurar concorrentes outra vez»). */
+  isAdmin?: boolean;
 }) {
   const { business } = source;
   const { kpis, series, period } = analytics;
@@ -667,7 +670,7 @@ export function ReviewsDashboard({
           </div>
           <ReaderJobsProvider slug={business.slug} initial={readerJobs}>
             <DashboardSync syncUrl={`/api/painel/${business.slug}/sync`} lastSyncedLabel={business.lastSyncedAt ? `a ${formatDateTime(business.lastSyncedAt)}` : ""} />
-            <HistoryImport slug={business.slug} googleConnect={googleConnect} />
+            <HistoryImport slug={business.slug} googleConnect={googleConnect} canSearchCompetitors={isAdmin} />
           </ReaderJobsProvider>
         </div>
         <div className="flex flex-col gap-4 lg:w-[27rem] lg:shrink-0">

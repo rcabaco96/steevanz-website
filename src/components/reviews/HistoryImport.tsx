@@ -18,7 +18,16 @@ const decimal = new Intl.NumberFormat("pt-PT", { minimumFractionDigits: 1, maxim
  * "Histórico completo": the panel queues a full import, the Steevanz reader on a local computer reads
  * every review from Google Maps and reports its progress, shown here as it runs.
  */
-export function HistoryImport({ slug, googleConnect = null }: { slug: string; googleConnect?: { href: string; external: boolean } | null }) {
+export function HistoryImport({
+  slug,
+  googleConnect = null,
+  canSearchCompetitors = false,
+}: {
+  slug: string;
+  googleConnect?: { href: string; external: boolean } | null;
+  /** Admins only: «Procurar concorrentes outra vez» (also in the admin's «Gerir»). */
+  canSearchCompetitors?: boolean;
+}) {
   const router = useRouter();
   const { state, now, apply } = useReaderJobs();
   const [error, setError] = useState<string | null>(null);
@@ -196,15 +205,17 @@ export function HistoryImport({ slug, googleConnect = null }: { slug: string; go
       ) : searchFailed ? (
         <div className="flex flex-col gap-2 border-t border-line pt-3">
           <p className="text-xs text-danger">A procura de concorrentes falhou: {searchFailed}</p>
-          <button type="button" onClick={() => void start(true)} disabled={starting} className={buttonClasses("secondary", "sm", "self-start")}>
-            {starting ? "A pedir…" : "Procurar concorrentes outra vez"}
-          </button>
+          {canSearchCompetitors ? (
+            <button type="button" onClick={() => void start(true)} disabled={starting} className={buttonClasses("secondary", "sm", "self-start")}>
+              {starting ? "A pedir…" : "Procurar concorrentes outra vez"}
+            </button>
+          ) : null}
         </div>
       ) : null}
 
       {/* Once the history is in, this button only searches the competitors again: the customer's own
           reviews have «Atualizar reviews». While a search runs (or failed, with its own button) it hides. */}
-      {!active && !(historyDone && (isActive(state.discover) || searchFailed)) ? (
+      {!active && !(historyDone && (!canSearchCompetitors || isActive(state.discover) || searchFailed)) ? (
         <div className="flex flex-col gap-2">
           <button
             type="button"
