@@ -65,7 +65,7 @@ const infoTexts = {
     "Média das estrelas das reviews publicadas no período escolhido. A comparação é com o período anterior de igual duração e só aparece com pelo menos 5 reviews nesse período.",
   reviews: "Reviews publicadas no Google no período escolhido, comparadas com o período anterior de igual duração (mínimo de 5 reviews para comparar).",
   competition: (radiusKm: number) =>
-    `Até ${competitorLimit} negócios num raio de ${radiusLabel(radiusKm)}: só os de uma das categorias do Google do seu negócio (a principal e as secundárias) ou de uma muito parecida: da mesma família (ex.: ginásio, health club e treinador pessoal; barbearia e cabeleireiro para homem) ou que diga o mesmo com menos ou mais palavras (ex.: «restaurante de kebab» e «kebab»; «treinador pessoal» e «treinador de animais de estimação» não, porque cada uma diz algo que a outra não diz; «restaurante», «bar» ou «café» sozinhos não contam). Se o nome do seu negócio disser o tipo (ex.: «Gym», «Barbearia», «Kebab»), esse tipo também conta. Primeiro os da mesma categoria e os com mais reviews. Se houver menos de ${competitorLimit}, mostramos menos: nunca juntamos negócios de outro tipo. Avaliação: ordenada pela média exata, calculada a partir da distribuição de estrelas no Google. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para a sua média exata passar a do negócio logo acima. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
+    `Até ${competitorLimit} negócios num raio de ${radiusLabel(radiusKm)}: só os de uma das categorias do Google do seu negócio (a principal e as secundárias) ou de uma muito parecida: da mesma família (ex.: ginásio, health club e treinador pessoal; barbearia e cabeleireiro para homem) ou que diga o mesmo com menos ou mais palavras (ex.: «restaurante de kebab» e «kebab»; «treinador pessoal» e «treinador de animais de estimação» não, porque cada uma diz algo que a outra não diz; «restaurante», «bar» ou «café» sozinhos não contam). Se o nome do seu negócio disser o tipo (ex.: «Gym», «Barbearia», «Kebab»), esse tipo também conta. Primeiro os da mesma categoria e os com mais reviews. Se houver menos de ${competitorLimit}, mostramos menos: nunca juntamos negócios de outro tipo. Ranking (a posição): a nota do Google e o número de reviews juntos, para quem tem poucas reviews não passar à frente de quem já provou a nota com muitas: cada negócio conta como se tivesse mais 10 reviews de 3★, o meio da escala (ver o (i) na tabela). A nota mostrada é sempre a do Google; «Avaliação Google» ordena só pela nota. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para passar o negócio logo acima no ranking. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
   competitionReplies:
     "Percentagem das reviews recentes de cada negócio que têm resposta do dono no Google. Contamos as reviews mais recentes (até 60) publicadas nos últimos 12 meses, sem as dos últimos 7 dias, para dar tempo a responder. Nos concorrentes, é medida uma vez, quando entram na comparação, com as mesmas reviews usadas para o ritmo; no seu negócio, com as suas reviews importadas e a mesma regra. Com menos de 5 reviews contadas não mostramos valor («–»). Empates: primeiro quem tem mais reviews contadas. É uma estimativa: guardamos só a percentagem e o número de reviews contadas, nunca os textos.",
   pace: "Média de reviews por mês nos últimos 3 meses, comparada com os 3 meses antes. Não depende do filtro de período: mostra sempre o ritmo atual.",
@@ -419,7 +419,7 @@ function competitionNotes(competition: Competition): { tone: "good" | "info"; te
     notes.push({ tone: "info", text: "Ainda não tem reviews no Google: a primeira já o tira do último lugar." });
     return notes;
   }
-  if (competition.ratingRank === 1) notes.push({ tone: "good", text: "É o negócio mais bem avaliado da zona. Agora é manter!" });
+  if (competition.ratingRank === 1) notes.push({ tone: "good", text: "Está em 1.º no ranking da zona (nota e número de reviews). Agora é manter!" });
   else if (competition.ratingGap) {
     notes.push({
       tone: "info",
@@ -428,7 +428,7 @@ function competitionNotes(competition: Competition): { tone: "good" | "info"; te
           {competition.ratingGap.fiveStarsToPass !== null ? (
             <>
               Faltam <strong>{plural(competition.ratingGap.fiveStarsToPass, "review de 5★", "reviews de 5★")}</strong> para passar o{" "}
-              <strong>{competition.ratingGap.name}</strong> na avaliação.
+              <strong>{competition.ratingGap.name}</strong> no ranking.
             </>
           ) : (
             <>
@@ -483,7 +483,7 @@ function CompetitionSummary({ competition, radiusKm }: { competition: Competitio
   const notes = competition ? competitionNotes(competition) : [];
   const trend = competition?.trend ?? null;
   const ranks = [
-    { label: "Avaliação", rank: competition?.ratingRank ?? null, places: trend?.ratingRankChange ?? null, change: trend?.ratingChange ?? null },
+    { label: "Ranking", rank: competition?.ratingRank ?? null, places: trend?.ratingRankChange ?? null, change: trend?.ratingChange ?? null },
     { label: "Total de reviews", rank: competition?.reviewsRank ?? null, places: trend?.reviewsRankChange ?? null, change: trend?.reviewsChange ?? null },
   ];
   return (
@@ -569,8 +569,8 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics): st
   if (competition?.ratingRank) {
     items.push(
       competition.ratingRank === 1
-        ? `É o mais bem avaliado entre ${competition.total} negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}.`
-        : `Está em ${competition.ratingRank}.º de ${competition.total} na avaliação entre os negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}. Veja abaixo quanto falta para subir.`,
+        ? `Está em 1.º no ranking (nota e número de reviews) entre ${competition.total} negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}.`
+        : `Está em ${competition.ratingRank}.º de ${competition.total} no ranking (nota e número de reviews) entre os negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}. Veja abaixo quanto falta para subir.`,
     );
   }
   const { beforeAfter, weekdays, themes, kpis } = analytics;

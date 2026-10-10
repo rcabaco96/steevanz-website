@@ -347,7 +347,40 @@ export function fiveStarsToBeat(average: number, count: number, target: number):
   return Math.floor((count * (target - average)) / (5 - target) + 1e-9) + 1;
 }
 
-const byRating = (a: CompetitorEntry, b: CompetitorEntry) => (b.average ?? b.rating ?? 0) - (a.average ?? a.rating ?? 0) || b.reviewsCount - a.reviewsCount;
+/**
+ * The fair ranking (owner, 2026-10-10): a place with few reviews must not pass one that proved its
+ * rating with many. Each place counts as if it also had `rankPriorReviews` reviews of
+ * `rankPriorStars` (the middle of the scale), so few reviews pull it towards 3★: a 5,0★ with 3
+ * reviews goes below a 4,8★ with 400, and a 1★ with 1 review stays last (pulling towards the zone's
+ * average would lift it). The score only orders the table; the screen shows Google's rating.
+ */
+export const rankPriorStars = 3;
+export const rankPriorReviews = 10;
+/** Below this many reviews a place is flagged «poucas reviews». */
+export const fewReviewsBelow = 10;
+
+export function rankScore(average: number | null, count: number): number | null {
+  if (average === null || count <= 0) return null;
+  return (average * count + rankPriorStars * rankPriorReviews) / (count + rankPriorReviews);
+}
+
+export const entryRankScore = (entry: Pick<CompetitorEntry, "average" | "rating" | "reviewsCount">): number | null =>
+  rankScore(entry.average ?? entry.rating, entry.reviewsCount);
+
+/**
+ * Smallest number of new 5-star reviews that lifts a place's ranking score above `targetScore`:
+ * (average·count + 5k + 3·10) / (count + k + 10) > target. Null when nothing below 5 can pass it.
+ */
+export function fiveStarsToRank(average: number, count: number, targetScore: number): number | null {
+  if (targetScore >= 5) return null;
+  const now = rankScore(average, count);
+  if (now !== null && now > targetScore) return 0;
+  const weight = Math.max(0, count);
+  const k = (targetScore * (weight + rankPriorReviews) - (average * weight + rankPriorStars * rankPriorReviews)) / (5 - targetScore);
+  return Math.max(0, Math.floor(k + 1e-9) + 1);
+}
+
+const byRank = (a: CompetitorEntry, b: CompetitorEntry) => (entryRankScore(b) ?? -1) - (entryRankScore(a) ?? -1) || b.reviewsCount - a.reviewsCount;
 
 /**
  * The comparison, shown as soon as anyone has numbers: the customer alone, or competitors while the
@@ -360,7 +393,8 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
   // Positions only once there is someone to be compared with ("1.º de 1" would mislead).
   const ranked = self !== null && entries.some((entry) => !entry.isSelf);
 
-  const rated = entries.filter((entry) => entry.average !== null || entry.rating !== null).sort(byRating);
+  // Positions follow the fair ranking (rating and number of reviews), not Google's rating alone.
+  const rated = entries.filter((entry) => entry.average !== null || entry.rating !== null).sort(byRank);
   // A customer with no review yet has no rating to sort by: it is last, not "loading".
   const selfWithoutReviews = self !== null && exact(self) === null && self.reviewsCount === 0;
   const ratingIndex = !ranked ? -1 : selfWithoutReviews ? rated.length : rated.findIndex((entry) => entry.isSelf);
@@ -374,7 +408,7 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
   const paceTop = paced[0];
 
   return {
-    entries: [...entries].sort(byRating),
+    entries: [...entries].sort(byRank),
     total: entries.length,
     competitors: entries.filter((entry) => !entry.isSelf).length,
     ratingRank: ratingIndex >= 0 ? ratingIndex + 1 : null,
@@ -385,7 +419,7 @@ export function computeCompetition(entries: CompetitorEntry[], lastSnapshotOn: s
         ? {
             name: aboveRating.name,
             averageDiff: exact(aboveRating)! - exact(self)!,
-            fiveStarsToPass: fiveStarsToBeat(exact(self)!, self.reviewsCount, exact(aboveRating)!),
+            fiveStarsToPass: fiveStarsToRank(exact(self)!, self.reviewsCount, entryRankScore(aboveRating)!),
           }
         : null,
     reviewsGap: aboveReviews && self ? { name: aboveReviews.name, reviewsDiff: aboveReviews.reviewsCount - self.reviewsCount + 1 } : null,

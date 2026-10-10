@@ -128,6 +128,15 @@ já guardada:
   - A procura guarda a categoria de cada lugar (`competitors.category`; a leitura do lugar
     completa-a com a da página). Mudar a regra = subir `competitorRuleVersion` (agora 3): as listas
     antigas são procuradas outra vez pelo leitor (rotina das 06:00, grátis). O admin pode excluir.
+- **Ranking justo** (dono, 2026-10-10): a posição na concorrência junta a nota do Google e o número
+  de reviews — cada lugar conta como se tivesse mais **10 reviews de 3★** (o meio da escala;
+  `rankScore`, `rankPriorReviews`, `rankPriorStars` em `src/lib/reviews/competitors.ts`). Com poucas
+  reviews desce (nunca sobe): um 5,0★ com 3 reviews fica abaixo de um 4,8★ com 400 e um 1★ com uma só
+  review continua em baixo. **Nunca puxar para a média da zona** (levantava os maus com poucas
+  reviews). O valor só ordena: o ecrã mostra sempre a nota do Google e o nº de reviews, com
+  «poucas reviews» abaixo de 10. Separadores: **Ranking** (abre neste), Avaliação Google, Total de
+  reviews, Respondidas, Perfil. Posições, setas e «Faltam X reviews de 5★» (`fiveStarsToRank`) seguem
+  o ranking.
 - **Os números de cada lugar são uma base partilhada por `place_id`** (lugar do Google), não por
   cliente. Uma leitura serve todos os clientes que comparam com esse lugar, e o lugar de um
   cliente é também um lugar que outros clientes podem ter como concorrente. **Custo e frequência

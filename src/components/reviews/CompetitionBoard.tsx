@@ -5,6 +5,10 @@ import { VerifiedBadge } from "@/components/google/VerifiedBadge";
 import { GoogleG } from "@/components/icons";
 import {
   competitorLimit,
+  entryRankScore,
+  fewReviewsBelow,
+  rankPriorReviews,
+  rankPriorStars,
   replyMinSample,
   type CompetitorEntry,
 } from "@/lib/reviews/competitors";
@@ -14,10 +18,12 @@ import { CompetitionCountdown } from "./CompetitionCountdown";
 import { InfoTip } from "./InfoTip";
 
 // "Reviews por mês" left the table on 2026-10-04 and "Fotos" on 2026-10-09 (owner's decisions).
-type SortKey = "rating" | "reviews" | "replies" | "profile";
+// «Ranking» (rating and number of reviews together) opens first since 2026-10-10 (owner's decision).
+type SortKey = "rank" | "rating" | "reviews" | "replies" | "profile";
 
 const tabs: { key: SortKey; label: string }[] = [
-  { key: "rating", label: "Avaliação" },
+  { key: "rank", label: "Ranking" },
+  { key: "rating", label: "Avaliação Google" },
   { key: "reviews", label: "Total de reviews" },
   { key: "replies", label: "Respondidas" },
   { key: "profile", label: "Perfil" },
@@ -40,6 +46,7 @@ const decimal = (value: number, digits: number) =>
   value.toFixed(digits).replace(".", ",");
 
 function value(entry: CompetitorEntry, key: SortKey): number | null {
+  if (key === "rank") return entryRankScore(entry);
   if (key === "rating") return entry.average ?? entry.rating;
   if (key === "reviews") return entry.reviewsCount;
   if (key === "profile") return entry.profile ? profileScore(entry.profile) : null;
@@ -51,13 +58,25 @@ function withoutReviews(entry: CompetitorEntry): boolean {
   return entry.reviewsCount === 0 && (entry.average ?? entry.rating) === null;
 }
 
+/** Star-based tabs: the ranking and Google's rating. */
+const starred = (key: SortKey) => key === "rank" || key === "rating";
+
 function display(entry: CompetitorEntry, key: SortKey): string {
   const current = value(entry, key);
-  if (current === null && key === "rating" && withoutReviews(entry)) return "Sem reviews";
+  if (current === null && starred(key) && withoutReviews(entry)) return "Sem reviews";
   if (current === null) return "–";
+  // The ranking never shows its score: Google's rating, as the customer sees it on Maps.
+  if (key === "rank") return `${decimal(entry.rating ?? entry.average ?? current, 1)}★`;
   if (key === "rating") return `${decimal(entry.rating ?? current, 1)}★`;
   if (key === "reviews") return number.format(current);
   return formatPercent(current);
+}
+
+/** Under the ranking: how many reviews the rating rests on, flagged when few. */
+function rankNote(entry: CompetitorEntry): string | null {
+  if (entry.reviewsCount <= 0) return null;
+  const reviews = `${number.format(entry.reviewsCount)} ${entry.reviewsCount === 1 ? "review" : "reviews"}`;
+  return entry.reviewsCount < fewReviewsBelow ? `${reviews} · poucas reviews` : reviews;
 }
 
 /** Under the profile score: what is missing ("falta site, horário") or that it is complete. */
@@ -101,7 +120,7 @@ export function CompetitionBoard({
   entries: CompetitorEntry[];
   replyInfo: ReactNode;
 }) {
-  const [sort, setSort] = useState<SortKey>("rating");
+  const [sort, setSort] = useState<SortKey>("rank");
   const [page, setPage] = useState(0);
   // The reply ranking appears once some competitor has been measured, even when every sample is
   // too small to show a rate ("–" with "só N reviews" says why).
@@ -127,7 +146,7 @@ export function CompetitionBoard({
   // Ratings sit on a shared star scale starting at the lowest whole star, labelled on screen.
   const floor = Math.max(1, Math.floor(Math.min(5, ...values)));
   const share = (current: number) =>
-    sort === "rating"
+    starred(sort)
       ? (current - floor) / (5 - floor || 1)
       : sort === "replies" || sort === "profile"
         ? current
@@ -145,7 +164,7 @@ export function CompetitionBoard({
 
   function row(entry: CompetitorEntry, rank: number) {
     const current = value(entry, sort);
-    const note = sort === "replies" ? replyNote(entry) : sort === "profile" ? profileNote(entry) : null;
+    const note = sort === "rank" ? rankNote(entry) : sort === "replies" ? replyNote(entry) : sort === "profile" ? profileNote(entry) : null;
     return (
       <li
         key={entry.id}
@@ -158,7 +177,7 @@ export function CompetitionBoard({
         <span
           className={`text-center text-sm font-semibold ${entry.isSelf ? "text-accent-text" : "text-subtle"}`}
         >
-          {current === null && !(sort === "rating" && withoutReviews(entry)) ? "–" : `${rank}.º`}
+          {current === null && !(starred(sort) && withoutReviews(entry)) ? "–" : `${rank}.º`}
         </span>
         <span className="flex min-w-0 items-center gap-2">
           <a
@@ -252,6 +271,15 @@ export function CompetitionBoard({
           <CompetitionCountdown />
         </div>
       </div>
+
+      {sort === "rank" ? (
+        <p className="flex items-start gap-1.5 text-xs text-subtle">
+          <span>Ordenado pela nota do Google e pelo número de reviews: quem tem poucas reviews desce, porque a nota ainda pode mudar muito.</span>
+          <InfoTip label="Como é feito o ranking">
+            {`Cada negócio conta como se tivesse mais ${rankPriorReviews} reviews de ${rankPriorStars}★ (o meio da escala). Com muitas reviews isso quase não mexe na nota; com poucas, puxa-a para o meio. Assim um 5,0★ com 3 reviews fica abaixo de um 4,8★ com 400, e um 1★ com uma só review continua em baixo. Este cálculo só decide a ordem: a nota mostrada é sempre a do Google. «Poucas reviews»: menos de ${fewReviewsBelow}.`}
+          </InfoTip>
+        </p>
+      ) : null}
 
       <div role="tabpanel" className="flex flex-col gap-1.5">
         <ol className="flex flex-col gap-1.5">

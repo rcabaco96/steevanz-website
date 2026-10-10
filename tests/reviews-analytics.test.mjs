@@ -322,7 +322,8 @@ describe("competitors", async () => {
     assert.equal(result.reviewsRank, 2);
     assert.equal(result.paceRank, 2);
     assert.ok(Math.abs(result.ratingGap.averageDiff - 0.15) < 1e-9);
-    assert.equal(result.ratingGap.fiveStarsToPass, 188);
+    // To pass x in the fair ranking (both scores pulled by 10 reviews of 3★): 144 reviews of 5★.
+    assert.equal(result.ratingGap.fiveStarsToPass, 144);
     assert.equal(result.reviewsGap.reviewsDiff, 301);
     assert.equal(result.paceLeader.name, "x");
   });
@@ -351,14 +352,26 @@ describe("competitors", async () => {
 
   it("counts places climbed only among places compared on both days", () => {
     const entry = (id, average, reviewsCount, isSelf = false) => ({ id, name: id, isSelf, distanceM: 0, rating: average, average, reviewsCount, pacePerMonth: null, replyRate: null, replySample: null });
-    const then = [entry("me", 4.4, 100, true), entry("x", 4.6, 300), entry("y", 4.5, 50)];
+    const then = [entry("me", 4.4, 100, true), entry("x", 4.6, 300), entry("y", 4.5, 300)];
     // "new" joined later with a better rating: it must not count as a fall.
-    const now = [entry("me", 4.55, 110, true), entry("x", 4.6, 305), entry("y", 4.5, 52), entry("new", 4.9, 10)];
+    const now = [entry("me", 4.6, 110, true), entry("x", 4.6, 305), entry("y", 4.5, 305), entry("new", 4.9, 10)];
     const trend = competitionTrend(now, then, "2026-09-04");
     assert.equal(trend.ratingRankChange, 1);
     assert.equal(trend.reviewsRankChange, 0);
-    assert.ok(Math.abs(trend.ratingChange - 0.15 / 4.4) < 1e-9);
+    assert.ok(Math.abs(trend.ratingChange - 0.2 / 4.4) < 1e-9);
     assert.ok(Math.abs(trend.reviewsChange - 0.1) < 1e-9);
+  });
+
+  it("ranks fairly: few reviews never pass places that proved their rating, and a lone 1★ stays last", async () => {
+    const { rankScore, fiveStarsToRank } = await import("../src/lib/reviews/competitors.ts");
+    const entry = (id, average, reviewsCount, isSelf = false) => ({ id, name: id, isSelf, distanceM: 0, rating: average, average, reviewsCount, pacePerMonth: null, replyRate: null, replySample: null });
+    const result = computeCompetition([entry("a", 5, 3), entry("b", 4.8, 400), entry("c", 4.9, 60), entry("d", 1, 1), entry("me", 4.5, 40, true)], null);
+    assert.deepEqual(result.entries.map((e) => e.id), ["b", "c", "me", "a", "d"]);
+    assert.ok(rankScore(1, 1) < 3, "a single 1★ review is not lifted towards the zone's average");
+    assert.equal(rankScore(null, 0), null);
+    // c (4,9★ with 60) needs 37 reviews of 5★ to pass b (4,8★ with 400) in the ranking; b is already above c.
+    assert.equal(fiveStarsToRank(4.9, 60, rankScore(4.8, 400)), 37);
+    assert.equal(fiveStarsToRank(4.8, 400, rankScore(4.9, 60)), 0);
   });
 
   it("shows the comparison as soon as anyone has numbers", () => {
