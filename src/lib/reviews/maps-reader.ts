@@ -388,10 +388,12 @@ export type PlaceProfile = Record<ProfileItem, boolean>;
  * from the page the reader opens anyway; no review is read. Positions seen on 2026-10-05:
  * [37][1] photos, [57] owner account (claimed), [7] website, [178] phone, [203] hours,
  * [154] the owner's description, [4][7] the rating (none on a place without reviews), [13] the
- * categories (main one first; the position common Maps scrapers use, not yet seen in a capture of ours). Null when the
- * payload is not a place.
+ * categories (all of them, main one first; the position common Maps scrapers use, and [13][0] matches
+ * the main category Google shows). Null when the payload is not a place.
  */
-export function parsePlaceProfile(body: string): { rating: number | null; photos: number | null; profile: PlaceProfile; category: string | null } | null {
+export function parsePlaceProfile(
+  body: string,
+): { rating: number | null; photos: number | null; profile: PlaceProfile; category: string | null; categories: string[] } | null {
   let data: unknown;
   try {
     data = JSON.parse(body.replace(/^\)\]\}'\s*/, ""));
@@ -405,10 +407,11 @@ export function parsePlaceProfile(body: string): { rating: number | null; photos
   const photos = at(place[37], 1);
   // [4][7] is the rating Google shows; a place without any review has no [4] at all.
   const rating = at(place[4], 7);
-  // [13] the place's Google categories, the main one first (e.g. ["Restaurante de doner kebab", …]).
-  const category = at(place[13], 0);
+  // [13] the place's Google categories, the main one first (e.g. ["Treinador pessoal", "Ginásio", …]).
+  const categories = placeCategories(place[13]);
   return {
-    category: typeof category === "string" && category.trim() && category.length <= 80 ? category.trim() : null,
+    category: categories[0] ?? null,
+    categories,
     rating: typeof rating === "number" && rating >= 1 && rating <= 5 ? rating : null,
     photos: typeof photos === "number" && Number.isInteger(photos) && photos >= 0 ? photos : null,
     profile: {
@@ -419,6 +422,21 @@ export function parsePlaceProfile(body: string): { rating: number | null; photos
       description: filled(place[154]),
     },
   };
+}
+
+/** The Google categories of a place's data ([13]): texts only, trimmed, no repeats, at most 10. */
+function placeCategories(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  const categories: string[] = [];
+  for (const item of value) {
+    const text = typeof item === "string" ? item.trim() : "";
+    if (!text || text.length > 80 || seen.has(text.toLowerCase())) continue;
+    seen.add(text.toLowerCase());
+    categories.push(text);
+    if (categories.length >= 10) break;
+  }
+  return categories;
 }
 
 /** Share of the profile fields filled in (0 to 1). */

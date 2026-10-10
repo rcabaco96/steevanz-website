@@ -43,4 +43,11 @@ describe("place category", () => {
     assert.equal(parsePlaceProfile(payload({ 13: ["Restaurante de doner kebab", "Restaurante"] })).category, "Restaurante de doner kebab");
     assert.equal(parsePlaceProfile(payload({})).category, null);
   });
+
+  it("reads all the place's Google categories, main first, without repeats", () => {
+    const read = parsePlaceProfile(payload({ 13: ["Treinador pessoal", " Ginásio ", "ginásio", null, "", "Health club"] }));
+    assert.equal(read.category, "Treinador pessoal");
+    assert.deepEqual(read.categories, ["Treinador pessoal", "Ginásio", "Health club"]);
+    assert.deepEqual(parsePlaceProfile(payload({})).categories, []);
+  });
 });

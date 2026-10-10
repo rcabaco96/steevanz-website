@@ -292,6 +292,20 @@ describe("competitors", async () => {
     assert.deepEqual(selectCompetitors(kebabHome, found).map((p) => p.placeId), ["same", "similar", "named"]);
   });
 
+  it("uses all the customer's categories and its name: a gym named «Gym» with main category «Treinador pessoal»", () => {
+    const gym = { placeId: "self", category: "Treinador Pessoal", categories: ["Treinador Pessoal"], name: "Urban Gym Health Club", lat: 37.1, lng: -8.35 };
+    const found = [
+      place("pt", "Treinador Pessoal", 0.001, 30, "Treinador Pessoal"),
+      place("pets", "Treinador de animais de estimação", 0.001, 500, "Treinador Pessoal"),
+      place("gym", "Ginásio", 0.002, 900, "Ginásio"),
+      place("club", "Health club", 0.002, 400, "Ginásio"),
+      { ...place("named", null, 0.002, 100, "Ginásio"), title: "Fitness Hut" },
+      { ...place("named-other", null, 0.002, 100, "treino cães"), title: "Gym dogs" },
+      place("yoga", "Estúdio de ioga", 0.002, 800, "Ginásio"),
+    ];
+    assert.deepEqual(selectCompetitors(gym, found, 30).map((p) => p.placeId), ["pt", "gym", "club", "named"]);
+  });
+
   it("measures monthly pace from recent review dates and from weekly snapshots", () => {
     const now = new Date("2026-10-02T12:00:00Z");
     const daysAgo = (d) => new Date(now.getTime() - d * 86_400_000).toISOString();

@@ -32,7 +32,7 @@ import {
   toRadiusKm,
 } from "../../src/lib/reviews/competitors.ts";
 import { previousCompetitionUpdate } from "../../src/lib/reviews/competition-schedule.ts";
-import { competitorRuleVersion, narrowerSearch } from "../../src/lib/reviews/competitor-category.ts";
+import { categorySearches, competitorRuleVersion, customerKinds, isCategorySearch, narrowerSearch } from "../../src/lib/reviews/competitor-category.ts";
 import { nameFromPage, placeIdFromFid } from "../../src/lib/reviews/maps-link.ts";
 import {
   competitorDailyDays,
@@ -99,6 +99,17 @@ async function rememberPlace(tab, store, business) {
   business.lat = facts.lat;
   business.lng = facts.lng;
   log(`  localização guardada: ${facts.lat}, ${facts.lng}`);
+}
+
+/**
+ * All the customer's Google categories (main first), from the place data the page loads: saved when
+ * read and different from the stored ones, for the competitor search (rule 5).
+ */
+async function rememberCategories(store, business, shown) {
+  const categories = shown.categories ?? [];
+  if (!categories.length || categories.join("|") === (business.categories ?? []).join("|")) return;
+  await store.updateBusiness(business.id, { categories });
+  business.categories = categories;
 }
 
 async function renameFromPage(store, business, shown) {
@@ -248,6 +259,7 @@ async function full(job, tab, store) {
     shown = await openPlace(tab, customerPlaceUrl(business));
     if (attempt === 1) {
       await rememberPlace(tab, store, business);
+      await rememberCategories(store, business, shown);
       await renameFromPage(store, business, shown);
       await store.jobProgress(job.id, { reviews_expected: shown.total });
       // The comparison shows the customer as soon as its rating and total are known.
@@ -357,7 +369,7 @@ async function discoverJob(job, tab, store) {
   log(`procura de concorrentes: ${business.name}`);
   const facts = (await overviewFacts(tab, customerPlaceUrl(business)).catch(
     () => null,
-  )) ?? { lat: null, lng: null, category: null, fid: null };
+  )) ?? { lat: null, lng: null, category: null, categories: [], fid: null };
   const current = await discover(tab, store, business, facts);
   // The customer's own row in the comparison: reused when read recently, else read.
   if (current.place_id) {
@@ -390,16 +402,21 @@ async function discover(tab, store, business, facts) {
   // in 30 s instead of failing; the reader gives up after ~10 min.
   if (!coords) throw new WaitError("À espera da localização do negócio, que o leitor guarda ao ler as estrelas.", 30);
   const fid = business.google_fid ?? facts.fid;
-  let category = facts.category ?? business.category;
+  // All the place's Google categories (main first): read now from the page's data, else the ones
+  // the customer's import saved. The main one as Google shows it under the name.
+  const read = facts.categories?.length ? facts.categories : (business.categories ?? []);
+  const category = facts.category ?? read[0] ?? business.category;
   let self = null;
   if (!category)
     throw new UserError(
       "Não foi possível ler a categoria do negócio no Google Maps.",
     );
+  const kinds = customerKinds([category, ...read], business.name);
+  const searches = categorySearches(kinds);
   const radiusKm = toRadiusKm(business.competitor_radius_km);
   const zoom = searchZoomFor(radiusKm);
   log(
-    `  a procurar concorrentes: «${category}» num raio de ${radiusKm} km`,
+    `  a procurar concorrentes: ${searches.map((search) => `«${search}»`).join(", ")} num raio de ${radiusKm} km (categorias do Google: ${kinds.categories.join(", ")})`,
   );
   const asCandidate = (place, searchString) => ({
     placeId: place.placeId,
@@ -418,7 +435,7 @@ async function discover(tab, store, business, facts) {
   // The customer itself never competes with itself: dropped by its Google feature id too.
   const others = (places) =>
     places.filter((place) => !(fid && place.fid === fid));
-  const found = await searchPlaces(tab, category, coords.lat, coords.lng, 60, zoom);
+  const found = await searchPlaces(tab, searches[0], coords.lat, coords.lng, 60, zoom);
   self ??= found.find((place) => fid && place.fid === fid) ?? null;
   if (!self && !business.place_id) {
     await sleep(1500 + Math.random() * 1500);
@@ -440,20 +457,26 @@ async function discover(tab, store, business, facts) {
   const origin = {
     placeId: selfPlaceId,
     category,
+    categories: kinds.categories,
+    name: business.name,
     lat: coords.lat,
     lng: coords.lng,
   };
-  let candidates = others(found).map((place) => asCandidate(place, category));
+  let candidates = others(found).map((place) => asCandidate(place, searches[0]));
   let chosen = selectCompetitors(origin, candidates, radiusKm);
-  // Fewer than 30: a second search with the customer's meaningful words only ("doner kebab"), never a
-  // generic one like "Restaurante" (rule 5: never padded with unrelated places).
-  const broader = narrowerSearch(category);
-  if (chosen.length < competitorLimit && broader) {
+  // Fewer than 30: the other category searches (a secondary category, the family named by the name:
+  // «Ginásio» for «Urban Gym», whose main category is «Treinador pessoal»), then the main category's
+  // meaningful words only ("doner kebab"), never a generic one like "Restaurante" (rule 5: never
+  // padded with unrelated places). Results are merged; each place is chosen once.
+  const narrower = narrowerSearch(category);
+  const more = [...searches.slice(1), ...(narrower && !isCategorySearch(narrower, searches) ? [narrower] : [])];
+  for (const search of more) {
+    if (chosen.length >= competitorLimit) break;
     await sleep(2000 + Math.random() * 1500);
     candidates = [
       ...candidates,
-      ...others(await searchPlaces(tab, broader, coords.lat, coords.lng, 60, zoom)).map(
-        (place) => asCandidate(place, broader),
+      ...others(await searchPlaces(tab, search, coords.lat, coords.lng, 60, zoom)).map(
+        (place) => asCandidate(place, search),
       ),
     ];
     chosen = selectCompetitors(origin, candidates, radiusKm);
@@ -487,6 +510,7 @@ async function discover(tab, store, business, facts) {
     lat: coords.lat,
     lng: coords.lng,
     category,
+    categories: kinds.categories,
     competitors_refreshed_at: new Date().toISOString(),
     competitors_search_radius_km: radiusKm,
     competitors_rule_version: competitorRuleVersion,
@@ -530,6 +554,7 @@ async function update(job, tab, store) {
   );
   const shown = await openPlace(tab, customerPlaceUrl(business));
   await rememberPlace(tab, store, business);
+  await rememberCategories(store, business, shown);
   await renameFromPage(store, business, shown);
   if (shown.noReviews) {
     await store.updateBusiness(business.id, { reviews_total: 0, last_synced_at: new Date().toISOString(), last_sync_error: null });

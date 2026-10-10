@@ -96,7 +96,7 @@ export async function openPlace(tab, url) {
     // No reviews tab: either Google's limited view, or a place that has no review at all. The place's
     // own data tells them apart (no rating = no review); only the latter is a normal answer.
     const facts = await placeProfile(tab, watch);
-    if (facts && facts.rating === null) return { watch, title, rating: null, total: 0, distribution: null, photos: facts.photos, profile: facts.profile, category: facts.category, noReviews: true };
+    if (facts && facts.rating === null) return { watch, title, rating: null, total: 0, distribution: null, photos: facts.photos, profile: facts.profile, category: facts.category, categories: facts.categories, noReviews: true };
   }
   if (!opened) throw new LimitedViewError(`O Google mostrou a vista limitada, sem reviews, ${openAttempts} vezes seguidas. Tente outra vez daqui a pouco.`);
   // Maps sometimes shows the summary and the topics but only asks for the list once the panel is
@@ -118,7 +118,7 @@ export async function openPlace(tab, url) {
   const total = shownTotal && (!distributionTotal || Math.abs(shownTotal - distributionTotal) <= distributionTotal * 0.1) ? shownTotal : distributionTotal;
   const rating = await tab.evaluate(shownRatingScript);
   const facts = await placeProfile(tab, watch);
-  return { watch, title, rating: typeof rating === "number" ? rating : null, total, distribution, photos: facts?.photos ?? null, profile: facts?.profile ?? null, category: facts?.category ?? null };
+  return { watch, title, rating: typeof rating === "number" ? rating : null, total, distribution, photos: facts?.photos ?? null, profile: facts?.profile ?? null, category: facts?.category ?? null, categories: facts?.categories ?? [] };
 }
 
 /**
@@ -246,12 +246,24 @@ export async function placeFacts(tab) {
   })()`);
 }
 
+/** Collects the tab's "/maps/preview/place" responses (the place's own data, read by placeProfile). */
+function watchPlaceData(tab) {
+  const watch = { placeRequests: new Set(), placeResponses: [] };
+  tab.listeners.add((msg) => {
+    if (msg.method === "Network.requestWillBeSent" && msg.params.request.url.includes("/maps/preview/place")) watch.placeRequests.add(msg.params.requestId);
+    if (msg.method === "Network.loadingFinished" && watch.placeRequests.has(msg.params.requestId)) watch.placeResponses.push(msg.params.requestId);
+  });
+  return watch;
+}
+
 /**
- * The place's own page in its overview (where the category shows under the name): opened again
- * after the reviews were read, when the category could not be read from the reviews view.
+ * The place's own page in its overview (where the category shows under the name): its coordinates,
+ * feature id, main category and all its Google categories (`categories`, main first, from the data
+ * Maps loads with the page; empty when that data could not be read).
  */
 export async function overviewFacts(tab, url) {
   const separator = url.includes("?") ? "&" : "?";
+  const watch = watchPlaceData(tab);
   await tab.send("Page.navigate", { url: `${url}${separator}hl=pt-PT` });
   if (!(await waitFor(tab, "!!document.querySelector('h1') || /consent\\./.test(location.host)", 20000))) return null;
   await tab.evaluate(`[...document.querySelectorAll('button')].find(x => /^\\s*(Aceitar tudo|Accept all)\\s*$/i.test(x.textContent))?.click()`);
@@ -259,7 +271,10 @@ export async function overviewFacts(tab, url) {
   // Maps puts the coordinates in the address bar a moment after the place shows (opened by place id
   // or from the Maps app's shared link, which carry none): wait for them (2026-10-09, King Kebab).
   await waitFor(tab, String.raw`/!3d-?\d|@-?\d+\.\d+,-?\d+\.\d+/.test(decodeURIComponent(location.href))`, 10000);
-  return placeFacts(tab);
+  const facts = await placeFacts(tab);
+  if (!facts) return null;
+  const data = await placeProfile(tab, watch).catch(() => null);
+  return { ...facts, category: facts.category ?? data?.category ?? null, categories: data?.categories ?? [] };
 }
 
 /**

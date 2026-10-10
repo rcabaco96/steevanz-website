@@ -1,5 +1,5 @@
 import type { PlaceProfile } from "./maps-reader.ts";
-import { categoryMatch, competitorRuleVersion, matchRank } from "./competitor-category.ts";
+import { categoryMatch, categorySearches, competitorRuleVersion, customerKinds, isCategorySearch, matchRank } from "./competitor-category.ts";
 import type { GooglePlace, StarDistribution } from "./place-types.ts";
 
 /**
@@ -104,17 +104,30 @@ export interface CompetitorCandidate {
 
 /**
  * Picks the places a customer would be compared with (rule 5, competitor-category.ts): only places of
- * the same Google category or a very similar one (a meaningful word in common), and places of
- * unknown category from the search of the customer's own category whose name shares such a word.
- * Same category first, then similar, then those matched by name; the most reviewed first within each.
- * Fewer than the limit is fine: the list is never padded with unrelated places.
+ * one of the customer's Google categories (main or secondary), of the same family (a gym and a health
+ * club) or of a very similar category ("kebab"), and places of unknown category from one of the
+ * customer's category searches whose name shares such a word or names the family. Same category
+ * first, then similar, then those matched by name; the most reviewed first within each. Fewer than the
+ * limit is fine: the list is never padded with unrelated places.
  */
 export function selectCompetitors(
-  self: { placeId: string; category: string; lat: number; lng: number },
+  self: {
+    placeId: string;
+    /** Main Google category. */
+    category: string;
+    /** All the place's Google categories, main first (review_businesses.categories); optional. */
+    categories?: readonly string[] | null;
+    /** The customer's name: «Gym», «Barbearia»… in it count as categories too. */
+    name?: string | null;
+    lat: number;
+    lng: number;
+  },
   places: GooglePlace[],
   radiusKm = competitorRadiusKm,
   limit = competitorLimit,
 ): CompetitorCandidate[] {
+  const kinds = customerKinds([self.category, ...(self.categories ?? [])], self.name);
+  const searches = categorySearches(kinds);
   const seen = new Set<string>([self.placeId]);
   const candidates: { candidate: CompetitorCandidate; rank: number }[] = [];
   for (const place of places) {
@@ -122,7 +135,7 @@ export function selectCompetitors(
     if (place.permanentlyClosed || place.temporarilyClosed || !place.reviewsCount) continue;
     const distanceM = distanceMeters(self, place.location);
     if (distanceM > radiusKm * 1000) continue;
-    const match = categoryMatch(self.category, { category: place.categoryName, name: place.title, fromCategorySearch: place.searchString === self.category });
+    const match = categoryMatch(kinds, { category: place.categoryName, name: place.title, fromCategorySearch: isCategorySearch(place.searchString, searches) });
     if (!match) continue;
     seen.add(place.placeId);
     candidates.push({
