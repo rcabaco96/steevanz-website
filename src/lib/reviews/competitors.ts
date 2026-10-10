@@ -3,10 +3,10 @@ import { categoryMatch, competitorRuleVersion, matchRank } from "./competitor-ca
 import type { GooglePlace, StarDistribution } from "./place-types.ts";
 
 /**
- * Business rule (regras-negocio-reviews, rule 5): competitors are searched within 5 or 10 km, chosen
- * per customer by an admin (review_businesses.competitor_radius_km); 10 km by default.
+ * Business rule (regras-negocio-reviews, rule 5): competitors are searched within 5, 10, 20 or 30 km,
+ * chosen per customer by an admin (review_businesses.competitor_radius_km); 10 km by default.
  */
-export const competitorRadiusOptions = [5, 10] as const;
+export const competitorRadiusOptions = [5, 10, 20, 30] as const;
 export type CompetitorRadiusKm = (typeof competitorRadiusOptions)[number];
 export const competitorRadiusKm: CompetitorRadiusKm = 10;
 export const competitorLimit = 30;
@@ -24,10 +24,13 @@ export function radiusLabel(radiusKm: number): string {
 
 /**
  * Zoom of the reader's Google Maps zone search: Maps lists the places of the area on screen, so a
- * smaller radius needs a closer view (13z ≈ 10 km around the point, 14z ≈ 5 km).
+ * smaller radius needs a closer view (14z ≈ 5 km around the point, 13z ≈ 10 km, 12z ≈ 20 km,
+ * 11z ≈ 30 km).
  */
 export function searchZoomFor(radiusKm: number): number {
-  return radiusKm <= 5 ? 14 : 13;
+  if (radiusKm <= 5) return 14;
+  if (radiusKm <= 10) return 13;
+  return radiusKm <= 20 ? 12 : 11;
 }
 
 /** Whether a compared place is within the customer's radius (unknown distance: kept). */
@@ -38,7 +41,7 @@ export function withinRadius(distanceM: number | null, radiusKm: number): boolea
 /** What decides whether a customer's competitors must be searched (again). */
 export interface DiscoveryState {
   competitors_refreshed_at: string | null;
-  /** Radius chosen by an admin (5 or 10 km). */
+  /** Radius chosen by an admin (5, 10, 20 or 30 km). */
   competitor_radius_km?: number | null;
   /** Radius the current list was searched with (null: before radii existed, i.e. 10 km). */
   competitors_search_radius_km?: number | null;

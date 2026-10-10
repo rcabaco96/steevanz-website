@@ -285,7 +285,7 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
           lng: place.lng,
           contact_name: contact.data.contact_name,
           contact_phone: contact.data.contact_phone,
-          // Competitor search radius (5 or 10 km; 10 by default), read by the reader's search.
+          // Competitor search radius (5, 10, 20 or 30 km; 10 by default), read by the reader's search.
           competitor_radius_km: toRadiusKm(value(formData, "competitor_radius_km")),
         })
         .select("id, slug")
@@ -331,7 +331,7 @@ export async function createBusinessFromMapsLink(_previous: AdminActionState, fo
 }
 
 /**
- * Competitor search radius (5 or 10 km), admins only. A different radius queues a new zone search
+ * Competitor search radius (5, 10, 20 or 30 km), admins only. A different radius queues a new zone search
  * by the free reader right away (it reads the radius when the job starts); places outside a smaller
  * radius stop showing at once (loadCompetition). The same radius changes nothing.
  */

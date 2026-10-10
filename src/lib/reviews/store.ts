@@ -32,7 +32,7 @@ export interface BusinessRow {
   contact_name?: string | null;
   contact_phone?: string | null;
   invite_sent_at?: string | null;
-  /** Competitor search radius chosen by an admin (5 or 10 km). */
+  /** Competitor search radius chosen by an admin (5, 10, 20 or 30 km). */
   competitor_radius_km?: number | null;
   /** Radius the current competitor list was searched with. */
   competitors_search_radius_km?: number | null;

@@ -80,7 +80,7 @@ já guardada:
 
 ## 5. Concorrência
 
-- Gratuita para todos os clientes. **Até 30 concorrentes num raio de 5 ou 10 km por cliente**
+- Gratuita para todos os clientes. **Até 30 concorrentes num raio de 5, 10, 20 ou 30 km por cliente**
   (`competitorLimit`, `review_businesses.competitor_radius_km`, 10 km por defeito). O raio
   escolhe-se ao criar o cliente no admin e depois **só um admin o muda** (página do negócio no
   admin). Guardar um raio **diferente** põe logo na fila uma procura nova do leitor (`discover`,

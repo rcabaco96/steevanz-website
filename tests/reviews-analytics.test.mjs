@@ -240,7 +240,7 @@ describe("competitors", async () => {
     assert.deepEqual(picked.map((p) => p.placeId), ["c", "a"]);
   });
 
-  it("searches within the radius chosen per customer (5 or 10 km) and searches again when it changes", async () => {
+  it("searches within the radius chosen per customer (5, 10, 20 or 30 km) and searches again when it changes", async () => {
     const { discoveryDue, searchZoomFor, toRadiusKm, withinRadius } = await import("../src/lib/reviews/competitors.ts");
     // ~0.06° of latitude ≈ 6.7 km: inside 10 km, outside 5 km.
     const places = [place("near", "Marisqueira", 0.01, 100), place("mid", "Marisqueira", 0.06, 200)];
@@ -250,8 +250,13 @@ describe("competitors", async () => {
     assert.equal(toRadiusKm("5"), 5);
     assert.equal(toRadiusKm(null), 10);
     assert.equal(toRadiusKm(7), 10);
+    assert.equal(toRadiusKm(20), 20);
+    assert.equal(toRadiusKm("30"), 30);
+    assert.equal(toRadiusKm(25), 10);
     assert.equal(searchZoomFor(10), 13);
     assert.equal(searchZoomFor(5), 14);
+    assert.equal(searchZoomFor(20), 12);
+    assert.equal(searchZoomFor(30), 11);
     assert.equal(withinRadius(4999, 5), true);
     assert.equal(withinRadius(6700, 5), false);
     assert.equal(withinRadius(null, 5), true);

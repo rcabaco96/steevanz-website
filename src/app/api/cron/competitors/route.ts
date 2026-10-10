@@ -8,7 +8,7 @@ export const maxDuration = 300;
 /**
  * Daily (vercel.json, 06:00 UTC). Queues the free reader's competitor search ("discover") for every
  * customer that needs one: never searched (competitors_refreshed_at null), searched with another
- * radius than the one an admin chose (5 or 10 km per customer), or chosen with an older selection
+ * radius than the one an admin chose (5, 10, 20 or 30 km per customer), or chosen with an older selection
  * rule (competitorRuleVersion: the category rule of 2026-10-09). The reader reads each customer's
  * radius when the job starts, then queues the reads of the places it chose; the scheduler tick keeps
  * them current. Nothing here reads Google or calls a paid provider. A new search every 90 days is

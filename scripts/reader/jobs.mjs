@@ -372,7 +372,7 @@ async function discoverJob(job, tab, store) {
 
 /**
  * The customer's competitors from a Google Maps search of its category around it, as any visitor
- * sees it (no paid provider): within the customer's radius (5 or 10 km, chosen by an admin), same
+ * sees it (no paid provider): within the customer's radius (5, 10, 20 or 30 km, chosen by an admin), same
  * category first, at most 30. Rows that drop out go (admin exclusions stay); the shared per-place
  * base (reader_places, other customers' rows) is untouched.
  * Their rating, total and stars come from the reader's competitor reads, queued here.
