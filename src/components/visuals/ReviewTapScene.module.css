@@ -1,0 +1,399 @@
+/* Landscape scene (16:9) for the flagship section; sizes in container units so it scales as one. */
+.scene {
+  --loop: 7s;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  container-type: inline-size;
+  background:
+    radial-gradient(60% 70% at 78% 18%, rgba(227, 154, 198, 0.28), transparent 65%),
+    radial-gradient(55% 60% at 12% 30%, rgba(233, 198, 133, 0.22), transparent 60%),
+    linear-gradient(180deg, #2a1830 0%, #1d1220 70%);
+}
+
+.glow {
+  position: absolute;
+  left: 18cqw;
+  bottom: 14cqw;
+  width: 26cqw;
+  height: 26cqw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(233, 198, 133, 0.35), transparent 70%);
+  filter: blur(2cqw);
+}
+
+/* The counter the plate stands on. */
+.counter {
+  position: absolute;
+  inset: auto 0 0;
+  height: 17cqw;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 30%),
+    linear-gradient(90deg, #4a3326 0%, #5b4030 45%, #4a3326 100%);
+  box-shadow: inset 0 0.4cqw 0 rgba(255, 255, 255, 0.08);
+}
+
+.plateWrap {
+  position: absolute;
+  left: 21cqw;
+  bottom: 12.5cqw;
+  width: 19cqw;
+}
+
+.plate {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2cqw 2.5cqw rgba(0, 0, 0, 0.45));
+}
+
+.pulse {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 9cqw;
+  height: 9cqw;
+  margin: -4.5cqw 0 0 -4.5cqw;
+  border-radius: 50%;
+  border: 0.35cqw solid rgba(233, 198, 133, 0.9);
+  opacity: 0;
+  animation: pulse var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.pulseLate {
+  animation-delay: 0.25s;
+}
+
+.phone {
+  position: absolute;
+  right: 16cqw;
+  top: 5cqw;
+  width: 20cqw;
+  aspect-ratio: 9 / 18.5;
+  padding: 0.7cqw;
+  border-radius: 3.2cqw;
+  background: linear-gradient(160deg, #3a2f3d, #141014);
+  box-shadow:
+    0 3cqw 5cqw -1cqw rgba(0, 0, 0, 0.6),
+    inset 0 0 0 0.25cqw rgba(255, 255, 255, 0.08);
+  transform-origin: 50% 80%;
+  animation: approach var(--loop) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 2.6cqw;
+  background: #fbf7f1;
+  color: #1d1220;
+  font-family: var(--font-sans);
+}
+
+.notch {
+  position: absolute;
+  left: 50%;
+  top: 0.9cqw;
+  width: 5cqw;
+  height: 1.1cqw;
+  margin-left: -2.5cqw;
+  border-radius: 1cqw;
+  background: #141014;
+  z-index: 2;
+}
+
+.idle {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.2cqw;
+  padding: 2cqw;
+  text-align: center;
+  font-size: 1.35cqw;
+  font-weight: 600;
+  color: #574659;
+  background: linear-gradient(180deg, #f4ece1, #fbf7f1);
+  animation: idleScreen var(--loop) linear infinite;
+}
+
+.idleIcon {
+  width: 4cqw;
+  height: 4cqw;
+  color: #7a2d60;
+}
+
+.review {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1cqw;
+  padding: 3.4cqw 1.6cqw 1.6cqw;
+  opacity: 0;
+  animation: reviewScreen var(--loop) linear infinite;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.9cqw;
+}
+
+.avatar {
+  width: 2.8cqw;
+  height: 2.8cqw;
+  flex: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e9c685, #7a2d60);
+}
+
+.reviewTitle {
+  font-size: 1.35cqw;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.prompt {
+  font-size: 1.1cqw;
+  color: #6f5d71;
+}
+
+.stars {
+  display: flex;
+  gap: 0.5cqw;
+}
+
+.star {
+  width: 2.6cqw;
+  height: 2.6cqw;
+  color: #d9cfc3;
+  animation: starFill var(--loop) linear infinite;
+  animation-delay: calc(var(--i, 0) * 0.12s);
+}
+
+.textLines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6cqw;
+  padding: 1cqw;
+  border: 0.15cqw solid #e7ddd0;
+  border-radius: 1cqw;
+}
+
+.textLine {
+  height: 0.7cqw;
+  border-radius: 0.4cqw;
+  background: #d9cfc3;
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: typeLine var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.textLine + .textLine {
+  width: 70%;
+  animation-delay: 0.2s;
+}
+
+.postButton {
+  align-self: flex-end;
+  margin-top: auto;
+  padding: 0.7cqw 1.8cqw;
+  border-radius: 99px;
+  background: #7a2d60;
+  color: #fbf7f1;
+  font-size: 1.15cqw;
+  font-weight: 700;
+  animation: press var(--loop) ease-out infinite;
+}
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 5cqw;
+  display: flex;
+  align-items: center;
+  gap: 0.6cqw;
+  white-space: nowrap;
+  padding: 0.8cqw 1.4cqw;
+  border-radius: 99px;
+  background: #1d1220;
+  color: #fbf7f1;
+  font-size: 1.05cqw;
+  font-weight: 600;
+  opacity: 0;
+  transform: translate(-50%, 1.5cqw);
+  animation: toast var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.toastDot {
+  width: 0.8cqw;
+  height: 0.8cqw;
+  border-radius: 50%;
+  background: #4cbb7f;
+}
+
+/* The phone travels to the plate, touches it, and comes back up to show the form. */
+@keyframes approach {
+  0%,
+  12% {
+    transform: translate(0, 0) rotate(8deg);
+  }
+  28%,
+  36% {
+    transform: translate(-30cqw, 9cqw) rotate(-6deg) scale(0.94);
+  }
+  50%,
+  100% {
+    transform: translate(-4cqw, 0) rotate(2deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  27% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  30% {
+    opacity: 0.95;
+  }
+  48%,
+  100% {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+@keyframes idleScreen {
+  0%,
+  33% {
+    opacity: 1;
+  }
+  37%,
+  96% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes reviewScreen {
+  0%,
+  33% {
+    opacity: 0;
+  }
+  37%,
+  94% {
+    opacity: 1;
+  }
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes starFill {
+  0%,
+  50% {
+    color: #d9cfc3;
+    transform: scale(1);
+  }
+  53% {
+    color: #e3a21a;
+    transform: scale(1.3);
+  }
+  56%,
+  94% {
+    color: #e3a21a;
+    transform: scale(1);
+  }
+  100% {
+    color: #d9cfc3;
+  }
+}
+
+@keyframes typeLine {
+  0%,
+  62% {
+    transform: scaleX(0);
+  }
+  72%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes press {
+  0%,
+  76% {
+    transform: scale(1);
+  }
+  78% {
+    transform: scale(0.9);
+  }
+  80%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes toast {
+  0%,
+  80% {
+    opacity: 0;
+    transform: translate(-50%, 1.5cqw);
+  }
+  84%,
+  93% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  97%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone,
+  .pulse,
+  .idle,
+  .review,
+  .star,
+  .textLine,
+  .postButton,
+  .toast {
+    animation: none !important;
+  }
+
+  .phone {
+    transform: translate(-4cqw, 0) rotate(2deg);
+  }
+
+  .idle {
+    opacity: 0;
+  }
+
+  .review,
+  .toast {
+    opacity: 1;
+  }
+
+  .toast {
+    transform: translate(-50%, 0);
+  }
+
+  .star {
+    color: #e3a21a;
+  }
+
+  .textLine {
+    transform: scaleX(1);
+  }
+}

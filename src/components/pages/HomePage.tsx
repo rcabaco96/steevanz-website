@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { homeCopy } from "@/content/home";
-import { videos } from "@/content/media";
 import { flagshipProduct, products } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import { ui } from "@/content/ui";
@@ -10,7 +9,7 @@ import { ArrowRight, Check, ProductGlyph } from "@/components/icons";
 import { CtaBand } from "@/components/marketing/CtaBand";
 import { Marquee } from "@/components/marketing/Marquee";
 import { ProductCard } from "@/components/marketing/ProductCard";
-import { LazyVideo } from "@/components/media/LazyVideo";
+import { ReviewTapScene } from "@/components/visuals/ReviewTapScene";
 import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
@@ -125,7 +124,8 @@ export function HomePage({ locale }: { locale: Locale }) {
           </div>
           <div className="flex flex-col gap-5">
             <div data-reveal className="relative overflow-hidden rounded-[1.75rem] border border-line bg-surface-inverse">
-              <LazyVideo video={videos["phone-tap"]} label={copy.flagship.videoAlt} className="aspect-video h-auto w-full object-cover opacity-90" />
+              {/* A phone tapping the plate and leaving a review (the stock video showed a card payment). */}
+              <ReviewTapScene copy={copy.scene} />
               <div className="absolute inset-x-4 bottom-4 flex items-center gap-3 rounded-2xl bg-black/55 px-4 py-3 text-sm text-white backdrop-blur-md">
                 <ProductGlyph icon="star-tap" size={18} />
                 {copy.scene.chipTap}
