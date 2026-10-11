@@ -22,6 +22,7 @@ import {
 import { isNegative } from "../../src/lib/reviews/analytics.ts";
 import {
   competitorLimit,
+  competitorMinimum,
   discoveryDue,
   distributionAverage,
   googleMapsPlaceUrl,
@@ -481,6 +482,9 @@ async function discover(tab, store, business, facts) {
     ];
     chosen = selectCompetitors(origin, candidates, radiusKm);
   }
+  // Safety net once every search ran: with fewer than 10 (competitorMinimum), Google's own results for the
+  // main category come next (selectCompetitors' fill).
+  if (chosen.length < competitorMinimum) chosen = selectCompetitors(origin, candidates, radiusKm, competitorLimit, competitorMinimum);
   await store.saveCompetitors(business.id, [
     {
       place_id: selfPlaceId,

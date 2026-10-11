@@ -128,6 +128,11 @@ já guardada:
   - A procura guarda a categoria de cada lugar (`competitors.category`; a leitura do lugar
     completa-a com a da página). Mudar a regra = subir `competitorRuleVersion` (agora 3): as listas
     antigas são procuradas outra vez pelo leitor (rotina das 06:00, grátis). O admin pode excluir.
+- **Rede de segurança** (dono, 2026-10-11): se as regras acima escolherem menos de **10**
+  (`competitorMinimum`), entram a seguir os lugares que o próprio Google devolveu na pesquisa da
+  **categoria principal** do cliente na zona, pela ordem do Google, até 30. Só no fim da procura
+  (depois de todas as pesquisas). Assim uma categoria que falte nas famílias (ex.: gelados, que já
+  tem família) nunca deixa um painel quase vazio.
 - **Ranking justo** (dono, 2026-10-10): a posição na concorrência junta a nota do Google e o número
   de reviews — cada lugar conta como se tivesse mais **10 reviews de 3★** (o meio da escala;
   `rankScore`, `rankPriorReviews`, `rankPriorStars` em `src/lib/reviews/competitors.ts`). Com poucas

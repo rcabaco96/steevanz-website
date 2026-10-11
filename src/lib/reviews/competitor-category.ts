@@ -18,7 +18,7 @@
  * null = 1, which filled up to 30 with the broader search; 2 = the main category only, any shared
  * word) is searched again by the reader.
  */
-export const competitorRuleVersion = 3;
+export const competitorRuleVersion = 4;
 
 /** Words that say nothing about what a place does (Portuguese and English, without accents). */
 const genericWords = new Set([
@@ -166,6 +166,13 @@ export const categoryFamilies: CategoryFamily[] = [
     search: "Pastelaria",
     labels: ["Pastelaria", "Padaria", "Confeitaria", "Padaria e pastelaria", "Bakery", "Pastry shop"],
     nameWords: ["pastelaria", "padaria", "confeitaria"],
+  },
+  {
+    // Ice cream: «Loja de gelados» and «Gelataria» share no word (2026-10-11, Dolci e Salati).
+    id: "icecream",
+    search: "Gelataria",
+    labels: ["Loja de gelados", "Gelataria", "Geladaria", "Gelateria", "Ice cream shop", "Loja de iogurte gelado", "Frozen yogurt shop", "Sorveteria"],
+    nameWords: ["gelataria", "gelateria", "geladaria", "gelados", "gelado", "gelato", "ice cream"],
   },
   {
     // Small lodging. Hotels are left out (another kind of stay and price).

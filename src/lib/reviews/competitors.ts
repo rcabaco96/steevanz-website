@@ -10,6 +10,8 @@ export const competitorRadiusOptions = [5, 10, 20, 30] as const;
 export type CompetitorRadiusKm = (typeof competitorRadiusOptions)[number];
 export const competitorRadiusKm: CompetitorRadiusKm = 10;
 export const competitorLimit = 30;
+/** Below this many competitors of our rules, Google's own results for the main category fill in. */
+export const competitorMinimum = 10;
 
 /** A stored or submitted radius as one of the options (anything else: the default, 10 km). */
 export function toRadiusKm(value: unknown): CompetitorRadiusKm {
@@ -109,6 +111,10 @@ export interface CompetitorCandidate {
  * customer's category searches whose name shares such a word or names the family. Same category
  * first, then similar, then those matched by name; the most reviewed first within each. Fewer than the
  * limit is fine: the list is never padded with unrelated places.
+ * Safety net (owner, 2026-10-11: a panel with 3 competitors before going public): with `fill` and
+ * fewer than that many chosen, the places Google itself returned for the customer's MAIN category
+ * search in the zone come next, in Google's order (a category missing from our lists never leaves a
+ * panel nearly empty). The reader passes it only once every category search ran.
  */
 export function selectCompetitors(
   self: {
@@ -125,38 +131,46 @@ export function selectCompetitors(
   places: GooglePlace[],
   radiusKm = competitorRadiusKm,
   limit = competitorLimit,
+  fill = 0,
 ): CompetitorCandidate[] {
   const kinds = customerKinds([self.category, ...(self.categories ?? [])], self.name);
   const searches = categorySearches(kinds);
   const seen = new Set<string>([self.placeId]);
   const candidates: { candidate: CompetitorCandidate; rank: number }[] = [];
+  const fallback: CompetitorCandidate[] = [];
   for (const place of places) {
     if (!place.placeId || seen.has(place.placeId) || !place.location || !place.title) continue;
     if (place.permanentlyClosed || place.temporarilyClosed || !place.reviewsCount) continue;
     const distanceM = distanceMeters(self, place.location);
     if (distanceM > radiusKm * 1000) continue;
     const match = categoryMatch(kinds, { category: place.categoryName, name: place.title, fromCategorySearch: isCategorySearch(place.searchString, searches) });
-    if (!match) continue;
+    const candidate: CompetitorCandidate = {
+      placeId: place.placeId,
+      name: place.title.trim(),
+      category: place.categoryName ?? null,
+      address: place.address ?? null,
+      url: place.url ?? null,
+      lat: place.location.lat,
+      lng: place.location.lng,
+      distanceM: Math.round(distanceM),
+      reviewsCount: place.reviewsCount,
+    };
+    if (!match) {
+      // Not matched by our rules, but Google listed it for the customer's main category.
+      if (fill > 0 && isCategorySearch(place.searchString, searches.slice(0, 1))) {
+        seen.add(place.placeId);
+        fallback.push(candidate);
+      }
+      continue;
+    }
     seen.add(place.placeId);
-    candidates.push({
-      rank: matchRank[match],
-      candidate: {
-        placeId: place.placeId,
-        name: place.title.trim(),
-        category: place.categoryName ?? null,
-        address: place.address ?? null,
-        url: place.url ?? null,
-        lat: place.location.lat,
-        lng: place.location.lng,
-        distanceM: Math.round(distanceM),
-        reviewsCount: place.reviewsCount,
-      },
-    });
+    candidates.push({ rank: matchRank[match], candidate });
   }
-  return candidates
+  const chosen = candidates
     .sort((a, b) => a.rank - b.rank || b.candidate.reviewsCount - a.candidate.reviewsCount)
     .slice(0, limit)
     .map((entry) => entry.candidate);
+  return chosen.length >= fill ? chosen : [...chosen, ...fallback].slice(0, limit);
 }
 
 /**

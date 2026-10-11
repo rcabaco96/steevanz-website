@@ -306,6 +306,29 @@ describe("competitors", async () => {
     assert.deepEqual(selectCompetitors(gym, found, 30).map((p) => p.placeId), ["pt", "gym", "club", "named"]);
   });
 
+  it("an ice cream shop: «Loja de gelados» and «Gelataria» are one family (2026-10-11, Dolci e Salati)", () => {
+    const shop = { placeId: "self", category: "Loja de gelados", categories: ["Loja de gelados", "Snack bar"], name: "Dolci e Salati", lat: 37.1, lng: -8.35 };
+    const found = [
+      place("g1", "Gelataria", 0.001, 300, "Loja de gelados"),
+      place("g2", "Loja de gelados", 0.002, 100, "Loja de gelados"),
+      place("cafe", "Café", 0.002, 900, "Loja de gelados"),
+    ];
+    assert.deepEqual(selectCompetitors(shop, found, 30).map((p) => p.placeId), ["g2", "g1"]);
+  });
+
+  it("safety net: with fewer than the minimum, Google's results for the main category fill in, in Google's order", () => {
+    const shop = { placeId: "self", category: "Loja de gelados", categories: ["Loja de gelados"], name: "Dolci e Salati", lat: 37.1, lng: -8.35 };
+    const found = [
+      place("g1", "Gelataria", 0.001, 300, "Loja de gelados"),
+      place("crepes", "Creperia", 0.002, 50, "Loja de gelados"),
+      place("cafe", "Café", 0.002, 900, "Loja de gelados"),
+      place("bar", "Bar", 0.002, 900, "Snack bar"),
+    ];
+    // Without the safety net only the family matches; with it (minimum 10), the main search's other results follow.
+    assert.deepEqual(selectCompetitors(shop, found, 30).map((p) => p.placeId), ["g1"]);
+    assert.deepEqual(selectCompetitors(shop, found, 30, 30, 10).map((p) => p.placeId), ["g1", "crepes", "cafe"]);
+  });
+
   it("measures monthly pace from recent review dates and from weekly snapshots", () => {
     const now = new Date("2026-10-02T12:00:00Z");
     const daysAgo = (d) => new Date(now.getTime() - d * 86_400_000).toISOString();
