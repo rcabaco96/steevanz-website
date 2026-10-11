@@ -9,7 +9,6 @@ import { AlertIcon, Check, ClockIcon, GoogleG, SparkleIcon } from "@/components/
 import { InfoTip } from "@/components/reviews/InfoTip";
 import { buttonClasses } from "@/components/ui/Button";
 import { emptyGoogleLink, loadGoogleLink, type GoogleLink } from "@/lib/google/connection";
-import { getSession } from "@/lib/auth/session";
 import { googleConnectComingSoon } from "@/lib/google/coming-soon";
 import { googleOAuthConfigured } from "@/lib/google/oauth";
 import { requirePanelPage } from "@/lib/reviews/access";
@@ -134,6 +133,12 @@ const headlines: Record<GoogleLink["status"], { title: string; lead: string }> =
   },
 };
 
+/** While Google is still approving the API access (`googleConnectComingSoon`). */
+const soonHeadline = {
+  title: "Verificação do perfil: em breve",
+  lead: "Em breve vai poder ligar o seu Perfil de Empresa Google e ganhar o selo «Perfil verificado»: a prova, dada pela Google, de que é mesmo você quem gere este negócio. E o painel passa a atualizar em segundos, pela API oficial.",
+};
+
 /**
  * Always clickable while the customer isn't connected. A plain navigation: the route redirects to
  * Google's consent screen and back here; while the connection isn't set up on the server it comes
@@ -147,7 +152,7 @@ function ConnectButton({ slug, configured, label = "Ligar com o Google", soon = 
           <GoogleG size={18} />
           {label} · Em breve
         </span>
-        <p className="text-sm text-muted">A ligação direta ao Google estará disponível em breve. Até lá, o seu painel continua a ler as suas reviews do Google Maps todos os dias.</p>
+        <p className="text-sm text-muted">Em princípio, disponível na próxima semana.</p>
       </div>
     );
   const button = (
@@ -232,14 +237,14 @@ function StatusCard({ slug, link, configured, soon }: { slug: string; link: Goog
   }
 
   const steps = [
-    "Toque em «Ligar com o Google».",
+    soon ? "Quando a ligação estiver disponível, toque em «Ligar com o Google»." : "Toque em «Ligar com o Google».",
     "Entre com a conta Google que gere o perfil do seu negócio e autorize a Steevanz.",
     "Se a conta gerir mais do que um negócio, escolha qual é o deste painel.",
   ];
   return (
     <section aria-labelledby="google-steps" className="card flex flex-col gap-4 p-4 sm:p-6">
       <h2 id="google-steps" className="font-semibold text-text">
-        Como funciona
+        {soon ? "Como vai funcionar" : "Como funciona"}
       </h2>
       <ol className="flex flex-col gap-3">
         {steps.map((step, index) => (
@@ -249,7 +254,7 @@ function StatusCard({ slug, link, configured, soon }: { slug: string; link: Goog
           </li>
         ))}
       </ol>
-      <p className="text-sm text-subtle">Demora menos de um minuto. Pode desligar quando quiser.</p>
+      <p className="text-sm text-subtle">{soon ? "Vai demorar menos de um minuto e pode desligar quando quiser." : "Demora menos de um minuto. Pode desligar quando quiser."}</p>
     </section>
   );
 }
@@ -300,16 +305,23 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
   if (!data) notFound();
   const { link, name } = data;
   const configured = googleOAuthConfigured();
-  // «Em breve» for customers until Google approves the API; admins keep the real button to test.
-  const soon = googleConnectComingSoon && (await getSession()).state !== "admin";
+  // «Em breve» for everyone, admins included (owner, 2026-10-11), until Google approves the API.
+  const soon = googleConnectComingSoon;
   // The customer's page only; what the server is missing shows in the admin's «Gerir» (owner, 2026-10-11).
   const missing = null;
-  const headline = headlines[link.status];
+  const headline = soon && link.status === "not_connected" ? soonHeadline : headlines[link.status];
   const pill = statusPill[link.status];
 
   return (
     <div className="flex flex-col gap-10 sm:gap-14">
-      <EstadoNotice estado={estado} link={link} missing={missing} />
+      {soon ? (
+        <Notice tone="gold">
+          <strong>Estamos em processo de verificação com a Google.</strong> Antes de qualquer empresa poder ligar perfis do Google, a Google tem de verificar e
+          aprovar o acesso, e a Steevanz está nessa fase. Em princípio, a ligação fica disponível na próxima semana. Não precisa de fazer nada: o seu painel
+          continua a ler as suas reviews do Google Maps todos os dias e o botão «Ligar com o Google» fica ativo nesta página assim que for possível.
+        </Notice>
+      ) : null}
+      <EstadoNotice estado={soon && estado === "indisponivel" ? null : estado} link={link} missing={missing} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_27rem] lg:items-start lg:gap-10">
         <section aria-labelledby="google-title" className="flex min-w-0 flex-col gap-5">
@@ -332,7 +344,7 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
           </div>
           <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">{headline.lead}</p>
           {link.status === "not_connected" ? <ConnectButton slug={slug} configured={configured} soon={soon} /> : null}
-          {link.status === "pending_location" ? (
+          {link.status === "pending_location" && !soon ? (
             <a href={googleConnectPath(slug)} className="self-start text-sm font-semibold text-accent-text underline-offset-4 hover:underline">
               Usar outra conta Google
             </a>

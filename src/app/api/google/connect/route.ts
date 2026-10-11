@@ -1,4 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { getSession } from "@/lib/auth/session";
+import { googleConnectComingSoon } from "@/lib/google/coming-soon";
 import { createState, signState, stateTtlSeconds } from "@/lib/google/crypto";
 import { buildAuthUrl, callbackPath, googleOAuthConfig, googleOAuthMissing, redirectUriFor, stateCookieName } from "@/lib/google/oauth";
 import { panelAccess } from "@/lib/reviews/access";
@@ -18,6 +20,9 @@ export async function GET(request: NextRequest) {
   if (access === "anonymous") return NextResponse.redirect(new URL(`/conta/entrar?next=${encodeURIComponent(`/painel/${slug}/google`)}`, request.nextUrl.origin));
   if (access === "denied") return new Response("Painel não encontrado.", { status: 404 });
   const panel = (estado: string) => NextResponse.redirect(new URL(`/painel/${slug}/google?estado=${estado}`, request.nextUrl.origin));
+
+  // Until Google approves the API only admins get through (to test, by opening this link directly).
+  if (googleConnectComingSoon && (await getSession()).state !== "admin") return panel("indisponivel");
 
   const config = googleOAuthConfig();
   if (!config) {
