@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { pageLabels } from "@/content/page-labels";
 import { getProductCopy } from "@/content/product-copy";
-import { getProduct, products, type ProductFamily } from "@/content/products";
+import { getProduct, productFamilies as families, products } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import { ui } from "@/content/ui";
 import { JsonLd } from "@/components/JsonLd";
@@ -20,8 +20,6 @@ export function productsIndexMetadata(locale: Locale): Metadata {
   const labels = pageLabels[locale].products;
   return pageMetadata({ locale, route: { key: "products" }, title: labels.metaTitle, description: labels.metaDescription });
 }
-
-const families: ProductFamily[] = ["nfc", "operations", "ai"];
 
 export function ProductsIndexPage({ locale }: { locale: Locale }) {
   const labels = pageLabels[locale];

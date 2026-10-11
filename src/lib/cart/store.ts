@@ -6,6 +6,7 @@ import {
   clampQuantity,
   defaultOptions,
   maxCartLines,
+  maxQuantityFor,
   sameOptions,
   sanitizeLines,
   sanitizeOptions,
@@ -93,7 +94,7 @@ export const cart = {
     write([...lines, { id: newLineId(), productId, quantity: 1, options: defaultOptions(productId) }]);
   },
   setQuantity(lineId: string, quantity: number) {
-    updateLine(lineId, (line) => ({ ...line, quantity: clampQuantity(quantity) }));
+    updateLine(lineId, (line) => ({ ...line, quantity: clampQuantity(quantity, maxQuantityFor(line.productId)) }));
   },
   setOptions(lineId: string, options: Partial<CartLineOptions>) {
     updateLine(lineId, (line) => (line.options ? { ...line, options: sanitizeOptions(line.productId, { ...line.options, ...options }) } : line));

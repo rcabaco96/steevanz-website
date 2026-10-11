@@ -31,6 +31,9 @@ export const productModules: Record<ProductId, ComponentType<ModuleProps>> = {
   "ai-reviews": ModulePlaceholder,
   automation: ModulePlaceholder,
   "nfc-menu": ModulePlaceholder,
+  "landing-page": ModulePlaceholder,
+  website: ModulePlaceholder,
+  "online-shop": ModulePlaceholder,
 };
 
 export function ProductModule(props: ModuleProps) {

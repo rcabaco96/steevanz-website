@@ -10,7 +10,10 @@ export type ProductId =
   | "ai-chatbot"
   | "ai-voice"
   | "ai-reviews"
-  | "automation";
+  | "automation"
+  | "landing-page"
+  | "website"
+  | "online-shop";
 
 export type SectorId = "restaurants" | "beauty" | "clinics" | "retail";
 
@@ -57,6 +60,18 @@ export interface FaqItem {
   a: string;
 }
 
+export interface AddOn {
+  name: string;
+  price: string;
+}
+
+/** Extra copy for the website products (landing page, website, online shop). */
+export interface WebProductCopy {
+  notIncluded: string[];
+  addOns: AddOn[];
+  monthlyPlan: { price: string; body: string; points: string[] };
+}
+
 export interface ProductCopy {
   name: string;
   shortName: string;
@@ -73,6 +88,7 @@ export interface ProductCopy {
   useCases: ({ sector: SectorId } & TitledText)[];
   includes: string[];
   faq: FaqItem[];
+  web?: WebProductCopy;
 }
 
 export type ProductCopyByLocale = Record<Locale, ProductCopy>;

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import type { ProductFamily, ProductIcon } from "@/content/products";
+import { productFamilies as families, type ProductFamily, type ProductIcon } from "@/content/products";
 import { ArrowRight, ChevronDown, CloseIcon, MenuIcon, ProductGlyph, UserIcon } from "@/components/icons";
 import type { Locale } from "@/lib/i18n";
 import { CartButton } from "@/components/cart/CartButton";
@@ -59,8 +59,6 @@ interface HeaderProps {
   links: HeaderLinks;
   products: NavProduct[];
 }
-
-const families: ProductFamily[] = ["nfc", "operations", "ai"];
 
 export function Header({ locale, labels, links, products }: HeaderProps) {
   const pathname = usePathname();
@@ -137,7 +135,8 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
           <Logo href={links.home} label={labels.homeLabel} />
 
           <nav aria-label={labels.mainNavLabel} className="hidden items-center gap-1 lg:flex">
-            <div ref={productsRef} className="relative">
+            {/* Not positioned: the menu centres on the (fixed, full-width) header, so four columns fit. */}
+            <div ref={productsRef}>
               <button
                 type="button"
                 aria-expanded={productsOpen}
@@ -153,11 +152,11 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
                   <div
                     id="products-menu"
                     inert={!productsOpen}
-                    className={`card absolute top-[calc(100%+0.75rem)] left-1/2 w-[min(58rem,calc(100vw-4rem))] origin-top p-3 transition-[opacity,transform,visibility] duration-200 ease-(--ease-out-expo) ${
+                    className={`card absolute top-[calc(100%-0.25rem)] left-1/2 w-[min(72rem,calc(100vw-4rem))] origin-top p-3 transition-[opacity,transform,visibility] duration-200 ease-(--ease-out-expo) ${
                       productsOpen ? "visible -translate-x-1/2 translate-y-0 scale-100 opacity-100" : "invisible -translate-x-1/2 translate-y-2 scale-[0.98] opacity-0"
                     }`}
                   >
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-4 gap-2">
                       {families.map((family) => (
                         <div key={family} className="flex flex-col gap-1 rounded-2xl p-2">
                           <p className="eyebrow px-3 pt-2 pb-1">{labels.families[family]}</p>

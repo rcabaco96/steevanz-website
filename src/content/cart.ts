@@ -24,6 +24,9 @@ export interface CartCopy {
   increase: string;
   remove: string;
   unitPrice: string;
+  /** Project products (websites, automation): one per order, price from the proposal. */
+  projectFrom: string;
+  oneProject: string;
   perMonth: string;
   addMore: string;
   /** Signed-in clients: products already active on the account. */
@@ -99,6 +102,8 @@ export const cartCopy: Localized<CartCopy> = {
     increase: "Aumentar quantidade de {name}",
     remove: "Remover {name}",
     unitPrice: "cada",
+    projectFrom: "desde {price} + IVA",
+    oneProject: "1 projeto",
     perMonth: "/mês",
     addMore: "Adicionar outros produtos",
     owned: {
@@ -180,6 +185,8 @@ export const cartCopy: Localized<CartCopy> = {
     increase: "Increase quantity of {name}",
     remove: "Remove {name}",
     unitPrice: "each",
+    projectFrom: "from {price} + VAT",
+    oneProject: "1 project",
     perMonth: "/month",
     addMore: "Add other products",
     owned: {

@@ -6,6 +6,7 @@ import type { ProductId } from "@/content/types";
 import { Check, NfcWaves, PhoneIcon, SparkleIcon, StarFilled } from "@/components/icons";
 import type { Locale } from "@/lib/i18n";
 import { NfcPlate, type PlateSymbol } from "./NfcPlate";
+import { LandingPageMockup, OnlineShopMockup, WebsiteMockup } from "./WebMockups";
 
 function PhoneFrame({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
@@ -341,6 +342,10 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
   if (product.id === "automation") {
     return <AutomationDiagram t={t} />;
   }
+
+  if (product.id === "landing-page") return <LandingPageMockup t={t} />;
+  if (product.id === "website") return <WebsiteMockup t={t} />;
+  if (product.id === "online-shop") return <OnlineShopMockup t={t} />;
 
   const screen = phoneScreens[product.id];
   return (

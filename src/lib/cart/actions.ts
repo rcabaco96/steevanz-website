@@ -1,29 +1,90 @@
 "use server";
 
 import { randomBytes } from "node:crypto";
+import { after } from "next/server";
 import type { FormField } from "@/content/booking";
-import { getProduct } from "@/content/products";
+import { getProduct, isWebProduct } from "@/content/products";
 import { ui } from "@/content/ui";
-import { sendOwnerEmail, type EmailTable } from "@/lib/booking/email";
+import { briefFields, webBriefCopy, type BriefField } from "@/content/web-brief";
+import { ownerAddress, sendOwnerEmail, type EmailSection, type EmailTable } from "@/lib/booking/email";
 import { productLabel, sectorLabel } from "@/lib/booking/labels";
 import { isRateLimited } from "@/lib/booking/request";
 import { fieldErrorsFrom, formDataToObject, orderFormKeys, orderSubmissionSchema } from "@/lib/booking/schema";
 import { honeypotField } from "@/lib/booking/types";
 import type { OrderItem, OrderTotals } from "@/lib/accounts/types";
 import { getSession } from "@/lib/auth/session";
+import type { Locale } from "@/lib/i18n";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
+import { briefDetails, briefRows, cartNeedsBrief, parseBrief, type WebBrief } from "./brief";
 import { alreadyActive, type OwnedProduct } from "./ownership";
 import { formatCents, priceCart, sanitizeLines, vatRate, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
 
 export type OrderActionState =
   | { status: "idle" }
-  | { status: "error"; code: "validation" | "empty_cart" | "rate_limited" | "generic"; fields: FormField[] }
+  | { status: "error"; code: "validation" | "empty_cart" | "rate_limited" | "generic"; fields: FormField[]; briefFields?: BriefField[] }
   | { status: "success"; reference: string };
 
-const groupTitles: Record<CartGroupId, string> = {
-  oneTime: "Pagamento único",
-  monthly: "Mensalidades",
-};
+const emailText = {
+  pt: {
+    groups: { oneTime: "Pagamento único", monthly: "Mensalidades" } as Record<CartGroupId, string>,
+    head: ["Produto", "Preço unit.", "Qtd.", "Subtotal"],
+    subtotal: "Subtotal (s/ IVA)",
+    vat: "IVA",
+    total: "Total (c/ IVA)",
+    perMonth: "/mês",
+    format: "Formato",
+    logo: "Logótipo",
+    yes: "sim",
+    no: "não",
+    logoOnce: " uma vez, incluído no subtotal",
+    perUnit: "/un.",
+    text: "Texto",
+    noText: "sem texto",
+  },
+  en: {
+    groups: { oneTime: "One-off payment", monthly: "Monthly plans" } as Record<CartGroupId, string>,
+    head: ["Product", "Unit price", "Qty", "Subtotal"],
+    subtotal: "Subtotal (excl. VAT)",
+    vat: "VAT",
+    total: "Total (incl. VAT)",
+    perMonth: "/month",
+    format: "Format",
+    logo: "Logo",
+    yes: "yes",
+    no: "no",
+    logoOnce: " once, included in the subtotal",
+    perUnit: "/unit",
+    text: "Text",
+    noText: "no text",
+  },
+} satisfies Record<Locale, unknown>;
+
+const confirmationText = {
+  pt: {
+    subject: (reference: string) => `Recebemos o seu pedido ${reference} · Steevanz`,
+    heading: "Recebemos o seu pedido",
+    hello: (name: string) => `Olá ${name}, obrigado pelo seu pedido.`,
+    next: "Vamos analisá-lo e responder com uma proposta de preço fechado. Nada foi cobrado: só avança se aceitar a proposta.",
+    web: "Para o projeto web, usamos as suas respostas (abaixo) para preparar a proposta. Se faltar alguma coisa, falamos consigo.",
+    reference: "Referência",
+    oneTime: "Total único",
+    monthly: "Total mensal",
+    vatIncluded: "c/ IVA",
+    note: "Preços «desde», indicativos: o valor final é o da proposta. Se quiser acrescentar alguma coisa, basta responder a este email.",
+  },
+  en: {
+    subject: (reference: string) => `We received your request ${reference} · Steevanz`,
+    heading: "We received your request",
+    hello: (name: string) => `Hi ${name}, thank you for your request.`,
+    next: "We'll review it and reply with a fixed-price proposal. Nothing has been charged: it only goes ahead if you accept the proposal.",
+    web: "For your web project, we use your answers (below) to prepare the proposal. If anything is missing, we'll get in touch.",
+    reference: "Reference",
+    oneTime: "One-off total",
+    monthly: "Monthly total",
+    vatIncluded: "incl. VAT",
+    note: "“From” prices are indicative: the final price is the one in the proposal. To add anything, just reply to this email.",
+  },
+} satisfies Record<Locale, unknown>;
 
 function orderReference(): string {
   const date = new Date().toISOString().slice(2, 10).replace(/-/g, "");
@@ -38,22 +99,24 @@ function parseItems(raw: string) {
   }
 }
 
-function customizationLines({ productId, options }: CartLine): string[] {
+function customizationLines({ productId, options }: CartLine, locale: Locale = "pt"): string[] {
   const customization = getProduct(productId).customization;
   if (!customization || !options) return [];
-  const format = customization.formats.find((candidate) => candidate.id === options.format)?.label.pt ?? options.format;
+  const t = emailText[locale];
+  const format = customization.formats.find((candidate) => candidate.id === options.format)?.label[locale] ?? options.format;
   const text = options.text.trim();
   return [
-    `Formato: ${format}`,
+    `${t.format}: ${format}`,
     options.logo
-      ? `Logótipo: sim (+${formatCents(customization.logoExtra * 100, "pt")}${customization.logoExtraPer === "line" ? " uma vez, incluído no subtotal" : "/un."})`
-      : "Logótipo: não",
-    `Texto: ${text ? `"${text}"` : "sem texto"}`,
+      ? `${t.logo}: ${t.yes} (+${formatCents(customization.logoExtra * 100, locale)}${customization.logoExtraPer === "line" ? t.logoOnce : t.perUnit})`
+      : `${t.logo}: ${t.no}`,
+    `${t.text}: ${text ? `"${text}"` : t.noText}`,
   ];
 }
 
-function orderItems(totals: Record<CartGroupId, GroupTotals>): OrderItem[] {
-  return (["oneTime", "monthly"] as const).flatMap((billing) =>
+/** The order as stored: the web brief goes with the first website product of the order. */
+function orderItems(totals: Record<CartGroupId, GroupTotals>, brief: WebBrief | null): OrderItem[] {
+  const items = (["oneTime", "monthly"] as const).flatMap((billing) =>
     totals[billing].lines.map((line) => ({
       productId: line.productId,
       quantity: line.quantity,
@@ -63,25 +126,33 @@ function orderItems(totals: Record<CartGroupId, GroupTotals>): OrderItem[] {
       details: customizationLines(line),
     })),
   );
+  const webItem = brief ? items.find((item) => isWebProduct(item.productId)) : undefined;
+  if (webItem && brief) webItem.details = [...webItem.details, ...briefDetails(brief)];
+  return items;
 }
 
-function groupTable(group: CartGroupId, totals: GroupTotals): EmailTable {
-  const suffix = group === "monthly" ? "/mês" : "";
-  const money = (cents: number) => `${formatCents(cents, "pt")}${suffix}`;
+function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "pt"): EmailTable {
+  const t = emailText[locale];
+  const suffix = group === "monthly" ? t.perMonth : "";
+  const money = (cents: number) => `${formatCents(cents, locale)}${suffix}`;
   return {
-    title: groupTitles[group],
-    head: ["Produto", "Preço unit.", "Qtd.", "Subtotal"],
+    title: t.groups[group],
+    head: t.head,
     rows: totals.lines.map((line) => {
       const product = getProduct(line.productId);
-      const name = `${productLabel(line.productId)} (${ui.pt.billing[product.priceBilling]})`;
-      return [[name, ...customizationLines(line)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
+      const name = `${productLabel(line.productId, locale)} (${ui[locale].billing[product.priceBilling]})`;
+      return [[name, ...customizationLines(line, locale)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
     }),
     foot: [
-      ["Subtotal (s/ IVA)", money(totals.subtotalCents)],
-      [`IVA (${vatRate}%)`, money(totals.vatCents)],
-      ["Total (c/ IVA)", money(totals.totalCents)],
+      [t.subtotal, money(totals.subtotalCents)],
+      [`${t.vat} (${vatRate}%)`, money(totals.vatCents)],
+      [t.total, money(totals.totalCents)],
     ],
   };
+}
+
+function briefSection(brief: WebBrief | null, locale: Locale): EmailSection[] {
+  return brief ? [{ title: webBriefCopy[locale].emailTitle, rows: briefRows(brief, locale) }] : [];
 }
 
 /** The products active on the signed-in client's account (the cart marks or removes them). */
@@ -107,8 +178,14 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   if (typeof honeypot === "string" && honeypot.trim()) return { status: "success", reference: "ok" };
 
   const parsed = orderSubmissionSchema.safeParse(raw);
-  if (!parsed.success) return { status: "error", code: "validation", fields: fieldErrorsFrom(parsed.error) };
+  // Website products come with a short brief; both checks run so every error shows at once.
+  const briefResult = cartNeedsBrief(parseItems(raw.items)) ? parseBrief(formDataToObject(formData, briefFields)) : null;
+  const briefErrors = briefResult && !briefResult.ok ? briefResult.fields : [];
+  if (!parsed.success || briefErrors.length) {
+    return { status: "error", code: "validation", fields: parsed.success ? [] : fieldErrorsFrom(parsed.error), briefFields: briefErrors };
+  }
   const data = parsed.data;
+  const brief = briefResult?.ok ? briefResult.brief : null;
 
   // A signed-in client never orders again a monthly product already active on the account.
   const session = await getSession();
@@ -145,7 +222,7 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       sector: data.sector ?? null,
       message: data.message ?? null,
       locale: data.locale,
-      items: orderItems(totals),
+      items: orderItems(totals, brief),
       totals: orderTotals,
     });
     if (error) console.error("[cart] order insert failed:", error.message);
@@ -153,7 +230,7 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   }
 
   const sent = await sendOwnerEmail({
-    subject: `Novo pedido de encomenda ${reference}: ${data.name} · ${summary}`,
+    subject: `Novo pedido de encomenda ${reference}: ${data.name} · ${summary}${brief ? " · Inclui projeto web" : ""}`,
     heading: `Novo pedido de encomenda ${reference}`,
     replyTo: data.email,
     rows: [
@@ -173,8 +250,34 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       { label: "Nota", value: "Preços \"desde\" do site, indicativos e sujeitos a proposta." },
     ],
     tables: groups.map((group) => groupTable(group, totals[group])),
+    sections: briefSection(brief, "pt"),
   });
 
   if (!sent && !saved) return { status: "error", code: "generic", fields: [] };
+
+  // Confirmation to the customer, in the language they ordered in. Replies go to the owner.
+  const locale: Locale = data.locale;
+  const text = confirmationText[locale];
+  after(async () => {
+    await sendOwnerEmail({
+      to: [data.email],
+      replyTo: ownerAddress,
+      subject: text.subject(reference),
+      heading: text.heading,
+      intro: [text.hello(data.name.split(/\s+/)[0]), text.next, ...(brief ? [text.web] : [])],
+      rows: [
+        { label: text.reference, value: reference },
+        { label: text.oneTime, value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.totalCents, locale)} ${text.vatIncluded}` : null },
+        {
+          label: text.monthly,
+          value: totals.monthly.lines.length ? `${formatCents(totals.monthly.totalCents, locale)}${emailText[locale].perMonth} ${text.vatIncluded}` : null,
+        },
+      ],
+      tables: groups.map((group) => groupTable(group, totals[group], locale)),
+      sections: briefSection(brief, locale),
+      note: text.note,
+    });
+  });
+
   return { status: "success", reference };
 }

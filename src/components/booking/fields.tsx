@@ -94,17 +94,32 @@ interface TextAreaFieldProps {
   defaultValue?: string;
   error?: string;
   className?: string;
+  required?: boolean;
+  maxLength?: number;
+  rows?: number;
 }
 
-export function TextAreaField({ name, label, optionalLabel, placeholder, defaultValue, error, className }: TextAreaFieldProps) {
+export function TextAreaField({
+  name,
+  label,
+  optionalLabel,
+  placeholder,
+  defaultValue,
+  error,
+  className,
+  required = false,
+  maxLength = 2000,
+  rows = 4,
+}: TextAreaFieldProps) {
   const id = `field-${name}`;
   return (
-    <FieldShell id={id} label={label} optionalLabel={optionalLabel} error={error} className={className}>
+    <FieldShell id={id} label={label} optionalLabel={required ? undefined : optionalLabel} error={error} className={className}>
       <textarea
         id={id}
         name={name}
-        rows={4}
-        maxLength={2000}
+        rows={rows}
+        required={required}
+        maxLength={maxLength}
         placeholder={placeholder}
         defaultValue={defaultValue}
         aria-invalid={error ? true : undefined}
@@ -131,6 +146,7 @@ interface SelectFieldProps {
   onChange?: (value: string) => void;
   error?: string;
   className?: string;
+  required?: boolean;
 }
 
 export function SelectField({
@@ -144,14 +160,16 @@ export function SelectField({
   onChange,
   error,
   className,
+  required = false,
 }: SelectFieldProps) {
   const id = `field-${name}`;
   return (
-    <FieldShell id={id} label={label} optionalLabel={optionalLabel} error={error} className={className}>
+    <FieldShell id={id} label={label} optionalLabel={required ? undefined : optionalLabel} error={error} className={className}>
       <div className="relative">
         <select
           id={id}
           name={name}
+          required={required}
           value={value}
           defaultValue={value === undefined ? defaultValue : undefined}
           onChange={onChange ? (event) => onChange(event.target.value) : undefined}

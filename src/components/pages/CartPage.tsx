@@ -8,6 +8,7 @@ import { cartCopy } from "@/content/cart";
 import { getProductCopy } from "@/content/product-copy";
 import { products } from "@/content/products";
 import { sectors } from "@/content/sectors";
+import { webBriefCopy } from "@/content/web-brief";
 import { ui } from "@/content/ui";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
@@ -66,6 +67,7 @@ export function CartPage({ locale }: { locale: Locale }) {
           locale={locale}
           copy={copy}
           formCopy={formCopy}
+          briefCopy={webBriefCopy[locale]}
           catalog={catalog}
           sectors={sectorOptions}
           links={{
