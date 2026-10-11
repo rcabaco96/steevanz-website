@@ -198,6 +198,19 @@ export const photos = {
     },
     credit: pexels("Jonathan Borba", "https://www.pexels.com/photo/interior-of-restaurant-14590691/"),
   },
+  "holiday-rental": {
+    src: "/media/photos/holiday-rental.jpg",
+    width: 1600,
+    height: 1067,
+    alt: {
+      pt: "Sala de um apartamento luminoso com sofá, plantas e janelas abertas",
+      en: "Bright apartment living room with a sofa, plants and open windows",
+    },
+    credit: pexels(
+      "Zack Tu Nan",
+      "https://www.pexels.com/photo/black-sofa-with-throw-pillows-near-window-8900181/",
+    ),
+  },
 } satisfies Record<string, MediaPhoto>;
 
 export type PhotoId = keyof typeof photos;

@@ -37,9 +37,22 @@ export function SectorsIndexPage({ locale }: { locale: Locale }) {
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             {sectors.map((sector, index) => {
               const copy = sector.copy[locale];
+              // An odd last card spans both columns, photo beside the text, so the grid never ends with a gap.
+              const wide = index === sectors.length - 1 && sectors.length % 2 === 1;
               return (
-                <article key={sector.id} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className="card card-interactive group relative overflow-hidden">
-                  <Photo id={sector.photo} locale={locale} sizes="(min-width: 768px) 50vw, 100vw" className="aspect-[16/9]" priority={index < 2} />
+                <article
+                  key={sector.id}
+                  data-reveal
+                  style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }}
+                  className={`card card-interactive group relative overflow-hidden ${wide ? "md:col-span-2 md:grid md:grid-cols-2 md:items-center" : ""}`}
+                >
+                  <Photo
+                    id={sector.photo}
+                    locale={locale}
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className={wide ? "aspect-[16/9] md:aspect-auto md:h-full md:min-h-[18rem]" : "aspect-[16/9]"}
+                    priority={index < 2}
+                  />
                   <div className="flex flex-col gap-3 p-7">
                     <h2 className="display text-3xl">
                       <Link href={href(locale, { key: "sector", sectorId: sector.id })} className="after:absolute after:inset-0">

@@ -18,11 +18,49 @@ export interface SectorCopy {
   faq: FaqItem[];
 }
 
+export interface SectorPackCopy {
+  badge: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  items: string[];
+  setupLabel: string;
+  monthlyLabel: string;
+  /** {setup} and {monthly} are replaced with the prices of each extra property. */
+  extraProperty: string;
+  /** {setup} and {monthly} are replaced with the prices of the same products bought separately. */
+  separately: string;
+  website: string;
+  note: string;
+  requestInfo: string;
+}
+
+// A bundle sold through the demo (not the cart): the cart has one billing per product and no bundle discounts.
+export interface SectorPack {
+  setup: number;
+  monthly: number;
+  extraSetup: number;
+  extraMonthly: number;
+  separatelySetup: number;
+  separatelyMonthly: number;
+  /** Product the demo and info-request forms open with. */
+  demoProduct: ProductId;
+  isProvisional: boolean;
+  copy: Localized<SectorPackCopy>;
+}
+
+export type SectorSide = { kind: "photo"; photo: PhotoId } | { kind: "product"; productId: ProductId };
+
 export interface Sector {
   id: SectorId;
   slug: Localized<string>;
   photo: PhotoId;
+  /** Picture next to the "day in the life" timeline when the sector has no video. */
+  side: SectorSide;
   bundle: ProductId[];
+  /** Honest limits of the bundle for this sector, shown under the recommended products. */
+  bundleNote?: Localized<string>;
+  pack?: SectorPack;
   copy: Localized<SectorCopy>;
 }
 
@@ -31,6 +69,7 @@ export const sectors: Sector[] = [
     id: "restaurants",
     slug: sectorSlugs.restaurants,
     photo: "restaurant-table",
+    side: { kind: "photo", photo: "retail" },
     bundle: ["nfc-google-reviews", "bookings", "waitlist", "ai-voice"],
     copy: {
       pt: {
@@ -93,6 +132,7 @@ export const sectors: Sector[] = [
     id: "beauty",
     slug: sectorSlugs.beauty,
     photo: "salon-chair",
+    side: { kind: "photo", photo: "retail" },
     bundle: ["bookings", "nfc-google-reviews", "loyalty", "ai-chatbot"],
     copy: {
       pt: {
@@ -155,6 +195,7 @@ export const sectors: Sector[] = [
     id: "clinics",
     slug: sectorSlugs.clinics,
     photo: "clinic",
+    side: { kind: "photo", photo: "reception-phone" },
     bundle: ["bookings", "ai-voice", "waitlist", "ai-reviews"],
     copy: {
       pt: {
@@ -217,6 +258,7 @@ export const sectors: Sector[] = [
     id: "retail",
     slug: sectorSlugs.retail,
     photo: "shop-owner",
+    side: { kind: "photo", photo: "retail" },
     bundle: ["nfc-google-reviews", "nfc-social", "loyalty", "ai-chatbot"],
     copy: {
       pt: {
@@ -271,6 +313,135 @@ export const sectors: Sector[] = [
           { q: "I run a small shop. Is this for me?", a: "Yes. The plates are a low one-off cost and monthly services have no long lock-in. We start with what pays back fastest." },
           { q: "Can I change where the plate points later?", a: "Yes. Our plates use an address we manage for you, so we can change the destination without reprinting anything." },
           { q: "Does it work if a customer has an older phone?", a: "Every plate also carries a QR code. Anyone whose phone can't read it with a tap points the camera and lands in the same place." },
+        ],
+      },
+    },
+  },
+  {
+    id: "lodging",
+    slug: sectorSlugs.lodging,
+    photo: "holiday-rental",
+    side: { kind: "product", productId: "guest-guide" },
+    // After the web products merge: put the website product id (AL template variant) in place of nfc-google-reviews.
+    bundle: ["guest-guide", "ai-chatbot", "automation", "nfc-google-reviews"],
+    bundleNote: {
+      pt: "As placas para reviews no Google são só para alojamentos que podem ter perfil no Google: hostels, guest houses, quartos com o anfitrião presente e casas onde recebe os hóspedes pessoalmente. Apartamentos e moradias com entrada autónoma não podem ter perfil, por regra do próprio Google. Nesses casos, o guia explica ao hóspede onde avaliar na Booking ou no Airbnb, da mesma forma para todos e sem ofertas em troca.",
+      en: "Google review plates are only for places that can have a Google profile: hostels, guest houses, rooms with the host on site and homes where you welcome guests in person. Self-check-in flats and villas can't have a profile, under Google's own rules. For those, the guide tells guests where to review on Booking.com or Airbnb, the same way for everyone and with nothing offered in return.",
+    },
+    pack: {
+      setup: 149,
+      monthly: 49,
+      extraSetup: 49,
+      extraMonthly: 9,
+      // Guide (69) + «Limpezas e prazos» automation (149); assistant 49/month.
+      separatelySetup: 218,
+      separatelyMonthly: 49,
+      demoProduct: "guest-guide",
+      isProvisional: true,
+      copy: {
+        pt: {
+          badge: "Preço de proposta",
+          eyebrow: "Pack Alojamento Local",
+          title: "Guia, assistente e automatização num só pack",
+          body: "Por menos do que a comissão de uma reserva por mês, os hóspedes ficam bem informados, a limpeza organiza-se sozinha e o seu telemóvel descansa.",
+          items: [
+            "Guia digital do alojamento em quatro línguas, com placa e versão para imprimir",
+            "Assistente com IA no WhatsApp, treinado com o guia, que responde aos hóspedes 24 horas e lhe passa as urgências",
+            "Automatização «Limpezas e prazos»: aviso à equipa de limpeza na véspera de cada saída, lembrete dos boletins e resumo semanal",
+            "Guia online e alterações incluídos enquanto o pack estiver ativo",
+            "Em hostels e guest houses com perfil no Google, uma placa para reviews incluída",
+          ],
+          setupLabel: "de configuração",
+          monthlyLabel: "/mês",
+          extraProperty: "Cada alojamento extra: +{setup} de configuração e +{monthly}/mês. Um número de WhatsApp serve até cinco alojamentos; acima disso, fazemos orçamento.",
+          separately: "Em separado: {setup} de configuração e {monthly}/mês.",
+          website: "Quer também um website com reservas diretas, para os hóspedes que voltam e para quem o encontra no Google ou no Instagram? Juntamo-lo ao pack, com preço à parte.",
+          note: "Valores sem IVA, confirmados na demonstração. Sem contratos longos: sugerimos um mínimo de três meses, pelo trabalho de configuração. O pack contrata-se na demonstração, não no carrinho.",
+          requestInfo: "Prefere receber a proposta por e-mail?",
+        },
+        en: {
+          badge: "Proposal price",
+          eyebrow: "Holiday-rental pack",
+          title: "Guide, assistant and automation in one pack",
+          body: "For less than the commission on one booking a month, guests stay well informed, cleaning organises itself and your phone gets a rest.",
+          items: [
+            "Digital guest guide in four languages, with a plate and a printable version",
+            "AI assistant on WhatsApp, trained on the guide, that answers guests around the clock and passes emergencies to you",
+            "\"Cleanings and deadlines\" automation: a notice to your cleaning team the day before each check-out, registration reminders and a weekly summary",
+            "Guide hosting and changes included while the pack is active",
+            "For hostels and guest houses with a Google profile, one review plate included",
+          ],
+          setupLabel: "setup",
+          monthlyLabel: "/month",
+          extraProperty: "Each extra property: +{setup} setup and +{monthly}/month. One WhatsApp number covers up to five properties; above that, we'll quote.",
+          separately: "Bought separately: {setup} setup and {monthly}/month.",
+          website: "Want a website with direct bookings too, for returning guests and people who find you on Google or Instagram? We add it to the pack, priced separately.",
+          note: "Prices exclude VAT and are confirmed in the demo. No long lock-in: we suggest a three-month minimum because of the setup work. The pack is arranged in the demo, not in the cart.",
+          requestInfo: "Rather get the proposal by email?",
+        },
+      },
+    },
+    copy: {
+      pt: {
+        name: "Alojamento local",
+        cardTitle: "Alojamento local",
+        cardBody: "Hóspedes bem informados em qualquer língua, menos mensagens a meio da noite e limpezas que se organizam sozinhas.",
+        metaTitle: "Guia digital, assistente IA e automação para alojamento local | Steevanz",
+        metaDescription: "Guia digital da casa em quatro línguas com um toque, assistente com IA no WhatsApp 24 horas, avisos automáticos de limpeza e websites com reservas diretas para alojamento local em Portugal.",
+        heroTitle: "Hóspedes bem recebidos. Telemóvel em silêncio.",
+        heroSubtitle: "Quem tem alojamento local responde às mesmas perguntas todos os dias, em várias línguas e a qualquer hora. Juntamos um guia digital da casa, um assistente que responde por si no WhatsApp e automatizações que tratam dos avisos e dos prazos. Nós configuramos tudo, sem apps para instalar.",
+        pains: [
+          { title: "«Qual é a password do WiFi?» pela décima vez esta semana", body: "WiFi, hora de check-out, estacionamento, como funciona a máquina, onde se põe o lixo. As mesmas perguntas, em inglês, francês ou alemão, muitas vezes quando está a jantar ou a dormir." },
+          { title: "Chegadas tardias e mensagens às duas da manhã", body: "O voo atrasou, o hóspede não encontra a caixa das chaves e só o anfitrião sabe responder. Uma resposta lenta é muitas vezes uma avaliação mais baixa." },
+          { title: "Limpezas e prazos a depender da sua memória", body: "Reservas no Airbnb e na Booking, a equipa de limpeza à espera de saber quando entrar e os boletins do SIBA a enviar em três dias úteis. Basta uma falha para correr mal." },
+          { title: "Comissões de 15 % em cada reserva", body: "Mesmo quem volta todos os anos reserva pela plataforma, porque o alojamento não tem um website próprio onde reservar." },
+        ],
+        bundleTitle: "O pacote para alojamento local",
+        bundleBody: "Um guia digital da casa em quatro línguas, aberto com um toque numa placa dentro do alojamento, um assistente com IA no WhatsApp que responde aos hóspedes 24 horas com a informação do guia, avisos automáticos à equipa de limpeza e lembretes dos boletins a partir do calendário que já usa e, se quiser, um website com reservas diretas.",
+        dayInTheLife: [
+          { title: "10:30 — Limpeza já combinada", body: "A equipa recebeu ontem o aviso no WhatsApp: saída às 11h e nova entrada às 16h no mesmo apartamento." },
+          { title: "16:40 — Check-in sem chamadas", body: "Os hóspedes entram, tocam na placa junto à porta e têm o WiFi, as regras da casa e o funcionamento da placa de indução na sua língua." },
+          { title: "23:50 — Pergunta respondida enquanto dorme", body: "«Is there a pharmacy open now?» O assistente responde em inglês com a farmácia de serviço mais próxima e só o acorda se for uma urgência." },
+          { title: "Dia seguinte, 09:00 — Prazos em dia", body: "Recebe um lembrete: há boletins de hóspedes estrangeiros por comunicar ao SIBA até amanhã." },
+        ],
+        faq: [
+          { q: "Isto substitui o Airbnb, a Booking ou o meu software de gestão?", a: "Não. Trabalhamos em conjunto com o que já usa. As plataformas continuam a tratar das reservas, e o guia, o assistente e as automatizações juntam-se ao calendário que já tem." },
+          { q: "O guia digital serve como o livro de informações que a lei exige?", a: "O guia inclui o conteúdo que a lei pede para o livro de informações: funcionamento da casa, regras, resíduos, eletrodomésticos, ruído, regras do condomínio e o seu contacto, em português, inglês e mais duas línguas. Também lhe entregamos uma versão para imprimir, que recomendamos deixar no alojamento." },
+          { q: "Tratam dos boletins do SIBA?", a: "Não enviamos boletins em seu nome. Lembramos os prazos a partir do calendário e, se quiser automatizar o envio, recomendamos ferramentas especializadas como a Chekin ou a Hostkit, que funcionam bem em conjunto com a Steevanz." },
+          { q: "Posso pedir avaliações aos hóspedes?", a: "Pode e deve, sempre da mesma forma a todos, sem ofertas nem descontos em troca. A Booking e o Airbnb enviam o seu próprio convite depois da saída, e o guia explica ao hóspede onde o encontra. As placas para o Google são indicadas para hostels, guest houses e casas onde recebe os hóspedes pessoalmente." },
+          { q: "O assistente dá o código da porta a quem perguntar?", a: "Não. Os códigos de acesso nunca são partilhados pelo assistente nem ficam no guia. Continua a enviá-los na sua mensagem de check-in. Urgências e reclamações passam logo para si." },
+          { q: "Tenho vários alojamentos. Como funciona?", a: "Cada alojamento tem o seu guia e a sua placa, e o assistente sabe em que casa está cada hóspede. Para gestores com vários alojamentos há preços por volume." },
+        ],
+      },
+      en: {
+        name: "Holiday rentals",
+        cardTitle: "Holiday rentals",
+        cardBody: "Well-informed guests in any language, fewer midnight messages and cleanings that organise themselves.",
+        metaTitle: "Digital guest guide, AI assistant and automation for holiday rentals | Steevanz",
+        metaDescription: "A digital guest guide in four languages with one tap, a 24/7 AI assistant on WhatsApp, automatic cleaning notices and direct-booking websites for holiday rentals in Portugal.",
+        heroTitle: "Guests well looked after. Phone on silent.",
+        heroSubtitle: "Holiday-rental hosts answer the same questions every day, in several languages and at any hour. We bring together a digital guest guide, an assistant that answers on WhatsApp for you and automations that take care of notices and deadlines. We set everything up, with no apps to install.",
+        pains: [
+          { title: "\"What's the WiFi password?\" for the tenth time this week", body: "WiFi, check-out time, parking, how the washing machine works, where the bins go. The same questions in English, French or German, often while you're having dinner or asleep." },
+          { title: "Late arrivals and 2 a.m. messages", body: "The flight was delayed, the guest can't find the key box and only you can answer. A slow reply often means a lower review." },
+          { title: "Cleanings and deadlines that rely on your memory", body: "Bookings on Airbnb and Booking.com, a cleaning team waiting to know when to go in, and guest registrations (SIBA) due within three working days. One slip is all it takes." },
+          { title: "15% commission on every booking", body: "Even guests who come back every year book through the platform, because your place has no website of its own." },
+        ],
+        bundleTitle: "The holiday-rental bundle",
+        bundleBody: "A digital guest guide in four languages that opens with one tap on a plate inside the property, an AI assistant on WhatsApp that answers guests around the clock using the guide, automatic notices to your cleaning team and registration reminders based on the calendar you already use and, if you want, a website with direct bookings.",
+        dayInTheLife: [
+          { title: "10:30 — Cleaning already arranged", body: "Your team got the WhatsApp notice yesterday: check-out at 11, new arrivals at 4 p.m. in the same flat." },
+          { title: "16:40 — Check-in with no phone calls", body: "Guests walk in, tap the plate by the door and get the WiFi, the house rules and how the hob works, in their own language." },
+          { title: "23:50 — Question answered while you sleep", body: "\"Is there a pharmacy open now?\" The assistant replies in English with the nearest on-duty pharmacy and only wakes you for a real emergency." },
+          { title: "Next day, 09:00 — Deadlines on track", body: "You get a reminder: foreign guests still need to be registered on SIBA by tomorrow." },
+        ],
+        faq: [
+          { q: "Does this replace Airbnb, Booking.com or my management software?", a: "No. We work alongside what you already use. The platforms keep handling bookings, and the guide, the assistant and the automations plug into the calendar you already have." },
+          { q: "Does the digital guide count as the information book the law requires?", a: "The guide includes the content Portuguese law asks for in the information book: how the property works, house rules, waste, appliances, noise, building rules and your contact, in Portuguese, English and two more languages. We also give you a printable version, which we recommend keeping in the property." },
+          { q: "Do you file the SIBA guest registrations?", a: "We don't file registrations on your behalf. We remind you of the deadlines based on your calendar and, if you want to automate filing, we recommend specialist tools such as Chekin or Hostkit, which work well alongside Steevanz." },
+          { q: "Can I ask guests for reviews?", a: "You can and should, the same way for every guest, with no gifts or discounts in return. Booking.com and Airbnb send their own invitation after check-out, and the guide tells guests where to find it. Google plates are meant for hostels, guest houses and homes where you welcome guests in person." },
+          { q: "Will the assistant give the door code to anyone who asks?", a: "No. Access codes are never shared by the assistant and never appear in the guide. You keep sending them in your check-in message. Emergencies and complaints go straight to you." },
+          { q: "I run several properties. How does it work?", a: "Each property has its own guide and plate, and the assistant knows which home each guest is staying in. Managers with several properties get volume pricing." },
         ],
       },
     },

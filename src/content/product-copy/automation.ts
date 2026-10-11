@@ -99,6 +99,11 @@ export const copy: ProductCopyByLocale = {
         title: "Lojas",
         body: "Encomendas online que atualizam o stock, emitem a fatura e avisam o cliente do envio, sem passos manuais.",
       },
+      {
+        sector: "lodging",
+        title: "Alojamento local: «Limpezas e prazos»",
+        body: "A partir dos calendários do Airbnb e da Booking, avisa a equipa de limpeza na véspera de cada saída, assinala as mudanças no mesmo dia, lembra o anfitrião do prazo dos boletins de hóspedes e envia um resumo semanal. Preço fechado de 149 €, até cinco alojamentos.",
+      },
     ],
     includes: [
       "Diagnóstico dos processos a automatizar",
@@ -128,6 +133,10 @@ export const copy: ProductCopyByLocale = {
       {
         q: "Como ficam os dados protegidos?",
         a: "Usamos apenas os acessos necessários, tratamos os dados de acordo com o RGPD e documentamos por onde passam. Os acessos continuam a ser seus e pode revogá-los a qualquer momento.",
+      },
+      {
+        q: "O que faz a automatização «Limpezas e prazos» para alojamento local?",
+        a: "Usa os links de calendário (iCal) que o Airbnb e a Booking dão a cada anúncio. Na véspera de cada saída, envia à equipa de limpeza, por WhatsApp ou email, a hora de saída, a próxima entrada e o alojamento. No dia a seguir a cada entrada, lembra-o do prazo de três dias úteis dos boletins do SIBA (é um lembrete, não um envio) e, uma vez por semana, manda o resumo de entradas e saídas. Tem limites: os calendários não trazem nomes nem número de hóspedes e atualizam com algumas horas de atraso. Preço fechado de 149 € até cinco alojamentos, ou incluído no Pack Alojamento Local.",
       },
     ],
   },
@@ -229,6 +238,11 @@ export const copy: ProductCopyByLocale = {
         title: "Shops",
         body: "Online orders that update stock, issue the invoice and let the customer know it's been shipped, with no manual steps.",
       },
+      {
+        sector: "lodging",
+        title: "Holiday rentals: \"Cleanings and deadlines\"",
+        body: "Using your Airbnb and Booking.com calendars, it notifies the cleaning team the day before each check-out, flags same-day turnovers, reminds the host of the guest-registration deadline and sends a weekly summary. Fixed price of €149 for up to five properties.",
+      },
     ],
     includes: [
       "Review of the processes to automate",
@@ -258,6 +272,10 @@ export const copy: ProductCopyByLocale = {
       {
         q: "How is my data protected?",
         a: "We use only the access we need, handle data in line with GDPR and document where it flows. The accounts remain yours and you can revoke our access at any time.",
+      },
+      {
+        q: "What does the \"Cleanings and deadlines\" automation do for holiday rentals?",
+        a: "It uses the calendar links (iCal) that Airbnb and Booking.com give every listing. The day before each check-out, it sends your cleaning team the check-out time, the next arrival and the property, by WhatsApp or email. The day after each arrival, it reminds you of the three-working-day deadline for SIBA guest registrations (a reminder, not a submission) and, once a week, it sends a summary of arrivals and departures. It has limits: calendars carry no guest names or numbers and refresh with a delay of a few hours. Fixed price of €149 for up to five properties, or included in the Holiday-rental pack.",
       },
     ],
   },

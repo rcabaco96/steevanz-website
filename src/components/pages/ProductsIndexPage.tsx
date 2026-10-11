@@ -85,7 +85,7 @@ export function ProductsIndexPage({ locale }: { locale: Locale }) {
           {sectors.map((sector, index) => {
             const copy = sector.copy[locale];
             return (
-              <article key={sector.id} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className="card flex flex-col gap-5 p-7">
+              <article key={sector.id} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className={`card flex flex-col gap-5 p-7 ${index === sectors.length - 1 && sectors.length % 2 === 1 ? "md:col-span-2" : ""}`}>
                 <div className="flex flex-col gap-2">
                   <h3 className="text-xl font-semibold text-text">{copy.bundleTitle}</h3>
                   <p className="text-[0.95rem] leading-relaxed text-muted">{copy.bundleBody}</p>

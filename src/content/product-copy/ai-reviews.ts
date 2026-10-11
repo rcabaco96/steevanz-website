@@ -99,6 +99,11 @@ export const copy: ProductCopyByLocale = {
         title: "Lojas",
         body: "Alertas rápidos sobre queixas de produto ou atendimento, para resolver antes que se repitam.",
       },
+      {
+        sector: "lodging",
+        title: "Hostels e guest houses",
+        body: "Hostels e guest houses recebem uma proposta de resposta a cada review no Google, na língua em que foi escrita. Funciona com perfis do Google; as respostas na Booking e no Airbnb continuam a fazer-se nas plataformas.",
+      },
     ],
     includes: [
       "Ligação ao perfil de empresa do seu negócio no Google",
@@ -232,6 +237,11 @@ export const copy: ProductCopyByLocale = {
         sector: "retail",
         title: "Shops",
         body: "Quick alerts on product or service complaints, so you can fix things before they happen again.",
+      },
+      {
+        sector: "lodging",
+        title: "Hostels and guest houses",
+        body: "Hostels and guest houses get a draft reply to every Google review, in the language it was written in. It works with Google profiles; replies on Booking.com and Airbnb are still made on those platforms.",
       },
     ],
     includes: [

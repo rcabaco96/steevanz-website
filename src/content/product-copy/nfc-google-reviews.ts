@@ -99,6 +99,11 @@ export const copy: ProductCopyByLocale = {
         title: "Lojas",
         body: "Um autocolante no balcão ou junto ao terminal de pagamento. Ideal para lojas de bairro que querem destacar-se nas pesquisas locais.",
       },
+      {
+        sector: "lodging",
+        title: "Hostels e guest houses",
+        body: "Em hostels e guest houses, uma placa na receção ou na sala dos pequenos-almoços pede a opinião no Google no fim da estadia, com um toque. Só para alojamentos que podem ter perfil no Google: apartamentos com entrada autónoma não podem.",
+      },
     ],
     includes: [
       "Placa com QR code impresso, no formato escolhido",
@@ -132,6 +137,10 @@ export const copy: ProductCopyByLocale = {
       {
         q: "E se eu não tiver perfil de empresa no Google?",
         a: "Ajudamos a identificar o perfil certo ou a perceber os passos para o criar e verificar. A placa só é configurada quando o perfil estiver ativo e pronto a receber reviews.",
+      },
+      {
+        q: "Tenho alojamento local. As placas servem para mim?",
+        a: "Se for um hostel, uma guest house, quartos com o anfitrião presente ou uma casa onde recebe os hóspedes pessoalmente, sim: pode ter perfil no Google e a placa pede a opinião no fim da estadia. Apartamentos e moradias com entrada autónoma não podem ter perfil, por regra do próprio Google, e a Booking e o Airbnb não têm links de avaliação que uma placa possa abrir. Nesses casos recomendamos o guia digital do alojamento, que explica ao hóspede onde avaliar, da mesma forma para todos e sem ofertas em troca.",
       },
     ],
   },
@@ -233,6 +242,11 @@ export const copy: ProductCopyByLocale = {
         title: "Shops",
         body: "A sticker on the counter or next to the card terminal. Ideal for neighbourhood shops that want to stand out in local searches.",
       },
+      {
+        sector: "lodging",
+        title: "Hostels and guest houses",
+        body: "In hostels and guest houses, a plate at reception or in the breakfast room asks for a Google review at the end of the stay, with one tap. Only for places that can have a Google profile: self-check-in flats can't.",
+      },
     ],
     includes: [
       "Plate with printed QR code, in the format you choose",
@@ -266,6 +280,10 @@ export const copy: ProductCopyByLocale = {
       {
         q: "What if I don't have a Google Business Profile?",
         a: "We'll help you find the right profile or understand the steps to create and verify one. The plate is only configured once the profile is live and ready to receive reviews.",
+      },
+      {
+        q: "I run a holiday rental. Are the plates for me?",
+        a: "If it's a hostel, a guest house, rooms with the host on site or a home where you welcome guests in person, yes: it can have a Google profile and the plate asks for a review at the end of the stay. Self-check-in flats and villas can't have a profile, under Google's own rules, and Booking.com and Airbnb have no review links a plate could open. For those, we recommend the digital guest guide, which tells guests where to leave a review, the same way for everyone and with nothing offered in return.",
       },
     ],
   },

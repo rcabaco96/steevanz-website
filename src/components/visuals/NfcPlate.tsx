@@ -2,7 +2,7 @@ import { useId } from "react";
 
 export type PlateVariant = "stand" | "square" | "sticker" | "wall" | "round";
 export type PlateFinish = "black" | "white";
-export type PlateSymbol = "stars" | "social" | "stamps" | "menu";
+export type PlateSymbol = "stars" | "social" | "stamps" | "menu" | "home";
 
 interface NfcPlateProps {
   variant?: PlateVariant;
@@ -116,10 +116,28 @@ function MenuTiles({ cx, y, size, color }: { cx: number; y: number; size: number
   );
 }
 
+function HomeMark({ cx, y, size, color }: { cx: number; y: number; size: number; color: string }) {
+  const half = size * 0.75;
+  const left = cx - half;
+  const right = cx + half;
+  const roof = y;
+  const eaves = y + size * 0.6;
+  const floor = y + size * 1.15;
+  const doorWidth = size * 0.36;
+  return (
+    <g fill="none" stroke={color} strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round">
+      <path d={`M${left - size * 0.15} ${eaves + size * 0.08}L${cx} ${roof}L${right + size * 0.15} ${eaves + size * 0.08}`} />
+      <path d={`M${left} ${eaves - size * 0.05}V${floor}H${right}V${eaves - size * 0.05}`} />
+      <path d={`M${cx - doorWidth / 2} ${floor}V${floor - size * 0.42}H${cx + doorWidth / 2}V${floor}`} />
+    </g>
+  );
+}
+
 function SymbolRow({ symbol, cx, y, size, color }: { symbol: PlateSymbol; cx: number; y: number; size: number; color: string }) {
   if (symbol === "social") return <SocialDots cx={cx} y={y} size={size} color={color} />;
   if (symbol === "stamps") return <StampRow cx={cx} y={y} size={size * 0.9} color={color} />;
   if (symbol === "menu") return <MenuTiles cx={cx} y={y} size={size} color={color} />;
+  if (symbol === "home") return <HomeMark cx={cx} y={y - size * 0.1} size={size} color={color} />;
   return <Stars cx={cx} y={y} size={size} color={color} />;
 }
 

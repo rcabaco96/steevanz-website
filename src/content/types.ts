@@ -10,9 +10,10 @@ export type ProductId =
   | "ai-chatbot"
   | "ai-voice"
   | "ai-reviews"
-  | "automation";
+  | "automation"
+  | "guest-guide";
 
-export type SectorId = "restaurants" | "beauty" | "clinics" | "retail";
+export type SectorId = "restaurants" | "beauty" | "clinics" | "retail" | "lodging";
 
 export type DocPageId =
   | "getting-started"

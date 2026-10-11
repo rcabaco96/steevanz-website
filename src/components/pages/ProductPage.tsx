@@ -164,7 +164,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         <SectionHeader id="usecases-title" eyebrow={labels.useCasesEyebrow} title={labels.useCasesTitle} />
         <div className="mt-12 grid gap-5 md:grid-cols-2">
           {copy.useCases.map((useCase, index) => (
-            <article key={useCase.title} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className="card flex flex-col gap-3 p-7">
+            <article key={useCase.title} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className={`card flex flex-col gap-3 p-7 ${index === copy.useCases.length - 1 && copy.useCases.length % 2 === 1 ? "md:col-span-2" : ""}`}>
               <Link href={href(locale, { key: "sector", sectorId: useCase.sector })} className="eyebrow w-fit hover:underline">
                 {getSector(useCase.sector).copy[locale].name}
               </Link>
@@ -201,9 +201,13 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
                 <ul className="grid grid-cols-3 gap-2">
                   {product.packs.map((pack) => (
                     <li key={pack.quantity} className="flex flex-col items-center gap-0.5 rounded-xl border border-line bg-surface-2/50 px-2 py-3 text-center">
-                      <span className="text-sm font-semibold text-text">{labels.packsCount.replace("{count}", String(pack.quantity))}</span>
+                      <span className="text-sm font-semibold text-text">
+                        {(product.packUnit === "property" ? labels.packsCountProperty : labels.packsCount).replace("{count}", String(pack.quantity))}
+                      </span>
                       <span className="display tabular text-2xl">{formatEuro(pack.quantity * pack.unitPrice, locale)}</span>
-                      <span className="tabular text-xs text-subtle">{labels.packsUnit.replace("{price}", formatEuro(pack.unitPrice, locale))}</span>
+                      <span className="tabular text-xs text-subtle">
+                        {(product.packUnit === "property" ? labels.packsUnitProperty : labels.packsUnit).replace("{price}", formatEuro(pack.unitPrice, locale))}
+                      </span>
                     </li>
                   ))}
                 </ul>
