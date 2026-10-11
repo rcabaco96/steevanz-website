@@ -67,9 +67,9 @@
 
 .phone {
   position: absolute;
-  right: 16cqw;
-  top: 5cqw;
-  width: 20cqw;
+  right: 17cqw;
+  top: 3.5cqw;
+  width: 17.5cqw;
   aspect-ratio: 9 / 18.5;
   padding: 0.7cqw;
   border-radius: 3.2cqw;
@@ -244,7 +244,7 @@
   }
   28%,
   36% {
-    transform: translate(-30cqw, 9cqw) rotate(-6deg) scale(0.94);
+    transform: translate(-32cqw, 7cqw) rotate(-6deg) scale(0.94);
   }
   50%,
   100% {
