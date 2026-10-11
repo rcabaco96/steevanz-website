@@ -4,7 +4,10 @@ import type { ProductId, SectorId } from "./types";
 
 export type PriceBilling = "one-time" | "monthly" | "project";
 
-export type ProductFamily = "nfc" | "operations" | "ai";
+export type ProductFamily = "nfc" | "operations" | "ai" | "web";
+
+/** The order families appear in (header menu, products index). */
+export const productFamilies: ProductFamily[] = ["nfc", "operations", "ai", "web"];
 
 export type ProductIcon =
   | "star-tap"
@@ -17,7 +20,10 @@ export type ProductIcon =
   | "chat"
   | "voice"
   | "shield-star"
-  | "flow";
+  | "flow"
+  | "page"
+  | "browser"
+  | "bag";
 
 export interface ProductImage {
   src: string;
@@ -281,7 +287,48 @@ export const products: Product[] = [
     related: ["ai-chatbot", "ai-reviews", "bookings"],
     contextPhoto: "shop-owner",
   },
+  {
+    id: "landing-page",
+    slug: { pt: "landing-page", en: "landing-page" },
+    family: "web",
+    icon: "page",
+    priceFrom: 390,
+    priceBilling: "project",
+    priceQualifier: { pt: "por projeto, + 15 €/mês de alojamento", en: "per project, + €15/month hosting" },
+    priceIsProvisional: true,
+    sectors: ["restaurants", "beauty", "clinics", "retail"],
+    related: ["website", "nfc-google-reviews", "bookings"],
+  },
+  {
+    id: "website",
+    slug: { pt: "criacao-website", en: "business-website" },
+    family: "web",
+    icon: "browser",
+    priceFrom: 790,
+    priceBilling: "project",
+    priceQualifier: { pt: "até 5 páginas, + 25 €/mês de alojamento", en: "up to 5 pages, + €25/month hosting" },
+    priceIsProvisional: true,
+    sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
+    related: ["bookings", "nfc-menu", "ai-chatbot"],
+  },
+  {
+    id: "online-shop",
+    slug: { pt: "loja-online", en: "online-shop" },
+    family: "web",
+    icon: "bag",
+    priceFrom: 1490,
+    priceBilling: "project",
+    priceQualifier: { pt: "até 50 produtos, + 39 €/mês de manutenção", en: "up to 50 products, + €39/month maintenance" },
+    priceIsProvisional: true,
+    sectors: ["restaurants", "beauty", "clinics", "retail"],
+    related: ["website", "loyalty", "automation"],
+  },
 ];
+
+/** Website products (landing page, website, online shop): the checkout asks for a short brief. */
+export function isWebProduct(id: string): boolean {
+  return products.some((product) => product.id === id && product.family === "web");
+}
 
 export const productIds = products.map((product) => product.id);
 

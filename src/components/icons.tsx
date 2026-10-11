@@ -301,6 +301,27 @@ const productIconPaths: Record<ProductIcon, ReactNode> = {
       <path d="M9 6h2.5a2 2 0 0 1 2 2v2.5a1.5 1.5 0 0 0 1.5 1.5M9 18h2.5a2 2 0 0 0 2-2v-2.5a1.5 1.5 0 0 1 1.5-1.5" />
     </>
   ),
+  page: (
+    <>
+      <rect x="5" y="2.5" width="14" height="19" rx="2.5" />
+      <path d="M8.5 6.5h7M8.5 9.5h4.5" />
+      <rect x="8.5" y="14" width="7" height="3.5" rx="1.75" />
+    </>
+  ),
+  browser: (
+    <>
+      <rect x="2.5" y="4" width="19" height="16" rx="2.5" />
+      <path d="M2.5 8.5h19M5.5 6.25h.01M7.75 6.25h.01" />
+      <rect x="6" y="11.5" width="5" height="5" rx="1" />
+      <path d="M13.5 12.5H18M13.5 15.5h3" />
+    </>
+  ),
+  bag: (
+    <>
+      <path d="M5 8h14l-1.1 11.6a1.6 1.6 0 0 1-1.6 1.4H7.7a1.6 1.6 0 0 1-1.6-1.4L5 8Z" />
+      <path d="M9 10.5V7a3 3 0 0 1 6 0v3.5" />
+    </>
+  ),
 };
 
 export function ProductGlyph({ icon, ...props }: IconProps & { icon: ProductIcon }) {

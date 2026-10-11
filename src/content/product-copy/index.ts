@@ -6,11 +6,14 @@ import { copy as aiVoice } from "./ai-voice";
 import { copy as automation } from "./automation";
 import { copy as bookings } from "./bookings";
 import { copy as guestGuide } from "./guest-guide";
+import { copy as landingPage } from "./landing-page";
 import { copy as loyalty } from "./loyalty";
 import { copy as nfcGoogleReviews } from "./nfc-google-reviews";
 import { copy as nfcMenu } from "./nfc-menu";
 import { copy as nfcSocial } from "./nfc-social";
+import { copy as onlineShop } from "./online-shop";
 import { copy as waitlist } from "./waitlist";
+import { copy as website } from "./website";
 
 export const productCopy: Record<ProductId, ProductCopyByLocale> = {
   "nfc-google-reviews": nfcGoogleReviews,
@@ -24,6 +27,9 @@ export const productCopy: Record<ProductId, ProductCopyByLocale> = {
   "ai-voice": aiVoice,
   "ai-reviews": aiReviews,
   automation,
+  "landing-page": landingPage,
+  website,
+  "online-shop": onlineShop,
 };
 
 export function getProductCopy(id: ProductId, locale: Locale): ProductCopy {

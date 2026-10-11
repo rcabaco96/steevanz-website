@@ -44,9 +44,14 @@ export function groupForBilling(billing: PriceBilling): CartGroupId {
   return billing === "monthly" ? "monthly" : "oneTime";
 }
 
-export function clampQuantity(value: number): number {
+/** Project products (websites, automation) are one project per line: the quantity stays at 1. */
+export function maxQuantityFor(productId: ProductId): number {
+  return getProduct(productId).priceBilling === "project" ? 1 : maxQuantity;
+}
+
+export function clampQuantity(value: number, max = maxQuantity): number {
   if (!Number.isFinite(value)) return 1;
-  return Math.min(maxQuantity, Math.max(1, Math.round(value)));
+  return Math.min(max, Math.max(1, Math.round(value)));
 }
 
 export function defaultOptions(productId: ProductId): CartLineOptions | undefined {
@@ -82,7 +87,7 @@ export function sanitizeLines(input: unknown): CartLine[] {
     if (typeof quantity !== "number") continue;
     const lineId = typeof id === "string" && id.length <= 40 && !ids.has(id) ? id : `${productId}-${index}`;
     ids.add(lineId);
-    lines.push({ id: lineId, productId, quantity: clampQuantity(quantity), options: sanitizeOptions(productId, options) });
+    lines.push({ id: lineId, productId, quantity: clampQuantity(quantity, maxQuantityFor(productId)), options: sanitizeOptions(productId, options) });
   }
   return lines;
 }

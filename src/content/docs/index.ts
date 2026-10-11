@@ -10,6 +10,7 @@ import { docs as nfcGoogleReviews } from "./nfc-google-reviews";
 import { docs as nfcMenu } from "./nfc-menu";
 import { docs as nfcSocial } from "./nfc-social";
 import { docs as waitlist } from "./waitlist";
+import { webDocs } from "./web";
 
 export const productDocs: Record<ProductId, ProductDocs> = {
   "nfc-google-reviews": nfcGoogleReviews,
@@ -23,6 +24,9 @@ export const productDocs: Record<ProductId, ProductDocs> = {
   "ai-voice": aiVoice,
   "ai-reviews": aiReviews,
   automation,
+  "landing-page": webDocs("landing-page"),
+  website: webDocs("website"),
+  "online-shop": webDocs("online-shop"),
 };
 
 export function getDocPage(productId: ProductId, pageId: DocPageId) {

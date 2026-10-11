@@ -7,6 +7,7 @@ import { getProduct, type Product } from "@/content/products";
 import { getSector } from "@/content/sectors";
 import type { ProductId } from "@/content/types";
 import { ui } from "@/content/ui";
+import { isWebProductId } from "@/content/web-products";
 import { JsonLd } from "@/components/JsonLd";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { cartCopy } from "@/content/cart";
@@ -14,6 +15,7 @@ import { AlertIcon, ArrowRight, Check, ProductGlyph } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { CtaBand } from "@/components/marketing/CtaBand";
 import { ProductCard } from "@/components/marketing/ProductCard";
+import { WebExtras, WebModelosSection, WebRulesSection } from "@/components/marketing/WebProductSections";
 import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
@@ -50,6 +52,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   const bookHref = bookingHref(locale, productId);
   const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icon.svg";
   const cartHref = href(locale, { key: "cart" });
+  const webId = isWebProductId(productId) ? productId : null;
   const cartLabels = { add: cartCopy[locale].add, inCart: cartCopy[locale].inCart, added: cartCopy[locale].addedAnnouncement };
 
   return (
@@ -175,6 +178,13 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       </Section>
 
+      {webId ? (
+        <>
+          <WebModelosSection locale={locale} productId={webId} />
+          <WebRulesSection locale={locale} productId={webId} />
+        </>
+      ) : null}
+
       <Section labelledBy="pricing-title">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
           <div data-reveal className="card p-7 sm:p-10">
@@ -229,6 +239,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
             </p>
           </div>
         </div>
+        {copy.web ? <WebExtras locale={locale} web={copy.web} /> : null}
       </Section>
 
       <Section tone="soft" labelledBy="faq-title">

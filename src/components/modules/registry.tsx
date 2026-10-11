@@ -32,6 +32,9 @@ export const productModules: Record<ProductId, ComponentType<ModuleProps>> = {
   automation: ModulePlaceholder,
   "nfc-menu": ModulePlaceholder,
   "guest-guide": ModulePlaceholder,
+  "landing-page": ModulePlaceholder,
+  website: ModulePlaceholder,
+  "online-shop": ModulePlaceholder,
 };
 
 export function ProductModule(props: ModuleProps) {

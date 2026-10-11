@@ -8,10 +8,12 @@ import { buttonClasses } from "@/components/ui/Button";
 import type { FormField, FormCopy } from "@/content/booking";
 import type { CartCopy } from "@/content/cart";
 import type { ProductIcon } from "@/content/products";
+import { briefContentStatuses, briefDomainStatuses, briefGoals, briefMaxLength, type BriefField, type WebBriefCopy } from "@/content/web-brief";
 import type { ProductId } from "@/content/types";
 import { cartOwnership, submitOrder, type OrderActionState } from "@/lib/cart/actions";
+import { cartNeedsBrief } from "@/lib/cart/brief";
 import { alreadyActive, type OwnedProduct } from "@/lib/cart/ownership";
-import { cartGroups, formatCents, maxQuantity, priceCart, vatRate, type CartGroupId, type GroupTotals, type PricedLine } from "@/lib/cart/pricing";
+import { cartGroups, formatCents, maxQuantity, maxQuantityFor, priceCart, vatRate, type CartGroupId, type GroupTotals, type PricedLine } from "@/lib/cart/pricing";
 import { cart, useCart } from "@/lib/cart/store";
 import type { Locale } from "@/lib/i18n";
 
@@ -36,6 +38,7 @@ interface CartViewProps {
   locale: Locale;
   copy: CartCopy;
   formCopy: FormCopy;
+  briefCopy: WebBriefCopy;
   catalog: CartCatalogItem[];
   sectors: SelectOption[];
   links: { privacy: string; products: string; home: string; signIn: string };
@@ -44,7 +47,7 @@ interface CartViewProps {
 type Step = "cart" | "checkout";
 type Money = (cents: number, group: CartGroupId) => string;
 
-export function CartView({ locale, copy, formCopy, catalog, sectors, links }: CartViewProps) {
+export function CartView({ locale, copy, formCopy, briefCopy, catalog, sectors, links }: CartViewProps) {
   const allLines = useCart();
   // Signed in as a client: what the account already has. Monthly products already active stay out
   // of the order; per-space products add spaces.
@@ -159,6 +162,7 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
 
   const errorFields: FormField[] = result.status === "error" ? result.fields : [];
   const fieldError = (field: FormField) => (errorFields.includes(field) ? formCopy.fieldErrors[field] : undefined);
+  const briefErrors: BriefField[] = result.status === "error" ? (result.briefFields ?? []) : [];
   const generalError =
     result.status === "error"
       ? {
@@ -274,6 +278,7 @@ export function CartView({ locale, copy, formCopy, catalog, sectors, links }: Ca
                   className="sm:col-span-2"
                 />
               </div>
+              {cartNeedsBrief(lines) ? <WebBriefFields copy={briefCopy} optional={formCopy.optional} errors={briefErrors} /> : null}
               <ConsentField copy={formCopy} privacyHref={links.privacy} error={fieldError("consent")} />
               <Honeypot label={formCopy.honeypotLabel} />
               <HiddenInputs values={{ locale }} />
@@ -466,7 +471,7 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
           </Link>
           <p className="text-sm text-subtle">{item.qualifier}</p>
           <p className="tabular text-sm text-muted">
-            {money(line.unitCents)} {copy.unitPrice}
+            {line.billing === "project" ? copy.projectFrom.replace("{price}", money(line.unitCents)) : `${money(line.unitCents)} ${copy.unitPrice}`}
           </p>
           {line.lineExtraCents ? (
             <p className="tabular text-sm text-muted">{copy.customize.lineExtra.replace("{price}", money(line.lineExtraCents))}</p>
@@ -490,7 +495,13 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
       ) : null}
 
       <div className="flex items-center justify-between gap-3 sm:pl-15">
-        <QuantityStepper line={line} copy={copy} label={(template) => template.replace("{name}", lineName)} />
+        {maxQuantityFor(line.productId) === 1 ? (
+          <span className="inline-flex h-10 items-center rounded-full border border-line bg-surface-2/60 px-4 text-sm font-semibold text-muted">
+            {copy.oneProject}
+          </span>
+        ) : (
+          <QuantityStepper line={line} copy={copy} label={(template) => template.replace("{name}", lineName)} />
+        )}
         <p className="tabular min-w-0 text-right text-lg font-semibold text-text">{money(line.subtotalCents)}</p>
       </div>
 
@@ -712,5 +723,66 @@ function QuickAdd({ title, items, addLabel }: { title: string; items: CartCatalo
         ))}
       </ul>
     </section>
+  );
+}
+
+function WebBriefFields({ copy, optional, errors }: { copy: WebBriefCopy; optional: string; errors: BriefField[] }) {
+  const error = (field: BriefField) => (field === "webBusiness" || field === "webGoal") && errors.includes(field) ? copy.errors[field] : undefined;
+  const options = <T extends string>(values: readonly T[], labels: Record<T, string>): SelectOption[] =>
+    values.map((value) => ({ value, label: labels[value] }));
+  return (
+    <fieldset className="flex flex-col gap-5 rounded-2xl border border-line bg-surface-2/40 p-4 sm:p-6">
+      <legend className="sr-only">{copy.title}</legend>
+      <div className="flex flex-col gap-1.5">
+        <p aria-hidden="true" className="text-lg font-semibold text-text">
+          {copy.title}
+        </p>
+        <p className="text-sm text-muted">{copy.lead}</p>
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <TextAreaField
+          name="webBusiness"
+          label={copy.labels.webBusiness}
+          required
+          rows={2}
+          maxLength={briefMaxLength.webBusiness}
+          placeholder={copy.placeholders.webBusiness}
+          error={error("webBusiness")}
+          className="sm:col-span-2"
+        />
+        <SelectField
+          name="webGoal"
+          label={copy.labels.webGoal}
+          required
+          options={options(briefGoals, copy.goals)}
+          placeholder={copy.choose}
+          defaultValue=""
+          error={error("webGoal")}
+          className="sm:col-span-2"
+        />
+        <TextAreaField
+          name="webPages"
+          label={copy.labels.webPages}
+          optionalLabel={optional}
+          rows={2}
+          maxLength={briefMaxLength.webPages}
+          placeholder={copy.placeholders.webPages}
+          className="sm:col-span-2"
+        />
+        <TextField name="webSite" label={copy.labels.webSite} optionalLabel={optional} maxLength={briefMaxLength.webSite} placeholder={copy.placeholders.webSite} className="sm:col-span-2" />
+        <SelectField name="webDomain" label={copy.labels.webDomain} optionalLabel={optional} options={options(briefDomainStatuses, copy.domain)} placeholder={copy.choose} defaultValue="" />
+        <SelectField name="webContent" label={copy.labels.webContent} optionalLabel={optional} options={options(briefContentStatuses, copy.content)} placeholder={copy.choose} defaultValue="" />
+        <TextField name="webDeadline" label={copy.labels.webDeadline} optionalLabel={optional} maxLength={briefMaxLength.webDeadline} placeholder={copy.placeholders.webDeadline} className="sm:col-span-2" />
+        <TextAreaField
+          name="webReferences"
+          label={copy.labels.webReferences}
+          optionalLabel={optional}
+          rows={3}
+          maxLength={briefMaxLength.webReferences}
+          placeholder={copy.placeholders.webReferences}
+          className="sm:col-span-2"
+        />
+      </div>
+    </fieldset>
   );
 }

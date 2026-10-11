@@ -1,6 +1,6 @@
 import { sendEmail, type Sender } from "@/lib/email/send";
 
-const ownerAddress = "rcabaco@steevanz.com";
+export const ownerAddress = "rcabaco@steevanz.com";
 
 export interface EmailRow {
   label: string;
@@ -14,6 +14,11 @@ export interface EmailTable {
   foot?: [string, string][];
 }
 
+export interface EmailSection {
+  title: string;
+  rows: EmailRow[];
+}
+
 export interface OwnerEmail {
   subject: string;
   heading: string;
@@ -21,6 +26,8 @@ export interface OwnerEmail {
   intro?: string[];
   rows: EmailRow[];
   tables?: EmailTable[];
+  /** Titled label/value blocks after the tables (e.g. the web brief of an order). */
+  sections?: EmailSection[];
   replyTo?: string;
   /** Defaults to the Steevanz owner inbox. */
   to?: string[];
@@ -72,8 +79,7 @@ function renderTableText({ title, rows, foot = [] }: EmailTable): string[] {
   return ["", title.toUpperCase(), ...rows.map((row) => `- ${row.join(" | ")}`), ...foot.map(([label, value]) => `  ${label}: ${value}`)];
 }
 
-function renderHtml({ heading, intro = [], rows, tables = [], adminUrl, linkLabel = "Abrir no painel", note, showUrl }: OwnerEmail): string {
-  const paragraphs = intro.map((text) => `<p style="margin:0 0 12px;color:#1d1220;font-size:15px;line-height:1.5">${escapeHtml(text)}</p>`).join("");
+function renderRowsHtml(rows: EmailRow[]): string {
   const body = rows
     .filter((row) => row.value)
     .map(
@@ -81,7 +87,17 @@ function renderHtml({ heading, intro = [], rows, tables = [], adminUrl, linkLabe
         `<tr><td style="padding:8px 12px;color:#6f5d71;font-size:13px;vertical-align:top;white-space:nowrap">${escapeHtml(row.label)}</td><td style="padding:8px 12px;color:#1d1220;font-size:15px;white-space:pre-wrap">${escapeHtml(String(row.value))}</td></tr>`,
     )
     .join("");
-  const table = body ? `<table style="border-collapse:collapse;width:100%">${body}</table>` : "";
+  return body ? `<table style="border-collapse:collapse;width:100%">${body}</table>` : "";
+}
+
+function renderSectionHtml({ title, rows }: EmailSection): string {
+  const table = renderRowsHtml(rows);
+  return table ? `<h2 style="margin:28px 0 8px;font-size:16px;color:#1d1220">${escapeHtml(title)}</h2>${table}` : "";
+}
+
+function renderHtml({ heading, intro = [], rows, tables = [], sections = [], adminUrl, linkLabel = "Abrir no painel", note, showUrl }: OwnerEmail): string {
+  const paragraphs = intro.map((text) => `<p style="margin:0 0 12px;color:#1d1220;font-size:15px;line-height:1.5">${escapeHtml(text)}</p>`).join("");
+  const table = renderRowsHtml(rows);
   const link = adminUrl
     ? `<p style="margin:24px 0 0"><a href="${escapeHtml(adminUrl)}" style="display:inline-block;background:#7a2d60;color:#ffffff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:600">${escapeHtml(linkLabel)}</a></p>`
     : "";
@@ -90,17 +106,22 @@ function renderHtml({ heading, intro = [], rows, tables = [], adminUrl, linkLabe
     adminUrl && showUrl
       ? `<p style="margin:16px 0 0;color:#6f5d71;font-size:12px;line-height:1.5">Se o botão não funcionar, copie este endereço para o navegador:<br><a href="${escapeHtml(adminUrl)}" style="color:#7a2d60;word-break:break-all">${escapeHtml(adminUrl)}</a></p>`
       : "";
-  return `<!doctype html><html><body style="margin:0;padding:24px;background:#fbf7f1;font-family:Arial,Helvetica,sans-serif"><div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e7ddd0;border-radius:16px;padding:24px"><h1 style="margin:0 0 16px;font-size:20px;color:#1d1220">${escapeHtml(heading)}</h1>${paragraphs}${table}${tables.map(renderTableHtml).join("")}${link}${small}${url}</div></body></html>`;
+  return `<!doctype html><html><body style="margin:0;padding:24px;background:#fbf7f1;font-family:Arial,Helvetica,sans-serif"><div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e7ddd0;border-radius:16px;padding:24px"><h1 style="margin:0 0 16px;font-size:20px;color:#1d1220">${escapeHtml(heading)}</h1>${paragraphs}${table}${tables.map(renderTableHtml).join("")}${sections.map(renderSectionHtml).join("")}${link}${small}${url}</div></body></html>`;
 }
 
-function renderText({ heading, intro = [], rows, tables = [], adminUrl, note }: OwnerEmail): string {
-  const lines = rows.filter((row) => row.value).map((row) => `${row.label}: ${row.value}`);
+function rowLines(rows: EmailRow[]): string[] {
+  return rows.filter((row) => row.value).map((row) => `${row.label}: ${row.value}`);
+}
+
+function renderText({ heading, intro = [], rows, tables = [], sections = [], adminUrl, note }: OwnerEmail): string {
+  const lines = rowLines(rows);
   return [
     heading,
     "",
     ...intro.flatMap((text) => [text, ""]),
     ...lines,
     ...tables.flatMap(renderTableText),
+    ...sections.flatMap((section) => ["", section.title.toUpperCase(), ...rowLines(section.rows)]),
     ...(adminUrl ? ["", adminUrl] : []),
     ...(note ? ["", note] : []),
   ].join("\n");

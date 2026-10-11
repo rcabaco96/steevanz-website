@@ -322,8 +322,9 @@ export const sectors: Sector[] = [
     slug: sectorSlugs.lodging,
     photo: "holiday-rental",
     side: { kind: "product", productId: "guest-guide" },
-    // After the web products merge: put the website product id (AL template variant) in place of nfc-google-reviews.
-    bundle: ["guest-guide", "ai-chatbot", "automation", "nfc-google-reviews"],
+    // The website (direct bookings, no platform commission) instead of the Google plates, which only suit
+    // places that can have a Google profile (said in the bundle note).
+    bundle: ["guest-guide", "ai-chatbot", "automation", "website"],
     bundleNote: {
       pt: "As placas para reviews no Google são só para alojamentos que podem ter perfil no Google: hostels, guest houses, quartos com o anfitrião presente e casas onde recebe os hóspedes pessoalmente. Apartamentos e moradias com entrada autónoma não podem ter perfil, por regra do próprio Google. Nesses casos, o guia explica ao hóspede onde avaliar na Booking ou no Airbnb, da mesma forma para todos e sem ofertas em troca.",
       en: "Google review plates are only for places that can have a Google profile: hostels, guest houses, rooms with the host on site and homes where you welcome guests in person. Self-check-in flats and villas can't have a profile, under Google's own rules. For those, the guide tells guests where to review on Booking.com or Airbnb, the same way for everyone and with nothing offered in return.",
