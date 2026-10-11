@@ -58,20 +58,24 @@ export function productJsonLd(input: {
   const { locale, product, name, description, image } = input;
   const url = absoluteUrl(href(locale, { key: "product", productId: product.id }));
   const isRecurring = product.priceBilling === "monthly";
+  // Every product is described as a Service (owner, 2026-10-11): we set it up and deliver it, the cart
+  // is a request with indicative prices, so Google's merchant listing / product snippet fields
+  // (shipping, returns, reviews) don't apply — and we never add ratings we don't have (rule 1).
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "Service",
     name,
     description,
     image: absoluteUrl(image),
     url,
-    brand: { "@type": "Brand", name: site.name },
+    serviceType: name,
+    provider: { "@id": organizationId },
+    areaServed: { "@type": "Country", name: "Portugal" },
     offers: {
       "@type": "Offer",
       url,
       priceCurrency: "EUR",
       price: product.priceFrom.toFixed(2),
-      availability: "https://schema.org/InStock",
       seller: { "@id": organizationId },
       priceSpecification: {
         "@type": isRecurring ? "UnitPriceSpecification" : "PriceSpecification",

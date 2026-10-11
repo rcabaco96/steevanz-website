@@ -348,36 +348,45 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           ],
         },
         {
+          id: "devolucoes",
+          title: "3. Devoluções das placas",
+          paragraphs: [
+            "Pode devolver placas e autocolantes sem personalização no prazo de 14 dias a contar da entrega, sem indicar motivo, em bom estado e na embalagem original; devolvemos o valor pago pelo mesmo meio de pagamento até 14 dias depois de recebermos a devolução.",
+            "As placas feitas à medida do seu negócio (com o seu logótipo ou texto personalizado) não podem ser devolvidas por arrependimento, como prevê a lei (Decreto-Lei n.º 24/2014, artigo 17.º); trocamo-las sem custos se chegarem com defeito ou não funcionarem.",
+            "Para devolver ou reportar um defeito, escreva para [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com) com a referência da encomenda.",
+          ],
+        },
+        {
           id: "marcas",
-          title: "3. Marcas de terceiros",
+          title: "4. Marcas de terceiros",
           paragraphs: [
             "Google, Google Maps e Perfil da Empresa no Google são marcas da Google LLC. WhatsApp, Instagram e Facebook são marcas da Meta Platforms, Inc. Apple Wallet é marca da Apple Inc. Estas marcas são referidas apenas para descrever a compatibilidade dos nossos produtos. A Steevanz é uma empresa independente e não tem qualquer afiliação, patrocínio ou aprovação destas entidades.",
           ],
         },
         {
           id: "propriedade",
-          title: "4. Propriedade intelectual",
+          title: "5. Propriedade intelectual",
           paragraphs: [
             "Os textos, desenhos, marcas e código deste site pertencem à Steevanz ou são usados com licença. As fotografias e vídeos de banco de imagens são utilizados ao abrigo das licenças Pexels e Unsplash. Não é permitida a reprodução para fins comerciais sem autorização escrita.",
           ],
         },
         {
           id: "responsabilidade",
-          title: "5. Responsabilidade",
+          title: "6. Responsabilidade",
           paragraphs: [
             "Fazemos o possível para manter a informação do site correta e atualizada, mas não garantimos que esteja livre de erros. As ferramentas de inteligência artificial descritas podem cometer erros e funcionam sempre com supervisão humana. Não nos responsabilizamos por conteúdos de sites de terceiros para os quais existam ligações.",
           ],
         },
         {
           id: "litigios",
-          title: "6. Resolução alternativa de litígios",
+          title: "7. Resolução alternativa de litígios",
           paragraphs: [
             "Em caso de litígio de consumo, o consumidor pode recorrer a uma entidade de resolução alternativa de litígios, nos termos da Lei n.º 144/2015, como o CNIACC — Centro Nacional de Informação e Arbitragem de Conflitos de Consumo ([www.cniacc.pt](https://www.cniacc.pt)). Mais informação no Portal do Consumidor ([www.consumidor.gov.pt](https://www.consumidor.gov.pt)). Dispomos de [Livro de Reclamações eletrónico](https://www.livroreclamacoes.pt).",
           ],
         },
         {
           id: "lei",
-          title: "7. Lei aplicável",
+          title: "8. Lei aplicável",
           paragraphs: [
             "Estes termos regem-se pela lei portuguesa. Para qualquer litígio é competente o foro da comarca de Lisboa, sem prejuízo das normas imperativas aplicáveis aos consumidores.",
           ],
@@ -407,36 +416,45 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           ],
         },
         {
+          id: "returns",
+          title: "3. Returns of plates",
+          paragraphs: [
+            "You can return plates and stickers without customisation within 14 days of delivery, without giving a reason, in good condition and in the original packaging; we refund the amount paid by the same payment method within 14 days of receiving the return.",
+            "Plates made to measure for your business (with your logo or custom text) cannot be returned for change of mind, as the law provides (Decree-Law 24/2014, article 17); we replace them free of charge if they arrive faulty or don't work.",
+            "To return or report a fault, write to [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com) with the order reference.",
+          ],
+        },
+        {
           id: "trademarks",
-          title: "3. Third-party trademarks",
+          title: "4. Third-party trademarks",
           paragraphs: [
             "Google, Google Maps and Google Business Profile are trademarks of Google LLC. WhatsApp, Instagram and Facebook are trademarks of Meta Platforms, Inc. Apple Wallet is a trademark of Apple Inc. These trademarks are mentioned only to describe the compatibility of our products. Steevanz is an independent company with no affiliation with, sponsorship by or endorsement from these companies.",
           ],
         },
         {
           id: "ip",
-          title: "4. Intellectual property",
+          title: "5. Intellectual property",
           paragraphs: [
             "The text, designs, marks and code of this website belong to Steevanz or are used under licence. Stock photos and videos are used under the Pexels and Unsplash licences. Commercial reproduction without written permission is not allowed.",
           ],
         },
         {
           id: "liability",
-          title: "5. Liability",
+          title: "6. Liability",
           paragraphs: [
             "We do our best to keep the information on this website accurate and up to date, but we cannot guarantee it is error-free. The artificial intelligence tools described can make mistakes and always operate with human oversight. We are not responsible for the content of third-party websites we link to.",
           ],
         },
         {
           id: "disputes",
-          title: "6. Alternative dispute resolution",
+          title: "7. Alternative dispute resolution",
           paragraphs: [
             "In the event of a consumer dispute, consumers may use an alternative dispute resolution body under Portuguese Law 144/2015, such as CNIACC ([www.cniacc.pt](https://www.cniacc.pt)). More information is available on the Consumer Portal ([www.consumidor.gov.pt](https://www.consumidor.gov.pt)). We also provide an [electronic complaints book](https://www.livroreclamacoes.pt).",
           ],
         },
         {
           id: "law",
-          title: "7. Governing law",
+          title: "8. Governing law",
           paragraphs: [
             "These terms are governed by Portuguese law. The courts of Lisbon have jurisdiction over any dispute, without prejudice to mandatory consumer protection rules.",
           ],
