@@ -7,7 +7,7 @@ export const docs: ProductDocs = {
       pt: {
         title: "Primeiros passos com a lista de espera digital",
         description:
-          "Como funciona a lista de espera digital da Steevanz: o cliente entra por QR ou NFC, acompanha a vez no telemóvel e é avisado quando chega a sua vez.",
+          "Como funciona a lista de espera digital da Steevanz: o cliente entra por QR code ou com um toque, acompanha a vez no telemóvel e é avisado quando chega a sua vez.",
         blocks: [
           {
             type: "p",
@@ -17,7 +17,7 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "O cliente lê o QR code ou toca na placa NFC à entrada. Também pode ser a equipa a adicioná-lo ao balcão.",
+              "O cliente lê o QR code ou toca na placa à entrada. Também pode ser a equipa a adicioná-lo ao balcão.",
               "Escreve o nome e, conforme o negócio, o número de pessoas ou o serviço. O email é opcional.",
               "Fica com uma senha no telemóvel: número, posição na fila e espera estimada, sempre atualizados.",
               "Quando há mesa ou vez livre, a equipa carrega em «Chamar o seguinte». O telemóvel do cliente toca; quem ligou os avisos recebe uma notificação mesmo com a página fechada, e quem deixou email recebe também um email.",
@@ -31,7 +31,7 @@ export const docs: ProductDocs = {
               "Página de entrada na fila e senha no telemóvel, sem app nem conta.",
               "Painel para a equipa no telemóvel, tablet ou computador, com o botão «Chamar o seguinte».",
               "Ecrã de chamada para uma TV à entrada (opcional), só com números.",
-              "Cartaz com QR code e placa NFC para a entrada.",
+              "Cartaz com QR code e placa para a entrada.",
               "Estatísticas dos últimos 30 dias: entradas, atendidos, desistências e horas com mais gente.",
               "Configuração da fila pela equipa da Steevanz.",
               "Suporte por WhatsApp e email.",
@@ -52,7 +52,7 @@ export const docs: ProductDocs = {
       en: {
         title: "Getting started with the digital waitlist",
         description:
-          "How the Steevanz digital waitlist works: customers join by QR code or NFC, follow their turn on their phone and are alerted when it is their turn.",
+          "How the Steevanz digital waitlist works: customers join by QR code or with a tap, follow their turn on their phone and are alerted when it is their turn.",
         blocks: [
           {
             type: "p",
@@ -62,7 +62,7 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "Customers scan the QR code or tap the NFC plate at the entrance. Your team can also add them at the desk.",
+              "Customers scan the QR code or tap the plate at the entrance. Your team can also add them at the desk.",
               "They type their name and, depending on the business, the number of people or the service. Email is optional.",
               "They get a ticket on their phone: number, position and estimated wait, always up to date.",
               "When a table or turn is free, your team taps «Call next». The customer's phone rings; those who switched alerts on get a notification even with the page closed, and those who left an email get an email too.",
@@ -76,7 +76,7 @@ export const docs: ProductDocs = {
               "Join page and ticket on the phone, no app or account.",
               "Staff dashboard on phone, tablet or computer, with the «Call next» button.",
               "Call screen for a TV at the entrance (optional), numbers only.",
-              "Poster with QR code and NFC plate for the entrance.",
+              "Poster with QR code and plate for the entrance.",
               "Stats for the last 30 days: joins, served (and calls that closed on their own), walk-aways and busiest hours.",
               "Queue set up by the Steevanz team.",
               "Support by WhatsApp and email.",
@@ -98,7 +98,7 @@ export const docs: ProductDocs = {
     setup: {
       pt: {
         title: "Instalação da lista de espera digital",
-        description: "Como a Steevanz põe a lista de espera a funcionar no seu espaço: regras da fila, QR e NFC à entrada, painel e ecrã de chamada.",
+        description: "Como a Steevanz põe a lista de espera a funcionar no seu espaço: regras da fila, QR code e placa à entrada, painel e ecrã de chamada.",
         blocks: [
           { type: "p", text: "Tratamos da instalação consigo. Normalmente fica a funcionar em poucos dias úteis." },
           {
@@ -106,7 +106,7 @@ export const docs: ProductDocs = {
             items: [
               { title: "Levantamento", body: "Falamos sobre o seu espaço: horas de maior movimento, se os clientes vêm em grupo ou escolhem um serviço e profissional." },
               { title: "Configuração da fila", body: "Criamos o espaço com o horário e definimos o tempo médio por vez, o tempo para chegar depois de chamado e o máximo de pessoas à espera." },
-              { title: "QR e NFC à entrada", body: "Entregamos o cartaz com o QR code e, se escolher, a placa NFC já programada com o link da fila." },
+              { title: "QR code e placa à entrada", body: "Entregamos o cartaz com o QR code e, se escolher, a placa já programada com o link da fila." },
               { title: "Painel e ecrã", body: "Mostramos à equipa o painel e, se quiser, ligamos o ecrã de chamada numa TV à entrada." },
               { title: "Teste real", body: "Um membro da equipa entra na fila com o próprio telemóvel e é chamado, para confirmar que tudo funciona de ponta a ponta." },
             ],
@@ -120,7 +120,7 @@ export const docs: ProductDocs = {
       },
       en: {
         title: "Setting up the digital waitlist",
-        description: "How Steevanz gets the waitlist running in your space: queue rules, QR and NFC at the door, dashboard and call screen.",
+        description: "How Steevanz gets the waitlist running in your space: queue rules, QR code and plate at the door, dashboard and call screen.",
         blocks: [
           { type: "p", text: "We handle the setup with you. It is usually up and running within a few working days." },
           {
@@ -128,7 +128,7 @@ export const docs: ProductDocs = {
             items: [
               { title: "Discovery", body: "We talk about your space: busiest hours, whether customers come in groups or pick a service and staff member." },
               { title: "Queue configuration", body: "We create your space with its opening hours and set the average time per turn, the time to arrive after being called and the most people waiting." },
-              { title: "QR and NFC at the door", body: "We deliver the poster with the QR code and, if you choose, the NFC plate programmed with the queue link." },
+              { title: "QR code and plate at the door", body: "We deliver the poster with the QR code and, if you choose, the plate programmed with the queue link." },
               { title: "Dashboard and screen", body: "We show your team the dashboard and, if you want, set up the call screen on a TV at the entrance." },
               { title: "Live test", body: "A team member joins the queue on their own phone and gets called, to confirm everything works end to end." },
             ],
@@ -288,12 +288,12 @@ export const docs: ProductDocs = {
               "Chame-o outra vez no «⋯» ou chame pelo número ao balcão.",
             ],
           },
-          { type: "h2", id: "qr-nfc-nao-abre", text: "O QR ou a placa NFC não abrem a página" },
+          { type: "h2", id: "qr-placa-nao-abre", text: "O QR ou a placa não abrem a página" },
           {
             type: "ol",
             items: [
               "Confirme que o QR não está danificado nem com reflexos.",
-              "Para a placa NFC, o NFC tem de estar ligado no telemóvel (alguns Android têm-no desligado).",
+              "Para a placa, a leitura por aproximação tem de estar ligada no telemóvel (alguns Android têm-na desligada nas definições de ligações).",
               "Se continuar, contacte-nos: verificamos o link programado.",
             ],
           },
@@ -319,12 +319,12 @@ export const docs: ProductDocs = {
               "Call them again from the «⋯» or call their number at the desk.",
             ],
           },
-          { type: "h2", id: "qr-nfc-not-opening", text: "The QR code or NFC plate does not open the page" },
+          { type: "h2", id: "qr-plate-not-opening", text: "The QR code or plate does not open the page" },
           {
             type: "ol",
             items: [
               "Check the QR code isn't damaged or catching glare.",
-              "For the NFC plate, NFC must be on in the phone (some Android phones have it off).",
+              "For the plate, the phone's contactless (tap) reading must be on (some Android phones have it off in the connection settings).",
               "If it still fails, contact us: we'll check the programmed link.",
             ],
           },
@@ -340,13 +340,13 @@ export const docs: ProductDocs = {
     faq: {
       pt: {
         title: "Perguntas frequentes sobre a lista de espera digital",
-        description: "Respostas às dúvidas mais comuns sobre a lista de espera digital da Steevanz: aplicações, avisos, NFC, faltas, ecrã e RGPD.",
+        description: "Respostas às dúvidas mais comuns sobre a lista de espera digital da Steevanz: aplicações, avisos, placas, faltas, ecrã e RGPD.",
         blocks: [
           { type: "h2", id: "perguntas", text: "Perguntas e respostas" },
           {
             type: "faq",
             items: [
-              { q: "O cliente precisa de instalar alguma app?", a: "Não. Entra pelo navegador, depois de ler o QR code ou tocar na placa NFC." },
+              { q: "O cliente precisa de instalar alguma app?", a: "Não. Entra pelo navegador, depois de ler o QR code ou tocar na placa." },
               { q: "Como é avisado o cliente?", a: "Na página da senha (som, vibração no Android e notificação, com a página aberta) e por email, se o deixar. Não enviamos SMS nem WhatsApp." },
               { q: "Quanto tempo tem o cliente para chegar?", a: "O que definir: 2 a 15 minutos (5 por omissão). A senha mostra até que horas guardamos a vez." },
               { q: "O cliente pode avisar que já não vem?", a: "Sim. Com um toque na senha sai da fila, e a equipa chama o seguinte." },
@@ -360,20 +360,20 @@ export const docs: ProductDocs = {
             items: [
               "[Configuração](/docs/lista-espera-digital/configuracao): regras da fila e privacidade.",
               "[Utilização](/docs/lista-espera-digital/utilizacao): chamar, faltas e balcão.",
-              "[Resolução de problemas](/docs/lista-espera-digital/resolucao-problemas): avisos, QR, NFC e ecrã.",
+              "[Resolução de problemas](/docs/lista-espera-digital/resolucao-problemas): avisos, QR, placa e ecrã.",
             ],
           },
         ],
       },
       en: {
         title: "Digital waitlist FAQ",
-        description: "Answers to common questions about the Steevanz digital waitlist: apps, alerts, NFC, no-shows, the call screen and GDPR.",
+        description: "Answers to common questions about the Steevanz digital waitlist: apps, alerts, plates, no-shows, the call screen and GDPR.",
         blocks: [
           { type: "h2", id: "questions", text: "Questions and answers" },
           {
             type: "faq",
             items: [
-              { q: "Do customers need to install an app?", a: "No. They join in the browser after scanning the QR code or tapping the NFC plate." },
+              { q: "Do customers need to install an app?", a: "No. They join in the browser after scanning the QR code or tapping the plate." },
               { q: "How are customers alerted?", a: "On their ticket page (sound, vibration on Android and a notification, with the page open) and by email if they leave one. We don't send SMS or WhatsApp messages." },
               { q: "How long do customers have to arrive?", a: "Whatever you set: 2 to 15 minutes (5 by default). The ticket shows until what time their turn is held." },
               { q: "Can customers say they are no longer coming?", a: "Yes. One tap on their ticket takes them out of the queue, and your team calls the next person." },
@@ -387,7 +387,7 @@ export const docs: ProductDocs = {
             items: [
               "[Configuration](/en/docs/digital-waitlist/configuration): queue rules and privacy.",
               "[Usage](/en/docs/digital-waitlist/usage): calling, no-shows and the desk.",
-              "[Troubleshooting](/en/docs/digital-waitlist/troubleshooting): alerts, QR code, NFC and the screen.",
+              "[Troubleshooting](/en/docs/digital-waitlist/troubleshooting): alerts, QR code, plate and the screen.",
             ],
           },
         ],

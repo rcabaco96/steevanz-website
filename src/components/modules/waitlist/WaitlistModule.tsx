@@ -153,7 +153,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
         <Materials
           title="Página da fila"
           url={url}
-          hint="Este é o link da fila. Imprima o cartaz para a entrada, ou peça-nos a placa NFC já programada com este link."
+          hint="Este é o link da fila. Imprima o cartaz para a entrada, ou peça-nos a placa já programada com este link."
           poster={{
             heading: current.kind === "restaurant" ? "Mesa ocupada? Entre na fila." : "Entre na fila pelo telemóvel.",
             sub: "Aponte a câmara ao código. Avisamos quando for a sua vez — pode esperar onde quiser.",

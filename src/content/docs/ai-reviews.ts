@@ -64,12 +64,12 @@ export const docs: ProductDocs = {
           },
           {
             type: "h2",
-            id: "combinar-nfc",
-            text: "Combinar com as placas NFC",
+            id: "combinar-placas",
+            text: "Combinar com as placas para reviews no Google",
           },
           {
             type: "p",
-            text: "O serviço funciona especialmente bem com as [placas NFC para Google Reviews](/produtos/placas-nfc-google-reviews): as placas ajudam a receber mais avaliações, e a gestão com IA garante que todas têm resposta. Para começar, consulte a [instalação](/docs/gestao-reviews-ia/instalacao) ou [marque uma demonstração](/agendar).",
+            text: "O serviço funciona especialmente bem com as [placas para reviews no Google](/produtos/placas-google-reviews): as placas ajudam a receber mais avaliações, e a gestão com IA garante que todas têm resposta. Para começar, consulte a [instalação](/docs/gestao-reviews-ia/instalacao) ou [marque uma demonstração](/agendar).",
           },
         ],
       },
@@ -133,12 +133,12 @@ export const docs: ProductDocs = {
           },
           {
             type: "h2",
-            id: "pair-with-nfc",
-            text: "Pairing with NFC plates",
+            id: "pair-with-plates",
+            text: "Pairing with Google review plates",
           },
           {
             type: "p",
-            text: "The service works especially well with [NFC Google review plates](/en/products/nfc-google-review-plates): the plates help you collect more reviews, and AI management makes sure every one gets a reply. To get going, see [setup](/en/docs/ai-review-management/setup) or [book a demo](/en/book-a-demo).",
+            text: "The service works especially well with [Google review plates](/en/products/google-review-plates): the plates help you collect more reviews, and AI management makes sure every one gets a reply. To get going, see [setup](/en/docs/ai-review-management/setup) or [book a demo](/en/book-a-demo).",
           },
         ],
       },
@@ -859,7 +859,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Podem ajudar-me a ter mais avaliações?",
-                a: "O serviço foca-se nas respostas. Para receber mais avaliações de forma legítima, recomendamos as nossas placas NFC para Google Reviews, que facilitam o pedido a todos os clientes.",
+                a: "O serviço foca-se nas respostas. Para receber mais avaliações de forma legítima, recomendamos as nossas placas para reviews no Google, que facilitam o pedido a todos os clientes.",
               },
               {
                 q: "Posso oferecer um desconto a quem deixar uma avaliação?",
@@ -925,7 +925,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Can you help me get more reviews?",
-                a: "The service focuses on replies. To collect more reviews legitimately, we recommend our NFC Google review plates, which make it easy to ask every customer.",
+                a: "The service focuses on replies. To collect more reviews legitimately, we recommend our Google review plates, which make it easy to ask every customer.",
               },
               {
                 q: "Can I offer a discount for leaving a review?",

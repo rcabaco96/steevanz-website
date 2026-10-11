@@ -6,10 +6,10 @@ export const copy: ProductCopyByLocale = {
     shortName: "Cartão Fidelização",
     tagline: "Carimbos digitais que os clientes não perdem nem esquecem em casa.",
     summary:
-      "Um cartão de fidelização no telemóvel do cliente: adere por NFC ou QR code, sem app, e a equipa carimba a cada visita. Recompensas automáticas.",
-    metaTitle: "Cartão de Fidelização Digital NFC | Steevanz",
+      "Um cartão de fidelização no telemóvel do cliente: adere com um toque ou QR code, sem app, e a equipa carimba a cada visita. Recompensas automáticas.",
+    metaTitle: "Cartão de Fidelização Digital | Steevanz",
     metaDescription:
-      "Cartão de fidelização digital com NFC e QR code: carimbos no telemóvel, sem app e sem cartões de papel. Recompensas automáticas e estatísticas.",
+      "Cartão de fidelização digital com adesão por toque ou QR code: carimbos no telemóvel, sem app e sem cartões de papel. Recompensas automáticas e estatísticas.",
     heroTitle: "O cartão de carimbos, agora no telemóvel",
     heroSubtitle:
       "Os clientes aderem com um toque ou uma leitura de QR code, juntam carimbos a cada visita e recebem a recompensa automaticamente. O cartão fica no telemóvel, a um toque do ecrã principal. Sem app para instalar.",
@@ -59,7 +59,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Carimbo em segundos",
-        body: "A equipa escreve o PIN de carimbo no telemóvel do cliente ou lê o QR do cartão com o telemóvel do balcão. A placa NFC com QR serve para os clientes aderirem.",
+        body: "A equipa escreve o PIN de carimbo no telemóvel do cliente ou lê o QR do cartão com o telemóvel do balcão. A placa com QR serve para os clientes aderirem.",
       },
       {
         title: "Recompensas automáticas",
@@ -97,7 +97,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Configuração do cartão com o nome, as regras e a recompensa do seu negócio",
-      "Placa NFC de balcão com QR code impresso",
+      "Placa de balcão com QR code impresso",
       "Definição das regras de carimbo e recompensa",
       "Painel com estatísticas de visitas e recompensas",
       "Formação rápida da sua equipa",
@@ -110,7 +110,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Que telemóveis funcionam?",
-        a: "Os iPhone XS e mais recentes leem NFC sem app; nos iPhone 7 a X, através do leitor no Centro de Controlo. A maioria dos Android lê NFC desde que esteja ligado. Qualquer telemóvel com câmara pode usar o QR code.",
+        a: "Os iPhone XS e mais recentes leem a placa sem app; nos iPhone 7 a X, através do leitor de etiquetas no Centro de Controlo. A maioria dos Android lê a placa desde que a opção de leitura por aproximação esteja ligada. Qualquer telemóvel com câmara pode usar o QR code.",
       },
       {
         q: "Como evito carimbos falsos?",
@@ -135,10 +135,10 @@ export const copy: ProductCopyByLocale = {
     shortName: "Loyalty Card",
     tagline: "Digital stamps your customers can't lose or leave at home.",
     summary:
-      "A loyalty card on your customer's phone: they join by NFC or QR code, no app, and your staff stamp it at every visit. Rewards unlock automatically.",
-    metaTitle: "NFC Digital Loyalty Card | Steevanz",
+      "A loyalty card on your customer's phone: they join with a tap or a QR code, no app, and your staff stamp it at every visit. Rewards unlock automatically.",
+    metaTitle: "Digital Loyalty Card | Steevanz",
     metaDescription:
-      "Digital loyalty card with NFC and QR code: stamps on the phone, no app and no paper cards. Automatic rewards and simple stats.",
+      "Digital loyalty card that customers join with a tap or a QR code: stamps on the phone, no app and no paper cards. Automatic rewards and simple stats.",
     heroTitle: "The stamp card, now on their phone",
     heroSubtitle:
       "Customers join with a tap or a QR scan, collect a stamp at every visit and receive their reward automatically. The card lives on their phone, one tap from the home screen. Nothing to install.",
@@ -188,7 +188,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Stamps in seconds",
-        body: "Your staff type the stamp PIN on the customer's phone or scan the card's QR with the counter phone. The NFC plate with QR is how customers join.",
+        body: "Your staff type the stamp PIN on the customer's phone or scan the card's QR with the counter phone. The plate with QR is how customers join.",
       },
       {
         title: "Automatic rewards",
@@ -226,7 +226,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Card set up with your business name, rules and reward",
-      "NFC counter plate with printed QR code",
+      "Counter plate with printed QR code",
       "Set-up of stamp and reward rules",
       "Dashboard with visit and reward stats",
       "Quick training for your staff",
@@ -239,7 +239,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Which phones work?",
-        a: "iPhone XS and newer read NFC without an app; iPhone 7 to X use the reader in Control Centre. Most Android phones read NFC as long as it's switched on. Any phone with a camera can use the QR code.",
+        a: "iPhone XS and newer read the plate without an app; iPhone 7 to X use the tag reader in Control Centre. Most Android phones read it as long as contactless (tap) reading is switched on. Any phone with a camera can use the QR code.",
       },
       {
         q: "How do I prevent fake stamps?",

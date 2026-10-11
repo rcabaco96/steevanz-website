@@ -58,7 +58,7 @@ async function parseEntry(formData: FormData, establishment: EstablishmentRow) {
   return { data, settings } as const;
 }
 
-/** Public: a customer joins the queue (QR or NFC at the door) and lands on their live status page. */
+/** Public: a customer joins the queue (QR code or a tap on the plate at the door) and lands on their live status page. */
 export async function joinWaitlist(_previous: ActionState, formData: FormData): Promise<ActionState> {
   let target: string | null = null;
   try {

@@ -5,13 +5,13 @@ export const docs: ProductDocs = {
   pages: {
     "getting-started": {
       pt: {
-        title: "Primeiros passos com NFC para redes sociais",
+        title: "Primeiros passos com as placas para redes sociais e site",
         description:
-          "Descubra como as placas, autocolantes e cartões NFC da Steevanz levam os clientes ao seu Instagram, Facebook, TikTok, site ou cartão de visita digital.",
+          "Descubra como as placas, autocolantes e cartões da Steevanz levam os clientes ao seu Instagram, Facebook, TikTok, site ou cartão de visita digital.",
         blocks: [
           {
             type: "p",
-            text: "Os produtos NFC para redes sociais transformam um simples toque com o telemóvel numa nova visita ao seu Instagram, à sua página de Facebook, ao seu TikTok ou ao seu site. Também servem como cartão de visita digital: um toque e o seu contacto fica guardado no telemóvel do cliente.",
+            text: "Os produtos para redes sociais e site transformam um simples toque com o telemóvel numa nova visita ao seu Instagram, à sua página de Facebook, ao seu TikTok ou ao seu site. Também servem como cartão de visita digital: um toque e o seu contacto fica guardado no telemóvel do cliente.",
           },
           {
             type: "p",
@@ -23,15 +23,15 @@ export const docs: ProductDocs = {
             head: ["Produto", "Para que serve"],
             rows: [
               ["Placa ou suporte de balcão", "Levar clientes a seguir o negócio numa rede social ou a uma página de links"],
-              ["Autocolante NFC", "Montras, menus, embalagens, espelhos"],
-              ["Cartão NFC de visita", "Partilhar o seu contacto pessoal ou da equipa com um toque"],
+              ["Autocolante", "Montras, menus, embalagens, espelhos"],
+              ["Cartão de visita", "Partilhar o seu contacto pessoal ou da equipa com um toque"],
               ["Página de links (link-in-bio)", "Uma página alojada pela Steevanz com todos os seus links num só sítio"],
             ],
           },
           { type: "h2", id: "como-funciona", text: "Como funciona" },
           {
             type: "p",
-            text: "Cada placa ou cartão tem um chip NFC e, na maioria dos formatos, um código QR impresso. Ambos apontam para um link curto gerido pela Steevanz, que encaminha o cliente para o destino que escolheu. Como o destino fica do nosso lado, pode mudá-lo sempre que quiser sem reimprimir nada.",
+            text: "Cada placa ou cartão tem um chip e, na maioria dos formatos, um código QR impresso. Ambos apontam para um link curto gerido pela Steevanz, que encaminha o cliente para o destino que escolheu. Como o destino fica do nosso lado, pode mudá-lo sempre que quiser sem reimprimir nada.",
           },
           {
             type: "ol",
@@ -55,9 +55,9 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "[Instalação](/docs/nfc-redes-sociais/instalacao): escolher o destino e colocar as placas.",
-              "[Configuração](/docs/nfc-redes-sociais/configuracao): página de links, cartão de visita e alteração do destino.",
-              "[Utilização](/docs/nfc-redes-sociais/utilizacao): ideias de colocação e estatísticas de toques.",
+              "[Instalação](/docs/placas-redes-sociais/instalacao): escolher o destino e colocar as placas.",
+              "[Configuração](/docs/placas-redes-sociais/configuracao): página de links, cartão de visita e alteração do destino.",
+              "[Utilização](/docs/placas-redes-sociais/utilizacao): ideias de colocação e estatísticas de toques.",
             ],
           },
           {
@@ -68,13 +68,13 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Getting started with NFC for social media",
+        title: "Getting started with plates for social media and websites",
         description:
-          "See how Steevanz NFC plates, stickers and cards take customers to your Instagram, Facebook, TikTok, website or digital business card in a single tap.",
+          "See how Steevanz plates, stickers and cards take customers to your Instagram, Facebook, TikTok, website or digital business card in a single tap.",
         blocks: [
           {
             type: "p",
-            text: "Our NFC social media products turn a simple phone tap into a new visit to your Instagram, Facebook page, TikTok or website. They also work as a digital business card: one tap and your contact details are saved on the customer's phone.",
+            text: "Our social media and website products turn a simple phone tap into a new visit to your Instagram, Facebook page, TikTok or website. They also work as a digital business card: one tap and your contact details are saved on the customer's phone.",
           },
           {
             type: "p",
@@ -86,15 +86,15 @@ export const docs: ProductDocs = {
             head: ["Product", "What it's for"],
             rows: [
               ["Counter plate or stand", "Getting customers to follow you on a social network or visit a links page"],
-              ["NFC sticker", "Shop windows, menus, packaging, mirrors"],
-              ["NFC business card", "Sharing your own or your team's contact details with a tap"],
+              ["Sticker", "Shop windows, menus, packaging, mirrors"],
+              ["Business card", "Sharing your own or your team's contact details with a tap"],
               ["Links page (link-in-bio)", "A page hosted by Steevanz with all your links in one place"],
             ],
           },
           { type: "h2", id: "how-it-works", text: "How it works" },
           {
             type: "p",
-            text: "Each plate or card has an NFC chip and, on most formats, a printed QR code. Both point to a short link managed by Steevanz, which forwards the customer to the destination you choose. Because the destination lives on our side, you can change it whenever you like without reprinting anything.",
+            text: "Each plate or card has a chip and, on most formats, a printed QR code. Both point to a short link managed by Steevanz, which forwards the customer to the destination you choose. Because the destination lives on our side, you can change it whenever you like without reprinting anything.",
           },
           {
             type: "ol",
@@ -118,9 +118,9 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "[Setup](/en/docs/nfc-social-media/setup): choosing a destination and placing your plates.",
-              "[Configuration](/en/docs/nfc-social-media/configuration): links page, business card and changing the destination.",
-              "[Usage](/en/docs/nfc-social-media/usage): placement ideas and tap statistics.",
+              "[Setup](/en/docs/social-media-plates/setup): choosing a destination and placing your plates.",
+              "[Configuration](/en/docs/social-media-plates/configuration): links page, business card and changing the destination.",
+              "[Usage](/en/docs/social-media-plates/usage): placement ideas and tap statistics.",
             ],
           },
           {
@@ -133,9 +133,9 @@ export const docs: ProductDocs = {
     },
     setup: {
       pt: {
-        title: "Instalação dos produtos NFC para redes sociais",
+        title: "Instalação das placas para redes sociais e site",
         description:
-          "Como escolher o destino certo para cada placa ou cartão NFC, que informação enviar à Steevanz e onde colocar as placas para ter mais toques.",
+          "Como escolher o destino certo para cada placa ou cartão, que informação enviar à Steevanz e onde colocar as placas para ter mais toques.",
         blocks: [
           {
             type: "p",
@@ -189,7 +189,7 @@ export const docs: ProductDocs = {
             items: [
               "Junto à caixa, onde o cliente espera com o telemóvel na mão.",
               "Nas mesas, ao lado do menu ou do suporte de avaliações Google.",
-              "Na montra, do lado de dentro do vidro: o NFC atravessa vidro fino, mas teste sempre.",
+              "Na montra, do lado de dentro do vidro: o sinal do chip atravessa vidro fino, mas teste sempre.",
               "Em espelhos de salões de beleza, onde os clientes costumam tirar fotografias.",
             ],
           },
@@ -197,19 +197,19 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "warning",
             title: "Evite metal",
-            text: "Superfícies metálicas e terminais de pagamento interferem com o NFC. Para metal, peça a versão anti-metal.",
+            text: "Superfícies metálicas e terminais de pagamento (que emitem o seu próprio campo sem contacto, contactless) interferem com o sinal do chip. Para metal, peça a versão anti-metal.",
           },
           { type: "h2", id: "combinar-produtos", text: "Combinar com outros produtos" },
           {
             type: "p",
-            text: "Muitos negócios combinam uma placa de redes sociais com uma [placa NFC Google Reviews](/produtos/placas-nfc-google-reviews). Mantenha as duas bem identificadas (\"Siga-nos\" e \"Avalie-nos\") para o cliente saber o que acontece em cada uma.",
+            text: "Muitos negócios combinam uma placa de redes sociais com uma [placa Google Reviews](/produtos/placas-google-reviews). Mantenha as duas bem identificadas (\"Siga-nos\" e \"Avalie-nos\") para o cliente saber o que acontece em cada uma.",
           },
         ],
       },
       en: {
-        title: "Setting up your NFC social media products",
+        title: "Setting up your social media and website plates",
         description:
-          "How to choose the right destination for each NFC plate or card, what information to send to Steevanz and where to place plates to get more taps.",
+          "How to choose the right destination for each plate or card, what information to send to Steevanz and where to place plates to get more taps.",
         blocks: [
           {
             type: "p",
@@ -263,7 +263,7 @@ export const docs: ProductDocs = {
             items: [
               "By the till, where customers wait with their phone in hand.",
               "On tables, next to the menu or your Google review stand.",
-              "In the shop window, on the inside of the glass: NFC works through thin glass, but always test it.",
+              "In the shop window, on the inside of the glass: the chip's signal passes through thin glass, but always test it.",
               "On salon mirrors, where clients tend to take photos.",
             ],
           },
@@ -271,12 +271,12 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "warning",
             title: "Avoid metal",
-            text: "Metal surfaces and card terminals interfere with NFC. For metal, ask for the anti-metal version.",
+            text: "Metal surfaces and card terminals (which emit their own contactless field) interfere with the chip's signal. For metal, ask for the anti-metal version.",
           },
           { type: "h2", id: "combine-products", text: "Combining with other products" },
           {
             type: "p",
-            text: "Many businesses pair a social media plate with an [NFC Google review plate](/en/products/nfc-google-review-plates). Label them clearly (\"Follow us\" and \"Review us\") so customers know what each one does.",
+            text: "Many businesses pair a social media plate with an [Google review plate](/en/products/google-review-plates). Label them clearly (\"Follow us\" and \"Review us\") so customers know what each one does.",
           },
         ],
       },
@@ -330,7 +330,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "cartao-visita-digital", text: "Cartão de visita digital" },
           {
             type: "p",
-            text: "O cartão NFC abre uma página de contacto com a sua fotografia, nome, cargo e botões de ação. O botão **Guardar contacto** descarrega um ficheiro `.vcf` (vCard), que o telemóvel reconhece e propõe adicionar aos contactos.",
+            text: "O cartão abre uma página de contacto com a sua fotografia, nome, cargo e botões de ação. O botão **Guardar contacto** descarrega um ficheiro `.vcf` (vCard), que o telemóvel reconhece e propõe adicionar aos contactos.",
           },
           {
             type: "table",
@@ -404,7 +404,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "digital-business-card", text: "Digital business card" },
           {
             type: "p",
-            text: "The NFC card opens a contact page with your photo, name, job title and action buttons. The **Save contact** button downloads a `.vcf` (vCard) file, which the phone recognises and offers to add to contacts.",
+            text: "The card opens a contact page with your photo, name, job title and action buttons. The **Save contact** button downloads a `.vcf` (vCard) file, which the phone recognises and offers to add to contacts.",
           },
           {
             type: "table",
@@ -435,7 +435,7 @@ export const docs: ProductDocs = {
       pt: {
         title: "Utilização: ideias de colocação e estatísticas",
         description:
-          "Como os clientes abrem as suas redes com NFC em iPhone e Android, ideias para colocar as placas e como ler as estatísticas de toques de cada placa.",
+          "Como os clientes abrem as suas redes com um toque em iPhone e Android, ideias para colocar as placas e como ler as estatísticas de toques de cada placa.",
         blocks: [
           {
             type: "p",
@@ -465,7 +465,7 @@ export const docs: ProductDocs = {
               "**Restaurante**: suporte de mesa com \"Siga-nos e veja os pratos do dia\".",
               "**Cabeleireiro**: autocolante no espelho, junto ao momento da fotografia final.",
               "**Loja**: autocolante no provador ou nas embalagens.",
-              "**Eventos e feiras**: cartões de visita NFC para a equipa comercial.",
+              "**Eventos e feiras**: cartões de visita para a equipa comercial.",
             ],
           },
           { type: "h2", id: "chamada-acao", text: "Uma boa chamada à ação" },
@@ -495,7 +495,7 @@ export const docs: ProductDocs = {
             items: [
               "Número de aberturas por placa e por período.",
               "Comparação entre locais (mesa, balcão, montra).",
-              "Divisão entre NFC e QR, quando os links são distintos.",
+              "Divisão entre toques e leituras do QR code, quando os links são distintos.",
             ],
           },
           {
@@ -513,7 +513,7 @@ export const docs: ProductDocs = {
       en: {
         title: "Usage: placement ideas and statistics",
         description:
-          "How customers open your social pages with NFC on iPhone and Android, practical ideas for placing plates and how to read the tap statistics per plate.",
+          "How customers open your social pages with a tap on iPhone and Android, practical ideas for placing plates and how to read the tap statistics per plate.",
         blocks: [
           {
             type: "p",
@@ -543,7 +543,7 @@ export const docs: ProductDocs = {
               "**Restaurant**: a table stand saying \"Follow us for today's specials\".",
               "**Hair salon**: a sticker on the mirror, right at the final-photo moment.",
               "**Shop**: a sticker in the fitting room or on packaging.",
-              "**Events and trade fairs**: NFC business cards for your sales team.",
+              "**Events and trade fairs**: business cards for your sales team.",
             ],
           },
           { type: "h2", id: "call-to-action", text: "A good call to action" },
@@ -573,7 +573,7 @@ export const docs: ProductDocs = {
             items: [
               "Number of opens per plate and per period.",
               "Comparison between spots (table, counter, window).",
-              "NFC versus QR split, when the links are kept separate.",
+              "Split between taps and QR code scans, when the links are kept separate.",
             ],
           },
           {
@@ -591,9 +591,9 @@ export const docs: ProductDocs = {
     },
     troubleshooting: {
       pt: {
-        title: "Resolução de problemas: NFC para redes sociais",
+        title: "Resolução de problemas: placas para redes sociais e site",
         description:
-          "Soluções para placas e cartões NFC que não abrem, perfis que abrem no navegador, contactos que não ficam guardados e links de redes sociais alterados.",
+          "Soluções para placas e cartões que não abrem, perfis que abrem no navegador, contactos que não ficam guardados e links de redes sociais alterados.",
         blocks: [
           {
             type: "p",
@@ -603,9 +603,9 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "Desbloqueie o ecrã. Os telemóveis só leem NFC com o ecrã ligado.",
-              "Em Android, ative o NFC nas definições.",
-              "Em iPhone 7, 8 ou X, use o \"Leitor de etiquetas NFC\" na Central de Controlo. Do iPhone XS em diante a leitura é automática.",
+              "Desbloqueie o ecrã. Os telemóveis só leem a placa com o ecrã ligado.",
+              "Em Android, confirme que a opção de leitura por aproximação está ligada nas definições de ligações.",
+              "Em iPhone 7, 8 ou X, use o leitor de etiquetas da Centro de Controlo. Do iPhone XS em diante a leitura é automática.",
               "Retire capas metálicas, capas-carteira ou popsockets e aproxime a parte superior (iPhone) ou central (muitos Android) das costas do telemóvel.",
               "Se nada funcionar, use o código QR.",
             ],
@@ -646,9 +646,9 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Troubleshooting NFC for social media",
+        title: "Troubleshooting plates for social media and websites",
         description:
-          "Fixes for NFC plates and cards that won't open, profiles opening in the browser, contacts that won't save and social media links that have changed.",
+          "Fixes for plates and cards that won't open, profiles opening in the browser, contacts that won't save and social media links that have changed.",
         blocks: [
           {
             type: "p",
@@ -658,9 +658,9 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "Unlock the screen. Phones only read NFC with the screen on.",
-              "On Android, turn NFC on in settings.",
-              "On iPhone 7, 8 or X, use \"NFC Tag Reader\" in Control Centre. From iPhone XS onwards reading is automatic.",
+              "Unlock the screen. Phones only read the plate with the screen on.",
+              "On Android, turn on the contactless (tap) reading option in the connection settings.",
+              "On iPhone 7, 8 or X, use the tag reader in Control Centre. From iPhone XS onwards reading is automatic.",
               "Remove metal cases, wallet cases or popsockets and hold the top (iPhone) or middle (many Android phones) of the back of the phone to the plate.",
               "If nothing works, use the QR code.",
             ],
@@ -703,9 +703,9 @@ export const docs: ProductDocs = {
     },
     faq: {
       pt: {
-        title: "Perguntas frequentes: NFC para redes sociais",
+        title: "Perguntas frequentes: placas para redes sociais e site",
         description:
-          "Respostas rápidas sobre placas e cartões NFC para Instagram, Facebook, TikTok e contactos: compatibilidade, alterações de destino, estatísticas e privacidade.",
+          "Respostas rápidas sobre placas e cartões para Instagram, Facebook, TikTok e contactos: compatibilidade, alterações de destino, estatísticas e privacidade.",
         blocks: [
           { type: "h2", id: "perguntas", text: "Perguntas frequentes" },
           {
@@ -744,7 +744,7 @@ export const docs: ProductDocs = {
                 a: "Não. A Steevanz é independente. As placas abrem os links públicos das suas páginas.",
               },
               {
-                q: "O NFC funciona através do vidro da montra?",
+                q: "A placa funciona através do vidro da montra?",
                 a: "Normalmente sim, com vidro simples e fino. Vidros duplos ou com películas metalizadas podem impedir a leitura; teste antes de fixar.",
               },
             ],
@@ -752,14 +752,14 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Tem outra dúvida? [Fale connosco](/contacto) ou veja o [produto NFC para redes sociais](/produtos/nfc-redes-sociais).",
+            text: "Tem outra dúvida? [Fale connosco](/contacto) ou veja as [placas para redes sociais e site](/produtos/placas-redes-sociais).",
           },
         ],
       },
       en: {
-        title: "NFC for social media FAQ",
+        title: "Plates for social media and websites FAQ",
         description:
-          "Quick answers about NFC plates and cards for Instagram, Facebook, TikTok and contacts: compatibility, changing destinations, statistics and privacy.",
+          "Quick answers about plates and cards for Instagram, Facebook, TikTok and contacts: compatibility, changing destinations, statistics and privacy.",
         blocks: [
           { type: "h2", id: "questions", text: "Frequently asked questions" },
           {
@@ -798,7 +798,7 @@ export const docs: ProductDocs = {
                 a: "No. Steevanz is independent. The plates open the public links to your pages.",
               },
               {
-                q: "Does NFC work through a shop window?",
+                q: "Does the plate work through a shop window?",
                 a: "Usually yes, with plain thin glass. Double glazing or metallised films can block it; test before fixing it in place.",
               },
             ],
@@ -806,7 +806,7 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Got another question? [Get in touch](/en/contact) or see the [NFC social media product](/en/products/nfc-social-media).",
+            text: "Got another question? [Get in touch](/en/contact) or see the [plates for social media and websites](/en/products/social-media-plates).",
           },
         ],
       },

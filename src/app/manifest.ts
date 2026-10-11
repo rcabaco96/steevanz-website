@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Steevanz",
     short_name: "Steevanz",
-    description: "Placas NFC para reviews no Google e IA para negócios locais.",
+    description: "Placas para reviews no Google e IA para negócios locais.",
     start_url: "/",
     display: "standalone",
     background_color: "#fbf7f1",

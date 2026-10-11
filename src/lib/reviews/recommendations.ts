@@ -76,7 +76,7 @@ export function themeServices(theme: Pick<ThemeStats, "id" | "mentions" | "verdi
   const reply = (id: Exclude<ThemeId, "waiting">): ThemeService => ({ productId: "ai-reviews", body: replyBody[id] });
   const byTheme: Record<ThemeId, ThemeService[]> = {
     waiting: [
-      { productId: "waitlist", body: "Os clientes entram na fila por QR code ou NFC, veem o tempo estimado e são avisados por SMS ou WhatsApp. Esperam onde quiserem, sem fila à porta." },
+      { productId: "waitlist", body: "Os clientes entram na fila com um toque ou QR code, veem o tempo estimado e são avisados por SMS ou WhatsApp. Esperam onde quiserem, sem fila à porta." },
       { productId: "bookings", body: "Com reservas online a qualquer hora e lembretes automáticos, sabe quem vem e quando, e há menos gente à espera de mesa." },
     ],
     service: [
@@ -109,7 +109,7 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
       productId: "waitlist",
       signal: `Tempo de espera · ${format1(waiting.avgRating ?? 0)}★ em ${waiting.mentions} reviews`,
       title: "Os clientes queixam-se da espera",
-      body: "Com a Lista de espera digital entram na fila por QR code ou NFC, veem o tempo estimado e são avisados por SMS ou WhatsApp quando é a vez deles. Esperam onde quiserem, sem aglomerações à porta.",
+      body: "Com a Lista de espera digital entram na fila com um toque ou QR code, veem o tempo estimado e são avisados por SMS ou WhatsApp quando é a vez deles. Esperam onde quiserem, sem aglomerações à porta.",
     });
   }
 
@@ -142,14 +142,14 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
       productId: "nfc-google-reviews",
       signal: `${competition.paceLeader.name}: ${Math.round(competition.paceLeader.pacePerMonth)} reviews/mês · o seu: ${Math.round(ownPace)}`,
       title: "A concorrência está a receber mais reviews",
-      body: "Quem recebe mais reviews aparece mais nas pesquisas do Google. Placas NFC nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque, para não ficar para trás.",
+      body: "Quem recebe mais reviews aparece mais nas pesquisas do Google. Placas nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque, para não ficar para trás.",
     });
   } else if (goal?.monthsToNext !== null && goal?.monthsToNext !== undefined && goal.monthsToNext > 4 && goal.next !== null) {
     items.push({
       productId: "nfc-google-reviews",
       signal: `${goal.fiveStarsNeeded} reviews de 5★ até aos ${format1(goal.next)}★`,
       title: "Chegar mais depressa à próxima estrela",
-      body: `Ao ritmo atual faltam cerca de ${Math.ceil(goal.monthsToNext)} meses. Placas NFC nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque.`,
+      body: `Ao ritmo atual faltam cerca de ${Math.ceil(goal.monthsToNext)} meses. Placas nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque.`,
     });
   }
 
@@ -159,7 +159,7 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
       productId: "loyalty",
       signal: `${Math.round((analytics.sentiment.positive / total) * 100)}% das reviews são positivas`,
       title: "Os clientes gostam de si. Faça-os voltar",
-      body: "Com o Cartão de fidelização digital, cada visita é carimbada por NFC ou QR code no telemóvel do cliente, sem app, com recompensas automáticas.",
+      body: "Com o Cartão de fidelização digital, cada visita é carimbada com um toque ou QR code no telemóvel do cliente, sem app, com recompensas automáticas.",
     });
   }
 

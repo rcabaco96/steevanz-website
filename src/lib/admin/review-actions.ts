@@ -223,7 +223,7 @@ async function resolveMapsLink(url: string): Promise<string> {
 
 /**
  * «Novo negócio»: a short Maps link (maps.app.goo.gl…, e.g. «Partilhar» in the Maps app) pasted →
- * the place's name and the NFC plate link, shown before saving. Admins only; only Google's short hosts.
+ * the place's name and the plate link, shown before saving. Admins only; only Google's short hosts.
  */
 export async function previewMapsLink(link: string): Promise<{ name: string; plateLink: string } | null> {
   try {

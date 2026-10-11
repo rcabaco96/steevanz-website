@@ -2,13 +2,13 @@ import type { DocPageContent, DocPageId } from "../types";
 
 export const en: Record<DocPageId, DocPageContent> = {
   "getting-started": {
-    title: "Getting started with the NFC digital menu",
+    title: "Getting started with the digital menu",
     description:
-      "How Steevanz's round NFC plates take guests, at the table, to videos, photos and carousels of your dishes with prices on Instagram or YouTube.",
+      "How Steevanz's round plates take guests, at the table, to videos, photos and carousels of your dishes with prices on Instagram or YouTube.",
     blocks: [
       {
         type: "p",
-        text: "The digital menu is a small round NFC plate, one per table. Guests tap it with their phone and open an Instagram highlight or a YouTube playlist with your dishes, as videos, photos or carousels, each with its price. It's like flicking through the menu while seeing the real food.",
+        text: "The digital menu is a small round plate, one per table. Guests tap it with their phone and open an Instagram highlight or a YouTube playlist with your dishes, as videos, photos or carousels, each with its price. It's like flicking through the menu while seeing the real food.",
       },
       {
         type: "p",
@@ -19,8 +19,8 @@ export const en: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Item", "Details"],
         rows: [
-          ["Round NFC plate", "Round table sticker or round table base"],
-          ["Printed QR code", "For phones without NFC or with NFC turned off"],
+          ["Round plate", "Round table sticker or round table base"],
+          ["Printed QR code", "For phones that can't read the plate by tap, or have that option turned off"],
           ["Setup", "We link each plate to your menu's Instagram highlight or YouTube playlist"],
           ["Changing the destination", "Switch the highlight or playlist without reprinting the plates"],
         ],
@@ -53,15 +53,15 @@ export const en: Record<DocPageId, DocPageContent> = {
       {
         type: "ul",
         items: [
-          "[Setup](/en/docs/nfc-digital-menu/setup): preparing the highlight or playlist and placing the plates.",
-          "[Configuration](/en/docs/nfc-digital-menu/configuration): changing the destination and keeping prices right.",
-          "[Usage](/en/docs/nfc-digital-menu/usage): good practice for your menu content.",
+          "[Setup](/en/docs/digital-menu/setup): preparing the highlight or playlist and placing the plates.",
+          "[Configuration](/en/docs/digital-menu/configuration): changing the destination and keeping prices right.",
+          "[Usage](/en/docs/digital-menu/usage): good practice for your menu content.",
         ],
       },
     ],
   },
   setup: {
-    title: "Setting up the NFC digital menu",
+    title: "Setting up the digital menu",
     description: "Prepare your menu's Instagram highlight or YouTube playlist and place the plates on your tables.",
     blocks: [
       { type: "h2", id: "prepare-content", text: "1. Prepare the content" },
@@ -103,13 +103,13 @@ export const en: Record<DocPageId, DocPageContent> = {
         items: [
           "One plate per table, somewhere visible and within easy reach (centre of the table or next to the napkin holder).",
           "Clean the surface before sticking the sticker and press for a few seconds.",
-          "Avoid metal surfaces: metal can stop NFC from working. Use the round table base there instead.",
+          "Avoid metal surfaces: metal blocks the chip's signal. Use the round table base there instead.",
         ],
       },
     ],
   },
   configuration: {
-    title: "Configuring the NFC digital menu",
+    title: "Configuring the digital menu",
     description: "Change where the plates go and keep dishes and prices up to date.",
     blocks: [
       { type: "h2", id: "change-destination", text: "Changing the destination" },
@@ -139,7 +139,7 @@ export const en: Record<DocPageId, DocPageContent> = {
     ],
   },
   usage: {
-    title: "Using the NFC digital menu",
+    title: "Using the digital menu",
     description: "Good practice so the digital menu helps guests choose.",
     blocks: [
       { type: "h2", id: "content-that-works", text: "Content that works" },
@@ -165,14 +165,14 @@ export const en: Record<DocPageId, DocPageContent> = {
     ],
   },
   troubleshooting: {
-    title: "Troubleshooting the NFC digital menu",
+    title: "Troubleshooting the digital menu",
     description: "What to do when a plate doesn't open the menu.",
     blocks: [
       {
         type: "table",
         head: ["Problem", "What to do"],
         rows: [
-          ["The phone doesn't react to the tap", "Check NFC is on (Android) and hold the top of the phone against the centre of the plate. Or scan the QR code."],
+          ["The phone doesn't react to the tap", "Check the phone's contactless (tap) reading is on (Android connection settings) and hold the top of the phone against the centre of the plate. Or scan the QR code."],
           ["It opens the profile, not the menu", "The highlight or playlist may have been deleted or renamed. Send us the new link."],
           ["The playlist is empty or private", "On YouTube, check that the playlist and its videos are public."],
           ["The plate doesn't work on metal", "Swap the sticker for the round table base."],
@@ -187,14 +187,14 @@ export const en: Record<DocPageId, DocPageContent> = {
     ],
   },
   faq: {
-    title: "NFC digital menu FAQ",
+    title: "Digital menu FAQ",
     description: "Quick answers about the digital menu plates.",
     blocks: [
       {
         type: "faq",
         items: [
           { q: "Do guests need to install an app?", a: "No. The phone opens Instagram or YouTube; if the app isn't installed, it opens in the browser." },
-          { q: "Does it work on iPhone and Android?", a: "Yes. Recent iPhones read NFC with nothing to turn on; on Android NFC must be on. There's always the printed QR code." },
+          { q: "Does it work on iPhone and Android?", a: "Yes. Recent iPhones read the plate with nothing to turn on; on Android, the contactless (tap) reading option must be on. There's always the printed QR code." },
           { q: "Does it replace the printed menu?", a: "It complements it. Seeing dishes as videos and photos helps guests choose, but the printed menu is still useful for those who prefer it." },
           { q: "How much does it cost?", a: "€15 per plate, or packs of 5 for €60, 10 for €100 and 20 for €180. The logo is charged once per order." },
           { q: "Do you create the videos?", a: "Not directly: we work with partners who create videos, photos and carousels of dishes, and we'll get you a quote." },

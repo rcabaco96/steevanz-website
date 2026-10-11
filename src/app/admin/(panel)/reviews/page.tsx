@@ -53,7 +53,7 @@ export default async function ReviewsAdminPage({ searchParams }: PageProps<"/adm
     <>
       <AdminPageHeader
         title="Reviews"
-        description="Negócios com placas NFC, o link das placas, a importação das reviews e a concorrência."
+        description="Negócios com placas, o link das placas, a importação das reviews e a concorrência."
         actions={
           <Link href="/admin/reviews/novo" className={buttonClasses("primary", "md")}>
             + Novo negócio

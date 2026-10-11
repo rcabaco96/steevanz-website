@@ -15,19 +15,19 @@ import { site, whatsappUrl } from "@/lib/site";
 const copy = {
   pt: {
     metaTitle: "Documentação e guias de utilização | Steevanz Docs",
-    metaDescription: "Guias práticos para instalar, configurar e usar as placas NFC, reservas, lista de espera, chatbot, receção por voz e automações da Steevanz.",
+    metaDescription: "Guias práticos para instalar, configurar e usar as placas, reservas, lista de espera, chatbot, receção por voz e automações da Steevanz.",
     eyebrow: "Documentação",
     title: "Tudo o que precisa de saber, passo a passo.",
-    lead: "Guias escritos para quem gere um negócio, não para engenheiros. Da colocação de uma placa NFC à configuração de um chatbot.",
+    lead: "Guias escritos para quem gere um negócio, não para engenheiros. Da colocação de uma placa à configuração de um chatbot.",
     helpTitle: "Não encontrou o que procurava?",
     helpBody: "Escreva-nos. Respondemos por WhatsApp ou e-mail em dias úteis.",
   },
   en: {
     metaTitle: "Documentation and how-to guides | Steevanz Docs",
-    metaDescription: "Practical guides to set up, configure and use Steevanz NFC plates, bookings, waiting lists, chatbot, voice receptionist and automations.",
+    metaDescription: "Practical guides to set up, configure and use Steevanz plates, bookings, waiting lists, chatbot, voice receptionist and automations.",
     eyebrow: "Documentation",
     title: "Everything you need to know, step by step.",
-    lead: "Guides written for people who run a business, not for engineers. From placing an NFC plate to configuring a chatbot.",
+    lead: "Guides written for people who run a business, not for engineers. From placing a plate to configuring a chatbot.",
     helpTitle: "Couldn't find what you were looking for?",
     helpBody: "Write to us. We reply by WhatsApp or email on working days.",
   },

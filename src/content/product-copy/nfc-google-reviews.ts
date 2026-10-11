@@ -2,14 +2,14 @@ import type { ProductCopyByLocale } from "../types";
 
 export const copy: ProductCopyByLocale = {
   pt: {
-    name: "Placas NFC para reviews no Google",
-    shortName: "Placas NFC Reviews",
+    name: "Placas para reviews no Google",
+    shortName: "Placas Google Reviews",
     tagline: "Um toque no telemóvel e o cliente está a escrever a sua review.",
     summary:
-      "Placas, autocolantes e expositores de mesa com NFC e QR code que abrem diretamente o formulário de review do seu negócio no Google. Nós configuramos tudo.",
-    metaTitle: "Placas NFC para Reviews no Google | Steevanz",
+      "Placas, autocolantes e expositores de mesa que, com um toque ou pelo QR code, abrem diretamente o formulário de review do seu negócio no Google. Nós configuramos tudo.",
+    metaTitle: "Placas para Reviews no Google | Steevanz",
     metaDescription:
-      "Placas NFC para reviews no Google: um toque no telemóvel abre o formulário de avaliação do seu negócio. Sem app, com QR code e configuração feita por nós.",
+      "Placas para reviews no Google: um toque no telemóvel abre o formulário de avaliação do seu negócio. Sem app, com QR code e configuração feita por nós.",
     heroTitle: "Mais reviews no Google, com um só toque",
     heroSubtitle:
       "O cliente aproxima o telemóvel da placa e o formulário de review do seu negócio no Google abre de imediato. Sem procurar o nome, sem instalar nada, sem pedir duas vezes. Nós preparamos a placa e configuramos o link por si.",
@@ -26,10 +26,10 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Transforme a boa experiência em review no momento certo",
       body:
-        "As nossas placas NFC levam o cliente diretamente ao formulário de review do seu negócio no Google, enquanto a experiência ainda está fresca. Um toque ou uma leitura do QR code e está feito.",
+        "As nossas placas levam o cliente diretamente ao formulário de review do seu negócio no Google, enquanto a experiência ainda está fresca. Um toque ou uma leitura do QR code e está feito.",
       points: [
         "Funciona com a maioria dos telemóveis atuais, sem app",
-        "QR code impresso na placa para telemóveis sem NFC",
+        "QR code impresso na placa para telemóveis sem leitura por aproximação",
         "Link configurado e testado pela nossa equipa antes da entrega",
         "Pede a opinião a todos os clientes por igual, de acordo com as políticas do Google",
       ],
@@ -55,11 +55,11 @@ export const copy: ProductCopyByLocale = {
     features: [
       {
         title: "Toque e review",
-        body: "O chip NFC abre o formulário de review do seu negócio no Google diretamente no telemóvel do cliente, sem passos intermédios nem pesquisas.",
+        body: "O chip abre o formulário de review do seu negócio no Google diretamente no telemóvel do cliente, sem passos intermédios nem pesquisas.",
       },
       {
         title: "QR code de reserva",
-        body: "Cada placa tem um QR code impresso. Quem tiver um telemóvel sem NFC, ou com o NFC desligado, aponta a câmara e chega ao mesmo sítio.",
+        body: "Cada placa tem um QR code impresso. Quem tiver um telemóvel sem leitura por aproximação, ou com essa opção desligada, aponta a câmara e chega ao mesmo sítio.",
       },
       {
         title: "Quatro formatos",
@@ -101,7 +101,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Placa NFC com QR code impresso, no formato escolhido",
+      "Placa com QR code impresso, no formato escolhido",
       "Configuração do link de review do seu perfil de empresa no Google",
       "Testes em iPhone e Android antes da entrega",
       "Conselhos sobre onde colocar a placa e como convidar os clientes",
@@ -111,7 +111,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Que telemóveis conseguem ler a placa?",
-        a: "Os iPhone XS e mais recentes leem etiquetas NFC sem qualquer app, basta aproximar o topo do telemóvel. Nos iPhone 7 a X, o leitor NFC está no Centro de Controlo. A maioria dos Android com NFC lê a placa desde que o NFC esteja ligado. Para todos os outros casos, há um QR code impresso na placa.",
+        a: "Os iPhone XS e mais recentes leem a placa sem qualquer app, basta aproximar o topo do telemóvel. Nos iPhone 7 a X, o leitor de etiquetas está no Centro de Controlo. A maioria dos Android lê a placa desde que a opção de leitura por aproximação esteja ligada nas definições de ligações. Para todos os outros casos, há um QR code impresso na placa.",
       },
       {
         q: "O cliente precisa de instalar alguma app?",
@@ -136,14 +136,14 @@ export const copy: ProductCopyByLocale = {
     ],
   },
   en: {
-    name: "NFC plates for Google reviews",
-    shortName: "NFC Review Plates",
+    name: "Plates for Google reviews",
+    shortName: "Google Review Plates",
     tagline: "One tap of a phone and your customer is writing a Google review.",
     summary:
-      "Plates, stickers and table stands with NFC and a QR code that open your business's Google review form directly. We set everything up for you.",
-    metaTitle: "NFC Google Review Plates | Steevanz",
+      "Plates, stickers and table stands that open your business's Google review form directly, with a tap or a QR code. We set everything up for you.",
+    metaTitle: "Google Review Plates | Steevanz",
     metaDescription:
-      "NFC Google review plates: one tap of a phone opens your business's review form. No app needed, QR code included and everything set up for you by our team.",
+      "Google review plates: one tap of a phone opens your business's review form. No app needed, QR code included and everything set up for you by our team.",
     heroTitle: "More Google reviews, with a single tap",
     heroSubtitle:
       "Your customer taps their phone on the plate and your business's Google review form opens straight away. No searching for your name, nothing to install, no asking twice. We prepare the plate and configure the link for you.",
@@ -160,10 +160,10 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Turn a good experience into a review at the right moment",
       body:
-        "Our NFC plates take customers straight to your business's Google review form while the experience is still fresh. One tap or one QR scan and they're there.",
+        "Our plates take customers straight to your business's Google review form while the experience is still fresh. One tap or one QR scan and they're there.",
       points: [
         "Works with most modern phones, no app required",
-        "QR code printed on the plate for phones without NFC",
+        "QR code printed on the plate for phones that can't read a tap",
         "Link configured and tested by our team before delivery",
         "Asks every customer equally, in line with Google's policies",
       ],
@@ -189,11 +189,11 @@ export const copy: ProductCopyByLocale = {
     features: [
       {
         title: "Tap to review",
-        body: "The NFC chip opens your business's Google review form directly on the customer's phone, with no extra steps and no searching.",
+        body: "The chip opens your business's Google review form directly on the customer's phone, with no extra steps and no searching.",
       },
       {
         title: "QR code fallback",
-        body: "Every plate has a printed QR code. Anyone whose phone lacks NFC, or has it switched off, just points the camera and lands in the same place.",
+        body: "Every plate has a printed QR code. Anyone whose phone can't read a tap, or has that option switched off, just points the camera and lands in the same place.",
       },
       {
         title: "Four formats",
@@ -235,7 +235,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "NFC plate with printed QR code, in the format you choose",
+      "Plate with printed QR code, in the format you choose",
       "Configuration of your Google Business Profile review link",
       "Testing on iPhone and Android before delivery",
       "Advice on where to place the plate and how to invite customers",
@@ -245,7 +245,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Which phones can read the plate?",
-        a: "iPhone XS and newer read NFC tags without any app: just hold the top of the phone near the plate. On iPhone 7 to X, the NFC reader is in Control Centre. Most Android phones with NFC read the plate as long as NFC is switched on. For everyone else, there's a QR code printed on the plate.",
+        a: "iPhone XS and newer read the plate without any app: just hold the top of the phone near it. On iPhone 7 to X, the tag reader is in Control Centre. Most Android phones read the plate as long as contactless (tap) reading is switched on in the connection settings. For everyone else, there's a QR code printed on the plate.",
       },
       {
         q: "Do customers need to install an app?",

@@ -21,6 +21,28 @@ const nextConfig: NextConfig = {
     // The establishment's logo is sent through a server action (up to 2 MB, plus the form's own bytes).
     serverActions: { bodySizeLimit: "3mb" },
   },
+  // Product slugs renamed on 2026-10-11 (the word "NFC" left the site): old links keep working.
+  async redirects() {
+    const renamed: [string, string][] = [
+      ["/produtos/placas-nfc-google-reviews", "/produtos/placas-google-reviews"],
+      ["/produtos/nfc-redes-sociais", "/produtos/placas-redes-sociais"],
+      ["/produtos/cardapio-digital-nfc", "/produtos/menu-digital"],
+      ["/docs/placas-nfc-google-reviews", "/docs/placas-google-reviews"],
+      ["/docs/nfc-redes-sociais", "/docs/placas-redes-sociais"],
+      ["/docs/cardapio-digital-nfc", "/docs/menu-digital"],
+      ["/en/products/nfc-google-review-plates", "/en/products/google-review-plates"],
+      ["/en/products/nfc-social-media", "/en/products/social-media-plates"],
+      ["/en/products/nfc-digital-menu", "/en/products/digital-menu"],
+      ["/en/docs/nfc-google-review-plates", "/en/docs/google-review-plates"],
+      ["/en/docs/nfc-social-media", "/en/docs/social-media-plates"],
+      ["/en/docs/nfc-digital-menu", "/en/docs/digital-menu"],
+    ];
+    return renamed.map(([source, destination]) => ({
+      source: `${source}/:rest*`,
+      destination: `${destination}/:rest*`,
+      permanent: true,
+    }));
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
