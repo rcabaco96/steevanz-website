@@ -67,12 +67,12 @@ describe("competition challenges", () => {
     assert.deepEqual(challengeOrder(result), ["reviews", "defend"]);
   });
 
-  it("warns about a close place right below, and puts it first", () => {
+  it("computes the close place right below but never shows it (only phrases about climbing)", () => {
     const result = challenges([entry("x", 4.9, 500), me(4.5, 100), entry("z", 4.49, 100)]);
     assert.equal(result.threat.name, "z");
     assert.equal(result.threat.rank, 3);
     assert.ok(result.threat.fiveStars <= 5);
-    assert.equal(challengeOrder(result)[0], "threat");
+    assert.ok(!challengeOrder(result).includes("threat"));
     // A distant place below is no threat.
     assert.equal(challenges([entry("x", 4.9, 500), me(4.5, 100), entry("z", 3.0, 100)]).threat, null);
   });

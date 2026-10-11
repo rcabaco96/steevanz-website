@@ -226,18 +226,16 @@ export function competitionChallenges(competition: Competition | null, ownReview
 export type ChallengeKind = "defend" | "threat" | "chase" | "reviews" | "pace";
 
 /**
- * The order the phrases are shown in (at most `limit` in a block): a close threat first (defend at
- * 1.º when the 2.º is close, or the place right below), then the chase in the ranking, the total of
- * reviews, the 1.º's lead and the pace race.
+ * The order the phrases are shown in (at most `limit` in a block). Only phrases about climbing
+ * (owner, 2026-10-11: «quero ganhar reviews para subir de posição, não para descer»): the chase in the
+ * ranking, the total of reviews, the pace race, and the lead when the customer is already 1.º. The
+ * place right below (`threat`) is still computed but never shown.
  */
 export function challengeOrder(challenges: CompetitionChallenges): ChallengeKind[] {
   const order: ChallengeKind[] = [];
-  const defendClose = challenges.defend !== null && challenges.defend.fiveStars <= threatMaxFiveStars;
-  if (defendClose) order.push("defend");
-  if (challenges.threat) order.push("threat");
   if (challenges.chase) order.push("chase");
   if (challenges.reviewsChase) order.push("reviews");
-  if (challenges.defend && !defendClose) order.push("defend");
   if (challenges.pace) order.push("pace");
+  if (challenges.defend) order.push("defend");
   return order;
 }

@@ -467,8 +467,8 @@ function challengeNote(kind: ChallengeKind, challenges: CompetitionChallenges): 
       info: { label: "Vantagem sobre o 2.º", text: infoTexts.challengeDefend },
       text: (
         <>
-          Está em 1.º no ranking. O <strong>{defend.name}</strong> vem logo atrás (2.º): precisa de{" "}
-          <strong>{plural(defend.fiveStars, "review de 5★", "reviews de 5★")}</strong> para lhe passar à frente.
+          Está em 1.º no ranking, à frente do <strong>{defend.name}</strong>. Cada review de 5★ aumenta a vantagem: hoje, ele precisaria de{" "}
+          <strong>{plural(defend.fiveStars, "review de 5★", "reviews de 5★")}</strong> para o alcançar.
         </>
       ),
     };
@@ -853,7 +853,8 @@ export function ReviewsDashboard({
       <Refreshable scopes={["sync","period"]}>
   <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {insights.length ? (
-            <section aria-labelledby="insights-title" className="card col-span-2 flex flex-col gap-4 border-accent/30 p-5 sm:p-6 lg:row-span-2">
+            // Title outside, one card per highlight (owner, 2026-10-11).
+            <section aria-labelledby="insights-title" className="col-span-2 flex flex-col gap-3 lg:row-span-2">
               <h2 id="insights-title" className="flex items-center gap-2 font-semibold text-text">
                 <LightbulbIcon size={20} className="text-accent-text" />
                 Destaques
@@ -861,7 +862,7 @@ export function ReviewsDashboard({
               </h2>
               <ul className="flex flex-col gap-3">
                 {insights.map((insight) => (
-                  <li key={insight.text} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
+                  <li key={insight.text} className="card flex gap-3 border-accent/30 p-4 text-[0.95rem] leading-relaxed text-muted sm:p-5">
                     <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                     <span className="min-w-0">
                       {insight.text}
