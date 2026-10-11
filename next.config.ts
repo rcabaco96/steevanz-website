@@ -37,6 +37,20 @@ const nextConfig: NextConfig = {
       ["/en/docs/nfc-social-media", "/en/docs/social-media-plates"],
       ["/en/docs/nfc-digital-menu", "/en/docs/digital-menu"],
     ];
+    // Product ids renamed the same day: they appear in the OG image URLs and in the account areas.
+    const renamedIds: [string, string][] = [
+      ["nfc-google-reviews", "google-review-plates"],
+      ["nfc-social", "social-plates"],
+      ["nfc-menu", "digital-menu"],
+    ];
+    for (const [from, to] of renamedIds) {
+      renamed.push(
+        [`/og/pt/${from}`, `/og/pt/${to}`],
+        [`/og/en/${from}`, `/og/en/${to}`],
+        [`/conta/${from}`, `/conta/${to}`],
+        [`/admin/clientes/:client/${from}`, `/admin/clientes/:client/${to}`],
+      );
+    }
     return renamed.map(([source, destination]) => ({
       source: `${source}/:rest*`,
       destination: `${destination}/:rest*`,

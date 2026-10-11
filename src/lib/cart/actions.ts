@@ -3,7 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { after } from "next/server";
 import type { FormField } from "@/content/booking";
-import { getProduct, isWebProduct } from "@/content/products";
+import { canonicalProductId, getProduct, isWebProduct } from "@/content/products";
 import { ui } from "@/content/ui";
 import { briefFields, webBriefCopy, type BriefField } from "@/content/web-brief";
 import { ownerAddress, sendOwnerEmail, type EmailSection, type EmailTable } from "@/lib/booking/email";
@@ -167,7 +167,7 @@ async function ownedProducts(userId: string): Promise<OwnedProduct[]> {
     console.error("[cart] owned products failed:", error.message);
     return [];
   }
-  return ((data ?? []) as { product_id: string; spaces: number | null }[]).map((row) => ({ productId: row.product_id, spaces: Math.max(1, row.spaces ?? 1) }));
+  return ((data ?? []) as { product_id: string; spaces: number | null }[]).map((row) => ({ productId: canonicalProductId(row.product_id), spaces: Math.max(1, row.spaces ?? 1) }));
 }
 
 export async function cartOwnership(): Promise<OwnedProduct[]> {

@@ -4,7 +4,7 @@ export type PlateVariant = "stand" | "square" | "sticker" | "wall" | "round";
 export type PlateFinish = "black" | "white";
 export type PlateSymbol = "stars" | "social" | "stamps" | "menu" | "home";
 
-interface NfcPlateProps {
+interface TapPlateProps {
   variant?: PlateVariant;
   finish?: PlateFinish;
   line1: string;
@@ -141,7 +141,7 @@ function SymbolRow({ symbol, cx, y, size, color }: { symbol: PlateSymbol; cx: nu
   return <Stars cx={cx} y={y} size={size} color={color} />;
 }
 
-function NfcSymbol({ cx, cy, scale, color }: { cx: number; cy: number; scale: number; color: string }) {
+function TapSymbol({ cx, cy, scale, color }: { cx: number; cy: number; scale: number; color: string }) {
   return (
     <g transform={`translate(${cx - 12 * scale} ${cy - 12 * scale}) scale(${scale})`} fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round">
       <path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17" />
@@ -150,7 +150,7 @@ function NfcSymbol({ cx, cy, scale, color }: { cx: number; cy: number; scale: nu
   );
 }
 
-export function NfcPlate({ variant = "stand", finish = "black", line1, line2, className = "", title, symbol = "stars" }: NfcPlateProps) {
+export function TapPlate({ variant = "stand", finish = "black", line1, line2, className = "", title, symbol = "stars" }: TapPlateProps) {
   const gradientId = useId();
   const shineId = useId();
   const colors = finishes[finish];
@@ -166,7 +166,7 @@ export function NfcPlate({ variant = "stand", finish = "black", line1, line2, cl
           </linearGradient>
         </defs>
         <circle cx="100" cy="100" r="92" fill={`url(#${gradientId})`} stroke={colors.edge} strokeWidth="3" />
-        <NfcSymbol cx={100} cy={62} scale={1.6} color={colors.accent} />
+        <TapSymbol cx={100} cy={62} scale={1.6} color={colors.accent} />
         <SymbolRow symbol={symbol} cx={100} y={92} size={18} color={colors.accent} />
         <text x="100" y="138" textAnchor="middle" fontFamily="var(--font-display)" fontSize="19" fill={colors.text}>
           {line1}
@@ -195,7 +195,7 @@ export function NfcPlate({ variant = "stand", finish = "black", line1, line2, cl
         <circle cx="110" cy="114" r="102" fill={colors.edge} />
         <circle cx="110" cy="108" r="100" fill={`url(#${gradientId})`} />
         <circle cx="110" cy="108" r="100" fill={`url(#${shineId})`} />
-        <NfcSymbol cx={110} cy={36} scale={1.35} color={colors.accent} />
+        <TapSymbol cx={110} cy={36} scale={1.35} color={colors.accent} />
         <SymbolRow symbol={symbol} cx={110} y={56} size={18} color={colors.accent} />
         <text x="110" y="104" textAnchor="middle" fontFamily="var(--font-display)" fontSize="21" fill={colors.text}>
           {line1}
@@ -242,7 +242,7 @@ export function NfcPlate({ variant = "stand", finish = "black", line1, line2, cl
       <rect x="10" y="4" width="200" height={faceHeight} rx="18" fill={colors.edge} />
       <rect x="14" y="8" width="192" height={faceHeight - 8} rx="15" fill={`url(#${gradientId})`} />
       <rect x="14" y="8" width="192" height={faceHeight - 8} rx="15" fill={`url(#${shineId})`} />
-      <NfcSymbol cx={110} cy={isStand ? 50 : 42} scale={1.7} color={colors.accent} />
+      <TapSymbol cx={110} cy={isStand ? 50 : 42} scale={1.7} color={colors.accent} />
       <SymbolRow symbol={symbol} cx={110} y={isStand ? 80 : 68} size={20} color={colors.accent} />
       <text x="110" y={isStand ? 134 : 118} textAnchor="middle" fontFamily="var(--font-display)" fontSize="24" fill={colors.text}>
         {line1}

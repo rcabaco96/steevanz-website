@@ -8,17 +8,17 @@ import { copy as bookings } from "./bookings";
 import { copy as guestGuide } from "./guest-guide";
 import { copy as landingPage } from "./landing-page";
 import { copy as loyalty } from "./loyalty";
-import { copy as nfcGoogleReviews } from "./nfc-google-reviews";
-import { copy as nfcMenu } from "./nfc-menu";
-import { copy as nfcSocial } from "./nfc-social";
+import { copy as googleReviewPlates } from "./google-review-plates";
+import { copy as digitalMenu } from "./digital-menu";
+import { copy as socialPlates } from "./social-plates";
 import { copy as onlineShop } from "./online-shop";
 import { copy as waitlist } from "./waitlist";
 import { copy as website } from "./website";
 
 export const productCopy: Record<ProductId, ProductCopyByLocale> = {
-  "nfc-google-reviews": nfcGoogleReviews,
-  "nfc-social": nfcSocial,
-  "nfc-menu": nfcMenu,
+  "google-review-plates": googleReviewPlates,
+  "social-plates": socialPlates,
+  "digital-menu": digitalMenu,
   "guest-guide": guestGuide,
   loyalty,
   bookings,

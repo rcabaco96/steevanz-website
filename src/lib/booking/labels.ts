@@ -1,5 +1,5 @@
 import { getProductCopy } from "@/content/product-copy";
-import { isProductId } from "@/content/products";
+import { toProductId } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import type { Locale } from "@/lib/i18n";
 import type { LeadKind, PipelineStatus } from "./types";
@@ -20,8 +20,9 @@ export const kindLabels: Record<LeadKind, string> = {
 
 export function productLabel(productId: string | null | undefined, locale: Locale = "pt"): string {
   if (!productId) return locale === "pt" ? "Sem produto definido" : "No product selected";
-  if (!isProductId(productId)) return productId;
-  return getProductCopy(productId, locale).name;
+  const id = toProductId(productId);
+  if (!id) return productId;
+  return getProductCopy(id, locale).name;
 }
 
 export function sectorLabel(sectorId: string | null | undefined, locale: Locale = "pt"): string {

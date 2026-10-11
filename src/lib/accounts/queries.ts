@@ -1,3 +1,4 @@
+import { canonicalProductId, productIdVariants } from "@/content/products";
 import { createAuthClient } from "@/lib/supabase/server";
 import type { ClientProductRow, OrderRow } from "./types";
 
@@ -25,7 +26,7 @@ export async function listOwnProducts(userId: string): Promise<OwnProduct[]> {
     .neq("status", "cancelled")
     .order("activated_at", { ascending: true });
   if (error) throw new Error(`listOwnProducts: ${error.message}`);
-  return (data ?? []) as OwnProduct[];
+  return ((data ?? []) as OwnProduct[]).map((row) => ({ ...row, product_id: canonicalProductId(row.product_id) }));
 }
 
 export async function getOwnProduct(userId: string, productId: string): Promise<OwnProduct | null> {
@@ -33,10 +34,12 @@ export async function getOwnProduct(userId: string, productId: string): Promise<
     .from("client_products")
     .select(productColumns)
     .eq("user_id", userId)
-    .eq("product_id", productId)
+    .in("product_id", productIdVariants(productId))
+    .limit(1)
     .maybeSingle();
   if (error) throw new Error(`getOwnProduct: ${error.message}`);
-  return data as OwnProduct | null;
+  const row = data as OwnProduct | null;
+  return row && { ...row, product_id: canonicalProductId(row.product_id) };
 }
 
 export async function listOwnOrders(userId: string): Promise<OwnOrder[]> {

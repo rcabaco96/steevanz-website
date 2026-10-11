@@ -1,5 +1,5 @@
 // Relative imports with extensions keep this module runnable by `node --test` (tests/cart-pricing.test.mjs).
-import { getProduct, isProductId } from "../../content/products.ts";
+import { getProduct, toProductId } from "../../content/products.ts";
 
 /** Products that run inside the client's space (waitlist, loyalty card, bookings). */
 export const perSpaceProducts = ["waitlist", "loyalty", "bookings"] as const;
@@ -17,6 +17,7 @@ export interface OwnedProduct {
  * One-off products, like plates, can always be bought again.
  */
 export function alreadyActive(productId: string, owned: OwnedProduct[]): boolean {
-  if (!isProductId(productId)) return false;
-  return getProduct(productId).priceBilling === "monthly" && owned.some((item) => item.productId === productId);
+  const id = toProductId(productId);
+  if (!id) return false;
+  return getProduct(id).priceBilling === "monthly" && owned.some((item) => toProductId(item.productId) === id);
 }

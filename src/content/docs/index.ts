@@ -6,16 +6,16 @@ import { docs as automation } from "./automation";
 import { docs as bookings } from "./bookings";
 import { docs as guestGuide } from "./guest-guide";
 import { docs as loyalty } from "./loyalty";
-import { docs as nfcGoogleReviews } from "./nfc-google-reviews";
-import { docs as nfcMenu } from "./nfc-menu";
-import { docs as nfcSocial } from "./nfc-social";
+import { docs as googleReviewPlates } from "./google-review-plates";
+import { docs as digitalMenu } from "./digital-menu";
+import { docs as socialPlates } from "./social-plates";
 import { docs as waitlist } from "./waitlist";
 import { webDocs } from "./web";
 
 export const productDocs: Record<ProductId, ProductDocs> = {
-  "nfc-google-reviews": nfcGoogleReviews,
-  "nfc-social": nfcSocial,
-  "nfc-menu": nfcMenu,
+  "google-review-plates": googleReviewPlates,
+  "social-plates": socialPlates,
+  "digital-menu": digitalMenu,
   "guest-guide": guestGuide,
   loyalty,
   bookings,

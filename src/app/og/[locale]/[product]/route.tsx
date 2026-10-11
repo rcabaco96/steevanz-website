@@ -1,5 +1,5 @@
 import { getProductCopy } from "@/content/product-copy";
-import { getProduct, isProductId, productIds } from "@/content/products";
+import { getProduct, productIds, toProductId } from "@/content/products";
 import { priceLabel } from "@/components/ui/Price";
 import { isLocale, locales } from "@/lib/i18n";
 import { renderOgImage } from "@/lib/og";
@@ -14,7 +14,7 @@ export function generateStaticParams() {
 export async function GET(_request: Request, { params }: { params: Promise<{ locale: string; product: string }> }) {
   const { locale: rawLocale, product: rawProduct } = await params;
   const locale = isLocale(rawLocale) ? rawLocale : "pt";
-  const productId = isProductId(rawProduct) ? rawProduct : "nfc-google-reviews";
+  const productId = toProductId(rawProduct) ?? "google-review-plates";
   const copy = getProductCopy(productId, locale);
   return renderOgImage({
     eyebrow: copy.name,

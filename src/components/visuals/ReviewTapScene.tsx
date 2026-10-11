@@ -1,6 +1,6 @@
 import type { HomeCopy } from "@/content/home";
-import { NfcWaves, StarFilled } from "@/components/icons";
-import { NfcPlate } from "./NfcPlate";
+import { TapWaves, StarFilled } from "@/components/icons";
+import { TapPlate } from "./TapPlate";
 import styles from "./ReviewTapScene.module.css";
 
 /**
@@ -15,7 +15,7 @@ export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
       <div className={styles.glow} />
       <div className={styles.counter} />
       <div className={styles.plateWrap}>
-        <NfcPlate variant="square" finish="white" line1={copy.plateLine1} line2={copy.plateLine2} className={styles.plate} />
+        <TapPlate variant="square" finish="white" line1={copy.plateLine1} line2={copy.plateLine2} className={styles.plate} />
         <span className={styles.pulse} />
         <span className={`${styles.pulse} ${styles.pulseLate}`} />
       </div>
@@ -23,7 +23,7 @@ export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
         <div className={styles.screen}>
           <span className={styles.notch} />
           <div className={styles.idle}>
-            <NfcWaves className={styles.idleIcon} />
+            <TapWaves className={styles.idleIcon} />
             <span>{copy.screenIdle}</span>
           </div>
           <div className={styles.review}>

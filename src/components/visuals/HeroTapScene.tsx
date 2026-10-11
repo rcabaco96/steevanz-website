@@ -1,6 +1,6 @@
 import type { HomeCopy } from "@/content/home";
-import { NfcWaves, StarFilled } from "@/components/icons";
-import { NfcPlate } from "./NfcPlate";
+import { TapWaves, StarFilled } from "@/components/icons";
+import { TapPlate } from "./TapPlate";
 import styles from "./HeroTapScene.module.css";
 
 export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
@@ -9,7 +9,7 @@ export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
       <div className={styles.halo} />
       <div className={styles.ring} />
       <div className={styles.plateWrap}>
-        <NfcPlate variant="stand" finish="black" line1={copy.plateLine1} line2={copy.plateLine2} className={styles.plate} />
+        <TapPlate variant="stand" finish="black" line1={copy.plateLine1} line2={copy.plateLine2} className={styles.plate} />
         <span className={styles.pulse} />
         <span className={`${styles.pulse} ${styles.pulseLate}`} />
       </div>
@@ -17,7 +17,7 @@ export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
         <div className={styles.screen}>
           <span className={styles.notch} />
           <div className={styles.idle}>
-            <NfcWaves className={styles.idleIcon} />
+            <TapWaves className={styles.idleIcon} />
             <span>{copy.screenIdle}</span>
           </div>
           <div className={styles.review}>
@@ -45,7 +45,7 @@ export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
         </div>
       </div>
       <div className={`${styles.chip} ${styles.chipTopLeft}`}>
-        <NfcWaves className={styles.chipIcon} />
+        <TapWaves className={styles.chipIcon} />
         {copy.chipNoApp}
       </div>
       <div className={`${styles.chip} ${styles.chipBottomRight}`}>

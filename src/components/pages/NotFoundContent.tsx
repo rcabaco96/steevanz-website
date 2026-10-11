@@ -2,7 +2,7 @@ import { products } from "@/content/products";
 import { getProductCopy } from "@/content/product-copy";
 import { ui } from "@/content/ui";
 import { ButtonLink } from "@/components/ui/Button";
-import { NfcPlate } from "@/components/visuals/NfcPlate";
+import { TapPlate } from "@/components/visuals/TapPlate";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import Link from "next/link";
@@ -61,7 +61,7 @@ export function NotFoundContent({ locale }: { locale: Locale }) {
             </ButtonLink>
           </div>
         </div>
-        <NfcPlate variant="stand" finish="black" line1={text.plateLine1} line2={text.plateLine2} className="mx-auto h-auto w-56 -rotate-6 sm:w-64" />
+        <TapPlate variant="stand" finish="black" line1={text.plateLine1} line2={text.plateLine2} className="mx-auto h-auto w-56 -rotate-6 sm:w-64" />
       </div>
     </section>
   );

@@ -1,9 +1,9 @@
 import type { Locale, Localized } from "@/lib/i18n";
 
 export type ProductId =
-  | "nfc-google-reviews"
-  | "nfc-social"
-  | "nfc-menu"
+  | "google-review-plates"
+  | "social-plates"
+  | "digital-menu"
   | "loyalty"
   | "bookings"
   | "waitlist"

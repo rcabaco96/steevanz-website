@@ -3,7 +3,7 @@ import { normalize, type ThemeId } from "./text.ts";
 import type { DashboardSource, GoogleReview } from "./types.ts";
 
 /** Product ids from the Steevanz catalogue that the dashboard can recommend. */
-export type RecommendedProduct = "ai-reviews" | "waitlist" | "ai-voice" | "bookings" | "nfc-google-reviews" | "loyalty";
+export type RecommendedProduct = "ai-reviews" | "waitlist" | "ai-voice" | "bookings" | "google-review-plates" | "loyalty";
 
 export interface Recommendation {
   productId: RecommendedProduct;
@@ -139,14 +139,14 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
   if (competition?.paceLeader && ownPace !== null && competition.paceLeader.pacePerMonth >= Math.max(ownPace * 1.2, ownPace + 2)) {
     // Losing ground to a named neighbour is the strongest argument, so it goes first.
     items.unshift({
-      productId: "nfc-google-reviews",
+      productId: "google-review-plates",
       signal: `${competition.paceLeader.name}: ${Math.round(competition.paceLeader.pacePerMonth)} reviews/mês · o seu: ${Math.round(ownPace)}`,
       title: "A concorrência está a receber mais reviews",
       body: "Quem recebe mais reviews aparece mais nas pesquisas do Google. Placas nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque, para não ficar para trás.",
     });
   } else if (goal?.monthsToNext !== null && goal?.monthsToNext !== undefined && goal.monthsToNext > 4 && goal.next !== null) {
     items.push({
-      productId: "nfc-google-reviews",
+      productId: "google-review-plates",
       signal: `${goal.fiveStarsNeeded} reviews de 5★ até aos ${format1(goal.next)}★`,
       title: "Chegar mais depressa à próxima estrela",
       body: `Ao ritmo atual faltam cerca de ${Math.ceil(goal.monthsToNext)} meses. Placas nas mesas, no balcão e à saída pedem a review no melhor momento, com um toque.`,

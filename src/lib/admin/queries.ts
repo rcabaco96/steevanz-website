@@ -1,4 +1,4 @@
-import { isProductId } from "@/content/products";
+import { canonicalProductId, productIdVariants, toProductId } from "@/content/products";
 import { isOrderStatus, type ClientProductRow, type OrderRow, type OrderStatus, type ProfileRow } from "@/lib/accounts/types";
 import { addDaysToDate, zonedDateTimeToUtc } from "@/lib/booking/slots";
 import { isLeadKind, isPipelineStatus, type BookingRow, type LeadKind, type LeadRow, type PipelineStatus } from "@/lib/booking/types";
@@ -38,7 +38,7 @@ export function parseFilters(params: AdminSearchParams | URLSearchParams): ListF
   return {
     status: isPipelineStatus(status) ? status : "",
     kind: isLeadKind(kind) ? kind : "",
-    product: product === "none" || isProductId(product) ? product : "",
+    product: product === "none" ? product : (toProductId(product) ?? ""),
     from: datePattern.test(from) ? from : "",
     to: datePattern.test(to) ? to : "",
     q: get("q").slice(0, 80),
@@ -65,6 +65,7 @@ function dayStart(date: string): string {
 interface FilterQuery extends PromiseLike<{ data: unknown[] | null; error: { message: string } | null }> {
   eq(column: string, value: string): FilterQuery;
   is(column: string, value: null): FilterQuery;
+  in(column: string, values: string[]): FilterQuery;
   gte(column: string, value: string): FilterQuery;
   lt(column: string, value: string): FilterQuery;
   or(filters: string): FilterQuery;
@@ -76,7 +77,7 @@ function applyFilters(query: FilterQuery, filters: ListFilters, dateColumn: stri
   let next = query;
   if (filters.status) next = next.eq("status", filters.status);
   if (filters.product === "none") next = next.is("product_id", null);
-  else if (filters.product) next = next.eq("product_id", filters.product);
+  else if (filters.product) next = next.in("product_id", productIdVariants(filters.product));
   if (withKind && filters.kind) next = next.eq("kind", filters.kind);
   if (filters.from) next = next.gte(dateColumn, dayStart(filters.from));
   if (filters.to) next = next.lt(dateColumn, dayStart(addDaysToDate(filters.to, 1)));
@@ -307,7 +308,7 @@ export async function listActiveProductIds(userId: string): Promise<string[]> {
   if (!isUuid(userId)) return [];
   const { data, error } = await createServiceClient().from("client_products").select("product_id").eq("user_id", userId).eq("status", "active");
   if (error) throw new Error(`listActiveProductIds: ${error.message}`);
-  return ((data ?? []) as { product_id: string }[]).map((row) => row.product_id);
+  return ((data ?? []) as { product_id: string }[]).map((row) => canonicalProductId(row.product_id));
 }
 
 export async function getProfile(id: string): Promise<ProfileRow | null> {
@@ -330,7 +331,7 @@ export async function listClientProducts(userId: string): Promise<ClientProductR
     .eq("user_id", userId)
     .order("activated_at", { ascending: true });
   if (error) throw new Error(`listClientProducts: ${error.message}`);
-  return (data ?? []) as ClientProductRow[];
+  return ((data ?? []) as ClientProductRow[]).map((row) => ({ ...row, product_id: canonicalProductId(row.product_id) }));
 }
 
 export async function getClientProduct(userId: string, productId: string): Promise<ClientProductRow | null> {
@@ -339,10 +340,12 @@ export async function getClientProduct(userId: string, productId: string): Promi
     .from("client_products")
     .select("*")
     .eq("user_id", userId)
-    .eq("product_id", productId)
+    .in("product_id", productIdVariants(productId))
+    .limit(1)
     .maybeSingle();
   if (error) throw new Error(`getClientProduct: ${error.message}`);
-  return data as ClientProductRow | null;
+  const row = data as ClientProductRow | null;
+  return row && { ...row, product_id: canonicalProductId(row.product_id) };
 }
 
 /** Orders placed while signed in, plus guest orders made with the same email. */

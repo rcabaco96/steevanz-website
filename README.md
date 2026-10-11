@@ -1,6 +1,6 @@
 # Steevanz website
 
-Next.js (App Router) site for Steevanz: NFC plates for Google reviews and AI tools for local businesses.
+Next.js (App Router) site for Steevanz: plates for Google reviews and AI tools for local businesses.
 
 ## Stack
 
