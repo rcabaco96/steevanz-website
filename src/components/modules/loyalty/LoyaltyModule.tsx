@@ -359,7 +359,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
             ))}
           </ul>
         ) : (
-          <EmptyState>{term ? "Nenhum cartão encontrado." : "Ainda sem cartões. Os clientes aderem pelo QR code ou pela placa NFC ao balcão."}</EmptyState>
+          <EmptyState>{term ? "Nenhum cartão encontrado." : "Ainda sem cartões. Os clientes aderem pelo QR code ou pela placa ao balcão."}</EmptyState>
         )}
       </div>
     );
@@ -405,7 +405,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
       <Materials
         title="Página de adesão"
         url={url}
-        hint="Os clientes aderem por este link. Imprima o cartaz para o balcão, ou peça-nos a placa NFC já programada."
+        hint="Os clientes aderem por este link. Imprima o cartaz para o balcão, ou peça-nos a placa já programada."
         poster={{
           heading: rewardsSentence(program),
           sub: "Aponte a câmara ao código. O cartão fica no seu telemóvel, sem aplicação.",

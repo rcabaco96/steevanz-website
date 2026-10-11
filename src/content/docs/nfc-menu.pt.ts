@@ -2,13 +2,13 @@ import type { DocPageContent, DocPageId } from "../types";
 
 export const pt: Record<DocPageId, DocPageContent> = {
   "getting-started": {
-    title: "Primeiros passos com o cardápio digital NFC",
+    title: "Primeiros passos com o menu digital",
     description:
-      "Como as placas NFC circulares da Steevanz levam os clientes, à mesa, aos vídeos, fotos e carrosséis dos seus pratos com preço no Instagram ou no YouTube.",
+      "Como as placas circulares da Steevanz levam os clientes, à mesa, aos vídeos, fotos e carrosséis dos seus pratos com preço no Instagram ou no YouTube.",
     blocks: [
       {
         type: "p",
-        text: "O cardápio digital é uma placa NFC circular e pequena, uma por mesa. O cliente aproxima o telemóvel e abre um destaque do Instagram ou uma playlist do YouTube com os seus pratos, em vídeo, foto ou carrossel, com o preço de cada um. É como folhear o menu, mas a ver a comida de verdade.",
+        text: "O menu digital é uma placa circular e pequena, uma por mesa. O cliente aproxima o telemóvel e abre um destaque do Instagram ou uma playlist do YouTube com os seus pratos, em vídeo, foto ou carrossel, com o preço de cada um. É como folhear o menu, mas a ver a comida de verdade.",
       },
       {
         type: "p",
@@ -19,9 +19,9 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Item", "Detalhe"],
         rows: [
-          ["Placa NFC circular", "Autocolante circular de mesa ou base circular de mesa"],
-          ["QR code impresso", "Para telemóveis sem NFC ou com o NFC desligado"],
-          ["Configuração", "Ligamos cada placa ao destaque do Instagram ou à playlist do YouTube do cardápio"],
+          ["Placa circular", "Autocolante circular de mesa ou base circular de mesa"],
+          ["QR code impresso", "Para telemóveis sem leitura por aproximação ou com essa opção desligada"],
+          ["Configuração", "Ligamos cada placa ao destaque do Instagram ou à playlist do YouTube do menu"],
           ["Mudança de destino", "Pode trocar o destaque ou a playlist sem reimprimir as placas"],
         ],
       },
@@ -45,7 +45,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "ol",
         items: [
           "O cliente senta-se e aproxima o telemóvel da placa (ou lê o QR code).",
-          "Abre-se o destaque do Instagram ou a playlist do YouTube com o cardápio.",
+          "Abre-se o destaque do Instagram ou a playlist do YouTube com o menu.",
           "O cliente vê os pratos com o preço e escolhe com mais confiança.",
         ],
       },
@@ -53,28 +53,28 @@ export const pt: Record<DocPageId, DocPageContent> = {
       {
         type: "ul",
         items: [
-          "[Instalação](/docs/cardapio-digital-nfc/instalacao): preparar o destaque ou a playlist e colocar as placas.",
-          "[Configuração](/docs/cardapio-digital-nfc/configuracao): mudar o destino e manter os preços certos.",
-          "[Utilização](/docs/cardapio-digital-nfc/utilizacao): boas práticas para o conteúdo do cardápio.",
+          "[Instalação](/docs/menu-digital/instalacao): preparar o destaque ou a playlist e colocar as placas.",
+          "[Configuração](/docs/menu-digital/configuracao): mudar o destino e manter os preços certos.",
+          "[Utilização](/docs/menu-digital/utilizacao): boas práticas para o conteúdo do menu.",
         ],
       },
     ],
   },
   setup: {
-    title: "Instalação do cardápio digital NFC",
-    description: "Prepare o destaque do Instagram ou a playlist do YouTube com o cardápio e coloque as placas nas mesas.",
+    title: "Instalação do menu digital",
+    description: "Prepare o destaque do Instagram ou a playlist do YouTube com o menu e coloque as placas nas mesas.",
     blocks: [
       { type: "h2", id: "preparar-conteudo", text: "1. Preparar o conteúdo" },
       {
         type: "p",
-        text: "A placa leva a um sítio específico, não ao perfil inteiro: um destaque do Instagram ou uma playlist do YouTube só com o cardápio.",
+        text: "A placa leva a um sítio específico, não ao perfil inteiro: um destaque do Instagram ou uma playlist do YouTube só com o menu.",
       },
       { type: "h3", id: "instagram", text: "Instagram: criar um destaque «Menu»" },
       {
         type: "steps",
         items: [
           { title: "Publique os pratos em stories", body: "Um vídeo, foto ou carrossel por prato, com o nome e o preço escritos na imagem." },
-          { title: "Crie o destaque", body: "No perfil, toque em «Novo» nos destaques, escolha as stories dos pratos e chame-lhe «Menu» ou «Cardápio»." },
+          { title: "Crie o destaque", body: "No perfil, toque em «Novo» nos destaques, escolha as stories dos pratos e chame-lhe «Menu»." },
           { title: "Organize por secções", body: "Se o menu for grande, crie um destaque por secção (Entradas, Pratos, Sobremesas, Bebidas)." },
         ],
       },
@@ -83,7 +83,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "steps",
         items: [
           { title: "Publique um vídeo curto por prato", body: "Shorts funcionam bem. Ponha o nome e o preço no título e no próprio vídeo." },
-          { title: "Crie a playlist «Menu»", body: "Junte os vídeos pela ordem do cardápio e deixe a playlist pública." },
+          { title: "Crie a playlist «Menu»", body: "Junte os vídeos pela ordem do menu e deixe a playlist pública." },
         ],
       },
       {
@@ -103,13 +103,13 @@ export const pt: Record<DocPageId, DocPageContent> = {
         items: [
           "Uma placa por mesa, num sítio visível e ao alcance do telemóvel (centro da mesa ou junto ao porta-guardanapos).",
           "Limpe a superfície antes de colar o autocolante e pressione durante alguns segundos.",
-          "Evite superfícies metálicas: o metal pode impedir o NFC de funcionar. Nesse caso, use a base circular de mesa.",
+          "Evite superfícies metálicas: o metal bloqueia o sinal do chip. Nesse caso, use a base circular de mesa.",
         ],
       },
     ],
   },
   configuration: {
-    title: "Configuração do cardápio digital NFC",
+    title: "Configuração do menu digital",
     description: "Mude o destino das placas e mantenha os pratos e os preços sempre certos.",
     blocks: [
       { type: "h2", id: "mudar-destino", text: "Mudar o destino" },
@@ -123,7 +123,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         items: [
           "Quando um preço mudar, publique a story ou o vídeo novo e retire o antigo do destaque ou da playlist.",
           "Pratos que saem do menu também devem sair do destaque ou da playlist.",
-          "Reveja o cardápio digital sempre que mudar o menu em papel.",
+          "Reveja o menu digital sempre que mudar o menu em papel.",
         ],
       },
       {
@@ -139,8 +139,8 @@ export const pt: Record<DocPageId, DocPageContent> = {
     ],
   },
   usage: {
-    title: "Utilização do cardápio digital NFC",
-    description: "Boas práticas para que o cardápio digital ajude os clientes a escolher.",
+    title: "Utilização do menu digital",
+    description: "Boas práticas para que o menu digital ajude os clientes a escolher.",
     blocks: [
       { type: "h2", id: "conteudo-que-funciona", text: "Conteúdo que funciona" },
       {
@@ -160,20 +160,20 @@ export const pt: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "juntar-reviews", text: "Juntar com as reviews Google" },
       {
         type: "p",
-        text: "Na mesma mesa, a placa de reviews Google pede uma avaliação no fim da refeição. O cardápio ajuda a escolher no início; as reviews ajudam novos clientes a encontrá-lo.",
+        text: "Na mesma mesa, a placa de reviews Google pede uma avaliação no fim da refeição. O menu digital ajuda a escolher no início; as reviews ajudam novos clientes a encontrá-lo.",
       },
     ],
   },
   troubleshooting: {
-    title: "Resolução de problemas do cardápio digital NFC",
-    description: "O que fazer quando a placa não abre o cardápio.",
+    title: "Resolução de problemas do menu digital",
+    description: "O que fazer quando a placa não abre o menu.",
     blocks: [
       {
         type: "table",
         head: ["Problema", "O que fazer"],
         rows: [
-          ["O telemóvel não reage ao toque", "Confirme que o NFC está ligado (Android) e encoste o topo do telemóvel ao centro da placa. Em alternativa, leia o QR code."],
-          ["Abre o perfil e não o cardápio", "O destaque ou a playlist pode ter sido apagado ou mudado de nome. Envie-nos o link novo."],
+          ["O telemóvel não reage ao toque", "Confirme que a opção de leitura por aproximação está ligada nas definições de ligações (Android) e encoste o topo do telemóvel ao centro da placa. Em alternativa, leia o QR code."],
+          ["Abre o perfil e não o menu", "O destaque ou a playlist pode ter sido apagado ou mudado de nome. Envie-nos o link novo."],
           ["A playlist aparece vazia ou privada", "No YouTube, confirme que a playlist e os vídeos estão públicos."],
           ["A placa não funciona sobre metal", "Troque o autocolante pela base circular de mesa."],
           ["Preços desatualizados", "Atualize as stories ou os vídeos: a placa mostra sempre o que estiver publicado."],
@@ -187,14 +187,14 @@ export const pt: Record<DocPageId, DocPageContent> = {
     ],
   },
   faq: {
-    title: "Perguntas frequentes sobre o cardápio digital NFC",
-    description: "Respostas rápidas sobre as placas de cardápio digital.",
+    title: "Perguntas frequentes sobre o menu digital",
+    description: "Respostas rápidas sobre as placas de menu digital.",
     blocks: [
       {
         type: "faq",
         items: [
           { q: "O cliente precisa de instalar alguma aplicação?", a: "Não. O telemóvel abre o Instagram ou o YouTube; se a aplicação não estiver instalada, abre no navegador." },
-          { q: "Funciona em iPhone e Android?", a: "Sim. Os iPhones recentes leem NFC sem fazer nada; no Android o NFC tem de estar ligado. Há sempre o QR code impresso." },
+          { q: "Funciona em iPhone e Android?", a: "Sim. Os iPhones recentes leem a placa sem fazer nada; no Android, a leitura por aproximação tem de estar ligada. Há sempre o QR code impresso." },
           { q: "Substitui o menu em papel?", a: "Complementa-o. Mostra os pratos em vídeo e foto, o que ajuda a escolher, mas o menu em papel continua útil para quem prefere." },
           { q: "Quanto custa?", a: "15 € por placa, ou packs de 5 por 60 €, 10 por 100 € e 20 por 180 €. O logotipo paga-se uma vez por encomenda." },
           { q: "Vocês criam os vídeos?", a: "Não diretamente: trabalhamos com parceiros que criam vídeos, fotos e carrosséis dos pratos e pedimos orçamento por si." },

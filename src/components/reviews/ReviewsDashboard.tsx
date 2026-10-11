@@ -622,7 +622,7 @@ export function ReviewsDashboard({
 }) {
   const { business } = source;
   const { kpis, series, period } = analytics;
-  // Everything about the NFC plates (install date, chart marker, «Antes e depois») only for clients who have them.
+  // Everything about the plates (install date, chart marker, «Antes e depois») only for clients who have them.
   const hasPlates = hasPlatesProduct(business);
   const insights = insightsFor(source, analytics);
   const granularityLabel = period.granularity === "month" ? "mês" : period.granularity === "week" ? "semana" : "dia";

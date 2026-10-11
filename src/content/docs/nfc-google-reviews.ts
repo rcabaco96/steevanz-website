@@ -5,13 +5,13 @@ export const docs: ProductDocs = {
   pages: {
     "getting-started": {
       pt: {
-        title: "Primeiros passos com as placas NFC Google Reviews",
+        title: "Primeiros passos com as placas Google Reviews",
         description:
-          "Saiba como funcionam as placas NFC para avaliações no Google, o que recebe da Steevanz e o que precisa de preparar antes de começar a recolher reviews.",
+          "Saiba como funcionam as placas para reviews no Google, o que recebe da Steevanz e o que precisa de preparar antes de começar a recolher reviews.",
         blocks: [
           {
             type: "p",
-            text: "As placas NFC Google Reviews permitem que os seus clientes deixem uma avaliação no Google em poucos segundos: basta aproximar o telemóvel da placa, ou apontar a câmara para o código QR impresso, e o formulário de avaliação do seu negócio abre de imediato. Sem pesquisas, sem procurar o nome da loja no Google Maps, sem passos intermédios.",
+            text: "As placas Google Reviews permitem que os seus clientes deixem uma avaliação no Google em poucos segundos: basta aproximar o telemóvel da placa, ou apontar a câmara para o código QR impresso, e o formulário de avaliação do seu negócio abre de imediato. Sem pesquisas, sem procurar o nome da loja no Google Maps, sem passos intermédios.",
           },
           {
             type: "p",
@@ -20,7 +20,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "como-funciona", text: "Como funciona" },
           {
             type: "p",
-            text: "Cada placa tem um chip NFC (do tipo **NTAG213** ou **NTAG215**) escondido no interior e um código QR impresso na frente. O chip e o QR apontam para um endereço curto gerido pela Steevanz, que por sua vez redireciona o cliente para o formulário de avaliação do seu Perfil da Empresa no Google.",
+            text: "Cada placa tem um chip (do tipo **NTAG213** ou **NTAG215**) escondido no interior e um código QR impresso na frente. O chip e o QR apontam para um endereço curto gerido pela Steevanz, que por sua vez redireciona o cliente para o formulário de avaliação do seu Perfil da Empresa no Google.",
           },
           {
             type: "ol",
@@ -35,7 +35,7 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "info",
             title: "Nada para instalar",
-            text: "O cliente não precisa de instalar nenhuma aplicação. O NFC está incluído na grande maioria dos telemóveis recentes e o QR funciona com a câmara de qualquer smartphone.",
+            text: "O cliente não precisa de instalar nenhuma aplicação. A leitura por aproximação está incluída na grande maioria dos telemóveis recentes e o QR funciona com a câmara de qualquer smartphone.",
           },
           { type: "h2", id: "formatos-disponiveis", text: "Formatos disponíveis" },
           {
@@ -65,10 +65,10 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "[Instalação](/docs/placas-nfc-google-reviews/instalacao): como obtemos o link de avaliação e onde colocar cada placa.",
-              "[Configuração](/docs/placas-nfc-google-reviews/configuracao): bloqueio dos chips, redirecionamento e alteração do destino.",
-              "[Utilização](/docs/placas-nfc-google-reviews/utilizacao): como a sua equipa deve pedir avaliações sem violar as regras do Google.",
-              "[Resolução de problemas](/docs/placas-nfc-google-reviews/resolucao-problemas): o que fazer se uma placa não reagir.",
+              "[Instalação](/docs/placas-google-reviews/instalacao): como obtemos o link de avaliação e onde colocar cada placa.",
+              "[Configuração](/docs/placas-google-reviews/configuracao): bloqueio dos chips, redirecionamento e alteração do destino.",
+              "[Utilização](/docs/placas-google-reviews/utilizacao): como a sua equipa deve pedir avaliações sem violar as regras do Google.",
+              "[Resolução de problemas](/docs/placas-google-reviews/resolucao-problemas): o que fazer se uma placa não reagir.",
             ],
           },
           {
@@ -79,13 +79,13 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Getting started with NFC Google review plates",
+        title: "Getting started with Google review plates",
         description:
-          "Learn how NFC Google review plates work, what Steevanz delivers and what you need to prepare before you start collecting more Google reviews.",
+          "Learn how Google review plates work, what Steevanz delivers and what you need to prepare before you start collecting more Google reviews.",
         blocks: [
           {
             type: "p",
-            text: "NFC Google review plates let your customers leave a Google review in seconds: they tap their phone on the plate, or point the camera at the printed QR code, and your business's review form opens straight away. No searching, no hunting for your shop on Google Maps, no extra steps.",
+            text: "Google review plates let your customers leave a Google review in seconds: they tap their phone on the plate, or point the camera at the printed QR code, and your business's review form opens straight away. No searching, no hunting for your shop on Google Maps, no extra steps.",
           },
           {
             type: "p",
@@ -94,7 +94,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "How it works" },
           {
             type: "p",
-            text: "Each plate has an NFC chip (**NTAG213** or **NTAG215**) hidden inside and a QR code printed on the front. Both point to a short link managed by Steevanz, which redirects the customer to the review form of your Google Business Profile.",
+            text: "Each plate has a chip (**NTAG213** or **NTAG215**) hidden inside and a QR code printed on the front. Both point to a short link managed by Steevanz, which redirects the customer to the review form of your Google Business Profile.",
           },
           {
             type: "ol",
@@ -109,7 +109,7 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "info",
             title: "Nothing to install",
-            text: "Customers don't need to install any app. NFC is built into the vast majority of recent phones, and the QR code works with any smartphone camera.",
+            text: "Customers don't need to install any app. Tap reading is built into the vast majority of recent phones, and the QR code works with any smartphone camera.",
           },
           { type: "h2", id: "available-formats", text: "Available formats" },
           {
@@ -139,10 +139,10 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "[Setup](/en/docs/nfc-google-review-plates/setup): how we get your review link and where to place each plate.",
-              "[Configuration](/en/docs/nfc-google-review-plates/configuration): chip locking, redirects and changing the destination.",
-              "[Usage](/en/docs/nfc-google-review-plates/usage): how your team should ask for reviews without breaking Google's rules.",
-              "[Troubleshooting](/en/docs/nfc-google-review-plates/troubleshooting): what to do if a plate doesn't respond.",
+              "[Setup](/en/docs/google-review-plates/setup): how we get your review link and where to place each plate.",
+              "[Configuration](/en/docs/google-review-plates/configuration): chip locking, redirects and changing the destination.",
+              "[Usage](/en/docs/google-review-plates/usage): how your team should ask for reviews without breaking Google's rules.",
+              "[Troubleshooting](/en/docs/google-review-plates/troubleshooting): what to do if a plate doesn't respond.",
             ],
           },
           {
@@ -155,9 +155,9 @@ export const docs: ProductDocs = {
     },
     setup: {
       pt: {
-        title: "Instalação das placas NFC Google Reviews",
+        title: "Instalação das placas Google Reviews",
         description:
-          "Como obter o link de avaliação do Perfil da Empresa no Google, validar o Place ID e escolher o melhor local para instalar cada placa NFC no seu negócio.",
+          "Como obter o link de avaliação do Perfil da Empresa no Google, validar o Place ID e escolher o melhor local para instalar cada placa no seu negócio.",
         blocks: [
           {
             type: "p",
@@ -218,7 +218,7 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Balcão**: perto do terminal de pagamento, mas **não por cima** dele. Os terminais de cartão emitem o seu próprio campo NFC e podem interferir com a leitura.",
+              "**Balcão**: perto do terminal de pagamento, mas **não por cima** dele. Os terminais de cartão emitem o seu próprio campo sem contacto (contactless) e podem interferir com a leitura.",
               "**Mesas**: um suporte por mesa, virado para o cliente. É o momento ideal, enquanto espera pela conta.",
               "**Parede**: à altura dos olhos (cerca de 1,40 m a 1,60 m do chão), junto à saída ou na sala de espera.",
               "**Autocolantes**: em menus, na capa da conta ou no espelho de um salão de cabeleireiro.",
@@ -228,19 +228,19 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "warning",
             title: "Superfícies metálicas",
-            text: "O metal bloqueia o sinal NFC. Se precisar de colar uma placa ou autocolante numa superfície metálica (balcão de inox, frigorífico, porta metálica), peça-nos a versão com **chip anti-metal**, que tem uma camada de ferrite isolante.",
+            text: "O metal bloqueia o sinal do chip. Se precisar de colar uma placa ou autocolante numa superfície metálica (balcão de inox, frigorífico, porta metálica), peça-nos a versão com **chip anti-metal**, que tem uma camada de ferrite isolante.",
           },
           { type: "h2", id: "testar-instalacao", text: "Testar depois de instalar" },
           {
             type: "p",
-            text: "Depois de colocar cada placa no sítio definitivo, teste-a com pelo menos um iPhone e um Android. Aproxime o telemóvel devagar, com o ecrã desbloqueado, e confirme que abre a janela de avaliação correta. Teste também o código QR com a câmara. Se algo falhar, veja a página de [resolução de problemas](/docs/placas-nfc-google-reviews/resolucao-problemas).",
+            text: "Depois de colocar cada placa no sítio definitivo, teste-a com pelo menos um iPhone e um Android. Aproxime o telemóvel devagar, com o ecrã desbloqueado, e confirme que abre a janela de avaliação correta. Teste também o código QR com a câmara. Se algo falhar, veja a página de [resolução de problemas](/docs/placas-google-reviews/resolucao-problemas).",
           },
         ],
       },
       en: {
-        title: "Setting up your NFC Google review plates",
+        title: "Setting up your Google review plates",
         description:
-          "How to get your Google Business Profile review link, check the Place ID and choose the best spot for each NFC review plate in your business premises.",
+          "How to get your Google Business Profile review link, check the Place ID and choose the best spot for each review plate in your business premises.",
         blocks: [
           {
             type: "p",
@@ -301,7 +301,7 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Counter**: near the card terminal, but **not on top of it**. Card terminals generate their own NFC field and can interfere with reading.",
+              "**Counter**: near the card terminal, but **not on top of it**. Card terminals generate their own contactless field and can interfere with reading.",
               "**Tables**: one stand per table, facing the customer. It's the perfect moment, while they wait for the bill.",
               "**Wall**: at eye level (roughly 1.40 m to 1.60 m from the floor), by the exit or in the waiting room.",
               "**Stickers**: on menus, bill folders or a salon mirror.",
@@ -311,12 +311,12 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "warning",
             title: "Metal surfaces",
-            text: "Metal blocks the NFC signal. If you need to mount a plate or sticker on metal (a stainless steel counter, a fridge, a metal door), ask us for the **anti-metal chip** version, which has an insulating ferrite layer.",
+            text: "Metal blocks the chip's signal. If you need to mount a plate or sticker on metal (a stainless steel counter, a fridge, a metal door), ask us for the **anti-metal chip** version, which has an insulating ferrite layer.",
           },
           { type: "h2", id: "test-installation", text: "Testing after installation" },
           {
             type: "p",
-            text: "Once each plate is in its final spot, test it with at least one iPhone and one Android phone. Bring the phone in slowly, screen unlocked, and check the correct review window opens. Test the QR code with the camera too. If anything fails, see the [troubleshooting](/en/docs/nfc-google-review-plates/troubleshooting) page.",
+            text: "Once each plate is in its final spot, test it with at least one iPhone and one Android phone. Bring the phone in slowly, screen unlocked, and check the correct review window opens. Test the QR code with the camera too. If anything fails, see the [troubleshooting](/en/docs/google-review-plates/troubleshooting) page.",
           },
         ],
       },
@@ -325,7 +325,7 @@ export const docs: ProductDocs = {
       pt: {
         title: "Configuração: chips, redirecionamento e destino",
         description:
-          "Como a Steevanz grava e bloqueia os chips NFC, porque usamos um redirecionamento e como alterar o destino das placas sem ter de as reimprimir.",
+          "Como a Steevanz grava e bloqueia os chips, porque usamos um redirecionamento e como alterar o destino das placas sem ter de as reimprimir.",
         blocks: [
           {
             type: "p",
@@ -334,12 +334,12 @@ export const docs: ProductDocs = {
           { type: "h2", id: "gravacao-bloqueio", text: "Gravação e bloqueio dos chips" },
           {
             type: "p",
-            text: "Cada chip NFC é gravado com um único registo: o endereço do redirecionamento da Steevanz. Depois de gravado e testado, o chip é **bloqueado permanentemente** (protegido contra escrita).",
+            text: "Cada chip é gravado com um único registo: o endereço do redirecionamento da Steevanz. Depois de gravado e testado, o chip é **bloqueado permanentemente** (protegido contra escrita).",
           },
           {
             type: "ul",
             items: [
-              "Ninguém consegue reescrever a placa com uma aplicação de NFC, nem por brincadeira nem por má intenção.",
+              "Ninguém consegue reescrever a placa com uma aplicação de escrita de chips, nem por brincadeira nem por má intenção.",
               "O bloqueio é irreversível: o conteúdo gravado no chip nunca mais muda.",
               "Mesmo assim, o destino final pode ser alterado, porque o chip aponta para o nosso redirecionamento e não diretamente para o Google.",
             ],
@@ -369,7 +369,7 @@ export const docs: ProductDocs = {
             items: [
               {
                 title: "Obter o novo link",
-                body: "Siga os passos da página de [instalação](/docs/placas-nfc-google-reviews/instalacao) para obter o novo link de avaliação.",
+                body: "Siga os passos da página de [instalação](/docs/placas-google-reviews/instalacao) para obter o novo link de avaliação.",
               },
               {
                 title: "Enviar-nos o pedido",
@@ -396,7 +396,7 @@ export const docs: ProductDocs = {
       en: {
         title: "Configuration: chips, redirects and destination",
         description:
-          "How Steevanz writes and locks your NFC chips, why we use a redirect link and how to change where your plates point without having to reprint them.",
+          "How Steevanz writes and locks your chips, why we use a redirect link and how to change where your plates point without having to reprint them.",
         blocks: [
           {
             type: "p",
@@ -405,12 +405,12 @@ export const docs: ProductDocs = {
           { type: "h2", id: "writing-locking", text: "Writing and locking the chips" },
           {
             type: "p",
-            text: "Each NFC chip is written with a single record: the Steevanz redirect address. Once written and tested, the chip is **permanently locked** (write-protected).",
+            text: "Each chip is written with a single record: the Steevanz redirect address. Once written and tested, the chip is **permanently locked** (write-protected).",
           },
           {
             type: "ul",
             items: [
-              "Nobody can rewrite the plate with an NFC app, whether as a prank or with bad intent.",
+              "Nobody can rewrite the plate with a chip-writing app, whether as a prank or with bad intent.",
               "Locking is irreversible: the content stored on the chip never changes again.",
               "The final destination can still be changed, because the chip points to our redirect rather than straight to Google.",
             ],
@@ -440,7 +440,7 @@ export const docs: ProductDocs = {
             items: [
               {
                 title: "Get the new link",
-                body: "Follow the steps on the [setup](/en/docs/nfc-google-review-plates/setup) page to get your new review link.",
+                body: "Follow the steps on the [setup](/en/docs/google-review-plates/setup) page to get your new review link.",
               },
               {
                 title: "Send us the request",
@@ -469,7 +469,7 @@ export const docs: ProductDocs = {
       pt: {
         title: "Utilização: como pedir avaliações todos os dias",
         description:
-          "Guia prático para a sua equipa pedir avaliações no Google com as placas NFC, respeitando as regras do Google, e manter as placas limpas e funcionais.",
+          "Guia prático para a sua equipa pedir avaliações no Google com as placas, respeitando as regras do Google, e manter as placas limpas e funcionais.",
         blocks: [
           {
             type: "p",
@@ -485,13 +485,13 @@ export const docs: ProductDocs = {
             items: [
               "\"Se tiver um minuto, ajudava-nos muito deixar uma avaliação no Google. É só aproximar o telemóvel desta placa.\"",
               "\"A sua opinião conta. Basta encostar o telemóvel aqui, ou ler o código com a câmara.\"",
-              "\"Se o NFC não funcionar, aponte a câmara para o QR, que abre logo a página.\"",
+              "\"Se o toque não funcionar, aponte a câmara para o QR, que abre logo a página.\"",
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Mostre como se faz. Muitas pessoas nunca usaram NFC; se a pessoa da equipa demonstrar com o próprio telemóvel na primeira semana, a taxa de utilização sobe claramente.",
+            text: "Mostre como se faz. Muitas pessoas nunca encostaram o telemóvel a uma placa; se a pessoa da equipa demonstrar com o próprio telemóvel na primeira semana, a taxa de utilização sobe claramente.",
           },
           { type: "h2", id: "regras-google", text: "Regras do Google que tem de cumprir" },
           {
@@ -544,7 +544,7 @@ export const docs: ProductDocs = {
       en: {
         title: "Usage: asking for reviews every day",
         description:
-          "A practical guide for your team to ask for Google reviews with NFC plates while following Google's rules, and to keep your plates clean and working.",
+          "A practical guide for your team to ask for Google reviews with your plates while following Google's rules, and to keep your plates clean and working.",
         blocks: [
           {
             type: "p",
@@ -566,7 +566,7 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Show them how. Many people have never used NFC; if staff demonstrate with their own phone in the first week, usage goes up noticeably.",
+            text: "Show them how. Many people have never tapped their phone on a plate; if staff demonstrate with their own phone in the first week, usage goes up noticeably.",
           },
           { type: "h2", id: "google-rules", text: "Google rules you must follow" },
           {
@@ -619,13 +619,13 @@ export const docs: ProductDocs = {
     },
     troubleshooting: {
       pt: {
-        title: "Resolução de problemas das placas NFC",
+        title: "Resolução de problemas das placas Google Reviews",
         description:
-          "O que fazer quando uma placa NFC não abre a página de avaliação: compatibilidade de telemóveis, capas, metal, links alterados e perfis Google suspensos.",
+          "O que fazer quando uma placa não abre a página de avaliação: compatibilidade de telemóveis, capas, metal, links alterados e perfis Google suspensos.",
         blocks: [
           {
             type: "p",
-            text: "Quase todos os problemas com placas NFC têm uma causa simples. Siga esta página por ordem antes de nos contactar; se o problema continuar, fale connosco pelo [contacto](/contacto) ou por WhatsApp.",
+            text: "Quase todos os problemas com as placas têm uma causa simples. Siga esta página por ordem antes de nos contactar; se o problema continuar, fale connosco pelo [contacto](/contacto) ou por WhatsApp.",
           },
           { type: "h2", id: "compatibilidade-telemoveis", text: "Compatibilidade dos telemóveis" },
           {
@@ -633,23 +633,23 @@ export const docs: ProductDocs = {
             head: ["Telemóvel", "Como ler a placa"],
             rows: [
               ["iPhone XS e mais recentes", "Leitura automática em segundo plano, com o ecrã ligado e desbloqueado"],
-              ["iPhone 7, 8 e X", "Abrir a Central de Controlo e tocar em \"Leitor de etiquetas NFC\" (pode ser preciso adicioná-lo em Definições)"],
-              ["iPhone 6 ou anterior", "Sem leitura NFC: usar o código QR"],
-              ["Android com NFC", "Ativar o NFC nas definições; aproximar a zona superior ou central da parte de trás"],
-              ["Android sem NFC", "Usar o código QR com a câmara"],
+              ["iPhone 7, 8 e X", "Abrir a Centro de Controlo e tocar no botão do leitor de etiquetas (pode ser preciso adicioná-lo em Definições)"],
+              ["iPhone 6 ou anterior", "Sem leitura por aproximação: usar o código QR"],
+              ["Android com leitura por aproximação", "Ligar a opção de leitura por aproximação nas definições de ligações; aproximar a zona superior ou central da parte de trás"],
+              ["Android sem leitura por aproximação", "Usar o código QR com a câmara"],
             ],
           },
           {
             type: "callout",
             tone: "info",
-            text: "A posição da antena NFC varia entre modelos. Na maioria dos iPhones fica no topo; em muitos Android fica a meio das costas. Se não reagir, deslize o telemóvel devagar sobre a placa.",
+            text: "A posição da antena de leitura varia entre modelos. Na maioria dos iPhones fica no topo; em muitos Android fica a meio das costas. Se não reagir, deslize o telemóvel devagar sobre a placa.",
           },
           { type: "h2", id: "placa-nao-reage", text: "A placa não reage" },
           {
             type: "ol",
             items: [
               "Confirme que o ecrã está ligado e desbloqueado.",
-              "No Android, confirme que o NFC está ativo nas definições (normalmente em \"Ligações\" ou \"Dispositivos ligados\").",
+              "No Android, confirme que a opção de leitura por aproximação está ligada nas definições (normalmente em \"Ligações\" ou \"Dispositivos ligados\").",
               "Retire acessórios espessos: capas metálicas, capas-carteira com cartões e popsockets interferem com o sinal. Capas finas comuns não costumam ser problema.",
               "Mantenha o telemóvel encostado 1 a 2 segundos, sem movimentos bruscos.",
               "Teste com outro telemóvel. Se funcionar noutro, o problema está no primeiro aparelho.",
@@ -700,13 +700,13 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Troubleshooting NFC review plates",
+        title: "Troubleshooting Google review plates",
         description:
-          "What to do when an NFC plate won't open the review page: phone compatibility, phone cases, metal surfaces, changed links and suspended Google profiles.",
+          "What to do when a plate won't open the review page: phone compatibility, phone cases, metal surfaces, changed links and suspended Google profiles.",
         blocks: [
           {
             type: "p",
-            text: "Almost every NFC plate problem has a simple cause. Work through this page in order before getting in touch; if the problem persists, [contact us](/en/contact) or message us on WhatsApp.",
+            text: "Almost every plate problem has a simple cause. Work through this page in order before getting in touch; if the problem persists, [contact us](/en/contact) or message us on WhatsApp.",
           },
           { type: "h2", id: "phone-compatibility", text: "Phone compatibility" },
           {
@@ -714,23 +714,23 @@ export const docs: ProductDocs = {
             head: ["Phone", "How to read the plate"],
             rows: [
               ["iPhone XS and newer", "Reads automatically in the background, with the screen on and unlocked"],
-              ["iPhone 7, 8 and X", "Open Control Centre and tap \"NFC Tag Reader\" (you may need to add it in Settings first)"],
-              ["iPhone 6 or older", "No NFC reading: use the QR code"],
-              ["Android with NFC", "Turn NFC on in settings; hold the top or middle of the back of the phone to the plate"],
-              ["Android without NFC", "Use the QR code with the camera"],
+              ["iPhone 7, 8 and X", "Open Control Centre and tap the tag reader button (you may need to add it in Settings first)"],
+              ["iPhone 6 or older", "No tap reading: use the QR code"],
+              ["Android with tap reading", "Turn on the contactless (tap) reading option in the connection settings; hold the top or middle of the back of the phone to the plate"],
+              ["Android without tap reading", "Use the QR code with the camera"],
             ],
           },
           {
             type: "callout",
             tone: "info",
-            text: "The NFC antenna position varies between models. On most iPhones it's at the top; on many Android phones it's in the middle of the back. If nothing happens, slide the phone slowly over the plate.",
+            text: "The position of the reading antenna varies between models. On most iPhones it's at the top; on many Android phones it's in the middle of the back. If nothing happens, slide the phone slowly over the plate.",
           },
           { type: "h2", id: "plate-not-responding", text: "The plate doesn't respond" },
           {
             type: "ol",
             items: [
               "Check the screen is on and unlocked.",
-              "On Android, check NFC is enabled in settings (usually under \"Connections\" or \"Connected devices\").",
+              "On Android, check the contactless (tap) reading option is turned on in settings (usually under \"Connections\" or \"Connected devices\").",
               "Remove bulky accessories: metal cases, wallet cases holding cards and popsockets interfere with the signal. Ordinary thin cases are usually fine.",
               "Hold the phone against the plate for 1 to 2 seconds without moving it around.",
               "Try another phone. If it works there, the issue is with the first device.",
@@ -783,9 +783,9 @@ export const docs: ProductDocs = {
     },
     faq: {
       pt: {
-        title: "Perguntas frequentes sobre placas NFC Google Reviews",
+        title: "Perguntas frequentes sobre placas Google Reviews",
         description:
-          "Respostas às dúvidas mais comuns sobre placas NFC para avaliações Google: compatibilidade, regras do Google, alterações de link, limpeza e substituição.",
+          "Respostas às dúvidas mais comuns sobre placas para reviews no Google: compatibilidade, regras do Google, alterações de link, limpeza e substituição.",
         blocks: [
           { type: "h2", id: "perguntas", text: "Perguntas frequentes" },
           {
@@ -793,11 +793,11 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "O cliente precisa de instalar alguma aplicação?",
-                a: "Não. O NFC está integrado na maioria dos telemóveis recentes e o código QR funciona com a câmara. O formulário abre no navegador ou na aplicação Google Maps.",
+                a: "Não. A leitura por aproximação está integrada na maioria dos telemóveis recentes e o código QR funciona com a câmara. O formulário abre no navegador ou na aplicação Google Maps.",
               },
               {
                 q: "Funciona em todos os iPhones?",
-                a: "Do iPhone XS em diante, a leitura é automática com o ecrã desbloqueado. Nos iPhone 7, 8 e X é preciso usar o \"Leitor de etiquetas NFC\" na Central de Controlo. Em modelos mais antigos, use o código QR.",
+                a: "Do iPhone XS em diante, a leitura é automática com o ecrã desbloqueado. Nos iPhone 7, 8 e X é preciso usar o botão do leitor de etiquetas na Centro de Controlo. Em modelos mais antigos, use o código QR.",
               },
               {
                 q: "A Steevanz tem alguma ligação à Google?",
@@ -813,11 +813,11 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Alguém pode reprogramar a minha placa?",
-                a: "Não. Bloqueamos todos os chips após a gravação, por isso não podem ser reescritos com aplicações NFC.",
+                a: "Não. Bloqueamos todos os chips após a gravação, por isso não podem ser reescritos com aplicações de escrita de chips.",
               },
               {
                 q: "Se mudar de morada ou de perfil, tenho de comprar placas novas?",
-                a: "Não. O chip aponta para um redirecionamento gerido pela Steevanz. Basta enviar-nos o novo link e atualizamos o destino de todas as placas. Veja a página de [configuração](/docs/placas-nfc-google-reviews/configuracao).",
+                a: "Não. O chip aponta para um redirecionamento gerido pela Steevanz. Basta enviar-nos o novo link e atualizamos o destino de todas as placas. Veja a página de [configuração](/docs/placas-google-reviews/configuracao).",
               },
               {
                 q: "Posso colocar uma placa numa superfície metálica?",
@@ -841,9 +841,9 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "NFC Google review plates FAQ",
+        title: "Google review plates FAQ",
         description:
-          "Answers to the most common questions about NFC Google review plates: phone compatibility, Google's rules, link changes, cleaning and replacements.",
+          "Answers to the most common questions about Google review plates: phone compatibility, Google's rules, link changes, cleaning and replacements.",
         blocks: [
           { type: "h2", id: "questions", text: "Frequently asked questions" },
           {
@@ -851,11 +851,11 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Do customers need to install an app?",
-                a: "No. NFC is built into most recent phones and the QR code works with the camera. The review form opens in the browser or in the Google Maps app.",
+                a: "No. Tap reading is built into most recent phones and the QR code works with the camera. The review form opens in the browser or in the Google Maps app.",
               },
               {
                 q: "Does it work on every iPhone?",
-                a: "From iPhone XS onwards, reading is automatic with the screen unlocked. On iPhone 7, 8 and X you need the \"NFC Tag Reader\" in Control Centre. On older models, use the QR code.",
+                a: "From iPhone XS onwards, reading is automatic with the screen unlocked. On iPhone 7, 8 and X you need the tag reader button in Control Centre. On older models, use the QR code.",
               },
               {
                 q: "Is Steevanz connected to Google?",
@@ -871,11 +871,11 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Can someone reprogram my plate?",
-                a: "No. We lock every chip after writing it, so it can't be rewritten with NFC apps.",
+                a: "No. We lock every chip after writing it, so it can't be rewritten with chip-writing apps.",
               },
               {
                 q: "If I move or change profile, do I need new plates?",
-                a: "No. The chip points to a redirect managed by Steevanz. Just send us the new link and we'll update every plate. See the [configuration](/en/docs/nfc-google-review-plates/configuration) page.",
+                a: "No. The chip points to a redirect managed by Steevanz. Just send us the new link and we'll update every plate. See the [configuration](/en/docs/google-review-plates/configuration) page.",
               },
               {
                 q: "Can I put a plate on a metal surface?",

@@ -6,10 +6,10 @@ export const copy: ProductCopyByLocale = {
     shortName: "Lista de Espera",
     tagline: "Os clientes sabem quanto falta e estão à porta quando chega a vez deles.",
     summary:
-      "Fila virtual por QR code ou NFC, com tempo de espera estimado e aviso no telemóvel quando a mesa ou a vez estiver pronta. Sem aglomerações à porta.",
+      "Fila virtual por QR code ou com um toque, com tempo de espera estimado e aviso no telemóvel quando a mesa ou a vez estiver pronta. Sem aglomerações à porta.",
     metaTitle: "Lista de Espera Digital e Fila Virtual | Steevanz",
     metaDescription:
-      "Lista de espera digital para restaurantes, clínicas e salões: o cliente entra na fila por QR code ou NFC e é avisado no telemóvel quando chega a sua vez.",
+      "Lista de espera digital para restaurantes, clínicas e salões: o cliente entra na fila com um toque ou QR code e é avisado no telemóvel quando chega a sua vez.",
     heroTitle: "Acabe com a fila à porta",
     heroSubtitle:
       "O cliente entra na lista de espera com um toque ou uma leitura de QR code, acompanha a posição e o tempo estimado no telemóvel e é avisado quando a mesa ou a vez estiver pronta. Sabe quanto falta e, quando é chamado, entra logo.",
@@ -28,7 +28,7 @@ export const copy: ProductCopyByLocale = {
       body:
         "Com a lista de espera digital, cada cliente sabe a sua posição e o tempo estimado, e é avisado no telemóvel quando for a sua vez. A equipa só carrega em «Chamar o seguinte».",
       points: [
-        "Entrada na lista por QR code, NFC ou pela equipa",
+        "Entrada na lista por QR code, com um toque ou pela equipa",
         "Tempo de espera estimado visível para o cliente",
         "Aviso no telemóvel e por email",
         "Painel simples para chamar o próximo cliente",
@@ -37,7 +37,7 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "O cliente entra na lista",
-        body: "Lê o QR code ou toca na placa NFC à entrada, ou a sua equipa adiciona-o em segundos.",
+        body: "Lê o QR code ou toca na placa à entrada, ou a sua equipa adiciona-o em segundos.",
       },
       {
         title: "Vê o tempo estimado",
@@ -51,7 +51,7 @@ export const copy: ProductCopyByLocale = {
     features: [
       {
         title: "Entrada sem esforço",
-        body: "Placa NFC com QR code à entrada para o cliente se inscrever sozinho, ou registo rápido pela equipa para quem prefere falar ao balcão.",
+        body: "Placa com QR code à entrada para o cliente se inscrever sozinho, ou registo rápido pela equipa para quem prefere falar ao balcão.",
       },
       {
         title: "Tempo estimado",
@@ -93,7 +93,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Configuração da lista de espera à medida do seu espaço",
-      "Placa NFC com QR code para a entrada",
+      "Placa com QR code para a entrada",
       "Ecrã de chamada para uma TV à entrada (opcional)",
       "Painel para a equipa em tablet, telemóvel ou computador",
       "Formação rápida da equipa",
@@ -102,7 +102,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "O cliente precisa de instalar alguma app?",
-        a: "Não. Entra na lista pelo navegador, depois de ler o QR code ou tocar na placa NFC. Os iPhone XS e mais recentes e a maioria dos Android com NFC ligado leem a placa sem app; os restantes usam o QR code.",
+        a: "Não. Entra na lista pelo navegador, depois de ler o QR code ou tocar na placa. Os iPhone XS e mais recentes e a maioria dos Android com a leitura por aproximação ligada leem a placa sem app; os restantes usam o QR code.",
       },
       {
         q: "E os clientes que não querem usar o telemóvel?",
@@ -127,10 +127,10 @@ export const copy: ProductCopyByLocale = {
     shortName: "Waitlist",
     tagline: "Customers know how long is left and are at the door when their turn comes.",
     summary:
-      "A virtual queue by QR code or NFC, with an estimated waiting time and a phone alert when the table or turn is ready. No crowd at the door.",
+      "A virtual queue by QR code or a tap, with an estimated waiting time and a phone alert when the table or turn is ready. No crowd at the door.",
     metaTitle: "Digital Waitlist and Virtual Queue | Steevanz",
     metaDescription:
-      "Digital waitlist for restaurants, clinics and salons: customers join the queue by QR code or NFC and are alerted on their phone when it's their turn.",
+      "Digital waitlist for restaurants, clinics and salons: customers join the queue with a tap or a QR code and are alerted on their phone when it's their turn.",
     heroTitle: "No more queue at the door",
     heroSubtitle:
       "Customers join the waitlist with a tap or a QR scan, follow their position and estimated wait on their phone and are alerted when their table or turn is ready. They know how long is left and, when called, come straight in.",
@@ -149,7 +149,7 @@ export const copy: ProductCopyByLocale = {
       body:
         "With a digital waitlist, every customer knows their position and estimated wait, and is alerted on their phone when it's their turn. Your team just taps «Call next».",
       points: [
-        "Join by QR code, NFC or via your staff",
+        "Join by QR code, a tap or via your staff",
         "Estimated waiting time visible to the customer",
         "Alert on the phone and by email",
         "Simple dashboard to call the next customer",
@@ -158,7 +158,7 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Customers join the list",
-        body: "They scan the QR code or tap the NFC plate at the entrance, or your staff add them in seconds.",
+        body: "They scan the QR code or tap the plate at the entrance, or your staff add them in seconds.",
       },
       {
         title: "They see the estimated wait",
@@ -172,7 +172,7 @@ export const copy: ProductCopyByLocale = {
     features: [
       {
         title: "Effortless joining",
-        body: "An NFC plate with QR code at the entrance lets customers sign up themselves, or staff can add anyone who prefers to ask at the desk.",
+        body: "A plate with QR code at the entrance lets customers sign up themselves, or staff can add anyone who prefers to ask at the desk.",
       },
       {
         title: "Estimated wait",
@@ -214,7 +214,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Waitlist set up around your space",
-      "NFC plate with QR code for the entrance",
+      "Plate with QR code for the entrance",
       "Call screen for a TV at the entrance (optional)",
       "Staff dashboard on tablet, phone or computer",
       "Quick staff training",
@@ -223,7 +223,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Do customers need to install an app?",
-        a: "No. They join in the browser after scanning the QR code or tapping the NFC plate. iPhone XS and newer and most Android phones with NFC switched on read the plate without an app; everyone else uses the QR code.",
+        a: "No. They join in the browser after scanning the QR code or tapping the plate. iPhone XS and newer and most Android phones with contactless (tap) reading switched on read the plate without an app; everyone else uses the QR code.",
       },
       {
         q: "What about customers who don't want to use their phone?",

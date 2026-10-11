@@ -9,7 +9,7 @@ type ShortPreview = { link: string; place: { name: string; plateLink: string } |
 
 /**
  * «Novo negócio»: the Google Maps link, and right below it, as soon as it is pasted, the link for the
- * NFC plate (Google's write-a-review window, from the place id computed out of the link) with a copy
+ * plate (Google's write-a-review window, from the place id computed out of the link) with a copy
  * button. A short link (maps.app.goo.gl, e.g. «Partilhar» in the Maps app) only says which place it is
  * after a redirect, so the server follows it (previewMapsLink).
  */
@@ -76,10 +76,10 @@ export function MapsLinkField({ inputClassName, labelClassName }: { inputClassNa
       {plateLink ? (
         <div className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface-2/60 p-3">
           <p className="text-sm font-medium text-text">
-            Link para a placa NFC <span className="font-normal text-subtle">· {name}</span>
+            Link para a placa <span className="font-normal text-subtle">· {name}</span>
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <input readOnly value={plateLink} onFocus={(event) => event.target.select()} aria-label="Link para a placa NFC" className={`${inputClassName} h-10 min-w-0 flex-1 text-xs`} />
+            <input readOnly value={plateLink} onFocus={(event) => event.target.select()} aria-label="Link para a placa" className={`${inputClassName} h-10 min-w-0 flex-1 text-xs`} />
             <button
               type="button"
               onClick={() => void copy()}
@@ -114,7 +114,7 @@ export function MapsLinkField({ inputClassName, labelClassName }: { inputClassNa
           <Skeleton className="h-4 w-full" />
         </div>
       ) : short && shortResult ? (
-        <p className="text-xs text-subtle">Não conseguimos ler este link curto agora. Pode criar o negócio na mesma: o link da placa NFC fica na ficha do negócio.</p>
+        <p className="text-xs text-subtle">Não conseguimos ler este link curto agora. Pode criar o negócio na mesma: o link da placa fica na ficha do negócio.</p>
       ) : short ? null : trimmed ? (
         <p className="text-xs text-subtle">Ainda não é o link de um negócio: abra o negócio no Google Maps e copie o link da barra de endereço.</p>
       ) : null}

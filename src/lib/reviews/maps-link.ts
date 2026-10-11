@@ -129,7 +129,7 @@ export function placeIdFromFid(fid: string | null | undefined): string | null {
 /** Google's own "ask for reviews" link: opens the write-a-review window straight away. */
 export const writeReviewLink = (placeId: string) => `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`;
 
-/** The NFC plate's link for a place in a Maps link: Google's write-a-review window. */
+/** The plate's link for a place in a Maps link: Google's write-a-review window. */
 export function plateLink(place: Pick<MapsPlaceLink, "fid">): string | null {
   const placeId = placeIdFromFid(place.fid);
   return placeId ? writeReviewLink(placeId) : null;

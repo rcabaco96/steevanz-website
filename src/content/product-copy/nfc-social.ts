@@ -2,17 +2,17 @@ import type { ProductCopyByLocale } from "../types";
 
 export const copy: ProductCopyByLocale = {
   pt: {
-    name: "NFC para redes sociais e site",
-    shortName: "NFC Redes Sociais",
+    name: "Placas para redes sociais e site",
+    shortName: "Placas Redes Sociais",
     tagline: "Novos seguidores e contactos com um toque, sem soletrar nada.",
     summary:
-      "Placas e cartões NFC que levam o cliente ao seu Instagram, Facebook, TikTok, site ou página de links. Inclui cartões de visita digitais que partilham o seu contacto.",
-    metaTitle: "NFC para Redes Sociais e Cartões Digitais | Steevanz",
+      "Placas e cartões que levam o cliente ao seu Instagram, Facebook, TikTok, site ou página de links. Inclui cartões de visita digitais que partilham o seu contacto.",
+    metaTitle: "Placas para Redes Sociais e Cartões Digitais | Steevanz",
     metaDescription:
-      "Placas e cartões NFC para redes sociais: um toque leva o cliente ao seu Instagram, TikTok, site ou cartão de visita digital. Sem app e configurado por nós.",
+      "Placas e cartões para redes sociais: um toque leva o cliente ao seu Instagram, TikTok, site ou cartão de visita digital. Sem app e configurado por nós.",
     heroTitle: "Do balcão para o seu Instagram num toque",
     heroSubtitle:
-      "Uma placa NFC que abre o seu Instagram, TikTok, Facebook, site ou uma página com todos os seus links. E cartões de visita digitais que guardam o seu contacto no telemóvel de quem os toca. Nós configuramos tudo.",
+      "Uma placa que abre o seu Instagram, TikTok, Facebook, site ou uma página com todos os seus links. E cartões de visita digitais que guardam o seu contacto no telemóvel de quem os toca. Nós configuramos tudo.",
     problem: {
       title: "Dizer o nome da conta em voz alta não chega",
       body:
@@ -26,11 +26,11 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Um toque, o destino certo",
       body:
-        "Cada placa ou cartão NFC abre exatamente o perfil, site ou página que escolher. Se tiver vários canais, criamos uma página de links alojada pela Steevanz com todos eles reunidos.",
+        "Cada placa ou cartão abre exatamente o perfil, site ou página que escolher. Se tiver vários canais, criamos uma página de links alojada pela Steevanz com todos eles reunidos.",
       points: [
         "Instagram, Facebook, TikTok, site ou página de links",
         "Cartão de visita digital que grava o seu contacto no telemóvel",
-        "QR code impresso para telemóveis sem NFC",
+        "QR code impresso para telemóveis sem leitura por aproximação",
         "Destino alterável a qualquer momento, sem trocar a placa",
       ],
     },
@@ -59,11 +59,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Cartão de visita digital",
-        body: "Um cartão NFC que partilha o seu contacto em formato vCard: nome, telefone, email e morada ficam guardados no telemóvel com um toque.",
+        body: "Um cartão que partilha o seu contacto em formato vCard: nome, telefone, email e morada ficam guardados no telemóvel com um toque.",
       },
       {
         title: "QR code incluído",
-        body: "Todas as placas e cartões têm um QR code impresso para quem tiver um telemóvel sem NFC ou com o NFC desligado.",
+        body: "Todas as placas e cartões têm um QR code impresso para quem tiver um telemóvel sem leitura por aproximação ou com essa opção desligada.",
       },
       {
         title: "Destino editável",
@@ -92,7 +92,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Placas ou cartões NFC com QR code impresso",
+      "Placas ou cartões com QR code impresso",
       "Configuração de cada destino: redes sociais, site ou página de links",
       "Página de links alojada pela Steevanz com a sua imagem",
       "Cartão de visita digital em formato vCard, se escolher essa opção",
@@ -102,7 +102,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Que telemóveis leem as placas e cartões?",
-        a: "Os iPhone XS e mais recentes leem NFC sem app, basta aproximar o topo do telemóvel. Nos iPhone 7 a X, use o leitor NFC do Centro de Controlo. A maioria dos Android lê desde que o NFC esteja ligado. Para os restantes, há um QR code impresso.",
+        a: "Os iPhone XS e mais recentes leem as placas e cartões sem app, basta aproximar o topo do telemóvel. Nos iPhone 7 a X, use o leitor de etiquetas do Centro de Controlo. A maioria dos Android lê desde que a opção de leitura por aproximação esteja ligada. Para os restantes, há um QR code impresso.",
       },
       {
         q: "Posso ter uma placa para cada rede social?",
@@ -123,17 +123,17 @@ export const copy: ProductCopyByLocale = {
     ],
   },
   en: {
-    name: "NFC for social media and websites",
-    shortName: "NFC Social",
+    name: "Plates for social media and websites",
+    shortName: "Social Media Plates",
     tagline: "New followers and contacts with a tap, no spelling required.",
     summary:
-      "NFC plates and cards that take customers to your Instagram, Facebook, TikTok, website or link page. Includes digital business cards that share your contact details.",
-    metaTitle: "NFC Social Media Plates and Digital Cards | Steevanz",
+      "Plates and cards that take customers to your Instagram, Facebook, TikTok, website or link page. Includes digital business cards that share your contact details.",
+    metaTitle: "Social Media Plates and Digital Cards | Steevanz",
     metaDescription:
-      "NFC plates and cards for social media: one tap takes customers to your Instagram, TikTok, website or digital business card. No app needed, set up by us.",
+      "Plates and cards for social media: one tap takes customers to your Instagram, TikTok, website or digital business card. No app needed, set up by us.",
     heroTitle: "From your counter to your Instagram in one tap",
     heroSubtitle:
-      "An NFC plate that opens your Instagram, TikTok, Facebook, website or a page with all your links. Plus digital business cards that save your contact details to the phone of anyone who taps them. We set it all up.",
+      "A plate that opens your Instagram, TikTok, Facebook, website or a page with all your links. Plus digital business cards that save your contact details to the phone of anyone who taps them. We set it all up.",
     problem: {
       title: "Saying your handle out loud isn't enough",
       body:
@@ -147,11 +147,11 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "One tap, the right destination",
       body:
-        "Each NFC plate or card opens exactly the profile, website or page you choose. If you have several channels, we build a link page hosted by Steevanz that brings them all together.",
+        "Each plate or card opens exactly the profile, website or page you choose. If you have several channels, we build a link page hosted by Steevanz that brings them all together.",
       points: [
         "Instagram, Facebook, TikTok, website or link page",
         "Digital business card that saves your contact to the phone",
-        "Printed QR code for phones without NFC",
+        "Printed QR code for phones that can't read a tap",
         "Destination can be changed at any time, no new plate needed",
       ],
     },
@@ -180,11 +180,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Digital business card",
-        body: "An NFC card that shares your details as a vCard: name, phone, email and address are saved to the phone with a single tap.",
+        body: "A card that shares your details as a vCard: name, phone, email and address are saved to the phone with a single tap.",
       },
       {
         title: "QR code included",
-        body: "Every plate and card has a printed QR code for anyone whose phone lacks NFC or has it switched off.",
+        body: "Every plate and card has a printed QR code for anyone whose phone can't read a tap or has that option switched off.",
       },
       {
         title: "Editable destination",
@@ -213,7 +213,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "NFC plates or cards with printed QR code",
+      "Plates or cards with printed QR code",
       "Configuration of each destination: social media, website or link page",
       "Link page hosted by Steevanz in your brand colours",
       "Digital business card in vCard format, if you choose it",
@@ -223,7 +223,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Which phones can read the plates and cards?",
-        a: "iPhone XS and newer read NFC without an app: just hold the top of the phone near it. On iPhone 7 to X, use the NFC reader in Control Centre. Most Android phones read it as long as NFC is switched on. For everyone else, there's a printed QR code.",
+        a: "iPhone XS and newer read the plates and cards without an app: just hold the top of the phone near one. On iPhone 7 to X, use the tag reader in Control Centre. Most Android phones read them as long as contactless (tap) reading is switched on. For everyone else, there's a printed QR code.",
       },
       {
         q: "Can I have one plate per social network?",

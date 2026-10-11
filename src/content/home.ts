@@ -54,17 +54,17 @@ export interface HomeCopy {
 
 export const homeCopy: Localized<HomeCopy> = {
   pt: {
-    metaTitle: "Placas NFC para reviews no Google e IA para negócios | Steevanz",
+    metaTitle: "Placas para reviews no Google e IA para negócios | Steevanz",
     metaDescription:
-      "Um toque no telemóvel e o cliente está a deixar a sua review no Google. Placas NFC, reservas, lista de espera e IA para restaurantes, salões, clínicas e lojas.",
+      "Um toque no telemóvel e o cliente está a deixar a sua review no Google. Placas com tecnologia Steevanz, reservas, lista de espera e IA para restaurantes, salões, clínicas e lojas.",
     hero: {
-      eyebrow: "Placas NFC para reviews no Google",
+      eyebrow: "Placas para reviews no Google",
       titleLead: "Um toque.",
       titleEmphasis: "Mais uma review de cinco estrelas.",
       subtitle:
         "O cliente aproxima o telemóvel da placa e o formulário de review do seu negócio no Google abre de imediato. Sem apps, sem procurar o nome, sem esforço. E quando quiser ir mais longe, temos reservas, filas e inteligência artificial à medida.",
       primaryCta: "Agendar demonstração",
-      secondaryCta: "Ver as placas NFC",
+      secondaryCta: "Ver as placas",
       trust: ["Sem app para o cliente", "Configuração incluída", "iPhone e Android"],
       priceChip: "Placas desde",
     },
@@ -78,7 +78,7 @@ export const homeCopy: Localized<HomeCopy> = {
       toast: "Review publicada",
       chipNoApp: "Sem app",
       chipTap: "Abre em segundos",
-      ariaLabel: "Animação: um telemóvel toca numa placa NFC e abre o formulário de review com cinco estrelas.",
+      ariaLabel: "Animação: um telemóvel toca numa placa e abre o formulário de review com cinco estrelas.",
     },
     marquee: [
       "Restaurantes",
@@ -97,16 +97,16 @@ export const homeCopy: Localized<HomeCopy> = {
     products: {
       eyebrow: "Produtos",
       title: "Tudo o que um negócio local precisa para crescer.",
-      lead: "Comece por uma placa NFC e acrescente o resto quando fizer sentido. Cada solução é configurada por nós e funciona sozinha ou em conjunto com as outras.",
+      lead: "Comece por uma placa e acrescente o resto quando fizer sentido. Cada solução é configurada por nós e funciona sozinha ou em conjunto com as outras.",
     },
     flagship: {
       eyebrow: "O produto principal",
       title: "A placa que transforma clientes satisfeitos em reviews.",
       lead:
-        "A maioria dos clientes contentes não deixa review porque dá trabalho. A placa NFC elimina o trabalho: um toque ou uma leitura do QR code e o formulário do Google está aberto, pronto para as estrelas.",
+        "A maioria dos clientes contentes não deixa review porque dá trabalho. A placa elimina o trabalho: um toque ou uma leitura do QR code e o formulário do Google está aberto, pronto para as estrelas.",
       points: [
         { title: "Direto ao formulário", body: "Nada de pesquisar o nome do negócio. A placa abre a página de review certa, no idioma do telemóvel do cliente." },
-        { title: "NFC e QR code na mesma placa", body: "Quem tem NFC toca, quem não tem aponta a câmara. Ninguém fica de fora." },
+        { title: "Toque e QR code na mesma placa", body: "Quem pode toca com o telemóvel, quem não pode aponta a câmara. Ninguém fica de fora." },
         { title: "Link gerido por nós", body: "Se o perfil mudar, atualizamos o destino sem reimprimir a placa." },
         { title: "Dentro das regras do Google", body: "Pedimos a review a todos os clientes por igual, sem incentivos nem filtros, como o Google exige." },
       ],
@@ -117,7 +117,7 @@ export const homeCopy: Localized<HomeCopy> = {
         { name: "Autocolante", body: "Para montras, menus e terminais." },
         { name: "Placa de parede", body: "À entrada ou junto à saída." },
       ],
-      cta: "Conhecer as placas NFC",
+      cta: "Conhecer as placas",
       videoAlt: "Pessoa a aproximar o telemóvel de uma superfície para uma leitura sem contacto.",
     },
     howItWorks: {
@@ -145,7 +145,7 @@ export const homeCopy: Localized<HomeCopy> = {
       stats: [
         { value: "1", label: "toque para abrir o formulário de review" },
         { value: "0", label: "apps para o cliente instalar" },
-        { value: "2", label: "formas de acesso em cada placa: NFC e QR" },
+        { value: "2", label: "formas de acesso em cada placa: toque e QR" },
         { value: "24/7", label: "atendimento com IA, mesmo com a porta fechada" },
       ],
       principles: [
@@ -158,11 +158,11 @@ export const homeCopy: Localized<HomeCopy> = {
       eyebrow: "Dúvidas",
       title: "Perguntas frequentes",
       items: [
-        { q: "Os clientes precisam de instalar alguma aplicação?", a: "Não. Nos telemóveis com NFC basta aproximar o telemóvel da placa. Nos restantes, a câmara lê o QR code impresso na mesma placa. Em ambos os casos abre-se o formulário de review no navegador ou na app do Google, se estiver instalada." },
-        { q: "Que telemóveis funcionam com NFC?", a: "Os iPhone XS e posteriores leem a placa com o ecrã desbloqueado, sem fazer nada. Os iPhone 7 a X usam o leitor NFC do Centro de Controlo. A grande maioria dos Android tem NFC; basta estar ativo nas definições." },
+        { q: "Os clientes precisam de instalar alguma aplicação?", a: "Não. Na grande maioria dos telemóveis basta aproximá-lo da placa. Nos restantes, a câmara lê o QR code impresso na mesma placa. Em ambos os casos abre-se o formulário de review no navegador ou na app do Google, se estiver instalada." },
+        { q: "Que telemóveis funcionam com um toque?", a: "Os iPhone XS e posteriores leem a placa com o ecrã desbloqueado, sem fazer nada. Os iPhone 7 a X usam o leitor de etiquetas do Centro de Controlo. A grande maioria dos Android também lê a placa; basta a leitura por aproximação estar ativa nas definições." },
         { q: "Isto é permitido pelo Google?", a: "Sim. O Google permite e incentiva que peça reviews aos seus clientes. O que não é permitido é oferecer contrapartidas ou pedir apenas aos clientes satisfeitos. As nossas placas pedem a todos por igual." },
         { q: "A Steevanz é o Google?", a: "Não. Somos uma empresa independente. As placas levam os clientes ao formulário de review do seu próprio perfil no Google, mas não temos qualquer ligação ao Google." },
-        { q: "Quanto custa?", a: "As placas NFC começam em 29 € por placa, com configuração incluída. Os serviços mensais, como reservas ou chatbot, têm preços a partir dos valores indicados em cada produto. Recebe sempre uma proposta fechada antes de decidir." },
+        { q: "Quanto custa?", a: "As placas começam em 29 € por placa, com configuração incluída. Os serviços mensais, como reservas ou chatbot, têm preços a partir dos valores indicados em cada produto. Recebe sempre uma proposta fechada antes de decidir." },
         { q: "Como compro?", a: "Não vendemos online porque cada negócio é diferente. Agende uma demonstração gratuita, mostramos tudo a funcionar e enviamos uma proposta. Se fizer sentido, tratamos do resto." },
       ],
     },
@@ -175,17 +175,17 @@ export const homeCopy: Localized<HomeCopy> = {
     },
   },
   en: {
-    metaTitle: "NFC plates for Google reviews and AI for business | Steevanz",
+    metaTitle: "Plates for Google reviews and AI for business | Steevanz",
     metaDescription:
-      "One tap and your customer is leaving a Google review. NFC plates, bookings, waiting lists and AI tools for restaurants, salons, clinics and shops.",
+      "One tap and your customer is leaving a Google review. Plates with Steevanz technology, bookings, waiting lists and AI tools for restaurants, salons, clinics and shops.",
     hero: {
-      eyebrow: "NFC plates for Google reviews",
+      eyebrow: "Plates for Google reviews",
       titleLead: "One tap.",
       titleEmphasis: "One more five-star review.",
       subtitle:
         "Customers hold their phone near the plate and your business's Google review form opens instantly. No apps, no searching, no effort. And when you're ready to go further, we have bookings, queues and tailored artificial intelligence.",
       primaryCta: "Book a demo",
-      secondaryCta: "See the NFC plates",
+      secondaryCta: "See the plates",
       trust: ["No app for customers", "Setup included", "iPhone and Android"],
       priceChip: "Plates from",
     },
@@ -199,7 +199,7 @@ export const homeCopy: Localized<HomeCopy> = {
       toast: "Review posted",
       chipNoApp: "No app",
       chipTap: "Opens in seconds",
-      ariaLabel: "Animation: a phone taps an NFC plate and opens a review form with five stars.",
+      ariaLabel: "Animation: a phone taps a plate and opens a review form with five stars.",
     },
     marquee: [
       "Restaurants",
@@ -218,16 +218,16 @@ export const homeCopy: Localized<HomeCopy> = {
     products: {
       eyebrow: "Products",
       title: "Everything a local business needs to grow.",
-      lead: "Start with an NFC plate and add the rest when it makes sense. Every solution is set up by us and works on its own or together with the others.",
+      lead: "Start with a plate and add the rest when it makes sense. Every solution is set up by us and works on its own or together with the others.",
     },
     flagship: {
       eyebrow: "Our flagship",
       title: "The plate that turns happy customers into reviews.",
       lead:
-        "Most happy customers never leave a review because it takes effort. The NFC plate removes the effort: one tap or a QR scan and the Google form is open, ready for the stars.",
+        "Most happy customers never leave a review because it takes effort. The plate removes the effort: one tap or a QR scan and the Google form is open, ready for the stars.",
       points: [
         { title: "Straight to the form", body: "No searching for your business name. The plate opens the right review page, in the language of the customer's phone." },
-        { title: "NFC and QR on one plate", body: "Those with NFC tap, the rest point their camera. Nobody is left out." },
+        { title: "Tap and QR on one plate", body: "Those who can tap their phone do, the rest point their camera. Nobody is left out." },
         { title: "A link we manage", body: "If your profile changes, we update the destination without reprinting the plate." },
         { title: "Within Google's rules", body: "Every customer is asked equally, with no incentives or filtering, as Google requires." },
       ],
@@ -238,7 +238,7 @@ export const homeCopy: Localized<HomeCopy> = {
         { name: "Sticker", body: "For windows, menus and terminals." },
         { name: "Wall plate", body: "At the entrance or by the exit." },
       ],
-      cta: "Explore the NFC plates",
+      cta: "Explore the plates",
       videoAlt: "A person holding a phone near a surface for a contactless read.",
     },
     howItWorks: {
@@ -266,7 +266,7 @@ export const homeCopy: Localized<HomeCopy> = {
       stats: [
         { value: "1", label: "tap to open the review form" },
         { value: "0", label: "apps for customers to install" },
-        { value: "2", label: "ways in on every plate: NFC and QR" },
+        { value: "2", label: "ways in on every plate: tap and QR" },
         { value: "24/7", label: "AI answering, even when you're closed" },
       ],
       principles: [
@@ -279,11 +279,11 @@ export const homeCopy: Localized<HomeCopy> = {
       eyebrow: "Questions",
       title: "Frequently asked questions",
       items: [
-        { q: "Do customers need to install an app?", a: "No. On phones with NFC they just hold the phone near the plate. On others, the camera reads the QR code printed on the same plate. Either way the review form opens in the browser, or in the Google app if installed." },
-        { q: "Which phones work with NFC?", a: "iPhone XS and later read the plate with the screen unlocked, with nothing else to do. iPhone 7 to X use the NFC reader in Control Centre. The vast majority of Android phones have NFC; it just needs to be switched on in settings." },
+        { q: "Do customers need to install an app?", a: "No. On the vast majority of phones they just hold the phone near the plate. On others, the camera reads the QR code printed on the same plate. Either way the review form opens in the browser, or in the Google app if installed." },
+        { q: "Which phones work with a tap?", a: "iPhone XS and later read the plate with the screen unlocked, with nothing else to do. iPhone 7 to X use the tag reader in Control Centre. The vast majority of Android phones read it too; tap reading just needs to be switched on in settings." },
         { q: "Is this allowed by Google?", a: "Yes. Google allows and encourages you to ask your customers for reviews. What's not allowed is offering incentives or asking only happy customers. Our plates ask everyone equally." },
         { q: "Is Steevanz part of Google?", a: "No. We're an independent company. Our plates take customers to the review form of your own Google profile, but we have no affiliation with Google." },
-        { q: "How much does it cost?", a: "NFC plates start at €29 per plate, setup included. Monthly services such as bookings or the chatbot start from the prices shown on each product. You always get a fixed proposal before deciding." },
+        { q: "How much does it cost?", a: "Plates start at €29 per plate, setup included. Monthly services such as bookings or the chatbot start from the prices shown on each product. You always get a fixed proposal before deciding." },
         { q: "How do I buy?", a: "We don't sell online because every business is different. Book a free demo, we show you everything working and send a proposal. If it makes sense, we take care of the rest." },
       ],
     },

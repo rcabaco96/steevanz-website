@@ -70,7 +70,7 @@ const plateTextMaxLength = 60;
 export const products: Product[] = [
   {
     id: "nfc-google-reviews",
-    slug: { pt: "placas-nfc-google-reviews", en: "nfc-google-review-plates" },
+    slug: { pt: "placas-google-reviews", en: "google-review-plates" },
     family: "nfc",
     icon: "star-tap",
     priceFrom: 29,
@@ -102,7 +102,7 @@ export const products: Product[] = [
   },
   {
     id: "nfc-social",
-    slug: { pt: "nfc-redes-sociais", en: "nfc-social-media" },
+    slug: { pt: "placas-redes-sociais", en: "social-media-plates" },
     family: "nfc",
     icon: "share-tap",
     priceFrom: 24,
@@ -126,7 +126,7 @@ export const products: Product[] = [
   },
   {
     id: "nfc-menu",
-    slug: { pt: "cardapio-digital-nfc", en: "nfc-digital-menu" },
+    slug: { pt: "menu-digital", en: "digital-menu" },
     family: "nfc",
     icon: "menu-tap",
     priceFrom: 15,

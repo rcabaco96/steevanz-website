@@ -242,7 +242,7 @@ function BusinessFields({ business }: { business: BusinessRow }) {
         <span className="text-xs font-normal text-subtle">Usado para importar as reviews.</span>
       </label>
       <label className={`${adminLabelClasses} sm:col-span-2`}>
-        Link da placa NFC
+        Link da placa
         <input name="review_url" type="url" required defaultValue={business.review_url} className={`${adminInputClasses} h-11`} />
         <span className="text-xs font-normal text-subtle">Para onde as placas levam o cliente: a janela «Escrever uma crítica» do Google.</span>
       </label>

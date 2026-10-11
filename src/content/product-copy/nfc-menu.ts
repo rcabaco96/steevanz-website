@@ -2,17 +2,17 @@ import type { ProductCopyByLocale } from "../types";
 
 export const copy: ProductCopyByLocale = {
   pt: {
-    name: "Cardápio digital NFC",
-    shortName: "Cardápio Digital",
+    name: "Menu digital",
+    shortName: "Menu Digital",
     tagline: "Os pratos em vídeo e fotografia, com preços, num toque na mesa.",
     summary:
-      "Placas NFC circulares e pequenas, uma por mesa, que abrem um destaque do Instagram ou uma playlist do YouTube com os seus pratos e preços. O cliente vê o menu como se folheasse a ementa.",
-    metaTitle: "Cardápio Digital NFC para Restaurantes | Steevanz",
+      "Placas circulares e pequenas, uma por mesa, que abrem um destaque do Instagram ou uma playlist do YouTube com os seus pratos e preços. O cliente vê o menu como se folheasse a ementa.",
+    metaTitle: "Menu Digital para Restaurantes | Steevanz",
     metaDescription:
-      "Placa NFC circular para a mesa que abre o menu em vídeo e fotografia no Instagram ou no YouTube, com preços. Desde 15 € por placa, com packs para todas as mesas.",
+      "Placa circular para a mesa que abre o menu em vídeo e fotografia no Instagram ou no YouTube, com preços. Desde 15 € por placa, com packs para todas as mesas.",
     heroTitle: "O menu ganha vida num toque na mesa",
     heroSubtitle:
-      "Uma pequena placa NFC circular em cada mesa abre um destaque do Instagram ou uma playlist do YouTube com vídeos, fotografias e carrosséis dos seus pratos, com o preço de cada um. O cliente vê o que vai comer antes de pedir. Nós configuramos tudo.",
+      "Uma pequena placa circular em cada mesa abre um destaque do Instagram ou uma playlist do YouTube com vídeos, fotografias e carrosséis dos seus pratos, com o preço de cada um. O cliente vê o que vai comer antes de pedir. Nós configuramos tudo.",
     problem: {
       title: "Uma ementa em papel não abre o apetite",
       body:
@@ -30,7 +30,7 @@ export const copy: ProductCopyByLocale = {
       points: [
         "Destaque do Instagram ou playlist do YouTube, à sua escolha",
         "Vídeos, fotografias e carrosséis com os preços",
-        "QR code impresso para telemóveis sem NFC",
+        "QR code impresso para telemóveis sem leitura por aproximação",
         "Destino alterável a qualquer momento, sem trocar as placas",
       ],
     },
@@ -67,7 +67,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "QR code incluído",
-        body: "Todas as placas têm um QR code impresso para quem tiver um telemóvel sem NFC ou com o NFC desligado.",
+        body: "Todas as placas têm um QR code impresso para quem tiver um telemóvel sem leitura por aproximação ou com essa opção desligada.",
       },
       {
         title: "Packs para todas as mesas",
@@ -101,7 +101,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Placas NFC circulares com QR code impresso",
+      "Placas circulares com QR code impresso",
       "Configuração do destino: destaque do Instagram ou playlist do YouTube",
       "Texto personalizado na placa",
       "Gravação, bloqueio e testes em iPhone e Android",
@@ -127,26 +127,26 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Substitui a ementa em papel?",
-        a: "Complementa-a. O cardápio digital mostra os pratos, mas não substitui a informação que o restaurante tem de ter disponível, como a tabela de preços e os alergénios.",
+        a: "Complementa-a. O menu digital mostra os pratos, mas não substitui a informação que o restaurante tem de ter disponível, como a tabela de preços e os alergénios.",
       },
       {
         q: "Que telemóveis leem as placas?",
-        a: "Os iPhone XS e mais recentes leem NFC sem app, basta aproximar o topo do telemóvel. Nos iPhone 7 a X, use o leitor NFC do Centro de Controlo. A maioria dos Android lê desde que o NFC esteja ligado. Para os restantes, há um QR code impresso.",
+        a: "Os iPhone XS e mais recentes leem as placas sem app, basta aproximar o topo do telemóvel. Nos iPhone 7 a X, use o leitor de etiquetas do Centro de Controlo. A maioria dos Android lê desde que a opção de leitura por aproximação esteja ligada. Para os restantes, há um QR code impresso.",
       },
     ],
   },
   en: {
-    name: "NFC digital menu",
+    name: "Digital menu",
     shortName: "Digital Menu",
     tagline: "Your dishes on video and in photos, with prices, in one tap at the table.",
     summary:
-      "Small round NFC plates, one per table, that open an Instagram highlight or a YouTube playlist with your dishes and prices. Guests browse the menu as if they were leafing through it.",
-    metaTitle: "NFC Digital Menu for Restaurants | Steevanz",
+      "Small round plates, one per table, that open an Instagram highlight or a YouTube playlist with your dishes and prices. Guests browse the menu as if they were leafing through it.",
+    metaTitle: "Digital Menu for Restaurants | Steevanz",
     metaDescription:
-      "A round NFC table plate that opens your menu on video and in photos on Instagram or YouTube, with prices. From €15 per plate, with packs for every table.",
+      "A round table plate that opens your menu on video and in photos on Instagram or YouTube, with prices. From €15 per plate, with packs for every table.",
     heroTitle: "Your menu comes alive with a tap at the table",
     heroSubtitle:
-      "A small round NFC plate on each table opens an Instagram highlight or a YouTube playlist with videos, photos and carousels of your dishes, each with its price. Guests see what they'll eat before they order. We set it all up.",
+      "A small round plate on each table opens an Instagram highlight or a YouTube playlist with videos, photos and carousels of your dishes, each with its price. Guests see what they'll eat before they order. We set it all up.",
     problem: {
       title: "A paper menu doesn't whet the appetite",
       body:
@@ -164,7 +164,7 @@ export const copy: ProductCopyByLocale = {
       points: [
         "Instagram highlight or YouTube playlist, your choice",
         "Videos, photos and carousels with prices",
-        "Printed QR code for phones without NFC",
+        "Printed QR code for phones that can't read a tap",
         "Destination can be changed at any time, no new plates needed",
       ],
     },
@@ -201,7 +201,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "QR code included",
-        body: "Every plate has a printed QR code for anyone whose phone lacks NFC or has it switched off.",
+        body: "Every plate has a printed QR code for anyone whose phone can't read a tap or has that option switched off.",
       },
       {
         title: "Packs for every table",
@@ -235,7 +235,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Round NFC plates with printed QR code",
+      "Round plates with printed QR code",
       "Destination setup: Instagram highlight or YouTube playlist",
       "Custom text on the plate",
       "Writing, locking and testing on iPhone and Android",
@@ -265,7 +265,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Which phones can read the plates?",
-        a: "iPhone XS and newer read NFC without an app: just hold the top of the phone near it. On iPhone 7 to X, use the NFC reader in Control Centre. Most Android phones read it as long as NFC is switched on. For everyone else, there's a printed QR code.",
+        a: "iPhone XS and newer read the plates without an app: just hold the top of the phone near one. On iPhone 7 to X, use the tag reader in Control Centre. Most Android phones read them as long as contactless (tap) reading is switched on. For everyone else, there's a printed QR code.",
       },
     ],
   },

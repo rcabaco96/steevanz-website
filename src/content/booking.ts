@@ -185,7 +185,7 @@ export const bookingCopy: Localized<BookingCopy> = {
   pt: {
     metaTitle: "Agendar demonstração gratuita | Steevanz",
     metaDescription:
-      "Escolha o dia e a hora para uma demonstração sem compromisso das placas NFC e soluções de IA da Steevanz para o seu negócio.",
+      "Escolha o dia e a hora para uma demonstração sem compromisso das placas e soluções de IA da Steevanz para o seu negócio.",
     eyebrow: "Demonstração gratuita",
     title: "Veja como funciona, no seu negócio.",
     lead: "Escolha um horário que lhe dê jeito. Mostramos a solução com exemplos do seu setor e respondemos a todas as dúvidas, sem compromisso.",
@@ -233,7 +233,7 @@ export const bookingCopy: Localized<BookingCopy> = {
   en: {
     metaTitle: "Book a free demo | Steevanz",
     metaDescription:
-      "Pick a day and time for a no-obligation demo of Steevanz NFC plates and AI solutions for your business.",
+      "Pick a day and time for a no-obligation demo of Steevanz plates and AI solutions for your business.",
     eyebrow: "Free demo",
     title: "See how it works, in your business.",
     lead: "Pick a time that suits you. We'll walk you through the solution with examples from your sector and answer every question, with no obligation.",
@@ -280,7 +280,7 @@ export const infoRequestCopy: Localized<InfoRequestCopy> = {
   pt: {
     metaTitle: "Pedir informação | Steevanz",
     metaDescription:
-      "Tem dúvidas sobre as placas NFC ou as soluções de IA da Steevanz? Envie-nos o seu pedido ou junte-se à lista de espera e respondemos rapidamente.",
+      "Tem dúvidas sobre as placas ou as soluções de IA da Steevanz? Envie-nos o seu pedido ou junte-se à lista de espera e respondemos rapidamente.",
     eyebrow: "Pedir informação",
     title: "Diga-nos o que precisa.",
     lead: "Envie as suas dúvidas ou junte-se à lista de espera de um produto. Respondemos normalmente no mesmo dia útil.",
@@ -305,7 +305,7 @@ export const infoRequestCopy: Localized<InfoRequestCopy> = {
   en: {
     metaTitle: "Request information | Steevanz",
     metaDescription:
-      "Questions about Steevanz NFC plates or AI solutions? Send us your request or join the waiting list and we'll get back to you quickly.",
+      "Questions about Steevanz plates or AI solutions? Send us your request or join the waiting list and we'll get back to you quickly.",
     eyebrow: "Request info",
     title: "Tell us what you need.",
     lead: "Send us your questions or join a product's waiting list. We usually reply the same working day.",

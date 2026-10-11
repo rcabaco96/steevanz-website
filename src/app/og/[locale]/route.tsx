@@ -10,14 +10,14 @@ export function generateStaticParams() {
 
 const copy = {
   pt: {
-    eyebrow: "Placas NFC · Inteligência artificial",
+    eyebrow: "Tecnologia Steevanz · Inteligência artificial",
     title: "Um toque. Mais uma review no Google.",
-    subtitle: "Placas NFC e ferramentas de IA para restaurantes, salões, clínicas e comércio local.",
+    subtitle: "Placas com tecnologia Steevanz e ferramentas de IA para restaurantes, salões, clínicas e comércio local.",
   },
   en: {
-    eyebrow: "NFC plates · Artificial intelligence",
+    eyebrow: "Steevanz technology · Artificial intelligence",
     title: "One tap. One more Google review.",
-    subtitle: "NFC plates and AI tools for restaurants, salons, clinics and local shops.",
+    subtitle: "Plates with Steevanz technology and AI tools for restaurants, salons, clinics and local shops.",
   },
 };
 

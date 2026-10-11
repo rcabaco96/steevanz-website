@@ -332,7 +332,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           className="absolute bottom-[4%] left-[14%] h-auto w-[28%] -rotate-[8deg] drop-shadow-[0_18px_24px_rgba(0,0,0,0.25)]"
         />
         <FloatingChip className="top-[8%] right-[4%]">
-          <NfcWaves size={16} className="text-accent-text" /> NFC + QR
+          <NfcWaves size={16} className="text-accent-text" /> {t.tapQrChip}
         </FloatingChip>
       </div>
     );
@@ -369,7 +369,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
       <PhoneFrame>{screen ? screen(t) : null}</PhoneFrame>
       {product.id === "nfc-menu" ? (
         <FloatingChip className="top-[10%] right-0">
-          <NfcWaves size={16} className="text-accent-text" /> NFC + QR
+          <NfcWaves size={16} className="text-accent-text" /> {t.tapQrChip}
         </FloatingChip>
       ) : null}
       {product.id === "bookings" ? (

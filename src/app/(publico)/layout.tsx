@@ -5,7 +5,7 @@ import { fontVariables } from "@/app/fonts";
 import { ThemeScript } from "@/components/site/ThemeScript";
 import { rootViewport } from "@/lib/root-metadata";
 
-// Pages the customers of our clients open from a QR code, an NFC plate or a link:
+// Pages the customers of our clients open from a QR code, a plate or a link:
 // /fila (waitlist), /cartao (loyalty card) and /reservar (bookings). No account, no app.
 export const metadata: Metadata = {
   title: { default: "Steevanz", template: "%s" },

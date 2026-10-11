@@ -40,7 +40,7 @@ export interface ContactCopy {
 export const aboutCopy: Localized<AboutCopy> = {
   pt: {
     metaTitle: "Sobre a Steevanz — tecnologia com os bons modos de sempre",
-    metaDescription: "Somos uma equipa portuguesa que torna a tecnologia simples e acessível para negócios locais: placas NFC, reservas e inteligência artificial com suporte próximo.",
+    metaDescription: "Somos uma equipa portuguesa que torna a tecnologia simples e acessível para negócios locais: placas com tecnologia Steevanz, reservas e inteligência artificial com suporte próximo.",
     eyebrow: "Sobre nós",
     title: "Tecnologia do amanhã, com os bons modos de sempre.",
     lead: "A Steevanz nasceu de uma família alentejana de nerds e geeks com uma ideia simples: a tecnologia deve adaptar-se às pessoas, e não o contrário.",
@@ -48,7 +48,7 @@ export const aboutCopy: Localized<AboutCopy> = {
     story: [
       "Desde 2021 que desenvolvemos software à medida para empresas de várias dimensões. Pelo caminho, reparámos numa coisa: os negócios locais — o restaurante do bairro, o salão de sempre, a clínica de confiança — eram quem mais beneficiava da tecnologia e quem menos acesso tinha a ela.",
       "Ferramentas pensadas para grandes empresas são caras, complicadas e vêm com contratos que ninguém lê. Decidimos fazer o contrário: produtos simples, preços claros, instalação feita por nós e uma pessoa real do outro lado do WhatsApp.",
-      "Começámos pelas placas NFC para reviews no Google, porque resolvem um problema que todos os negócios têm, com um investimento pequeno e resultados visíveis. A partir daí juntámos reservas, filas, fidelização e inteligência artificial, sempre com a mesma regra: se não poupa tempo ou não traz clientes, não vale a pena.",
+      "Começámos pelas placas para reviews no Google, porque resolvem um problema que todos os negócios têm, com um investimento pequeno e resultados visíveis. A partir daí juntámos reservas, filas, fidelização e inteligência artificial, sempre com a mesma regra: se não poupa tempo ou não traz clientes, não vale a pena.",
     ],
     valuesEyebrow: "O que nos guia",
     valuesTitle: "Ser Steevanz é ser",
@@ -70,7 +70,7 @@ export const aboutCopy: Localized<AboutCopy> = {
   },
   en: {
     metaTitle: "About Steevanz — technology with good old-fashioned manners",
-    metaDescription: "We're a Portuguese team making technology simple and accessible for local businesses: NFC plates, bookings and AI, with hands-on support.",
+    metaDescription: "We're a Portuguese team making technology simple and accessible for local businesses: plates with Steevanz technology, bookings and AI, with hands-on support.",
     eyebrow: "About us",
     title: "Tomorrow's technology, with good old-fashioned manners.",
     lead: "Steevanz was born from an Alentejo family of nerds and geeks with a simple idea: technology should adapt to people, not the other way round.",
@@ -78,7 +78,7 @@ export const aboutCopy: Localized<AboutCopy> = {
     story: [
       "Since 2021 we have been building bespoke software for companies of all sizes. Along the way we noticed something: local businesses — the neighbourhood restaurant, the salon you've always used, the clinic you trust — stood to gain the most from technology and had the least access to it.",
       "Tools designed for large companies are expensive, complicated and come with contracts nobody reads. We decided to do the opposite: simple products, clear prices, setup done by us and a real person on the other end of WhatsApp.",
-      "We started with NFC plates for Google reviews, because they solve a problem every business has, with a small investment and visible results. From there we added bookings, queues, loyalty and artificial intelligence, always with the same rule: if it doesn't save time or bring customers, it isn't worth it.",
+      "We started with plates for Google reviews, because they solve a problem every business has, with a small investment and visible results. From there we added bookings, queues, loyalty and artificial intelligence, always with the same rule: if it doesn't save time or bring customers, it isn't worth it.",
     ],
     valuesEyebrow: "What guides us",
     valuesTitle: "Being Steevanz means being",
@@ -103,7 +103,7 @@ export const aboutCopy: Localized<AboutCopy> = {
 export const contactCopy: Localized<ContactCopy> = {
   pt: {
     metaTitle: "Contacto — fale com a Steevanz por WhatsApp, e-mail ou telefone",
-    metaDescription: "Fale com a Steevanz por WhatsApp, e-mail ou telefone. Respondemos em dias úteis. Agende uma demonstração gratuita das placas NFC e soluções de IA.",
+    metaDescription: "Fale com a Steevanz por WhatsApp, e-mail ou telefone. Respondemos em dias úteis. Agende uma demonstração gratuita das placas e soluções de IA.",
     eyebrow: "Contacto",
     title: "Fale connosco. Respondemos como gostamos que nos respondam.",
     lead: "Escolha o canal que lhe der mais jeito. Por norma respondemos no próprio dia útil.",
@@ -129,7 +129,7 @@ export const contactCopy: Localized<ContactCopy> = {
   },
   en: {
     metaTitle: "Contact — talk to Steevanz by WhatsApp, email or phone",
-    metaDescription: "Talk to Steevanz by WhatsApp, email or phone. We reply on working days. Book a free demo of our NFC plates and AI solutions.",
+    metaDescription: "Talk to Steevanz by WhatsApp, email or phone. We reply on working days. Book a free demo of our plates and AI solutions.",
     eyebrow: "Contact",
     title: "Talk to us. We reply the way we like to be replied to.",
     lead: "Pick whichever channel suits you best. We usually reply on the same working day.",

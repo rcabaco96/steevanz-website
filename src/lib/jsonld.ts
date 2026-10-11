@@ -24,8 +24,8 @@ export function organizationJsonLd(locale: Locale): JsonLdNode {
     areaServed: { "@type": "Country", name: "Portugal" },
     description:
       locale === "pt"
-        ? "Placas NFC para reviews no Google e soluções de inteligência artificial para restaurantes, salões, clínicas e comércio local."
-        : "NFC plates for Google reviews and AI solutions for restaurants, salons, clinics and local shops.",
+        ? "Placas para reviews no Google e soluções de inteligência artificial para restaurantes, salões, clínicas e comércio local."
+        : "Plates for Google reviews and AI solutions for restaurants, salons, clinics and local shops.",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
