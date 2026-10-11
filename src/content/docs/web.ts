@@ -39,7 +39,7 @@ const facts: Record<WebProductId, WebFacts> = {
   },
   "online-shop": {
     days: { pt: "15 a 20 dias úteis", en: "15 to 20 working days" },
-    monthly: { pt: "39 € + IVA por mês", en: "€39 + VAT a month" },
+    monthly: { pt: "19 € + IVA por mês e 3% por venda", en: "€19 + VAT a month and 3% per sale" },
     allowance: { pt: "1 h 30", en: "1.5 hours" },
     thing: { pt: "a loja", en: "the shop" },
     ready: "pronta",

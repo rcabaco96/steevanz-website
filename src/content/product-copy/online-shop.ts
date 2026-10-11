@@ -112,7 +112,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa no total?",
-        a: "Desde 1.490 € + IVA, uma vez, com até 50 produtos carregados. O plano mensal custa 39 € + IVA. À parte ficam as comissões do fornecedor de pagamentos (por exemplo, cerca de 1 a 1,5% em MB WAY e cerca de 0,30 a 0,50 € por referência Multibanco nos fornecedores portugueses) e, se usar Shopify, a mensalidade da plataforma.",
+        a: "Desde 750 € + IVA, uma vez, com até 50 produtos carregados. Depois, 19 € + IVA por mês e 3% de cada venda feita na loja, sem fidelização: só ganhamos mais quando a sua loja vende. À parte ficam as comissões do fornecedor de pagamentos (por exemplo, cerca de 1 a 1,5% em MB WAY e cerca de 0,30 a 0,50 € por referência Multibanco nos fornecedores portugueses) e, se usar Shopify, a mensalidade da plataforma.",
       },
       {
         q: "Que plataforma usam?",
@@ -162,7 +162,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Email profissional", price: "40 €" },
       ],
       monthlyPlan: {
-        price: "39 €/mês + IVA",
+        price: "19 €/mês + 3% por venda + IVA",
         body: "Manutenção sem fidelização, com cancelamento a 30 dias. Com Shopify, a mensalidade da plataforma paga-se diretamente à Shopify. Na nossa plataforma, o alojamento está incluído.",
         points: [
           "Monitorização, atualizações e cópias de segurança",
@@ -284,7 +284,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost in total?",
-        a: "From €1,490 + VAT, once, with up to 50 products uploaded. The monthly plan is €39 + VAT. Payment provider fees are separate (for example, about 1 to 1.5% on MB WAY and about €0.30 to €0.50 per Multibanco reference with Portuguese providers), plus the platform fee if you use Shopify.",
+        a: "From €750 + VAT, once, with up to 50 products uploaded. After that, €19 + VAT a month and 3% of each sale made in the shop, with no lock-in: we only earn more when your shop sells. Payment provider fees are separate (for example, about 1 to 1.5% on MB WAY and about €0.30 to €0.50 per Multibanco reference with Portuguese providers), plus the platform fee if you use Shopify.",
       },
       {
         q: "Which platform do you use?",
@@ -334,7 +334,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Professional email", price: "€40" },
       ],
       monthlyPlan: {
-        price: "€39/month + VAT",
+        price: "€19/month + 3% per sale + VAT",
         body: "Maintenance with no lock-in, cancel with 30 days' notice. With Shopify, you pay the platform's monthly fee straight to Shopify. On our own platform, hosting is included.",
         points: [
           "Monitoring, updates and backups",
