@@ -84,7 +84,7 @@ export function themeServices(theme: Pick<ThemeStats, "id" | "mentions" | "verdi
       { productId: "ai-chatbot", body: "O chatbot responde logo, 24 horas, às perguntas do site e do WhatsApp, e a equipa fica livre para quem está no balcão." },
     ],
     price: [
-      { productId: "loyalty", body: "O cartão de fidelização dá a quem volta uma recompensa automática, e o preço passa a valer mais para os clientes habituais." },
+      { productId: "loyalty", body: "O cartão de cliente dá a quem volta uma recompensa automática, e o preço passa a valer mais para os clientes habituais." },
       reply("price"),
     ],
     quality: [reply("quality")],
@@ -159,7 +159,7 @@ export function recommendations(source: DashboardSource, analytics: DashboardAna
       productId: "loyalty",
       signal: `${Math.round((analytics.sentiment.positive / total) * 100)}% das reviews são positivas`,
       title: "Os clientes gostam de si. Faça-os voltar",
-      body: "Com o Cartão de fidelização digital, cada visita é carimbada com um toque ou QR code no telemóvel do cliente, sem app, com recompensas automáticas.",
+      body: "Com o Cartão de cliente digital, cada visita é carimbada com um toque ou QR code no telemóvel do cliente, sem app, com recompensas automáticas.",
     });
   }
 

@@ -59,6 +59,9 @@ const emailText = {
   },
 } satisfies Record<Locale, unknown>;
 
+/** The customer's order confirmation email: ready, switched off for now (owner, 2026-10-11). */
+const sendCustomerConfirmation = false;
+
 const confirmationText = {
   pt: {
     subject: (reference: string) => `Recebemos o seu pedido ${reference} · Steevanz`,
@@ -256,6 +259,8 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   if (!sent && !saved) return { status: "error", code: "generic", fields: [] };
 
   // Confirmation to the customer, in the language they ordered in. Replies go to the owner.
+  // Off for now (owner, 2026-10-11): only the owner is emailed; flip sendCustomerConfirmation to send it.
+  if (!sendCustomerConfirmation) return { status: "success", reference };
   const locale: Locale = data.locale;
   const text = confirmationText[locale];
   after(async () => {

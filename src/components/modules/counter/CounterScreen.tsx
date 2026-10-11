@@ -34,7 +34,7 @@ export async function CounterScreen({ ownerId, viewer, basePath, query }: { owne
     query,
   );
   if (!establishment) {
-    return <EmptyState>Ainda não há espaços com a lista de espera, as reservas online ou o cartão de fidelização ativos.</EmptyState>;
+    return <EmptyState>Ainda não há espaços com a lista de espera, as reservas online ou o cartão de cliente ativos.</EmptyState>;
   }
   const products = spaces.find((space) => space.establishment.id === establishment.id)!.products;
   const active = products.find((product) => tabs[product].id === queryValue(query, "vista")) ?? products[0];

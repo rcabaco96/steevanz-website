@@ -2,14 +2,14 @@ import type { ProductCopyByLocale } from "../types";
 
 export const copy: ProductCopyByLocale = {
   pt: {
-    name: "Cartão de fidelização digital",
-    shortName: "Cartão Fidelização",
+    name: "Cartão de cliente digital",
+    shortName: "Cartão de Cliente",
     tagline: "Carimbos digitais que os clientes não perdem nem esquecem em casa.",
     summary:
-      "Um cartão de fidelização no telemóvel do cliente: adere com um toque ou QR code, sem app, e a equipa carimba a cada visita. Recompensas automáticas.",
-    metaTitle: "Cartão de Fidelização Digital | Steevanz",
+      "Um cartão de cliente no telemóvel: adere com um toque ou QR code, sem app, e a equipa carimba a cada visita. Recompensas automáticas.",
+    metaTitle: "Cartão de Cliente Digital | Steevanz",
     metaDescription:
-      "Cartão de fidelização digital com adesão por toque ou QR code: carimbos no telemóvel, sem app e sem cartões de papel. Recompensas automáticas e estatísticas.",
+      "Cartão de cliente digital com adesão por toque ou QR code: carimbos no telemóvel, sem app e sem cartões de papel. Recompensas automáticas e estatísticas.",
     heroTitle: "O cartão de carimbos, agora no telemóvel",
     heroSubtitle:
       "Os clientes aderem com um toque ou uma leitura de QR code, juntam carimbos a cada visita e recebem a recompensa automaticamente. O cartão fica no telemóvel, a um toque do ecrã principal. Sem app para instalar.",
@@ -24,7 +24,7 @@ export const copy: ProductCopyByLocale = {
       ],
     },
     solution: {
-      title: "Fidelização simples para si e para o cliente",
+      title: "Recompensas simples para si e para o cliente",
       body:
         "O cartão vive no telemóvel do cliente e cada visita é carimbada pela equipa em segundos. Quando os carimbos estão completos, a recompensa fica disponível automaticamente.",
       points: [

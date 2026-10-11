@@ -48,7 +48,7 @@ export const aboutCopy: Localized<AboutCopy> = {
     story: [
       "Desde 2021 que desenvolvemos software à medida para empresas de várias dimensões. Pelo caminho, reparámos numa coisa: os negócios locais — o restaurante do bairro, o salão de sempre, a clínica de confiança — eram quem mais beneficiava da tecnologia e quem menos acesso tinha a ela.",
       "Ferramentas pensadas para grandes empresas são caras, complicadas e vêm com contratos que ninguém lê. Decidimos fazer o contrário: produtos simples, preços claros, instalação feita por nós e uma pessoa real do outro lado do WhatsApp.",
-      "Começámos pelas placas para reviews no Google, porque resolvem um problema que todos os negócios têm, com um investimento pequeno e resultados visíveis. A partir daí juntámos reservas, filas, fidelização e inteligência artificial, sempre com a mesma regra: se não poupa tempo ou não traz clientes, não vale a pena.",
+      "Começámos pelas placas para reviews no Google, porque resolvem um problema que todos os negócios têm, com um investimento pequeno e resultados visíveis. A partir daí juntámos reservas, filas, cartões de cliente e inteligência artificial, sempre com a mesma regra: se não poupa tempo ou não traz clientes, não vale a pena.",
     ],
     valuesEyebrow: "O que nos guia",
     valuesTitle: "Ser Steevanz é ser",
