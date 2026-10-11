@@ -24,6 +24,19 @@ import {
 } from "@/lib/reviews/analytics";
 import { formatBucket, formatDate, formatDateTime, formatHours, formatInt, formatPercent, formatRating, formatSignedPercent, weekdayLong } from "@/lib/reviews/format";
 import { competitorLimit, radiusLabel, type Competition } from "@/lib/reviews/competitors";
+import {
+  challengeOrder,
+  chaseMaxFiveStars,
+  competitionChallenges,
+  monthlyChallengeMax,
+  paceRaceMonths,
+  reviewsChaseMax,
+  threatMaxFiveStars,
+  type ChallengeKind,
+  type CompetitionChallenges,
+  type CompetitionWins,
+  type MonthlyChallenge,
+} from "@/lib/reviews/challenges";
 import type { ThemeId } from "@/lib/reviews/text";
 import type { DashboardSource } from "@/lib/reviews/types";
 import { BarList, ColumnChart, DataTable, RatingDots, RatingLineChart, type ColumnDatum } from "./charts";
@@ -81,6 +94,13 @@ const infoTexts = {
     "Percentagem das reviews do período que já têm resposta do dono no Google; o tempo é a mediana entre a review e a resposta. Ao atualizar, vemos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo (todos os meses, ou com o link por baixo de «Atualizar reviews»).",
   recommendations: "Cada sugestão só aparece quando os seus dados mostram um sinal concreto (indicado em cada cartão) e nunca para serviços que já tem.",
   insights: "Frases geradas automaticamente a partir dos números deste painel. Só aparecem quando a diferença é relevante e há dados suficientes.",
+  challengeChase: `Ranking: a nota do Google e o número de reviews juntos (cada negócio conta como se tivesse mais 10 reviews de 3★; ver o (i) da tabela). Contamos o mínimo de reviews novas de 5★ que põem o seu negócio acima do negócio logo acima de si, com a nota e o total de hoje no Google. A posição indicada é a que teria com essas reviews, se os outros não mudarem. Não mostramos quando são precisas mais de ${chaseMaxFiveStars}.`,
+  challengeDefend: `O mínimo de reviews de 5★ que o 2.º do ranking teria de receber, sem o seu negócio receber nenhuma, para lhe passar à frente (cada negócio conta como se tivesse mais 10 reviews de 3★). Com a nota e o total de hoje no Google. Não mostramos acima de ${chaseMaxFiveStars}.`,
+  challengeThreat: `O mínimo de reviews de 5★ que o negócio logo abaixo de si no ranking teria de receber, sem o seu negócio receber nenhuma, para lhe passar à frente (cada negócio conta como se tivesse mais 10 reviews de 3★). Com a nota e o total de hoje no Google. Só aparece quando bastam ${threatMaxFiveStars} ou menos.`,
+  challengeReviews: `Total de reviews no Google do negócio logo acima de si nesta contagem menos o seu, mais 1. A posição é a que teria no separador «Total de reviews» com essas reviews, se os outros não mudarem. Não mostramos acima de ${reviewsChaseMax}.`,
+  challengePace: `Compara o ritmo do negócio logo acima de si no total de reviews com o seu. O seu ritmo: reviews publicadas nos últimos 3 meses ÷ 3. O do concorrente: a subida do total de reviews nos registos das últimas semanas (pelo menos 3 semanas) ou, até lá, as datas das reviews mais recentes dele. Meses = reviews que faltam ÷ (o seu ritmo − o dele). Se ao ritmo atual demorar mais de ${paceRaceMonths[paceRaceMonths.length - 1]} meses, indicamos o mínimo de reviews a mais por mês para o passar em ${paceRaceMonths.slice(0, -1).join(", ")} ou ${paceRaceMonths[paceRaceMonths.length - 1]} meses, sem pedir mais do que o seu ritmo atual (ou 5 por mês). Só aparece com os dois ritmos medidos. Estimativa: supõe que os ritmos se mantêm.`,
+  challengeMonthly: `O objetivo mais perto entre passar o negócio logo acima no ranking (reviews de 5★) e no total de reviews, quando faltam ${monthlyChallengeMax} ou menos. A barra junta as reviews que já recebeu este mês (desde o dia 1, hora de Lisboa; só as de 5★ quando o objetivo é o ranking) às que ainda faltam, calculadas com os números de hoje. Atualiza a cada leitura das reviews.`,
+  wins: "Comparação com há 1 mês, o mesmo cálculo das setas em «Na sua zona»: lugares ganhos no ranking e no total de reviews, contando só os negócios presentes nos dois momentos, e a subida da sua média exata (só a partir de 0,01★).",
 };
 
 const starFilterLabels: Record<ReviewStarFilter, string> ={ all: "Todas", positive: "Positivas (4–5★)", negative: "Negativas (1–3★)" };
@@ -412,45 +432,170 @@ function ThemeServiceCards({ items, theme }: { items: ThemeService[]; theme: str
   );
 }
 
-function competitionNotes(competition: Competition): { tone: "good" | "info"; text: ReactNode }[] {
-  const notes: { tone: "good" | "info"; text: ReactNode }[] = [];
-  const self = competition.entries.find((entry) => entry.isSelf);
-  if (self && self.reviewsCount === 0 && (self.average ?? self.rating) === null) {
-    notes.push({ tone: "info", text: "Ainda não tem reviews no Google: a primeira já o tira do último lugar." });
-    return notes;
-  }
-  if (competition.ratingRank === 1) notes.push({ tone: "good", text: "Está em 1.º no ranking da zona (nota e número de reviews). Agora é manter!" });
-  else if (competition.ratingGap) {
-    notes.push({
+type NoteTone = "good" | "info" | "warn";
+interface CompetitionNote {
+  tone: NoteTone;
+  text: ReactNode;
+  /** How the phrase is calculated (business rule 7). */
+  info?: { label: string; text: string };
+}
+
+/** "cerca de 4 reviews", "menos de 1 review" (monthly paces). */
+function paceAmount(pace: number): string {
+  return pace < 1 ? "menos de 1 review" : `cerca de ${plural(Math.round(pace), "review", "reviews")}`;
+}
+
+/** One challenge phrase (challenges.ts), with the (i) that explains it. */
+function challengeNote(kind: ChallengeKind, challenges: CompetitionChallenges): CompetitionNote | null {
+  const { chase, defend, threat, reviewsChase, pace } = challenges;
+  if (kind === "chase" && chase) {
+    return {
       tone: "info",
+      info: { label: "Reviews de 5★ para subir no ranking", text: infoTexts.challengeChase },
       text: (
         <>
-          {competition.ratingGap.fiveStarsToPass !== null ? (
+          Faltam <strong>{plural(chase.fiveStars, "review de 5★", "reviews de 5★")}</strong> para ultrapassar o <strong>{chase.name}</strong> e subir para{" "}
+          <strong>{chase.reachRank}.º</strong> no ranking.
+        </>
+      ),
+    };
+  }
+  if (kind === "defend" && defend) {
+    const close = defend.fiveStars <= threatMaxFiveStars;
+    return {
+      tone: close ? "warn" : "good",
+      info: { label: "Vantagem sobre o 2.º", text: infoTexts.challengeDefend },
+      text: (
+        <>
+          Está em 1.º no ranking. O <strong>{defend.name}</strong> (2.º) está a <strong>{plural(defend.fiveStars, "review de 5★", "reviews de 5★")}</strong> de lhe
+          passar à frente.
+        </>
+      ),
+    };
+  }
+  if (kind === "threat" && threat) {
+    return {
+      tone: "warn",
+      info: { label: "Quem vem logo atrás", text: infoTexts.challengeThreat },
+      text: (
+        <>
+          Atenção: o <strong>{threat.name}</strong> ({threat.rank}.º) está a <strong>{plural(threat.fiveStars, "review de 5★", "reviews de 5★")}</strong> de o
+          ultrapassar.
+        </>
+      ),
+    };
+  }
+  if (kind === "reviews" && reviewsChase) {
+    return {
+      tone: "info",
+      info: { label: "Reviews para subir no total", text: infoTexts.challengeReviews },
+      text: (
+        <>
+          Faltam <strong>{plural(reviewsChase.reviews, "review", "reviews")}</strong> para ter mais reviews do que o <strong>{reviewsChase.name}</strong> e subir
+          para <strong>{reviewsChase.reachRank}.º</strong> em total de reviews.
+        </>
+      ),
+    };
+  }
+  if (kind === "pace" && pace) {
+    return {
+      tone: "info",
+      info: { label: "Corrida ao ritmo de reviews", text: infoTexts.challengePace },
+      text: (
+        <>
+          O <strong>{pace.name}</strong> recebe {paceAmount(pace.theirPace)} por mês e o seu negócio {paceAmount(pace.ownPace)}.{" "}
+          {pace.extraPerMonth > 0 ? (
             <>
-              Faltam <strong>{plural(competition.ratingGap.fiveStarsToPass, "review de 5★", "reviews de 5★")}</strong> para passar o{" "}
-              <strong>{competition.ratingGap.name}</strong> no ranking.
+              Com mais <strong>{plural(pace.extraPerMonth, "review", "reviews")} por mês</strong>, passa-lhe à frente em ~{formatDuration(pace.months)}.
             </>
           ) : (
-            <>
-              O <strong>{competition.ratingGap.name}</strong> tem 5,0★: só reviews de 5★ o deixam ao seu alcance.
-            </>
+            <>A este ritmo, passa-lhe à frente em ~{formatDuration(pace.months)}.</>
           )}
         </>
       ),
-    });
+    };
   }
-  if (competition.reviewsGap) {
-    notes.push({
-      tone: "info",
-      text: (
-        <>
-          Faltam <strong>{plural(competition.reviewsGap.reviewsDiff, "review", "reviews")}</strong> para passar o <strong>{competition.reviewsGap.name}</strong> em
-          número de reviews.
-        </>
-      ),
-    });
+  return null;
+}
+
+/** Phrases of «Na sua zona» (`summary`, the first two by priority) and of the competition section (the next ones). */
+function competitionNotes(competition: Competition, challenges: CompetitionChallenges | null): { summary: CompetitionNote[]; section: CompetitionNote[] } {
+  const self = competition.entries.find((entry) => entry.isSelf);
+  if (self && self.reviewsCount === 0 && (self.average ?? self.rating) === null) {
+    return { summary: [{ tone: "info", text: "Ainda não tem reviews no Google: a primeira já o tira do último lugar." }], section: [] };
   }
-  return notes;
+  const notes = challenges ? challengeOrder(challenges).map((kind) => ({ kind, note: challengeNote(kind, challenges) })) : [];
+  if (competition.ratingRank === 1 && !challenges?.defend) {
+    notes.unshift({ kind: "defend", note: { tone: "good", text: "Está em 1.º no ranking da zona (nota e número de reviews). Agora é manter!" } });
+  }
+  // The month's challenge box already says its target in «Na sua zona»: that phrase goes to the section.
+  const inBox: ChallengeKind | null = challenges?.monthly ? (challenges.monthly.kind === "rank" ? "chase" : "reviews") : null;
+  const summary = notes.filter((item) => item.kind !== inBox).slice(0, 2);
+  const section = notes.filter((item) => !summary.includes(item)).slice(0, 3);
+  const phrases = (items: typeof notes) => items.flatMap((item) => item.note ?? []);
+  return { summary: phrases(summary), section: phrases(section) };
+}
+
+function NoteList({ notes }: { notes: CompetitionNote[] }) {
+  return (
+    <ul className="flex flex-col gap-2">
+      {notes.map((note, index) => (
+        <li key={index} className={`flex items-start gap-2 text-sm leading-snug ${note.tone === "good" ? "text-success" : note.tone === "warn" ? "text-text" : "text-muted"}`}>
+          {note.tone === "good" ? (
+            <Check size={16} className="mt-0.5 shrink-0" />
+          ) : note.tone === "warn" ? (
+            <AlertIcon size={16} className="mt-0.5 shrink-0 text-danger" />
+          ) : (
+            <ArrowUpRight size={16} className="mt-0.5 shrink-0 text-accent-text" />
+          )}
+          <span className="min-w-0 break-words">
+            {note.text}
+            {note.info ? (
+              <>
+                {" "}
+                <InfoTip label={note.info.label}>{note.info.text}</InfoTip>
+              </>
+            ) : null}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** «Desafio deste mês»: the nearest reachable target and what this month already brought (real counts). */
+function MonthlyChallengeBox({ challenge }: { challenge: MonthlyChallenge }) {
+  const rank = challenge.kind === "rank";
+  const done = challenge.doneThisMonth;
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl bg-accent-soft/60 p-3.5">
+      <p className="flex items-center gap-1.5 text-xs font-semibold tracking-[0.06em] text-accent-text uppercase">
+        Desafio deste mês
+        <InfoTip label="Desafio deste mês">{infoTexts.challengeMonthly}</InfoTip>
+      </p>
+      <p className="text-[0.95rem] leading-snug text-text">
+        <strong>{plural(challenge.missing, rank ? "review de 5★" : "review", rank ? "reviews de 5★" : "reviews")}</strong> para chegar ao{" "}
+        <strong>{challenge.reachRank}.º lugar</strong> {rank ? "no ranking" : "em total de reviews"}.
+      </p>
+      <ProgressBar value={done / (done + challenge.missing)} label={`Desafio deste mês: ${done} recebidas, faltam ${challenge.missing}`} track="bg-surface" />
+      <p className="text-xs text-muted">
+        Este mês: {done === 0 ? "ainda nenhuma" : plural(done, "recebida", "recebidas")}
+        {rank ? " de 5★" : ""} · faltam {formatInt(challenge.missing)}
+      </p>
+    </div>
+  );
+}
+
+/** "No último mês subiu 2 lugares no ranking e 1 em total de reviews, e a sua média subiu 0,05★." */
+function winsText(wins: CompetitionWins): string | null {
+  const climbs = [
+    wins.rankPlaces !== null ? `${plural(wins.rankPlaces, "lugar", "lugares")} no ranking` : null,
+    wins.reviewsPlaces !== null ? `${wins.rankPlaces !== null ? formatInt(wins.reviewsPlaces) : plural(wins.reviewsPlaces, "lugar", "lugares")} em total de reviews` : null,
+  ].filter((part): part is string => part !== null);
+  const rise = wins.ratingRise !== null ? `a sua média subiu ${wins.ratingRise.toFixed(2).replace(".", ",")}★` : null;
+  if (!climbs.length && !rise) return null;
+  if (!climbs.length) return `No último mês, ${rise}.`;
+  return `No último mês subiu ${climbs.join(" e ")}${rise ? `, e ${rise}` : ""}.`;
 }
 
 /**
@@ -478,9 +623,9 @@ function RankTrendLine({ places, change, since }: { places: number | null; chang
   );
 }
 
-function CompetitionSummary({ competition, radiusKm }: { competition: Competition | null; radiusKm: number }) {
+function CompetitionSummary({ competition, challenges, radiusKm }: { competition: Competition | null; challenges: CompetitionChallenges | null; radiusKm: number }) {
   const radius = radiusLabel(radiusKm);
-  const notes = competition ? competitionNotes(competition) : [];
+  const notes = competition ? competitionNotes(competition, challenges).summary : [];
   const trend = competition?.trend ?? null;
   const ranks = [
     { label: "Ranking", rank: competition?.ratingRank ?? null, places: trend?.ratingRankChange ?? null, change: trend?.ratingChange ?? null },
@@ -523,16 +668,8 @@ function CompetitionSummary({ competition, radiusKm }: { competition: Competitio
         ))}
       </dl>
       {trend ? <p className="-mt-2 text-[0.7rem] text-subtle">Setas e percentagens: face a há 1 mês.</p> : null}
-      {notes.length ? (
-        <ul className="flex flex-col gap-2">
-          {notes.map((note, index) => (
-            <li key={index} className={`flex items-start gap-2 text-sm leading-snug ${note.tone === "good" ? "text-success" : "text-muted"}`}>
-              {note.tone === "good" ? <Check size={16} className="mt-0.5 shrink-0" /> : <ArrowUpRight size={16} className="mt-0.5 shrink-0 text-accent-text" />}
-              <span>{note.text}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {challenges?.monthly ? <MonthlyChallengeBox challenge={challenges.monthly} /> : null}
+      {notes.length ? <NoteList notes={notes} /> : null}
       {competition ? (
         <a href="#competition" className={buttonClasses("primary", "md", "w-full")}>
           Ver a tabela da concorrência
@@ -548,7 +685,18 @@ function CompetitionSummary({ competition, radiusKm }: { competition: Competitio
   );
 }
 
-function CompetitionSection({ competition, category, radiusKm }: { competition: Competition; category: string | null; radiusKm: number }) {
+function CompetitionSection({
+  competition,
+  challenges,
+  category,
+  radiusKm,
+}: {
+  competition: Competition;
+  challenges: CompetitionChallenges | null;
+  category: string | null;
+  radiusKm: number;
+}) {
+  const notes = competitionNotes(competition, challenges).section;
   return (
     <Section
       id="competition"
@@ -556,6 +704,11 @@ function CompetitionSection({ competition, category, radiusKm }: { competition: 
       info={infoTexts.competition(radiusKm)}
       lead={`${plural(competition.competitors, "negócio", "negócios")} ${category ? `de «${category}» ` : ""}num raio de ${radiusLabel(radiusKm)}. Dados públicos do Google, atualizados duas vezes por dia${competition.lastSnapshotOn ? ` (última atualização a ${formatDate(`${competition.lastSnapshotOn}T12:00:00Z`)})` : ""}.`}
     >
+      {notes.length ? (
+        <div className="card p-4 sm:p-5">
+          <NoteList notes={notes} />
+        </div>
+      ) : null}
       <Card>
         <CompetitionBoard entries={competition.entries} replyInfo={infoTexts.competitionReplies} />
       </Card>
@@ -563,7 +716,13 @@ function CompetitionSection({ competition, category, radiusKm }: { competition: 
   );
 }
 
-function insightsFor(source: DashboardSource, analytics: DashboardAnalytics): string[] {
+interface Insight {
+  text: string;
+  /** Its own (i) when the phrase rests on a calculation the Destaques (i) does not explain. */
+  info?: { label: string; text: string };
+}
+
+function insightsFor(source: DashboardSource, analytics: DashboardAnalytics, challenges: CompetitionChallenges | null): Insight[] {
   const items: string[] = [];
   const competition = source.competition;
   if (competition?.ratingRank) {
@@ -595,7 +754,11 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics): st
   if (kpis.replyRate.current !== null && kpis.replyRate.current < 0.7 && analytics.unansweredCount > 0) {
     items.push(`Há ${plural(analytics.unansweredCount, "review", "reviews")} sem resposta neste período. Responder a todas, sobretudo às negativas, mostra a quem pesquisa que o negócio está atento.`);
   }
-  return items.slice(0, 5);
+  const insights: Insight[] = items.map((text) => ({ text }));
+  // A real climb of the last month comes first: it is the win to celebrate.
+  const wins = challenges?.wins ? winsText(challenges.wins) : null;
+  if (wins) insights.unshift({ text: wins, info: { label: "O último mês", text: infoTexts.wins } });
+  return insights.slice(0, 5);
 }
 
 function beforeAfterGapText(gap: DashboardAnalytics["beforeAfterGap"]): string {
@@ -624,7 +787,8 @@ export function ReviewsDashboard({
   const { kpis, series, period } = analytics;
   // Everything about the plates (install date, chart marker, «Antes e depois») only for clients who have them.
   const hasPlates = hasPlatesProduct(business);
-  const insights = insightsFor(source, analytics);
+  const challenges = competitionChallenges(source.competition, source.reviews, new Date(period.end));
+  const insights = insightsFor(source, analytics, challenges);
   const granularityLabel = period.granularity === "month" ? "mês" : period.granularity === "week" ? "semana" : "dia";
   const markerKey = hasPlates && business.platesInstalledOn ? bucketKey(`${business.platesInstalledOn}T12:00:00Z`, period.granularity) : null;
   const marker = markerKey && series.some((bucket) => bucket.key === markerKey) ? { key: markerKey, label: "Placas" } : undefined;
@@ -672,7 +836,7 @@ export function ReviewsDashboard({
         </div>
         <div className="flex flex-col gap-4 lg:w-[27rem] lg:shrink-0">
           <Refreshable scopes={["sync"]}>
-            <CompetitionSummary competition={source.competition} radiusKm={business.competitorRadiusKm} />
+            <CompetitionSummary competition={source.competition} challenges={challenges} radiusKm={business.competitorRadiusKm} />
           </Refreshable>
           <Refreshable scopes={["sync"]}>
             {analytics.ratingGoal ? (
@@ -697,9 +861,17 @@ export function ReviewsDashboard({
               </h2>
               <ul className="flex flex-col gap-3">
                 {insights.map((insight) => (
-                  <li key={insight} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
+                  <li key={insight.text} className="flex gap-3 text-[0.95rem] leading-relaxed text-muted">
                     <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                    {insight}
+                    <span className="min-w-0">
+                      {insight.text}
+                      {insight.info ? (
+                        <>
+                          {" "}
+                          <InfoTip label={insight.info.label}>{insight.info.text}</InfoTip>
+                        </>
+                      ) : null}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -721,7 +893,7 @@ export function ReviewsDashboard({
       </Refreshable>
 
       <Refreshable scopes={["sync"]}>
-  {source.competition ? <CompetitionSection competition={source.competition} category={business.category} radiusKm={business.competitorRadiusKm} /> : null}
+  {source.competition ? <CompetitionSection competition={source.competition} challenges={challenges} category={business.category} radiusKm={business.competitorRadiusKm} /> : null}
       </Refreshable>
 
       <Refreshable scopes={["sync","period"]}>
