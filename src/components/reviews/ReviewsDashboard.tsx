@@ -7,7 +7,7 @@ import { getProduct } from "@/content/products";
 import { getProductCopy } from "@/content/product-copy";
 import { BusinessName } from "./BusinessName";
 import type { ProductId } from "@/content/types";
-import { aiReviewsPitch, recommendations, themeServices, type AiReviewsPitch, type Recommendation, type ThemeService } from "@/lib/reviews/recommendations";
+import { aiReviewsPitch, recommendations, type AiReviewsPitch, type Recommendation } from "@/lib/reviews/recommendations";
 import { href as routeHref } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import {
@@ -337,39 +337,6 @@ function RecommendationCards({ items }: { items: Recommendation[] }) {
         );
       })}
     </ul>
-  );
-}
-
-/** Inside an opened theme with a problem: the services that tackle it (at most 2). */
-function ThemeServiceCards({ items, theme }: { items: ThemeService[]; theme: string }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-text">
-        <LightbulbIcon size={14} className="text-gold-text" /> Pode ajudar com {theme.toLowerCase()}
-      </p>
-      <ul className="grid gap-2 sm:grid-cols-2">
-        {items.map((item) => {
-          const product = getProduct(item.productId);
-          return (
-            <li key={item.productId} className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-3.5">
-              <div className="flex items-center gap-2.5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent-text">
-                  <ProductGlyph icon={product.icon} size={16} />
-                </span>
-                <p className="min-w-0 text-sm font-semibold text-text">{getProductCopy(item.productId, "pt").name}</p>
-              </div>
-              <p className="text-sm leading-relaxed text-muted">{item.body}</p>
-              <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-2">
-                <span className="text-sm font-semibold text-text">{priceLabel(product, "pt")}</span>
-                <a href={productLink(item.productId)} target="_blank" rel="noopener" className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-accent-text hover:underline">
-                  Saber mais <ArrowUpRight size={15} />
-                </a>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
   );
 }
 
@@ -874,10 +841,6 @@ export function ReviewsDashboard({
                         </span>
                       </summary>
                       <div className="flex flex-col gap-3 pb-4">
-                        {(() => {
-                          const services = themeServices(theme, business.activeServices);
-                          return services.length ? <ThemeServiceCards items={services} theme={themeLabels[theme.id]} /> : null;
-                        })()}
                         {theme.examples.length ? (
                           <ul className="flex flex-col gap-2">
                             {theme.examples.map((example) => (
