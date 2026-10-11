@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPanelGoogleStatus, googleConnectPath } from "@/components/google/header-status";
+import { googleConnectComingSoon } from "@/lib/google/coming-soon";
 import { ReviewsDashboard, reviewsPageSize, type DashboardQuery } from "@/components/reviews/ReviewsDashboard";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { computeAnalytics, reviewStarFilters, type PeriodId, type ReviewStarFilter } from "@/lib/reviews/analytics";
@@ -55,7 +56,7 @@ export default async function DashboardPage({ params, searchParams }: PageProps<
   // «Ligar Google» under a partial import: straight to Google's consent (or, while the connection
   // isn't set up yet, back to the Google page with the explanation).
   const googleStatus = await getPanelGoogleStatus(slug);
-  const googleConnect = googleStatus === "connected" ? null : { href: googleConnectPath(slug), external: true };
+  const googleConnect = googleStatus === "connected" || googleConnectComingSoon ? null : { href: googleConnectPath(slug), external: true };
   return (
     <ReviewsDashboard
       source={source}

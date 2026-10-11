@@ -9,6 +9,8 @@ import { AlertIcon, Check, ClockIcon, GoogleG, SparkleIcon } from "@/components/
 import { InfoTip } from "@/components/reviews/InfoTip";
 import { buttonClasses } from "@/components/ui/Button";
 import { emptyGoogleLink, loadGoogleLink, type GoogleLink } from "@/lib/google/connection";
+import { getSession } from "@/lib/auth/session";
+import { googleConnectComingSoon } from "@/lib/google/coming-soon";
 import { googleOAuthConfigured } from "@/lib/google/oauth";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDateTime } from "@/lib/reviews/format";
@@ -137,7 +139,17 @@ const headlines: Record<GoogleLink["status"], { title: string; lead: string }> =
  * Google's consent screen and back here; while the connection isn't set up on the server it comes
  * straight back with estado=indisponivel, which explains why.
  */
-function ConnectButton({ slug, configured, label = "Ligar com o Google" }: { slug: string; configured: boolean; label?: string }) {
+function ConnectButton({ slug, configured, label = "Ligar com o Google", soon = false }: { slug: string; configured: boolean; label?: string; soon?: boolean }) {
+  if (soon)
+    return (
+      <div className="flex flex-col gap-2">
+        <span aria-disabled="true" className={buttonClasses("secondary", "lg", "w-full cursor-not-allowed opacity-70 sm:w-auto sm:self-start")}>
+          <GoogleG size={18} />
+          {label} · Em breve
+        </span>
+        <p className="text-sm text-muted">A ligação direta ao Google estará disponível em breve. Até lá, o seu painel continua a ler as suas reviews do Google Maps todos os dias.</p>
+      </div>
+    );
   const button = (
     <a href={googleConnectPath(slug)} className={buttonClasses("primary", "lg", "w-full sm:w-auto sm:self-start")}>
       <GoogleG size={18} />
@@ -162,7 +174,7 @@ function Detail({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function StatusCard({ slug, link, configured }: { slug: string; link: GoogleLink; configured: boolean }) {
+function StatusCard({ slug, link, configured, soon }: { slug: string; link: GoogleLink; configured: boolean; soon: boolean }) {
   if (link.status === "pending_location") {
     return (
       <section aria-labelledby="google-choose" className="card flex flex-col gap-3 p-4 sm:p-6">
@@ -177,7 +189,7 @@ function StatusCard({ slug, link, configured }: { slug: string; link: GoogleLink
               Não encontrámos nenhum Perfil de Empresa na conta Google com que entrou{link.email ? ` (${link.email})` : ""}. Volte a ligar com a conta que gere o perfil do
               seu negócio.
             </p>
-            <ConnectButton slug={slug} configured={configured} label="Ligar com outra conta" />
+            <ConnectButton slug={slug} configured={configured} label="Ligar com outra conta" soon={soon} />
           </>
         )}
       </section>
@@ -213,7 +225,7 @@ function StatusCard({ slug, link, configured }: { slug: string; link: GoogleLink
           </Detail>
         </dl>
         {link.status === "connected" && !link.lastSyncAt ? <GoogleImportWatcher /> : null}
-        {link.status === "error" ? <ConnectButton slug={slug} configured={configured} label="Voltar a ligar" /> : null}
+        {link.status === "error" ? <ConnectButton slug={slug} configured={configured} label="Voltar a ligar" soon={soon} /> : null}
         <GoogleDisconnectButton slug={slug} />
       </section>
     );
@@ -288,6 +300,8 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
   if (!data) notFound();
   const { link, name } = data;
   const configured = googleOAuthConfigured();
+  // «Em breve» for customers until Google approves the API; admins keep the real button to test.
+  const soon = googleConnectComingSoon && (await getSession()).state !== "admin";
   // The customer's page only; what the server is missing shows in the admin's «Gerir» (owner, 2026-10-11).
   const missing = null;
   const headline = headlines[link.status];
@@ -317,14 +331,14 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
             ) : null}
           </div>
           <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">{headline.lead}</p>
-          {link.status === "not_connected" ? <ConnectButton slug={slug} configured={configured} /> : null}
+          {link.status === "not_connected" ? <ConnectButton slug={slug} configured={configured} soon={soon} /> : null}
           {link.status === "pending_location" ? (
             <a href={googleConnectPath(slug)} className="self-start text-sm font-semibold text-accent-text underline-offset-4 hover:underline">
               Usar outra conta Google
             </a>
           ) : null}
         </section>
-        <StatusCard slug={slug} link={link} configured={configured} />
+        <StatusCard slug={slug} link={link} configured={configured} soon={soon} />
       </div>
 
       <section aria-labelledby="google-benefits" className="flex flex-col gap-4 sm:gap-6">

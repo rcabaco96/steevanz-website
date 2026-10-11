@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertIcon, ArrowRight, GoogleG } from "@/components/icons";
 import { googleConnectPath, googlePagePath, type GoogleLinkStatus } from "./header-status";
+import { googleConnectComingSoon } from "@/lib/google/coming-soon";
 import { ShieldCheckIcon } from "./verified";
 
 type Tone = { bar: string; text: string; button: string };
@@ -41,7 +42,17 @@ export function GoogleConnectBanner({ slug, status }: { slug: string; status: Ex
             href: page,
             external: false,
           }
-        : {
+        : googleConnectComingSoon
+          ? {
+              tone: tones.invite,
+              short: "Ligar ao Google: em breve",
+              mid: "Em breve: ligue o seu Perfil de Empresa Google",
+              long: "Em breve: ligue o seu Perfil de Empresa Google e ganhe o selo «Perfil verificado» e respostas publicadas diretamente",
+              action: "Em breve",
+              href: page,
+              external: false,
+            }
+          : {
             tone: tones.invite,
             short: "Verifique o seu perfil",
             mid: "Verifique o seu perfil: ligue o Perfil de Empresa Google",
