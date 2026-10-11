@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { FormField } from "@/content/booking";
-import { isProductId } from "@/content/products";
+import { toProductId } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import { leadKinds } from "./types";
 
@@ -38,8 +38,8 @@ const contactShape = {
   productId: z
     .string()
     .trim()
-    .refine((value) => value === "" || isProductId(value))
-    .transform((value) => (value.length ? value : null)),
+    .refine((value) => value === "" || toProductId(value) !== null)
+    .transform((value) => (value.length ? toProductId(value) : null)),
   locale: z.enum(["pt", "en"]),
   consent: z.literal("on"),
   utm_source: trackingText,

@@ -16,7 +16,7 @@ import { Faq } from "@/components/ui/Faq";
 import { formatEuro } from "@/components/ui/Price";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { HeroTapScene } from "@/components/visuals/HeroTapScene";
-import { NfcPlate, type PlateVariant } from "@/components/visuals/NfcPlate";
+import { TapPlate, type PlateVariant } from "@/components/visuals/TapPlate";
 import type { Locale } from "@/lib/i18n";
 import { faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
@@ -141,7 +141,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                     style={{ ["--reveal-delay" as string]: `${index * 60}ms` }}
                     className="card flex flex-col items-center gap-3 p-4 text-center"
                   >
-                    <NfcPlate
+                    <TapPlate
                       variant={formatVariants[index]}
                       finish={index % 2 === 0 ? "black" : "white"}
                       line1={copy.scene.plateLine1}

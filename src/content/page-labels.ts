@@ -24,7 +24,7 @@ const pt = {
     packsCountProperty: "{count} alojamentos",
     packsUnitProperty: "{price} por alojamento",
     packsLogoOnce: "Logótipo e cores: +{price} uma só vez por pack, porque o desenho é feito uma vez para todas as placas.",
-    family: { nfc: "Placas e cartões", operations: "Reservas e filas", ai: "Inteligência artificial", web: "Websites e lojas online" },
+    family: { plates: "Placas e cartões", operations: "Reservas e filas", ai: "Inteligência artificial", web: "Websites e lojas online" },
   },
   products: {
     metaTitle: "Produtos: placas, reservas, IA e websites para negócios | Steevanz",
@@ -33,7 +33,7 @@ const pt = {
     title: "Ferramentas simples para negócios que atendem pessoas.",
     lead: "Soluções que funcionam sozinhas ou em conjunto. Todas configuradas por nós, todas com suporte em português.",
     familyLeads: {
-      nfc: "Um toque no telemóvel para reviews, seguidores, o menu e clientes fiéis.",
+      plates: "Um toque no telemóvel para reviews, seguidores, o menu e clientes fiéis.",
       operations: "Menos telefonemas, menos faltas e menos filas à porta.",
       ai: "Atendimento e tarefas repetitivas tratados por inteligência artificial, com supervisão humana.",
       web: "Presença online com preço fechado, ligada às ferramentas Steevanz.",
@@ -83,7 +83,7 @@ const en: PageLabels = {
     packsCountProperty: "{count} properties",
     packsUnitProperty: "{price} per property",
     packsLogoOnce: "Logo and colours: +{price} once per pack, because we design it once for every plate.",
-    family: { nfc: "Plates and cards", operations: "Bookings and queues", ai: "Artificial intelligence", web: "Websites and online shops" },
+    family: { plates: "Plates and cards", operations: "Bookings and queues", ai: "Artificial intelligence", web: "Websites and online shops" },
   },
   products: {
     metaTitle: "Products: plates, bookings, AI and websites for business | Steevanz",
@@ -92,7 +92,7 @@ const en: PageLabels = {
     title: "Simple tools for businesses that serve people.",
     lead: "Solutions that work on their own or together. All set up by us, all with friendly local support.",
     familyLeads: {
-      nfc: "One tap of a phone for reviews, followers, your menu and loyal customers.",
+      plates: "One tap of a phone for reviews, followers, your menu and loyal customers.",
       operations: "Fewer phone calls, fewer no-shows and fewer queues at the door.",
       ai: "Customer service and repetitive tasks handled by AI, with human oversight.",
       web: "Your online presence at a fixed price, connected to your Steevanz tools.",

@@ -2,7 +2,7 @@ import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import Link from "next/link";
 import { getProductCopy } from "@/content/product-copy";
-import { isProductId, products } from "@/content/products";
+import { canonicalProductId, isProductId, products } from "@/content/products";
 import { accessLabels, accessState, type AccessState, type OwnerAccount } from "@/lib/admin/client-access";
 import { authLinkValidity } from "@/lib/auth/link-validity";
 import {
@@ -268,7 +268,7 @@ function BusinessFields({ business }: { business: BusinessRow }) {
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {products.map((product) => (
               <label key={product.id} className="flex min-h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm text-text has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50">
-                <input type="checkbox" name="active_services" value={product.id} defaultChecked={business.active_services?.includes(product.id)} className="h-4.5 w-4.5 accent-accent" />
+                <input type="checkbox" name="active_services" value={product.id} defaultChecked={business.active_services?.some((service) => canonicalProductId(service) === product.id)} className="h-4.5 w-4.5 accent-accent" />
                 {getProductCopy(product.id, "pt").shortName}
               </label>
             ))}

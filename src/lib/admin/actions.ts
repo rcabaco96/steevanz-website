@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { isProductId } from "@/content/products";
+import { canonicalProductId, isProductId, productIdVariants, toProductId } from "@/content/products";
 import { orderStatuses, subscriptionStatuses, type ClientProductRow } from "@/lib/accounts/types";
 import type { ActionState } from "@/lib/action-state";
 import { pipelineStatuses } from "@/lib/booking/types";
@@ -228,15 +228,15 @@ export async function updateOrder(_previous: AdminActionState, formData: FormDat
     if (!account) {
       return { ok: false, message: `Não existe conta com o email ${order.email}. Peça ao cliente para criar conta com esse email e aceite de novo.` };
     }
-    const productIds = [...new Set(order.items.map((item) => item.productId).filter(isProductId))];
+    const productIds = [...new Set(order.items.map((item) => toProductId(item.productId)).filter((id) => id !== null))];
     if (productIds.length) {
       const { data: current, error: currentError } = await client
         .from("client_products")
         .select("product_id, status, spaces")
         .eq("user_id", account.id)
-        .in("product_id", productIds);
+        .in("product_id", productIds.flatMap(productIdVariants));
       if (currentError) throw new Error(currentError.message);
-      const active = new Map(((current ?? []) as Pick<ClientProductRow, "product_id" | "status" | "spaces">[]).filter((row) => row.status === "active").map((row) => [row.product_id, row]));
+      const active = new Map(((current ?? []) as Pick<ClientProductRow, "product_id" | "status" | "spaces">[]).filter((row) => row.status === "active").map((row) => [canonicalProductId(row.product_id), row]));
       for (const product_id of productIds) {
         const existing = active.get(product_id);
         if (existing) continue;
@@ -283,7 +283,7 @@ export async function removeClientProduct(_previous: AdminActionState, formData:
     const userId = uuid.safeParse(value(formData, "user_id"));
     const productId = value(formData, "product_id");
     if (!userId.success || !isProductId(productId)) return { ok: false, message: "Pedido inválido." };
-    const { error } = await createServiceClient().from("client_products").delete().eq("user_id", userId.data).eq("product_id", productId);
+    const { error } = await createServiceClient().from("client_products").delete().eq("user_id", userId.data).in("product_id", productIdVariants(productId));
     if (error) throw new Error(error.message);
     revalidatePath("/admin/clientes", "layout");
     revalidatePath("/conta", "layout");
@@ -306,11 +306,12 @@ export async function saveClientProduct(_previous: AdminActionState, formData: F
       .from("client_products")
       .select("id")
       .eq("user_id", parsed.data.user_id)
-      .eq("product_id", parsed.data.product_id)
+      .in("product_id", productIdVariants(parsed.data.product_id))
+      .limit(1)
       .maybeSingle();
     if (lookupError) throw new Error(lookupError.message);
     const { error } = existing
-      ? await client.from("client_products").update({ status: parsed.data.status, notes: parsed.data.notes, spaces: parsed.data.spaces }).eq("id", existing.id)
+      ? await client.from("client_products").update({ product_id: parsed.data.product_id, status: parsed.data.status, notes: parsed.data.notes, spaces: parsed.data.spaces }).eq("id", existing.id)
       : await client.from("client_products").insert(parsed.data);
     if (error) {
       if (error.code === "23503") return { ok: false, message: "Conta não encontrada." };

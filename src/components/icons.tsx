@@ -201,7 +201,7 @@ export const TrashIcon = (props: IconProps) => (
   </StrokeIcon>
 );
 
-export const NfcWaves = (props: IconProps) => (
+export const TapWaves = (props: IconProps) => (
   <StrokeIcon {...props}>
     <path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17" />
     <circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none" />

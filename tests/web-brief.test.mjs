@@ -30,9 +30,9 @@ describe("web products in the cart", () => {
   it("locks every project product, but not plates or monthly products", () => {
     assert.equal(maxQuantityFor("landing-page"), 1);
     assert.equal(maxQuantityFor("automation"), 1);
-    assert.equal(maxQuantityFor("nfc-google-reviews"), 99);
+    assert.equal(maxQuantityFor("google-review-plates"), 99);
     assert.equal(maxQuantityFor("bookings"), 99);
-    assert.equal(sanitizeLines([{ id: "p", productId: "nfc-social", quantity: 4 }])[0].quantity, 4);
+    assert.equal(sanitizeLines([{ id: "p", productId: "social-plates", quantity: 4 }])[0].quantity, 4);
   });
 
   it("prices the web products as one-off «desde» amounts before VAT", () => {
@@ -43,8 +43,8 @@ describe("web products in the cart", () => {
   });
 
   it("asks for the brief only when a web product is in the cart", () => {
-    assert.equal(cartNeedsBrief([{ productId: "nfc-menu" }, { productId: "bookings" }]), false);
-    assert.equal(cartNeedsBrief([{ productId: "nfc-menu" }, { productId: "landing-page" }]), true);
+    assert.equal(cartNeedsBrief([{ productId: "digital-menu" }, { productId: "bookings" }]), false);
+    assert.equal(cartNeedsBrief([{ productId: "digital-menu" }, { productId: "landing-page" }]), true);
     assert.equal(cartNeedsBrief([{ productId: "automation" }]), false);
   });
 });

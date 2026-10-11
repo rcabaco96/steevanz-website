@@ -70,7 +70,7 @@ export const sectors: Sector[] = [
     slug: sectorSlugs.restaurants,
     photo: "restaurant-table",
     side: { kind: "photo", photo: "retail" },
-    bundle: ["nfc-google-reviews", "bookings", "waitlist", "ai-voice"],
+    bundle: ["google-review-plates", "bookings", "waitlist", "ai-voice"],
     copy: {
       pt: {
         name: "Restaurantes e cafés",
@@ -133,7 +133,7 @@ export const sectors: Sector[] = [
     slug: sectorSlugs.beauty,
     photo: "salon-chair",
     side: { kind: "photo", photo: "retail" },
-    bundle: ["bookings", "nfc-google-reviews", "loyalty", "ai-chatbot"],
+    bundle: ["bookings", "google-review-plates", "loyalty", "ai-chatbot"],
     copy: {
       pt: {
         name: "Cabeleireiros e estética",
@@ -259,7 +259,7 @@ export const sectors: Sector[] = [
     slug: sectorSlugs.retail,
     photo: "shop-owner",
     side: { kind: "photo", photo: "retail" },
-    bundle: ["nfc-google-reviews", "nfc-social", "loyalty", "ai-chatbot"],
+    bundle: ["google-review-plates", "social-plates", "loyalty", "ai-chatbot"],
     copy: {
       pt: {
         name: "Comércio local",

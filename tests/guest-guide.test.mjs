@@ -48,13 +48,13 @@ describe("holiday-rental sector tags", () => {
   const tagged = (id) => getProduct(id).sectors.includes("lodging");
 
   it("tags the products that fit holiday rentals", () => {
-    for (const id of ["guest-guide", "nfc-google-reviews", "ai-chatbot", "ai-reviews", "automation"]) {
+    for (const id of ["guest-guide", "google-review-plates", "ai-chatbot", "ai-reviews", "automation"]) {
       assert.ok(tagged(id), `${id} should be tagged with lodging`);
     }
   });
 
   it("leaves out slot bookings, waiting lists, the menu and stamp cards", () => {
-    for (const id of ["nfc-menu", "bookings", "waitlist", "loyalty"]) {
+    for (const id of ["digital-menu", "bookings", "waitlist", "loyalty"]) {
       assert.ok(!tagged(id), `${id} should not be tagged with lodging`);
     }
   });

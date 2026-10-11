@@ -1,7 +1,7 @@
 import type { ProductDocs } from "../types";
 
 export const docs: ProductDocs = {
-  productId: "nfc-google-reviews",
+  productId: "google-review-plates",
   pages: {
     "getting-started": {
       pt: {

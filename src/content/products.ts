@@ -4,10 +4,10 @@ import type { ProductId, SectorId } from "./types";
 
 export type PriceBilling = "one-time" | "monthly" | "project";
 
-export type ProductFamily = "nfc" | "operations" | "ai" | "web";
+export type ProductFamily = "plates" | "operations" | "ai" | "web";
 
 /** The order families appear in (header menu, products index). */
-export const productFamilies: ProductFamily[] = ["nfc", "operations", "ai", "web"];
+export const productFamilies: ProductFamily[] = ["plates", "operations", "ai", "web"];
 
 export type ProductIcon =
   | "star-tap"
@@ -78,9 +78,9 @@ const plateTextMaxLength = 60;
 
 export const products: Product[] = [
   {
-    id: "nfc-google-reviews",
+    id: "google-review-plates",
     slug: { pt: "placas-google-reviews", en: "google-review-plates" },
-    family: "nfc",
+    family: "plates",
     icon: "star-tap",
     priceFrom: 29,
     priceBilling: "one-time",
@@ -88,7 +88,7 @@ export const products: Product[] = [
     priceIsProvisional: true,
     flagship: true,
     sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
-    related: ["ai-reviews", "nfc-social", "loyalty"],
+    related: ["ai-reviews", "social-plates", "loyalty"],
     contextPhoto: "restaurant-table",
     customization: {
       formats: [
@@ -110,16 +110,16 @@ export const products: Product[] = [
     ],
   },
   {
-    id: "nfc-social",
+    id: "social-plates",
     slug: { pt: "placas-redes-sociais", en: "social-media-plates" },
-    family: "nfc",
+    family: "plates",
     icon: "share-tap",
     priceFrom: 24,
     priceBilling: "one-time",
     priceQualifier: { pt: "por placa ou cartão", en: "per plate or card" },
     priceIsProvisional: true,
     sectors: ["restaurants", "beauty", "retail", "lodging"],
-    related: ["nfc-google-reviews", "loyalty", "ai-chatbot"],
+    related: ["google-review-plates", "loyalty", "ai-chatbot"],
     contextPhoto: "phone-tap",
     customization: {
       formats: [
@@ -134,16 +134,16 @@ export const products: Product[] = [
     },
   },
   {
-    id: "nfc-menu",
+    id: "digital-menu",
     slug: { pt: "menu-digital", en: "digital-menu" },
-    family: "nfc",
+    family: "plates",
     icon: "menu-tap",
     priceFrom: 15,
     priceBilling: "one-time",
     priceQualifier: { pt: "por placa, configuração incluída", en: "per plate, setup included" },
     priceIsProvisional: true,
     sectors: ["restaurants", "retail"],
-    related: ["nfc-google-reviews", "nfc-social", "bookings"],
+    related: ["google-review-plates", "social-plates", "bookings"],
     contextPhoto: "restaurant-hero",
     customization: {
       formats: [
@@ -164,7 +164,7 @@ export const products: Product[] = [
   {
     id: "guest-guide",
     slug: { pt: "guia-digital-alojamento", en: "digital-guest-guide" },
-    family: "nfc",
+    family: "plates",
     icon: "guide-tap",
     priceFrom: 69,
     priceBilling: "one-time",
@@ -174,7 +174,7 @@ export const products: Product[] = [
     },
     priceIsProvisional: true,
     sectors: ["lodging"],
-    related: ["ai-chatbot", "automation", "nfc-google-reviews"],
+    related: ["ai-chatbot", "automation", "google-review-plates"],
     contextPhoto: "holiday-rental",
     customization: {
       formats: [
@@ -198,14 +198,14 @@ export const products: Product[] = [
   {
     id: "loyalty",
     slug: { pt: "cartao-fidelidade-digital", en: "digital-loyalty-card" },
-    family: "nfc",
+    family: "plates",
     icon: "stamp",
     priceFrom: 19,
     priceBilling: "monthly",
     priceQualifier: { pt: "por mês, por loja", en: "per month, per location" },
     priceIsProvisional: true,
     sectors: ["restaurants", "beauty", "retail"],
-    related: ["nfc-google-reviews", "nfc-social", "bookings"],
+    related: ["google-review-plates", "social-plates", "bookings"],
     contextPhoto: "cafe-counter",
   },
   {
@@ -231,7 +231,7 @@ export const products: Product[] = [
     priceQualifier: { pt: "por mês, por estabelecimento", en: "per month, per venue" },
     priceIsProvisional: true,
     sectors: ["restaurants", "clinics", "beauty"],
-    related: ["bookings", "nfc-google-reviews", "ai-voice"],
+    related: ["bookings", "google-review-plates", "ai-voice"],
     contextPhoto: "restaurant-busy",
   },
   {
@@ -270,7 +270,7 @@ export const products: Product[] = [
     priceQualifier: { pt: "por mês, por perfil Google", en: "per month, per Google profile" },
     priceIsProvisional: true,
     sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
-    related: ["nfc-google-reviews", "ai-chatbot", "automation"],
+    related: ["google-review-plates", "ai-chatbot", "automation"],
     contextPhoto: "owner-laptop",
   },
   {
@@ -297,7 +297,7 @@ export const products: Product[] = [
     priceQualifier: { pt: "por projeto, + 15 €/mês de alojamento, sem fidelização", en: "per project, + €15/month hosting, no lock-in" },
     priceIsProvisional: true,
     sectors: ["restaurants", "beauty", "clinics", "retail"],
-    related: ["website", "nfc-google-reviews", "bookings"],
+    related: ["website", "google-review-plates", "bookings"],
   },
   {
     id: "website",
@@ -309,7 +309,7 @@ export const products: Product[] = [
     priceQualifier: { pt: "até 5 páginas, + 25 €/mês de alojamento, sem fidelização", en: "up to 5 pages, + €25/month hosting, no lock-in" },
     priceIsProvisional: true,
     sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
-    related: ["bookings", "nfc-menu", "ai-chatbot"],
+    related: ["bookings", "digital-menu", "ai-chatbot"],
   },
   {
     id: "online-shop",
@@ -340,6 +340,33 @@ export function getProduct(id: ProductId): Product {
 
 export function isProductId(value: string): value is ProductId {
   return products.some((product) => product.id === value);
+}
+
+/**
+ * Product ids renamed on 2026-10-11 (old id → current id). Ids that come from outside (old links
+ * with ?produto=…, carts saved in browsers, rows stored before the rename) still resolve.
+ */
+export const renamedProductIds: Readonly<Record<string, ProductId>> = {
+  "nfc-google-reviews": "google-review-plates",
+  "nfc-social": "social-plates",
+  "nfc-menu": "digital-menu",
+};
+
+/** The current product id for an id from outside (URL, saved cart, database row), old ids included. */
+export function toProductId(value: unknown): ProductId | null {
+  if (typeof value !== "string") return null;
+  if (isProductId(value)) return value;
+  return Object.prototype.hasOwnProperty.call(renamedProductIds, value) ? renamedProductIds[value] : null;
+}
+
+/** Like `toProductId`, but keeps an unknown value as it is (labels, stored rows). */
+export function canonicalProductId(value: string): string {
+  return toProductId(value) ?? value;
+}
+
+/** The id plus its old ids, to match database rows written before or after the rename. */
+export function productIdVariants(id: string): string[] {
+  return [id, ...Object.keys(renamedProductIds).filter((old) => renamedProductIds[old] === id)];
 }
 
 export const flagshipProduct = products.find((product) => product.flagship) ?? products[0];

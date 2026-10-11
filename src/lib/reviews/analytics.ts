@@ -52,16 +52,16 @@ export interface BeforeAfter {
 
 /**
  * Why the before/after comparison is missing, so the dashboard can say so instead of hiding it.
- * `no-plates`: the client doesn't have the NFC plates product, so the comparison (and its section)
+ * `no-plates`: the client doesn't have the plates product, so the comparison (and its section)
  * doesn't exist for them at all.
  */
 export type BeforeAfterGap = "no-plates" | "no-install-date" | "too-early" | "no-history" | null;
 
-/** The product the «Antes e depois das placas» comparison belongs to: the NFC plates for Google reviews. */
-export const platesProductId = "nfc-google-reviews";
+/** The product the «Antes e depois das placas» comparison belongs to: the plates for Google reviews. */
+export const platesProductId = "google-review-plates";
 
 /**
- * Whether the client has the NFC plates product (their account's active products, or the manual list
+ * Whether the client has the plates product (their account's active products, or the manual list
  * for a business without an account). Follows the client, never who is looking: an admin opening the
  * panel sees exactly what the client sees.
  */

@@ -1,7 +1,7 @@
 import type { ProductDocs } from "../types";
 
 export const docs: ProductDocs = {
-  productId: "nfc-social",
+  productId: "social-plates",
   pages: {
     "getting-started": {
       pt: {

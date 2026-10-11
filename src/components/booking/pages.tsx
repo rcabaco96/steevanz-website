@@ -1,9 +1,10 @@
+import { permanentRedirect } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
 import { Check, MailIcon, WhatsAppIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import { bookingCopy, infoRequestCopy, waitlistParamValues } from "@/content/booking";
 import { getProductCopy } from "@/content/product-copy";
-import { isProductId, products } from "@/content/products";
+import { isProductId, products, toProductId } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import { ui } from "@/content/ui";
 import { getAvailability } from "@/lib/booking/availability";
@@ -39,9 +40,23 @@ function trackingFrom(params: SearchParams): Record<string, string> {
   return Object.fromEntries(utmKeys.map((key) => [key, firstParam(params, key).slice(0, 300)]));
 }
 
+/** Old links with a renamed product id (?produto=…) go to the same page with the current id. */
+function redirectRenamedProduct(path: string, params: SearchParams): void {
+  const key = [bookingProductParam, "product"].find((name) => firstParam(params, name));
+  if (!key) return;
+  const raw = firstParam(params, key);
+  const current = toProductId(raw);
+  if (!current || current === raw) return;
+  const query = new URLSearchParams();
+  for (const [name, value] of Object.entries(params)) {
+    for (const item of [value ?? []].flat()) query.append(name, name === key ? current : item);
+  }
+  permanentRedirect(`${path}?${query}`);
+}
+
 function productFrom(params: SearchParams): string {
   const candidate = firstParam(params, bookingProductParam) || firstParam(params, "product");
-  return isProductId(candidate) ? candidate : "";
+  return toProductId(candidate) ?? "";
 }
 
 function PageIntro({ eyebrow, title, lead, children }: { eyebrow: string; title: string; lead: string; children?: ReactNode }) {
@@ -99,6 +114,7 @@ function ContactFallback({ locale, title, body, cta }: { locale: Locale; title: 
 }
 
 export async function BookingPageView({ locale, searchParams }: { locale: Locale; searchParams: SearchParams }) {
+  redirectRenamedProduct(href(locale, { key: "book" }), searchParams);
   const copy = bookingCopy[locale];
   const availability = await getAvailability();
 
@@ -145,6 +161,7 @@ export async function BookingPageView({ locale, searchParams }: { locale: Locale
 }
 
 export function InfoRequestPageView({ locale, searchParams }: { locale: Locale; searchParams: SearchParams }) {
+  redirectRenamedProduct(href(locale, { key: "requestInfo" }), searchParams);
   const copy = infoRequestCopy[locale];
   const kindParam = firstParam(searchParams, "tipo") || firstParam(searchParams, "type");
   const initialKind: LeadKind = waitlistParamValues.includes(kindParam) ? "waitlist" : "info_request";

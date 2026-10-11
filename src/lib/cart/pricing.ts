@@ -1,5 +1,5 @@
 // Relative imports with extensions keep this module runnable by `node --test` (tests/cart-pricing.test.mjs).
-import { getProduct, isProductId, type PriceBilling, type Product } from "../../content/products.ts";
+import { getProduct, toProductId, type PriceBilling, type Product } from "../../content/products.ts";
 import type { ProductId } from "../../content/types.ts";
 import type { Locale } from "../i18n.ts";
 
@@ -82,8 +82,10 @@ export function sanitizeLines(input: unknown): CartLine[] {
   for (const [index, item] of input.entries()) {
     if (lines.length >= maxCartLines) break;
     if (!item || typeof item !== "object") continue;
-    const { id, productId, quantity, options } = item as Record<string, unknown>;
-    if (typeof productId !== "string" || !isProductId(productId)) continue;
+    const { id, productId: rawProductId, quantity, options } = item as Record<string, unknown>;
+    // Old ids (carts saved before a product was renamed) become the current ones.
+    const productId = toProductId(rawProductId);
+    if (!productId) continue;
     if (typeof quantity !== "number") continue;
     const lineId = typeof id === "string" && id.length <= 40 && !ids.has(id) ? id : `${productId}-${index}`;
     ids.add(lineId);

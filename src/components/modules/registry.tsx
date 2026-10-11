@@ -21,8 +21,8 @@ export interface ModuleProps {
 // One management module per product. Each product gets its own component here
 // as it is built; until then they all show the placeholder.
 export const productModules: Record<ProductId, ComponentType<ModuleProps>> = {
-  "nfc-google-reviews": ModulePlaceholder,
-  "nfc-social": ModulePlaceholder,
+  "google-review-plates": ModulePlaceholder,
+  "social-plates": ModulePlaceholder,
   loyalty: LoyaltyModule,
   bookings: BookingsModule,
   waitlist: WaitlistModule,
@@ -30,7 +30,7 @@ export const productModules: Record<ProductId, ComponentType<ModuleProps>> = {
   "ai-voice": ModulePlaceholder,
   "ai-reviews": ModulePlaceholder,
   automation: ModulePlaceholder,
-  "nfc-menu": ModulePlaceholder,
+  "digital-menu": ModulePlaceholder,
   "guest-guide": ModulePlaceholder,
   "landing-page": ModulePlaceholder,
   website: ModulePlaceholder,

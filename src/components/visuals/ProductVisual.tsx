@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import { mockupCopy, type MockupCopy } from "@/content/mockups";
 import type { Product } from "@/content/products";
 import type { ProductId } from "@/content/types";
-import { Check, NfcWaves, PhoneIcon, SparkleIcon, StarFilled } from "@/components/icons";
+import { Check, TapWaves, PhoneIcon, SparkleIcon, StarFilled } from "@/components/icons";
 import type { Locale } from "@/lib/i18n";
-import { NfcPlate, type PlateSymbol } from "./NfcPlate";
+import { TapPlate, type PlateSymbol } from "./TapPlate";
 import { LandingPageMockup, OnlineShopMockup, WebsiteMockup } from "./WebMockups";
 
 function PhoneFrame({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -346,7 +346,7 @@ const phoneScreens: Partial<Record<ProductId, (t: MockupCopy) => ReactNode>> = {
   "ai-chatbot": (t) => <ChatScreen t={t} />,
   "ai-voice": (t) => <VoiceScreen t={t} />,
   "ai-reviews": (t) => <ReviewsScreen t={t} />,
-  "nfc-menu": (t) => <MenuScreen t={t} />,
+  "digital-menu": (t) => <MenuScreen t={t} />,
   "guest-guide": (t) => <GuideScreen t={t} />,
 };
 
@@ -373,15 +373,15 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
     );
   }
 
-  if (product.id === "nfc-google-reviews" || product.id === "nfc-social") {
-    const isReview = product.id === "nfc-google-reviews";
+  if (product.id === "google-review-plates" || product.id === "social-plates") {
+    const isReview = product.id === "google-review-plates";
     const line1 = isReview ? t.reviewLine1 : t.socialLine1;
     const line2 = isReview ? t.reviewLine2 : t.socialLine2;
     const symbol: PlateSymbol = isReview ? "stars" : "social";
     return (
       <div className="relative mx-auto aspect-square w-full max-w-md" data-image-slot={t.imageSlot}>
         <div aria-hidden="true" className="absolute inset-[6%] rounded-full bg-[radial-gradient(closest-side,rgb(var(--glow)/0.25),transparent)]" />
-        <NfcPlate
+        <TapPlate
           variant="stand"
           finish="black"
           symbol={symbol}
@@ -389,7 +389,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           line2={line2}
           className="absolute top-[4%] left-[8%] h-auto w-[52%] drop-shadow-[0_30px_40px_rgba(0,0,0,0.3)]"
         />
-        <NfcPlate
+        <TapPlate
           variant="square"
           finish="white"
           symbol={symbol}
@@ -397,7 +397,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           line2={line2}
           className="absolute right-[4%] bottom-[14%] h-auto w-[40%] rotate-[6deg] drop-shadow-[0_24px_30px_rgba(0,0,0,0.22)]"
         />
-        <NfcPlate
+        <TapPlate
           variant="sticker"
           finish="black"
           symbol={symbol}
@@ -406,7 +406,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           className="absolute bottom-[4%] left-[14%] h-auto w-[28%] -rotate-[8deg] drop-shadow-[0_18px_24px_rgba(0,0,0,0.25)]"
         />
         <FloatingChip className="top-[8%] right-[4%]">
-          <NfcWaves size={16} className="text-accent-text" /> {t.tapQrChip}
+          <TapWaves size={16} className="text-accent-text" /> {t.tapQrChip}
         </FloatingChip>
       </div>
     );
@@ -424,8 +424,8 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
   return (
     <div className="relative mx-auto w-full max-w-md py-4">
       <div aria-hidden="true" className="absolute inset-[10%] rounded-full bg-[radial-gradient(closest-side,rgb(var(--glow)/0.28),transparent)]" />
-      {product.id === "nfc-menu" ? (
-        <NfcPlate
+      {product.id === "digital-menu" ? (
+        <TapPlate
           variant="round"
           finish="black"
           symbol="menu"
@@ -435,7 +435,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
         />
       ) : null}
       {product.id === "guest-guide" ? (
-        <NfcPlate
+        <TapPlate
           variant="wall"
           finish="white"
           symbol="home"
@@ -445,7 +445,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
         />
       ) : null}
       {product.id === "loyalty" ? (
-        <NfcPlate
+        <TapPlate
           variant="sticker"
           finish="black"
           symbol="stamps"
@@ -455,9 +455,9 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
         />
       ) : null}
       <PhoneFrame>{screen ? screen(t) : null}</PhoneFrame>
-      {product.id === "nfc-menu" || product.id === "guest-guide" ? (
+      {product.id === "digital-menu" || product.id === "guest-guide" ? (
         <FloatingChip className="top-[10%] right-0">
-          <NfcWaves size={16} className="text-accent-text" /> {t.tapQrChip}
+          <TapWaves size={16} className="text-accent-text" /> {t.tapQrChip}
         </FloatingChip>
       ) : null}
       {product.id === "guest-guide" ? (

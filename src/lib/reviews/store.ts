@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendOwnerEmail } from "@/lib/booking/email";
 import { siteUrl } from "@/lib/site";
+import { canonicalProductId } from "@/content/products";
 import { createServiceClient } from "@/lib/supabase/service";
 import { loadCompetition } from "./competitor-store";
 import { toRadiusKm } from "./competitors";
@@ -55,7 +56,7 @@ export function toBusiness(row: BusinessRow): ReviewBusiness {
     ratingTotal: row.rating_total === null ? null : Number(row.rating_total),
     reviewsTotal: row.reviews_total,
     lastSyncedAt: row.last_synced_at,
-    activeServices: row.active_services ?? [],
+    activeServices: (row.active_services ?? []).map(canonicalProductId),
     category: row.category ?? null,
     googleFid: row.google_fid ?? null,
     competitorRadiusKm: toRadiusKm(row.competitor_radius_km),
@@ -78,7 +79,7 @@ async function ownerServices(client: SupabaseClient, ownerId: string | null): Pr
   if (!ownerId) return null;
   const { data, error } = await client.from("client_products").select("product_id").eq("user_id", ownerId).eq("status", "active");
   if (error) throw new Error(error.message);
-  return ((data ?? []) as { product_id: string }[]).map((row) => row.product_id);
+  return ((data ?? []) as { product_id: string }[]).map((row) => canonicalProductId(row.product_id));
 }
 
 export async function getDashboardSource(slug: string): Promise<DashboardSource | null> {

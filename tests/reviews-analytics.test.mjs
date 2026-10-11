@@ -89,7 +89,7 @@ describe("computeAnalytics", () => {
   });
 
   it("measures the effect of the plates on monthly reviews", () => {
-    const withPlates = { ...source, business: { ...source.business, activeServices: ["nfc-google-reviews"] } };
+    const withPlates = { ...source, business: { ...source.business, activeServices: ["google-review-plates"] } };
     const analytics = computeAnalytics(withPlates, "all", now);
     assert.ok(analytics.beforeAfter);
     assert.ok(analytics.beforeAfter.upliftPct > 100, `uplift ${analytics.beforeAfter.upliftPct}`);
@@ -100,7 +100,7 @@ describe("computeAnalytics", () => {
     const analytics = computeAnalytics(source, "all", now);
     assert.equal(analytics.beforeAfter, null);
     assert.equal(analytics.beforeAfterGap, "no-plates");
-    const otherProducts = { ...source, business: { ...source.business, activeServices: ["ai-reviews", "nfc-social"] } };
+    const otherProducts = { ...source, business: { ...source.business, activeServices: ["ai-reviews", "social-plates"] } };
     assert.equal(computeAnalytics(otherProducts, "all", now).beforeAfterGap, "no-plates");
   });
 
@@ -168,7 +168,7 @@ describe("sample-size guards", () => {
   it("does not compare on a handful of data points", () => {
     const now = new Date("2026-10-02T12:00:00Z");
     const source = {
-      business: { id: "b", slug: "b", name: "B", googleMapsUrl: "", reviewUrl: "", platesInstalledOn: "2026-09-25", ratingTotal: 5, reviewsTotal: 2, lastSyncedAt: null, activeServices: ["nfc-google-reviews"], category: null },
+      business: { id: "b", slug: "b", name: "B", googleMapsUrl: "", reviewUrl: "", platesInstalledOn: "2026-09-25", ratingTotal: 5, reviewsTotal: 2, lastSyncedAt: null, activeServices: ["google-review-plates"], category: null },
       competition: null,
       reviews: [review("x", "2026-09-30T12:10:00Z", 5), review("y", "2025-09-01T12:00:00Z", 4)],
     };
@@ -199,7 +199,7 @@ describe("recommendations", async () => {
     assert.ok(items.length > 0 && items.length <= 3);
     const ownsAll = { ...base, business: { ...base.business, activeServices: items.map((item) => item.productId) } };
     const remaining = recommendations(ownsAll, analytics, periodReviews).map((item) => item.productId);
-    for (const item of items) if (item.productId !== "nfc-google-reviews") assert.ok(!remaining.includes(item.productId));
+    for (const item of items) if (item.productId !== "google-review-plates") assert.ok(!remaining.includes(item.productId));
   });
 
   it("links waiting complaints to the digital waitlist", () => {
