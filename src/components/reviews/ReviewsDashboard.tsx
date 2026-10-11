@@ -467,8 +467,8 @@ function challengeNote(kind: ChallengeKind, challenges: CompetitionChallenges): 
       info: { label: "Vantagem sobre o 2.º", text: infoTexts.challengeDefend },
       text: (
         <>
-          Está em 1.º no ranking. O <strong>{defend.name}</strong> (2.º) está a <strong>{plural(defend.fiveStars, "review de 5★", "reviews de 5★")}</strong> de lhe
-          passar à frente.
+          Está em 1.º no ranking. O <strong>{defend.name}</strong> vem logo atrás (2.º): precisa de{" "}
+          <strong>{plural(defend.fiveStars, "review de 5★", "reviews de 5★")}</strong> para lhe passar à frente.
         </>
       ),
     };
@@ -479,8 +479,8 @@ function challengeNote(kind: ChallengeKind, challenges: CompetitionChallenges): 
       info: { label: "Quem vem logo atrás", text: infoTexts.challengeThreat },
       text: (
         <>
-          Atenção: o <strong>{threat.name}</strong> ({threat.rank}.º) está a <strong>{plural(threat.fiveStars, "review de 5★", "reviews de 5★")}</strong> de o
-          ultrapassar.
+          Atenção: está em {threat.rank - 1}.º e o <strong>{threat.name}</strong> vem logo atrás ({threat.rank}.º). Bastam-lhe{" "}
+          <strong>{plural(threat.fiveStars, "review de 5★", "reviews de 5★")}</strong> para lhe passar à frente.
         </>
       ),
     };
