@@ -194,17 +194,14 @@ export function competitionChallenges(competition: Competition | null, ownReview
     if (ahead) pace = paceRace(ahead.name, gap.reviewsDiff, ahead.pacePerMonth, self.pacePerMonth);
   }
 
-  // The month's challenge: the nearest reachable target (the ranking first on a tie).
+  // The month's challenge: passing the place right above in the ranking, when it is within reach.
+  // Only the ranking since 2026-10-12 (owner): one position, so it never gets confused with another.
   const thisMonth = lisbonMonth(now.toISOString());
   const receivedThisMonth = ownReviews.filter((review) => Date.parse(review.publishedAt) <= now.getTime() && lisbonMonth(review.publishedAt) === thisMonth);
-  const options: MonthlyChallenge[] = [];
-  if (chase && chase.fiveStars <= monthlyChallengeMax) {
-    options.push({ kind: "rank", name: chase.name, missing: chase.fiveStars, reachRank: chase.reachRank, doneThisMonth: receivedThisMonth.filter((review) => review.rating === 5).length });
-  }
-  if (reviewsChase && reviewsChase.reviews <= monthlyChallengeMax) {
-    options.push({ kind: "reviews", name: reviewsChase.name, missing: reviewsChase.reviews, reachRank: reviewsChase.reachRank, doneThisMonth: receivedThisMonth.length });
-  }
-  const monthly = options.sort((a, b) => a.missing - b.missing)[0] ?? null;
+  const monthly: MonthlyChallenge | null =
+    chase && chase.fiveStars <= monthlyChallengeMax
+      ? { kind: "rank", name: chase.name, missing: chase.fiveStars, reachRank: chase.reachRank, doneThisMonth: receivedThisMonth.filter((review) => review.rating === 5).length }
+      : null;
 
   let wins: CompetitionWins | null = null;
   const trend = competition.trend;
@@ -217,7 +214,8 @@ export function competitionChallenges(competition: Competition | null, ownReview
       reviewsPlaces: trend.reviewsRankChange !== null && trend.reviewsRankChange > 0 ? trend.reviewsRankChange : null,
       ratingRise: rise !== null && rise >= ratingWinMin - 1e-9 ? rise : null,
     };
-    if (candidate.rankPlaces !== null || candidate.reviewsPlaces !== null || candidate.ratingRise !== null) wins = candidate;
+    // Places in total reviews are no win to show (only the ranking since 2026-10-12, owner).
+    if (candidate.rankPlaces !== null || candidate.ratingRise !== null) wins = candidate;
   }
 
   return { chase, defend, threat, reviewsChase, pace, monthly, wins };
@@ -227,15 +225,14 @@ export type ChallengeKind = "defend" | "threat" | "chase" | "reviews" | "pace";
 
 /**
  * The order the phrases are shown in (at most `limit` in a block). Only phrases about climbing
- * (owner, 2026-10-11: «quero ganhar reviews para subir de posição, não para descer»): the chase in the
- * ranking, the total of reviews, the pace race, and the lead when the customer is already 1.º. The
- * place right below (`threat`) is still computed but never shown.
+ * (owner, 2026-10-11: «quero ganhar reviews para subir de posição, não para descer») and only about
+ * the ranking (owner, 2026-10-12: the rating and the total of reviews got confused with it): the
+ * chase in the ranking and the lead when the customer is already 1.º. The place right below
+ * (`threat`), the total-reviews chase and the pace race are still computed but never shown.
  */
 export function challengeOrder(challenges: CompetitionChallenges): ChallengeKind[] {
   const order: ChallengeKind[] = [];
   if (challenges.chase) order.push("chase");
-  if (challenges.reviewsChase) order.push("reviews");
-  if (challenges.pace) order.push("pace");
   if (challenges.defend) order.push("defend");
   return order;
 }

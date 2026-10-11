@@ -165,8 +165,9 @@ já guardada:
   nem fazer pedidos extra. Perfil = % de 5 campos: reivindicado pelo dono, site, telefone, horário,
   descrição. Guardado em `competitor_snapshots.profile`. O separador «Fotos» saiu da tabela
   (dono, 2026-10-09); o nº de fotos continua guardado em `competitor_snapshots.photos_count`.
-- **Setas em «Na sua zona»:** lugares ganhos/perdidos face a há 1 mês e variação da nota / do
-  total do cliente. Com uma captura de há 1 mês usa-se essa; senão, o cliente de há 1 mês sai das
+- **«Na sua zona» mostra uma só posição: o Ranking** (dono, 2026-10-12: a posição em total de
+  reviews confundia-se com o ranking). **Setas:** lugares ganhos/perdidos no ranking face a há 1 mês
+  e variação da nota do cliente. Com uma captura de há 1 mês usa-se essa; senão, o cliente de há 1 mês sai das
   reviews dele (sem as do último mês) e cada concorrente = total − ritmo mensal, com a nota de hoje
   (`entryMonthAgo` / `competitionTrend` em `src/lib/reviews/competitors.ts`). As posições comparam
   só os lugares presentes nos dois momentos.
@@ -373,17 +374,22 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
     (`fiveStarsToRank`; P = posição real com essas reviews). Escondida acima de 100.
   - **Defender o 1.º:** «O Y (2.º) está a N reviews de 5★ de lhe passar à frente» (até 100);
     **ameaça** abaixo do 1.º: «Atenção: o Z está a N reviews de 5★ de o ultrapassar» só com N ≤ 5.
-  - **Total de reviews:** «Faltam N reviews para ter mais reviews do que o Y e subir para P.º» (até 200).
-  - **Corrida ao ritmo** (com o negócio logo acima no total; os dois ritmos medidos, pelo menos
-    1/mês num deles): a este ritmo passa em ≤ 12 meses, ou o mínimo de reviews a mais por mês para
-    passar em 3, 6 ou 12 meses, nunca mais do que o ritmo atual (ou 5).
-  - **Desafio deste mês:** o objetivo mais perto (ranking ou total) com ≤ 15 em falta, com barra das
-    reviews recebidas desde o dia 1 (hora de Lisboa; de 5★ para o ranking) + as que faltam.
-  - **Conquistas do último mês** (Destaques): lugares ganhos no ranking / no total e subida da média
+  - **Só o ranking** (dono, 2026-10-12): as frases de total de reviews («Faltam N reviews para ter
+    mais reviews do que o Y») e a corrida ao ritmo continuam calculadas (`reviewsChase`, `pace`)
+    mas **nunca aparecem**, tal como a ameaça.
+  - **Desafio deste mês:** passar o negócio logo acima no ranking com ≤ 15 reviews de 5★ em falta,
+    com barra das reviews de 5★ recebidas desde o dia 1 (hora de Lisboa) + as que faltam.
+  - **Conquistas do último mês** (Destaques): lugares ganhos no ranking e subida da média
     (≥ 0,01★), da `competitionTrend`. Sem emojis (o painel não os usa).
-  - Onde: «Na sua zona» mostra o desafio e 2 frases por prioridade (ameaça/defesa perto → subir no
-    ranking → total → defesa folgada → ritmo; a do desafio passa para baixo); a secção da
-    concorrência mostra as 3 seguintes por cima da tabela.
+  - Onde: «Na sua zona» mostra o desafio e 2 frases por prioridade (subir no ranking → defesa do
+    1.º; a do desafio passa para baixo); a secção da concorrência mostra as seguintes por cima da
+    tabela.
+- **Destaques: sempre pelo menos 3 cartões** (dono, 2026-10-12), no máximo 5, ao lado do cartão
+  «Avaliação no Google» (os 4 cartões de números saíram). Primeiro o que se destaca (conquistas,
+  posição no ranking, placas, tema e dia mais fracos, reviews por responder); com menos de 3,
+  juntam-se factos do negócio por esta ordem: ponto forte, % respondidas (≥ 70%), ritmo dos últimos
+  3 meses, % positivas, melhor dia (`insightsFor` em `ReviewsDashboard.tsx`). Só não há 3 quando o
+  período escolhido não tem reviews.
 
 ## 14. Perfil verificado (ligação ao Google Business Profile)
 

@@ -28,8 +28,6 @@ import {
   chaseMaxFiveStars,
   competitionChallenges,
   monthlyChallengeMax,
-  paceRaceMonths,
-  reviewsChaseMax,
   threatMaxFiveStars,
   type ChallengeKind,
   type CompetitionChallenges,
@@ -74,7 +72,7 @@ const infoTexts = {
   ratingGoal:
     "O Google mostra a média de todas as reviews arredondada a uma casa decimal (4,45 aparece como 4,5). A barra mostra onde está a sua média exata entre a nota atual e a seguinte. «Faltam X reviews de 5★» é o mínimo de reviews de 5★ que leva a média ao valor em que o Google passa a mostrar a nota seguinte. O ritmo usa as reviews de 5★ dos últimos 3 meses. Com o histórico incompleto, usamos os totais do Google (estimativa).",
   competition: (radiusKm: number) =>
-    `Até ${competitorLimit} negócios num raio de ${radiusLabel(radiusKm)}: só os de uma das categorias do Google do seu negócio (a principal e as secundárias) ou de uma muito parecida: da mesma família (ex.: ginásio, health club e treinador pessoal; barbearia e cabeleireiro para homem) ou que diga o mesmo com menos ou mais palavras (ex.: «restaurante de kebab» e «kebab»; «treinador pessoal» e «treinador de animais de estimação» não, porque cada uma diz algo que a outra não diz; «restaurante», «bar» ou «café» sozinhos não contam). Se o nome do seu negócio disser o tipo (ex.: «Gym», «Barbearia», «Kebab»), esse tipo também conta. Primeiro os da mesma categoria e os com mais reviews. Se houver menos de ${competitorLimit}, mostramos menos: nunca juntamos negócios de outro tipo. Ranking (a posição): a nota do Google e o número de reviews juntos, para quem tem poucas reviews não passar à frente de quem já provou a nota com muitas: cada negócio conta como se tivesse mais 10 reviews de 3★, o meio da escala (ver o (i) na tabela). A nota mostrada é sempre a do Google. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para passar o negócio logo acima no ranking. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
+    `Até ${competitorLimit} negócios num raio de ${radiusLabel(radiusKm)}: só os de uma das categorias do Google do seu negócio (a principal e as secundárias) ou de uma muito parecida: da mesma família (ex.: ginásio, health club e treinador pessoal; barbearia e cabeleireiro para homem) ou que diga o mesmo com menos ou mais palavras (ex.: «restaurante de kebab» e «kebab»; «treinador pessoal» e «treinador de animais de estimação» não, porque cada uma diz algo que a outra não diz; «restaurante», «bar» ou «café» sozinhos não contam). Se o nome do seu negócio disser o tipo (ex.: «Gym», «Barbearia», «Kebab»), esse tipo também conta. Primeiro os da mesma categoria e os com mais reviews. Se houver menos de ${competitorLimit}, mostramos menos: nunca juntamos negócios de outro tipo. Ranking (a posição): a nota do Google e o número de reviews juntos, para quem tem poucas reviews não passar à frente de quem já provou a nota com muitas: cada negócio conta como se tivesse mais 10 reviews de 3★, o meio da escala (ver o (i) na tabela). A nota mostrada é sempre a do Google. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para passar o negócio logo acima no ranking. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos no ranking face a há um mês e a variação da sua nota nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
   competitionReplies:
     "Percentagem das reviews recentes de cada negócio que têm resposta do dono no Google. Contamos as reviews mais recentes (até 60) publicadas nos últimos 12 meses, sem as dos últimos 7 dias, para dar tempo a responder. Nos concorrentes, é medida uma vez, quando entram na comparação, com as mesmas reviews usadas para o ritmo; no seu negócio, com as suas reviews importadas e a mesma regra. Com menos de 5 reviews contadas não mostramos valor («–»). Empates: primeiro quem tem mais reviews contadas. É uma estimativa: guardamos só a percentagem e o número de reviews contadas, nunca os textos.",
   sentiment: "Regra Steevanz: reviews de 1 a 3★ contam como negativas e de 4 a 5★ como positivas. Não há categoria neutra.",
@@ -86,14 +84,17 @@ const infoTexts = {
   replies:
     "Percentagem das reviews do período que já têm resposta do dono no Google; o tempo é a mediana entre a review e a resposta. Ao atualizar, vemos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo (todos os meses, ou com o link por baixo de «Atualizar reviews»).",
   recommendations: "Cada sugestão só aparece quando os seus dados mostram um sinal concreto (indicado em cada cartão) e nunca para serviços que já tem.",
-  insights: "Frases geradas automaticamente a partir dos números deste painel. Só aparecem quando a diferença é relevante e há dados suficientes.",
+  insights:
+    "Frases geradas automaticamente a partir dos números deste painel. Primeiro o que se destaca (subidas no ranking, a sua posição, as placas, o tema e o dia mais fracos, reviews por responder), só quando a diferença é relevante e há dados suficientes. Se forem menos de 3, juntamos factos do seu negócio (o ponto forte, as respostas, o ritmo de reviews, as reviews positivas, o melhor dia). Entre 3 e 5 frases.",
+  insightPace:
+    "Reviews publicadas nos últimos 90 dias ÷ 3, comparadas com os 90 dias antes (a variação só aparece a partir de 10%). Não depende do filtro de período.",
+  insightReplies:
+    "Percentagem das reviews do período que já têm resposta do dono no Google. Ao atualizar, apanhamos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo.",
   challengeChase: `Ranking: a nota do Google e o número de reviews juntos (cada negócio conta como se tivesse mais 10 reviews de 3★; ver o (i) da tabela). Contamos o mínimo de reviews novas de 5★ que põem o seu negócio acima do negócio logo acima de si, com a nota e o total de hoje no Google. A posição indicada é a que teria com essas reviews, se os outros não mudarem. Não mostramos quando são precisas mais de ${chaseMaxFiveStars}.`,
   challengeDefend: `O mínimo de reviews de 5★ que o 2.º do ranking teria de receber, sem o seu negócio receber nenhuma, para lhe passar à frente (cada negócio conta como se tivesse mais 10 reviews de 3★). Com a nota e o total de hoje no Google. Não mostramos acima de ${chaseMaxFiveStars}.`,
   challengeThreat: `O mínimo de reviews de 5★ que o negócio logo abaixo de si no ranking teria de receber, sem o seu negócio receber nenhuma, para lhe passar à frente (cada negócio conta como se tivesse mais 10 reviews de 3★). Com a nota e o total de hoje no Google. Só aparece quando bastam ${threatMaxFiveStars} ou menos.`,
-  challengeReviews: `Total de reviews no Google do negócio logo acima de si nesta contagem menos o seu, mais 1. A posição é a que teria numa lista ordenada só pelo total de reviews, se os outros não mudarem. Não mostramos acima de ${reviewsChaseMax}.`,
-  challengePace: `Compara o ritmo do negócio logo acima de si no total de reviews com o seu. O seu ritmo: reviews publicadas nos últimos 3 meses ÷ 3. O do concorrente: a subida do total de reviews nos registos das últimas semanas (pelo menos 3 semanas) ou, até lá, as datas das reviews mais recentes dele. Meses = reviews que faltam ÷ (o seu ritmo − o dele). Se ao ritmo atual demorar mais de ${paceRaceMonths[paceRaceMonths.length - 1]} meses, indicamos o mínimo de reviews a mais por mês para o passar em ${paceRaceMonths.slice(0, -1).join(", ")} ou ${paceRaceMonths[paceRaceMonths.length - 1]} meses, sem pedir mais do que o seu ritmo atual (ou 5 por mês). Só aparece com os dois ritmos medidos. Estimativa: supõe que os ritmos se mantêm.`,
-  challengeMonthly: `O objetivo mais perto entre passar o negócio logo acima no ranking (reviews de 5★) e no total de reviews, quando faltam ${monthlyChallengeMax} ou menos. A barra junta as reviews que já recebeu este mês (desde o dia 1, hora de Lisboa; só as de 5★ quando o objetivo é o ranking) às que ainda faltam, calculadas com os números de hoje. Atualiza a cada leitura das reviews.`,
-  wins: "Comparação com há 1 mês, o mesmo cálculo das setas em «Na sua zona»: lugares ganhos no ranking e no total de reviews, contando só os negócios presentes nos dois momentos, e a subida da sua média exata (só a partir de 0,01★).",
+  challengeMonthly: `Passar o negócio logo acima de si no ranking, quando faltam ${monthlyChallengeMax} reviews de 5★ ou menos. A barra junta as reviews de 5★ que já recebeu este mês (desde o dia 1, hora de Lisboa) às que ainda faltam, calculadas com os números de hoje. Atualiza a cada leitura das reviews.`,
+  wins: "Comparação com há 1 mês, o mesmo cálculo das setas em «Na sua zona»: lugares ganhos no ranking, contando só os negócios presentes nos dois momentos, e a subida da sua média exata (só a partir de 0,01★).",
 };
 
 const starFilterLabels: Record<ReviewStarFilter, string> ={ all: "Todas", positive: "Positivas (4–5★)", negative: "Negativas (1–3★)" };
@@ -380,14 +381,9 @@ interface CompetitionNote {
   info?: { label: string; text: string };
 }
 
-/** "cerca de 4 reviews", "menos de 1 review" (monthly paces). */
-function paceAmount(pace: number): string {
-  return pace < 1 ? "menos de 1 review" : `cerca de ${plural(Math.round(pace), "review", "reviews")}`;
-}
-
 /** One challenge phrase (challenges.ts), with the (i) that explains it. */
 function challengeNote(kind: ChallengeKind, challenges: CompetitionChallenges): CompetitionNote | null {
-  const { chase, defend, threat, reviewsChase, pace } = challenges;
+  const { chase, defend, threat } = challenges;
   if (kind === "chase" && chase) {
     return {
       tone: "info",
@@ -421,36 +417,6 @@ function challengeNote(kind: ChallengeKind, challenges: CompetitionChallenges): 
         <>
           Atenção: está em {threat.rank - 1}.º e o <strong>{threat.name}</strong> vem logo atrás ({threat.rank}.º). Bastam-lhe{" "}
           <strong>{plural(threat.fiveStars, "review de 5★", "reviews de 5★")}</strong> para lhe passar à frente.
-        </>
-      ),
-    };
-  }
-  if (kind === "reviews" && reviewsChase) {
-    return {
-      tone: "info",
-      info: { label: "Reviews para subir no total", text: infoTexts.challengeReviews },
-      text: (
-        <>
-          Faltam <strong>{plural(reviewsChase.reviews, "review", "reviews")}</strong> para ter mais reviews do que o <strong>{reviewsChase.name}</strong> e subir
-          para <strong>{reviewsChase.reachRank}.º</strong> em total de reviews.
-        </>
-      ),
-    };
-  }
-  if (kind === "pace" && pace) {
-    return {
-      tone: "info",
-      info: { label: "Corrida ao ritmo de reviews", text: infoTexts.challengePace },
-      text: (
-        <>
-          O <strong>{pace.name}</strong> recebe {paceAmount(pace.theirPace)} por mês e o seu negócio {paceAmount(pace.ownPace)}.{" "}
-          {pace.extraPerMonth > 0 ? (
-            <>
-              Com mais <strong>{plural(pace.extraPerMonth, "review", "reviews")} por mês</strong>, passa-lhe à frente em ~{formatDuration(pace.months)}.
-            </>
-          ) : (
-            <>A este ritmo, passa-lhe à frente em ~{formatDuration(pace.months)}.</>
-          )}
         </>
       ),
     };
@@ -526,16 +492,13 @@ function MonthlyChallengeBox({ challenge }: { challenge: MonthlyChallenge }) {
   );
 }
 
-/** "No último mês subiu 2 lugares no ranking e 1 em total de reviews, e a sua média subiu 0,05★." */
+/** "No último mês subiu 2 lugares no ranking, e a sua média subiu 0,05★." */
 function winsText(wins: CompetitionWins): string | null {
-  const climbs = [
-    wins.rankPlaces !== null ? `${plural(wins.rankPlaces, "lugar", "lugares")} no ranking` : null,
-    wins.reviewsPlaces !== null ? `${wins.rankPlaces !== null ? formatInt(wins.reviewsPlaces) : plural(wins.reviewsPlaces, "lugar", "lugares")} em total de reviews` : null,
-  ].filter((part): part is string => part !== null);
+  const climb = wins.rankPlaces !== null ? `${plural(wins.rankPlaces, "lugar", "lugares")} no ranking` : null;
   const rise = wins.ratingRise !== null ? `a sua média subiu ${wins.ratingRise.toFixed(2).replace(".", ",")}★` : null;
-  if (!climbs.length && !rise) return null;
-  if (!climbs.length) return `No último mês, ${rise}.`;
-  return `No último mês subiu ${climbs.join(" e ")}${rise ? `, e ${rise}` : ""}.`;
+  if (!climb && !rise) return null;
+  if (!climb) return `No último mês, ${rise}.`;
+  return `No último mês subiu ${climb}${rise ? `, e ${rise}` : ""}.`;
 }
 
 /**
@@ -567,10 +530,8 @@ function CompetitionSummary({ competition, challenges, radiusKm }: { competition
   const radius = radiusLabel(radiusKm);
   const notes = competition ? competitionNotes(competition, challenges).summary : [];
   const trend = competition?.trend ?? null;
-  const ranks = [
-    { label: "Ranking", rank: competition?.ratingRank ?? null, places: trend?.ratingRankChange ?? null, change: trend?.ratingChange ?? null },
-    { label: "Total de reviews", rank: competition?.reviewsRank ?? null, places: trend?.reviewsRankChange ?? null, change: trend?.reviewsChange ?? null },
-  ];
+  // Only the ranking since 2026-10-12 (owner): a second position (total of reviews) got confused with it.
+  const ranks = [{ label: "Ranking", rank: competition?.ratingRank ?? null, places: trend?.ratingRankChange ?? null, change: trend?.ratingChange ?? null }];
   return (
     <aside aria-labelledby="competition-summary-title" className="card flex flex-col gap-4 p-4 sm:p-5">
       <div className="flex items-baseline justify-between gap-3">
@@ -582,7 +543,7 @@ function CompetitionSummary({ competition, challenges, radiusKm }: { competition
           {competition ? `${plural(competition.competitors, "concorrente", "concorrentes")} até ${radius}` : `concorrentes até ${radius}`}
         </span>
       </div>
-      <dl className="grid grid-cols-2 gap-2">
+      <dl className="grid gap-2">
         {ranks.map((item) => (
           <div key={item.label} className="flex min-w-0 flex-col gap-0.5 rounded-xl bg-surface-2/70 px-2.5 py-2">
             <dt className="text-[0.7rem] leading-tight text-muted">{item.label}</dt>
@@ -662,43 +623,92 @@ interface Insight {
   info?: { label: string; text: string };
 }
 
+/** «Destaques» shows at least this many cards (owner, 2026-10-12) and at most 5. */
+const minInsights = 3;
+
 function insightsFor(source: DashboardSource, analytics: DashboardAnalytics, challenges: CompetitionChallenges | null): Insight[] {
-  const items: string[] = [];
   const competition = source.competition;
+  const { beforeAfter, weekdays, themes, kpis, sentiment, period } = analytics;
+  const inPeriod = period.id === "all" ? "em todo o histórico" : "no período escolhido";
+  const overall = kpis.avgRating.current;
+  const items: Insight[] = [];
+  // A real climb of the last month comes first: it is the win to celebrate.
+  const wins = challenges?.wins ? winsText(challenges.wins) : null;
+  if (wins) items.push({ text: wins, info: { label: "O último mês", text: infoTexts.wins } });
   if (competition?.ratingRank) {
-    items.push(
-      competition.ratingRank === 1
-        ? `Está em 1.º no ranking (nota e número de reviews) entre ${competition.total} negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}.`
-        : `Está em ${competition.ratingRank}.º de ${competition.total} no ranking (nota e número de reviews) entre os negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}. Veja abaixo quanto falta para subir.`,
-    );
+    items.push({
+      text:
+        competition.ratingRank === 1
+          ? `Está em 1.º no ranking (nota e número de reviews) entre ${competition.total} negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}.`
+          : `Está em ${competition.ratingRank}.º de ${competition.total} no ranking (nota e número de reviews) entre os negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}. Veja abaixo quanto falta para subir.`,
+    });
   }
-  const { beforeAfter, weekdays, themes, kpis } = analytics;
   if (beforeAfter && beforeAfter.upliftPct !== null && Math.abs(beforeAfter.upliftPct) >= 10) {
-    items.push(
-      `Desde que as placas foram instaladas, recebe em média ${formatRating(beforeAfter.after.reviewsPerMonth)} reviews por mês, ${formatSignedPercent(beforeAfter.upliftPct)} face aos meses anteriores (${formatRating(beforeAfter.before.reviewsPerMonth)}/mês).`,
-    );
+    items.push({
+      text: `Desde que as placas foram instaladas, recebe em média ${formatRating(beforeAfter.after.reviewsPerMonth)} reviews por mês, ${formatSignedPercent(beforeAfter.upliftPct)} face aos meses anteriores (${formatRating(beforeAfter.before.reviewsPerMonth)}/mês).`,
+    });
   }
   const weakest = themes.find((theme) => theme.verdict === "improve");
   if (weakest) {
-    items.push(
-      `«${themeLabels[weakest.id]}» é o tema com pior avaliação: ${formatRating(weakest.avgRating)}★ em ${weakest.mentions} reviews que o mencionam. Veja abaixo o que os clientes dizem.`,
-    );
+    items.push({
+      text: `«${themeLabels[weakest.id]}» é o tema com pior avaliação: ${formatRating(weakest.avgRating)}★ em ${weakest.mentions} reviews que o mencionam. Veja abaixo o que os clientes dizem.`,
+    });
   }
-  const overall = kpis.avgRating.current;
-  const worstDay = weekdays.filter((day) => day.reviews >= 10 && day.avgRating !== null).sort((a, b) => a.avgRating! - b.avgRating!)[0];
+  const rated = weekdays.filter((day) => day.reviews >= 10 && day.avgRating !== null).sort((a, b) => a.avgRating! - b.avgRating!);
+  const worstDay = rated[0];
   if (worstDay && overall !== null && worstDay.avgRating! <= overall - 0.5) {
-    items.push(
-      `À ${weekdayLong[worstDay.weekday]} a avaliação média cai para ${formatRating(worstDay.avgRating)}★ (média geral ${formatRating(overall)}★). Vale a pena perceber o que muda nesse dia: equipa, movimento, fornecedores.`,
-    );
+    items.push({
+      text: `À ${weekdayLong[worstDay.weekday]} a avaliação média cai para ${formatRating(worstDay.avgRating)}★ (média geral ${formatRating(overall)}★). Vale a pena perceber o que muda nesse dia: equipa, movimento, fornecedores.`,
+    });
   }
-  if (kpis.replyRate.current !== null && kpis.replyRate.current < 0.7 && analytics.unansweredCount > 0) {
-    items.push(`Há ${plural(analytics.unansweredCount, "review", "reviews")} sem resposta neste período. Responder a todas, sobretudo às negativas, mostra a quem pesquisa que o negócio está atento.`);
+  const replyRate = kpis.replyRate.current;
+  if (replyRate !== null && replyRate < 0.7 && analytics.unansweredCount > 0) {
+    items.push({ text: `Há ${plural(analytics.unansweredCount, "review", "reviews")} sem resposta neste período. Responder a todas, sobretudo às negativas, mostra a quem pesquisa que o negócio está atento.` });
   }
-  const insights: Insight[] = items.map((text) => ({ text }));
-  // A real climb of the last month comes first: it is the win to celebrate.
-  const wins = challenges?.wins ? winsText(challenges.wins) : null;
-  if (wins) insights.unshift({ text: wins, info: { label: "O último mês", text: infoTexts.wins } });
-  return insights.slice(0, 5);
+
+  // Fewer than 3: facts about the business that are always there when it has reviews.
+  const extras: Insight[] = [];
+  const strongest = themes.find((theme) => theme.verdict === "strength");
+  if (strongest) {
+    extras.push({
+      text: `«${themeLabels[strongest.id]}» é o seu ponto forte: ${formatRating(strongest.avgRating)}★ em ${strongest.mentions} reviews que o mencionam.`,
+      info: { label: "Temas", text: infoTexts.themes },
+    });
+  }
+  if (replyRate !== null && replyRate >= 0.7) {
+    extras.push({
+      text: `Respondeu a ${formatPercent(replyRate)} das reviews ${inPeriod}: quem pesquisa no Google vê que o negócio está atento.`,
+      info: { label: "Reviews respondidas", text: infoTexts.insightReplies },
+    });
+  }
+  const pace = kpis.pace;
+  if (pace.current !== null) {
+    const change = pace.previous ? (pace.current / pace.previous - 1) * 100 : null;
+    const versus = change !== null && Math.abs(change) >= 10 ? `, ${formatSignedPercent(change)} face aos 3 meses anteriores` : "";
+    const climb = competition?.ratingRank && competition.ratingRank > 1 ? " Cada review de 5★ conta para subir no ranking." : "";
+    extras.push({
+      text:
+        pace.current === 0
+          ? "Não recebeu reviews novas nos últimos 3 meses. Pedir a review a cada cliente satisfeito é a forma mais rápida de voltar a crescer."
+          : `Nos últimos 3 meses recebeu em média ${formatRating(pace.current)} reviews por mês${versus}.${climb}`,
+      info: { label: "Ritmo de reviews", text: infoTexts.insightPace },
+    });
+  }
+  if (kpis.reviews.current) {
+    extras.push({
+      text: `${formatPercent(sentiment.positive / kpis.reviews.current)} das reviews ${inPeriod} são positivas (4 a 5★).`,
+      info: { label: "Positivas e negativas", text: infoTexts.sentiment },
+    });
+  }
+  const bestDay = rated[rated.length - 1];
+  if (bestDay && bestDay !== worstDay && overall !== null && bestDay.avgRating! >= overall + 0.2) {
+    extras.push({ text: `À ${weekdayLong[bestDay.weekday]} a avaliação média sobe para ${formatRating(bestDay.avgRating)}★ (média geral ${formatRating(overall)}★): é o seu melhor dia.` });
+  }
+  for (const extra of extras) {
+    if (items.length >= minInsights) break;
+    items.push(extra);
+  }
+  return items.slice(0, 5);
 }
 
 function beforeAfterGapText(gap: DashboardAnalytics["beforeAfterGap"]): string {

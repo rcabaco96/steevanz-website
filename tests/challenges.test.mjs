@@ -64,7 +64,8 @@ describe("competition challenges", () => {
     const result = challenges([me(4.9, 300), entry("b", 4.85, 310)]);
     assert.ok(result.defend.fiveStars > 5);
     assert.equal(result.reviewsChase.reviews, 11);
-    assert.deepEqual(challengeOrder(result), ["reviews", "defend"]);
+    // The total-reviews chase is computed but only ranking phrases are shown (owner, 2026-10-12).
+    assert.deepEqual(challengeOrder(result), ["defend"]);
   });
 
   it("computes the close place right below but never shows it (only phrases about climbing)", () => {
@@ -87,10 +88,9 @@ describe("competition challenges", () => {
     ];
     const result = challenges([entry("big", 4.0, 110), me(4.6, 100), entry("small", 3.0, 20)], reviews);
     assert.deepEqual(result.reviewsChase, { name: "big", reviews: 11, rank: 2, reachRank: 1 });
-    assert.equal(result.monthly.kind, "reviews");
-    assert.equal(result.monthly.missing, 11);
-    assert.equal(result.monthly.doneThisMonth, 3);
-    // Same counts with a ranking chase: the 5★ of this month are counted.
+    // The month's challenge is only about the ranking: here the customer is already above "big" there.
+    assert.equal(result.monthly, null);
+    // With a ranking chase: the 5★ of this month are counted.
     const rank = challenges([entry("a", 4.55, 60), me(4.5, 40), entry("b", 3.5, 300)], reviews);
     assert.equal(rank.monthly.kind, "rank");
     assert.equal(rank.monthly.missing, rank.chase.fiveStars);
@@ -125,6 +125,8 @@ describe("competition challenges", () => {
     const entries = [entry("a", 4.6, 100), me(4.5, 40)];
     const trend = { since: "2026-09-11", ratingRankChange: 2, reviewsRankChange: 0, ratingChange: 0.05 / 4.45, reviewsChange: 0.1 };
     const wins = challenges(entries, [], trend).wins;
+    // Places climbed only in total reviews are no win to show.
+    assert.equal(challenges(entries, [], { ...trend, ratingRankChange: 0, reviewsRankChange: 3, ratingChange: 0 }).wins, null);
     assert.equal(wins.rankPlaces, 2);
     assert.equal(wins.reviewsPlaces, null);
     assert.ok(Math.abs(wins.ratingRise - 0.05) < 1e-9);
