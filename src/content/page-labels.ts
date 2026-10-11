@@ -22,7 +22,7 @@ const pt = {
     packsCount: "{count} placas",
     packsUnit: "{price} por placa",
     packsLogoOnce: "Logótipo e cores: +{price} uma só vez por pack, porque o desenho é feito uma vez para todas as placas.",
-    family: { nfc: "Placas e fidelização", operations: "Reservas e filas", ai: "Inteligência artificial" },
+    family: { nfc: "Placas e cartões", operations: "Reservas e filas", ai: "Inteligência artificial" },
   },
   products: {
     metaTitle: "Produtos: placas, reservas e IA para negócios | Steevanz",
@@ -78,7 +78,7 @@ const en: PageLabels = {
     packsCount: "{count} plates",
     packsUnit: "{price} per plate",
     packsLogoOnce: "Logo and colours: +{price} once per pack, because we design it once for every plate.",
-    family: { nfc: "Plates and loyalty", operations: "Bookings and queues", ai: "Artificial intelligence" },
+    family: { nfc: "Plates and cards", operations: "Bookings and queues", ai: "Artificial intelligence" },
   },
   products: {
     metaTitle: "Products: plates, bookings and AI for business | Steevanz",
