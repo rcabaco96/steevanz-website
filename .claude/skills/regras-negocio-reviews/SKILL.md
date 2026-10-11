@@ -353,7 +353,7 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
 - O admin mostra o estado do leitor (último sinal, pedidos na fila) e os últimos pedidos de cada
   negócio, com estado e erro.
 
-## 13. Gamificação (planeada)
+## 13. Gamificação (planeada; frases de competição já existem)
 
 - O software vai ter um **plano de gamificação por cima** (níveis, desafios, conquistas, prémios),
   pensado ao nível do **cliente como um todo** e sempre ligado à **venda dos serviços Steevanz**
@@ -363,6 +363,24 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
   Supabase, por cliente).
 - Os números usados na gamificação seguem as mesmas regras: nunca inventados (regra 1) e com (i)
   a explicar a lógica (regra 7).
+- **Já existe — frases de competição no painel** (dono, 2026-10-11; lógica pura em
+  `src/lib/reviews/challenges.ts`, testes em `tests/challenges.test.mjs`), todas com os números de
+  hoje (nota e total do Google, ritmos medidos, reviews do cliente) e cada uma com (i):
+  - **Subir no ranking:** «Faltam N reviews de 5★ para ultrapassar o Y e subir para P.º»
+    (`fiveStarsToRank`; P = posição real com essas reviews). Escondida acima de 100.
+  - **Defender o 1.º:** «O Y (2.º) está a N reviews de 5★ de lhe passar à frente» (até 100);
+    **ameaça** abaixo do 1.º: «Atenção: o Z está a N reviews de 5★ de o ultrapassar» só com N ≤ 5.
+  - **Total de reviews:** «Faltam N reviews para ter mais reviews do que o Y e subir para P.º» (até 200).
+  - **Corrida ao ritmo** (com o negócio logo acima no total; os dois ritmos medidos, pelo menos
+    1/mês num deles): a este ritmo passa em ≤ 12 meses, ou o mínimo de reviews a mais por mês para
+    passar em 3, 6 ou 12 meses, nunca mais do que o ritmo atual (ou 5).
+  - **Desafio deste mês:** o objetivo mais perto (ranking ou total) com ≤ 15 em falta, com barra das
+    reviews recebidas desde o dia 1 (hora de Lisboa; de 5★ para o ranking) + as que faltam.
+  - **Conquistas do último mês** (Destaques): lugares ganhos no ranking / no total e subida da média
+    (≥ 0,01★), da `competitionTrend`. Sem emojis (o painel não os usa).
+  - Onde: «Na sua zona» mostra o desafio e 2 frases por prioridade (ameaça/defesa perto → subir no
+    ranking → total → defesa folgada → ritmo; a do desafio passa para baixo); a secção da
+    concorrência mostra as 3 seguintes por cima da tabela.
 
 ## 14. Perfil verificado (ligação ao Google Business Profile)
 
