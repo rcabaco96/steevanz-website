@@ -117,7 +117,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa no total?",
-        a: "Desde 790 € + IVA, uma vez, para até 5 páginas. Cada página extra custa 90 € + IVA. O plano mensal de alojamento e manutenção custa 25 € + IVA, sem fidelização. O domínio e o email pagam-se à parte.",
+        a: "Desde 350 € + IVA, uma vez, para até 5 páginas. Cada página extra custa 90 € + IVA. O plano mensal de alojamento e manutenção custa 25 € + IVA, sem fidelização. O domínio e o email pagam-se à parte.",
       },
       {
         q: "O que preciso de vos enviar?",
@@ -296,7 +296,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost in total?",
-        a: "From €790 + VAT, once, for up to 5 pages. Each extra page is €90 + VAT. The monthly hosting and maintenance plan is €25 + VAT, with no lock-in. Domain and email are paid separately.",
+        a: "From €350 + VAT, once, for up to 5 pages. Each extra page is €90 + VAT. The monthly hosting and maintenance plan is €25 + VAT, with no lock-in. Domain and email are paid separately.",
       },
       {
         q: "What do I need to send you?",
