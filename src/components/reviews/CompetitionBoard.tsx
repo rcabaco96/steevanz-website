@@ -19,12 +19,11 @@ import { InfoTip } from "./InfoTip";
 
 // "Reviews por mês" left the table on 2026-10-04 and "Fotos" on 2026-10-09 (owner's decisions).
 // «Ranking» (rating and number of reviews together) opens first since 2026-10-10 (owner's decision).
-type SortKey = "rank" | "rating" | "reviews" | "replies" | "profile";
+// «Avaliação Google» and «Total de reviews» left on 2026-10-12 (owner): Ranking, Respondidas, Perfil.
+type SortKey = "rank" | "replies" | "profile";
 
 const tabs: { key: SortKey; label: string }[] = [
   { key: "rank", label: "Ranking" },
-  { key: "rating", label: "Avaliação Google" },
-  { key: "reviews", label: "Total de reviews" },
   { key: "replies", label: "Respondidas" },
   { key: "profile", label: "Perfil" },
 ];
@@ -37,6 +36,8 @@ const profileLabels: Record<ProfileItem, string> = {
   description: "descrição",
 };
 
+const rankInfo = `O ranking junta a nota do Google e o número de reviews. Cada negócio conta como se tivesse mais ${rankPriorReviews} reviews de ${rankPriorStars}★ (o meio da escala). Com muitas reviews isso quase não mexe na nota; com poucas, puxa-a para o meio. Assim um 5,0★ com 3 reviews fica abaixo de um 4,8★ com 400, e um 1★ com uma só review continua em baixo. Este cálculo só decide a ordem: a nota mostrada é sempre a do Google. «Poucas reviews»: menos de ${fewReviewsBelow}.`;
+
 /** The table always lists this many places; the customer is added below when outside it. */
 const shownPlaces = competitorLimit + 1;
 const pageSize = 10;
@@ -47,8 +48,6 @@ const decimal = (value: number, digits: number) =>
 
 function value(entry: CompetitorEntry, key: SortKey): number | null {
   if (key === "rank") return entryRankScore(entry);
-  if (key === "rating") return entry.average ?? entry.rating;
-  if (key === "reviews") return entry.reviewsCount;
   if (key === "profile") return entry.profile ? profileScore(entry.profile) : null;
   return entry.replyRate;
 }
@@ -58,8 +57,8 @@ function withoutReviews(entry: CompetitorEntry): boolean {
   return entry.reviewsCount === 0 && (entry.average ?? entry.rating) === null;
 }
 
-/** Star-based tabs: the ranking and Google's rating. */
-const starred = (key: SortKey) => key === "rank" || key === "rating";
+/** The star-based tab: the ranking. */
+const starred = (key: SortKey) => key === "rank";
 
 function display(entry: CompetitorEntry, key: SortKey): string {
   const current = value(entry, key);
@@ -67,8 +66,6 @@ function display(entry: CompetitorEntry, key: SortKey): string {
   if (current === null) return "–";
   // The ranking never shows its score: Google's rating, as the customer sees it on Maps.
   if (key === "rank") return `${decimal(entry.rating ?? entry.average ?? current, 1)}★`;
-  if (key === "rating") return `${decimal(entry.rating ?? current, 1)}★`;
-  if (key === "reviews") return number.format(current);
   return formatPercent(current);
 }
 
@@ -142,15 +139,9 @@ export function CompetitionBoard({
   const values = sorted
     .map((entry) => value(entry, sort))
     .filter((current): current is number => current !== null);
-  const max = Math.max(1, ...values);
   // Ratings sit on a shared star scale starting at the lowest whole star, labelled on screen.
   const floor = Math.max(1, Math.floor(Math.min(5, ...values)));
-  const share = (current: number) =>
-    starred(sort)
-      ? (current - floor) / (5 - floor || 1)
-      : sort === "replies" || sort === "profile"
-        ? current
-        : current / max;
+  const share = (current: number) => (starred(sort) ? (current - floor) / (5 - floor || 1) : current);
 
   const listed = sorted.slice(0, shownPlaces);
   const pages = Math.max(1, Math.ceil(listed.length / pageSize));
@@ -211,11 +202,6 @@ export function CompetitionBoard({
         </span>
         <span className="tabular text-right text-sm font-semibold text-text">
           {display(entry, sort)}
-          {sort === "rating" && entry.average !== null ? (
-            <span className="block text-xs font-normal text-subtle">
-              média {decimal(entry.average, 2)}
-            </span>
-          ) : null}
           {note ? (
             <span className="block text-xs font-normal text-subtle">
               {note}
@@ -248,23 +234,25 @@ export function CompetitionBoard({
           className="flex flex-wrap gap-1.5"
         >
           {readTabs.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              role="tab"
-              aria-selected={sort === tab.key}
-              onClick={() => {
-                setSort(tab.key);
-                setPage(0);
-              }}
-              className={`inline-flex h-10 items-center rounded-full px-3.5 text-sm font-semibold transition-colors sm:px-4 ${
-                sort === tab.key
-                  ? "bg-surface-inverse text-inverse"
-                  : "border border-line bg-surface text-muted hover:text-text"
-              }`}
-            >
-              {tab.label}
-            </button>
+            <span key={tab.key} className="inline-flex items-center gap-0.5">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={sort === tab.key}
+                onClick={() => {
+                  setSort(tab.key);
+                  setPage(0);
+                }}
+                className={`inline-flex h-10 items-center rounded-full px-3.5 text-sm font-semibold transition-colors sm:px-4 ${
+                  sort === tab.key
+                    ? "bg-surface-inverse text-inverse"
+                    : "border border-line bg-surface text-muted hover:text-text"
+                }`}
+              >
+                {tab.label}
+              </button>
+              {tab.key === "rank" ? <InfoTip label="Como é feito o ranking">{rankInfo}</InfoTip> : null}
+            </span>
           ))}
         </div>
         <div className="self-end sm:shrink-0 sm:self-start">
@@ -273,11 +261,8 @@ export function CompetitionBoard({
       </div>
 
       {sort === "rank" ? (
-        <p className="flex items-start gap-1.5 text-xs text-subtle">
-          <span>Ordenado pela nota do Google e pelo número de reviews: quem tem poucas reviews desce, porque a nota ainda pode mudar muito.</span>
-          <InfoTip label="Como é feito o ranking">
-            {`Cada negócio conta como se tivesse mais ${rankPriorReviews} reviews de ${rankPriorStars}★ (o meio da escala). Com muitas reviews isso quase não mexe na nota; com poucas, puxa-a para o meio. Assim um 5,0★ com 3 reviews fica abaixo de um 4,8★ com 400, e um 1★ com uma só review continua em baixo. Este cálculo só decide a ordem: a nota mostrada é sempre a do Google. «Poucas reviews»: menos de ${fewReviewsBelow}.`}
-          </InfoTip>
+        <p className="text-xs text-subtle">
+          Ordenado pela nota do Google e pelo número de reviews: quem tem poucas reviews desce, porque a nota ainda pode mudar muito.
         </p>
       ) : null}
 
@@ -358,18 +343,16 @@ export function CompetitionBoard({
       ) : null}
 
       <p className="text-xs text-subtle">
-        {sort === "rating" ? (
-          `Barras numa escala de ${floor}★ a 5★. Média exata calculada a partir da distribuição de estrelas no Google.`
+        {sort === "rank" ? (
+          `Barras numa escala de ${floor}★ a 5★. Na barra conta também o número de reviews (ver o (i) do Ranking).`
         ) : sort === "replies" ? (
           <>
             Barras de 0 a 100%. Reviews recentes com resposta do dono no Google
             (estimativa). «–»: ainda sem medição ou menos de {replyMinSample}{" "}
             reviews. <InfoTip label="Respondidas">{replyInfo}</InfoTip>
           </>
-        ) : sort === "profile" ? (
-          "Barras de 0 a 100%. Campos preenchidos no perfil Google: perfil reivindicado pelo dono, site, telefone, horário e descrição. «–»: ainda não lido."
         ) : (
-          "Total de reviews no Google."
+          "Barras de 0 a 100%. Campos preenchidos no perfil Google: perfil reivindicado pelo dono, site, telefone, horário e descrição. «–»: ainda não lido."
         )}
       </p>
     </div>

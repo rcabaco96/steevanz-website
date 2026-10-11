@@ -139,8 +139,8 @@ já guardada:
   reviews desce (nunca sobe): um 5,0★ com 3 reviews fica abaixo de um 4,8★ com 400 e um 1★ com uma só
   review continua em baixo. **Nunca puxar para a média da zona** (levantava os maus com poucas
   reviews). O valor só ordena: o ecrã mostra sempre a nota do Google e o nº de reviews, com
-  «poucas reviews» abaixo de 10. Separadores: **Ranking** (abre neste), Avaliação Google, Total de
-  reviews, Respondidas, Perfil. Posições, setas e «Faltam X reviews de 5★» (`fiveStarsToRank`) seguem
+  «poucas reviews» abaixo de 10. Separadores: **Ranking** (abre neste, com o (i) da regra ao lado),
+  Respondidas, Perfil («Avaliação Google» e «Total de reviews» saíram a 2026-10-12, dono). Posições, setas e «Faltam X reviews de 5★» (`fiveStarsToRank`) seguem
   o ranking.
 - **Os números de cada lugar são uma base partilhada por `place_id`** (lugar do Google), não por
   cliente. Uma leitura serve todos os clientes que comparam com esse lugar, e o lugar de um
