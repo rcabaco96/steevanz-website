@@ -21,12 +21,9 @@ const decimal = new Intl.NumberFormat("pt-PT", { minimumFractionDigits: 1, maxim
 export function HistoryImport({
   slug,
   googleConnect = null,
-  canSearchCompetitors = false,
 }: {
   slug: string;
   googleConnect?: { href: string; external: boolean } | null;
-  /** Admins only: «Procurar concorrentes outra vez» (also in the admin's «Gerir»). */
-  canSearchCompetitors?: boolean;
 }) {
   const router = useRouter();
   const { state, now, apply } = useReaderJobs();
@@ -205,25 +202,22 @@ export function HistoryImport({
       ) : searchFailed ? (
         <div className="flex flex-col gap-2 border-t border-line pt-3">
           <p className="text-xs text-danger">A procura de concorrentes falhou: {searchFailed}</p>
-          {canSearchCompetitors ? (
-            <button type="button" onClick={() => void start(true)} disabled={starting} className={buttonClasses("secondary", "sm", "self-start")}>
-              {starting ? "A pedir…" : "Procurar concorrentes outra vez"}
-            </button>
-          ) : null}
         </div>
       ) : null}
 
       {/* Once the history is in, this button only searches the competitors again: the customer's own
           reviews have «Atualizar reviews». While a search runs (or failed, with its own button) it hides. */}
-      {!active && !(historyDone && (!canSearchCompetitors || isActive(state.discover) || searchFailed)) ? (
+      {/* Only the first import here: the customer's reviews then have «Atualizar reviews», and searching
+          the competitors again is the admin's (owner, 2026-10-11: admin-only actions live in «Gerir»). */}
+      {!active && !historyDone ? (
         <div className="flex flex-col gap-2">
           <button
             type="button"
-            onClick={() => void start(historyDone)}
+            onClick={() => void start()}
             disabled={starting}
             className={buttonClasses(stored.count ? "secondary" : "primary", "md", "self-start")}
           >
-            {starting ? "A pedir…" : historyDone ? "Procurar concorrentes outra vez" : "Importar histórico completo"}
+            {starting ? "A pedir…" : "Importar histórico completo"}
           </button>
           {!reader.online ? <p className="text-xs text-subtle">O pedido fica em espera até o leitor ser ligado.</p> : null}
           {error ? (

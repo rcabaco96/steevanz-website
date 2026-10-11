@@ -20,6 +20,7 @@ import { competitorRuleVersion } from "@/lib/reviews/competitor-category";
 import { pausedText } from "@/lib/reviews/reader-throttle";
 import { rediscoveryDue } from "@/lib/reviews/competitor-store";
 import { competitorRadiusOptions, radiusLabel, toRadiusKm, withinRadius } from "@/lib/reviews/competitors";
+import { googleOAuthConfigured, googleOAuthMissing } from "@/lib/google/oauth";
 import { formatDateTime } from "@/lib/reviews/format";
 import { readerOfflineAfterHours, type JobRequester, type ReaderJobKind } from "@/lib/reviews/reader-queue";
 import type { BusinessRow } from "@/lib/reviews/store";
@@ -297,6 +298,13 @@ export function BusinessDetail({
   return (
     <div className="flex flex-col gap-6">
       <ClientAccess business={business} owner={owner} ownerProducts={ownerProducts} />
+      {googleOAuthConfigured() ? null : (
+        // Admin-only (moved from the customer's «Ligar Google» page): names of the missing settings, never values.
+        <p className="rounded-2xl border border-gold/40 bg-gold-soft p-3.5 text-sm text-gold-text">
+          <strong>«Ligar Google» ainda não está ativo:</strong> faltam no servidor {googleOAuthMissing().join(", ")}. Defina-as na Vercel (Settings → Environment
+          Variables, Production) e faça um novo deploy. Até lá, o cliente vê que a ligação ainda não está ativa.
+        </p>
+      )}
       <div className="flex flex-col gap-3 rounded-2xl bg-surface-2/60 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm">
           <p className="text-text">

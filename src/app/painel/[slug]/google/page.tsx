@@ -9,8 +9,7 @@ import { AlertIcon, Check, ClockIcon, GoogleG, SparkleIcon } from "@/components/
 import { InfoTip } from "@/components/reviews/InfoTip";
 import { buttonClasses } from "@/components/ui/Button";
 import { emptyGoogleLink, loadGoogleLink, type GoogleLink } from "@/lib/google/connection";
-import { getSession } from "@/lib/auth/session";
-import { googleOAuthConfigured, googleOAuthMissing } from "@/lib/google/oauth";
+import { googleOAuthConfigured } from "@/lib/google/oauth";
 import { requirePanelPage } from "@/lib/reviews/access";
 import { formatDateTime } from "@/lib/reviews/format";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
@@ -289,8 +288,8 @@ export default async function GooglePage({ params, searchParams }: PageProps<"/p
   if (!data) notFound();
   const { link, name } = data;
   const configured = googleOAuthConfigured();
-  // An admin sees the customer's page as is, plus which server settings are missing.
-  const missing = !configured && (await getSession()).state === "admin" ? googleOAuthMissing() : null;
+  // The customer's page only; what the server is missing shows in the admin's «Gerir» (owner, 2026-10-11).
+  const missing = null;
   const headline = headlines[link.status];
   const pill = statusPill[link.status];
 
