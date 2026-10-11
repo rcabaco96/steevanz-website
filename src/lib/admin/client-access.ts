@@ -82,8 +82,9 @@ export async function sendPanelInvite(client: Client, business: { name: string; 
   const sent = await sendOwnerEmail({
     from: "noreply",
     to: [email],
-    subject: `O painel de reviews de ${business.name} está pronto`,
-    heading: "O seu painel de reviews Steevanz",
+    // «reviews Google» (owner, 2026-10-12): the reviews are the customer's Google ones; the software is Steevanz's.
+    subject: `O painel de reviews Google de ${business.name} está pronto`,
+    heading: "O seu painel de reviews Google · Steevanz",
     rows: [
       { label: "Negócio", value: business.name },
       {
