@@ -15,7 +15,6 @@ import {
   filterReviews,
   hasPlatesProduct,
   minSample,
-  type Comparison,
   type DashboardAnalytics,
   type PeriodId,
   type RatingGoal,
@@ -74,16 +73,10 @@ export const themeLabels: Record<ThemeId, string> = {
 const infoTexts = {
   ratingGoal:
     "O Google mostra a média de todas as reviews arredondada a uma casa decimal (4,45 aparece como 4,5). A barra mostra onde está a sua média exata entre a nota atual e a seguinte. «Faltam X reviews de 5★» é o mínimo de reviews de 5★ que leva a média ao valor em que o Google passa a mostrar a nota seguinte. O ritmo usa as reviews de 5★ dos últimos 3 meses. Com o histórico incompleto, usamos os totais do Google (estimativa).",
-  avgRating:
-    "Média das estrelas das reviews publicadas no período escolhido. A comparação é com o período anterior de igual duração e só aparece com pelo menos 5 reviews nesse período.",
-  reviews: "Reviews publicadas no Google no período escolhido, comparadas com o período anterior de igual duração (mínimo de 5 reviews para comparar).",
   competition: (radiusKm: number) =>
     `Até ${competitorLimit} negócios num raio de ${radiusLabel(radiusKm)}: só os de uma das categorias do Google do seu negócio (a principal e as secundárias) ou de uma muito parecida: da mesma família (ex.: ginásio, health club e treinador pessoal; barbearia e cabeleireiro para homem) ou que diga o mesmo com menos ou mais palavras (ex.: «restaurante de kebab» e «kebab»; «treinador pessoal» e «treinador de animais de estimação» não, porque cada uma diz algo que a outra não diz; «restaurante», «bar» ou «café» sozinhos não contam). Se o nome do seu negócio disser o tipo (ex.: «Gym», «Barbearia», «Kebab»), esse tipo também conta. Primeiro os da mesma categoria e os com mais reviews. Se houver menos de ${competitorLimit}, mostramos menos: nunca juntamos negócios de outro tipo. Ranking (a posição): a nota do Google e o número de reviews juntos, para quem tem poucas reviews não passar à frente de quem já provou a nota com muitas: cada negócio conta como se tivesse mais 10 reviews de 3★, o meio da escala (ver o (i) na tabela). A nota mostrada é sempre a do Google; «Avaliação Google» ordena só pela nota. «Faltam X reviews de 5★»: mínimo de reviews de 5★ para passar o negócio logo acima no ranking. Respondidas: percentagem das reviews recentes com resposta do dono (estimativa, ver o (i) na tabela). Dados públicos do Google, atualizados duas vezes por dia (10:00 e 19:00). Setas: lugares ganhos ou perdidos face a há um mês e a variação da sua nota ou do seu total de reviews nesse mês. O seu negócio de há um mês é calculado com as suas reviews (sem as publicadas no último mês); nos concorrentes, tiramos ao total as reviews que recebem por mês e mantemos a nota de hoje, até termos registos com um mês.`,
   competitionReplies:
     "Percentagem das reviews recentes de cada negócio que têm resposta do dono no Google. Contamos as reviews mais recentes (até 60) publicadas nos últimos 12 meses, sem as dos últimos 7 dias, para dar tempo a responder. Nos concorrentes, é medida uma vez, quando entram na comparação, com as mesmas reviews usadas para o ritmo; no seu negócio, com as suas reviews importadas e a mesma regra. Com menos de 5 reviews contadas não mostramos valor («–»). Empates: primeiro quem tem mais reviews contadas. É uma estimativa: guardamos só a percentagem e o número de reviews contadas, nunca os textos.",
-  pace: "Média de reviews por mês nos últimos 3 meses, comparada com os 3 meses antes. Não depende do filtro de período: mostra sempre o ritmo atual.",
-  replyRate:
-    "Percentagem das reviews do período que já têm resposta do dono no Google. Ao atualizar, apanhamos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo.",
   sentiment: "Regra Steevanz: reviews de 1 a 3★ contam como negativas e de 4 a 5★ como positivas. Não há categoria neutra.",
   weekdayRating: "Média das estrelas das reviews publicadas em cada dia da semana (hora de Lisboa). Dias com menos de 5 reviews não mostram valor.",
   themes:
@@ -147,59 +140,6 @@ function Card({ title, subtitle, info, children, className = "" }: { title?: str
   );
 }
 
-
-function Delta({
-  comparison,
-  format,
-  unit = "",
-  allTime = false,
-  versus = "período anterior",
-}: {
-  comparison: Comparison;
-  format: "count" | "rating" | "share";
-  unit?: string;
-  allTime?: boolean;
-  versus?: string;
-}) {
-  const { current, previous } = comparison;
-  if (allTime) return <span className="text-xs text-subtle">todo o histórico</span>;
-  if (current === null || previous === null) return <span className="text-xs text-subtle">poucos dados para comparar</span>;
-  let diff: number;
-  let label: string;
-  if (format === "count") {
-    if (previous === 0) return <span className="text-xs text-subtle">poucos dados para comparar</span>;
-    diff = (current / previous - 1) * 100;
-    label = formatSignedPercent(diff);
-  } else if (format === "rating") {
-    diff = current - previous;
-    label = `${diff > 0 ? "+" : ""}${diff.toFixed(1).replace(".", ",")}${unit}`;
-  } else {
-    diff = (current - previous) * 100;
-    label = `${diff > 0 ? "+" : ""}${Math.round(diff)} p.p.`;
-  }
-  const flat = Math.abs(diff) < (format === "rating" ? 0.05 : 1);
-  const tone = flat ? "text-subtle" : diff > 0 ? "text-success" : "text-danger";
-  const arrow = flat ? "→" : diff > 0 ? "↑" : "↓";
-  return (
-    <span className={`text-xs font-semibold ${tone}`}>
-      <span aria-hidden="true">{arrow} </span>
-      {label} <span className="font-normal text-subtle">vs {versus}</span>
-    </span>
-  );
-}
-
-function StatTile({ label, value, info, children }: { label: string; value: string; info?: ReactNode; children?: ReactNode }) {
-  return (
-    <div className="card flex min-w-0 flex-col gap-1.5 p-4 sm:p-5">
-      <p className="flex items-center gap-1.5 text-sm text-muted">
-        {label}
-        {info ? <InfoTip label={label}>{info}</InfoTip> : null}
-      </p>
-      <p className="text-3xl font-semibold tracking-[-0.02em] text-text">{value}</p>
-      {children}
-    </div>
-  );
-}
 
 function formatDuration(months: number): string {
   if (months < 1) {
@@ -838,23 +778,16 @@ export function ReviewsDashboard({
           <Refreshable scopes={["sync"]}>
             <CompetitionSummary competition={source.competition} challenges={challenges} radiusKm={business.competitorRadiusKm} />
           </Refreshable>
-          <Refreshable scopes={["sync"]}>
-            {analytics.ratingGoal ? (
-              <RatingGoalCard goal={analytics.ratingGoal} />
-            ) : (
-              <div className="card p-5 sm:p-6">
-                <p className="text-sm text-muted">Ainda não há reviews importadas do Google.</p>
-              </div>
-            )}
-          </Refreshable>
         </div>
       </div>
 
-      <Refreshable scopes={["sync","period"]}>
-  <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      {/* Destaques with the Google rating card beside it, in place of the four number tiles (rating,
+          reviews, replied, per month) that left on 2026-10-12 (owner). Phones: one under the other. */}
+      <div className={`grid gap-6 lg:items-start lg:gap-10 ${insights.length ? "lg:grid-cols-[minmax(0,1fr)_27rem]" : ""}`}>
+        <Refreshable scopes={["sync", "period"]}>
           {insights.length ? (
             // Title outside, one card per highlight (owner, 2026-10-11).
-            <section aria-labelledby="insights-title" className="col-span-2 flex flex-col gap-3 lg:row-span-2">
+            <section aria-labelledby="insights-title" className="flex flex-col gap-3">
               <h2 id="insights-title" className="flex items-center gap-2 font-semibold text-text">
                 <LightbulbIcon size={20} className="text-accent-text" />
                 Destaques
@@ -878,20 +811,19 @@ export function ReviewsDashboard({
               </ul>
             </section>
           ) : null}
-          <StatTile label="Avaliação no período" info={infoTexts.avgRating} value={kpis.avgRating.current === null ? "–" : `${formatRating(kpis.avgRating.current)}★`}>
-            <Delta allTime={period.id === "all"} comparison={kpis.avgRating} format="rating" unit="★" />
-          </StatTile>
-          <StatTile label="Reviews no período" info={infoTexts.reviews} value={formatInt(kpis.reviews.current ?? 0)}>
-            <Delta allTime={period.id === "all"} comparison={kpis.reviews} format="count" />
-          </StatTile>
-          <StatTile label="Reviews respondidas" info={infoTexts.replyRate} value={formatPercent(kpis.replyRate.current)}>
-            <Delta allTime={period.id === "all"} comparison={kpis.replyRate} format="share" />
-          </StatTile>
-          <StatTile label="Reviews por mês" info={infoTexts.pace} value={formatRating(kpis.pace.current)}>
-            <Delta comparison={kpis.pace} format="count" versus="3 meses anteriores" />
-          </StatTile>
-        </section>
-      </Refreshable>
+        </Refreshable>
+        <div className={insights.length ? "" : "lg:max-w-[27rem]"}>
+          <Refreshable scopes={["sync"]}>
+            {analytics.ratingGoal ? (
+              <RatingGoalCard goal={analytics.ratingGoal} />
+            ) : (
+              <div className="card p-5 sm:p-6">
+                <p className="text-sm text-muted">Ainda não há reviews importadas do Google.</p>
+              </div>
+            )}
+          </Refreshable>
+        </div>
+      </div>
 
       <Refreshable scopes={["sync"]}>
   {source.competition ? <CompetitionSection competition={source.competition} challenges={challenges} category={business.category} radiusKm={business.competitorRadiusKm} /> : null}

@@ -60,19 +60,22 @@ export default function DashboardLoading() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <div className="card col-span-2 flex flex-col gap-4 p-5 sm:p-6">
+      {/* «Destaques» (title and a card per highlight) with the Google rating card beside it. */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_27rem] lg:items-start lg:gap-10">
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-5 w-32" />
+          {[0, 1, 2].map((index) => (
+            <div key={index} className="card flex flex-col gap-2 p-4 sm:p-5">
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+          ))}
+        </div>
+        <div className="card flex flex-col gap-4 p-5 sm:p-6">
           <Skeleton className="h-4 w-36" />
           <Skeleton className="h-14 w-40" />
           <Skeleton className="h-24 w-full rounded-2xl" />
         </div>
-        {[0, 1, 2, 3].map((index) => (
-          <div key={index} className="card flex flex-col gap-2 p-4 sm:p-5">
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="h-8 w-16" />
-            <Skeleton className="h-3 w-28" />
-          </div>
-        ))}
       </div>
 
       <CardSkeleton lines={4} />
