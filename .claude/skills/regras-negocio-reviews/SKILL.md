@@ -176,6 +176,9 @@ já guardada:
 
 ## 6. Limites técnicos
 
+- Funções na Vercel na região **`arn1` (Estocolmo)**, ao lado do Supabase (`eu-north-1`): cada
+  consulta é uma ida e volta à base de dados, e de Washington (`iad1`, o valor por omissão) eram
+  ~100 ms cada (`"regions"` no `vercel.json`). Não mudar uma sem a outra.
 - Funções na Vercel: máximo 300 s (plano Hobby com Fluid compute, `"fluid": true` no
   `vercel.json`). Plano Hobby: só crons **diários**, no máximo 2 (`tick` 22:00 UTC como rede de
   segurança e `competitors` 06:00 UTC). Tudo o que precisa de outro horário corre pelo tick do

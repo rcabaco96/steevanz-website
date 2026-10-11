@@ -627,3 +627,40 @@ html.reveal-ready [data-reveal] {
     }
   }
 }
+
+/* The bar at the top while the next page loads, and the clicked link dimmed (NavigationProgress). */
+@layer components {
+  .nav-progress-run {
+    animation: nav-progress-run 10s cubic-bezier(0.1, 0.7, 0.2, 1) both;
+  }
+
+  .nav-progress-done {
+    animation: nav-progress-done 0.35s ease-out both;
+  }
+
+  @keyframes nav-progress-run {
+    from {
+      transform: scaleX(0.08);
+    }
+    to {
+      transform: scaleX(0.9);
+    }
+  }
+
+  @keyframes nav-progress-done {
+    from {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 0;
+    }
+  }
+
+  a[data-nav-pending] {
+    cursor: progress;
+    opacity: 0.6;
+    transition: opacity 0.15s 0.1s;
+  }
+}

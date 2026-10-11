@@ -50,12 +50,12 @@ export default async function DashboardPage({ params, searchParams }: PageProps<
   if (!source) notFound();
 
   const client = tryCreateServiceClient();
-  // Only reads Supabase (jobs of the local reader); opening the page never reads Google.
-  const readerJobs = client ? await loadReaderJobs(client, source.business.id).catch(() => emptyReaderJobs) : emptyReaderJobs;
-
-  // «Ligar Google» under a partial import: straight to Google's consent (or, while the connection
-  // isn't set up yet, back to the Google page with the explanation).
-  const googleStatus = await getPanelGoogleStatus(slug);
+  // Both at once: each is a round trip to Supabase. Only reads Supabase (jobs of the local reader);
+  // opening the page never reads Google. The Google status feeds «Ligar Google» under a partial import.
+  const [readerJobs, googleStatus] = await Promise.all([
+    client ? loadReaderJobs(client, source.business.id).catch(() => emptyReaderJobs) : emptyReaderJobs,
+    getPanelGoogleStatus(slug),
+  ]);
   const googleConnect = googleStatus === "connected" || googleConnectComingSoon ? null : { href: googleConnectPath(slug), external: true };
   return (
     <ReviewsDashboard

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "../globals.css";
 import { fontVariables } from "@/app/fonts";
+import { NavigationProgress } from "@/components/site/NavigationProgress";
 import { ThemeScript } from "@/components/site/ThemeScript";
 import { rootViewport } from "@/lib/root-metadata";
 
@@ -18,6 +19,7 @@ export default function AdminRootLayout({ children }: { children: ReactNode }) {
     <html lang="pt-PT" className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="min-h-dvh bg-bg-soft">
         <ThemeScript />
+        <NavigationProgress />
         {children}
       </body>
     </html>

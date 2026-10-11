@@ -11,6 +11,7 @@ import { href } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import { Footer } from "./Footer";
 import { Header, type NavProduct } from "./Header";
+import { NavigationProgress } from "./NavigationProgress";
 import { RevealObserver } from "./RevealObserver";
 import { ThemeScript } from "./ThemeScript";
 import { WhatsAppButton } from "./WhatsAppButton";
@@ -34,6 +35,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
     <html lang={htmlLang[locale]} className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="min-h-dvh">
         <ThemeScript />
+        <NavigationProgress />
         <a
           href="#main"
           className="fixed top-3 left-3 z-[60] -translate-y-20 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-contrast transition-transform focus:translate-y-0"
