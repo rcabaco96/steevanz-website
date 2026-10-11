@@ -18,8 +18,8 @@ export interface LegalDocument {
 
 export type LegalDocumentId = "privacy" | "cookies" | "terms";
 
-const updatedPt = "Última atualização: 1 de outubro de 2026";
-const updatedEn = "Last updated: 1 October 2026";
+const updatedPt = "Última atualização: 11 de outubro de 2026";
+const updatedEn = "Last updated: 11 October 2026";
 
 export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> = {
   privacy: {
@@ -113,8 +113,18 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           ],
         },
         {
+          id: "google",
+          title: "10. Dados da sua conta Google (Perfil da Empresa)",
+          paragraphs: [
+            "Se ligar o painel ao Google com «Ligar Google», pedimos-lhe autorização, no ecrã do próprio Google, para gerir o Perfil da Empresa no Google do seu negócio (permissão business.manage) e para saber o email da conta com que entrou.",
+            "Usamos esse acesso apenas para mostrar no seu painel as reviews do seu negócio e as respostas que já deu, para identificar o perfil certo e, quando o pedir, publicar as respostas às reviews que aprovar. Não usamos estes dados para publicidade, não os vendemos nem os partilhamos com terceiros, e não os usamos para treinar modelos de inteligência artificial de terceiros.",
+            "As chaves de acesso que o Google nos dá ficam guardadas cifradas e só são usadas pelos nossos servidores. Pode desligar a ligação a qualquer momento no seu painel ou em myaccount.google.com/permissions; ao desligar, apagamos as chaves.",
+            "A utilização e a transferência para qualquer outra aplicação de informações recebidas das APIs da Google pela Steevanz cumprem a Política de Dados do Utilizador dos Serviços de API da Google, incluindo os requisitos de Utilização Limitada.",
+          ],
+        },
+        {
           id: "alteracoes",
-          title: "10. Alterações a esta política",
+          title: "11. Alterações a esta política",
           paragraphs: [
             "Podemos atualizar esta política para refletir alterações legais ou nos nossos serviços. A data da última atualização está sempre indicada no topo desta página.",
           ],
@@ -211,8 +221,18 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           ],
         },
         {
+          id: "google",
+          title: "10. Your Google account data (Business Profile)",
+          paragraphs: [
+            "If you connect the panel to Google with «Ligar Google», we ask your permission, on Google's own screen, to manage your business's Google Business Profile (business.manage permission) and to know the email of the account you signed in with.",
+            "We use this access only to show your business's reviews and the replies you already gave in your panel, to identify the right profile and, when you ask, to publish the review replies you approve. We do not use this data for advertising, we do not sell it or share it with third parties, and we do not use it to train third-party AI models.",
+            "The access keys Google gives us are stored encrypted and used only by our servers. You can disconnect at any time in your panel or at myaccount.google.com/permissions; when you disconnect, we delete the keys.",
+            "Steevanz's use and transfer to any other app of information received from Google APIs will adhere to the Google API Services User Data Policy, including the Limited Use requirements.",
+          ],
+        },
+        {
           id: "changes",
-          title: "10. Changes to this policy",
+          title: "11. Changes to this policy",
           paragraphs: [
             "We may update this policy to reflect legal changes or changes to our services. The date of the last update is always shown at the top of this page.",
           ],
