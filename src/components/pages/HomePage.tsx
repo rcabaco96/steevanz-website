@@ -184,7 +184,9 @@ export function HomePage({ locale }: { locale: Locale }) {
                 key={sector.id}
                 data-reveal
                 style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }}
-                className="group relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[1.75rem] p-7 text-white sm:min-h-[26rem]"
+                className={`group relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[1.75rem] p-7 text-white sm:min-h-[26rem] ${
+                  index === sectors.length - 1 && sectors.length % 2 === 1 ? "sm:col-span-2" : ""
+                }`}
               >
                 <Photo
                   id={sector.photo}

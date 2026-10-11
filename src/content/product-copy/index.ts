@@ -5,6 +5,7 @@ import { copy as aiReviews } from "./ai-reviews";
 import { copy as aiVoice } from "./ai-voice";
 import { copy as automation } from "./automation";
 import { copy as bookings } from "./bookings";
+import { copy as guestGuide } from "./guest-guide";
 import { copy as loyalty } from "./loyalty";
 import { copy as nfcGoogleReviews } from "./nfc-google-reviews";
 import { copy as nfcMenu } from "./nfc-menu";
@@ -15,6 +16,7 @@ export const productCopy: Record<ProductId, ProductCopyByLocale> = {
   "nfc-google-reviews": nfcGoogleReviews,
   "nfc-social": nfcSocial,
   "nfc-menu": nfcMenu,
+  "guest-guide": guestGuide,
   loyalty,
   bookings,
   waitlist,

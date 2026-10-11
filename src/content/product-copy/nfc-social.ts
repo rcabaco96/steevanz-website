@@ -90,6 +90,11 @@ export const copy: ProductCopyByLocale = {
         title: "Lojas",
         body: "Um autocolante na montra ou no balcão leva à loja online, às redes sociais ou à página com todas as formas de contacto.",
       },
+      {
+        sector: "lodging",
+        title: "Hostels e guest houses",
+        body: "Uma placa «Siga-nos» na sala comum ou na receção leva os hóspedes ao Instagram do alojamento, para se lembrarem de si na próxima viagem.",
+      },
     ],
     includes: [
       "Placas ou cartões com QR code impresso",
@@ -210,6 +215,11 @@ export const copy: ProductCopyByLocale = {
         sector: "retail",
         title: "Shops",
         body: "A sticker in the window or on the counter leads to your online shop, social media or a page with every way to reach you.",
+      },
+      {
+        sector: "lodging",
+        title: "Hostels and guest houses",
+        body: "A \"Follow us\" plate in the common room or at reception takes guests to your Instagram, so they remember you for their next trip.",
       },
     ],
     includes: [

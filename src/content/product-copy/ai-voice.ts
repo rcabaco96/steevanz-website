@@ -94,6 +94,11 @@ export const copy: ProductCopyByLocale = {
         title: "Clínicas e consultórios",
         body: "Responde a questões administrativas e marca consultas, passando de imediato qualquer situação urgente para a equipa.",
       },
+      {
+        sector: "lodging",
+        title: "Guest houses e gestores de alojamento",
+        body: "Atende as chamadas dos hóspedes em várias línguas, responde a horas de check-in, como chegar e estacionamento, e envia-lhe por WhatsApp os pedidos que precisam de si.",
+      },
     ],
     includes: [
       "Definição do guião e das regras de atendimento",
@@ -222,6 +227,11 @@ export const copy: ProductCopyByLocale = {
         sector: "clinics",
         title: "Clinics and practices",
         body: "Answers admin questions and books appointments, forwarding anything urgent to your team straight away.",
+      },
+      {
+        sector: "lodging",
+        title: "Guest houses and rental managers",
+        body: "Answers guests' calls in several languages, handles check-in times, directions and parking, and sends you the requests that need you on WhatsApp.",
       },
     ],
     includes: [

@@ -56,7 +56,7 @@ export const homeCopy: Localized<HomeCopy> = {
   pt: {
     metaTitle: "Placas para reviews no Google e IA para negócios | Steevanz",
     metaDescription:
-      "Um toque no telemóvel e o cliente está a deixar a sua review no Google. Placas com tecnologia Steevanz, reservas, lista de espera e IA para restaurantes, salões, clínicas e lojas.",
+      "Um toque no telemóvel e o cliente está a deixar a sua review no Google. Placas com tecnologia Steevanz, reservas, lista de espera e IA para restaurantes, salões, clínicas, lojas e alojamento local.",
     hero: {
       eyebrow: "Placas para reviews no Google",
       titleLead: "Um toque.",
@@ -177,7 +177,7 @@ export const homeCopy: Localized<HomeCopy> = {
   en: {
     metaTitle: "Plates for Google reviews and AI for business | Steevanz",
     metaDescription:
-      "One tap and your customer is leaving a Google review. Plates with Steevanz technology, bookings, waiting lists and AI tools for restaurants, salons, clinics and shops.",
+      "One tap and your customer is leaving a Google review. Plates with Steevanz technology, bookings, waiting lists and AI tools for restaurants, salons, clinics, shops and holiday rentals.",
     hero: {
       eyebrow: "Plates for Google reviews",
       titleLead: "One tap.",

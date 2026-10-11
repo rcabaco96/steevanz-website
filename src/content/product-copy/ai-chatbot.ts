@@ -99,6 +99,11 @@ export const copy: ProductCopyByLocale = {
         title: "Lojas",
         body: "Informa sobre horários, disponibilidade de produtos, trocas e envios, a qualquer hora do dia.",
       },
+      {
+        sector: "lodging",
+        title: "Alojamento local",
+        body: "Responde aos hóspedes no WhatsApp, a qualquer hora e na língua deles: WiFi, check-out, estacionamento, onde jantar. Aprende com o guia da casa, nunca partilha códigos de acesso e passa logo ao anfitrião as urgências e os pedidos especiais.",
+      },
     ],
     includes: [
       "Recolha e organização da informação do seu negócio",
@@ -132,6 +137,10 @@ export const copy: ProductCopyByLocale = {
       {
         q: "Posso cancelar o plano mensal?",
         a: "Sim, o plano é mensal e sem fidelização. Se cancelar, desligamos o chatbot do site e do WhatsApp.",
+      },
+      {
+        q: "Funciona para alojamento local?",
+        a: "Sim. O assistente aprende com o guia digital de cada alojamento e responde no WhatsApp, na língua do hóspede, a perguntas sobre WiFi, check-in e check-out, eletrodomésticos, estacionamento, transportes e recomendações. Tem regras fixas: nunca partilha códigos da porta, da caixa das chaves ou do alarme, nem confirma quem está hospedado; numa emergência indica o 112 e avisa-o de imediato; reclamações, danos, reembolsos e pedidos de entrada antecipada ou saída tardia passam para si com um resumo. Um número de WhatsApp serve até cinco alojamentos.",
       },
     ],
   },
@@ -233,6 +242,11 @@ export const copy: ProductCopyByLocale = {
         title: "Shops",
         body: "Tells customers about opening hours, product availability, returns and delivery, at any time of day.",
       },
+      {
+        sector: "lodging",
+        title: "Holiday rentals",
+        body: "Answers guests on WhatsApp at any hour and in their language: WiFi, check-out, parking, where to eat. It learns from the house guide, never shares access codes and passes emergencies and special requests straight to the host.",
+      },
     ],
     includes: [
       "Gathering and organising your business information",
@@ -266,6 +280,10 @@ export const copy: ProductCopyByLocale = {
       {
         q: "Can I cancel the monthly plan?",
         a: "Yes, the plan is monthly with no minimum term. If you cancel, we disconnect the chatbot from your website and WhatsApp.",
+      },
+      {
+        q: "Does it work for holiday rentals?",
+        a: "Yes. The assistant learns from each property's digital guest guide and answers on WhatsApp, in the guest's language, about WiFi, check-in and check-out, appliances, parking, transport and recommendations. It follows fixed rules: it never shares door, key-box or alarm codes, and never confirms who is staying; in an emergency it points guests to 112 and alerts you at once; complaints, damage, refunds and early check-in or late check-out requests are passed to you with a summary. One WhatsApp number covers up to five properties.",
       },
     ],
   },

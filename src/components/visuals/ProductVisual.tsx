@@ -266,6 +266,78 @@ function AutomationDiagram({ t }: { t: MockupCopy }) {
   );
 }
 
+function GuideGlyph({ path }: { path: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d={path} />
+    </svg>
+  );
+}
+
+const guideIcons = {
+  wifi: "M4 9.5a12 12 0 0 1 16 0M7 12.8a7.5 7.5 0 0 1 10 0M10 16a3 3 0 0 1 4 0M12 19h.01",
+  clock: "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 4v4l2.5 1.5",
+  rules: "M7 4h10v16H7zM10 8h4M10 12h4M10 16h2",
+  bins: "M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13M10.5 11v5M13.5 11v5",
+  tips: "M12 21s-6-5.6-6-10.5A6 6 0 0 1 18 10.5C18 15.4 12 21 12 21Zm0-8.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z",
+  sos: "M12 4v16M4 12h16",
+};
+
+function GuideScreen({ t }: { t: MockupCopy }) {
+  const languages = ["PT", "EN", "FR", "ES"];
+  const rows = [
+    { icon: guideIcons.clock, label: t.guideCheckout, value: t.guideCheckoutTime },
+    { icon: guideIcons.rules, label: t.guideRules },
+    { icon: guideIcons.bins, label: t.guideBins },
+    { icon: guideIcons.tips, label: t.guideTips },
+    { icon: guideIcons.sos, label: t.guideEmergency },
+  ];
+  return (
+    <>
+      <div className="bg-gradient-to-br from-[#7a2d60] to-[#3b1631] px-4 pt-10 pb-4 text-white">
+        <p className="text-[0.62rem] tracking-[0.16em] uppercase opacity-75">{t.guideWelcome}</p>
+        <p className="font-display text-xl leading-tight">{t.guideTitle}</p>
+        <div className="mt-2.5 flex gap-1.5">
+          {languages.map((language) => (
+            <span
+              key={language}
+              className={`rounded-full px-2 py-0.5 text-[0.58rem] font-bold ${language === t.guideLang ? "bg-[#e9c685] text-[#3b1631]" : "bg-white/15 text-white/85"}`}
+            >
+              {language}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col gap-2 p-3">
+        <div className="rounded-2xl border border-[#e7ddd0] bg-white p-3 shadow-sm">
+          <p className="flex items-center gap-1.5 text-[0.72rem] font-bold">
+            <span className="text-[#7a2d60]">
+              <GuideGlyph path={guideIcons.wifi} />
+            </span>
+            {t.guideWifi}
+          </p>
+          <p className="mt-1 text-[0.68rem] text-[#574659]">{t.guideWifiName}</p>
+          <div className="mt-1.5 flex items-center justify-between gap-2">
+            <span className="font-mono text-[0.72rem] tracking-[0.2em] text-[#1d1220]">••••••••</span>
+            <span className="rounded-full bg-[#7a2d60] px-2.5 py-1 text-[0.6rem] font-semibold text-white">{t.guideCopy}</span>
+          </div>
+        </div>
+        <ul className="flex flex-col overflow-hidden rounded-2xl border border-[#e7ddd0] bg-white">
+          {rows.map((row, index) => (
+            <li key={row.label} className={`flex items-center gap-2 px-3 py-2 text-[0.7rem] ${index > 0 ? "border-t border-[#efe6da]" : ""}`}>
+              <span className="text-[#7a2d60]">
+                <GuideGlyph path={row.icon} />
+              </span>
+              <span className="font-medium">{row.label}</span>
+              {row.value ? <span className="ml-auto font-bold">{row.value}</span> : <span className="ml-auto text-[#b9a9bf]">›</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+}
+
 const phoneScreens: Partial<Record<ProductId, (t: MockupCopy) => ReactNode>> = {
   loyalty: (t) => <LoyaltyScreen t={t} />,
   bookings: (t) => <BookingScreen t={t} />,
@@ -274,6 +346,7 @@ const phoneScreens: Partial<Record<ProductId, (t: MockupCopy) => ReactNode>> = {
   "ai-voice": (t) => <VoiceScreen t={t} />,
   "ai-reviews": (t) => <ReviewsScreen t={t} />,
   "nfc-menu": (t) => <MenuScreen t={t} />,
+  "guest-guide": (t) => <GuideScreen t={t} />,
 };
 
 interface ProductVisualProps {
@@ -356,6 +429,16 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           className="absolute bottom-[4%] left-[0%] z-10 h-auto w-[38%] -rotate-[6deg] drop-shadow-[0_24px_30px_rgba(0,0,0,0.3)]"
         />
       ) : null}
+      {product.id === "guest-guide" ? (
+        <NfcPlate
+          variant="wall"
+          finish="white"
+          symbol="home"
+          line1={t.guideLine1}
+          line2={t.guideLine2}
+          className="absolute bottom-[0%] -left-[2%] z-10 h-auto w-[30%] -rotate-[5deg] drop-shadow-[0_24px_30px_rgba(0,0,0,0.28)]"
+        />
+      ) : null}
       {product.id === "loyalty" ? (
         <NfcPlate
           variant="sticker"
@@ -367,9 +450,14 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
         />
       ) : null}
       <PhoneFrame>{screen ? screen(t) : null}</PhoneFrame>
-      {product.id === "nfc-menu" ? (
+      {product.id === "nfc-menu" || product.id === "guest-guide" ? (
         <FloatingChip className="top-[10%] right-0">
           <NfcWaves size={16} className="text-accent-text" /> {t.tapQrChip}
+        </FloatingChip>
+      ) : null}
+      {product.id === "guest-guide" ? (
+        <FloatingChip className="right-0 bottom-[16%]">
+          <Check size={14} className="text-success" /> {t.guideLanguagesChip}
         </FloatingChip>
       ) : null}
       {product.id === "bookings" ? (

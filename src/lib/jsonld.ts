@@ -24,8 +24,8 @@ export function organizationJsonLd(locale: Locale): JsonLdNode {
     areaServed: { "@type": "Country", name: "Portugal" },
     description:
       locale === "pt"
-        ? "Placas para reviews no Google e soluções de inteligência artificial para restaurantes, salões, clínicas e comércio local."
-        : "Plates for Google reviews and AI solutions for restaurants, salons, clinics and local shops.",
+        ? "Placas para reviews no Google e soluções de inteligência artificial para restaurantes, salões, clínicas, comércio local e alojamento local."
+        : "Plates for Google reviews and AI solutions for restaurants, salons, clinics, local shops and holiday rentals.",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",

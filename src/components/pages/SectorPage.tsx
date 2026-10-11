@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import { videos, type VideoId } from "@/content/media";
 import { pageLabels } from "@/content/page-labels";
 import { getProduct } from "@/content/products";
-import { getSector, sectors } from "@/content/sectors";
+import { getSector, sectors, type Sector } from "@/content/sectors";
 import type { SectorId } from "@/content/types";
 import { ui } from "@/content/ui";
 import { JsonLd } from "@/components/JsonLd";
-import { AlertIcon, ArrowRight } from "@/components/icons";
+import { AlertIcon, ArrowRight, Check } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { CtaBand } from "@/components/marketing/CtaBand";
 import { ProductCard } from "@/components/marketing/ProductCard";
@@ -15,10 +15,12 @@ import { LazyVideo } from "@/components/media/LazyVideo";
 import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
+import { formatEuro } from "@/components/ui/Price";
 import { Section, SectionHeader } from "@/components/ui/Section";
+import { ProductVisual } from "@/components/visuals/ProductVisual";
 import type { Locale } from "@/lib/i18n";
 import { faqJsonLd } from "@/lib/jsonld";
-import { href } from "@/lib/routes";
+import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { whatsappUrl } from "@/lib/site";
 
@@ -79,7 +81,7 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
 
       <Section tone="soft" labelledBy="pains-title">
         <SectionHeader id="pains-title" eyebrow={labels.sectors.painsEyebrow} title={labels.sectors.painsTitle} />
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className={`mt-12 grid gap-5 ${copy.pains.length === 4 ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
           {copy.pains.map((pain, index) => (
             <article key={pain.title} data-reveal style={{ ["--reveal-delay" as string]: `${index * 90}ms` }} className="card flex flex-col gap-3 p-7">
               <AlertIcon size={22} className="text-danger" />
@@ -97,6 +99,13 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
             <ProductCard key={productId} product={getProduct(productId)} locale={locale} revealDelay={index * 70} />
           ))}
         </div>
+        {sector.bundleNote ? (
+          <p data-reveal className="mt-8 flex max-w-3xl gap-3 rounded-2xl border border-line bg-surface-2/50 p-5 text-sm leading-relaxed text-muted">
+            <AlertIcon size={18} className="mt-0.5 shrink-0 text-gold-text" />
+            <span>{sector.bundleNote[locale]}</span>
+          </p>
+        ) : null}
+        {sector.pack ? <SectorPackCard pack={sector.pack} locale={locale} /> : null}
       </Section>
 
       <Section tone="soft" labelledBy="day-title">
@@ -116,9 +125,13 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
           <div data-reveal className="overflow-hidden rounded-[2rem] border border-line lg:sticky lg:top-28">
             {videoId ? (
               <LazyVideo video={videos[videoId]} label={videos[videoId].alt[locale]} className="aspect-[4/5] h-auto w-full object-cover sm:aspect-video lg:aspect-[4/5]" />
+            ) : sector.side.kind === "product" ? (
+              <div className="bg-surface px-4 py-10 sm:px-10">
+                <ProductVisual product={getProduct(sector.side.productId)} locale={locale} />
+              </div>
             ) : (
               <Photo
-                id={sectorId === "clinics" ? "reception-phone" : "retail"}
+                id={sector.side.photo}
                 locale={locale}
                 sizes="(min-width: 1024px) 45vw, 100vw"
                 className="aspect-[4/5] sm:aspect-video lg:aspect-[4/5]"
@@ -163,5 +176,64 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
         secondaryHref={whatsappUrl(t.common.whatsappMessage)}
       />
     </>
+  );
+}
+
+function SectorPackCard({ pack, locale }: { pack: NonNullable<Sector["pack"]>; locale: Locale }) {
+  const copy = pack.copy[locale];
+  const t = ui[locale];
+  const money = (amount: number) => formatEuro(amount, locale);
+  const fill = (template: string, setup: number, monthly: number) => template.replace("{setup}", money(setup)).replace("{monthly}", money(monthly));
+  return (
+    <section aria-labelledby="pack-title" className="mt-14">
+      <div data-reveal className="grid overflow-hidden rounded-[var(--radius-card)] bg-surface-inverse text-inverse lg:grid-cols-[1.3fr_1fr]">
+        <div className="flex flex-col gap-5 p-7 sm:p-10">
+          <p className="font-mono text-xs tracking-[0.16em] text-gold uppercase">{copy.eyebrow}</p>
+          <h2 id="pack-title" className="display text-3xl sm:text-4xl">
+            {copy.title}
+          </h2>
+          <p className="leading-relaxed opacity-80">{copy.body}</p>
+          <ul className="flex flex-col gap-3">
+            {copy.items.map((item) => (
+              <li key={item} className="flex gap-3 text-[0.95rem]">
+                <Check size={18} className="mt-0.5 shrink-0 text-gold" />
+                <span className="opacity-90">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm leading-relaxed opacity-70">{copy.website}</p>
+        </div>
+        <div className="flex flex-col gap-5 border-t border-white/10 bg-white/5 p-7 sm:p-10 lg:border-t-0 lg:border-l">
+          {pack.isProvisional ? (
+            <span className="w-fit rounded-full border border-gold/40 px-3 py-1 font-mono text-[0.7rem] tracking-[0.12em] text-gold uppercase">{copy.badge}</span>
+          ) : null}
+          <div className="flex flex-col gap-1">
+            <p className="flex flex-wrap items-baseline gap-x-2">
+              <span className="display tabular text-5xl">{money(pack.setup)}</span>
+              <span className="text-sm opacity-70">{copy.setupLabel}</span>
+            </p>
+            <p className="flex flex-wrap items-baseline gap-x-1">
+              <span className="text-sm opacity-70">+</span>
+              <span className="display tabular text-4xl">{money(pack.monthly)}</span>
+              <span className="text-sm opacity-70">{copy.monthlyLabel}</span>
+              <span className="ml-1 text-xs opacity-60">{t.common.vatExcluded}</span>
+            </p>
+          </div>
+          <p className="text-sm opacity-80">{fill(copy.separately, pack.separatelySetup, pack.separatelyMonthly)}</p>
+          <p className="text-sm leading-relaxed opacity-80">{fill(copy.extraProperty, pack.extraSetup, pack.extraMonthly)}</p>
+          <p className="text-xs leading-relaxed opacity-60">{copy.note}</p>
+          <ButtonLink href={bookingHref(locale, pack.demoProduct)} size="lg" className="mt-auto w-full">
+            {t.common.bookDemo}
+            <ArrowRight size={18} />
+          </ButtonLink>
+          <p className="text-center text-sm opacity-80">
+            {copy.requestInfo}{" "}
+            <Link href={`${href(locale, { key: "requestInfo" })}?produto=${pack.demoProduct}`} className="font-semibold text-gold underline underline-offset-4">
+              {t.common.requestInfo}
+            </Link>
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }

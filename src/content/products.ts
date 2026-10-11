@@ -10,6 +10,7 @@ export type ProductIcon =
   | "star-tap"
   | "share-tap"
   | "menu-tap"
+  | "guide-tap"
   | "stamp"
   | "calendar"
   | "queue"
@@ -62,6 +63,8 @@ export interface Product {
   contextPhoto?: PhotoId;
   customization?: ProductCustomization;
   packs?: ProductPack[];
+  /** What one unit of a pack is: a plate (default) or a property (plate and guide included). */
+  packUnit?: "plate" | "property";
 }
 
 const plateLogoExtra = 10;
@@ -78,7 +81,7 @@ export const products: Product[] = [
     priceQualifier: { pt: "por placa, configuração incluída", en: "per plate, setup included" },
     priceIsProvisional: true,
     flagship: true,
-    sectors: ["restaurants", "beauty", "clinics", "retail"],
+    sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
     related: ["ai-reviews", "nfc-social", "loyalty"],
     contextPhoto: "restaurant-table",
     customization: {
@@ -109,7 +112,7 @@ export const products: Product[] = [
     priceBilling: "one-time",
     priceQualifier: { pt: "por placa ou cartão", en: "per plate or card" },
     priceIsProvisional: true,
-    sectors: ["restaurants", "beauty", "retail"],
+    sectors: ["restaurants", "beauty", "retail", "lodging"],
     related: ["nfc-google-reviews", "loyalty", "ai-chatbot"],
     contextPhoto: "phone-tap",
     customization: {
@@ -150,6 +153,40 @@ export const products: Product[] = [
       { quantity: 5, unitPrice: 12 },
       { quantity: 10, unitPrice: 10 },
       { quantity: 20, unitPrice: 9 },
+    ],
+  },
+  {
+    id: "guest-guide",
+    slug: { pt: "guia-digital-alojamento", en: "digital-guest-guide" },
+    family: "nfc",
+    icon: "guide-tap",
+    priceFrom: 69,
+    priceBilling: "one-time",
+    priceQualifier: {
+      pt: "por alojamento, placa e 4 línguas incluídas; depois 3 €/mês",
+      en: "per property, plate and 4 languages included; then €3/month",
+    },
+    priceIsProvisional: true,
+    sectors: ["lodging"],
+    related: ["ai-chatbot", "automation", "nfc-google-reviews"],
+    contextPhoto: "holiday-rental",
+    customization: {
+      formats: [
+        { id: "wall-plate", label: { pt: "Placa de parede (entrada, por dentro)", en: "Wall plate (inside the entrance)" } },
+        { id: "table-stand", label: { pt: "Expositor (sala ou receção)", en: "Stand (living room or reception)" } },
+        { id: "sticker", label: { pt: "Autocolante (frigorífico ou espelho)", en: "Sticker (fridge or mirror)" } },
+      ],
+      logoExtra: plateLogoExtra,
+      logoExtraPer: "line",
+      logoExtraIsProvisional: true,
+      textMaxLength: plateTextMaxLength,
+    },
+    packUnit: "property",
+    // Owner proposal 2026-10-11: volume prices for property managers (per property, plate and guide included).
+    packs: [
+      { quantity: 3, unitPrice: 59 },
+      { quantity: 5, unitPrice: 55 },
+      { quantity: 10, unitPrice: 49 },
     ],
   },
   {
@@ -200,7 +237,7 @@ export const products: Product[] = [
     priceBilling: "monthly",
     priceQualifier: { pt: "por mês, site + WhatsApp", en: "per month, website + WhatsApp" },
     priceIsProvisional: true,
-    sectors: ["restaurants", "beauty", "clinics", "retail"],
+    sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
     related: ["ai-voice", "bookings", "automation"],
     contextPhoto: "phone-chat",
   },
@@ -213,7 +250,7 @@ export const products: Product[] = [
     priceBilling: "monthly",
     priceQualifier: { pt: "por mês, por número", en: "per month, per phone line" },
     priceIsProvisional: true,
-    sectors: ["restaurants", "beauty", "clinics"],
+    sectors: ["restaurants", "beauty", "clinics", "lodging"],
     related: ["ai-chatbot", "bookings", "waitlist"],
     contextPhoto: "reception-phone",
   },
@@ -226,7 +263,7 @@ export const products: Product[] = [
     priceBilling: "monthly",
     priceQualifier: { pt: "por mês, por perfil Google", en: "per month, per Google profile" },
     priceIsProvisional: true,
-    sectors: ["restaurants", "beauty", "clinics", "retail"],
+    sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
     related: ["nfc-google-reviews", "ai-chatbot", "automation"],
     contextPhoto: "owner-laptop",
   },
@@ -235,11 +272,12 @@ export const products: Product[] = [
     slug: { pt: "automacao-processos", en: "process-automation" },
     family: "ai",
     icon: "flow",
-    priceFrom: 250,
+    // 149 € is the fixed-price «Limpezas e prazos» preset for holiday rentals (proposal 2026-10-11); bespoke projects start higher.
+    priceFrom: 149,
     priceBilling: "project",
     priceQualifier: { pt: "por projeto, preço fechado", en: "per project, fixed price" },
     priceIsProvisional: true,
-    sectors: ["restaurants", "beauty", "clinics", "retail"],
+    sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
     related: ["ai-chatbot", "ai-reviews", "bookings"],
     contextPhoto: "shop-owner",
   },

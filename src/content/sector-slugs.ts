@@ -6,4 +6,5 @@ export const sectorSlugs: Record<SectorId, Localized<string>> = {
   beauty: { pt: "cabeleireiros-estetica", en: "salons-beauty" },
   clinics: { pt: "clinicas", en: "clinics" },
   retail: { pt: "comercio", en: "retail" },
+  lodging: { pt: "alojamento-local", en: "holiday-rentals" },
 };
