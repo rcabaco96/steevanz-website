@@ -49,13 +49,21 @@ export interface CompetitionSlotResult {
 }
 
 /**
+ * The 10:00 and 19:00 competitor routines are paused (owner, 2026-10-12: «cancela as rotinas porque
+ * isso é muito pesado, depois logo pensamos nisso»): they queued ~225 reads a day and Google limited
+ * the reader, holding up the customers' own updates. New competitors after a search are still read
+ * once (queued by the search, not by this routine). Flip to false to turn them back on.
+ */
+export const competitorRoutinesPaused = true;
+
+/**
  * Plans the competitor work of a slot for the reader: one "competitor" read per distinct place not
  * read since the slot (numbers, recent reviews and replies), and the one-off 12-month reads of
  * places never measured.
  */
 export async function runCompetitionSlot(client: Client, options: { now: Date; dryRun: boolean; inputs: PlanInputs; deadline: number }): Promise<CompetitionSlotResult> {
   const { now, dryRun, inputs } = options;
-  const jobs = planCompetitionSlot(inputs.businesses, inputs.competitors, inputs.readerPlaces, now);
+  const jobs = competitorRoutinesPaused ? [] : planCompetitionSlot(inputs.businesses, inputs.competitors, inputs.readerPlaces, now);
   return {
     competitor: jobs.filter((job) => job.kind === "competitor").length,
     competitorReplies: jobs.filter((job) => job.kind === "competitor_replies").length,
