@@ -1,0 +1,15 @@
+# The open-source Google Maps scraper (github.com/gosom/google-maps-scraper, MIT) for the prospector.
+# It has no password, so it listens on this computer only (127.0.0.1): never expose the port.
+# One browser at a time (-c 1) and the prospector's own pauses keep Google from blocking this IP.
+services:
+  gmaps-scraper:
+    image: gosom/google-maps-scraper:v1.18.1
+    container_name: steevanz-gmaps-scraper
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    command: ["-web", "-data-folder", "/gmapsdata", "-c", "1"]
+    volumes:
+      - gmaps_data:/gmapsdata
+volumes:
+  gmaps_data:

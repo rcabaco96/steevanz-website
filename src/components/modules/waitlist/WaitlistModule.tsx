@@ -57,7 +57,7 @@ function QueueSettings({ settings, establishmentId, kind, hasServices, hasStaff 
             <input type="checkbox" name="auto_hours" defaultChecked={settings.auto_hours} className="mt-0.5 h-4.5 w-4.5 accent-accent" />
             <span>
               Abrir e fechar a fila com o horário
-              <span className="block text-xs text-subtle">Abre à hora de abertura e fecha à hora de fecho (horário em «Espaço», abaixo). Pode sempre abrir ou fechar à mão.</span>
+              <span className="block text-xs text-subtle">Abre à hora de abertura e fecha à hora de fecho (horário mais abaixo, nesta página). Pode sempre abrir ou fechar à mão.</span>
             </span>
           </label>
           <label className="flex items-start gap-2 text-sm text-text">
@@ -139,7 +139,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
       <div className="flex flex-col gap-6">
         {nav}
         <QueueSettings settings={settings} establishmentId={current.id} kind={current.kind} hasServices={bundle.services.length > 0} hasStaff={bundle.staff.length > 0} />
-        <EstablishmentSettings bundle={bundle} viewer={viewer} sections={["details", ...(settings.ask_service ? (["services"] as const) : []), ...(settings.ask_staff ? (["staff"] as const) : [])]} />
+        <EstablishmentSettings bundle={bundle} viewer={viewer} sections={["hours", "closures", "details", ...(settings.ask_service ? (["services"] as const) : []), ...(settings.ask_staff ? (["staff"] as const) : [])]} />
       </div>
     );
   }

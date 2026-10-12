@@ -11,7 +11,7 @@ const links = [
   { href: "/admin", label: "Início", exact: true },
   { href: "/admin/clientes", label: "Clientes" },
   { href: "/admin/encomendas", label: "Encomendas" },
-  { href: "/admin/bookings", label: "Contactos", also: ["/admin/leads", "/admin/availability"] },
+  { href: "/admin/bookings", label: "Contactos", also: ["/admin/leads", "/admin/prospecao", "/admin/availability"] },
   { href: "/admin/reviews", label: "Reviews" },
 ];
 

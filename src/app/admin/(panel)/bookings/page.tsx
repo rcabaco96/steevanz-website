@@ -25,7 +25,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
     <>
       <AdminPageHeader
         title="Contactos"
-        description="Demonstrações marcadas no site e pedidos de informação."
+        description="Demonstrações marcadas no site, pedidos de informação e negócios a contactar."
         actions={
           <a href={`/admin/export/bookings${filtersToQuery(filters)}`} className={buttonClasses("secondary", "sm")}>
             Exportar CSV

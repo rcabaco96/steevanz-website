@@ -229,6 +229,10 @@
 select:not([multiple]):not([size]):not(.appearance-none) {
   appearance: none;
   padding-right: 2.5rem;
+  /* One line always: a long option is cut with "…" instead of breaking the field in two. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
   background-position:
     calc(100% - 1.15rem) 50%,
@@ -255,11 +259,11 @@ select:not([multiple]):not([size]):not(.appearance-none) {
     display: none;
   }
 
-  /* The chosen option centred in the field, like the text of an input (Tailwind's `block` would
-     otherwise put it at the top). Widths still come from the classes. */
+  /* The chosen option centred in the field, like the text of an input, on one line cut with "…"
+     before the chevron (a flex box would let long text run under it). Widths come from the classes. */
   select:not([multiple]):not([size]):not(.appearance-none):not(.hidden) {
-    display: inline-flex;
-    align-items: center;
+    display: block;
+    align-content: center;
   }
 
   ::picker(select) {

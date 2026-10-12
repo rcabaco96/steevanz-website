@@ -8,6 +8,7 @@ import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/li
 import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
 import { parseSubscription } from "../src/lib/modules/waitlist/push-rules.ts";
 import { iconColor, iconSize, iconUrl, imageTypeOf, initialsOf, logoPathFor, logoVersion, ownsLogoPath } from "../src/lib/establishments/logo-rules.ts";
+import { opportunities, parseCsv, pickEmail, prospectFromRow, reasons, siteKind } from "../src/lib/prospects/rules.ts";
 
 const minute = 60_000;
 
@@ -406,5 +407,55 @@ describe("establishment logo and icon", () => {
     assert.equal(iconColor("#12ab34"), "#12ab34");
     assert.equal(iconColor("red"), "#7a2d60");
     assert.equal(iconColor(null), "#7a2d60");
+  });
+});
+
+describe("prospecting", () => {
+  it("reads the scraper's CSV, quotes, commas and line breaks included", () => {
+    const csv = 'title,category,review_rating,review_count,website,emails,place_id,link\n"Barbearia ""Zé"", Lda",Barbearia,4.1,"23",,"info@ze.pt, logo@2x.png",ChIJ1,https://maps.google.com/?cid=1\nCafé Central,Café,4.8,512,https://central.pt,,ChIJ2,\n';
+    const rows = parseCsv(csv);
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0].title, 'Barbearia "Zé", Lda');
+    const first = prospectFromRow(rows[0]);
+    assert.equal(first.email, "info@ze.pt");
+    assert.equal(first.rating, 4.1);
+    assert.equal(first.reviews, 23);
+    assert.equal(first.website, null);
+    assert.equal(prospectFromRow({ title: "Sem lugar" }), null);
+  });
+  it("picks a real email, not images or placeholders", () => {
+    assert.equal(pickEmail("mailto:GERAL@Loja.PT"), "geral@loja.pt");
+    assert.equal(pickEmail("icon@2x.png user@example.com"), null);
+    assert.equal(pickEmail(""), null);
+  });
+  it("tags what each business could buy", () => {
+    assert.deepEqual(opportunities({ rating: 4.1, reviews: 23, website: null, category: "Barbearia" }), ["site", "modules"]);
+    assert.deepEqual(opportunities({ rating: 4.8, reviews: 512, website: "https://x.pt", category: "Loja de roupa" }), []);
+    assert.deepEqual(opportunities({ rating: 4.6, reviews: 30, website: "https://x.pt", category: "Restaurante" }), ["modules"]);
+    // Google calls barbershops «Barbeiro»; a Facebook page is not a site of their own.
+    assert.deepEqual(opportunities({ rating: 4.9, reviews: 300, website: "https://www.facebook.com/barbearia", category: "Barbeiro" }), ["site", "modules"]);
+  });
+  it("says why to call in plain words", () => {
+    const texts = (prospect) => reasons(prospect).map((reason) => (reason.note ? `nota: ${reason.text}` : reason.text));
+    assert.deepEqual(texts({ rating: 4.1, reviews: 23, website: "https://www.facebook.com/x", category: "Barbeiro" }), [
+      "Reservas Online e Cartão Fidelização",
+      "nota: Sem site próprio: só tem Facebook",
+    ]);
+    assert.deepEqual(texts({ rating: 4.9, reviews: 300, website: "https://barbearia-x.buk.pt", category: "Barbeiro" }), ["Reservas Online e Cartão Fidelização", "nota: Já reserva com Buk", "nota: Sem site próprio"]);
+    assert.deepEqual(texts({ rating: 4.7, reviews: 900, website: "https://tasca.pt", category: "Restaurante" }), ["Lista de Espera e Reservas Online"]);
+    assert.deepEqual(texts({ rating: 4.8, reviews: 400, website: "https://loja.pt", category: "Loja de roupa" }), []);
+    // Reviews are only a filter: we cannot tell from Google whether a place already has review plates.
+    assert.deepEqual(texts({ rating: 0, reviews: 0, website: "https://loja.pt", category: "Loja" }), []);
+  });
+  it("tells a site of its own from social pages, directories and booking platforms", () => {
+    assert.equal(siteKind(null), "none");
+    assert.equal(siteKind("https://www.barbeariaorlando.pt"), "own");
+    assert.equal(siteKind("https://domfelipebarbearia.wixsite.com/x"), "own");
+    assert.equal(siteKind("https://www.instagram.com/x"), "social");
+    assert.equal(siteKind("https://play.google.com/store/apps/details?id=x"), "social");
+    assert.equal(siteKind("https://www.pai.pt/x"), "social");
+    assert.equal(siteKind("https://barbearia-areosa.buk.pt"), "booking");
+    assert.equal(siteKind("https://sites.appbarber.com.br/x"), "booking");
+    assert.equal(siteKind("https://www.fresha.com/a/x"), "booking");
   });
 });
