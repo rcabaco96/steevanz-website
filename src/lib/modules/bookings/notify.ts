@@ -21,7 +21,8 @@ export function calendarEvent(booking: EstablishmentBookingRow, bundle: Establis
     start: booking.starts_at,
     end: booking.ends_at,
     title: `${bookingSummary(booking, bundle)} · ${establishment.name}`,
-    description: [establishment.address, establishment.phone].filter(Boolean).join(" · "),
+    description: [establishment.address, establishment.phone, establishment.maps_url ? `Google Maps: ${establishment.maps_url}` : null].filter(Boolean).join(" · "),
+    location: [establishment.name, establishment.address].filter(Boolean).join(", "),
   };
 }
 

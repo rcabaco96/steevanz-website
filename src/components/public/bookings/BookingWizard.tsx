@@ -380,9 +380,9 @@ export function BookingWizard({
             </label>
             <label className={publicLabel}>
               Email
-              <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" placeholder="Para receber a confirmação" className={publicInput} />
+              <input name="email" type="email" required maxLength={200} autoComplete="email" inputMode="email" placeholder="Para receber a confirmação" className={publicInput} />
             </label>
-            <PhoneField label="Telemóvel" labelClassName={publicLabel} inputClassName={publicInput} />
+            <PhoneField label="Telemóvel (opcional)" labelClassName={publicLabel} inputClassName={publicInput} />
             <label className={publicLabel}>
               Notas (opcional)
               <textarea name="notes" rows={2} maxLength={500} placeholder={mode === "table" ? "Alergias, cadeira de bebé, pedidos especiais…" : "Algo que devamos saber?"} className={`${publicInput} h-auto py-2.5`} />
