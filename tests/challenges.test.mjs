@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { challengeOrder, chaseMaxFiveStars, competitionChallenges, paceRace } from "../src/lib/reviews/challenges.ts";
+import { challengeOrder, chaseMaxFiveStars, competitionChallenges, monthlyChallenge, monthlyStepMin, paceRace } from "../src/lib/reviews/challenges.ts";
 import { computeCompetition, fiveStarsToRank, rankScore } from "../src/lib/reviews/competitors.ts";
 
 const now = new Date("2026-10-11T12:00:00Z");
@@ -47,7 +47,8 @@ describe("competition challenges", () => {
     const result = challenges([entry("a", 4.9, 2000), me(4.0, 20)]);
     assert.ok(fiveStarsToRank(4.0, 20, rankScore(4.9, 2000)) > chaseMaxFiveStars);
     assert.equal(result.chase, null);
-    assert.equal(result.monthly, null);
+    // Too far to chase: the month still has a challenge, at the own pace.
+    assert.equal(result.monthly.kind, "pace");
   });
 
   it("at 1.º, counts how many 5★ reviews the 2.º needs to pass the customer", () => {
@@ -88,8 +89,9 @@ describe("competition challenges", () => {
     ];
     const result = challenges([entry("big", 4.0, 110), me(4.6, 100), entry("small", 3.0, 20)], reviews);
     assert.deepEqual(result.reviewsChase, { name: "big", reviews: 11, rank: 2, reachRank: 1 });
-    // The month's challenge is only about the ranking: here the customer is already above "big" there.
-    assert.equal(result.monthly, null);
+    // The month's challenge is only about the ranking: here the customer is already 1.º there.
+    assert.equal(result.monthly.kind, "lead");
+    assert.equal(result.monthly.doneThisMonth, 2, "only 5★ of this month count");
     // With a ranking chase: the 5★ of this month are counted.
     const rank = challenges([entry("a", 4.55, 60), me(4.5, 40), entry("b", 3.5, 300)], reviews);
     assert.equal(rank.monthly.kind, "rank");
@@ -144,6 +146,46 @@ describe("competition challenges", () => {
     const alone = challenges([me(4.6, 100), entry("b", null, 0)]);
     assert.equal(alone.defend, null);
     assert.equal(alone.chase, null);
-    assert.equal(alone.monthly, null);
+    assert.equal(alone.monthly.kind, "lead");
+    assert.equal(alone.monthly.name, null);
+  });
+});
+
+describe("the month's challenge, for everyone", () => {
+  const at = (iso, rating = 5) => ({ rating, publishedAt: iso });
+  // 2026-10-12: 2 five-star reviews this month, 9 in the last 90 days (3 a month).
+  const reviews = [
+    at("2026-10-02T10:00:00Z"),
+    at("2026-10-05T10:00:00Z"),
+    at("2026-10-06T10:00:00Z", 4),
+    ...["2026-09-20", "2026-09-10", "2026-08-30", "2026-08-15", "2026-07-30", "2026-07-20"].map((day) => at(`${day}T10:00:00Z`)),
+    at("2026-05-01T10:00:00Z"),
+  ];
+
+  it("chases the place above when it is within reach", () => {
+    const month = monthlyChallenge({ chase: { name: "a", fiveStars: 6, reachRank: 2 }, ratingRank: 3, second: null }, reviews, now);
+    assert.deepEqual(month, { kind: "rank", name: "a", missing: 6, target: 8, reachRank: 2, totalMissing: null, doneThisMonth: 2 });
+  });
+
+  it("gives a step a bit above the own pace when the place above is far", () => {
+    const month = monthlyChallenge({ chase: { name: "a", fiveStars: 40, reachRank: 2 }, ratingRank: 3, second: null }, reviews, now);
+    assert.equal(month.kind, "step");
+    assert.equal(month.target, 4, "3 a month × 1.2, rounded up");
+    assert.equal(month.missing, 2);
+    assert.equal(month.totalMissing, 40);
+  });
+
+  it("widens the lead at 1.º and falls back to the pace without a ranking", () => {
+    assert.equal(monthlyChallenge({ chase: null, ratingRank: 1, second: "b" }, reviews, now).kind, "lead");
+    const alone = monthlyChallenge(null, [], now);
+    assert.equal(alone.kind, "pace");
+    assert.equal(alone.target, monthlyStepMin);
+    assert.equal(alone.missing, monthlyStepMin);
+  });
+
+  it("is done once the month's target is reached", () => {
+    const busy = Array.from({ length: 5 }, (_, day) => at(`2026-10-0${day + 1}T10:00:00Z`));
+    const month = monthlyChallenge(null, busy, now);
+    assert.equal(month.missing, 0);
   });
 });

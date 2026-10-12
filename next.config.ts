@@ -17,7 +17,8 @@ const nextConfig: NextConfig = {
   experimental: {
     globalNotFound: true,
     optimizePackageImports: ["motion"],
-    inlineCss: true,
+    // inlineCss left on 2026-10-12: it copied the whole stylesheet (~140 KB) into every prerendered page
+    // and navigation payload (~385 MB per deployment, over the Vercel Hobby storage) and into every page change.
     // The establishment's logo is sent through a server action (up to 2 MB, plus the form's own bytes).
     serverActions: { bodySizeLimit: "3mb" },
   },

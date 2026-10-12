@@ -377,8 +377,11 @@ Seguir a skill `skeletons`: blocos que atualizam mostram skeleton, só nas parte
   - **Só o ranking** (dono, 2026-10-12): as frases de total de reviews («Faltam N reviews para ter
     mais reviews do que o Y») e a corrida ao ritmo continuam calculadas (`reviewsChase`, `pace`)
     mas **nunca aparecem**, tal como a ameaça.
-  - **Desafio deste mês:** passar o negócio logo acima no ranking com ≤ 15 reviews de 5★ em falta,
-    com barra das reviews de 5★ recebidas desde o dia 1 (hora de Lisboa) + as que faltam.
+  - **Desafio deste mês: todos os clientes têm um** (dono, 2026-10-12; `monthlyChallenge`), só de
+    reviews de 5★ recebidas desde o dia 1 (hora de Lisboa), com barra: **passar** o negócio logo acima
+    no ranking com ≤ 15 em falta; mais longe (≤ 100), **o primeiro passo** deste mês para o passar; em
+    1.º, **aumentar a vantagem**; sem ranking, **crescer**. Nos três últimos o objetivo do mês é 5★ dos
+    últimos 90 dias ÷ 3 × 1,2, arredondado para cima, entre 3 e 15; ao chegar lá: «Desafio cumprido».
   - **Conquistas do último mês** (Destaques): lugares ganhos no ranking e subida da média
     (≥ 0,01★), da `competitionTrend`. Sem emojis (o painel não os usa).
   - Onde: «Na sua zona» mostra o desafio e 2 frases por prioridade (subir no ranking → defesa do

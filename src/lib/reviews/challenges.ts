@@ -66,13 +66,32 @@ export interface PaceRace {
   months: number;
 }
 
+/** The month's target of 5★ reviews when there is no place above within reach: a bit above the own pace. */
+export const monthlyStepMin = 3;
+/** «Um pouco acima do seu ritmo»: the own 5★ pace of the last 3 months times this, rounded up. */
+export const monthlyStepFactor = 1.2;
+
+/**
+ * «Desafio deste mês», always there (owner, 2026-10-12: «todos têm de ter o desafio do mês»):
+ * - "rank": the place right above in the ranking is within reach (≤ monthlyChallengeMax 5★ reviews);
+ * - "step": it is further (≤ chaseMaxFiveStars): this month's step towards passing it;
+ * - "lead": the customer is 1.º: 5★ reviews this month to widen the lead;
+ * - "pace": no ranking yet (or no place above to chase): 5★ reviews this month, a bit above the own pace.
+ * Only 5★ reviews count, all kinds alike.
+ */
 export interface MonthlyChallenge {
-  kind: "rank" | "reviews";
-  name: string;
-  /** Reviews still missing (5★ for "rank"). */
+  kind: "rank" | "step" | "lead" | "pace";
+  /** The place to pass ("rank", "step") or the 2.º ("lead", when known). */
+  name: string | null;
+  /** 5★ reviews still missing: to pass the place ("rank"), or to reach this month's target. */
   missing: number;
-  reachRank: number;
-  /** Reviews already received this calendar month (Lisbon), 5★ only for "rank". */
+  /** This month's target of 5★ reviews ("step", "lead", "pace"); for "rank", done + missing. */
+  target: number;
+  /** "rank": the position reached; "step": the position once the place is passed. */
+  reachRank: number | null;
+  /** "step": 5★ reviews still needed in total to pass the place. */
+  totalMissing: number | null;
+  /** 5★ reviews already received this calendar month (Lisbon). */
   doneThisMonth: number;
 }
 
@@ -194,14 +213,8 @@ export function competitionChallenges(competition: Competition | null, ownReview
     if (ahead) pace = paceRace(ahead.name, gap.reviewsDiff, ahead.pacePerMonth, self.pacePerMonth);
   }
 
-  // The month's challenge: passing the place right above in the ranking, when it is within reach.
   // Only the ranking since 2026-10-12 (owner): one position, so it never gets confused with another.
-  const thisMonth = lisbonMonth(now.toISOString());
-  const receivedThisMonth = ownReviews.filter((review) => Date.parse(review.publishedAt) <= now.getTime() && lisbonMonth(review.publishedAt) === thisMonth);
-  const monthly: MonthlyChallenge | null =
-    chase && chase.fiveStars <= monthlyChallengeMax
-      ? { kind: "rank", name: chase.name, missing: chase.fiveStars, reachRank: chase.reachRank, doneThisMonth: receivedThisMonth.filter((review) => review.rating === 5).length }
-      : null;
+  const monthly = monthlyChallenge({ chase, ratingRank: competition.ratingRank, second: index === 0 ? (below?.name ?? null) : null }, ownReviews, now);
 
   let wins: CompetitionWins | null = null;
   const trend = competition.trend;
@@ -219,6 +232,36 @@ export function competitionChallenges(competition: Competition | null, ownReview
   }
 
   return { chase, defend, threat, reviewsChase, pace, monthly, wins };
+}
+
+/**
+ * The month's challenge (see MonthlyChallenge), for every customer: `ranking` is null without a
+ * comparison. `ownReviews` are the customer's imported reviews (5★ this month and the pace).
+ */
+export function monthlyChallenge(
+  ranking: { chase: RankChase | null; ratingRank: number; second: string | null } | null,
+  ownReviews: OwnReview[],
+  now: Date,
+): MonthlyChallenge {
+  const nowMs = now.getTime();
+  const thisMonth = lisbonMonth(now.toISOString());
+  const fiveStars = ownReviews.filter((review) => review.rating === 5 && Date.parse(review.publishedAt) <= nowMs);
+  const done = fiveStars.filter((review) => lisbonMonth(review.publishedAt) === thisMonth).length;
+  const chase = ranking?.chase ?? null;
+  if (chase && chase.fiveStars <= monthlyChallengeMax) {
+    return { kind: "rank", name: chase.name, missing: chase.fiveStars, target: done + chase.fiveStars, reachRank: chase.reachRank, totalMissing: null, doneThisMonth: done };
+  }
+  // A bit above the own 5★ pace of the last 3 months, never under monthlyStepMin nor over the max.
+  const since = nowMs - 90 * 86_400_000;
+  const pace = fiveStars.filter((review) => Date.parse(review.publishedAt) >= since).length / 3;
+  let target = Math.min(monthlyChallengeMax, Math.max(monthlyStepMin, Math.ceil(pace * monthlyStepFactor - 1e-9)));
+  const base = { missing: Math.max(0, target - done), target, doneThisMonth: done };
+  if (chase) {
+    target = Math.min(target, chase.fiveStars);
+    return { kind: "step", name: chase.name, ...base, missing: Math.max(0, target - done), target, reachRank: chase.reachRank, totalMissing: chase.fiveStars };
+  }
+  if (ranking?.ratingRank === 1) return { kind: "lead", name: ranking.second, ...base, reachRank: null, totalMissing: null };
+  return { kind: "pace", name: null, ...base, reachRank: null, totalMissing: null };
 }
 
 export type ChallengeKind = "defend" | "threat" | "chase" | "reviews" | "pace";
