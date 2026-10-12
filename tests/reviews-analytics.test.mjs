@@ -174,8 +174,11 @@ describe("sample-size guards", () => {
     };
     const analytics = computeAnalytics(source, "30d", now);
     assert.equal(analytics.kpis.reviews.previous, null);
-    assert.equal(analytics.beforeAfter, null);
-    assert.equal(analytics.beforeAfterGap, "too-early");
+    // From the day the plates went in: real counts over the same number of days before (owner, 2026-10-12).
+    assert.equal(analytics.beforeAfter.shortDays, 8);
+    assert.equal(analytics.beforeAfter.after.reviews, 1);
+    assert.equal(analytics.beforeAfter.before.reviews, 0);
+    assert.equal(analytics.beforeAfter.upliftPct, null);
   });
 });
 

@@ -83,7 +83,7 @@ const infoTexts = {
   themes:
     "Detetamos os temas no texto das reviews com listas de palavras em português e inglês (ex.: «espera», «demora», «fila» para Tempo de espera). «Ponto forte»: pelo menos 5 menções, média acima da média geral e 80% ou mais positivas (4–5★). «A melhorar»: pelo menos 5 menções e 30% ou mais negativas (1–3★), ou média 0,4★ abaixo da geral.",
   beforeAfter:
-    "Compara o tempo desde a instalação das placas com igual número de meses antes (mínimo 3 meses). Reviews por mês = reviews no intervalo ÷ meses. Só aparece com pelo menos 1 mês de placas e 3 reviews antes. Não depende do filtro de período.",
+    "Nos primeiros 30 dias das placas: as reviews recebidas desde o dia da instalação, comparadas com as do mesmo número de dias logo antes. São números reais, sem projeções. A partir de 30 dias: compara o tempo desde a instalação com igual número de meses antes (mínimo 3 meses), em reviews por mês (reviews no intervalo ÷ meses), com pelo menos 3 reviews antes. Não depende do filtro de período.",
   replies:
     "Percentagem das reviews do período que já têm resposta do dono no Google; o tempo é a mediana entre a review e a resposta. Ao atualizar, vemos as respostas novas a reviews dos últimos 90 dias; respostas a reviews mais antigas aparecem na verificação do histórico completo (todos os meses, ou com o link por baixo de «Atualizar reviews»).",
   recommendations: "Cada sugestão só aparece quando os seus dados mostram um sinal concreto (indicado em cada cartão) e nunca para serviços que já tem.",
@@ -641,7 +641,12 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics, cha
           : `Está em ${competition.ratingRank}.º de ${competition.total} no ranking (nota e número de reviews) entre os negócios da mesma categoria num raio de ${radiusLabel(source.business.competitorRadiusKm)}. Veja abaixo quanto falta para subir.`,
     });
   }
-  if (beforeAfter && beforeAfter.upliftPct !== null && Math.abs(beforeAfter.upliftPct) >= 10) {
+  if (beforeAfter?.shortDays && beforeAfter.after.reviews > beforeAfter.before.reviews) {
+    items.push({
+      text: `Desde que as placas foram instaladas, há ${plural(beforeAfter.shortDays, "dia", "dias")}, recebeu ${plural(beforeAfter.after.reviews, "review", "reviews")}, contra ${formatInt(beforeAfter.before.reviews)} nos mesmos dias antes.`,
+      info: { label: "Antes e depois das placas", text: infoTexts.beforeAfter },
+    });
+  } else if (beforeAfter && !beforeAfter.shortDays && beforeAfter.upliftPct !== null && Math.abs(beforeAfter.upliftPct) >= 10) {
     items.push({
       text: `Desde que as placas foram instaladas, recebe em média ${formatRating(beforeAfter.after.reviewsPerMonth)} reviews por mês, ${formatSignedPercent(beforeAfter.upliftPct)} face aos meses anteriores (${formatRating(beforeAfter.before.reviewsPerMonth)}/mês).`,
     });
@@ -711,7 +716,6 @@ function insightsFor(source: DashboardSource, analytics: DashboardAnalytics, cha
 
 function beforeAfterGapText(gap: DashboardAnalytics["beforeAfterGap"]): string {
   if (gap === "no-install-date") return "Indique à Steevanz a data de instalação das placas para comparar o antes e o depois.";
-  if (gap === "too-early") return "As placas foram instaladas há menos de um mês. A comparação aparece quando houver pelo menos um mês de dados.";
   return "Não há reviews suficientes antes das placas para fazer uma comparação justa.";
 }
 
@@ -948,16 +952,35 @@ export function ReviewsDashboard({
 
       {hasPlates ? (
       <Refreshable scopes={["sync"]}>
-  <Section id="before-after" info={infoTexts.beforeAfter} title="Antes e depois das placas" lead="Compara o tempo desde a instalação com igual período anterior (independente do filtro).">
+  <Section
+          id="before-after"
+          info={infoTexts.beforeAfter}
+          title="Antes e depois das placas"
+          lead={
+            analytics.beforeAfter?.shortDays
+              ? `Desde a instalação (${plural(analytics.beforeAfter.shortDays, "dia", "dias")}) contra os mesmos dias logo antes. Números reais, sem projeções.`
+              : "Compara o tempo desde a instalação com igual período anterior (independente do filtro)."
+          }
+        >
           {analytics.beforeAfter ? (
             <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
               {[
-                {
-                  label: "Reviews por mês",
-                  before: formatRating(analytics.beforeAfter.before.reviewsPerMonth),
-                  after: formatRating(analytics.beforeAfter.after.reviewsPerMonth),
-                  note: analytics.beforeAfter.upliftPct !== null ? `${formatSignedPercent(analytics.beforeAfter.upliftPct)} reviews por mês` : null,
-                },
+                analytics.beforeAfter.shortDays
+                  ? {
+                      label: "Reviews recebidas",
+                      before: formatInt(analytics.beforeAfter.before.reviews),
+                      after: formatInt(analytics.beforeAfter.after.reviews),
+                      note:
+                        analytics.beforeAfter.after.reviews > analytics.beforeAfter.before.reviews
+                          ? `+${plural(analytics.beforeAfter.after.reviews - analytics.beforeAfter.before.reviews, "review", "reviews")}`
+                          : null,
+                    }
+                  : {
+                      label: "Reviews por mês",
+                      before: formatRating(analytics.beforeAfter.before.reviewsPerMonth),
+                      after: formatRating(analytics.beforeAfter.after.reviewsPerMonth),
+                      note: analytics.beforeAfter.upliftPct !== null ? `${formatSignedPercent(analytics.beforeAfter.upliftPct)} reviews por mês` : null,
+                    },
                 {
                   label: "Avaliação média",
                   before: `${formatRating(analytics.beforeAfter.before.avgRating)}★`,
@@ -986,7 +1009,7 @@ export function ReviewsDashboard({
                       <span className="text-3xl font-semibold tracking-[-0.02em] text-text">{item.after}</span>
                     </div>
                   </div>
-                  {item.note ? <p className={`text-sm font-semibold ${analytics.beforeAfter!.upliftPct! >= 0 ? "text-success" : "text-danger"}`}>{item.note}</p> : null}
+                  {item.note ? <p className={`text-sm font-semibold ${item.note.startsWith("+") ? "text-success" : "text-danger"}`}>{item.note}</p> : null}
                 </div>
               ))}
             </div>

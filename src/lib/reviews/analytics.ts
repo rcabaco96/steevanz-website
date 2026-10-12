@@ -48,14 +48,23 @@ export interface BeforeAfter {
   before: PeriodStats;
   after: PeriodStats;
   upliftPct: number | null;
+  /**
+   * Days since the plates went in while under `beforeAfterMonthlyFromDays`: then «before» is the same
+   * number of days right before them and the dashboard shows real counts, no per-month projection.
+   * Null from then on (reviews per month over up to 3 months before).
+   */
+  shortDays: number | null;
 }
+
+/** From this many days of plates on, the comparison is in reviews per month (before: real counts). */
+export const beforeAfterMonthlyFromDays = 30;
 
 /**
  * Why the before/after comparison is missing, so the dashboard can say so instead of hiding it.
  * `no-plates`: the client doesn't have the plates product, so the comparison (and its section)
  * doesn't exist for them at all.
  */
-export type BeforeAfterGap = "no-plates" | "no-install-date" | "too-early" | "no-history" | null;
+export type BeforeAfterGap = "no-plates" | "no-install-date" | "no-history" | null;
 
 /** The product the «Antes e depois das placas» comparison belongs to: the plates for Google reviews. */
 export const platesProductId = "google-review-plates";
@@ -227,7 +236,17 @@ function computeBeforeAfter(source: DashboardSource, now: Date): { value: Before
   const installed = Date.parse(`${installedOn}T00:00:00Z`);
   const monthMs = 30.44 * dayMs;
   const afterMonths = (now.getTime() - installed) / monthMs;
-  if (afterMonths < 1) return { value: null, gap: "too-early" };
+  // From the day the plates went in (owner, 2026-10-12: «quero desde o momento que vendo a placa»):
+  // the first days compare real counts with the same number of days right before.
+  const afterMs = Math.max(0, now.getTime() - installed);
+  if (afterMs < beforeAfterMonthlyFromDays * dayMs) {
+    const windowMs = Math.max(dayMs, afterMs);
+    const inRange = (from: number, to: number) => source.reviews.filter((review) => Date.parse(review.publishedAt) >= from && Date.parse(review.publishedAt) < to);
+    const before = statsFor(inRange(installed - windowMs, installed), windowMs / monthMs);
+    const after = statsFor(inRange(installed, now.getTime() + 1), windowMs / monthMs);
+    const upliftPct = before.reviews > 0 ? (after.reviews / before.reviews - 1) * 100 : null;
+    return { value: { installedOn, before, after, upliftPct, shortDays: Math.max(1, Math.ceil(afterMs / dayMs)) }, gap: null };
+  }
   const firstReview = source.reviews.length ? Math.min(...source.reviews.map((review) => Date.parse(review.publishedAt))) : installed;
   const beforeStart = Math.max(firstReview, installed - Math.max(afterMonths, 3) * monthMs);
   const beforeMonths = (installed - beforeStart) / monthMs;
@@ -241,7 +260,7 @@ function computeBeforeAfter(source: DashboardSource, now: Date): { value: Before
     afterMonths,
   );
   const upliftPct = before.reviewsPerMonth > 0 ? (after.reviewsPerMonth / before.reviewsPerMonth - 1) * 100 : null;
-  return { value: { installedOn, before, after, upliftPct }, gap: null };
+  return { value: { installedOn, before, after, upliftPct, shortDays: null }, gap: null };
 }
 
 function topWords(reviews: GoogleReview[], limit: number): WordCount[] {
