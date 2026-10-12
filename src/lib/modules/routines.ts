@@ -4,7 +4,7 @@ import type { EstablishmentBundle } from "@/lib/establishments/types";
 import { siteUrl } from "@/lib/site";
 import { sendReminder } from "./bookings/notify";
 import type { EstablishmentBookingRow } from "./bookings/store";
-import { applySchedule, ensureWaitlistSettings, settleQueue, staleAfterHours } from "./waitlist/store";
+import { applySchedule, ensureWaitlistSettings, staleAfterHours } from "./waitlist/store";
 
 // Routines of the establishment modules, run by the scheduler tick (every 15 minutes).
 
@@ -13,7 +13,7 @@ const reminderWindowHours = { from: 2, to: 24 } as const;
 /** Bookings made shortly before their time don't need a reminder. */
 const minLeadHours = 6;
 const remindersPerTick = 40;
-/** Waitlist entries (names, emails) are kept 30 days, as the join page says. */
+/** Waitlist entries (names, phones) are kept 30 days, as the join page says. */
 export const waitlistRetentionDays = 30;
 
 /** Address of the public pages in emails sent outside a request (no request origin to use). */
@@ -67,36 +67,28 @@ export async function runModuleRoutines(client: SupabaseClient, options: { now: 
   }
 
   // Tickets nobody closed (left waiting or called from a previous service) are closed as cancelled.
-  const { error: staleError } = await client
-    .from("waitlist_entries")
-    .update({ status: "cancelled", finished_at: new Date(now).toISOString() })
-    .in("status", ["waiting", "called"])
-    .lt("joined_at", stale);
-  if (staleError) throw new Error(`waitlist stale tickets: ${staleError.message}`);
+  // Left over from an earlier day: still waiting means they gave up; still called means they were served.
+  const [{ error: staleError }, { error: staleCalledError }] = await Promise.all([
+    client.from("waitlist_entries").update({ status: "cancelled", finished_at: new Date(now).toISOString() }).eq("status", "waiting").lt("joined_at", stale),
+    client.from("waitlist_entries").update({ status: "served", finished_at: new Date(now).toISOString(), close_reason: "auto" }).eq("status", "called").lt("joined_at", stale),
+  ]);
+  if (staleError || staleCalledError) throw new Error(`waitlist stale tickets: ${(staleError ?? staleCalledError)!.message}`);
 
   const { count: expired, error: purgeError } = await client.from("waitlist_entries").delete({ count: "exact" }).lt("joined_at", cutoff);
   if (purgeError) throw new Error(`waitlist retention: ${purgeError.message}`);
-  const waitlists = await settleWaitlists(client, now);
+  const waitlists = await settleWaitlists(client);
   return { reminders: { due: due.length, sent }, waitlistExpired: expired ?? 0, waitlists };
 }
 
-/**
- * Safety net for the automatic waitlist (the pages already do it whenever someone looks at the
- * queue): opening hours applied, and calls past the time to show up closed as served.
- */
-async function settleWaitlists(client: SupabaseClient, now: number) {
-  const [scheduled, overdue] = await Promise.all([
-    client.from("waitlist_settings").select("establishment_id").eq("auto_hours", true).limit(500),
-    client.from("waitlist_entries").select("establishment_id").eq("status", "called").lt("called_at", new Date(now - 60_000).toISOString()).limit(500),
-  ]);
-  if (scheduled.error) throw new Error(`waitlist schedule: ${scheduled.error.message}`);
-  if (overdue.error) throw new Error(`waitlist overdue: ${overdue.error.message}`);
-  const ids = new Set([...(scheduled.data ?? []), ...(overdue.data ?? [])].map((row: { establishment_id: string }) => row.establishment_id));
+/** Safety net for the automatic waitlist (the pages already do it whenever someone looks at the queue): opening hours applied. */
+async function settleWaitlists(client: SupabaseClient) {
+  const { data, error } = await client.from("waitlist_settings").select("establishment_id").eq("auto_hours", true).limit(500);
+  if (error) throw new Error(`waitlist schedule: ${error.message}`);
+  const ids = new Set((data ?? []).map((row: { establishment_id: string }) => row.establishment_id));
   for (const id of ids) {
     const establishment = await getEstablishment(id);
     if (!establishment) continue;
     await applySchedule(establishment, await ensureWaitlistSettings(establishment));
-    await settleQueue(id);
   }
   return { establishments: ids.size };
 }

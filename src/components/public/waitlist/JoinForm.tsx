@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useSyncExternalStore } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon } from "@/components/icons";
+import { PhoneField } from "@/components/shared/PhoneField";
 import { joinWaitlist } from "@/lib/modules/waitlist/actions";
 import { brandButton, publicInput, publicLabel } from "../BrandFrame";
 import { unlockAlerts } from "./alerts";
@@ -119,10 +120,7 @@ export function JoinForm({
           </select>
         </label>
       ) : null}
-      <label className={publicLabel}>
-        Email (opcional)
-        <input name="email" type="email" maxLength={200} autoComplete="email" inputMode="email" placeholder="Recomendado: avisamos também por email" className={publicInput} />
-      </label>
+      <PhoneField label="Telemóvel (opcional)" hint="Para a equipa lhe poder ligar, se for preciso." labelClassName={publicLabel} inputClassName={publicInput} />
       {state && !state.ok ? (
         <p role="alert" className="flex items-center gap-1.5 text-sm text-danger">
           <AlertIcon size={15} />
@@ -131,7 +129,7 @@ export function JoinForm({
       ) : null}
       <Submit label={submitLabel} />
       <p className="text-xs text-subtle">
-        O nome e o email servem só para esta fila e são apagados ao fim de 30 dias.
+        O nome e o telemóvel servem só para esta fila e são apagados ao fim de 30 dias.
       </p>
     </form>
   );

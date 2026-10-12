@@ -47,7 +47,7 @@ export async function CounterScreen({ ownerId, viewer, basePath, query }: { owne
   const bundle = await loadBundle(establishment);
   const hasQueue = products.includes("waitlist");
   const [queueData, bookingData] = await Promise.all([
-    hasQueue ? currentSettings(establishment, bundle).then(async (settings) => ({ settings, queue: await loadQueue(establishment, settings) })) : null,
+    hasQueue ? currentSettings(establishment, bundle).then(async (settings) => ({ settings, queue: await loadQueue(establishment) })) : null,
     products.includes("bookings") ? ensureBookingPage(establishment).then(async (page) => ({ page, today: await loadAgendaDay(bundle, page, zonedDateString(new Date(), establishment.time_zone)) })) : null,
   ]);
   const waiting = queueData?.queue.live.filter((entry) => entry.status === "waiting") ?? [];

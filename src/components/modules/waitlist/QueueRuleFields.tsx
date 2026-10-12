@@ -4,7 +4,6 @@ import { useState } from "react";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 
 const input = `${adminInputClasses} h-11`;
-const graceOptions = [2, 3, 5, 10, 15];
 
 type Ask = "ask_party" | "ask_service" | "ask_staff";
 
@@ -22,7 +21,6 @@ const askLabels: Record<Ask, string> = {
  */
 export function QueueRuleFields({
   avgMinutes,
-  graceMinutes,
   maxWaiting,
   maxParty,
   asks,
@@ -32,7 +30,6 @@ export function QueueRuleFields({
   staffLabel = "Profissional preferido",
 }: {
   avgMinutes: number;
-  graceMinutes: number;
   maxWaiting: number;
   maxParty: number;
   asks: Record<Ask, boolean>;
@@ -86,19 +83,6 @@ export function QueueRuleFields({
         </span>
       </label>
       <label className={adminLabelClasses}>
-        Tempo para chegar depois de chamado
-        <select name="grace_minutes" defaultValue={graceMinutes} className={input}>
-          {graceOptions.concat(graceOptions.includes(graceMinutes) ? [] : [graceMinutes]).map((minutes) => (
-            <option key={minutes} value={minutes}>
-              {minutes} minutos
-            </option>
-          ))}
-        </select>
-        <span className="text-xs font-normal text-subtle">
-          O cliente deve esperar no local: quando é chamado vê «venha já» e até que horas guardamos a vez. Depois disso, «Não apareceu» chama o seguinte.
-        </span>
-      </label>
-      <label className={adminLabelClasses}>
         Máximo à espera
         <input name="max_waiting" type="number" min={1} max={500} required defaultValue={maxWaiting} className={input} />
       </label>
@@ -107,7 +91,7 @@ export function QueueRuleFields({
         <input name="max_party" type="number" min={1} max={100} required defaultValue={maxParty} className={input} />
       </label>
       {on.ask_service ? (
-        <p className="text-xs text-subtle sm:col-span-2">A espera estimada soma a duração dos serviços das pessoas à frente, dividida pelos profissionais a trabalhar.</p>
+        <p className="text-xs text-subtle sm:col-span-2">A espera estimada soma o que falta dos serviços em curso e a duração dos serviços das pessoas à frente, repartidos pelos profissionais a trabalhar.</p>
       ) : null}
     </>
   );

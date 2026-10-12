@@ -6,7 +6,7 @@ import { startOfLocalDay, tokenPattern } from "../common";
 import { estimateWait, type EtaEntry } from "./eta";
 import { scheduledState } from "./schedule";
 
-export type QueueState = "open" | "paused" | "closed";
+export type QueueState = "open" | "closed";
 export type EntryStatus = "waiting" | "called" | "served" | "no_show" | "cancelled";
 export type EntryReply = "on_way" | "late" | "leaving";
 
@@ -19,6 +19,7 @@ export interface WaitlistSettingsRow {
   ask_staff: boolean;
   max_party: number;
   max_waiting: number;
+  /** Not used any more (calls no longer close on their own). */
   grace_minutes: number;
   message: string | null;
   /** Opens and closes with the establishment's opening hours. */
@@ -26,6 +27,8 @@ export interface WaitlistSettingsRow {
   /** Marking «Não apareceu» calls the next ticket right away. */
   auto_next: boolean;
   state_changed_at: string;
+  /** Tickets are numbered from here: closing the queue starts them again at 1. */
+  numbers_from: string;
   updated_at: string;
 }
 
@@ -38,7 +41,9 @@ export interface WaitlistEntryRow {
   party_size: number | null;
   service_id: string | null;
   staff_id: string | null;
+  /** Older tickets only: the queue asks for a phone now. */
   email: string | null;
+  phone: string | null;
   notes: string | null;
   source: "online" | "staff";
   status: EntryStatus;
@@ -61,7 +66,7 @@ export interface WaitlistEntryRow {
 /** Tickets left waiting or called longer than this (e.g. from yesterday) are no longer part of the queue. */
 export const staleAfterHours = 12;
 
-export const stateLabels: Record<QueueState, string> = { open: "Aberta", paused: "Em pausa", closed: "Fechada" };
+export const stateLabels: Record<QueueState, string> = { open: "Aberta", closed: "Fechada" };
 export const replyLabels: Record<EntryReply, string> = { on_way: "A caminho", late: "Vai atrasar-se", leaving: "Já não vem" };
 export const statusLabels: Record<EntryStatus, string> = {
   waiting: "À espera",
@@ -122,20 +127,6 @@ export async function currentSettings(establishment: EstablishmentRow, bundle?: 
   return applySchedule(establishment, await ensureWaitlistSettings(establishment), bundle);
 }
 
-/** Called tickets past the time to show up: they close as served. */
-export function overdueCalls(live: WaitlistEntryRow[], settings: WaitlistSettingsRow, now: number): WaitlistEntryRow[] {
-  return live.filter(
-    (entry) => entry.status === "called" && entry.called_at && now - Date.parse(entry.called_at) > settings.grace_minutes * 60_000,
-  );
-}
-
-/** Closes overdue calls in the database as served. */
-export async function settleQueue(establishmentId: string): Promise<WaitlistEntryRow[]> {
-  const { data, error } = await createServiceClient().rpc("waitlist_settle", { p_establishment: establishmentId });
-  if (error) throw new Error(`waitlist settle: ${error.message}`);
-  return (data ?? []) as WaitlistEntryRow[];
-}
-
 export interface QueueSnapshot {
   /** Waiting and called, in queue order. */
   live: WaitlistEntryRow[];
@@ -147,18 +138,8 @@ export interface QueueSnapshot {
   now: number;
 }
 
-/**
- * The live queue. With the settings, overdue calls are settled first (closed as served), so every
- * page that shows the queue keeps it moving on its own.
- */
-export async function loadQueue(establishment: EstablishmentRow, settings?: WaitlistSettingsRow): Promise<QueueSnapshot> {
-  const snapshot = await readQueue(establishment);
-  if (!settings || !overdueCalls(snapshot.live, settings, snapshot.now).length) return snapshot;
-  await settleQueue(establishment.id);
-  return readQueue(establishment);
-}
-
-async function readQueue(establishment: EstablishmentRow): Promise<QueueSnapshot> {
+/** The live queue. Called tickets stay until the team marks them (served or no-show). */
+export async function loadQueue(establishment: EstablishmentRow): Promise<QueueSnapshot> {
   const client = createServiceClient();
   const dayStart = startOfLocalDay(establishment.time_zone).toISOString();
   const [live, done, calls] = await Promise.all([
@@ -199,21 +180,40 @@ function etaEntry(entry: WaitlistEntryRow, bundle: EstablishmentBundle, settings
   return { serviceMinutes: settings.ask_service ? (service?.duration_minutes ?? settings.avg_minutes) : null, staffId: entry.staff_id };
 }
 
-/** Place in the queue (1 = next) and estimated minutes for a waiting entry. */
-export function entryOutlook(entry: WaitlistEntryRow, queue: QueueSnapshot, bundle: EstablishmentBundle, settings: WaitlistSettingsRow) {
+/**
+ * Estimated minutes until a waiting entry is called, or for someone joining now (no entry): the
+ * people ahead and, when the queue asks for the service, what is left of the services being done.
+ */
+export function queueWait(queue: QueueSnapshot, bundle: EstablishmentBundle, settings: WaitlistSettingsRow, entry?: WaitlistEntryRow): number {
   const waiting = queue.live.filter((item) => item.status === "waiting");
-  const index = waiting.findIndex((item) => item.id === entry.id);
+  const index = entry ? waiting.findIndex((item) => item.id === entry.id) : waiting.length;
   const ahead = index < 0 ? [] : waiting.slice(0, index);
-  const minutes = estimateWait({
+  const inService = settings.ask_service
+    ? queue.live
+        .filter((item) => item.status === "called" && item.called_at)
+        .map((item) => ({
+          staffId: item.staff_id,
+          minutesLeft: (etaEntry(item, bundle, settings).serviceMinutes ?? settings.avg_minutes) - (queue.now - Date.parse(item.called_at!)) / 60_000,
+        }))
+    : [];
+  const active = bundle.staff.filter((item) => item.active);
+  return estimateWait({
     ahead: ahead.map((item) => etaEntry(item, bundle, settings)),
-    self: etaEntry(entry, bundle, settings),
+    self: entry ? etaEntry(entry, bundle, settings) : { serviceMinutes: null, staffId: null },
+    inService,
     avgMinutes: settings.avg_minutes,
-    activeStaff: bundle.staff.filter((item) => item.active).length,
-    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
+    activeStaff: active.length,
+    staffIds: active.map((item) => item.id),
     recentCalls: queue.recentCalls,
     now: queue.now,
   });
-  return { position: index + 1, minutes };
+}
+
+/** The ticket being served now (the last one called), or the last one served today; null before the first call. */
+export function servingNumber(queue: QueueSnapshot): number | null {
+  const called = queue.live.filter((item) => item.status === "called" && item.called_at).sort((a, b) => Date.parse(b.called_at!) - Date.parse(a.called_at!))[0];
+  if (called) return called.number;
+  return queue.doneToday.find((item) => item.status === "served")?.number ?? null;
 }
 
 export async function getEntryByToken(token: string): Promise<WaitlistEntryRow | null> {
@@ -226,10 +226,8 @@ export async function getEntryByToken(token: string): Promise<WaitlistEntryRow |
 export interface WaitlistStats {
   days: number;
   joined: number;
-  /** Marked as served by the team (or the customer's «Cheguei»). */
+  /** Marked as served by the team (or, before, closed on their own after the call). */
   served: number;
-  /** Called and closed on their own once the time to show up passed (nobody marked anything). */
-  autoClosed: number;
   noShow: number;
   cancelled: number;
   /** Median minutes between joining and being called. */
@@ -266,8 +264,7 @@ export async function loadStats(establishment: EstablishmentRow, days = 30): Pro
   return {
     days,
     joined: rows.length,
-    served: rows.filter((row) => row.status === "served" && row.close_reason !== "auto").length,
-    autoClosed: rows.filter((row) => row.status === "served" && row.close_reason === "auto").length,
+    served: rows.filter((row) => row.status === "served").length,
     noShow: rows.filter((row) => row.status === "no_show").length,
     cancelled: rows.filter((row) => row.status === "cancelled").length,
     medianWait: median,
@@ -278,4 +275,9 @@ export async function loadStats(establishment: EstablishmentRow, days = 30): Pro
       })
       .sort((a, b) => b.count - a.count),
   };
+}
+
+/** How many people can be served at once: one per professional working (at least one). */
+export function servingCapacity(bundle: EstablishmentBundle): number {
+  return Math.max(1, bundle.staff.filter((item) => item.active).length);
 }

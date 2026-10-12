@@ -42,7 +42,6 @@ function QueueSettings({ settings, establishmentId, kind, hasServices, hasStaff 
         <input type="hidden" name="establishment_id" value={establishmentId} />
         <QueueRuleFields
           avgMinutes={settings.avg_minutes}
-          graceMinutes={settings.grace_minutes}
           maxWaiting={settings.max_waiting}
           maxParty={settings.max_party}
           asks={{ ask_party: settings.ask_party, ask_service: settings.ask_service, ask_staff: settings.ask_staff }}
@@ -97,11 +96,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
         {nav}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Tile label="Entraram na fila" value={String(stats.joined)} hint={`Últimos ${stats.days} dias.`} />
-          <Tile
-            label="Atendidos"
-            value={String(stats.served)}
-            hint={`Marcados como atendidos. ${stats.autoClosed ? `Mais ${stats.autoClosed} ${stats.autoClosed === 1 ? "chamado que fechou sozinho" : "chamados que fecharam sozinhos"} (ninguém marcou nada).` : "Nenhum chamado fechou sozinho."}`}
-          />
+          <Tile label="Atendidos" value={String(stats.served)} hint="Chamados e atendidos." />
           <Tile
             label="Desistências"
             value={String(left)}
@@ -175,7 +170,7 @@ export async function WaitlistModule({ userId, viewer, basePath, query, productI
     );
   }
 
-  const queue = await loadQueue(current, settings);
+  const queue = await loadQueue(current);
   const newest = queue.live.filter((entry) => entry.status === "waiting").sort((a, b) => Date.parse(b.joined_at) - Date.parse(a.joined_at))[0];
   return (
     <div className="flex flex-col gap-6">

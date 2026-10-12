@@ -5,7 +5,8 @@
 //   (once there are at least 3 calls), so the estimate follows the real rhythm of the day.
 // - Service queues (barbers, clinics): the people ahead are handed out in order, each to their own
 //   professional or, for "anyone", to whoever is free first; the wait is when this person's
-//   professional (or the first one free) gets to them. Free professionals mean no wait.
+//   professional (or the first one free) gets to them. People being served now keep their
+//   professional busy for what is left of their service. Free professionals mean no wait.
 // The result is rounded up to 5 minutes and always shown as an estimate.
 
 export interface EtaEntry {
@@ -21,6 +22,8 @@ export interface EtaInput {
   /** Who is asking (their own professional matters in service queues). */
   self?: EtaEntry;
   avgMinutes: number;
+  /** People being served now (service queues): who serves them and the minutes left. */
+  inService?: { staffId: string | null; minutesLeft: number }[];
   /** Professionals working (service queues). */
   activeStaff: number;
   /** Their ids, so people waiting for one of them go to that one (service queues). */
@@ -49,9 +52,10 @@ export function roundUpToFive(minutes: number): number {
 /** Minutes until this person is called (0 = next). */
 export function estimateWait(input: EtaInput): number {
   const { ahead, avgMinutes } = input;
-  if (!ahead.length) return 0;
-  const isServiceQueue = ahead.some((entry) => entry.serviceMinutes !== null);
+  const inService = input.inService ?? [];
+  const isServiceQueue = inService.length > 0 || [...ahead, ...(input.self ? [input.self] : [])].some((entry) => entry.serviceMinutes !== null);
   if (!isServiceQueue) {
+    if (!ahead.length) return 0;
     const pace = observedPace(input.recentCalls, input.now);
     const perTurn = pace === null ? avgMinutes : (avgMinutes + pace) / 2;
     return roundUpToFive(ahead.length * perTurn);
@@ -59,6 +63,10 @@ export function estimateWait(input: EtaInput): number {
   const servers = input.staffIds?.length ? input.staffIds : Array.from({ length: Math.max(1, input.activeStaff) }, (_, index) => `#${index}`);
   const busyUntil = new Map(servers.map((id) => [id, 0]));
   const firstFree = () => servers.reduce((best, id) => (busyUntil.get(id)! < busyUntil.get(best)! ? id : best), servers[0]);
+  for (const entry of inService) {
+    const server = entry.staffId && busyUntil.has(entry.staffId) ? entry.staffId : firstFree();
+    busyUntil.set(server, busyUntil.get(server)! + Math.max(0, entry.minutesLeft));
+  }
   for (const entry of ahead) {
     const server = entry.staffId && busyUntil.has(entry.staffId) ? entry.staffId : firstFree();
     busyUntil.set(server, busyUntil.get(server)! + (entry.serviceMinutes ?? avgMinutes));

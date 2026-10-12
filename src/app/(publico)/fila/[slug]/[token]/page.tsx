@@ -11,7 +11,7 @@ import { kindWords } from "@/lib/establishments/kinds";
 import { iconUrl } from "@/lib/establishments/logo-rules";
 import { loadBundle } from "@/lib/establishments/store";
 import { formatWait } from "@/lib/modules/waitlist/eta";
-import { currentSettings, entryOutlook, getEntryByToken, loadQueue } from "@/lib/modules/waitlist/store";
+import { currentSettings, getEntryByToken, loadQueue, queueWait, servingNumber } from "@/lib/modules/waitlist/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string; token: string }>; searchParams: Promise<{ voltou?: string }> };
@@ -50,13 +50,15 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
   if (!found || found.establishment_id !== establishment.id) notFound();
   const bundle = await loadBundle(establishment);
   const settings = await currentSettings(establishment, bundle);
-  const queue = await loadQueue(establishment, settings);
-  // Settling the queue may have just closed this ticket: read it again.
-  const entry = queue.live.find((item) => item.id === found.id) ?? (await getEntryByToken(token)) ?? found;
+  const queue = await loadQueue(establishment);
+  const entry = queue.live.find((item) => item.id === found.id) ?? found;
   const words = kindWords[establishment.kind];
   const called = entry.status === "called";
   const live = entry.status === "waiting" || called;
-  const outlook = entry.status === "waiting" ? entryOutlook(entry, queue, bundle, settings) : null;
+  const waiting = entry.status === "waiting";
+  const minutes = waiting ? queueWait(queue, bundle, settings, entry) : 0;
+  const ahead = waiting ? queue.live.filter((item) => item.status === "waiting" && item.sort_key < entry.sort_key).length : 0;
+  const serving = servingNumber(queue);
   const service = entry.service_id ? bundle.services.find((item) => item.id === entry.service_id) : null;
   const staff = entry.staff_id ? bundle.staff.find((item) => item.id === entry.staff_id) : null;
   const joinedAt = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(entry.joined_at));
@@ -67,12 +69,6 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
     `entrou às ${joinedAt}`,
   ].filter(Boolean);
   const done = entry.status === "served" || entry.status === "no_show" || entry.status === "cancelled" ? finished[entry.status] : null;
-  const deadline =
-    called && entry.called_at
-      ? new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(
-          new Date(Date.parse(entry.called_at) + settings.grace_minutes * 60_000),
-        )
-      : null;
 
   return (
     <BrandFrame establishment={establishment} service="Lista de espera">
@@ -98,21 +94,19 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
           {called ? (
             <div role="alert" className="mt-4 flex flex-col gap-1">
               <p className="display text-[1.7rem] leading-tight">{words.ready}</p>
-              <p className="opacity-85">
-                Venha já: guardamos a sua vez até às {deadline}.
-              </p>
+              <p className="opacity-85">Venha já: é a sua vez.</p>
             </div>
           ) : null}
         </div>
         <div className="ticket-tear" />
         <div className="flex flex-col gap-4 px-6 pt-5 pb-6">
-          {outlook ? (
+          {waiting ? (
             <>
               <div className="grid grid-cols-2 gap-4">
-                <Fact value={`${outlook.position}.º`} label="na fila" />
-                <Fact value={outlook.minutes ? formatWait(outlook.minutes).replace("cerca de ", "~ ") : "A seguir"} label={outlook.minutes ? "de espera estimada" : "é o próximo a ser chamado"} />
+                <Fact value={serving ? `Senha ${serving}` : "–"} label={serving ? "a ser atendida agora" : "ainda ninguém chamado"} />
+                <Fact value={minutes ? formatWait(minutes).replace("cerca de ", "~ ") : "A seguir"} label={minutes ? "até à sua vez (estimativa)" : "é o próximo a ser chamado"} />
               </div>
-              <QueueLine ahead={outlook.position - 1} withYou />
+              <QueueLine ahead={ahead} withYou />
             </>
           ) : null}
           {done ? <p className="text-muted">{done.text}</p> : null}

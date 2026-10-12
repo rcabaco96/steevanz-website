@@ -3,13 +3,13 @@
 //
 // - Inside an opening interval (and not a closed day), a closed queue opens on its own, unless it
 //   was closed by hand during this interval (then it stays closed until the next one).
-// - Outside the opening hours, an open or paused queue closes on its own, unless it was opened by
+// - Outside the opening hours, an open queue closes on its own, unless it was opened by
 //   hand after the last closing time (then it stays as the team left it).
 // Times are local to the establishment (DST-safe through the zoned helpers of the booking engine).
 
 import { addDaysToDate, parseTimeToMinutes, weekdayOfDate, zonedDateString, zonedDateTimeToUtc } from "../../booking/slots.ts";
 
-export type QueueState = "open" | "paused" | "closed";
+export type QueueState = "open" | "closed";
 
 export interface OpeningHours {
   weekday: number;

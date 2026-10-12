@@ -7,8 +7,8 @@ import { ScreenChime } from "@/components/public/waitlist/ScreenChime";
 import { requestOrigin } from "@/lib/booking/request";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
-import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
-import { currentSettings, loadQueue } from "@/lib/modules/waitlist/store";
+import { formatWait } from "@/lib/modules/waitlist/eta";
+import { currentSettings, loadQueue, queueWait } from "@/lib/modules/waitlist/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 /** Always dark (a TV at the door): the Steevanz accent of dark mode. */
@@ -29,22 +29,12 @@ export default async function WaitlistScreenPage({ params }: Props) {
   if (!establishment) notFound();
   const [bundle, origin] = await Promise.all([loadBundle(establishment), requestOrigin()]);
   const settings = await currentSettings(establishment, bundle);
-  const queue = await loadQueue(establishment, settings);
+  const queue = await loadQueue(establishment);
   const words = kindWords[establishment.kind];
   const called = queue.live.filter((entry) => entry.status === "called").sort((a, b) => Date.parse(b.called_at ?? "") - Date.parse(a.called_at ?? ""));
   const waiting = queue.live.filter((entry) => entry.status === "waiting");
   const [latest, ...earlier] = called;
-  const minutes = estimateWait({
-    ahead: waiting.map((entry) => ({
-      serviceMinutes: settings.ask_service ? (bundle.services.find((item) => item.id === entry.service_id)?.duration_minutes ?? settings.avg_minutes) : null,
-      staffId: entry.staff_id,
-    })),
-    avgMinutes: settings.avg_minutes,
-    activeStaff: bundle.staff.filter((item) => item.active).length,
-    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
-    recentCalls: queue.recentCalls,
-    now: queue.now,
-  });
+  const minutes = queueWait(queue, bundle, settings);
   const time = new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(queue.now));
   const open = settings.state === "open";
   // Customers pick who serves them: the estimate is for «qualquer barbeiro» (waiting for one in particular can take longer).
@@ -81,7 +71,7 @@ export default async function WaitlistScreenPage({ params }: Props) {
           )}
           {earlier.length ? (
             <div className="flex items-center gap-[1.5vw]">
-              <p className="shrink-0 text-[clamp(1rem,1.6vw,2rem)] text-white/60">Também chamados</p>
+              <p className="shrink-0 text-[clamp(1rem,1.6vw,2rem)] text-white/60">Também em atendimento</p>
               <ul className="flex gap-[1vw] overflow-hidden">
                 {earlier.slice(0, 6).map((entry) => (
                   <li key={entry.id} className="display rounded-[1vw] bg-white/10 px-[1.6vw] py-[0.6vh] text-[clamp(1.6rem,3.4vw,4rem)] leading-tight tabular-nums">
@@ -105,10 +95,8 @@ export default async function WaitlistScreenPage({ params }: Props) {
             </>
           ) : (
             <>
-              <p className="display text-[clamp(1.6rem,3vw,3.6rem)] leading-tight">{settings.state === "paused" ? "Entradas em pausa" : "Fila fechada"}</p>
-              <p className="text-[clamp(1rem,1.6vw,2rem)] text-white/65">
-                {settings.state === "paused" ? "Voltamos a aceitar entradas daqui a pouco." : "Quem já está na fila continua a ser chamado."}
-              </p>
+              <p className="display text-[clamp(1.6rem,3vw,3.6rem)] leading-tight">Fila fechada</p>
+              <p className="text-[clamp(1rem,1.6vw,2rem)] text-white/65">Quem já está na fila continua a ser chamado.</p>
             </>
           )}
           <div className="mt-[1vh] grid w-full grid-cols-2 gap-[1vw] border-t border-white/10 pt-[2vh]">

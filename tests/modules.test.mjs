@@ -83,6 +83,22 @@ describe("waitlist estimate", () => {
     assert.equal(estimateWait({ ahead, self: { serviceMinutes: 30, staffId: "rui" }, avgMinutes: 20, activeStaff: 2, staffIds: ["rui", "pedro"], recentCalls: [], now }), 45);
   });
 
+  it("counts what is left of the services being done now", () => {
+    const staffIds = ["rui", "pedro"];
+    // Both chairs busy (20 and 5 minutes left): someone joining now waits for the first one free.
+    const inService = [
+      { staffId: "rui", minutesLeft: 20 },
+      { staffId: null, minutesLeft: 5 },
+    ];
+    assert.equal(estimateWait({ ahead: [], inService, avgMinutes: 20, activeStaff: 2, staffIds, recentCalls: [], now }), 5);
+    // One ahead (30 min) takes the chair free in 5: the next free one is Rui's, in 20.
+    assert.equal(estimateWait({ ahead: [{ serviceMinutes: 30, staffId: null }], inService, avgMinutes: 20, activeStaff: 2, staffIds, recentCalls: [], now }), 20);
+    // Waiting for Rui: his current customer, then the one ahead for him.
+    assert.equal(estimateWait({ ahead: [{ serviceMinutes: 30, staffId: "rui" }], self: { serviceMinutes: 30, staffId: "rui" }, inService, avgMinutes: 20, activeStaff: 2, staffIds, recentCalls: [], now }), 50);
+    // A service running late counts as about to finish.
+    assert.equal(estimateWait({ ahead: [], inService: [{ staffId: "rui", minutesLeft: -10 }], avgMinutes: 20, activeStaff: 1, staffIds: ["rui"], recentCalls: [], now }), 0);
+  });
+
   it("rounds and formats", () => {
     assert.equal(roundUpToFive(1), 5);
     assert.equal(roundUpToFive(21), 25);
@@ -108,9 +124,9 @@ describe("waitlist opening hours", () => {
   it("leaves it closed when the team closed it during this service", () => {
     assert.equal(scheduledState({ ...base, state: "closed", stateChangedAt: at("13:00"), now: at("13:30") }), null);
   });
-  it("closes an open or paused queue after closing time", () => {
+  it("closes an open queue after closing time", () => {
     assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("12:00"), now: at("15:10") }), "closed");
-    assert.equal(scheduledState({ ...base, state: "paused", stateChangedAt: at("14:00"), now: at("16:00") }), "closed");
+    assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("14:00"), now: at("16:00") }), "closed");
   });
   it("respects a queue opened by hand after closing time", () => {
     assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("15:20"), now: at("16:00") }), null);
