@@ -241,12 +241,6 @@ select:not([multiple]):not([size]):not(.appearance-none) {
   background-repeat: no-repeat;
 }
 
-/* The team's PIN typed on a customer's phone: digits masked without a password field (which phones
-   offer to save). */
-.pin-mask {
-  -webkit-text-security: disc;
-}
-
 /* The open list in our colours, where the browser allows it (Chrome and Edge 135+); elsewhere the
    system list (on phones, the system picker, which is the easiest to use there). */
 @supports (appearance: base-select) {
@@ -599,10 +593,60 @@ html.reveal-ready [data-reveal] {
     }
   }
 
+  /* A reward won: the gift pops in and confetti falls around it. */
+  .reward-pop {
+    animation: reward-pop 0.8s var(--ease-out-expo) both;
+  }
+  @keyframes reward-pop {
+    0% {
+      transform: scale(0.2) rotate(-18deg);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.12) rotate(6deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) rotate(0);
+    }
+  }
+  .reward-rise {
+    animation: reward-rise 0.6s var(--ease-out-expo) 0.25s both;
+  }
+  @keyframes reward-rise {
+    from {
+      transform: translateY(14px);
+      opacity: 0;
+    }
+  }
+  .confetti-piece {
+    position: absolute;
+    top: -12px;
+    width: 9px;
+    height: 14px;
+    border-radius: 2px;
+    animation: confetti-fall var(--fall, 2.6s) cubic-bezier(0.25, 0.6, 0.45, 1) var(--delay, 0s) both;
+  }
+  @keyframes confetti-fall {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(var(--drift, 0px), 105vh, 0) rotate(var(--spin, 540deg));
+      opacity: 0.9;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .stamp-land,
-    .call-pulse {
+    .call-pulse,
+    .reward-pop,
+    .reward-rise {
       animation: none;
+    }
+    .confetti-piece {
+      display: none;
     }
   }
 }

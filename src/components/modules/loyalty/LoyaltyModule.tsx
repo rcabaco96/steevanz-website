@@ -6,7 +6,7 @@ import { requestOrigin } from "@/lib/booking/request";
 import { moduleEstablishments } from "@/lib/establishments/provision";
 import { loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
-import { saveProgram, setStaffCode, staffDeleteCard, staffMigrateStamps, staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
+import { saveProgram, staffDeleteCard, staffMigrateStamps, staffRedeem, staffRemoveStamp, staffStamp } from "@/lib/modules/loyalty/actions";
 import { cardRewards, formatCardCode, maxMilestones, missingText, rewardsSentence } from "@/lib/modules/loyalty/rules";
 import {
   availableRewards,
@@ -260,33 +260,6 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
   );
 }
 
-function StaffCodeSettings({ program, establishmentId, timeZone }: { program: LoyaltyProgramRow; establishmentId: string; timeZone: string }) {
-  const input = `${adminInputClasses} h-11 tracking-[0.3em]`;
-  return (
-    <Panel title="PIN de carimbo">
-      <p className="-mt-2 mb-4 text-sm text-muted">
-        6 algarismos que só o dono e os funcionários sabem. O cliente mostra o cartão no telemóvel, o funcionário escreve o PIN e o carimbo aparece: assim o
-        cliente não consegue carimbar sozinho. Serve também para entregar recompensas. Não o deixe à vista; se suspeitar que foi divulgado, mude-o aqui.
-        {program.staff_code_set_at
-          ? ` Definido a ${new Intl.DateTimeFormat("pt-PT", { timeZone, dateStyle: "medium", timeStyle: "short" }).format(new Date(program.staff_code_set_at))}.`
-          : ""}
-      </p>
-      <ActionForm action={setStaffCode} className="flex flex-wrap items-end gap-3">
-        <input type="hidden" name="establishment_id" value={establishmentId} />
-        <label className={adminLabelClasses}>
-          Novo PIN
-          <input name="code" type="password" inputMode="numeric" pattern="\d{6}" maxLength={6} required autoComplete="new-password" className={input} />
-        </label>
-        <label className={adminLabelClasses}>
-          Repetir
-          <input name="confirm" type="password" inputMode="numeric" pattern="\d{6}" maxLength={6} required autoComplete="new-password" className={input} />
-        </label>
-        <SubmitButton size="sm">{program.staff_code_set_at ? "Mudar PIN" : "Definir PIN"}</SubmitButton>
-      </ActionForm>
-    </Panel>
-  );
-}
-
 function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
     <div className="card flex flex-col gap-1 p-4">
@@ -304,15 +277,7 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
   const view = pickView(query, views);
   const program = await ensureProgram(current);
   const nav = <ModuleNav basePath={basePath} establishments={establishments} current={current} views={views} view={view} />;
-  const settingsHref = `${basePath}?${new URLSearchParams({ ...(establishments.length > 1 ? { loja: current.slug } : {}), vista: "definicoes" })}`;
-  const codeMissing = !program.staff_code_set_at ? (
-    <p className="rounded-2xl border border-gold/40 bg-gold-soft px-4 py-3 text-sm text-gold-text">
-      Falta definir o <strong>PIN de carimbo</strong>: sem ele, só consegue dar carimbos aqui no painel (procurando o cliente).{" "}
-      <Link href={settingsHref} className="font-semibold underline">
-        Definir agora
-      </Link>
-    </p>
-  ) : null;
+
 
   if (view === "clientes" || view === "carimbar") {
     const term = view === "carimbar" ? queryValue(query, "q").trim() : "";
@@ -326,7 +291,6 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
     return (
       <div className="flex flex-col gap-6">
         {nav}
-        {codeMissing}
         {view === "carimbar" ? (
           <form method="get" action={basePath} className="flex gap-2" role="search">
             {establishments.length > 1 ? <input type="hidden" name="loja" value={current.slug} /> : null}
@@ -390,7 +354,6 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
     return (
       <div className="flex flex-col gap-6">
         {nav}
-        <StaffCodeSettings program={program} establishmentId={current.id} timeZone={current.time_zone} />
         <ProgramSettings program={program} establishmentId={current.id} />
         <EstablishmentSettings bundle={bundle} viewer={viewer} sections={["details"]} />
       </div>
@@ -401,7 +364,6 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
   return (
     <div className="flex flex-col gap-6">
       {nav}
-      {codeMissing}
       <Materials
         title="Página de adesão"
         url={url}

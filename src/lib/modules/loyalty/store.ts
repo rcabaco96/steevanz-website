@@ -1,4 +1,4 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { kindDefaults } from "@/lib/establishments/kinds";
 import { isUuid } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
@@ -75,22 +75,6 @@ export async function ensureProgram(establishment: EstablishmentRow): Promise<Lo
     .single();
   if (insertError) throw new Error(`loyalty program insert: ${insertError.message}`);
   return created as LoyaltyProgramRow;
-}
-
-export function hashStaffCode(code: string, salt: string): string {
-  return createHash("sha256").update(`${salt}:${code}`).digest("hex");
-}
-
-export function newStaffCodeHash(code: string): { staff_code_hash: string; staff_code_salt: string } {
-  const salt = randomBytes(16).toString("hex");
-  return { staff_code_hash: hashStaffCode(code, salt), staff_code_salt: salt };
-}
-
-export function staffCodeMatches(program: LoyaltyProgramRow, code: string): boolean {
-  if (!program.staff_code_hash || !program.staff_code_salt) return false;
-  const given = Buffer.from(hashStaffCode(code, program.staff_code_salt), "hex");
-  const stored = Buffer.from(program.staff_code_hash, "hex");
-  return given.length === stored.length && timingSafeEqual(given, stored);
 }
 
 export function newCardCode(): string {

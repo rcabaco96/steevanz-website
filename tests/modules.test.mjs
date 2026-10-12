@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { kindFromCategory, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
 import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/schedule.ts";
-import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, isLocked, isStaffCode, missingText, nextReward, normalizeCardCode, parseEuros, rewardInSentence, rewardsCrossed, rewardsSentence, stampRuleText, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
+import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, missingText, nextReward, normalizeCardCode, parseEuros, rewardInSentence, rewardsCrossed, rewardsSentence, stampRuleText, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
 import { parseSubscription } from "../src/lib/modules/waitlist/push-rules.ts";
@@ -157,16 +157,6 @@ describe("loyalty rules", () => {
     for (const char of code) assert.ok(codeAlphabet.includes(char));
     assert.equal(formatCardCode("K7P29Q"), "K7P 29Q");
     assert.equal(normalizeCardCode(" k7p-29q "), "K7P29Q");
-  });
-
-  it("checks staff codes and locks", () => {
-    assert.ok(isStaffCode("123456"));
-    assert.ok(!isStaffCode("12345"));
-    assert.ok(!isStaffCode("12a456"));
-    const now = Date.now();
-    assert.ok(isLocked(new Date(now + minute).toISOString(), now));
-    assert.ok(!isLocked(new Date(now - minute).toISOString(), now));
-    assert.ok(!isLocked(null, now));
   });
 
   it("draws the stamp slots", () => {

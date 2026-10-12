@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { QrCode } from "@/components/modules/shared/QrCode";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
-import { RedeemWithCodeForm, RememberCard, StampWithCodeForm } from "@/components/public/loyalty/CardForms";
+import { RememberCard } from "@/components/public/loyalty/CardForms";
+import { RewardCelebration } from "@/components/public/loyalty/RewardCelebration";
 import { StampCard } from "@/components/public/loyalty/StampCard";
 import { requestOrigin } from "@/lib/booking/request";
 import { cardRewards, formatCardCode, missingText, nextReward, stampRuleText } from "@/lib/modules/loyalty/rules";
@@ -51,7 +52,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
 
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
-      <RememberCard slug={establishment.slug} token={card.token} />
+      <RememberCard slug={establishment.slug} token={card.token} name={card.name} />
       {/* A stamp given from the staff panel shows up while the customer is at the counter. */}
       <AutoRefresh intervalMs={10_000} />
       <StampCard
@@ -78,6 +79,7 @@ export default async function LoyaltyCardPage({ params }: Props) {
         </p>
       ) : null}
 
+      {rewards.length ? <RewardCelebration rewardId={rewards[0].id} label={rewards[0].label ?? program.reward} /> : null}
       {rewards.length ? (
         <article className="ticket overflow-hidden">
           <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
@@ -87,16 +89,15 @@ export default async function LoyaltyCardPage({ params }: Props) {
             {rewards[0].expires_at ? <p className="mt-1 text-sm text-muted">Válida até {format.format(new Date(rewards[0].expires_at))}.</p> : null}
           </div>
           <div className="ticket-tear" />
-          <div className="flex flex-col gap-3 px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">Na altura de usar, mostre este ecrã ao balcão: o funcionário escreve aqui o PIN de carimbo.</p>
-            <RedeemWithCodeForm token={card.token} rewardId={rewards[0].id} />
+          <div className="px-6 pt-5 pb-6">
+            <p className="text-sm text-muted">Para usar, mostre este cartão ao balcão: o funcionário lê o código QR em baixo e entrega-lhe a recompensa.</p>
           </div>
         </article>
       ) : null}
 
       <PublicCard>
         <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold text-text">Pedir carimbo</h2>
+          <h2 className="text-lg font-semibold text-text">{rewards.length ? "Pedir carimbo ou usar a recompensa" : "Pedir carimbo"}</h2>
           <p className="text-muted">Mostre este ecrã ao balcão. O carimbo aparece no cartão em segundos.</p>
         </div>
         {program.active ? (
@@ -107,12 +108,6 @@ export default async function LoyaltyCardPage({ params }: Props) {
               </div>
               <p className="text-sm text-muted">O funcionário lê este código com o telemóvel ou tablet do estabelecimento.</p>
             </div>
-            <details className="group text-sm">
-              <summary className="cursor-pointer text-center font-medium text-muted hover:text-text">Sem leitor de QR? O funcionário escreve o PIN</summary>
-              <div className="mt-4">
-                <StampWithCodeForm token={card.token} />
-              </div>
-            </details>
           </>
         ) : (
           <p className="text-muted">Os carimbos estão em pausa de momento.</p>

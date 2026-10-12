@@ -18,20 +18,6 @@ export function normalizeCardCode(input: string): string {
   return input.toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
-export const staffCodeLength = 6;
-
-export function isStaffCode(value: string): boolean {
-  return new RegExp(`^\\d{${staffCodeLength}}$`).test(value);
-}
-
-/** Wrong staff codes on one card before it is locked for a while (stops guessing). */
-export const maxCodeAttempts = 5;
-export const codeLockMinutes = 15;
-
-export function isLocked(lockedUntil: string | null, now: number): boolean {
-  return Boolean(lockedUntil && Date.parse(lockedUntil) > now);
-}
-
 /** Stamp circles of the card: filled, then empty. */
 export function stampSlots(stamps: number, required: number): boolean[] {
   return Array.from({ length: required }, (_, index) => index < stamps);

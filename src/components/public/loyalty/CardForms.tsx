@@ -1,11 +1,11 @@
 "use client";
 
-import { useActionState, useEffect, useSyncExternalStore } from "react";
+import { useActionState, useEffect, useMemo, useSyncExternalStore } from "react";
 import { PhoneField } from "@/components/shared/PhoneField";
 import { useFormStatus } from "react-dom";
 import { AlertIcon, Check } from "@/components/icons";
 import type { ActionState } from "@/lib/action-state";
-import { joinLoyalty, recoverCard, redeemWithCode, stampWithCode } from "@/lib/modules/loyalty/actions";
+import { joinLoyalty, recoverCard } from "@/lib/modules/loyalty/actions";
 import { brandButton, brandSecondaryButton, publicInput, publicLabel } from "../BrandFrame";
 
 function Submit({ label, pendingLabel, secondary = false }: { label: string; pendingLabel: string; secondary?: boolean }) {
@@ -30,41 +30,76 @@ function Message({ state }: { state: ActionState }) {
 
 const noop = () => () => {};
 
-function useSavedCard(slug: string): string | null {
-  return useSyncExternalStore(
+/** A card opened on this phone: its link and the name on it. */
+interface SavedCard {
+  token: string;
+  name: string;
+}
+
+const savedKey = (slug: string) => `cartoes:${slug}`;
+const maxSaved = 6;
+
+/**
+ * The cards opened on this phone for one establishment, most recent first. Several fit (a family
+ * sharing a phone, or a card opened from someone's link): opening one never forgets the others.
+ */
+function readSaved(slug: string): SavedCard[] {
+  try {
+    const list = JSON.parse(window.localStorage.getItem(savedKey(slug)) ?? "[]") as SavedCard[];
+    const valid = Array.isArray(list) ? list.filter((item) => typeof item?.token === "string" && typeof item?.name === "string") : [];
+    // Before the list there was only one card per establishment.
+    const legacy = window.localStorage.getItem(`cartao:${slug}`);
+    return legacy && !valid.some((item) => item.token === legacy) ? [...valid, { token: legacy, name: "" }] : valid;
+  } catch {
+    return [];
+  }
+}
+
+function useSavedCards(slug: string): SavedCard[] {
+  // The raw text as the snapshot (a stable value), parsed below.
+  const raw = useSyncExternalStore(
     noop,
     () => {
       try {
-        return window.localStorage.getItem(`cartao:${slug}`);
+        return `${window.localStorage.getItem(savedKey(slug)) ?? ""}|${window.localStorage.getItem(`cartao:${slug}`) ?? ""}`;
       } catch {
-        return null;
+        return "";
       }
     },
-    () => null,
+    () => "",
   );
+  return useMemo(() => (raw ? readSaved(slug) : []), [raw, slug]);
 }
 
-/** Keeps the card's address on this phone, so the join page can send the customer back to it. */
-export function RememberCard({ slug, token }: { slug: string; token: string }) {
+/** Keeps the card's address on this phone (with the others), so the join page can send the customer back to it. */
+export function RememberCard({ slug, token, name }: { slug: string; token: string; name: string }) {
   useEffect(() => {
     try {
-      window.localStorage.setItem(`cartao:${slug}`, token);
+      const list = [{ token, name }, ...readSaved(slug).filter((item) => item.token !== token)].slice(0, maxSaved);
+      window.localStorage.setItem(savedKey(slug), JSON.stringify(list));
+      window.localStorage.removeItem(`cartao:${slug}`);
     } catch {
       // Private mode: the email with the link still works.
     }
-  }, [slug, token]);
+  }, [slug, token, name]);
   return null;
 }
 
 export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; terms: string; welcomeStamp: boolean }) {
   const [state, formAction] = useActionState(joinLoyalty, null);
-  const saved = useSavedCard(slug);
+  const saved = useSavedCards(slug);
   return (
     <form action={formAction} className="flex flex-col gap-4">
-      {saved ? (
-        <a href={`/cartao/${slug}/${saved}`} className={brandButton}>
-          Abrir o meu cartão
-        </a>
+      {saved.length ? (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium text-text">{saved.length === 1 ? "Cartão aberto neste telemóvel" : "Cartões abertos neste telemóvel"}</p>
+          {saved.map((card) => (
+            <a key={card.token} href={`/cartao/${slug}/${card.token}`} className={saved.length === 1 ? brandButton : brandSecondaryButton}>
+              {card.name ? `Abrir o cartão de ${card.name}` : "Abrir o meu cartão"}
+            </a>
+          ))}
+          <p className="mt-2 text-sm text-muted">Ou crie um cartão novo:</p>
+        </div>
       ) : null}
       <input type="hidden" name="slug" value={slug} />
       <div aria-hidden="true" className="hidden">
@@ -93,7 +128,7 @@ export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; term
         <span>{terms}</span>
       </label>
       <Message state={state} />
-      <Submit label={welcomeStamp ? "Criar cartão e ganhar o 1.º carimbo" : "Criar o meu cartão"} pendingLabel="A criar…" secondary={Boolean(saved)} />
+      <Submit label={welcomeStamp ? "Criar cartão e ganhar o 1.º carimbo" : "Criar o meu cartão"} pendingLabel="A criar…" secondary={saved.length > 0} />
     </form>
   );
 }
@@ -109,57 +144,6 @@ export function RecoverForm({ slug }: { slug: string }) {
       </label>
       <Message state={state} />
       <Submit label="Enviar o link do cartão" pendingLabel="A enviar…" secondary />
-    </form>
-  );
-}
-
-function CodeInput() {
-  return (
-    <label className={publicLabel}>
-      PIN de carimbo <span className="font-normal text-subtle">(escrito pelo funcionário)</span>
-      {/* Text with the digits masked, not a password field: the customer's phone must never offer to save the team's PIN. */}
-      <input
-        name="code"
-        type="text"
-        inputMode="numeric"
-        pattern="\d{6}"
-        maxLength={6}
-        required
-        autoComplete="off"
-        autoCorrect="off"
-        spellCheck={false}
-        data-1p-ignore
-        data-lpignore="true"
-        data-form-type="other"
-        placeholder="••••••"
-        className={`${publicInput} pin-mask text-center text-2xl tracking-[0.5em]`}
-      />
-    </label>
-  );
-}
-
-/** The team types its code on the customer's phone to stamp the card. */
-export function StampWithCodeForm({ token }: { token: string }) {
-  const [state, formAction] = useActionState(stampWithCode, null);
-  return (
-    <form action={formAction} className="flex flex-col gap-3">
-      <input type="hidden" name="token" value={token} />
-      <CodeInput />
-      <Message state={state} />
-      <Submit label="Dar carimbo" pendingLabel="A validar…" />
-    </form>
-  );
-}
-
-export function RedeemWithCodeForm({ token, rewardId }: { token: string; rewardId: string }) {
-  const [state, formAction] = useActionState(redeemWithCode, null);
-  return (
-    <form action={formAction} className="flex flex-col gap-3">
-      <input type="hidden" name="token" value={token} />
-      <input type="hidden" name="reward_id" value={rewardId} />
-      <CodeInput />
-      <Message state={state} />
-      <Submit label="Entregar recompensa" pendingLabel="A validar…" />
     </form>
   );
 }

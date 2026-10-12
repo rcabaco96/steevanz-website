@@ -18,7 +18,7 @@ export const docs: ProductDocs = {
             items: [
               "O cliente lê o QR code ou toca na placa ao balcão e cria o cartão só com o nome (o email é recomendado, o telemóvel é opcional).",
               "O cartão abre no telemóvel e pode ficar no ecrã principal, como uma app.",
-              "A cada visita, a equipa dá o carimbo: lê o QR do cartão com o telemóvel do balcão, ou escreve o PIN de carimbo no telemóvel do cliente.",
+              "A cada visita, a equipa dá o carimbo: lê o QR do cartão com o telemóvel do balcão, ou procura o cliente no Balcão.",
               "Ao chegar a uma recompensa (pelo caminho ou com o cartão completo), ela aparece no cartão. A equipa entrega-a da mesma forma. Uma recompensa já ganha não muda, mesmo que o dono mude as recompensas depois.",
             ],
           },
@@ -26,7 +26,7 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               { title: "Sem aplicação", body: "O cartão é uma página no telemóvel do cliente. Não há nada para instalar." },
-              { title: "Sem fraude", body: "Só a equipa dá carimbos (com o PIN ou pelo painel) e há um tempo mínimo entre carimbos." },
+              { title: "Sem fraude", body: "Só a equipa dá carimbos, no painel (com sessão iniciada), e há um tempo mínimo entre carimbos." },
               { title: "Com estatísticas", body: "Veja quantos clientes aderiram, quantos voltaram e quantas recompensas foram entregues." },
             ],
           },
@@ -47,7 +47,7 @@ export const docs: ProductDocs = {
             items: [
               "Customers scan the QR code or tap the plate at the counter and create their card with just a name (email recommended, phone optional).",
               "The card opens on the phone and can sit on the home screen, like an app.",
-              "At every visit, your staff give the stamp: they scan the card's QR with the counter phone, or type the stamp PIN on the customer's phone.",
+              "At every visit, your staff give the stamp: they scan the card's QR with the counter phone, or find the customer in the Balcão.",
               "When a reward is reached (along the way or with a full card), it appears on the card. Your staff hand it over the same way. A reward already earned never changes, even if the owner changes the rewards later.",
             ],
           },
@@ -55,7 +55,7 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               { title: "No app needed", body: "The card is a page on the customer's phone. There's nothing to install." },
-              { title: "No fraud", body: "Only your staff give stamps (with the PIN or from the dashboard) and there's a minimum time between stamps." },
+              { title: "No fraud", body: "Only your staff give stamps, from the dashboard (signed in), and there's a minimum time between stamps." },
               { title: "With stats", body: "See how many customers joined, how many came back and how many rewards were handed out." },
             ],
           },
@@ -66,45 +66,43 @@ export const docs: ProductDocs = {
     setup: {
       pt: {
         title: "Instalação do cartão de fidelidade digital",
-        description: "Como a Steevanz põe o cartão a funcionar: regras e recompensa, PIN de carimbo, placa de adesão ao balcão e um teste completo.",
+        description: "Como a Steevanz põe o cartão a funcionar: regras e recompensa, placa de adesão ao balcão e um teste completo.",
         blocks: [
           { type: "p", text: "Tratamos da instalação consigo. Normalmente fica pronta em poucos dias úteis." },
           {
             type: "steps",
             items: [
               { title: "Enviar a informação do negócio", body: "Envie-nos o nome do negócio, as regras (quantos carimbos) e a recompensa. Usamos esta informação para configurar o cartão e a página." },
-              { title: "Definir o PIN de carimbo", body: "Um código de 6 algarismos que só a equipa sabe. É com ele que se dão carimbos no telemóvel do cliente." },
               { title: "Rever o texto de consentimento", body: "O texto que o cliente aceita ao criar o cartão. Usamos um texto padrão com o nome do seu negócio, que pode alterar." },
               { title: "Instalar a placa de adesão", body: "A placa com QR code fica no balcão, à vista, para os clientes aderirem." },
               { title: "Fazer um teste completo", body: "Criamos um cartão de teste, damos um carimbo e entregamos uma recompensa, para confirmar que tudo funciona." },
             ],
           },
-          { type: "callout", tone: "info", text: "Depois, pode mudar as regras e o PIN quando quiser em [configuração](/docs/cartao-fidelidade-digital/configuracao)." },
+          { type: "callout", tone: "info", text: "Depois, pode mudar as regras quando quiser em [configuração](/docs/cartao-fidelidade-digital/configuracao)." },
         ],
       },
       en: {
         title: "Setting up the digital loyalty card",
-        description: "How Steevanz gets the card running: rules and reward, stamp PIN, the sign-up plate at the counter and a full test.",
+        description: "How Steevanz gets the card running: rules and reward, the sign-up plate at the counter and a full test.",
         blocks: [
           { type: "p", text: "We handle the setup with you. It is usually ready within a few working days." },
           {
             type: "steps",
             items: [
               { title: "Send your business details", body: "Send us your business name, the rules (how many stamps) and the reward. We use them to set up the card and the page." },
-              { title: "Set the stamp PIN", body: "A 6-digit code only your staff know. It's how stamps are given on the customer's phone." },
               { title: "Review the consent text", body: "The text customers accept when creating their card. We use a standard text with your business name, which you can change." },
               { title: "Place the sign-up plate", body: "The plate with QR code sits on the counter, in view, for customers to join." },
               { title: "Run a full test", body: "We create a test card, give a stamp and hand over a reward, to confirm everything works." },
             ],
           },
-          { type: "callout", tone: "info", text: "Afterwards you can change the rules and the PIN whenever you like in [configuration](/en/docs/digital-loyalty-card/configuration)." },
+          { type: "callout", tone: "info", text: "Afterwards you can change the rules whenever you like in [configuration](/en/docs/digital-loyalty-card/configuration)." },
         ],
       },
     },
     configuration: {
       pt: {
         title: "Configuração: recompensas, antifraude e RGPD",
-        description: "As regras do cartão: carimbos para completar, recompensa, tempo mínimo entre carimbos, validade, PIN de carimbo e dados dos clientes.",
+        description: "As regras do cartão: carimbos para completar, recompensa, tempo mínimo entre carimbos, validade e dados dos clientes.",
         blocks: [
           { type: "p", text: "As regras estão no separador **Definições** do cartão, na sua área de cliente." },
           {
@@ -122,22 +120,6 @@ export const docs: ProductDocs = {
               ["Texto de consentimento", "Mostrado ao criar o cartão."],
             ],
           },
-          { type: "h2", id: "pin", text: "PIN de carimbo" },
-          {
-            type: "ul",
-            items: [
-              "6 algarismos, guardados de forma cifrada: nem a Steevanz o consegue ver.",
-              "PIN óbvios (todos iguais ou seguidos) são recusados.",
-              "5 PIN errados no mesmo cartão bloqueiam-no durante 15 minutos.",
-              "Se suspeitar que o PIN foi divulgado, mude-o nas definições.",
-            ],
-          },
-          {
-            type: "callout",
-            tone: "warning",
-            title: "Proteja o PIN de carimbo",
-            text: "Não o deixe à vista no balcão. Quem souber o PIN consegue dar carimbos.",
-          },
           { type: "h2", id: "rgpd", text: "Dados dos clientes" },
           {
             type: "ul",
@@ -151,7 +133,7 @@ export const docs: ProductDocs = {
       },
       en: {
         title: "Configuration: rewards, anti-fraud and GDPR",
-        description: "The card's rules: stamps to complete, reward, minimum time between stamps, validity, stamp PIN and customer data.",
+        description: "The card's rules: stamps to complete, reward, minimum time between stamps, validity and customer data.",
         blocks: [
           { type: "p", text: "The rules are in the card's **Settings** tab, in your client area." },
           {
@@ -168,22 +150,6 @@ export const docs: ProductDocs = {
               ["Card active", "Paused: no new sign-ups or stamps."],
               ["Consent text", "Shown when the card is created."],
             ],
-          },
-          { type: "h2", id: "pin", text: "Stamp PIN" },
-          {
-            type: "ul",
-            items: [
-              "6 digits, stored encrypted: not even Steevanz can see it.",
-              "Obvious PINs (all the same or in sequence) are refused.",
-              "5 wrong PINs on the same card lock it for 15 minutes.",
-              "If you suspect the PIN has leaked, change it in the settings.",
-            ],
-          },
-          {
-            type: "callout",
-            tone: "warning",
-            title: "Protect the stamp PIN",
-            text: "Don't leave it in view at the counter. Anyone who knows the PIN can give stamps.",
           },
           { type: "h2", id: "gdpr", text: "Customer data" },
           {
@@ -206,12 +172,12 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Com o QR (a forma principal):** leia o QR do cartão com a câmara do telemóvel ou tablet do balcão. O cartão abre no Balcão: carregue em «Dar carimbo». Também pode procurar pelo nome, telemóvel ou código.",
-              "**Com o PIN, no telemóvel do cliente:** em «Sem leitor de QR?», a equipa escreve o PIN de carimbo. O telemóvel do cliente não se oferece para o guardar.",
+              "**Com o QR (a forma principal):** leia o QR do cartão com a câmara do telemóvel ou tablet do balcão. O cartão abre no Balcão: carregue em «Dar carimbo».",
+              "**Sem QR:** procure o cliente no Balcão pelo nome, telemóvel ou código do cartão.",
             ],
           },
           { type: "h2", id: "recompensa", text: "Entregar a recompensa" },
-          { type: "p", text: "Da mesma forma: com o PIN no telemóvel do cliente, ou «Entregar recompensa» no Balcão. O cartão recomeça e os carimbos a mais passam para o novo." },
+          { type: "p", text: "Quando o cliente ganha uma recompensa, o cartão no telemóvel dele mostra-a (com uma pequena animação). Para a usar, leia o QR do cartão e carregue em «Entregar» no Balcão. O cartão recomeça e os carimbos a mais passam para o novo." },
           { type: "h2", id: "recuperar", text: "Cliente que mudou de telemóvel" },
           {
             type: "ul",
@@ -233,12 +199,12 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**With the QR (the main way):** scan the card's QR with the counter phone or tablet camera. The card opens in the Balcão: tap «Give stamp». You can also search by name, phone or code.",
-              "**With the PIN, on the customer's phone:** under «No QR reader?», your staff type the stamp PIN. The customer's phone does not offer to save it.",
+              "**With the QR (the main way):** scan the card's QR with the counter phone or tablet camera. The card opens in the Balcão: tap «Give stamp».",
+              "**Without the QR:** find the customer in the Balcão by name, phone or card code.",
             ],
           },
           { type: "h2", id: "reward", text: "Handing over the reward" },
-          { type: "p", text: "The same way: with the PIN on the customer's phone, or «Hand over reward» in the Balcão. The card starts again and any extra stamps carry over." },
+          { type: "p", text: "When a customer wins a reward, the card on their phone shows it (with a short animation). To use it, scan the card's QR and tap «Hand over» in the Balcão. The card starts again and any extra stamps carry over." },
           { type: "h2", id: "recover", text: "A customer with a new phone" },
           {
             type: "ul",
@@ -256,12 +222,10 @@ export const docs: ProductDocs = {
     troubleshooting: {
       pt: {
         title: "Resolução de problemas do cartão",
-        description: "Soluções para problemas comuns: o carimbo é recusado, o PIN bloqueou, o cliente perdeu o cartão e a placa não abre.",
+        description: "Soluções para problemas comuns: o carimbo é recusado, o cliente perdeu o cartão e a placa não abre.",
         blocks: [
           { type: "h2", id: "recusado", text: "O carimbo é recusado" },
           { type: "p", text: "Dentro do tempo mínimo entre carimbos não é possível dar outro: a mensagem diz a partir de que hora pode ser dado. Confirme também que o cartão está ativo nas definições." },
-          { type: "h2", id: "pin-bloqueado", text: "O PIN ficou bloqueado" },
-          { type: "p", text: "Depois de 5 PIN errados, o cartão fica bloqueado 15 minutos. Pode carimbar pelo Balcão entretanto." },
           { type: "h2", id: "perdeu", text: "O cliente perdeu o cartão" },
           { type: "p", text: "Use «Já tinha cartão?» (com email) ou «Mostrar QR do cartão» no Balcão. Veja [utilização](/docs/cartao-fidelidade-digital/utilizacao)." },
           { type: "h2", id: "placa", text: "A placa não abre" },
@@ -270,12 +234,10 @@ export const docs: ProductDocs = {
       },
       en: {
         title: "Loyalty card troubleshooting",
-        description: "Fixes for common issues: the stamp is refused, the PIN locked, the customer lost the card and the plate doesn't open.",
+        description: "Fixes for common issues: the stamp is refused, the customer lost the card and the plate doesn't open.",
         blocks: [
           { type: "h2", id: "refused", text: "The stamp is refused" },
           { type: "p", text: "Within the minimum time between stamps another one can't be given: the message says from what time it can. Also check the card is active in the settings." },
-          { type: "h2", id: "pin-locked", text: "The PIN locked" },
-          { type: "p", text: "After 5 wrong PINs, the card locks for 15 minutes. You can stamp from the Balcão meanwhile." },
           { type: "h2", id: "lost", text: "The customer lost their card" },
           { type: "p", text: "Use «Already have a card?» (with email) or «Show card QR» in the Balcão. See [usage](/en/docs/digital-loyalty-card/usage)." },
           { type: "h2", id: "plate", text: "The plate doesn't open" },
@@ -295,7 +257,7 @@ export const docs: ProductDocs = {
               { q: "O cliente precisa de instalar uma app?", a: "Não. O cartão abre no navegador e pode ficar no ecrã principal do telemóvel." },
               { q: "O cartão fica na Apple Wallet ou na Google Wallet?", a: "Ainda não. É uma página no telemóvel, que pode ficar no ecrã principal." },
               { q: "Que telemóveis funcionam?", a: "Qualquer telemóvel com câmara usa o QR code. Os iPhone XS e mais recentes e a maioria dos Android com a leitura por aproximação ligada também leem a placa." },
-              { q: "Como evito carimbos falsos?", a: "Só a equipa dá carimbos, com o PIN de carimbo ou pelo Balcão, e há um tempo mínimo entre carimbos." },
+              { q: "Como evito carimbos falsos?", a: "Só a equipa dá carimbos, pelo Balcão (com sessão iniciada), e há um tempo mínimo entre carimbos." },
               { q: "Que dados são guardados?", a: "O nome (email e telemóvel opcionais) e o registo de carimbos e recompensas, de acordo com o RGPD." },
               { q: "Posso cancelar o plano?", a: "Sim, o plano é mensal e sem fidelização. Recomendamos avisar os clientes para usarem as recompensas que já ganharam." },
             ],
@@ -313,7 +275,7 @@ export const docs: ProductDocs = {
               { q: "Do customers need to install an app?", a: "No. The card opens in the browser and can sit on the phone's home screen." },
               { q: "Does the card go in Apple Wallet or Google Wallet?", a: "Not yet. It's a page on the phone that can sit on the home screen." },
               { q: "Which phones work?", a: "Any phone with a camera can use the QR code. iPhone XS and newer and most Android phones with contactless reading on also read the plate." },
-              { q: "How do I prevent fake stamps?", a: "Only your staff give stamps, with the stamp PIN or from the Balcão, and there's a minimum time between stamps." },
+              { q: "How do I prevent fake stamps?", a: "Only your staff give stamps, from the Balcão (signed in), and there's a minimum time between stamps." },
               { q: "What data is stored?", a: "The name (email and phone optional) and the record of stamps and rewards, in line with GDPR." },
               { q: "Can I cancel the plan?", a: "Yes, the plan is monthly with no minimum term. We recommend telling customers so they can use rewards they've already earned." },
             ],
