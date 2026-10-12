@@ -42,14 +42,14 @@ function CardActions({ card, establishment, rewards, program, qrHref }: { card: 
   );
   return (
     <div className="flex flex-wrap items-start gap-2 border-t border-line pt-4">
-      <ActionForm action={staffStamp} className="flex flex-col">
+      <ActionForm action={staffStamp} className="contents" transient>
         {hidden}
         <SubmitButton size="md" pendingLabel="A carimbar…">
           Dar carimbo
         </SubmitButton>
       </ActionForm>
       {rewards.length ? (
-        <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${rewards[0].label ?? program.reward}» a ${card.name}?`}>
+        <ActionForm action={staffRedeem} className="contents" transient confirmMessage={`Entregar «${rewards[0].label ?? program.reward}» a ${card.name}?`}>
           {hidden}
           <input type="hidden" name="reward_id" value={rewards[0].id} />
           <SubmitButton size="md" variant="secondary">
@@ -57,7 +57,7 @@ function CardActions({ card, establishment, rewards, program, qrHref }: { card: 
           </SubmitButton>
         </ActionForm>
       ) : null}
-      <ActionForm action={staffRemoveStamp} confirmMessage={`Retirar um carimbo a ${card.name}?`} className="flex flex-col">
+      <ActionForm action={staffRemoveStamp} confirmMessage={`Retirar um carimbo a ${card.name}?`} className="contents" transient>
         {hidden}
         <SubmitButton size="md" variant="ghost">
           Retirar um carimbo

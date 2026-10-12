@@ -95,14 +95,14 @@ function CardRow({
         </div>
       </div>
       <div className="flex flex-wrap items-start gap-2">
-        <ActionForm action={staffStamp} className="flex flex-col">
+        <ActionForm action={staffStamp} className="contents" transient>
           {hidden}
           <SubmitButton size="sm" pendingLabel="A carimbar…">
             Dar carimbo
           </SubmitButton>
         </ActionForm>
         {rewards.length ? (
-          <ActionForm action={staffRedeem} className="flex flex-col" confirmMessage={`Entregar «${rewards[0].label ?? program.reward}» a ${card.name}?`}>
+          <ActionForm action={staffRedeem} className="contents" transient confirmMessage={`Entregar «${rewards[0].label ?? program.reward}» a ${card.name}?`}>
             {hidden}
             <input type="hidden" name="reward_id" value={rewards[0].id} />
             <SubmitButton size="sm" variant="secondary">
@@ -110,7 +110,7 @@ function CardRow({
             </SubmitButton>
           </ActionForm>
         ) : null}
-        <ActionForm action={staffRemoveStamp} className="flex flex-col" confirmMessage={`Retirar um carimbo a ${card.name}?`}>
+        <ActionForm action={staffRemoveStamp} className="contents" transient confirmMessage={`Retirar um carimbo a ${card.name}?`}>
           {hidden}
           <SubmitButton size="sm" variant="ghost">
             Retirar carimbo

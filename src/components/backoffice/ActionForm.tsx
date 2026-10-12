@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useActionState, type ReactNode } from "react";
+import { Fragment, useActionState, useEffect, useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon, Check } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
@@ -20,17 +20,26 @@ interface ActionFormProps {
    * form, and so the «Guardado» message, stays. A key on the form itself would wipe the message.
    */
   resetKey?: string;
+  /** Success messages go away after a few seconds (quick actions repeated often, like a stamp). */
+  transient?: boolean;
 }
 
-export function ActionForm({ action, children, className = "", confirmMessage, hideMessage = false, resetKey }: ActionFormProps) {
+export function ActionForm({ action, children, className = "", confirmMessage, hideMessage = false, resetKey, transient = false }: ActionFormProps) {
   const [state, formAction] = useActionState(action, null);
+  const [faded, setFaded] = useState<ActionState>(null);
+  useEffect(() => {
+    if (!transient || !state?.ok) return;
+    const timer = window.setTimeout(() => setFaded(state), 5000);
+    return () => window.clearTimeout(timer);
+  }, [transient, state]);
+  const shown = state && state !== faded ? state : null;
   // Asks first (in the site's own dialog) when there is a confirmation message.
   const { onSubmit, dialog } = useConfirmedSubmit(confirmMessage);
   return (
     <form action={formAction} onSubmit={onSubmit} className={className}>
       <Fragment key={resetKey}>{children}</Fragment>
       {dialog}
-      {state && !(hideMessage && state.ok) ? <FormMessage ok={state.ok} message={state.message} /> : null}
+      {shown && !(hideMessage && shown.ok) ? <FormMessage ok={shown.ok} message={shown.message} /> : null}
     </form>
   );
 }
