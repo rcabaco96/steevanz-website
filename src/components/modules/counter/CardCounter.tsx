@@ -71,7 +71,7 @@ function CardActions({ card, establishment, rewards, program, qrHref }: { card: 
 }
 
 /**
- * The loyalty card for the team (the Balcão): find the customer (or scan their card's QR with this
+ * The loyalty card for the team (the Atendimento): find the customer (or scan their card's QR with this
  * device's camera, which lands here), then "Dar carimbo". A single result opens the card.
  */
 export function CardCounter({

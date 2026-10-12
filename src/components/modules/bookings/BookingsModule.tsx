@@ -222,7 +222,7 @@ export interface AgendaLinks {
 }
 
 /**
- * One day of bookings for the team (the module and the Balcão): how full each turn is (restaurants),
+ * One day of bookings for the team (the module and the Atendimento): how full each turn is (restaurants),
  * who is still to come, and what is done. Changing, cancelling and "Não veio" are behind "⋯".
  */
 export function AgendaDay({ bundle, agenda, links }: { bundle: EstablishmentBundle; agenda: Awaited<ReturnType<typeof loadAgendaDay>>; links: AgendaLinks }) {

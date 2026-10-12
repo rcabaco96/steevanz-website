@@ -27,7 +27,7 @@ import { NoEstablishment } from "../shared/NoEstablishment";
 import { QrCode } from "../shared/QrCode";
 
 const views = [
-  { id: "carimbar", label: "Carimbar" },
+  // One place for the customers: search (or the card's QR) on top, everyone by last visit below.
   { id: "clientes", label: "Clientes" },
   { id: "estatisticas", label: "Estatísticas" },
   { id: "definicoes", label: "Definições" },
@@ -222,7 +222,7 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
         <label className={adminLabelClasses}>
           Consumo mínimo para carimbar (€, opcional)
           <input name="min_spend" inputMode="decimal" maxLength={8} defaultValue={program.min_spend_cents ? (program.min_spend_cents / 100).toString().replace(".", ",") : ""} placeholder="Sem mínimo" className={input} />
-          <span className="text-xs font-normal text-subtle">1 carimbo por serviço pago a partir deste valor. Aparece no cartão do cliente e no Balcão; a equipa aplica.</span>
+          <span className="text-xs font-normal text-subtle">1 carimbo por serviço pago a partir deste valor. Aparece no cartão do cliente e no Atendimento; a equipa aplica.</span>
         </label>
         <label className={adminLabelClasses}>
           Validade da recompensa (dias)
@@ -274,43 +274,46 @@ export async function LoyaltyModule({ userId, viewer, basePath, query, productId
   const nav = <ModuleNav basePath={basePath} establishments={establishments} current={current} views={views} view={view} />;
 
 
-  if (view === "clientes" || view === "carimbar") {
-    const term = view === "carimbar" ? queryValue(query, "q").trim() : "";
-    const cards = view === "clientes" ? await recentCards(current.id, 100) : term ? await searchCards(current.id, term) : await recentCards(current.id, 8);
+  if (view === "clientes") {
+    const term = queryValue(query, "q").trim();
+    const cards = term ? await searchCards(current.id, term) : await recentCards(current.id, 100);
     const rewards = await availableRewards(cards.map((card) => card.id));
     const rewardsOf = (cardId: string) => rewards.filter((reward) => reward.card_id === cardId);
-    const keep = { ...(establishments.length > 1 ? { loja: current.slug } : {}), ...(view === "carimbar" ? {} : { vista: view }), ...(term ? { q: term } : {}) };
+    const keep = { ...(establishments.length > 1 ? { loja: current.slug } : {}), ...(term ? { q: term } : {}) };
     const hrefWith = (extra: Record<string, string>) => `${basePath}?${new URLSearchParams({ ...keep, ...extra })}`;
     const qrCard = await getCard(current.id, queryValue(query, "qr"));
     const origin = await requestOrigin();
     return (
       <div className="flex flex-col gap-6">
         {nav}
-        {view === "carimbar" ? (
-          <form method="get" action={basePath} className="flex gap-2" role="search">
-            {establishments.length > 1 ? <input type="hidden" name="loja" value={current.slug} /> : null}
-            <input
-              type="search"
-              name="q"
-              defaultValue={term}
-              aria-label="Procurar cartão"
-              placeholder="Código do cartão, nome, email ou telemóvel"
-              autoFocus={!term}
-              className={`${adminInputClasses} h-12 flex-1`}
-            />
-            <button type="submit" className={buttonClasses("primary", "md")}>
-              Procurar
-            </button>
-          </form>
-        ) : null}
+        <form method="get" action={basePath} className="flex gap-2" role="search">
+          {establishments.length > 1 ? <input type="hidden" name="loja" value={current.slug} /> : null}
+          <input
+            type="search"
+            name="q"
+            defaultValue={term}
+            aria-label="Procurar cartão"
+            placeholder="Código do cartão, nome, email ou telemóvel"
+            autoFocus={!term}
+            className={`${adminInputClasses} h-12 flex-1`}
+          />
+          <button type="submit" className={buttonClasses("primary", "md")}>
+            Procurar
+          </button>
+        </form>
         {qrCard ? <CardQr card={qrCard} url={`${origin}/cartao/${current.slug}/${qrCard.token}`} closeHref={hrefWith({})} /> : null}
-        {view === "carimbar" ? (
-          <p className="-mt-3 text-xs text-subtle">
-            {term ? `Resultados para «${term}».` : "Mais rápido: aponte a câmara deste telemóvel ou tablet ao QR do cartão do cliente e o cartão abre aqui. Em baixo, os últimos clientes com carimbo."}
-          </p>
-        ) : (
-          <p className="-mt-3 text-sm text-muted">Os 100 cartões mais recentes, pela última visita.</p>
-        )}
+        <p className="-mt-3 text-xs text-subtle">
+          {term ? (
+            <>
+              Resultados para «{term}».{" "}
+              <Link href={hrefWith({ q: "" })} scroll={false} className="font-semibold text-muted underline-offset-2 hover:underline">
+                Ver todos
+              </Link>
+            </>
+          ) : (
+            "Mais rápido: aponte a câmara deste telemóvel ou tablet ao QR do cartão do cliente e o cartão abre no Atendimento, pronto a carimbar. Em baixo, os clientes pela última visita."
+          )}
+        </p>
         {cards.length ? (
           <ul className="card divide-y divide-line">
             {cards.map((card) => (

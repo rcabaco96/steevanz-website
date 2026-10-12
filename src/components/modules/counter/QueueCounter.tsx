@@ -158,7 +158,7 @@ function Figure({ label, value }: { label: string; value: string }) {
 }
 
 /**
- * The queue for the team (the module's "Fila" tab and the Balcão): one "Chamar o seguinte" (the next
+ * The queue for the team (the module's "Fila" tab and the Atendimento): one "Chamar o seguinte" (the next
  * ticket in order, whoever they asked for), who is being served and the line. Whoever is called is
  * being served; calling more people than there are professionals closes the oldest call as served,
  * so nobody has to mark anything. The exceptions are behind "⋯" on each row.

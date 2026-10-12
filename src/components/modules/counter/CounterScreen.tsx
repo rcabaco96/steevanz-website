@@ -23,7 +23,7 @@ const tabs: Record<ModuleProduct, { id: string; label: string }> = {
 };
 
 /**
- * The Balcão: what needs a tap during the day (queue, today's bookings, loyalty card) for one space,
+ * The Atendimento: what needs a tap during the day (queue, today's bookings, loyalty card) for one space,
  * as tabs in the backoffice. Settings, history and stats stay in each module. `basePath` is the
  * client area's or the admin's page; `ownerId` is the client whose spaces it shows.
  */

@@ -41,7 +41,7 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "tip",
             title: "Funciona com as reservas",
-            text: "Se também tiver as reservas online, a fila e as reservas de hoje ficam lado a lado no Balcão da sua área de cliente.",
+            text: "Se também tiver as reservas online, a fila e as reservas de hoje ficam lado a lado no Atendimento da sua área de cliente.",
           },
           {
             type: "p",
@@ -86,7 +86,7 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "tip",
             title: "Works with bookings",
-            text: "If you also use online bookings, the queue and today's bookings sit side by side in the Balcão of your client area.",
+            text: "If you also use online bookings, the queue and today's bookings sit side by side in the «Atendimento» screen of your client area.",
           },
           {
             type: "p",
@@ -222,7 +222,7 @@ export const docs: ProductDocs = {
         title: "Utilização diária da lista de espera",
         description: "Como gerir a fila no dia a dia: chamar o seguinte, quem não aparece, adicionar alguém à fila e fechar a fila.",
         blocks: [
-          { type: "p", text: "Use o separador **Fila** do Balcão (ou da lista de espera) no telemóvel ou tablet do balcão. A página atualiza-se sozinha." },
+          { type: "p", text: "Use o separador **Fila** do Atendimento (ou da lista de espera) no telemóvel ou tablet do balcão. A página atualiza-se sozinha." },
           {
             type: "steps",
             items: [
@@ -247,7 +247,7 @@ export const docs: ProductDocs = {
         title: "Using the waitlist day to day",
         description: "How to run the queue every day: calling the next one, no-shows, adding someone to the queue and closing the queue.",
         blocks: [
-          { type: "p", text: "Use the **Queue** tab of the Balcão (or of the waitlist) on the counter phone or tablet. The page updates by itself." },
+          { type: "p", text: "Use the **Queue** tab of the «Atendimento» screen (or of the waitlist) on the counter phone or tablet. The page updates by itself." },
           {
             type: "steps",
             items: [

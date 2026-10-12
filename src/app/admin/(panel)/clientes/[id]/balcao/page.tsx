@@ -6,7 +6,7 @@ import { CounterScreen } from "@/components/modules/counter/CounterScreen";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getProfile } from "@/lib/admin/queries";
 
-export const metadata: Metadata = { title: "Balcão do cliente" };
+export const metadata: Metadata = { title: "Atendimento do cliente" };
 
 export default async function AdminClientCounterPage({
   params,
@@ -23,7 +23,7 @@ export default async function AdminClientCounterPage({
   return (
     <>
       <BackLink href={`/admin/clientes/${profile.id}`} label={profile.full_name ?? profile.email} />
-      <AdminPageHeader title="Balcão" description={`${profile.business_name ?? profile.email} · vista de administrador`} />
+      <AdminPageHeader title="Atendimento" description={`${profile.business_name ?? profile.email} · vista de administrador`} />
       <CounterScreen ownerId={profile.id} viewer="admin" basePath={`/admin/clientes/${profile.id}/balcao`} query={query} />
     </>
   );

@@ -57,7 +57,7 @@ export function EstablishmentsAdminPanel({
                     <div className="flex items-center gap-1">
                       {covered.length ? (
                         <Link href={`/admin/clientes/${ownerId}/balcao?${new URLSearchParams({ loja: establishment.slug })}`} title="Fila, reservas de hoje e cartão num só sítio" className={buttonClasses("primary", "sm")}>
-                          Abrir Balcão
+                          Abrir o Atendimento
                         </Link>
                       ) : null}
                       {covered.length ? (

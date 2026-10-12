@@ -71,7 +71,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Liga-se às reservas",
-        body: "Se também usar o nosso sistema de reservas, a fila e as reservas de hoje ficam lado a lado no Balcão, para gerir a sala sem surpresas.",
+        body: "Se também usar o nosso sistema de reservas, a fila e as reservas de hoje ficam lado a lado no Atendimento, para gerir a sala sem surpresas.",
       },
     ],
     useCases: [
