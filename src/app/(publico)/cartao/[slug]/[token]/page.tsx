@@ -4,15 +4,15 @@ import type { ReactNode } from "react";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { QrCode } from "@/components/modules/shared/QrCode";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
-import { RememberCard } from "@/components/public/loyalty/CardForms";
-import { RewardCelebration } from "@/components/public/loyalty/RewardCelebration";
+import { CardOnThisPhone } from "@/components/public/loyalty/CardForms";
+import { RewardReveal } from "@/components/public/loyalty/RewardReveal";
 import { StampCard } from "@/components/public/loyalty/StampCard";
 import { requestOrigin } from "@/lib/booking/request";
 import { cardRewards, formatCardCode, missingText, nextReward, stampRuleText } from "@/lib/modules/loyalty/rules";
 import { availableRewards, ensureProgram, getCardByToken, recentlyRedeemed } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
-type Props = { params: Promise<{ slug: string; token: string }> };
+type Props = { params: Promise<{ slug: string; token: string }>; searchParams: Promise<{ novo?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, token } = await params;
@@ -40,8 +40,9 @@ function Disclosure({ title, children }: { title: string; children: ReactNode })
   );
 }
 
-export default async function LoyaltyCardPage({ params }: Props) {
+export default async function LoyaltyCardPage({ params, searchParams }: Props) {
   const { slug, token } = await params;
+  const { novo } = await searchParams;
   const establishment = await publicEstablishment(slug, "loyalty");
   if (!establishment) notFound();
   const card = await getCardByToken(token);
@@ -52,7 +53,6 @@ export default async function LoyaltyCardPage({ params }: Props) {
 
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
-      <RememberCard slug={establishment.slug} token={card.token} name={card.name} />
       {/* A stamp given from the staff panel shows up while the customer is at the counter. */}
       <AutoRefresh intervalMs={10_000} />
       <StampCard
@@ -79,20 +79,21 @@ export default async function LoyaltyCardPage({ params }: Props) {
         </p>
       ) : null}
 
-      {rewards.length ? <RewardCelebration rewardId={rewards[0].id} label={rewards[0].label ?? program.reward} /> : null}
       {rewards.length ? (
-        <article className="ticket overflow-hidden">
-          <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">{rewards.length === 1 ? "Tem uma recompensa à espera" : `Tem ${rewards.length} recompensas à espera`}</p>
-            <p className="display mt-1 text-[1.9rem] leading-tight">{rewards[0].label ?? program.reward}</p>
-            {rewards.length > 1 ? <p className="mt-1 text-sm text-muted">Depois: {rewards.slice(1).map((reward) => reward.label ?? program.reward).join(", ")}.</p> : null}
-            {rewards[0].expires_at ? <p className="mt-1 text-sm text-muted">Válida até {format.format(new Date(rewards[0].expires_at))}.</p> : null}
-          </div>
-          <div className="ticket-tear" />
-          <div className="px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">Para usar, mostre este cartão ao balcão: o funcionário lê o código QR em baixo e entrega-lhe a recompensa.</p>
-          </div>
-        </article>
+        <RewardReveal rewardId={rewards[0].id}>
+          <article className="ticket overflow-hidden">
+            <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
+              <p className="text-sm text-muted">{rewards.length === 1 ? "Tem uma recompensa à espera" : `Tem ${rewards.length} recompensas à espera`}</p>
+              <p className="display mt-1 text-[1.9rem] leading-tight">{rewards[0].label ?? program.reward}</p>
+              {rewards.length > 1 ? <p className="mt-1 text-sm text-muted">Depois: {rewards.slice(1).map((reward) => reward.label ?? program.reward).join(", ")}.</p> : null}
+              {rewards[0].expires_at ? <p className="mt-1 text-sm text-muted">Válida até {format.format(new Date(rewards[0].expires_at))}.</p> : null}
+            </div>
+            <div className="ticket-tear" />
+            <div className="px-6 pt-5 pb-6">
+              <p className="text-sm text-muted">Para usar, mostre este cartão ao balcão: o funcionário lê o código QR em baixo e entrega-lhe a recompensa.</p>
+            </div>
+          </article>
+        </RewardReveal>
       ) : null}
 
       <PublicCard>
@@ -116,6 +117,8 @@ export default async function LoyaltyCardPage({ params }: Props) {
           O funcionário também encontra o cartão pelo código <strong className="font-semibold text-muted">{formatCardCode(card.code)}</strong>.
         </p>
       </PublicCard>
+
+      <CardOnThisPhone slug={establishment.slug} token={card.token} name={card.name} createdHere={novo === "1"} />
 
       <Disclosure title="Ter o cartão sempre à mão">
         <ul className="flex list-disc flex-col gap-1.5 pl-5">

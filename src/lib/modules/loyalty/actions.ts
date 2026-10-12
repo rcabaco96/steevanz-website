@@ -152,7 +152,8 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
     if (program.welcome_stamp) await stamp(card.id, 1, "welcome");
     sendCardEmail(establishment, card, program, await cardLink(establishment, card), true);
     refresh(establishment);
-    target = `/cartao/${establishment.slug}/${card.token}`;
+    // «novo»: created on this phone, so the card page keeps it here.
+    target = `/cartao/${establishment.slug}/${card.token}?novo=1`;
   } catch (error) {
     console.error("[loyalty] join failed:", error instanceof Error ? error.message : error);
     return { ok: false, message: "Não foi possível criar o cartão. Tente novamente." };

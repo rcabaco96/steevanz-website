@@ -28,9 +28,7 @@ function Message({ state }: { state: ActionState }) {
   );
 }
 
-const noop = () => () => {};
-
-/** A card opened on this phone: its link and the name on it. */
+/** A card kept on this phone: its link and the name on it. */
 interface SavedCard {
   token: string;
   name: string;
@@ -38,11 +36,19 @@ interface SavedCard {
 
 const savedKey = (slug: string) => `cartoes:${slug}`;
 const maxSaved = 6;
+const savedEvent = "cartoes-guardados";
 
-/**
- * The cards opened on this phone for one establishment, most recent first. Several fit (a family
- * sharing a phone, or a card opened from someone's link): opening one never forgets the others.
- */
+/** Re-reads the saved cards when this page changes them, or another tab does. */
+function subscribeSaved(onChange: () => void) {
+  window.addEventListener(savedEvent, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(savedEvent, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+/** The cards kept on this phone for one establishment, most recent first (a family sharing a phone keeps several). */
 function readSaved(slug: string): SavedCard[] {
   try {
     const list = JSON.parse(window.localStorage.getItem(savedKey(slug)) ?? "[]") as SavedCard[];
@@ -55,10 +61,21 @@ function readSaved(slug: string): SavedCard[] {
   }
 }
 
+function writeSaved(slug: string, list: SavedCard[]) {
+  try {
+    if (list.length) window.localStorage.setItem(savedKey(slug), JSON.stringify(list.slice(0, maxSaved)));
+    else window.localStorage.removeItem(savedKey(slug));
+    window.localStorage.removeItem(`cartao:${slug}`);
+    window.dispatchEvent(new Event(savedEvent));
+  } catch {
+    // Private mode: the email with the link still works.
+  }
+}
+
 function useSavedCards(slug: string): SavedCard[] {
   // The raw text as the snapshot (a stable value), parsed below.
   const raw = useSyncExternalStore(
-    noop,
+    subscribeSaved,
     () => {
       try {
         return `${window.localStorage.getItem(savedKey(slug)) ?? ""}|${window.localStorage.getItem(`cartao:${slug}`) ?? ""}`;
@@ -71,18 +88,39 @@ function useSavedCards(slug: string): SavedCard[] {
   return useMemo(() => (raw ? readSaved(slug) : []), [raw, slug]);
 }
 
-/** Keeps the card's address on this phone (with the others), so the join page can send the customer back to it. */
-export function RememberCard({ slug, token, name }: { slug: string; token: string; name: string }) {
+/**
+ * Whether this card is kept on this phone (so the join page opens it again). A card created here is
+ * kept on its own; one opened from a link (a friend's, or one's own on someone else's phone) only
+ * when the person asks, and any can be forgotten.
+ */
+export function CardOnThisPhone({ slug, token, name, createdHere }: { slug: string; token: string; name: string; createdHere: boolean }) {
+  const saved = useSavedCards(slug);
+  const kept = saved.some((item) => item.token === token);
+  const keep = () => writeSaved(slug, [{ token, name }, ...readSaved(slug).filter((item) => item.token !== token)]);
+  const forget = () => writeSaved(slug, readSaved(slug).filter((item) => item.token !== token));
+
   useEffect(() => {
-    try {
-      const list = [{ token, name }, ...readSaved(slug).filter((item) => item.token !== token)].slice(0, maxSaved);
-      window.localStorage.setItem(savedKey(slug), JSON.stringify(list));
-      window.localStorage.removeItem(`cartao:${slug}`);
-    } catch {
-      // Private mode: the email with the link still works.
-    }
-  }, [slug, token, name]);
-  return null;
+    if (createdHere) writeSaved(slug, [{ token, name }, ...readSaved(slug).filter((item) => item.token !== token)]);
+  }, [createdHere, slug, token, name]);
+
+  if (kept) {
+    return (
+      <p className="text-center text-sm text-subtle">
+        Guardado neste telemóvel.{" "}
+        <button type="button" onClick={forget} className="font-semibold text-muted underline-offset-2 hover:text-text hover:underline">
+          Esquecer
+        </button>
+      </p>
+    );
+  }
+  return (
+    <div className="flex flex-col items-center gap-1 text-center">
+      <button type="button" onClick={keep} className="inline-flex min-h-10 items-center rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-text transition-colors hover:bg-surface-2">
+        Guardar neste telemóvel
+      </button>
+      <p className="text-xs text-subtle">Só se o telemóvel for seu: fica a abrir este cartão a partir da página do estabelecimento.</p>
+    </div>
+  );
 }
 
 export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; terms: string; welcomeStamp: boolean }) {
@@ -92,7 +130,7 @@ export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; term
     <form action={formAction} className="flex flex-col gap-4">
       {saved.length ? (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-text">{saved.length === 1 ? "Cartão aberto neste telemóvel" : "Cartões abertos neste telemóvel"}</p>
+          <p className="text-sm font-medium text-text">{saved.length === 1 ? "Cartão guardado neste telemóvel" : "Cartões guardados neste telemóvel"}</p>
           {saved.map((card) => (
             <a key={card.token} href={`/cartao/${slug}/${card.token}`} className={saved.length === 1 ? brandButton : brandSecondaryButton}>
               {card.name ? `Abrir o cartão de ${card.name}` : "Abrir o meu cartão"}
