@@ -9,6 +9,7 @@ import { radiusLabel, toRadiusKm } from "@/lib/reviews/competitors";
 import { handRetiredJobsToReader, jobPriority, queueReaderJob, readerProvider } from "@/lib/reviews/reader-queue";
 import { queueCompetitorSearch } from "@/lib/reviews/import-jobs";
 import { isShortMapsLink, parseMapsPlaceLink, placeIdFromFid, writeReviewLink } from "@/lib/reviews/maps-link";
+import { googleHosts, resolveMapsLink } from "@/lib/reviews/maps-resolve";
 import { isAdminEmail } from "@/lib/supabase/env";
 import { createServiceClient } from "@/lib/supabase/service";
 import type { AdminActionState } from "./actions";
@@ -16,7 +17,6 @@ import { AdminAccessError, requireAdmin } from "./auth";
 import { ClientAccessError, ensureClientAccount, loadOwnerAccount, sendPanelInvite } from "./client-access";
 
 const uuid = z.uuid();
-const googleHosts = /(^|\.)google\.[a-z.]+$|(^|\.)goo\.gl$|(^|\.)g\.page$/;
 
 function value(formData: FormData, key: string): string {
   const entry = formData.get(key);
@@ -204,21 +204,6 @@ export async function removeBusinessAccess(_previous: AdminActionState, formData
     revalidatePath("/admin/reviews", "layout");
     return { ok: true, message: "Acesso retirado. A conta continua a existir, mas já não abre este painel." };
   });
-}
-
-/** A short Maps link (maps.app.goo.gl…) → the full place link it redirects to (a plain request, no API). */
-async function resolveMapsLink(url: string): Promise<string> {
-  let current = url;
-  for (let hop = 0; hop < 5 && isShortMapsLink(current); hop++) {
-    const response = await fetch(current, { redirect: "manual", cache: "no-store", signal: AbortSignal.timeout(10_000) });
-    const next = response.headers.get("location");
-    if (!next) break;
-    current = new URL(next, current).toString();
-  }
-  // A redirect can stop at Google's consent page, with the place link as its "continue" parameter.
-  const parsed = new URL(current);
-  const resume = parsed.searchParams.get("continue");
-  return /(^|\.)consent\./.test(parsed.hostname) && resume ? resume : current;
 }
 
 /**

@@ -11,6 +11,9 @@ export interface EstablishmentRow {
   logo_path: string | null;
   phone: string | null;
   address: string | null;
+  /** The place on Google Maps (set by an admin), and its write-a-review link when the place id is known. */
+  maps_url: string | null;
+  review_url: string | null;
   time_zone: string;
   created_at: string;
   updated_at: string;

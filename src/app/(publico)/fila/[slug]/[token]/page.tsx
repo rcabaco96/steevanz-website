@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
-import { BrandFrame, Fact, PublicCard } from "@/components/public/BrandFrame";
+import { BrandFrame, Fact, PublicCard, ReviewLink, brandButton } from "@/components/public/BrandFrame";
 import { CallAlert } from "@/components/public/waitlist/CallAlert";
 import { ForgetTicket } from "@/components/public/waitlist/ForgetTicket";
 import { QueueLine } from "@/components/public/waitlist/QueueLine";
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const finished = {
-  served: { chip: "Atendido", text: "Foi atendido. Obrigado pela visita!" },
+  served: { chip: "Atendido", text: "Já foi atendido." },
   no_show: { chip: "Senha expirada", text: "Foi chamado mas não se apresentou, por isso a vez passou ao seguinte. Se ainda estiver por perto, fale com a equipa." },
   cancelled: { chip: "Saiu da fila", text: "Já não está na fila." },
 } as const;
@@ -113,6 +113,14 @@ export default async function WaitlistTicketPage({ params, searchParams }: Props
           {live ? <p className="text-sm text-muted">{details.join(", ")}</p> : null}
         </div>
       </article>
+
+      {entry.status === "served" && establishment.review_url ? (
+        <PublicCard className="items-center text-center">
+          <p className="display text-[1.5rem] leading-tight">Obrigado pela visita!</p>
+          <p className="text-muted">Gostou? Uma avaliação no Google ajuda muito {establishment.name}.</p>
+          <ReviewLink establishment={establishment} className={brandButton} label="Deixar avaliação no Google" />
+        </PublicCard>
+      ) : null}
 
       <CallAlert
         slug={establishment.slug}
