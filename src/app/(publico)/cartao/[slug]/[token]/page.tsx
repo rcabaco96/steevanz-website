@@ -73,14 +73,16 @@ export default async function LoyaltyCardPage({ params, searchParams }: Props) {
       </div>
 
       {redeemed?.redeemed_at ? (
-        <p role="status" className="rounded-2xl border border-success/30 bg-success-soft px-4 py-3 text-center font-semibold text-success">
-          Recompensa entregue às{" "}
-          {new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(redeemed.redeemed_at))}. Bom proveito!
-        </p>
+        <RewardReveal id={`entregue-${redeemed.id}`} className="rounded-2xl">
+          <p role="status" className="rounded-2xl border border-success/30 bg-success-soft px-4 py-3 text-center font-semibold text-success">
+            {redeemed.label ?? program.reward}: entregue às{" "}
+            {new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(redeemed.redeemed_at))}. Obrigado e até à próxima!
+          </p>
+        </RewardReveal>
       ) : null}
 
       {rewards.length ? (
-        <RewardReveal rewardId={rewards[0].id}>
+        <RewardReveal id={rewards[0].id}>
           <article className="ticket overflow-hidden">
             <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
               <p className="text-sm text-muted">{rewards.length === 1 ? "Tem uma recompensa à espera" : `Tem ${rewards.length} recompensas à espera`}</p>

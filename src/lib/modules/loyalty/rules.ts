@@ -85,9 +85,9 @@ export function eurosText(cents: number): string {
   return `${new Intl.NumberFormat("pt-PT", { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(cents / 100)} €`;
 }
 
-/** "1 carimbo por visita, a partir de 10 € de consumo" (or per visit, with no minimum). */
+/** "1 carimbo por serviço pago, a partir de 10 €" (or per paid service, with no minimum). */
 export function stampRuleText(minSpendCents: number | null): string {
-  return minSpendCents ? `1 carimbo por visita, a partir de ${eurosText(minSpendCents)} de consumo` : "1 carimbo por visita";
+  return minSpendCents ? `1 carimbo por serviço pago, a partir de ${eurosText(minSpendCents)}` : "1 carimbo por serviço pago";
 }
 
 /** "5", "7,50", "7.5" → cents; empty → null; anything else → undefined (invalid). */

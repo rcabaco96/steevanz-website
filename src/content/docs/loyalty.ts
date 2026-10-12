@@ -112,7 +112,7 @@ export const docs: ProductDocs = {
               ["Carimbos para completar", "De 2 a 50 (por omissão 10). Se baixar o número, os cartões que já têm carimbos suficientes ficam logo completos."],
               ["Recompensa ao completar o cartão", "O que o cliente ganha no último carimbo, ex.: «um prato do dia oferecido»."],
               ["Recompensas pelo caminho", "Até 3, antes do cartão completo (ex.: ao 3.º carimbo um café, ao 6.º uma sobremesa). A primeira chega cedo e faz voltar; a grande fica no fim. Nos restaurantes vêm sugeridas; nos outros negócios fica só a final."],
-              ["Consumo mínimo para carimbar", "«1 carimbo por visita a partir de X €». Aparece no cartão do cliente e no Balcão; a equipa aplica. Vazio = sem mínimo."],
+              ["Consumo mínimo para carimbar", "«1 carimbo por serviço pago a partir de X €». Aparece no cartão do cliente e no Balcão; a equipa aplica. Vazio = sem mínimo."],
               ["Validade da recompensa", "Em dias; vazio = sem validade."],
               ["Primeiro carimbo na adesão", "Oferece 1 carimbo ao criar o cartão."],
               ["Cartão ativo", "Em pausa: sem novas adesões nem carimbos."],

@@ -338,8 +338,8 @@ describe("loyalty rewards along the way", () => {
   it("writes the rewards and the stamp rule for customers", () => {
     assert.equal(rewardsSentence(barber), "Junte 10 carimbos e ganhe um corte oferecido.");
     assert.equal(rewardsSentence(restaurant), "Ganhe um café oferecido ao 3.º carimbo, uma sobremesa oferecida ao 6.º e um prato do dia oferecido ao 10.º.");
-    assert.equal(stampRuleText(null), "1 carimbo por visita");
-    assert.equal(stampRuleText(1000), "1 carimbo por visita, a partir de 10 € de consumo");
+    assert.equal(stampRuleText(null), "1 carimbo por serviço pago");
+    assert.equal(stampRuleText(1000), "1 carimbo por serviço pago, a partir de 10 €");
     assert.equal(eurosText(750), "7,50 €");
   });
   it("reads the minimum spend typed by the owner", () => {

@@ -21,11 +21,12 @@ function Glint({ size }: { size: string }) {
 }
 
 /**
- * The reward ticket arriving the first time this phone sees that reward: it rises in with a soft
- * glow and a few glints, then stays still. Remembered per reward; without motion it simply shows.
+ * A reward moment arriving the first time this phone sees it (a reward won, or handed over): it
+ * rises in with a soft glow and a few glints, then stays still. Remembered per `id` (the reward and
+ * the moment); without motion it simply shows.
  */
-export function RewardReveal({ rewardId, children }: { rewardId: string; children: ReactNode }) {
-  const key = `cartao-premio:${rewardId}`;
+export function RewardReveal({ id, className = "", children }: { id: string; className?: string; children: ReactNode }) {
+  const key = `cartao-premio:${id}`;
   const seen = useSyncExternalStore(
     noop,
     () => {
@@ -53,7 +54,7 @@ export function RewardReveal({ rewardId, children }: { rewardId: string; childre
 
   if (seen) return <>{children}</>;
   return (
-    <div className="reward-reveal relative">
+    <div className={`reward-reveal relative ${className}`}>
       {children}
       <span aria-hidden="true" className="pointer-events-none absolute inset-0 text-[#e2bd6c]">
         {glints.map(({ size, delay, ...place }, index) => (

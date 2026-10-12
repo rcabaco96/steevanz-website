@@ -13,7 +13,7 @@ export interface LoyaltyProgramRow {
   reward: string;
   /** Rewards along the way, before the full card (up to 3). */
   milestones: Milestone[];
-  /** «1 carimbo por visita a partir de X €»: shown to customers and staff, applied by the team. */
+  /** «1 carimbo por serviço pago a partir de X €»: shown to customers and staff, applied by the team. */
   min_spend_cents: number | null;
   welcome_stamp: boolean;
   /** Not used any more: stamps are never limited by time. */

@@ -222,7 +222,7 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
         <label className={adminLabelClasses}>
           Consumo mínimo para carimbar (€, opcional)
           <input name="min_spend" inputMode="decimal" maxLength={8} defaultValue={program.min_spend_cents ? (program.min_spend_cents / 100).toString().replace(".", ",") : ""} placeholder="Sem mínimo" className={input} />
-          <span className="text-xs font-normal text-subtle">1 carimbo por visita a partir deste valor. Aparece no cartão do cliente e no Balcão; a equipa aplica.</span>
+          <span className="text-xs font-normal text-subtle">1 carimbo por serviço pago a partir deste valor. Aparece no cartão do cliente e no Balcão; a equipa aplica.</span>
         </label>
         <label className={adminLabelClasses}>
           Validade da recompensa (dias)
