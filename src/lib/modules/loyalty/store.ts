@@ -22,6 +22,7 @@ export interface LoyaltyProgramRow {
   staff_code_hash: string | null;
   staff_code_salt: string | null;
   staff_code_set_at: string | null;
+  /** The card's own conditions («Não acumula com outras promoções»), shown with the stamp rule. */
   terms: string | null;
   updated_at: string;
 }

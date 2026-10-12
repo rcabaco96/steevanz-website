@@ -123,7 +123,7 @@ export function CardOnThisPhone({ slug, token, name, createdHere }: { slug: stri
   );
 }
 
-export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; terms: string; welcomeStamp: boolean }) {
+export function JoinCardForm({ slug, businessName, welcomeStamp }: { slug: string; businessName: string; welcomeStamp: boolean }) {
   const [state, formAction] = useActionState(joinLoyalty, null);
   const saved = useSavedCards(slug);
   return (
@@ -161,12 +161,11 @@ export function JoinCardForm({ slug, terms, welcomeStamp }: { slug: string; term
         labelClassName={publicLabel}
         inputClassName={publicInput}
       />
-      <label className="flex items-start gap-2.5 text-sm text-muted">
-        <input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--brand)]" />
-        <span>{terms}</span>
-      </label>
       <Message state={state} />
       <Submit label={welcomeStamp ? "Criar cartão e ganhar o 1.º carimbo" : "Criar o meu cartão"} pendingLabel="A criar…" secondary={saved.length > 0} />
+      <p className="text-xs text-subtle">
+        Ao criar o cartão, aceita que {businessName} guarde o seu nome e contacto só para gerir o cartão. Pode pedir para os apagar a qualquer momento.
+      </p>
     </form>
   );
 }

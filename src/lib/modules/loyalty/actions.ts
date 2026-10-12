@@ -78,6 +78,7 @@ function sendCardEmail(establishment: EstablishmentRow, card: LoyaltyCardRow, pr
         { label: "Cartão", value: `${card.name} · código ${card.code.slice(0, 3)} ${card.code.slice(3)}` },
         { label: "Recompensas", value: cardRewards(program).map((item) => `${item.at} carimbos: ${item.reward}`).join(" · ") },
         { label: "Carimbos", value: stampRuleText(program.min_spend_cents) },
+        { label: "Condições", value: program.terms },
         { label: "Dica", value: "Abra o link no telemóvel e escolha «Adicionar ao ecrã principal» para ter o cartão sempre à mão." },
       ],
       adminUrl: link,
@@ -92,7 +93,6 @@ const joinSchema = z.object({
   name: z.string().trim().min(1).max(60),
   email: z.union([z.email().max(200), z.literal("")]).transform((email) => email.toLowerCase() || null),
   phone: z.string().trim().max(40).transform((text) => text || null),
-  consent: z.literal(true),
 });
 
 /** Public: a customer gets a card (with the welcome stamp, if the program gives one). Only the name is required. */
@@ -106,11 +106,10 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
       name: formText(formData, "name"),
       email: formText(formData, "email"),
       phone: "",
-      consent: formData.get("consent") === "on",
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? "");
-      return { ok: false, message: field === "consent" ? "Para criar o cartão tem de aceitar o tratamento dos dados." : field === "email" ? "Indique um email válido." : "Indique o seu nome." };
+      return { ok: false, message: field === "email" ? "Indique um email válido." : "Indique o seu nome." };
     }
     const typedPhone = phoneFrom(formData);
     if ("error" in typedPhone) return { ok: false, message: typedPhone.error };
@@ -140,6 +139,7 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
           name: parsed.data.name,
           email: parsed.data.email,
           phone: parsed.data.phone,
+          // Creating the card is accepting the note under the button (data kept only to run the card).
           consent_at: new Date().toISOString(),
         })
         .select("*")

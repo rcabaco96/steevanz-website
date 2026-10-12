@@ -66,7 +66,9 @@ export default async function LoyaltyCardPage({ params, searchParams }: Props) {
       />
       <div className="-mt-1 flex flex-col gap-1 text-center">
         <p className="text-muted">{missingText(card.stamps, program)}</p>
-        <p className="text-sm text-subtle">{stampRuleText(program.min_spend_cents)}.</p>
+        <p className="text-sm text-subtle">
+          {stampRuleText(program.min_spend_cents)}.{program.terms ? ` ${program.terms}` : ""}
+        </p>
         {rewardAt.length > 1 ? (
           <p className="text-sm text-subtle">{cardRewards(program).map((item) => `${item.at}.º carimbo: ${item.reward}`).join(" · ")}</p>
         ) : null}

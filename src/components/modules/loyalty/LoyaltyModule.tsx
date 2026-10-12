@@ -237,15 +237,18 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
           Cartão ativo (novas adesões e carimbos)
         </label>
         <label className={`${adminLabelClasses} sm:col-span-2`}>
-          Texto de consentimento (opcional)
+          Condições do cartão (opcional)
           <textarea
             name="terms"
-            rows={3}
+            rows={2}
             maxLength={600}
             defaultValue={program.terms ?? ""}
-            placeholder="Por omissão: «Aceito que [nome do espaço] guarde o meu nome e contacto para gerir o cartão de cliente…»"
+            placeholder="Por exemplo: Não acumula com outras promoções."
             className={`${adminInputClasses} py-2`}
           />
+          <span className="text-xs font-normal text-subtle">
+            Aparecem junto à regra do carimbo, na adesão e no cartão do cliente. A regra («1 carimbo por serviço pago») e o aviso de dados já aparecem sozinhos.
+          </span>
         </label>
         <div className="sm:col-span-2">
           <SubmitButton size="sm">Guardar regras</SubmitButton>

@@ -73,7 +73,7 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               { title: "Enviar a informação do negócio", body: "Envie-nos o nome do negócio, as regras (quantos carimbos) e a recompensa. Usamos esta informação para configurar o cartão e a página." },
-              { title: "Rever o texto de consentimento", body: "O texto que o cliente aceita ao criar o cartão. Usamos um texto padrão com o nome do seu negócio, que pode alterar." },
+              { title: "Rever as condições", body: "Se o cartão tiver condições (por exemplo, não acumular com outras promoções), aparecem junto à regra do carimbo." },
               { title: "Instalar a placa de adesão", body: "A placa com QR code fica no balcão, à vista, para os clientes aderirem." },
               { title: "Fazer um teste completo", body: "Criamos um cartão de teste, damos um carimbo e entregamos uma recompensa, para confirmar que tudo funciona." },
             ],
@@ -90,7 +90,7 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               { title: "Send your business details", body: "Send us your business name, the rules (how many stamps) and the reward. We use them to set up the card and the page." },
-              { title: "Review the consent text", body: "The text customers accept when creating their card. We use a standard text with your business name, which you can change." },
+              { title: "Review the conditions", body: "If the card has conditions (for example, not combined with other offers), they show next to the stamp rule." },
               { title: "Place the sign-up plate", body: "The plate with QR code sits on the counter, in view, for customers to join." },
               { title: "Run a full test", body: "We create a test card, give a stamp and hand over a reward, to confirm everything works." },
             ],
@@ -116,7 +116,7 @@ export const docs: ProductDocs = {
               ["Validade da recompensa", "Em dias; vazio = sem validade."],
               ["Primeiro carimbo na adesão", "Oferece 1 carimbo ao criar o cartão."],
               ["Cartão ativo", "Em pausa: sem novas adesões nem carimbos."],
-              ["Texto de consentimento", "Mostrado ao criar o cartão."],
+              ["Condições do cartão", "Opcional: aparecem junto à regra do carimbo (por exemplo, «Não acumula com outras promoções»)."],
             ],
           },
           { type: "h2", id: "rgpd", text: "Dados dos clientes" },
@@ -124,7 +124,7 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "Só o nome é obrigatório. O email serve para recuperar o cartão; o telemóvel ajuda a encontrá-lo ao balcão.",
-              "O cliente aceita o texto de consentimento ao criar o cartão.",
+              "Ao criar o cartão, o cliente vê que os dados servem só para o gerir e que pode pedir para os apagar.",
               "A pedido do cliente, a equipa apaga o cartão e todo o histórico.",
             ],
           },
@@ -146,7 +146,7 @@ export const docs: ProductDocs = {
               ["Reward validity", "In days; empty = no expiry."],
               ["First stamp on joining", "Gives 1 stamp when the card is created."],
               ["Card active", "Paused: no new sign-ups or stamps."],
-              ["Consent text", "Shown when the card is created."],
+              ["Card conditions", "Optional: shown next to the stamp rule (e.g. «Not combined with other offers»)."],
             ],
           },
           { type: "h2", id: "gdpr", text: "Customer data" },
@@ -154,7 +154,7 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "Only the name is required. The email lets them recover the card; the phone helps find it at the counter.",
-              "Customers accept the consent text when creating their card.",
+              "When creating the card, customers see that the data is only used to run it and that they can ask for it to be deleted.",
               "At the customer's request, your staff delete the card and its whole history.",
             ],
           },

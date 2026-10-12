@@ -186,7 +186,9 @@ export function CardCounter({
             </p>
           ) : null}
           <p className="text-sm text-muted">
-            {missingText(focus.stamps, program)} <span className="text-subtle">{stampRuleText(program.min_spend_cents)}.</span>
+            {missingText(focus.stamps, program)} <span className="text-subtle">
+              {stampRuleText(program.min_spend_cents)}.{program.terms ? ` ${program.terms}` : ""}
+            </span>
           </p>
           <CardActions card={focus} establishment={establishment} rewards={rewardsOf(focus.id)} program={program} qrHref={hrefWith({ qr: focus.id })} />
         </section>
