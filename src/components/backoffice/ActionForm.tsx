@@ -4,6 +4,7 @@ import { Fragment, useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { AlertIcon, Check } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
+import { useConfirmedSubmit } from "@/components/ui/ConfirmDialog";
 import type { ActionState } from "@/lib/action-state";
 
 type FormAction = (state: ActionState, formData: FormData) => Promise<ActionState>;
@@ -23,15 +24,12 @@ interface ActionFormProps {
 
 export function ActionForm({ action, children, className = "", confirmMessage, hideMessage = false, resetKey }: ActionFormProps) {
   const [state, formAction] = useActionState(action, null);
+  // Asks first (in the site's own dialog) when there is a confirmation message.
+  const { onSubmit, dialog } = useConfirmedSubmit(confirmMessage);
   return (
-    <form
-      action={formAction}
-      onSubmit={(event) => {
-        if (confirmMessage && !window.confirm(confirmMessage)) event.preventDefault();
-      }}
-      className={className}
-    >
+    <form action={formAction} onSubmit={onSubmit} className={className}>
       <Fragment key={resetKey}>{children}</Fragment>
+      {dialog}
       {state && !(hideMessage && state.ok) ? <FormMessage ok={state.ok} message={state.message} /> : null}
     </form>
   );

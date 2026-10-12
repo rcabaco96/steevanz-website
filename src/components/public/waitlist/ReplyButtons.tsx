@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { replyToCall } from "@/lib/modules/waitlist/actions";
-import { brandSecondaryButton } from "../BrandFrame";
+import { useConfirmedSubmit } from "@/components/ui/ConfirmDialog";
+import { brandButton, brandSecondaryButton } from "../BrandFrame";
 
 function Option({ value, label, danger = false }: { value: string; label: string; danger?: boolean }) {
   const { pending } = useFormStatus();
@@ -23,15 +24,14 @@ function Option({ value, label, danger = false }: { value: string; label: string
 /** "Já não venho": leaves the queue (optional; waiting or being called needs nothing else). */
 export function ReplyButtons({ token }: { token: string }) {
   const [state, formAction] = useActionState(replyToCall, null);
+  // The only answer left is leaving, which loses the place: ask first.
+  const { onSubmit, dialog } = useConfirmedSubmit("Sair da fila? Perde o seu lugar.", {
+    confirmClassName: `${brandButton} bg-danger! text-white! shadow-none!`,
+    cancelClassName: brandSecondaryButton,
+  });
   return (
-    <form
-      action={formAction}
-      onSubmit={(event) => {
-        const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
-        if (submitter?.value === "leaving" && !window.confirm("Sair da fila? Perde o seu lugar.")) event.preventDefault();
-      }}
-      className="flex flex-col gap-2"
-    >
+    <form action={formAction} onSubmit={onSubmit} className="flex flex-col gap-2">
+      {dialog}
       <input type="hidden" name="token" value={token} />
       <Option value="leaving" label="Já não venho, sair da fila" danger />
       {state ? (

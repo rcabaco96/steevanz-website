@@ -644,6 +644,14 @@ html.reveal-ready [data-reveal] {
   }
 }
 
+/* Confirmation dialog: rises in a little. */
+@keyframes confirm-in {
+  from {
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+  }
+}
+
 /* Call screen (TV): the newly called number arrives big. */
 @layer components {
   .tv-call-in {

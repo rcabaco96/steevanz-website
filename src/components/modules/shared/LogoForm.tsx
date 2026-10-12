@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { FormMessage } from "@/components/backoffice/ActionForm";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { buttonClasses } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { ActionState } from "@/lib/action-state";
 import { removeEstablishmentLogo, uploadEstablishmentLogo } from "@/lib/establishments/actions";
 import { logoMaxBytes } from "@/lib/establishments/logo-rules";
@@ -65,6 +66,7 @@ export function LogoForm({ establishmentId, hasLogo, iconSrc }: { establishmentI
   const [message, setMessage] = useState<ActionState>(null);
   const [pending, startTransition] = useTransition();
   const [action, setAction] = useState<"upload" | "remove" | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const uploading = pending && action === "upload";
   const removing = pending && action === "remove";
@@ -171,16 +173,22 @@ export function LogoForm({ establishmentId, hasLogo, iconSrc }: { establishmentI
                 disabled={pending}
                 aria-busy={removing}
                 className={buttonClasses("ghost", "sm", "text-muted hover:text-danger")}
-                onClick={() => {
-                  if (!window.confirm("Remover o logótipo? O ícone volta a mostrar as iniciais do espaço.")) return;
-                  const data = new FormData();
-                  data.set("establishment_id", establishmentId);
-                  run("remove", data);
-                }}
+                onClick={() => setConfirmRemove(true)}
               >
                 {removing ? "A remover…" : "Remover logótipo"}
               </button>
             ) : null}
+            <ConfirmDialog
+              open={confirmRemove}
+              message="Remover o logótipo? O ícone volta a mostrar as iniciais do espaço."
+              onCancel={() => setConfirmRemove(false)}
+              onConfirm={() => {
+                setConfirmRemove(false);
+                const data = new FormData();
+                data.set("establishment_id", establishmentId);
+                run("remove", data);
+              }}
+            />
           </form>
           {message ? <FormMessage ok={message.ok} message={message.message} /> : null}
         </div>
