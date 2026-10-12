@@ -13,6 +13,8 @@ alter table public.waitlist_settings drop constraint if exists waitlist_settings
 alter table public.waitlist_settings add constraint waitlist_settings_state_check check (state in ('open', 'closed'));
 
 alter table public.waitlist_settings add column numbers_from timestamptz not null default now();
+-- Counting from the last time each queue opened or closed, so an open queue keeps its numbers going.
+update public.waitlist_settings set numbers_from = state_changed_at;
 
 alter table public.waitlist_entries add column phone text check (char_length(phone) <= 40);
 
