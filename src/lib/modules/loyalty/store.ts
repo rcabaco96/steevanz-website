@@ -16,6 +16,7 @@ export interface LoyaltyProgramRow {
   /** «1 carimbo por visita a partir de X €»: shown to customers and staff, applied by the team. */
   min_spend_cents: number | null;
   welcome_stamp: boolean;
+  /** Not used any more: stamps are never limited by time. */
   cooldown_minutes: number;
   reward_valid_days: number | null;
   staff_code_hash: string | null;

@@ -23,22 +23,6 @@ export function stampSlots(stamps: number, required: number): boolean[] {
   return Array.from({ length: required }, (_, index) => index < stamps);
 }
 
-/** "Pode receber outro carimbo às 15:40". */
-export function cooldownMessage(nextAllowedAt: string, timeZone: string): string {
-  const time = new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(nextAllowedAt));
-  const sameDay =
-    new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date(nextAllowedAt)) === new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date());
-  return sameDay
-    ? `Este cartão já recebeu um carimbo há pouco. O próximo pode ser dado a partir das ${time}.`
-    : `Este cartão já recebeu um carimbo há pouco. O próximo pode ser dado a partir de ${new Intl.DateTimeFormat("pt-PT", {
-        timeZone,
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date(nextAllowedAt))}.`;
-}
-
 /**
  * The reward inside a sentence ("ganhe …", "faltam 3 carimbos para …"). Written with an article or a
  * number («Uma sobremesa oferecida», «2 cafés») it reads on: "ganhe uma sobremesa oferecida". Without

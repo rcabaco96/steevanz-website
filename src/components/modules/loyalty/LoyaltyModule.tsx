@@ -225,11 +225,6 @@ function ProgramSettings({ program, establishmentId }: { program: LoyaltyProgram
           <span className="text-xs font-normal text-subtle">1 carimbo por visita a partir deste valor. Aparece no cartão do cliente e no Balcão; a equipa aplica.</span>
         </label>
         <label className={adminLabelClasses}>
-          Tempo mínimo entre carimbos (minutos)
-          <input name="cooldown_minutes" type="number" min={0} max={10080} required defaultValue={program.cooldown_minutes} className={input} />
-          <span className="text-xs font-normal text-subtle">Antifraude: evita dois carimbos na mesma visita. 0 = sem limite.</span>
-        </label>
-        <label className={adminLabelClasses}>
           Validade da recompensa (dias)
           <input name="reward_valid_days" type="number" min={1} max={730} defaultValue={program.reward_valid_days ?? ""} placeholder="Sem validade" className={input} />
         </label>

@@ -26,7 +26,7 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               { title: "Sem aplicação", body: "O cartão é uma página no telemóvel do cliente. Não há nada para instalar." },
-              { title: "Sem fraude", body: "Só a equipa dá carimbos, no painel (com sessão iniciada), e há um tempo mínimo entre carimbos." },
+              { title: "Sem fraude", body: "Só a equipa dá carimbos, no painel (com sessão iniciada). Quando dar cada carimbo é decisão sua." },
               { title: "Com estatísticas", body: "Veja quantos clientes aderiram, quantos voltaram e quantas recompensas foram entregues." },
             ],
           },
@@ -55,7 +55,7 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               { title: "No app needed", body: "The card is a page on the customer's phone. There's nothing to install." },
-              { title: "No fraud", body: "Only your staff give stamps, from the dashboard (signed in), and there's a minimum time between stamps." },
+              { title: "No fraud", body: "Only your staff give stamps, from the dashboard (signed in). When to give each stamp is up to you." },
               { title: "With stats", body: "See how many customers joined, how many came back and how many rewards were handed out." },
             ],
           },
@@ -102,7 +102,7 @@ export const docs: ProductDocs = {
     configuration: {
       pt: {
         title: "Configuração: recompensas, antifraude e RGPD",
-        description: "As regras do cartão: carimbos para completar, recompensa, tempo mínimo entre carimbos, validade e dados dos clientes.",
+        description: "As regras do cartão: carimbos para completar, recompensa, validade e dados dos clientes.",
         blocks: [
           { type: "p", text: "As regras estão no separador **Definições** do cartão, na sua área de cliente." },
           {
@@ -113,7 +113,6 @@ export const docs: ProductDocs = {
               ["Recompensa ao completar o cartão", "O que o cliente ganha no último carimbo, ex.: «um prato do dia oferecido»."],
               ["Recompensas pelo caminho", "Até 3, antes do cartão completo (ex.: ao 3.º carimbo um café, ao 6.º uma sobremesa). A primeira chega cedo e faz voltar; a grande fica no fim. Nos restaurantes vêm sugeridas; nos outros negócios fica só a final."],
               ["Consumo mínimo para carimbar", "«1 carimbo por visita a partir de X €». Aparece no cartão do cliente e no Balcão; a equipa aplica. Vazio = sem mínimo."],
-              ["Tempo mínimo entre carimbos", "Antifraude: um carimbo por visita."],
               ["Validade da recompensa", "Em dias; vazio = sem validade."],
               ["Primeiro carimbo na adesão", "Oferece 1 carimbo ao criar o cartão."],
               ["Cartão ativo", "Em pausa: sem novas adesões nem carimbos."],
@@ -133,7 +132,7 @@ export const docs: ProductDocs = {
       },
       en: {
         title: "Configuration: rewards, anti-fraud and GDPR",
-        description: "The card's rules: stamps to complete, reward, minimum time between stamps, validity and customer data.",
+        description: "The card's rules: stamps to complete, reward, validity and customer data.",
         blocks: [
           { type: "p", text: "The rules are in the card's **Settings** tab, in your client area." },
           {
@@ -144,7 +143,6 @@ export const docs: ProductDocs = {
               ["Reward for a full card", "What the customer gets on the last stamp, e.g. «a free dish of the day»."],
               ["Rewards along the way", "Up to 3 before the card is full (e.g. a coffee at the 3rd stamp, a dessert at the 6th). The first comes early and brings people back; the big one stays at the end. Suggested for restaurants; other businesses keep only the final one."],
               ["Minimum spend per stamp", "«1 stamp per visit from X €». Shown on the customer's card and in the Balcão; your staff apply it. Empty = no minimum."],
-              ["Minimum time between stamps", "Anti-fraud: one stamp per visit."],
               ["Reward validity", "In days; empty = no expiry."],
               ["First stamp on joining", "Gives 1 stamp when the card is created."],
               ["Card active", "Paused: no new sign-ups or stamps."],
@@ -187,8 +185,8 @@ export const docs: ProductDocs = {
             ],
           },
           { type: "h2", id: "papel", text: "Carimbos do cartão de papel" },
-          { type: "p", text: "Nos clientes do módulo, em «Mais», passe os carimbos que o cliente tinha no papel. Não contam para o tempo mínimo entre carimbos, por isso o carimbo da visita de hoje pode ser dado logo." },
-          { type: "callout", tone: "tip", text: "Errou um carimbo? «Retirar carimbo» no cartão do cliente. Também liberta o tempo mínimo entre carimbos e, se esse carimbo tinha completado o cartão, anula a recompensa por usar." },
+          { type: "p", text: "Nos clientes do módulo, em «Mais», passe os carimbos que o cliente tinha no papel. O carimbo da visita de hoje pode ser dado logo a seguir." },
+          { type: "callout", tone: "tip", text: "Errou um carimbo? «Retirar carimbo» no cartão do cliente. Se esse carimbo tinha completado o cartão, anula a recompensa por usar." },
         ],
       },
       en: {
@@ -214,8 +212,8 @@ export const docs: ProductDocs = {
             ],
           },
           { type: "h2", id: "paper", text: "Stamps from a paper card" },
-          { type: "p", text: "In the module's customers, under «More», move the stamps the customer had on paper. They don't count towards the minimum time between stamps, so today's visit can be stamped straight away." },
-          { type: "callout", tone: "tip", text: "Stamped by mistake? «Remove stamp» on the customer's card. It also frees the minimum time between stamps and, if that stamp completed the card, takes back the unused reward." },
+          { type: "p", text: "In the module's customers, under «More», move the stamps the customer had on paper. Today's visit can be stamped right after." },
+          { type: "callout", tone: "tip", text: "Stamped by mistake? «Remove stamp» on the customer's card. If that stamp completed the card, it takes back the unused reward." },
         ],
       },
     },
@@ -225,7 +223,7 @@ export const docs: ProductDocs = {
         description: "Soluções para problemas comuns: o carimbo é recusado, o cliente perdeu o cartão e a placa não abre.",
         blocks: [
           { type: "h2", id: "recusado", text: "O carimbo é recusado" },
-          { type: "p", text: "Dentro do tempo mínimo entre carimbos não é possível dar outro: a mensagem diz a partir de que hora pode ser dado. Confirme também que o cartão está ativo nas definições." },
+          { type: "p", text: "Confirme que o cartão está ativo nas definições: em pausa, não se dão nem retiram carimbos." },
           { type: "h2", id: "perdeu", text: "O cliente perdeu o cartão" },
           { type: "p", text: "Use «Já tinha cartão?» (com email) ou «Mostrar QR do cartão» no Balcão. Veja [utilização](/docs/cartao-fidelidade-digital/utilizacao)." },
           { type: "h2", id: "placa", text: "A placa não abre" },
@@ -237,7 +235,7 @@ export const docs: ProductDocs = {
         description: "Fixes for common issues: the stamp is refused, the customer lost the card and the plate doesn't open.",
         blocks: [
           { type: "h2", id: "refused", text: "The stamp is refused" },
-          { type: "p", text: "Within the minimum time between stamps another one can't be given: the message says from what time it can. Also check the card is active in the settings." },
+          { type: "p", text: "Check the card is active in the settings: while paused, stamps can't be given or removed." },
           { type: "h2", id: "lost", text: "The customer lost their card" },
           { type: "p", text: "Use «Already have a card?» (with email) or «Show card QR» in the Balcão. See [usage](/en/docs/digital-loyalty-card/usage)." },
           { type: "h2", id: "plate", text: "The plate doesn't open" },
@@ -257,7 +255,7 @@ export const docs: ProductDocs = {
               { q: "O cliente precisa de instalar uma app?", a: "Não. O cartão abre no navegador e pode ficar no ecrã principal do telemóvel." },
               { q: "O cartão fica na Apple Wallet ou na Google Wallet?", a: "Ainda não. É uma página no telemóvel, que pode ficar no ecrã principal." },
               { q: "Que telemóveis funcionam?", a: "Qualquer telemóvel com câmara usa o QR code. Os iPhone XS e mais recentes e a maioria dos Android com a leitura por aproximação ligada também leem a placa." },
-              { q: "Como evito carimbos falsos?", a: "Só a equipa dá carimbos, pelo Balcão (com sessão iniciada), e há um tempo mínimo entre carimbos." },
+              { q: "Como evito carimbos falsos?", a: "Só a equipa dá carimbos, pelo Balcão (com sessão iniciada). O cliente não consegue carimbar sozinho." },
               { q: "Que dados são guardados?", a: "O nome (email e telemóvel opcionais) e o registo de carimbos e recompensas, de acordo com o RGPD." },
               { q: "Posso cancelar o plano?", a: "Sim, o plano é mensal e sem fidelização. Recomendamos avisar os clientes para usarem as recompensas que já ganharam." },
             ],
@@ -275,7 +273,7 @@ export const docs: ProductDocs = {
               { q: "Do customers need to install an app?", a: "No. The card opens in the browser and can sit on the phone's home screen." },
               { q: "Does the card go in Apple Wallet or Google Wallet?", a: "Not yet. It's a page on the phone that can sit on the home screen." },
               { q: "Which phones work?", a: "Any phone with a camera can use the QR code. iPhone XS and newer and most Android phones with contactless reading on also read the plate." },
-              { q: "How do I prevent fake stamps?", a: "Only your staff give stamps, from the Balcão (signed in), and there's a minimum time between stamps." },
+              { q: "How do I prevent fake stamps?", a: "Only your staff give stamps, from the Balcão (signed in). Customers can't stamp their own card." },
               { q: "What data is stored?", a: "The name (email and phone optional) and the record of stamps and rewards, in line with GDPR." },
               { q: "Can I cancel the plan?", a: "Yes, the plan is monthly with no minimum term. We recommend telling customers so they can use rewards they've already earned." },
             ],

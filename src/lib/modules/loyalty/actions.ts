@@ -15,7 +15,6 @@ import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken } from "..
 import { publicEstablishment } from "../public";
 import {
   cardRewards,
-  cooldownMessage,
   maxMilestones,
   missingText,
   parseEuros,
@@ -45,8 +44,9 @@ interface StampOutcome {
   next_allowed_at: string | null;
 }
 
-async function stamp(cardId: string, amount: number, source: "staff_panel" | "welcome" | "migration", enforceCooldown: boolean): Promise<StampOutcome> {
-  const { data, error } = await createServiceClient().rpc("loyalty_stamp", { p_card: cardId, p_amount: amount, p_source: source, p_enforce_cooldown: enforceCooldown });
+/** Adds (or, negative, removes) stamps. Never limited by time: the business decides when to stamp. */
+async function stamp(cardId: string, amount: number, source: "staff_panel" | "welcome" | "migration"): Promise<StampOutcome> {
+  const { data, error } = await createServiceClient().rpc("loyalty_stamp", { p_card: cardId, p_amount: amount, p_source: source, p_enforce_cooldown: false });
   if (error) throw new Error(error.message);
   const row = (Array.isArray(data) ? data[0] : data) as StampOutcome | undefined;
   if (!row) throw new Error("loyalty_stamp returned nothing");
@@ -54,8 +54,7 @@ async function stamp(cardId: string, amount: number, source: "staff_panel" | "we
 }
 
 /** After a stamp: the reward it gave (a milestone or the full card), or what is missing for the next. */
-function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, establishment: EstablishmentRow, before: number): ActionState {
-  if (result.outcome === "cooldown") return { ok: false, message: cooldownMessage(result.next_allowed_at!, establishment.time_zone) };
+function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, before: number): { ok: boolean; message: string } {
   const reached = rewardsCrossed(before, 1, program)[0];
   if (reached) {
     const full = reached.at === program.stamps_required;
@@ -150,7 +149,7 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
     }
     if (!card) throw new Error("no free card code");
     await client.from("loyalty_events").insert({ card_id: card.id, establishment_id: establishment.id, kind: "joined", amount: 0 });
-    if (program.welcome_stamp) await stamp(card.id, 1, "welcome", false);
+    if (program.welcome_stamp) await stamp(card.id, 1, "welcome");
     sendCardEmail(establishment, card, program, await cardLink(establishment, card), true);
     refresh(establishment);
     target = `/cartao/${establishment.slug}/${card.token}`;
@@ -221,15 +220,15 @@ async function staffCard(formData: FormData) {
 
 const paused: ActionState = { ok: false, message: "O cartão de cliente está em pausa. Ative-o em Definições para dar ou retirar carimbos." };
 
-/** Staff panel: one stamp (respects the time window between stamps). */
+/** Staff panel: one stamp, whenever the team gives it. */
 export async function staffStamp(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
     if (!program.active) return paused;
-    const result = await stamp(card.id, 1, "staff_panel", true);
+    const result = await stamp(card.id, 1, "staff_panel");
     refresh(establishment);
-    const outcome = stampMessage(result, program, establishment, card.stamps)!;
+    const outcome = stampMessage(result, program, card.stamps);
     return { ok: outcome.ok, message: `${card.name}: ${outcome.message}` };
   });
 }
@@ -240,7 +239,7 @@ export async function staffRemoveStamp(_previous: ActionState, formData: FormDat
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
     if (!program.active) return paused;
-    const result = await stamp(card.id, -1, "staff_panel", false);
+    const result = await stamp(card.id, -1, "staff_panel");
     if (result.outcome === "nothing") return { ok: false, message: "Este cartão não tem carimbos para retirar." };
     refresh(establishment);
     return {
@@ -253,7 +252,7 @@ export async function staffRemoveStamp(_previous: ActionState, formData: FormDat
   });
 }
 
-/** Staff panel: stamps a customer already had on the paper card (no time window). */
+/** Staff panel: stamps a customer already had on the paper card. */
 export async function staffMigrateStamps(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
@@ -261,7 +260,7 @@ export async function staffMigrateStamps(_previous: ActionState, formData: FormD
     if (!program.active) return paused;
     const amount = Number(formText(formData, "amount"));
     if (!Number.isInteger(amount) || amount < 1 || amount > program.stamps_required * 3) return { ok: false, message: "Indique quantos carimbos tinha no cartão de papel." };
-    await stamp(card.id, amount, "migration", false);
+    await stamp(card.id, amount, "migration");
     refresh(establishment);
     const reached = rewardsCrossed(card.stamps, amount, program).map((item) => item.reward);
     return { ok: true, message: `${amount} carimbos do cartão de papel passados para ${card.name}.${reached.length ? ` Ganhou: ${reached.join(", ")}.` : ""}` };
@@ -296,7 +295,6 @@ const programSchema = z.object({
   stamps_required: z.coerce.number().int().min(2).max(50),
   reward: z.string().trim().min(1).max(120),
   welcome_stamp: z.boolean(),
-  cooldown_minutes: z.coerce.number().int().min(0).max(10080),
   reward_valid_days: z
     .string()
     .trim()
@@ -329,7 +327,6 @@ export async function saveProgram(_previous: ActionState, formData: FormData): P
       stamps_required: formText(formData, "stamps_required"),
       reward: formText(formData, "reward"),
       welcome_stamp: formData.get("welcome_stamp") === "on",
-      cooldown_minutes: formText(formData, "cooldown_minutes"),
       reward_valid_days: formText(formData, "reward_valid_days"),
       terms: formText(formData, "terms"),
     });
