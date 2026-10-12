@@ -52,12 +52,12 @@ function PlaceLinks({ establishment }: { establishment: EstablishmentRow }) {
   return (
     <div className={`grid gap-3 ${both ? "grid-cols-2" : "grid-cols-1"}`}>
       {establishment.maps_url ? (
-        <a href={establishment.maps_url} target="_blank" rel="noopener noreferrer" className={`${brandSecondaryButton} px-3 text-[0.95rem]`}>
+        <a href={establishment.maps_url} target="_blank" rel="noopener noreferrer" className={`${brandSecondaryButton} px-3 text-[0.95rem] whitespace-nowrap`}>
           <PinIcon />
-          Ver no Google Maps
+          Google Maps
         </a>
       ) : null}
-      <ReviewLink establishment={establishment} className={`${brandSecondaryButton} px-3 text-[0.95rem]`} />
+      <ReviewLink establishment={establishment} className={`${brandSecondaryButton} px-3 text-[0.95rem] whitespace-nowrap`} />
     </div>
   );
 }
