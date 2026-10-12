@@ -25,6 +25,15 @@ function Submit({ label }: { label: string }) {
 
 const noop = () => () => {};
 
+function BellIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-4.5 w-4.5 shrink-0 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9a6 6 0 1 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9Z" />
+      <path d="M10 19a2 2 0 0 0 4 0" />
+    </svg>
+  );
+}
+
 /** The last place this phone had in this queue, to go back to it instead of joining twice. */
 function useSavedTicket(slug: string): string | null {
   return useSyncExternalStore(
@@ -120,7 +129,13 @@ export function JoinForm({
           </select>
         </label>
       ) : null}
-      <PhoneField label="Telemóvel (opcional)" hint="Para a equipa lhe poder ligar, se for preciso." labelClassName={publicLabel} inputClassName={publicInput} />
+      <PhoneField label="Telemóvel (opcional)" hint="Só para a equipa lhe ligar, se for preciso. Não enviamos SMS." labelClassName={publicLabel} inputClassName={publicInput} />
+      <p className="flex items-start gap-2 rounded-2xl border border-line bg-surface-2/60 px-4 py-3 text-sm text-text">
+        <BellIcon />
+        <span>
+          Avisamos quando for a sua vez com uma <strong className="font-semibold">notificação no telemóvel</strong>: no passo seguinte, toque em «Ativar avisos».
+        </span>
+      </p>
       {state && !state.ok ? (
         <p role="alert" className="flex items-center gap-1.5 text-sm text-danger">
           <AlertIcon size={15} />

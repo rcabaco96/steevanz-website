@@ -5,6 +5,8 @@
 -- - Two people with the same name cannot be in the queue at once (accents and case ignored).
 -- Calls no longer close on their own after a while (the app stops calling waitlist_settle); the
 -- team marks «Atendido» or «Não apareceu». grace_minutes and email stay for older rows.
+-- waitlist_join takes the phone and still takes the email (both optional, named), so the site
+-- deployed before this change keeps working until the new one is out.
 
 update public.waitlist_settings set state = 'closed' where state = 'paused';
 alter table public.waitlist_settings drop constraint if exists waitlist_settings_state_check;
@@ -49,10 +51,11 @@ create or replace function public.waitlist_join(
   p_party integer,
   p_service uuid,
   p_staff uuid,
-  p_phone text,
   p_notes text,
   p_source text,
-  p_day_start timestamptz
+  p_day_start timestamptz,
+  p_phone text default null,
+  p_email text default null
 )
 returns public.waitlist_entries
 language plpgsql
@@ -87,13 +90,13 @@ begin
   end if;
   select coalesce(max(number), 0) + 1 into next_number from public.waitlist_entries
     where establishment_id = p_establishment and joined_at >= greatest(p_day_start, settings.numbers_from);
-  insert into public.waitlist_entries (establishment_id, token, number, name, party_size, service_id, staff_id, phone, notes, source)
-    values (p_establishment, p_token, next_number, p_name, p_party, p_service, p_staff, p_phone, p_notes, p_source)
+  insert into public.waitlist_entries (establishment_id, token, number, name, party_size, service_id, staff_id, phone, email, notes, source)
+    values (p_establishment, p_token, next_number, p_name, p_party, p_service, p_staff, p_phone, p_email, p_notes, p_source)
     returning * into entry;
   return entry;
 end;
 $$;
 
-revoke execute on function public.waitlist_join(uuid, text, text, integer, uuid, uuid, text, text, text, timestamptz) from anon, authenticated, public;
-grant execute on function public.waitlist_join(uuid, text, text, integer, uuid, uuid, text, text, text, timestamptz) to service_role;
+revoke execute on function public.waitlist_join(uuid, text, text, integer, uuid, uuid, text, text, timestamptz, text, text) from anon, authenticated, public;
+grant execute on function public.waitlist_join(uuid, text, text, integer, uuid, uuid, text, text, timestamptz, text, text) to service_role;
 revoke execute on function public.waitlist_name_key(text) from anon, authenticated, public;
