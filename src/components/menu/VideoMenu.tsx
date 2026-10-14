@@ -19,7 +19,7 @@ const focusCount = 4;
 /** The next row (in the scroll's direction) plays hidden, so it is moving as it appears. */
 const aheadCount = poolSize - focusCount;
 /** Changing collection: the panel stays until the new collection's videos play, at most this long (ms). */
-const switchWaitMs = 4000;
+const switchWaitMs = 2500;
 /**
  * A new collection starts at its top (owner, 2026-10-14). At once: the page scrolls smoothly by
  * default, and a smooth scroll is dropped while the panel holds the page still (iPhone).
@@ -105,7 +105,7 @@ const mosaicTiles = 28;
  * latest at mosaicWaitMax; it takes mosaicExitMs (ms).
  */
 const mosaicExitAt = 2050;
-const mosaicWaitMax = 5000;
+const mosaicWaitMax = 2600;
 const mosaicExitMs = 700;
 
 /**

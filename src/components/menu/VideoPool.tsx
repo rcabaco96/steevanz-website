@@ -47,12 +47,6 @@ export const poolSize = 6;
  * after a video change the old video's reports still arrive for a moment.
  */
 const shownAfterSeconds = 0.3;
-/**
- * On an iPhone a video starting to play shows the phone's own ⏸ over it for about 3 s (owner's screen
- * recording, 2026-10-14: «desaparece sim»): there, a player shows only after this much (s).
- */
-const shownAfterSecondsApple = 3.5;
-const appleTouch = () => /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
 /**
  * Sound, turned on from inside the visitor's tap: an iPhone lets a video play aloud only when the tap
@@ -214,7 +208,6 @@ export function VideoPool({
 
   // YouTube's messages: ready, state changes, the video looping when it ends.
   useEffect(() => {
-    const showAfter = appleTouch() ? shownAfterSecondsApple : shownAfterSeconds;
     const onMessage = (event: MessageEvent) => {
       const index = frames.current.findIndex((frame) => frame && event.source === frame.contentWindow);
       if (index < 0 || typeof event.data !== "string") return;
@@ -240,7 +233,7 @@ export function VideoPool({
       if (typeof info.currentTime === "number") player.time = info.currentTime;
       const showing = player.showing;
       // Frames are on screen: its own video, playing, a moment in.
-      if (player.reported === player.video && player.state === 1 && player.time >= player.from + showAfter) player.showing = player.video;
+      if (player.reported === player.video && player.state === 1 && player.time >= player.from + shownAfterSeconds) player.showing = player.video;
       const state = data.event === "onStateChange" && typeof data.info === "number" ? data.info : typeof info.playerState === "number" ? info.playerState : null;
       if (state === null || state === player.state) {
         if (player.showing !== showing) setTick((tick) => tick + 1);
