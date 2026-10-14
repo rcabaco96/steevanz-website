@@ -40,10 +40,13 @@ export default function ReelsPage() {
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {reels.map((reel) => (
             <li key={reel.embed} className="card flex flex-col gap-3 p-3">
-              {/* The mask makes iPhones (WebKit) clip the playing video to the rounded corners too. */}
+              {/*
+                clip-path makes iPhones (WebKit) clip the playing video to the rounded corners too. Not a
+                mask: with -webkit-mask-image the iPhone stopped passing taps to the video (2026-10-14).
+              */}
               <div
-                className="relative aspect-[9/16] w-full overflow-hidden rounded-2xl bg-surface-inverse"
-                style={{ WebkitMaskImage: "-webkit-radial-gradient(white, black)", transform: "translateZ(0)" }}
+                className="relative isolate aspect-[9/16] w-full overflow-hidden rounded-2xl bg-surface-inverse"
+                style={{ clipPath: "inset(0 round 1rem)" }}
               >
                 <ReelFrame
                   src={reel.embed}
