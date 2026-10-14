@@ -66,9 +66,18 @@ const dishes: Record<string, MenuDish> = {
   "pumpkin-muffins": { video: "1yiE_3d_src", name: "Muffin de abóbora", description: "Muffin fofo de abóbora com crumble de canela.", price: 2.9 },
   "apple-muffins": { video: "iehPPojb51g", name: "Muffin de maçã", description: "Muffin de maçã com cobertura estaladiça.", price: 2.9 },
   "cheese-toast": { video: "9yBWV4TnqAA", name: "Tosta de queijo", description: "Pão tostado na manteiga com queijo derretido.", price: 4.5 },
+  // Drinks (owner, 2026-10-14): non-alcoholic, the drink in frame (no one talking to the camera).
+  smoothie: { video: "01ivc-1r3oc", name: "Smoothie de frutos vermelhos", description: "Morango, frutos vermelhos e iogurte, batidos na hora.", price: 4.5 },
+  espresso: { video: "YwtN14fMzso", name: "Espresso", description: "Café de especialidade, tirado na hora.", price: 1.2 },
+  "double-espresso": { video: "Xe-khGBG1Gk", name: "Espresso duplo", description: "Dose dupla, intensa e encorpada.", price: 2 },
+  "pour-over": { video: "wiGpI2rqMHo", name: "Café de filtro (V60)", description: "Café coado à mão, suave e aromático.", price: 3.2 },
+  lemonade: { video: "yRN65wygV2s", name: "Limonada caseira", description: "Limões espremidos na hora, com hortelã e gelo.", price: 3 },
+  "smoked-tea": { video: "T72WmperNsY", name: "Chá gelado fumado", description: "Chá preto fumado servido com gelo e casca de laranja.", price: 3.5 },
+  "pink-mocktail": { video: "wtiZ88q-gV4", name: "Mocktail Pink Pearl", description: "Bebida cremosa de frutos vermelhos, sem álcool.", price: 4.9 },
 };
 
 const brunch = ["latte", "shakshuka", "croissants", "pumpkin-muffins", "apple-muffins", "cheese-toast", "crepes", "boiled-egg", "fruit-salad", "donuts"];
+const drinks = ["smoothie", "lemonade", "espresso", "double-espresso", "pour-over", "latte", "smoked-tea", "pink-mocktail"];
 const sweet = ["fried-ice-cream", "tiramisu", "creme-brulee", "brownie", "donuts", "orange-cake", "crepes", "fruit-salad"];
 const snacks = ["arancini", "popcorn", "nachos", "crispy-chicken", "boiled-egg", "pierogi"];
 const burgers = ["burger", "sandwich", "fish-and-chips", "tacos"];
@@ -81,7 +90,8 @@ export const demoMenu: VideoMenuData = {
   dishes,
   collections: [
     { id: "brunch", name: "Brunch", dishes: brunch },
-    { id: "todos", name: "Todos", dishes: [...new Set([...brunch, ...sweet, ...snacks, ...burgers, ...mains])] },
+    { id: "bebidas", name: "Bebidas", dishes: drinks },
+    { id: "todos", name: "Todos", dishes: [...new Set([...brunch, ...drinks, ...sweet, ...snacks, ...burgers, ...mains])] },
     { id: "gelados", name: "Gelados e sobremesas", dishes: sweet },
     { id: "salgados", name: "Salgados e snacks", dishes: snacks },
     { id: "hamburgueres", name: "Hambúrgueres e sandes", dishes: burgers },
