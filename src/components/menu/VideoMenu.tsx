@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
 import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
 import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
@@ -97,9 +97,14 @@ function DishCard({
 /** Tiles of the mosaic opening: 4 columns of 7 rows, filling the screen (and beyond, it is tilted). */
 const mosaicColumns = 4;
 const mosaicTiles = 28;
-/** When the mosaic's ending starts, and how long it takes (ms; the circle of «B»). */
+/**
+ * The mosaic's ending (the circle of «B») starts once it has shown this long and the videos on screen
+ * are playing (owner, 2026-10-14: «quando acabar a animação os vídeos estejam a dar»), or at the
+ * latest at mosaicWaitMax; it takes mosaicExitMs (ms).
+ */
 const mosaicExitAt = 2050;
-const mosaicExitMs = 1150;
+const mosaicWaitMax = 4000;
+const mosaicExitMs = 700;
 
 /**
  * The opening (owner, 2026-10-14, after trying a circular reveal, a lens alone, and mosaic endings
@@ -109,34 +114,48 @@ const mosaicExitMs = 1150;
  * behind it all along, so they are playing when it ends. The circle is a mask whose radius is a
  * registered CSS property (--menu-reveal), centred on the logo; transforms and opacity otherwise.
  */
-function MosaicSplash({ logo, business, videos, onDone }: { logo: string; business: string; videos: string[]; onDone: () => void }) {
+function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string; business: string; videos: string[]; ready: boolean; onDone: () => void }) {
   const [phase, setPhase] = useState<"in" | "out" | "done">("in");
-  const [centre, setCentre] = useState({ x: "50%", y: "46%" });
+  const [waited, setWaited] = useState<"no" | "enough" | "max">("no");
+  // The lens's centre (the logo) and the radius that uncovers the farthest corner, set at the start
+  // (changing them as it opens restyled the whole mosaic: a dropped frame).
+  const [lens, setLens] = useState({ x: "50%", y: "46%", to: "80vmax" });
   const mark = useRef<HTMLImageElement>(null);
   const rows = Math.ceil(mosaicTiles / mosaicColumns);
 
+  useLayoutEffect(() => {
+    const rect = mark.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const far = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    setLens({ x: `${Math.round(x)}px`, y: `${Math.round(y)}px`, to: `${Math.ceil(far + 2)}px` });
+  }, []);
   useEffect(() => {
-    const leave = window.setTimeout(() => {
-      const rect = mark.current?.getBoundingClientRect();
-      if (rect) setCentre({ x: `${Math.round(rect.left + rect.width / 2)}px`, y: `${Math.round(rect.top + rect.height / 2)}px` });
-      setPhase("out");
-    }, mosaicExitAt);
+    const enough = window.setTimeout(() => setWaited("enough"), mosaicExitAt);
+    const max = window.setTimeout(() => setWaited("max"), mosaicWaitMax);
+    return () => {
+      window.clearTimeout(enough);
+      window.clearTimeout(max);
+    };
+  }, []);
+  // Once it leaves it keeps leaving (a video buffering again later does not bring it back).
+  if (phase === "in" && (waited === "max" || (waited === "enough" && ready))) setPhase("out");
+  useEffect(() => {
+    if (phase !== "out") return;
     const end = window.setTimeout(() => {
       setPhase("done");
       onDone();
-    }, mosaicExitAt + mosaicExitMs);
-    return () => {
-      window.clearTimeout(leave);
-      window.clearTimeout(end);
-    };
-  }, [onDone]);
+    }, mosaicExitMs);
+    return () => window.clearTimeout(end);
+  }, [phase, onDone]);
 
   if (phase === "done") return null;
   const out = phase === "out";
   return (
     <div aria-hidden="true" className="fixed inset-0 z-[100] overflow-hidden">
       {/* Everything but the logo: the lens opens through it. */}
-      <div className={`absolute inset-0 ${out ? "menu-mosaic-lens" : ""}`} style={{ ["--reveal-x" as string]: centre.x, ["--reveal-y" as string]: centre.y, background: "#fbe3ee" }}>
+      <div className={`absolute inset-0 ${out ? "menu-mosaic-lens" : ""}`} style={{ ["--reveal-x" as string]: lens.x, ["--reveal-y" as string]: lens.y, ["--reveal-to" as string]: lens.to, background: "#fbe3ee" }}>
         <div className="menu-mosaic absolute grid gap-2.5" style={{ gridTemplateColumns: `repeat(${mosaicColumns}, minmax(0, 1fr))` }}>
           {Array.from({ length: mosaicTiles }, (_, index) => {
             // From the centre outwards.
@@ -150,7 +169,7 @@ function MosaicSplash({ logo, business, videos, onDone }: { logo: string; busine
           })}
         </div>
         {/* A soft light behind the logo so it reads over the pictures. */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
+        <div className="absolute inset-0 will-change-transform" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
       </div>
       <div className="pointer-events-none absolute inset-0 grid place-items-center">
         <div className={`flex flex-col items-center gap-3 ${out ? "menu-mosaic-mark-out" : "menu-mosaic-mark"}`}>
@@ -199,8 +218,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     const before = [root.style.overscrollBehaviorY, document.body.style.overscrollBehaviorY];
     root.style.overscrollBehaviorY = "none";
     document.body.style.overscrollBehaviorY = "none";
+    // The panel and the full screen close through «back»: the browser would put back the scroll of
+    // that moment (a new collection, scrolled to its top, jumped down again).
+    const restoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
     return () => {
       [root.style.overscrollBehaviorY, document.body.style.overscrollBehaviorY] = before;
+      window.history.scrollRestoration = restoration;
     };
   }, []);
 
@@ -272,7 +296,15 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     return [...viewerTargets, ...behind].slice(0, poolSize);
   }, [viewer, viewerTargets, gridTargets]);
 
-  const closeSheet = useCallback(() => {
+  // The panel takes a step in the history (owner's iPhone: «back» with it open left the page and
+  // reloaded the players): «back» closes it, and closing it otherwise takes that step back.
+  const sheetEntry = useRef(false);
+  const openSheet = () => {
+    setSheet(true);
+    window.history.pushState({ menuSheet: true }, "");
+    sheetEntry.current = true;
+  };
+  const hideSheet = useCallback(() => {
     setSheetClosing(true);
     window.setTimeout(() => {
       setSheet(false);
@@ -280,6 +312,19 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       setDrag(0);
     }, sheetSlideMs);
   }, []);
+  const closeSheet = useCallback(() => {
+    if (sheetEntry.current) window.history.back();
+    else hideSheet();
+  }, [hideSheet]);
+  useEffect(() => {
+    const onPop = () => {
+      if (!sheetEntry.current) return;
+      sheetEntry.current = false;
+      hideSheet();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [hideSheet]);
 
   // The collections panel: Esc closes it and the page behind stays put.
   useEffect(() => {
@@ -357,7 +402,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={menu.logo} alt={menu.business} width={44} height={44} className="h-11 w-11 shrink-0 rounded-full" />
-          <button type="button" onClick={() => setSheet(true)} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={`Coleção: ${collection.name}. Mudar de coleção`}>
+          <button type="button" onClick={openSheet} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={`Coleção: ${collection.name}. Mudar de coleção`}>
             <span className="text-xs text-muted">{menu.business}</span>
             <span className="flex max-w-full items-center gap-1 font-semibold text-text">
               <span className="truncate">{collection.name}</span>
@@ -366,7 +411,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
               </svg>
             </span>
           </button>
-          <button type="button" onClick={() => setSheet(true)} aria-label="Abrir o menu" aria-expanded={sheet} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-text hover:bg-surface-2">
+          <button type="button" onClick={openSheet} aria-label="Abrir o menu" aria-expanded={sheet} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-text hover:bg-surface-2">
             <MenuIcon />
           </button>
         </div>
@@ -466,7 +511,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         />
       ) : null}
       <VideoPool targets={poolTargets} sound={sound} enabled motion={viewerMotion} onReady={setReady} />
-      <MosaicSplash logo={menu.logo} business={menu.business} videos={Object.values(menu.dishes).map((dish) => dish.video)} onDone={opened} />
+      <MosaicSplash
+        logo={menu.logo}
+        business={menu.business}
+        videos={Object.values(menu.dishes).map((dish) => dish.video)}
+        ready={focus.visible.length > 0 && focus.visible.every((key) => ready.includes(`grid-${key}`))}
+        onDone={opened}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
 import type { PoolTarget } from "./VideoPool";
 
 /** A vertical YouTube video (Short) with what is shown over it. */
@@ -140,6 +140,21 @@ export function ShortsViewer({
       window.clearTimeout(timer.current);
     };
   }, [start, onClose]);
+
+  // Turned or resized: back onto the video on screen (the slides change height).
+  const currentRef = useRef(current);
+  useLayoutEffect(() => {
+    currentRef.current = current;
+  });
+  useEffect(() => {
+    const element = scroller.current;
+    if (!element) return;
+    const observer = new ResizeObserver(() => {
+      element.scrollTop = (currentRef.current + 1) * element.clientHeight;
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   /*
    * What the pool should play, like Reels (owner, 2026-10-14): the video on screen playing, the one

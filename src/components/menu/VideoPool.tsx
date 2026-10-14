@@ -47,6 +47,17 @@ export const poolSize = 4;
  * after a video change the old video's reports still arrive for a moment.
  */
 const shownAfterSeconds = 0.3;
+/**
+ * YouTube buffering this long (ms) hides the video under its thumbnail (its loading circle would show);
+ * shorter stalls stay on the frame.
+ */
+const bufferGraceMs = 300;
+/**
+ * Every player keeps at least this much of itself inside the screen (px), invisible when its box is
+ * off it: an iPhone pauses a muted video playing off screen, and YouTube then shows its ⏸ over it
+ * when it comes back (the full screen's next and previous videos; the players without a box).
+ */
+const keepInView = 2;
 /** Players get a phone's width and are scaled to the box (small YouTube players add a Shorts overlay). */
 const playerWidth = 360;
 const playerHeight = (playerWidth * 16) / 9;
@@ -71,6 +82,8 @@ interface Player {
   time: number;
   /** The video it has really started showing frames of: stays so through its loops. */
   showing: string | null;
+  /** When it last started buffering (performance.now()). */
+  bufferingAt: number;
 }
 
 interface Placement {
@@ -126,7 +139,7 @@ export function VideoPool({
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
   const players = useRef<Player[]>(
-    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null })),
+    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
   );
   const [sources, setSources] = useState<string[] | null>(null);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
@@ -207,6 +220,10 @@ export function VideoPool({
         return;
       }
       player.state = state;
+      if (state === 3) {
+        player.bufferingAt = performance.now();
+        window.setTimeout(() => setTick((tick) => tick + 1), bufferGraceMs + 20);
+      }
       // Each video loops on its own (YouTube's loop parameter would bring back the first video); a seek
       // from the end plays on by itself (no «play» command, no ⏸).
       if (state === 0 && player.running) frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
@@ -288,14 +305,20 @@ export function VideoPool({
         const target = current.find((candidate) => candidate.key === player.target);
         const rect = target?.element?.getBoundingClientRect();
         if (!target || !rect) return null;
+        // Full screen: a box off the screen (the next or previous video) keeps its player at the edge, unseen.
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const inView = !target.fixed || (rect.bottom > 0 && rect.top < height && rect.right > 0 && rect.left < width);
+        const clamp = (value: number, size: number, room: number) => Math.min(Math.max(value, keepInView - size), room - keepInView);
+        // Not while YouTube buffers for a while (3: its loading circle) nor paused (2: its ⏸); the thumbnail shows instead.
+        const stalled = player.state === 3 && performance.now() - player.bufferingAt >= bufferGraceMs;
         return {
-          top: target.fixed ? rect.top : rect.top - origin.top,
-          left: target.fixed ? rect.left : rect.left - origin.left,
+          top: target.fixed ? (inView ? rect.top : clamp(rect.top, rect.height, height)) : rect.top - origin.top,
+          left: target.fixed ? (inView ? rect.left : clamp(rect.left, rect.width, width)) : rect.left - origin.left,
           width: rect.width,
           height: rect.height,
           fixed: target.fixed,
-          // Not while YouTube buffers (3: its loading circle) nor paused (2: its ⏸); the thumbnail shows instead.
-          shown: target.visible && player.video === target.video && player.showing === target.video && player.state !== 3 && player.state !== 2,
+          shown: inView && target.visible && player.video === target.video && player.showing === target.video && !stalled && player.state !== 2,
         };
       });
     // Only a real change re-renders (this runs after every render).
@@ -344,22 +367,26 @@ export function VideoPool({
         const spot = placements[index];
         const scale = spot ? spot.width / playerWidth : 1;
         const slid = Boolean(spot?.fixed && motion && (motion.x || motion.glide));
+        // Without a box: waits on the screen, unseen and behind everything (see keepInView).
+        const fixed = !spot || spot.fixed;
         return (
           <div
             key={index}
-            className="overflow-hidden transition-opacity duration-200"
+            className="overflow-hidden"
             style={{
-              position: spot?.fixed ? "fixed" : "absolute",
-              top: spot?.top ?? -10000,
+              position: fixed ? "fixed" : "absolute",
+              top: spot?.top ?? 0,
               left: spot?.left ?? 0,
               width: spot?.width ?? playerWidth,
               height: spot?.height ?? playerHeight,
               opacity: spot?.shown ? 1 : 0,
-              zIndex: spot?.fixed ? 95 : 30,
+              zIndex: !spot ? -1 : spot.fixed ? 95 : 30,
               borderRadius: spot?.fixed ? 0 : 12,
-              clipPath: spot?.fixed ? undefined : "inset(0 round 12px)",
+              clipPath: spot && !spot.fixed ? "inset(0 round 12px)" : undefined,
               transform: slid && motion ? `translateX(${motion.x}px)` : undefined,
-              transition: slid && motion?.glide ? `opacity 200ms, transform 260ms ${glideEase}` : "opacity 200ms",
+              // Hidden at once (moving to another card never shows the old dish there), shown with a short
+              // fade in the grid; in full screen, both at once (it follows the swipe).
+              transition: slid && motion?.glide ? `transform 260ms ${glideEase}` : spot?.shown && !spot.fixed ? "opacity 200ms" : "none",
             }}
           >
             <iframe
