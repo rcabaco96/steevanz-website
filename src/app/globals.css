@@ -665,9 +665,9 @@ html.reveal-ready [data-reveal] {
   }
 }
 
-/* The video menu's opening (VideoMenu: MenuSplash, «B»): the logo comes into focus, then a circle
-   opens from it like a lens and reveals the menu, while the logo grows and fades. The circle's radius
-   is a registered property, so the mask can be animated. The collections panel slides in. */
+/* The video menu: the lens of its opening (the circle's radius is a registered property, so the mask
+   can be animated; used by MosaicSplash), the logo's focus in and out, and the collections panel
+   sliding in. */
 @property --menu-reveal {
   syntax: "<length>";
   inherits: false;
@@ -675,19 +675,6 @@ html.reveal-ready [data-reveal] {
 }
 
 @layer components {
-  .menu-splash-bg {
-    -webkit-mask-image: radial-gradient(circle at 50% 45%, transparent var(--menu-reveal), #000 calc(var(--menu-reveal) + 1px));
-    mask-image: radial-gradient(circle at 50% 45%, transparent var(--menu-reveal), #000 calc(var(--menu-reveal) + 1px));
-    animation: menu-reveal 1.1s cubic-bezier(0.65, 0, 0.35, 1) 1.2s both;
-  }
-
-  .menu-splash-mark {
-    animation:
-      menu-mark-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both,
-      menu-mark-out 0.6s cubic-bezier(0.4, 0, 1, 1) 1.15s both;
-    will-change: opacity, transform, filter;
-  }
-
   .menu-sheet {
     animation: menu-sheet-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
   }
@@ -735,11 +722,23 @@ html.reveal-ready [data-reveal] {
   }
 }
 
-/* The video menu's opening «C» (VideoMenu: MosaicSplash): tiles rise from the centre into a tilted
-   mosaic, the logo comes into focus, then the scene zooms in and fades into the menu. */
+/* The video menu's opening (VideoMenu: MosaicSplash): tiles rise from the centre into a tilted
+   mosaic, the logo comes into focus, then the lens of «B» opens from the logo onto the menu. */
 @layer components {
   .menu-mosaic {
     inset: -18% -22%;
+    transform: rotate(-12deg);
+  }
+
+  /* The ending of «B» on the mosaic: the lens opens from the logo (centre set by the component). */
+  .menu-mosaic-lens {
+    -webkit-mask-image: radial-gradient(circle at var(--reveal-x) var(--reveal-y), transparent var(--menu-reveal), #000 calc(var(--menu-reveal) + 1px));
+    mask-image: radial-gradient(circle at var(--reveal-x) var(--reveal-y), transparent var(--menu-reveal), #000 calc(var(--menu-reveal) + 1px));
+    animation: menu-reveal 1.1s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  .menu-mosaic-mark-out {
+    animation: menu-mark-out 0.6s cubic-bezier(0.4, 0, 1, 1) both;
   }
 
   .menu-mosaic-tile {
@@ -751,13 +750,7 @@ html.reveal-ready [data-reveal] {
     will-change: opacity, transform, filter;
   }
 
-  .menu-curtain-up {
-    animation: menu-curtain-up 0.85s cubic-bezier(0.65, 0, 0.35, 1) both;
-  }
 
-  .menu-curtain-down {
-    animation: menu-curtain-down 0.85s cubic-bezier(0.65, 0, 0.35, 1) both;
-  }
 
   @keyframes menu-tile-in {
     from {
@@ -766,15 +759,5 @@ html.reveal-ready [data-reveal] {
     }
   }
 
-  @keyframes menu-curtain-up {
-    to {
-      transform: translateY(-170vh);
-    }
-  }
 
-  @keyframes menu-curtain-down {
-    to {
-      transform: translateY(170vh);
-    }
-  }
 }

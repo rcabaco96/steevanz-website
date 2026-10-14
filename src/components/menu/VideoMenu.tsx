@@ -88,35 +88,68 @@ function DishCard({
   );
 }
 
+/** Tiles of the mosaic opening: 4 columns of 7 rows, filling the screen (and beyond, it is tilted). */
+const mosaicColumns = 4;
+const mosaicTiles = 28;
+/** When the mosaic's ending starts, and how long it takes (ms; the circle of «B»). */
+const mosaicExitAt = 2050;
+const mosaicExitMs = 1150;
+
 /**
- * The opening (owner, 2026-10-14, «B»: a circular reveal): on the business's colours, the logo comes
- * into focus (blur to sharp) with its name; then a circle opens from the logo like a lens and reveals
- * the menu behind, while the logo grows and fades. ~2 s. The circle is a mask whose radius is a
- * registered CSS property (--menu-reveal); where that isn't supported, the cover leaves after 3 s.
- * Drawn by the server, so it covers the page from the first frame; `onDone` lets the videos start.
+ * The opening (owner, 2026-10-14, after trying a circular reveal, a lens alone, and mosaic endings
+ * where the dishes flew onto the cards or opened like a curtain): the dishes' thumbnails rise into a tilted mosaic from the centre
+ * outwards and the logo comes into focus over them («C»); then, as in «B», a circle opens from the
+ * logo like a lens and reveals the menu, while the logo grows and fades. The videos load and play
+ * behind it all along, so they are playing when it ends. The circle is a mask whose radius is a
+ * registered CSS property (--menu-reveal), centred on the logo; transforms and opacity otherwise.
  */
-function MenuSplash({ logo, business, onDone }: { logo: string; business: string; onDone: () => void }) {
-  const [done, setDone] = useState(false);
-  const finish = useCallback(() => {
-    setDone(true);
-    onDone();
-  }, [onDone]);
+function MosaicSplash({ logo, business, videos, onDone }: { logo: string; business: string; videos: string[]; onDone: () => void }) {
+  const [phase, setPhase] = useState<"in" | "out" | "done">("in");
+  const [centre, setCentre] = useState({ x: "50%", y: "46%" });
+  const mark = useRef<HTMLImageElement>(null);
+  const rows = Math.ceil(mosaicTiles / mosaicColumns);
+
   useEffect(() => {
-    const timer = window.setTimeout(finish, 3000);
-    return () => window.clearTimeout(timer);
-  }, [finish]);
-  if (done) return null;
+    const leave = window.setTimeout(() => {
+      const rect = mark.current?.getBoundingClientRect();
+      if (rect) setCentre({ x: `${Math.round(rect.left + rect.width / 2)}px`, y: `${Math.round(rect.top + rect.height / 2)}px` });
+      setPhase("out");
+    }, mosaicExitAt);
+    const end = window.setTimeout(() => {
+      setPhase("done");
+      onDone();
+    }, mosaicExitAt + mosaicExitMs);
+    return () => {
+      window.clearTimeout(leave);
+      window.clearTimeout(end);
+    };
+  }, [onDone]);
+
+  if (phase === "done") return null;
+  const out = phase === "out";
   return (
-    <div aria-hidden="true" className="fixed inset-0 z-[100]">
-      <div
-        className="menu-splash-bg absolute inset-0"
-        onAnimationEnd={(event) => event.target === event.currentTarget && finish()}
-        style={{ background: "radial-gradient(circle at 50% 45%, #ffffff 0%, #fde7f0 55%, #f6c9dc 100%)" }}
-      />
+    <div aria-hidden="true" className="fixed inset-0 z-[100] overflow-hidden">
+      {/* Everything but the logo: the lens opens through it. */}
+      <div className={`absolute inset-0 ${out ? "menu-mosaic-lens" : ""}`} style={{ ["--reveal-x" as string]: centre.x, ["--reveal-y" as string]: centre.y, background: "#fbe3ee" }}>
+        <div className="menu-mosaic absolute grid gap-2.5" style={{ gridTemplateColumns: `repeat(${mosaicColumns}, minmax(0, 1fr))` }}>
+          {Array.from({ length: mosaicTiles }, (_, index) => {
+            // From the centre outwards.
+            const distance = Math.hypot((index % mosaicColumns) - (mosaicColumns - 1) / 2, Math.floor(index / mosaicColumns) - (rows - 1) / 2);
+            return (
+              <div key={index} className="menu-mosaic-tile relative aspect-[9/16] overflow-hidden rounded-2xl bg-white/60 shadow-lg" style={{ animationDelay: `${Math.round(distance * 110)}ms` }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`https://i.ytimg.com/vi/${videos[index % videos.length]}/hqdefault.jpg`} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              </div>
+            );
+          })}
+        </div>
+        {/* A soft light behind the logo so it reads over the pictures. */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
+      </div>
       <div className="pointer-events-none absolute inset-0 grid place-items-center">
-        <div className="menu-splash-mark flex flex-col items-center gap-4">
+        <div className={`flex flex-col items-center gap-3 ${out ? "menu-mosaic-mark-out" : "menu-mosaic-mark"}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo} alt="" width={176} height={176} className="h-44 w-44 rounded-full shadow-[0_18px_50px_rgba(194,61,122,0.28)]" />
+          <img ref={mark} src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
           <span className="display text-2xl" style={{ color: "#5f2a44" }}>
             {business}
           </span>
@@ -127,185 +160,12 @@ function MenuSplash({ logo, business, onDone }: { logo: string; business: string
 }
 
 /**
- * The openings tried (owner, 2026-10-14): the mosaic of dishes («C») ending with the dishes fitting
- * into the menu's cards («fit», the default) or opening like a curtain («curtain»), and the circular
- * reveal («B», «reveal»).
- */
-export type MenuOpening = "fit" | "curtain" | "reveal";
-
-/** Tiles of the mosaic opening: 4 columns of 7 rows, filling the screen (and beyond, it is tilted). */
-const mosaicColumns = 4;
-const mosaicTiles = 28;
-const mosaicTilt = -12;
-/** When the mosaic's ending starts, and how long it takes (ms). */
-const mosaicExitAt = 2050;
-const mosaicExitMs = { fit: 900, curtain: 1000 } as const;
-
-const thumbnail = (video: string) => `https://i.ytimg.com/vi/${video}/hqdefault.jpg`;
-
-/** Something flying from the opening to its place in the menu (a dish's picture to its card, the logo to the bar). */
-interface Flyer {
-  src: string;
-  round: boolean;
-  to: { left: number; top: number; width: number; height: number };
-  from: { x: number; y: number; scale: number; rotate: number };
-}
-
-/**
- * The opening «C» (owner, 2026-10-14): the dishes' thumbnails rise into a tilted mosaic from the
- * centre outwards, the logo comes into focus over them; then «fit»: the four central pictures (the
- * menu's first four dishes) fly onto the four cards of the grid and the logo onto the bar while the
- * rest fades, or «curtain»: the columns slide away up and down, the logo flies onto the bar. The
- * videos load and play behind it all along, so they are playing when it ends. Transforms and opacity
- * only; flights measured on the page (FLIP).
- */
-function MosaicSplash({
-  logo,
-  business,
-  videos,
-  firstVideos,
-  exit,
-  onDone,
-}: {
-  logo: string;
-  business: string;
-  videos: string[];
-  firstVideos: string[];
-  exit: "fit" | "curtain";
-  onDone: () => void;
-}) {
-  const [phase, setPhase] = useState<"in" | "out" | "done">("in");
-  const [flyers, setFlyers] = useState<Flyer[]>([]);
-  const [flying, setFlying] = useState(false);
-  const tiles = useRef<(HTMLDivElement | null)[]>([]);
-  const mark = useRef<HTMLImageElement>(null);
-  const rows = Math.ceil(mosaicTiles / mosaicColumns);
-  // The four tiles nearest the centre, in reading order: they show the menu's first four dishes.
-  const central = useMemo(
-    () =>
-      Array.from({ length: mosaicTiles }, (_, index) => index)
-        .sort((a, b) => {
-          const distance = (index: number) => Math.hypot((index % mosaicColumns) - (mosaicColumns - 1) / 2, Math.floor(index / mosaicColumns) - (rows - 1) / 2);
-          return distance(a) - distance(b);
-        })
-        .slice(0, 4)
-        .sort((a, b) => a - b),
-    [rows],
-  );
-
-  useEffect(() => {
-    const leave = window.setTimeout(() => {
-      const next: Flyer[] = [];
-      const place = (element: Element, src: string, round: boolean, target: Element | null, rotate: number) => {
-        if (!target) return;
-        const from = element.getBoundingClientRect();
-        const to = target.getBoundingClientRect();
-        const width = element instanceof HTMLElement ? element.offsetWidth : from.width;
-        next.push({
-          src,
-          round,
-          to: { left: to.left, top: to.top, width: to.width, height: to.height },
-          from: { x: from.left + from.width / 2 - (to.left + to.width / 2), y: from.top + from.height / 2 - (to.top + to.height / 2), scale: width / Math.max(1, to.width), rotate },
-        });
-      };
-      if (exit === "fit") {
-        const cards = [...document.querySelectorAll("main ul li button > div")];
-        central.forEach((tile, order) => {
-          const element = tiles.current[tile];
-          if (element && firstVideos[order]) place(element, thumbnail(firstVideos[order]), false, cards[order] ?? null, mosaicTilt);
-        });
-      }
-      if (mark.current) place(mark.current, logo, true, document.querySelector("header img"), 0);
-      setFlyers(next);
-      setPhase("out");
-      // Drawn where they start first, then sent on their way.
-      window.requestAnimationFrame(() => window.requestAnimationFrame(() => setFlying(true)));
-    }, mosaicExitAt);
-    const end = window.setTimeout(() => {
-      setPhase("done");
-      onDone();
-    }, mosaicExitAt + mosaicExitMs[exit]);
-    return () => {
-      window.clearTimeout(leave);
-      window.clearTimeout(end);
-    };
-  }, [central, exit, firstVideos, logo, onDone]);
-
-  if (phase === "done") return null;
-  const out = phase === "out";
-  return (
-    <div aria-hidden="true" className="fixed inset-0 z-[100] overflow-hidden">
-      <div className="absolute inset-0 transition-opacity ease-out" style={{ background: "#fbe3ee", opacity: out ? 0 : 1, transitionDuration: exit === "curtain" ? "350ms" : "550ms" }} />
-      <div className="menu-mosaic absolute grid gap-2.5" style={{ gridTemplateColumns: `repeat(${mosaicColumns}, minmax(0, 1fr))`, transform: `rotate(${mosaicTilt}deg)` }}>
-        {Array.from({ length: mosaicTiles }, (_, index) => {
-          const column = index % mosaicColumns;
-          const row = Math.floor(index / mosaicColumns);
-          // In: from the centre outwards. Out («curtain»): columns alternately up and down, one after the other.
-          const distance = Math.hypot(column - (mosaicColumns - 1) / 2, row - (rows - 1) / 2);
-          const centre = central.indexOf(index);
-          const flown = out && exit === "fit" && centre >= 0;
-          return (
-            <div
-              key={index}
-              ref={(tile) => {
-                tiles.current[index] = tile;
-              }}
-              className={`relative aspect-[9/16] overflow-hidden rounded-2xl bg-white/60 shadow-lg ${out && exit === "curtain" ? (column % 2 ? "menu-curtain-down" : "menu-curtain-up") : "menu-mosaic-tile"}`}
-              style={{
-                animationDelay: out ? `${column * 70}ms` : `${Math.round(distance * 110)}ms`,
-                opacity: flown ? 0 : out && exit === "fit" ? 0 : undefined,
-                transition: out && exit === "fit" && !flown ? "opacity 450ms ease-out" : undefined,
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={thumbnail(centre >= 0 && firstVideos[centre] ? firstVideos[centre] : videos[index % videos.length])} alt="" className="absolute inset-0 h-full w-full object-cover" />
-            </div>
-          );
-        })}
-      </div>
-      {/* A soft light behind the logo so it reads over the pictures. */}
-      <div
-        className="absolute inset-0 transition-opacity duration-300"
-        style={{ opacity: out ? 0 : 1, background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }}
-      />
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="menu-mosaic-mark flex flex-col items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img ref={mark} src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" style={{ opacity: out ? 0 : 1 }} />
-          <span className="display text-2xl transition-opacity duration-200" style={{ color: "#5f2a44", opacity: out ? 0 : 1 }}>
-            {business}
-          </span>
-        </div>
-      </div>
-      {flyers.map((flyer, index) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={index}
-          src={flyer.src}
-          alt=""
-          className="fixed object-cover shadow-xl"
-          style={{
-            left: flyer.to.left,
-            top: flyer.to.top,
-            width: flyer.to.width,
-            height: flyer.to.height,
-            borderRadius: flyer.round ? 9999 : 12,
-            transform: flying ? "none" : `translate(${flyer.from.x}px, ${flyer.from.y}px) rotate(${flyer.from.rotate}deg) scale(${flyer.from.scale})`,
-            transition: `transform ${mosaicExitMs[exit] - 100}ms cubic-bezier(0.32, 0.72, 0, 1)`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/**
  * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
  * the bar, ☰ opens the list of collections (the first opens by default); a tap on a dish opens the
  * collection full screen, one dish per screen. Every video plays in a fixed pool of 3 players
  * (VideoPool), never created again: the cards and slides hold thumbnails.
  */
-export function VideoMenu({ menu, openingStyle = "fit" }: { menu: VideoMenuData; openingStyle?: MenuOpening }) {
+export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [active, setActive] = useState(menu.collections[0].id);
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
@@ -560,18 +420,7 @@ export function VideoMenu({ menu, openingStyle = "fit" }: { menu: VideoMenuData;
         />
       ) : null}
       <VideoPool targets={poolTargets} sound={sound} enabled />
-      {openingStyle === "reveal" ? (
-        <MenuSplash logo={menu.logo} business={menu.business} onDone={opened} />
-      ) : (
-        <MosaicSplash
-          logo={menu.logo}
-          business={menu.business}
-          videos={Object.values(menu.dishes).map((dish) => dish.video)}
-          firstVideos={menu.collections[0].dishes.slice(0, 4).map((key) => menu.dishes[key].video)}
-          exit={openingStyle}
-          onDone={opened}
-        />
-      )}
+      <MosaicSplash logo={menu.logo} business={menu.business} videos={Object.values(menu.dishes).map((dish) => dish.video)} onDone={opened} />
     </div>
   );
 }

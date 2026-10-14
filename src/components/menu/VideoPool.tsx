@@ -77,9 +77,9 @@ const samePlacement = (a: Placement | null, b: Placement | null) =>
     a.fixed === b.fixed &&
     a.shown === b.shown);
 
-const embedSrc = (video: string, origin: string) =>
+const embedSrc = (video: string, origin: string, autoplay: boolean) =>
   `https://www.youtube-nocookie.com/embed/${video}?${new URLSearchParams({
-    autoplay: "0",
+    autoplay: autoplay ? "1" : "0",
     mute: "1",
     controls: "0",
     playsinline: "1",
@@ -124,8 +124,15 @@ export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; 
     const start = targets;
     const fallback = start[0]?.video ?? "";
     const initial = players.current.map((player, index) => {
-      player.video = start[index]?.video ?? fallback;
-      return embedSrc(player.video, origin);
+      const target = start[index];
+      player.video = target?.video ?? fallback;
+      // A player made for a box that plays starts by itself: a «play» command would make YouTube
+      // show its ⏸ over the video for a few seconds.
+      if (target?.play) {
+        player.target = target.key;
+        player.playing = true;
+      }
+      return embedSrc(player.video, origin, Boolean(target?.play));
     });
     setSources(initial);
   }, [enabled, sources, targets]);
