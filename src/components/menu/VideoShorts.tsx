@@ -38,28 +38,22 @@ const axisAfter = 8;
 /** The full screen closes when dragged right past this share of its width, or this fast (px/ms). */
 const closeShare = 0.25;
 const closeSpeed = 0.5;
-/** The video shrinking back into its card, or back to full screen (ms). */
-const closeMs = 320;
-const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
+/** The full screen sliding out, or back (ms; the collections panel's). */
+const closeMs = 260;
+export const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 /**
- * Where the full screen's video is while it is dragged to close (owner, 2026-10-14: «igualzinho aos
- * reels do Instagram»): moved with the finger, shrunk, rounded, over a fading backdrop; then into its
- * card in the grid. Shared with the pool, whose player there moves the same way.
+ * How far the full screen is dragged to the right to close it, like the collections panel (owner,
+ * 2026-10-14: the shrink back into the card was dropped). Shared with the pool, whose players there
+ * move the same way.
  */
 export interface ViewerMotion {
   x: number;
-  y: number;
-  scale: number;
-  /** Corner radius as seen on screen (px). */
-  radius: number;
-  /** Opacity of the black behind (1 = full screen, 0 = the menu shows). */
-  backdrop: number;
   /** Glides there (release) instead of following the finger. */
   glide: boolean;
 }
 
-export const restingMotion: ViewerMotion = { x: 0, y: 0, scale: 1, radius: 0, backdrop: 1, glide: false };
+export const restingMotion: ViewerMotion = { x: 0, glide: false };
 
 function SoundIcon({ on }: { on: boolean }) {
   return (
@@ -76,7 +70,7 @@ function SoundIcon({ on }: { on: boolean }) {
  * swipe has ended, and the next video is prepared in another player. A carousel both ways (owner,
  * 2026-10-14): copies of the last and of the first sit before and after the list, and landing on one
  * jumps to the real video. The sound, once on, stays on. Closes with ✕, Esc, the phone's back button,
- * or dragging it to the right: it shrinks with the finger and goes back into its card, like Instagram.
+ * or dragging it to the right: it slides out with the finger, like the collections panel.
  */
 export function ShortsViewer({
   items,
@@ -86,8 +80,6 @@ export function ShortsViewer({
   onSound,
   onTargets,
   onMotion,
-  cardFor,
-  revealCard,
   onClose,
 }: {
   items: ShortItem[];
@@ -96,11 +88,8 @@ export function ShortsViewer({
   sound: boolean;
   onSound: () => void;
   onTargets: (targets: PoolTarget[]) => void;
-  /** The video dragged to close (the pool's player there follows it). */
+  /** The full screen dragged to close (the pool's players there follow it). */
   onMotion: (motion: ViewerMotion) => void;
-  /** The grid's card of a dish (where the video shrinks back to), and bringing it on screen first. */
-  cardFor: (key: string) => HTMLElement | null;
-  revealCard: (key: string) => void;
   onClose: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
@@ -111,8 +100,6 @@ export function ShortsViewer({
   const restTimer = useRef<number | undefined>(undefined);
   const gesture = useRef<{ x: number; y: number; dx: number; dy: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
   const [motion, setMotion] = useState<ViewerMotion>(restingMotion);
-  // The video's box on screen while it is dragged (the origin of the shrink, the clip of the rest).
-  const [frame, setFrame] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
   const moveTo = useCallback(
     (next: ViewerMotion) => {
       setMotion(next);
@@ -221,24 +208,10 @@ export function ShortsViewer({
     const dy = touch.clientY - start.y;
     start.dx = dx;
     start.dy = dy;
-    if (!start.axis && Math.max(Math.abs(dx), Math.abs(dy)) > axisAfter) {
-      start.axis = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "close" : "vertical";
-      if (start.axis === "close") {
-        // The card it goes back to is brought on screen behind (the black still covers the page).
-        const item = items[current];
-        if (item) revealCard(item.key);
-        const box = boxes.current[current]?.getBoundingClientRect();
-        if (box) setFrame({ top: box.top, left: box.left, width: box.width, height: box.height });
-      }
-    }
+    if (!start.axis && Math.max(Math.abs(dx), Math.abs(dy)) > axisAfter) start.axis = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "close" : "vertical";
     if (start.axis === "vertical") element.scrollTop = start.top - dy;
-    if (start.axis === "close") {
-      // Follows the finger, shrinking and rounding as it goes; the menu shows through behind.
-      const distance = Math.hypot(dx, dy);
-      const width = Math.max(1, window.innerWidth);
-      const scale = Math.max(0.55, 1 - distance / (width * 1.6));
-      moveTo({ x: dx, y: dy, scale, radius: Math.min(28, ((1 - scale) / 0.45) * 28), backdrop: Math.max(0, 1 - distance / (width * 0.9)), glide: false });
-    }
+    // The whole full screen follows the finger to the right; the menu (still playing) shows behind.
+    if (start.axis === "close") moveTo({ x: Math.max(0, dx), glide: false });
   };
   const onGestureEnd = () => {
     const start = gesture.current;
@@ -247,27 +220,11 @@ export function ShortsViewer({
     if (!start || !element || !start.axis) return;
     if (start.axis === "close") {
       const width = Math.max(1, window.innerWidth);
-      const item = items[current];
       if (start.dx > width * closeShare || start.dx / Math.max(1, performance.now() - start.at) > closeSpeed) {
-        // Into its card in the grid (where its player carries on), else out to the right.
-        const card = item ? cardFor(item.key)?.getBoundingClientRect() : null;
-        const box = frame;
-        if (card && box && card.width > 0) {
-          moveTo({
-            x: card.left + card.width / 2 - (box.left + box.width / 2),
-            y: card.top + card.height / 2 - (box.top + box.height / 2),
-            scale: card.width / box.width,
-            radius: 12,
-            backdrop: 0,
-            glide: true,
-          });
-        } else {
-          moveTo({ x: width, y: start.dy, scale: 0.7, radius: 24, backdrop: 0, glide: true });
-        }
+        moveTo({ x: width, glide: true });
         window.setTimeout(() => window.history.back(), closeMs);
       } else {
-        moveTo({ ...restingMotion, glide: true });
-        window.setTimeout(() => setFrame(null), closeMs);
+        moveTo({ x: 0, glide: true });
       }
       return;
     }
@@ -290,25 +247,13 @@ export function ShortsViewer({
     onSound();
   };
   const item = items[current];
-  const glide = motion.glide ? `${closeMs}ms ${glideEase}` : null;
-  const dragged = frame !== null;
+  const slid = { transform: `translateX(${motion.x}px)`, transition: motion.glide ? `transform ${closeMs}ms ${glideEase}` : "none" };
 
   return (
     <div role="dialog" aria-modal="true" aria-label={label}>
-      <div className="fixed inset-0 z-[90]">
-        <div className="absolute inset-0 bg-black" style={{ opacity: motion.backdrop, transition: glide ? `opacity ${glide}` : "none" }} />
+      <div className="fixed inset-0 z-[90] bg-black" style={slid}>
         <div
           ref={scroller}
-          style={
-            dragged
-              ? {
-                  transform: `translate(${motion.x}px, ${motion.y}px) scale(${motion.scale})`,
-                  transformOrigin: `${frame.left + frame.width / 2}px ${frame.top + frame.height / 2}px`,
-                  clipPath: `inset(${frame.top}px ${window.innerWidth - frame.left - frame.width}px ${window.innerHeight - frame.top - frame.height}px ${frame.left}px round ${motion.radius / motion.scale}px)`,
-                  transition: glide ? `transform ${glide}, clip-path ${glide}` : "none",
-                }
-              : undefined
-          }
           onScroll={(event) => {
             const element = event.currentTarget;
             setScrolling(true);
@@ -362,11 +307,9 @@ export function ShortsViewer({
         onWheel={onGestureWheel}
         onClick={onGestureTap}
         className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
+        style={slid}
       >
-        <div
-          className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] transition-opacity duration-150"
-          style={{ opacity: dragged ? 0 : 1 }}
-        >
+        <div className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
           <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
@@ -378,7 +321,7 @@ export function ShortsViewer({
         </div>
         {item ? (
           <div
-            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling || dragged ? "opacity-0" : "opacity-100"}`}
+            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling ? "opacity-0" : "opacity-100"}`}
           >
             <span className="text-xs font-semibold tracking-wide text-white/70">
               {current + 1} / {items.length}

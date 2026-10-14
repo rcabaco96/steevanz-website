@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { ViewerMotion } from "./VideoShorts";
+import { glideEase, type ViewerMotion } from "./VideoShorts";
 
 /**
  * Where a video should be: a box on the page (a grid card, or a full-screen slide) that the pool
@@ -13,12 +13,12 @@ export interface PoolTarget {
   element: HTMLElement | null;
   /** In the full screen (viewport coordinates, above it); else on the page (scrolls with it). */
   fixed: boolean;
-  /** Plays (else paused). */
+  /** Plays, and is the one that may have sound. */
   play: boolean;
   /**
-   * Not playing, but primed: loaded and played until its first frames are on, then paused there, so
-   * it shows a real frame (not the thumbnail) and starts at once when it plays (the next video in
-   * full screen, the rows around the grid's).
+   * Ready ahead: playing too (muted), so it is already moving when it comes on screen (the next and
+   * previous videos in full screen). Never paused to wait: on an iPhone, YouTube shows its ⏸ over a
+   * video that is paused and played again (owner, 2026-10-14).
    */
   prime?: boolean;
   /** Shown (once playing); hidden players keep their video, under the covers. */
@@ -35,11 +35,12 @@ export interface PoolTarget {
  * player that was playing a card is the one that grows to full screen: the video carries on.
  */
 /**
- * 8: the grid plays the dishes on screen (two rows of two) and has the row below and the row above
- * already playing, hidden, so they play as they appear (owner, 2026-10-14); full screen uses 2. Each
- * player is a whole YouTube page (memory): one per dish would make an iPhone reload the page.
+ * 4: the dishes on screen in the grid (two rows of two); in full screen, the video and the ones above
+ * and below. 8 (the rows around the grid's already playing) made the site slow (owner, 2026-10-14:
+ * «secalhar é mesmo melhor só 4 players»). Each player is a whole YouTube page (memory): one per dish
+ * would make an iPhone reload the page.
  */
-const poolSize = 8;
+export const poolSize = 4;
 /**
  * A player shows over the thumbnail only once its own video (by the id YouTube reports) has played
  * this far (s): at YouTube's first «playing» the video hasn't drawn a frame yet (a black break), and
@@ -61,6 +62,10 @@ interface Player {
   /** Commands sent before YouTube's API answered. */
   queue: string[];
   playing: boolean;
+  /** Told to run (play or prime); else paused, out of sight. */
+  running: boolean;
+  /** Where its video was (re)started (s): frames count from there. */
+  from: number;
   /** The video YouTube says it has, and how far it has played (s). */
   reported: string | null;
   time: number;
@@ -113,7 +118,7 @@ export function VideoPool({
   targets: PoolTarget[];
   sound: boolean;
   enabled: boolean;
-  /** The full screen dragged to close: its player (fixed) moves, shrinks and rounds with it. */
+  /** The full screen dragged to close: its players (fixed) slide with it. */
   motion?: ViewerMotion;
   /** The targets whose player is showing their video (e.g. a new collection is ready). */
   onReady?: (keys: string[]) => void;
@@ -121,7 +126,7 @@ export function VideoPool({
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
   const players = useRef<Player[]>(
-    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, reported: null, time: 0, showing: null })),
+    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null })),
   );
   const [sources, setSources] = useState<string[] | null>(null);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
@@ -157,10 +162,11 @@ export function VideoPool({
       const target = start[index];
       player.video = target?.video ?? fallback;
       // A player made for a box that plays (or is primed) starts by itself: a «play» command would make
-      // YouTube show its ⏸ over the video for a few seconds. A primed one pauses on its first frames.
+      // YouTube show its ⏸ over the video for a few seconds.
       if (target?.play || target?.prime) {
         player.target = target.key;
         player.playing = Boolean(target.play);
+        player.running = true;
       }
       return embedSrc(player.video, origin, Boolean(target?.play || target?.prime));
     });
@@ -194,19 +200,21 @@ export function VideoPool({
       if (typeof info.currentTime === "number") player.time = info.currentTime;
       const showing = player.showing;
       // Frames are on screen: its own video, playing, a moment in.
-      if (player.reported === player.video && player.state === 1 && player.time >= shownAfterSeconds) player.showing = player.video;
-      // A primed player stops on its first frames.
-      if (player.showing !== showing && !player.playing) frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+      if (player.reported === player.video && player.state === 1 && player.time >= player.from + shownAfterSeconds) player.showing = player.video;
       const state = data.event === "onStateChange" && typeof data.info === "number" ? data.info : typeof info.playerState === "number" ? info.playerState : null;
       if (state === null || state === player.state) {
         if (player.showing !== showing) setTick((tick) => tick + 1);
         return;
       }
       player.state = state;
-      // Each video loops on its own (YouTube's loop parameter would bring back the first video).
-      if (state === 0 && player.playing) {
-        frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
-        frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+      // Each video loops on its own (YouTube's loop parameter would bring back the first video); a seek
+      // from the end plays on by itself (no «play» command, no ⏸).
+      if (state === 0 && player.running) frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
+      // Paused by the browser or YouTube (not by us): hidden under its thumbnail, and loaded again where it was.
+      if (state === 2 && player.running && player.video) {
+        player.from = player.time;
+        player.showing = null;
+        frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "loadVideoById", args: [player.video, player.time] }), "*");
       }
       setTick((tick) => tick + 1);
     };
@@ -238,19 +246,27 @@ export function VideoPool({
       taken.add(free);
       assignment.set(target.key, free);
       const player = pool[free];
+      const run = Boolean(target.play || target.prime);
       player.video = target.video;
       player.state = -1;
       player.showing = null;
-      send(free, target.play || target.prime ? "loadVideoById" : "cueVideoById", [target.video, 0]);
+      player.from = 0;
+      player.running = run;
+      send(free, run ? "loadVideoById" : "cueVideoById", [target.video, 0]);
     }
     pool.forEach((player, index) => {
       const target = targets.find((candidate) => assignment.get(candidate.key) === index) ?? null;
       player.target = target?.key ?? null;
-      const play = Boolean(target?.play);
-      // A primed player still loading must not be paused yet (it pauses itself on its first frames).
-      const priming = !play && target?.prime && player.showing !== player.video;
-      if (!priming && (play !== player.playing || (play && player.state === 2))) send(index, play ? "playVideo" : "pauseVideo");
-      player.playing = play;
+      player.playing = Boolean(target?.play);
+      const run = Boolean(target?.play || target?.prime);
+      if (run && !player.running && player.video) {
+        // Back on from a pause: loaded again where it was (a «play» command would show YouTube's ⏸),
+        // under its thumbnail until its frames are on.
+        player.from = player.time;
+        player.showing = null;
+        send(index, "loadVideoById", [player.video, player.time]);
+      } else if (!run && player.running) send(index, "pauseVideo");
+      player.running = run;
     });
   }, [targets, sources, send]);
 
@@ -278,8 +294,8 @@ export function VideoPool({
           width: rect.width,
           height: rect.height,
           fixed: target.fixed,
-          // Not while YouTube buffers (state 3): its loading circle would show over the video; the thumbnail does instead.
-          shown: target.visible && player.video === target.video && player.showing === target.video && player.state !== 3,
+          // Not while YouTube buffers (3: its loading circle) nor paused (2: its ⏸); the thumbnail shows instead.
+          shown: target.visible && player.video === target.video && player.showing === target.video && player.state !== 3 && player.state !== 2,
         };
       });
     // Only a real change re-renders (this runs after every render).
@@ -327,9 +343,7 @@ export function VideoPool({
       {sources.map((src, index) => {
         const spot = placements[index];
         const scale = spot ? spot.width / playerWidth : 1;
-        // Dragged to close (full screen only): radius as seen, so divided by the shrink.
-        const moved = Boolean(motion && (motion.x || motion.y || motion.scale !== 1 || motion.glide));
-        const radius = motion ? motion.radius / motion.scale : 0;
+        const slid = Boolean(spot?.fixed && motion && (motion.x || motion.glide));
         return (
           <div
             key={index}
@@ -342,10 +356,10 @@ export function VideoPool({
               height: spot?.height ?? playerHeight,
               opacity: spot?.shown ? 1 : 0,
               zIndex: spot?.fixed ? 95 : 30,
-              borderRadius: spot?.fixed ? (moved ? radius : 0) : 12,
-              clipPath: spot?.fixed ? (moved ? `inset(0 round ${radius}px)` : undefined) : "inset(0 round 12px)",
-              transform: spot?.fixed && moved && motion ? `translate(${motion.x}px, ${motion.y}px) scale(${motion.scale})` : undefined,
-              transition: spot?.fixed && motion?.glide ? "opacity 200ms, transform 320ms cubic-bezier(0.32, 0.72, 0, 1), border-radius 320ms, clip-path 320ms" : "opacity 200ms",
+              borderRadius: spot?.fixed ? 0 : 12,
+              clipPath: spot?.fixed ? undefined : "inset(0 round 12px)",
+              transform: slid && motion ? `translateX(${motion.x}px)` : undefined,
+              transition: slid && motion?.glide ? `opacity 200ms, transform 260ms ${glideEase}` : "opacity 200ms",
             }}
           >
             <iframe
