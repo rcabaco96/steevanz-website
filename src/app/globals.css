@@ -665,39 +665,53 @@ html.reveal-ready [data-reveal] {
   }
 }
 
-/* The video menu's opening (VideoMenu: MenuSplash): logo in, name, then the whole overlay fades out. */
+/* The video menu's opening (VideoMenu: MenuSplash): logo in, name, a pause, then a slow fade to the menu. */
 @layer components {
   .menu-splash {
-    animation: menu-splash-out 0.45s ease-in 1.15s both;
+    animation: menu-splash-out 0.8s cubic-bezier(0.4, 0, 0.2, 1) 1.8s both;
+    will-change: opacity;
+  }
+
+  .menu-splash-content {
+    animation: menu-splash-drift 0.8s cubic-bezier(0.4, 0, 0.2, 1) 1.8s both;
+    will-change: transform;
   }
 
   .menu-splash-logo {
-    animation: menu-splash-logo 0.8s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+    animation: menu-splash-logo 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    will-change: opacity, transform;
   }
 
   .menu-splash-name {
-    animation: menu-splash-name 0.5s ease-out 0.35s both;
+    animation: menu-splash-name 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+    will-change: opacity, transform;
   }
 
   @keyframes menu-splash-logo {
     from {
       opacity: 0;
-      transform: scale(0.55) rotate(-8deg);
+      transform: scale(0.88);
     }
     to {
       opacity: 1;
-      transform: scale(1) rotate(0);
+      transform: scale(1);
     }
   }
 
   @keyframes menu-splash-name {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes menu-splash-drift {
+    to {
+      transform: scale(1.04);
     }
   }
 
@@ -710,7 +724,7 @@ html.reveal-ready [data-reveal] {
 
   @media (prefers-reduced-motion: reduce) {
     .menu-splash {
-      animation-delay: 0.4s;
+      animation-delay: 0.6s;
     }
   }
 }

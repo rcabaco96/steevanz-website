@@ -57,21 +57,26 @@ function DishCard({ id, dish, playing, onSeen, onOpen }: { id: string; dish: Men
 }
 
 /**
- * The opening (owner, 2026-10-14): the business's logo grows in on its colours, its name follows,
- * then the whole thing fades away over the menu (~1.6 s). Drawn by the server, so it covers the page
- * from the first frame while the videos start loading behind it.
+ * The opening (owner, 2026-10-14; slower and softer after «um pouco rápida demais»): the business's
+ * logo fades and grows in gently on its colours, its name follows, a short pause, then the whole thing
+ * fades slowly over the menu (~2.6 s). Only opacity and scale (smooth on phones). Drawn by the server,
+ * so it covers the page from the first frame; `onDone` lets the videos start only after it.
  */
-function MenuSplash({ logo, business }: { logo: string; business: string }) {
+function MenuSplash({ logo, business, onDone }: { logo: string; business: string; onDone: () => void }) {
   const [done, setDone] = useState(false);
   if (done) return null;
   return (
     <div
       aria-hidden="true"
-      onAnimationEnd={(event) => event.target === event.currentTarget && setDone(true)}
+      onAnimationEnd={(event) => {
+        if (event.target !== event.currentTarget) return;
+        setDone(true);
+        onDone();
+      }}
       className="menu-splash fixed inset-0 z-[100] grid place-items-center"
       style={{ background: "radial-gradient(circle at 50% 42%, #ffffff 0%, #fde7f0 55%, #f8cfe0 100%)" }}
     >
-      <div className="flex flex-col items-center gap-5">
+      <div className="menu-splash-content flex flex-col items-center gap-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logo} alt="" width={176} height={176} className="menu-splash-logo h-44 w-44 rounded-full shadow-[0_18px_50px_rgba(194,61,122,0.25)]" />
         <span className="menu-splash-name display text-2xl" style={{ color: "#5f2a44" }}>
@@ -91,6 +96,14 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [active, setActive] = useState(menu.collections[0].id);
   const [sheet, setSheet] = useState(false);
   const [viewer, setViewer] = useState<{ start: number; startAt: number } | null>(null);
+  // No video starts while the opening plays (it would take the phone's attention from the animation).
+  const [opening, setOpening] = useState(true);
+  const opened = useCallback(() => setOpening(false), []);
+  // Should the browser never report the end of the animation (e.g. a tab in the background).
+  useEffect(() => {
+    const timer = window.setTimeout(opened, 3500);
+    return () => window.clearTimeout(timer);
+  }, [opened]);
   const closeViewer = useCallback(() => setViewer(null), []);
   // The grid's single playing card: how much of each card is on screen, the winner picked once the scroll rests.
   const ratios = useRef(new Map<string, number>());
@@ -175,7 +188,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
               id={key}
               dish={dish}
               // While the full screen or the collections panel is open, the grid plays nothing (memory).
-              playing={focus === key && viewer === null && !sheet}
+              playing={focus === key && viewer === null && !sheet && !opening}
               onSeen={seen}
               // The full screen carries on where the card's video was.
               onOpen={() => setViewer({ start: index, startAt: focus === key ? lastPosition(dish.video) : 0 })}
@@ -236,7 +249,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       {viewer !== null ? (
         <ShortsViewer items={items} start={viewer.start} startAt={viewer.startAt} label={`${menu.business}: ${collection.name}`} onClose={closeViewer} />
       ) : null}
-      <MenuSplash logo={menu.logo} business={menu.business} />
+      <MenuSplash logo={menu.logo} business={menu.business} onDone={opened} />
     </div>
   );
 }
