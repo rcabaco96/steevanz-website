@@ -116,18 +116,19 @@ export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; 
     frames.current[index]?.contentWindow?.postMessage(message, "*");
   }, []);
 
-  // The players are made once, after the opening, each on the video of the box it starts on.
+  // The players are made once, as soon as the grid says which videos are on screen (during the
+  // opening, so they are already playing when it ends; owner 2026-10-14), each on one of those videos.
   useEffect(() => {
-    if (!enabled || sources) return;
+    if (!enabled || sources || !targets.length) return;
     const origin = window.location.origin;
-    const start = targetsRef.current;
+    const start = targets;
     const fallback = start[0]?.video ?? "";
     const initial = players.current.map((player, index) => {
       player.video = start[index]?.video ?? fallback;
       return embedSrc(player.video, origin);
     });
     setSources(initial);
-  }, [enabled, sources]);
+  }, [enabled, sources, targets]);
 
   // YouTube's messages: ready, state changes, the video looping when it ends.
   useEffect(() => {
