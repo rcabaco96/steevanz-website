@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { glideEase, type ViewerMotion } from "./VideoShorts";
 
 /**
@@ -13,7 +13,7 @@ export interface PoolTarget {
   element: HTMLElement | null;
   /** In the full screen (viewport coordinates, above it); else on the page (scrolls with it). */
   fixed: boolean;
-  /** Plays, and is the one that may have sound. */
+  /** Plays (else ready ahead, or paused). */
   play: boolean;
   /**
    * Ready ahead: playing too (muted), so it is already moving when it comes on screen (the next and
@@ -48,14 +48,6 @@ export const poolSize = 6;
  */
 const shownAfterSeconds = 0.3;
 
-/**
- * Sound, turned on from inside the visitor's tap: an iPhone lets a video play aloud only when the tap
- * itself turns the sound on (a command sent a moment later paused the video; owner, 2026-10-14).
- */
-export interface PoolControl {
-  /** The player playing this video gets the sound (the others lose it). Call it inside a tap. */
-  unmute: (video: string) => void;
-}
 /**
  * YouTube buffering this long (ms) hides the video under its thumbnail (its loading circle would show);
  * shorter stalls stay on the frame.
@@ -94,8 +86,6 @@ interface Player {
   showing: string | null;
   /** When it last started buffering (performance.now()). */
   bufferingAt: number;
-  /** Has the sound on. */
-  unmuted: boolean;
 }
 
 interface Placement {
@@ -135,29 +125,21 @@ const embedSrc = (video: string, origin: string, autoplay: boolean) =>
 
 export function VideoPool({
   targets,
-  sound,
   enabled,
   motion,
   onReady,
-  controlRef,
-  onSoundBlocked,
 }: {
   targets: PoolTarget[];
-  sound: boolean;
   enabled: boolean;
   /** The full screen dragged to close: its players (fixed) slide with it. */
   motion?: ViewerMotion;
   /** The targets whose player is showing their video (e.g. a new collection is ready). */
   onReady?: (keys: string[]) => void;
-  /** Where the pool puts what can be called from a tap (the sound). */
-  controlRef?: RefObject<PoolControl | null>;
-  /** The sound was refused (the video paused): it is off again. */
-  onSoundBlocked?: () => void;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
   const players = useRef<Player[]>(
-    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null, bufferingAt: 0, unmuted: false })),
+    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
   );
   const [sources, setSources] = useState<string[] | null>(null);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
@@ -165,10 +147,8 @@ export function VideoPool({
   const targetsRef = useRef(targets);
   const reported = useRef("");
   const onReadyRef = useRef(onReady);
-  const onSoundBlockedRef = useRef(onSoundBlocked);
   useLayoutEffect(() => {
     onReadyRef.current = onReady;
-    onSoundBlockedRef.current = onSoundBlocked;
   });
   useLayoutEffect(() => {
     targetsRef.current = targets;
@@ -249,12 +229,6 @@ export function VideoPool({
       if (state === 0 && player.running) frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
       // Paused by the browser or YouTube (not by us): hidden under its thumbnail, and loaded again where it was.
       if (state === 2 && player.running && player.video) {
-        // Paused by turning its sound on (the phone did not count the tap): back to silent, and on.
-        if (player.unmuted) {
-          frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "mute", args: [] }), "*");
-          player.unmuted = false;
-          onSoundBlockedRef.current?.();
-        }
         player.from = player.time;
         player.showing = null;
         frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "loadVideoById", args: [player.video, player.time] }), "*");
@@ -313,38 +287,6 @@ export function VideoPool({
     });
   }, [targets, sources, send]);
 
-  // Sound: given inside the visitor's tap (controlRef.unmute), only to the video it was given to; taken
-  // from every other player here (muting needs no tap).
-  const soundVideo = useRef<string | null>(null);
-  useLayoutEffect(() => {
-    if (!controlRef) return;
-    controlRef.current = {
-      unmute: (video) => {
-        soundVideo.current = video;
-        const pool = players.current;
-        const index = pool.findIndex((player) => player.video === video && player.running);
-        pool.forEach((player, other) => {
-          if (other !== index && player.unmuted) {
-            send(other, "mute");
-            player.unmuted = false;
-          }
-        });
-        if (index < 0) return;
-        // Sent now, inside the tap (send() posts at once to a ready player).
-        send(index, "unMute");
-        pool[index].unmuted = true;
-      },
-    };
-  });
-  useEffect(() => {
-    if (!sources) return;
-    players.current.forEach((player, index) => {
-      if (player.unmuted && (!sound || player.video !== soundVideo.current)) {
-        send(index, "mute");
-        player.unmuted = false;
-      }
-    });
-  }, [sound, targets, sources, send]);
 
   // Where each player sits: over its target's box (page or viewport coordinates).
   const place = useCallback(() => {

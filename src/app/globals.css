@@ -665,15 +665,7 @@ html.reveal-ready [data-reveal] {
   }
 }
 
-/* The video menu: the lens of its opening (the circle's radius is a registered property, so the mask
-   can be animated; used by MosaicSplash), the logo's focus in and out, and the collections panel
-   sliding in. */
-@property --menu-reveal {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
+/* The video menu: the logo's focus in its opening (MosaicSplash), and the collections panel sliding in. */
 @layer components {
   .menu-sheet {
     animation: menu-sheet-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
@@ -681,12 +673,6 @@ html.reveal-ready [data-reveal] {
 
   .menu-sheet-backdrop {
     animation: menu-fade-in 0.28s ease both;
-  }
-
-  @keyframes menu-reveal {
-    to {
-      --menu-reveal: var(--reveal-to, 80vmax);
-    }
   }
 
   @keyframes menu-mark-in {
@@ -699,13 +685,6 @@ html.reveal-ready [data-reveal] {
       opacity: 1;
       filter: blur(0);
       transform: scale(1);
-    }
-  }
-
-  @keyframes menu-mark-out {
-    to {
-      opacity: 0;
-      transform: scale(1.2);
     }
   }
 
@@ -723,7 +702,7 @@ html.reveal-ready [data-reveal] {
 }
 
 /* The video menu's opening (VideoMenu: MosaicSplash): tiles rise from the centre into a tilted
-   mosaic, the logo comes into focus, then the lens of «B» opens from the logo onto the menu. */
+   mosaic, the logo comes into focus, then the scene zooms in and fades into the menu. */
 @layer components {
   .menu-mosaic {
     inset: -18% -22%;
@@ -732,15 +711,16 @@ html.reveal-ready [data-reveal] {
     will-change: transform;
   }
 
-  /* The ending of «B» on the mosaic: the lens opens from the logo (centre set by the component). */
-  .menu-mosaic-lens {
-    -webkit-mask-image: radial-gradient(circle at var(--reveal-x) var(--reveal-y), transparent var(--menu-reveal), #000 calc(var(--menu-reveal) + 1px));
-    mask-image: radial-gradient(circle at var(--reveal-x) var(--reveal-y), transparent var(--menu-reveal), #000 calc(var(--menu-reveal) + 1px));
-    animation: menu-reveal 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .menu-mosaic-out {
+    animation: menu-mosaic-out 0.7s cubic-bezier(0.65, 0, 0.35, 1) both;
+    will-change: opacity, transform;
   }
 
-  .menu-mosaic-mark-out {
-    animation: menu-mark-out 0.45s cubic-bezier(0.4, 0, 1, 1) both;
+  @keyframes menu-mosaic-out {
+    to {
+      opacity: 0;
+      transform: scale(1.35);
+    }
   }
 
   .menu-mosaic-tile {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type TouchEvent, type WheelEvent } from "react";
 import type { PoolTarget } from "./VideoPool";
 
 /** A vertical YouTube video (Short) with what is shown over it. */
@@ -55,30 +55,19 @@ export interface ViewerMotion {
 
 export const restingMotion: ViewerMotion = { x: 0, glide: false };
 
-function SoundIcon({ on }: { on: boolean }) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 5 6 9H3v6h3l5 4z" />
-      {on ? <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" /> : <path d="m22 9-6 6M16 9l6 6" />}
-    </svg>
-  );
-}
 
 /**
  * Full screen, one video per screen: swipe (or scroll, or the arrow keys) to the next or previous
  * one (no CSS snapping: the moves are ours and land exactly on a slide). The slides hold thumbnails; the pool's players (VideoPool) cover the one on screen once the
  * swipe has ended, and the next video is prepared in another player. A carousel both ways (owner,
  * 2026-10-14): copies of the last and of the first sit before and after the list, and landing on one
- * jumps to the real video. The sound, once on, stays on. Closes with ✕, Esc, the phone's back button,
+ * jumps to the real video. Always silent (owner, 2026-10-14: an iPhone refuses sound in YouTube's players). Closes with ✕, Esc, the phone's back button,
  * or dragging it to the right: it slides out with the finger, like the collections panel.
  */
 export function ShortsViewer({
   items,
   start,
   label,
-  sound,
-  onSound,
-  soundTo,
   onTargets,
   onMotion,
   onClose,
@@ -86,10 +75,6 @@ export function ShortsViewer({
   items: ShortItem[];
   start: number;
   label: string;
-  sound: boolean;
-  onSound: () => void;
-  /** Gives the sound to a video's player: called inside the tap (an iPhone's rule). */
-  soundTo: (video: string) => void;
   onTargets: (targets: PoolTarget[]) => void;
   /** The full screen dragged to close (the pool's players there follow it). */
   onMotion: (motion: ViewerMotion) => void;
@@ -122,15 +107,9 @@ export function ShortsViewer({
       // Slide 0 is the copy of the last video and slide items.length + 1 the copy of the first (carousel).
       const slide = Math.max(loop ? 0 : 1, Math.min(loop ? items.length + 1 : items.length, index + 1));
       element.scrollTo({ top: slide * element.clientHeight, behavior: "smooth" });
-      if (sound) soundTo(items[(slide - 1 + items.length) % items.length].video);
     },
-    [items, loop, sound, soundTo],
+    [items.length, loop],
   );
-  // The sound on or off; on, from inside the tap.
-  const toggleSound = () => {
-    if (!sound && items[current]) soundTo(items[current].video);
-    onSound();
-  };
 
   // Open on the tapped video; lock the page behind; «back» closes.
   useEffect(() => {
@@ -214,7 +193,7 @@ export function ShortsViewer({
    * an iPhone): YouTube's frames sit over the slides and an iPhone can give them the touch even when
    * they let taps through. A vertical drag moves the list with the finger and, on release, to the next
    * or previous video (or back); a left-to-right drag moves the whole full screen with the finger and,
-   * on release, closes it (or slides it back); a tap without moving turns the sound on or off.
+   * on release, closes it (or slides it back).
    */
   const onGestureStart = (event: TouchEvent) => {
     if ((event.target as HTMLElement).closest("button")) return;
@@ -260,17 +239,11 @@ export function ShortsViewer({
     else if (moved < -height * swipeShare || speed < -swipeSpeed) target -= 1;
     target = Math.max(loop ? 0 : 1, Math.min(loop ? items.length + 1 : items.length, target));
     element.scrollTo({ top: target * height, behavior: "smooth" });
-    // The video it lands on gets the sound now, while the finger's touch still counts as a tap.
-    if (sound) soundTo(items[(target - 1 + items.length) % items.length].video);
   };
   const onGestureWheel = (event: WheelEvent) => {
     if (Math.abs(event.deltaY) < 12 || performance.now() - lastWheel.current < wheelGap) return;
     lastWheel.current = performance.now();
     goTo(current + (event.deltaY > 0 ? 1 : -1));
-  };
-  const onGestureTap = (event: MouseEvent) => {
-    if ((event.target as HTMLElement).closest("button")) return;
-    toggleSound();
   };
   const item = items[current];
   const slid = { transform: `translateX(${motion.x}px)`, transition: motion.glide ? `transform ${closeMs}ms ${glideEase}` : "none" };
@@ -331,7 +304,6 @@ export function ShortsViewer({
         onTouchEnd={onGestureEnd}
         onTouchCancel={onGestureEnd}
         onWheel={onGestureWheel}
-        onClick={onGestureTap}
         className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
         style={slid}
       >
@@ -340,9 +312,6 @@ export function ShortsViewer({
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>
-          </button>
-          <button type="button" onClick={toggleSound} aria-label={sound ? "Tirar o som" : "Ligar o som"} className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">
-            <SoundIcon on={sound} />
           </button>
         </div>
         {item ? (

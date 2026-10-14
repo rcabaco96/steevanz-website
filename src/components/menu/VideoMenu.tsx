@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
-import { poolSize, VideoPool, type PoolControl, type PoolTarget } from "./VideoPool";
+import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
 import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
@@ -100,8 +100,7 @@ function DishCard({
 const mosaicColumns = 4;
 const mosaicTiles = 28;
 /**
- * The mosaic's ending (the circle of «B») starts once it has shown this long and the videos on screen
- * are playing (owner, 2026-10-14: «quando acabar a animação os vídeos estejam a dar»), or at the
+ * The mosaic's ending starts once it has shown this long and the videos on screen are playing (owner, 2026-10-14: «quando acabar a animação os vídeos estejam a dar»), or at the
  * latest at mosaicWaitMax; it takes mosaicExitMs (ms).
  */
 const mosaicExitAt = 2050;
@@ -109,30 +108,16 @@ const mosaicWaitMax = 2600;
 const mosaicExitMs = 700;
 
 /**
- * The opening (owner, 2026-10-14, after trying a circular reveal, a lens alone, and mosaic endings
- * where the dishes flew onto the cards or opened like a curtain): the dishes' thumbnails rise into a tilted mosaic from the centre
- * outwards and the logo comes into focus over them («C»); then, as in «B», a circle opens from the
- * logo like a lens and reveals the menu, while the logo grows and fades. The videos load and play
- * behind it all along, so they are playing when it ends. The circle is a mask whose radius is a
- * registered CSS property (--menu-reveal), centred on the logo; transforms and opacity otherwise.
+ * The opening (owner, 2026-10-14, back to the mosaic's first ending: the circle of «B», a mask redrawn
+ * every frame, stuttered on an iPhone while the videos loaded): the dishes' thumbnails rise into a
+ * tilted mosaic from the centre outwards, the logo comes into focus over them, then everything zooms
+ * in and fades into the menu. Opacity and transforms only. The videos load and play behind it.
  */
 function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string; business: string; videos: string[]; ready: boolean; onDone: () => void }) {
   const [phase, setPhase] = useState<"in" | "out" | "done">("in");
   const [waited, setWaited] = useState<"no" | "enough" | "max">("no");
-  // The lens's centre (the logo) and the radius that uncovers the farthest corner, set at the start
-  // (changing them as it opens restyled the whole mosaic: a dropped frame).
-  const [lens, setLens] = useState({ x: "50%", y: "46%", to: "80vmax" });
-  const mark = useRef<HTMLImageElement>(null);
   const rows = Math.ceil(mosaicTiles / mosaicColumns);
 
-  useLayoutEffect(() => {
-    const rect = mark.current?.getBoundingClientRect();
-    if (!rect) return;
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    const far = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
-    setLens({ x: `${Math.round(x)}px`, y: `${Math.round(y)}px`, to: `${Math.ceil(far + 2)}px` });
-  }, []);
   useEffect(() => {
     const enough = window.setTimeout(() => setWaited("enough"), mosaicExitAt);
     const max = window.setTimeout(() => setWaited("max"), mosaicWaitMax);
@@ -155,9 +140,8 @@ function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string;
   if (phase === "done") return null;
   const out = phase === "out";
   return (
-    <div aria-hidden="true" className="fixed inset-0 z-[100] overflow-hidden">
-      {/* Everything but the logo: the lens opens through it. */}
-      <div className={`absolute inset-0 ${out ? "menu-mosaic-lens" : ""}`} style={{ ["--reveal-x" as string]: lens.x, ["--reveal-y" as string]: lens.y, ["--reveal-to" as string]: lens.to, background: "#fbe3ee" }}>
+    <div aria-hidden="true" className={`fixed inset-0 z-[100] overflow-hidden ${out ? "menu-mosaic-out" : ""}`} style={{ background: "#fbe3ee" }}>
+      <div className="absolute inset-0">
         <div className="menu-mosaic absolute grid gap-2.5" style={{ gridTemplateColumns: `repeat(${mosaicColumns}, minmax(0, 1fr))` }}>
           {Array.from({ length: mosaicTiles }, (_, index) => {
             // From the centre outwards.
@@ -171,12 +155,12 @@ function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string;
           })}
         </div>
         {/* A soft light behind the logo so it reads over the pictures. */}
-        <div className="absolute inset-0 will-change-transform" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
       </div>
       <div className="pointer-events-none absolute inset-0 grid place-items-center">
-        <div className={`flex flex-col items-center gap-3 ${out ? "menu-mosaic-mark-out" : "menu-mosaic-mark"}`}>
+        <div className="menu-mosaic-mark flex flex-col items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img ref={mark} src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
+          <img src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
           <span className="display text-2xl" style={{ color: "#5f2a44" }}>
             {business}
           </span>
@@ -203,10 +187,6 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [viewerTargets, setViewerTargetsState] = useState<PoolTarget[]>([]);
   const setViewerTargets = useCallback((next: PoolTarget[]) => setViewerTargetsState((previous) => (sameTargets(previous, next) ? previous : next)), []);
   const [gridTargets, setGridTargets] = useState<PoolTarget[]>([]);
-  const [sound, setSound] = useState(false);
-  const poolControl = useRef<PoolControl | null>(null);
-  const soundTo = useCallback((video: string) => poolControl.current?.unmute(video), []);
-  const muteAll = useCallback(() => setSound(false), []);
   // The full screen dragged to close: the pool's player there moves with it.
   const [viewerMotion, setViewerMotion] = useState<ViewerMotion>(restingMotion);
   // The collection being switched to: the panel stays open until its videos play.
@@ -236,7 +216,6 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const closeViewer = useCallback(() => {
     setViewer(null);
     setViewerTargets([]);
-    setSound(false);
     setViewerMotion(restingMotion);
   }, [setViewerTargets]);
 
@@ -451,13 +430,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => {
-                // Full screen opens with sound (owner, 2026-10-14: «quero som nos vídeos»), given inside this tap.
-                soundTo(dish.video);
-                setSound(true);
-                setViewer(index);
-              }}
-            />
+            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => setViewer(index)} />
           ))}
         </ul>
         <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de canais de culinária no YouTube e preços de exemplo.</p>
@@ -536,15 +509,12 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
           items={items}
           start={viewer}
           label={`${menu.business}: ${collection.name}`}
-          sound={sound}
-          onSound={() => setSound((on) => !on)}
-          soundTo={soundTo}
           onTargets={setViewerTargets}
           onMotion={setViewerMotion}
           onClose={closeViewer}
         />
       ) : null}
-      <VideoPool targets={poolTargets} sound={sound} enabled motion={viewerMotion} onReady={setReady} controlRef={poolControl} onSoundBlocked={muteAll} />
+      <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} />
       <MosaicSplash
         logo={menu.logo}
         business={menu.business}
