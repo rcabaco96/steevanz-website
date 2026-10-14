@@ -8,8 +8,10 @@ import { demoMenu } from "@/content/demo-menu";
 // The public modules' layout keeps it out of search engines; it is in no menu nor the sitemap.
 export const metadata: Metadata = { title: `Menu · ${demoMenu.business}` };
 
-export default function DemoVideoMenuPage() {
+export default async function DemoVideoMenuPage({ searchParams }: PageProps<"/raza17raza">) {
+  // The opening to look at (owner, 2026-10-14): the mosaic («C») by default, ?abertura=b the circular reveal.
+  const opening = (await searchParams).abertura === "b" ? "reveal" : "mosaic";
   // The players and thumbnails come from these hosts: the connections are open before they're needed.
   for (const host of ["https://www.youtube-nocookie.com", "https://i.ytimg.com", "https://www.google.com"]) preconnect(host);
-  return <VideoMenu menu={demoMenu} />;
+  return <VideoMenu menu={demoMenu} openingStyle={opening} />;
 }

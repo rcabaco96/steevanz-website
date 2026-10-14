@@ -27,7 +27,14 @@ export interface PoolTarget {
  * until its player reports the video playing, so YouTube's black loading screen never shows. The
  * player that was playing a card is the one that grows to full screen: the video carries on.
  */
-const poolSize = 3;
+/** 4: the grid plays every dish on screen (two rows of two, owner 2026-10-14); full screen uses 2. */
+const poolSize = 4;
+/**
+ * A player shows over the thumbnail only once its own video (by the id YouTube reports) has played
+ * this far (s): at YouTube's first «playing» the video hasn't drawn a frame yet (a black break), and
+ * after a video change the old video's reports still arrive for a moment.
+ */
+const shownAfterSeconds = 0.3;
 /** Players get a phone's width and are scaled to the box (small YouTube players add a Shorts overlay). */
 const playerWidth = 360;
 const playerHeight = (playerWidth * 16) / 9;
@@ -43,6 +50,11 @@ interface Player {
   /** Commands sent before YouTube's API answered. */
   queue: string[];
   playing: boolean;
+  /** The video YouTube says it has, and how far it has played (s). */
+  reported: string | null;
+  time: number;
+  /** The video it has really started showing frames of: stays so through its loops. */
+  showing: string | null;
 }
 
 interface Placement {
@@ -83,7 +95,9 @@ const embedSrc = (video: string, origin: string) =>
 export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; sound: boolean; enabled: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
-  const players = useRef<Player[]>(Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false })));
+  const players = useRef<Player[]>(
+    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, reported: null, time: 0, showing: null })),
+  );
   const [sources, setSources] = useState<string[] | null>(null);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
   const [, setTick] = useState(0);
@@ -133,13 +147,21 @@ export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; 
         setTick((tick) => tick + 1);
         return;
       }
-      const state =
-        data.event === "onStateChange" && typeof data.info === "number"
-          ? data.info
-          : data.event === "infoDelivery" && typeof (data.info as { playerState?: number })?.playerState === "number"
-            ? (data.info as { playerState: number }).playerState
-            : null;
-      if (state === null || state === player.state) return;
+      const info = (data.event === "infoDelivery" && data.info && typeof data.info === "object" ? data.info : {}) as {
+        playerState?: number;
+        currentTime?: number;
+        videoData?: { video_id?: string };
+      };
+      if (typeof info.videoData?.video_id === "string") player.reported = info.videoData.video_id;
+      if (typeof info.currentTime === "number") player.time = info.currentTime;
+      const showing = player.showing;
+      // Frames are on screen: its own video, playing, a moment in.
+      if (player.reported === player.video && player.state === 1 && player.time >= shownAfterSeconds) player.showing = player.video;
+      const state = data.event === "onStateChange" && typeof data.info === "number" ? data.info : typeof info.playerState === "number" ? info.playerState : null;
+      if (state === null || state === player.state) {
+        if (player.showing !== showing) setTick((tick) => tick + 1);
+        return;
+      }
       player.state = state;
       // Each video loops on its own (YouTube's loop parameter would bring back the first video).
       if (state === 0 && player.playing) {
@@ -178,6 +200,7 @@ export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; 
       const player = pool[free];
       player.video = target.video;
       player.state = -1;
+      player.showing = null;
       send(free, target.play ? "loadVideoById" : "cueVideoById", [target.video, 0]);
     }
     pool.forEach((player, index) => {
@@ -213,7 +236,7 @@ export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; 
           width: rect.width,
           height: rect.height,
           fixed: target.fixed,
-          shown: target.visible && target.play && player.video === target.video && player.state === 1,
+          shown: target.visible && target.play && player.video === target.video && player.showing === target.video,
         };
       });
     // Only a real change re-renders (this runs after every render).

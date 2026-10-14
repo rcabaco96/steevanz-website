@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode, type TouchEvent, type WheelEvent } from "react";
 import type { PoolTarget } from "./VideoPool";
 
 /** A vertical YouTube video (Short) with what is shown over it. */
@@ -34,6 +34,11 @@ const showAfter = 250;
 const preloadAfter = 900;
 /** No scroll event for this long: the swipe has ended. */
 const scrollRest = 140;
+/** A swipe moves to the next or previous video past this share of the screen, or this fast (px/ms). */
+const swipeShare = 0.18;
+const swipeSpeed = 0.35;
+/** One video per wheel gesture (ms between moves). */
+const wheelGap = 450;
 
 function SoundIcon({ on }: { on: boolean }) {
   return (
@@ -46,7 +51,7 @@ function SoundIcon({ on }: { on: boolean }) {
 
 /**
  * Full screen, one video per screen: swipe (or scroll, or the arrow keys) to the next or previous
- * one. The slides hold thumbnails; the pool's players (VideoPool) cover the one on screen once the
+ * one (no CSS snapping: the moves are ours and land exactly on a slide). The slides hold thumbnails; the pool's players (VideoPool) cover the one on screen once the
  * swipe has ended, and the next video is prepared in another player. A carousel both ways (owner,
  * 2026-10-14): copies of the last and of the first sit before and after the list, and landing on one
  * jumps to the real video. The sound, once on, stays on. Closes with ✕, Esc or the phone's back button.
@@ -71,6 +76,8 @@ export function ShortsViewer({
   const scroller = useRef<HTMLDivElement>(null);
   const boxes = useRef<(HTMLDivElement | null)[]>([]);
   const restTimer = useRef<number | undefined>(undefined);
+  const gesture = useRef<{ y: number; top: number; at: number; moved: boolean } | null>(null);
+  const lastWheel = useRef(0);
   const [current, setCurrent] = useState(start);
   // The tapped video shows at once: its player is the one that was playing it in the grid.
   const [shownOn, setShownOn] = useState<number | null>(start);
@@ -151,10 +158,53 @@ export function ShortsViewer({
       className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden"
     >
       <ShortCover video={item.video} />
-      {/* Under the player (which lets taps through): a tap turns the sound on or off. */}
-      <button type="button" onClick={onSound} aria-label={sound ? "Tirar o som" : "Ligar o som"} className="absolute inset-0" />
     </div>
   );
+
+  /*
+   * The gestures are ours, on a layer above everything (owner, 2026-10-14: swiping stopped working on
+   * an iPhone): YouTube's frames sit over the slides and an iPhone can give them the touch even when
+   * they let taps through. The list follows the finger; on release it moves to the next or previous
+   * video (or back); a tap without moving turns the sound on or off.
+   */
+  const onGestureStart = (event: TouchEvent) => {
+    if ((event.target as HTMLElement).closest("button")) return;
+    const element = scroller.current;
+    if (!element) return;
+    gesture.current = { y: event.touches[0].clientY, top: element.scrollTop, at: performance.now(), moved: false };
+  };
+  const onGestureMove = (event: TouchEvent) => {
+    const start = gesture.current;
+    const element = scroller.current;
+    if (!start || !element) return;
+    const dy = event.touches[0].clientY - start.y;
+    if (Math.abs(dy) > 6) start.moved = true;
+    element.scrollTop = start.top - dy;
+  };
+  const onGestureEnd = () => {
+    const start = gesture.current;
+    const element = scroller.current;
+    gesture.current = null;
+    if (!start || !element) return;
+    if (!start.moved) return;
+    const height = Math.max(1, element.clientHeight);
+    const moved = element.scrollTop - start.top;
+    const speed = moved / Math.max(1, performance.now() - start.at);
+    let target = Math.round(start.top / height);
+    if (moved > height * swipeShare || speed > swipeSpeed) target += 1;
+    else if (moved < -height * swipeShare || speed < -swipeSpeed) target -= 1;
+    target = Math.max(loop ? 0 : 1, Math.min(loop ? items.length + 1 : items.length, target));
+    element.scrollTo({ top: target * height, behavior: "smooth" });
+  };
+  const onGestureWheel = (event: WheelEvent) => {
+    if (Math.abs(event.deltaY) < 12 || performance.now() - lastWheel.current < wheelGap) return;
+    lastWheel.current = performance.now();
+    goTo(current + (event.deltaY > 0 ? 1 : -1));
+  };
+  const onGestureTap = (event: MouseEvent) => {
+    if ((event.target as HTMLElement).closest("button")) return;
+    onSound();
+  };
   const item = items[current];
 
   return (
@@ -168,6 +218,11 @@ export function ShortsViewer({
             window.clearTimeout(restTimer.current);
             restTimer.current = window.setTimeout(() => setScrolling(false), scrollRest);
             const height = Math.max(1, element.clientHeight);
+            if (gesture.current) {
+              const index = Math.max(0, Math.min(items.length - 1, Math.round(element.scrollTop / height) - 1));
+              if (index !== current) setCurrent(index);
+              return;
+            }
             // Settled on a copy: on to the real video it shows, without a visible jump.
             if (loop && Math.abs(element.scrollTop - (items.length + 1) * height) < 2) {
               element.scrollTop = height;
@@ -182,28 +237,36 @@ export function ShortsViewer({
             const index = Math.max(0, Math.min(items.length - 1, Math.round(element.scrollTop / height) - 1));
             if (index !== current) setCurrent(index);
           }}
-          className="h-full snap-y snap-mandatory overflow-y-auto overscroll-none [scrollbar-width:none]"
+          className="h-full overflow-y-auto overscroll-none [scrollbar-width:none]"
         >
           {loop ? (
-            <section aria-hidden="true" className="grid h-[100dvh] snap-start snap-always place-items-center">
+            <section aria-hidden="true" className="grid h-[100dvh] place-items-center">
               {slide(items[items.length - 1], null)}
             </section>
           ) : null}
           {items.map((entry, index) => (
-            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-[100dvh] snap-start snap-always place-items-center">
+            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-[100dvh] place-items-center">
               {slide(entry, index)}
             </section>
           ))}
           {loop ? (
-            <section aria-hidden="true" className="grid h-[100dvh] snap-start snap-always place-items-center">
+            <section aria-hidden="true" className="grid h-[100dvh] place-items-center">
               {slide(items[0], null)}
             </section>
           ) : null}
         </div>
       </div>
-      {/* Above the pool's players (z 95): the buttons and what the dish on screen is. */}
-      <div className="pointer-events-none fixed inset-0 z-[96] flex flex-col justify-between text-white">
-        <div className="flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
+      {/* Above the pool's players (z 95): the gestures, the buttons and what the dish on screen is. */}
+      <div
+        onTouchStart={onGestureStart}
+        onTouchMove={onGestureMove}
+        onTouchEnd={onGestureEnd}
+        onTouchCancel={onGestureEnd}
+        onWheel={onGestureWheel}
+        onClick={onGestureTap}
+        className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
+      >
+        <div className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
           <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
@@ -215,7 +278,7 @@ export function ShortsViewer({
         </div>
         {item ? (
           <div
-            className={`flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling ? "opacity-0" : "opacity-100"}`}
+            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling ? "opacity-0" : "opacity-100"}`}
           >
             <span className="text-xs font-semibold tracking-wide text-white/70">
               {current + 1} / {items.length}

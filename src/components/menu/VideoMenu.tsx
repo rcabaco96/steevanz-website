@@ -11,13 +11,14 @@ const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR"
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
 
 /**
- * In the grid the row most on screen plays (its first `focusCount` dishes), once the scroll has
- * stopped this long (ms), in the players of the pool (VideoPool).
+ * In the grid every dish on screen plays (up to `focusCount`, the four of two rows; owner 2026-10-14:
+ * «devem começar logo os vídeos que aparecem no ecrã»), once the scroll has stopped this long (ms), in
+ * the players of the pool (VideoPool).
  */
 const focusAfter = 350;
-const focusCount = 2;
-/** A card must be at least this much on screen to be one that plays. */
-const focusMinRatio = 0.6;
+const focusCount = 4;
+/** A card must be at least this much on screen to play. */
+const focusMinRatio = 0.4;
 /** The collections panel closes when dragged this share of its width to the right (or flicked). */
 const sheetCloseShare = 0.3;
 const sheetCloseSpeed = 0.5; // px per ms
@@ -125,13 +126,70 @@ function MenuSplash({ logo, business, onDone }: { logo: string; business: string
   );
 }
 
+/** The openings tried (owner, 2026-10-14): «C» the mosaic of dishes, «B» the circular reveal. */
+export type MenuOpening = "mosaic" | "reveal";
+
+/** Tiles of the mosaic opening: 4 columns of 7 rows, filling the screen (and beyond, it is tilted). */
+const mosaicColumns = 4;
+const mosaicTiles = 28;
+
+/**
+ * The opening «C» (owner, 2026-10-14): the dishes' thumbnails rise into a tilted mosaic, from the
+ * centre outwards, the logo comes into focus over them, then everything zooms in and fades into the
+ * menu. ~2.2 s, opacity and transforms only. The thumbnails are YouTube's (the ones the cards show).
+ */
+function MosaicSplash({ logo, business, videos, onDone }: { logo: string; business: string; videos: string[]; onDone: () => void }) {
+  const [done, setDone] = useState(false);
+  const finish = useCallback(() => {
+    setDone(true);
+    onDone();
+  }, [onDone]);
+  useEffect(() => {
+    const timer = window.setTimeout(finish, 3200);
+    return () => window.clearTimeout(timer);
+  }, [finish]);
+  if (done) return null;
+  const rows = Math.ceil(mosaicTiles / mosaicColumns);
+  return (
+    <div aria-hidden="true" className="fixed inset-0 z-[100] overflow-hidden" style={{ background: "#fbe3ee" }}>
+      <div className="menu-mosaic-scene absolute inset-0" onAnimationEnd={(event) => event.target === event.currentTarget && finish()}>
+        <div className="menu-mosaic absolute grid gap-2.5" style={{ gridTemplateColumns: `repeat(${mosaicColumns}, minmax(0, 1fr))` }}>
+          {Array.from({ length: mosaicTiles }, (_, index) => {
+            const column = index % mosaicColumns;
+            const row = Math.floor(index / mosaicColumns);
+            // From the centre outwards.
+            const distance = Math.hypot(column - (mosaicColumns - 1) / 2, row - (rows - 1) / 2);
+            return (
+              <div key={index} className="menu-mosaic-tile relative aspect-[9/16] overflow-hidden rounded-2xl bg-white/60 shadow-lg" style={{ animationDelay: `${Math.round(distance * 70)}ms` }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`https://i.ytimg.com/vi/${videos[index % videos.length]}/hqdefault.jpg`} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              </div>
+            );
+          })}
+        </div>
+        {/* A soft light behind the logo so it reads over the pictures. */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
+        <div className="absolute inset-0 grid place-items-center">
+          <div className="menu-mosaic-mark flex flex-col items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
+            <span className="display text-2xl" style={{ color: "#5f2a44" }}>
+              {business}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
  * the bar, ☰ opens the list of collections (the first opens by default); a tap on a dish opens the
  * collection full screen, one dish per screen. Every video plays in a fixed pool of 3 players
  * (VideoPool), never created again: the cards and slides hold thumbnails.
  */
-export function VideoMenu({ menu }: { menu: VideoMenuData }) {
+export function VideoMenu({ menu, openingStyle = "mosaic" }: { menu: VideoMenuData; openingStyle?: MenuOpening }) {
   const [active, setActive] = useState(menu.collections[0].id);
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
@@ -386,7 +444,11 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         />
       ) : null}
       <VideoPool targets={poolTargets} sound={sound} enabled={!opening} />
-      <MenuSplash logo={menu.logo} business={menu.business} onDone={opened} />
+      {openingStyle === "reveal" ? (
+        <MenuSplash logo={menu.logo} business={menu.business} onDone={opened} />
+      ) : (
+        <MosaicSplash logo={menu.logo} business={menu.business} videos={Object.values(menu.dishes).map((dish) => dish.video)} onDone={opened} />
+      )}
     </div>
   );
 }
