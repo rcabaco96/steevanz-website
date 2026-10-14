@@ -10,11 +10,12 @@ const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR"
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
 
 /**
- * In the grid only one video plays: the dish most on screen, once the scroll has stopped this long
- * (ms). Several YouTube players at once, made and dropped while scrolling, made iPhones reload the
- * page (owner, 2026-10-14).
+ * In the grid only the row most on screen plays (its first `focusCount` dishes), once the scroll has
+ * stopped this long (ms). Many YouTube players at once, made and dropped while scrolling, made iPhones
+ * reload the page; one at a time left the dish beside it still (owner, 2026-10-14).
  */
 const focusAfter = 350;
+const focusCount = 2;
 /** A card must be at least this much on screen to be the one that plays. */
 const focusMinRatio = 0.6;
 
@@ -27,15 +28,15 @@ function MenuIcon() {
 }
 
 /** A dish of the grid: its video plays (muted) when it is the one in focus; a tap opens the collection full screen. */
-function DishCard({ id, dish, playing, onSeen, onOpen }: { id: string; dish: MenuDish; playing: boolean; onSeen: (id: string, ratio: number) => void; onOpen: () => void }) {
+function DishCard({ id, order, dish, playing, onSeen, onOpen }: { id: string; order: number; dish: MenuDish; playing: boolean; onSeen: (id: string, order: number, ratio: number) => void; onOpen: () => void }) {
   const holder = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = holder.current;
     if (!element) return;
-    const observer = new IntersectionObserver(([entry]) => onSeen(id, entry.intersectionRatio), { threshold: [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] });
+    const observer = new IntersectionObserver(([entry]) => onSeen(id, order, entry.intersectionRatio), { threshold: [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] });
     observer.observe(element);
     return () => observer.disconnect();
-  }, [id, onSeen]);
+  }, [id, order, onSeen]);
   return (
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
@@ -106,17 +107,20 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   }, [opened]);
   const closeViewer = useCallback(() => setViewer(null), []);
   // The grid's single playing card: how much of each card is on screen, the winner picked once the scroll rests.
-  const ratios = useRef(new Map<string, number>());
+  const ratios = useRef(new Map<string, { order: number; ratio: number }>());
   const focusTimer = useRef<number | undefined>(undefined);
-  const [focus, setFocus] = useState<string | null>(null);
-  const seen = useCallback((key: string, ratio: number) => {
-    ratios.current.set(key, ratio);
+  const [focus, setFocus] = useState<string[]>([]);
+  const seen = useCallback((key: string, order: number, ratio: number) => {
+    ratios.current.set(key, { order, ratio });
     window.clearTimeout(focusTimer.current);
     focusTimer.current = window.setTimeout(() => {
-      let best: string | null = null;
-      let bestRatio = focusMinRatio;
-      for (const [candidate, value] of ratios.current) if (value >= bestRatio && (best === null || value > bestRatio)) [best, bestRatio] = [candidate, value];
-      setFocus(best);
+      // The most visible dishes; on a tie, the ones higher in the grid (the same row, side by side).
+      const ranked = [...ratios.current]
+        .filter(([, seen]) => seen.ratio >= focusMinRatio)
+        .sort(([, a], [, b]) => b.ratio - a.ratio || a.order - b.order)
+        .slice(0, focusCount)
+        .map(([candidate]) => candidate);
+      setFocus(ranked);
     }, focusAfter);
   }, []);
 
@@ -149,7 +153,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
 
   const choose = (id: string) => {
     ratios.current.clear();
-    setFocus(null);
+    setFocus([]);
     setActive(id);
     setSheet(false);
     window.scrollTo({ top: 0 });
@@ -186,12 +190,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
             <DishCard
               key={`${collection.id}-${key}`}
               id={key}
+              order={index}
               dish={dish}
               // While the full screen or the collections panel is open, the grid plays nothing (memory).
-              playing={focus === key && viewer === null && !sheet && !opening}
+              playing={focus.includes(key) && viewer === null && !sheet && !opening}
               onSeen={seen}
               // The full screen carries on where the card's video was.
-              onOpen={() => setViewer({ start: index, startAt: focus === key ? lastPosition(dish.video) : 0 })}
+              onOpen={() => setViewer({ start: index, startAt: focus.includes(key) ? lastPosition(dish.video) : 0 })}
             />
           ))}
         </ul>

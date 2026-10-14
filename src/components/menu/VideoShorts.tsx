@@ -81,6 +81,8 @@ export function ShortPlayer({
   const box = useRef<HTMLDivElement>(null);
   /** The time to jump to as soon as YouTube's player answers (its API isn't up at the frame's load). */
   const pendingSeek = useRef(0);
+  /** What the player was last told (it starts playing, muted, by itself): commands only on a change. */
+  const told = useRef<{ active: boolean; sound: boolean } | null>(null);
   const [ready, setReady] = useState(false);
   const [scale, setScale] = useState(1);
   // A removed player starts over (thumbnail first) when it comes back.
@@ -115,10 +117,16 @@ export function ShortPlayer({
     return () => window.removeEventListener("message", onMessage);
   }, [load, video]);
 
+  // Every command makes YouTube flash its controls (⏮ ⏸ ⏭) over the video: only real changes are sent.
   useEffect(() => {
-    if (!ready) return;
-    command(frame.current, sound ? "unMute" : "mute");
-    command(frame.current, active ? "playVideo" : "pauseVideo");
+    if (!ready) {
+      told.current = null;
+      return;
+    }
+    const before = told.current ?? { active: true, sound: false };
+    if (sound !== before.sound) command(frame.current, sound ? "unMute" : "mute");
+    if (active !== before.active) command(frame.current, active ? "playVideo" : "pauseVideo");
+    told.current = { active, sound };
   }, [ready, active, sound]);
 
   return (
@@ -172,9 +180,10 @@ function SoundIcon({ on }: { on: boolean }) {
  * Full screen, one video per screen: swipe (or scroll, or the arrow keys) to the next or previous
  * one. Only the video on screen plays; the next one is prepared once the current one has stayed on
  * screen a moment (at most 2 players). The tapped video carries on from `startAt`. The sound, once
- * on, stays on from video to video. After the last video comes the first again (owner, 2026-10-14:
- * «efeito carrossel»): a copy of the first follows the last, and landing on it jumps to the real one.
- * Closes with ✕, Esc or the phone's back button.
+ * on, stays on from video to video. A carousel both ways (owner, 2026-10-14): after the last video
+ * comes the first, and above the first comes the last. Copies of the last and of the first sit before
+ * and after the list; landing on one jumps to the real video. Closes with ✕, Esc or the phone's back
+ * button.
  */
 export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { items: ShortItem[]; start: number; startAt?: number; label: string; onClose: () => void }) {
   const scroller = useRef<HTMLDivElement>(null);
@@ -187,8 +196,10 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
     (index: number) => {
       const element = scroller.current;
       if (!element) return;
-      // Up to the copy of the first video after the last one (carousel), which then jumps to the first.
-      element.scrollTo({ top: Math.max(0, Math.min(items.length > 1 ? items.length : 0, index)) * element.clientHeight, behavior: "smooth" });
+      // Slide 0 is the copy of the last video and slide items.length + 1 the copy of the first (carousel).
+      const loop = items.length > 1;
+      const slide = Math.max(loop ? 0 : 1, Math.min(loop ? items.length + 1 : items.length, index + 1));
+      element.scrollTo({ top: slide * element.clientHeight, behavior: "smooth" });
     },
     [items.length],
   );
@@ -196,7 +207,7 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
   // Open on the tapped video; lock the page behind; «back» closes.
   useEffect(() => {
     const element = scroller.current;
-    if (element) element.scrollTop = start * element.clientHeight;
+    if (element) element.scrollTop = (start + 1) * element.clientHeight;
     const root = document.documentElement;
     const overflow = root.style.overflow;
     root.style.overflow = "hidden";
@@ -232,14 +243,20 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
         onScroll={(event) => {
           const element = event.currentTarget;
           const height = Math.max(1, element.clientHeight);
-          // Settled on the copy of the first video: on to the real first one, without a visible jump.
-          if (items.length > 1 && Math.abs(element.scrollTop - items.length * height) < 2) {
-            element.scrollTop = 0;
+          // Settled on a copy: on to the real video it shows, without a visible jump.
+          if (items.length > 1 && Math.abs(element.scrollTop - (items.length + 1) * height) < 2) {
+            element.scrollTop = height;
             setCurrent(0);
             setLeftStart(true);
             return;
           }
-          const index = Math.min(items.length - 1, Math.round(element.scrollTop / height));
+          if (items.length > 1 && element.scrollTop < 2) {
+            element.scrollTop = items.length * height;
+            setCurrent(items.length - 1);
+            setLeftStart(true);
+            return;
+          }
+          const index = Math.max(0, Math.min(items.length - 1, Math.round(element.scrollTop / height) - 1));
           if (index !== current) {
             setCurrent(index);
             if (index !== start) setLeftStart(true);
@@ -247,6 +264,14 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
         }}
         className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain [scrollbar-width:none]"
       >
+        {items.length > 1 ? (
+          // The copy of the last video before the first one (carousel): its thumbnail only, no player.
+          <section aria-hidden="true" className="relative grid h-[100dvh] snap-start snap-always place-items-center">
+            <div className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden sm:rounded-2xl">
+              <ShortPlayer video={items[items.length - 1].video} title={items[items.length - 1].title} load={false} active={false} sound={false} />
+            </div>
+          </section>
+        ) : null}
         {items.map((item, index) => (
           <section key={item.key} aria-label={`${index + 1} de ${items.length}: ${item.title}`} className="relative grid h-[100dvh] snap-start snap-always place-items-center">
             <div className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden sm:rounded-2xl">
