@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
-import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
+import { poolSize, VideoPool, type PoolControl, type PoolTarget } from "./VideoPool";
 import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
@@ -15,9 +15,11 @@ const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99,
  * Recomputed this soon after the scroll moves (ms).
  */
 const focusAfter = 120;
-const focusCount = poolSize;
+const focusCount = 4;
+/** The next row (in the scroll's direction) plays hidden, so it is moving as it appears. */
+const aheadCount = poolSize - focusCount;
 /** Changing collection: the panel stays until the new collection's videos play, at most this long (ms). */
-const switchWaitMs = 2500;
+const switchWaitMs = 4000;
 /**
  * A new collection starts at its top (owner, 2026-10-14). At once: the page scrolls smoothly by
  * default, and a smooth scroll is dropped while the panel holds the page still (iPhone).
@@ -103,7 +105,7 @@ const mosaicTiles = 28;
  * latest at mosaicWaitMax; it takes mosaicExitMs (ms).
  */
 const mosaicExitAt = 2050;
-const mosaicWaitMax = 4000;
+const mosaicWaitMax = 5000;
 const mosaicExitMs = 700;
 
 /**
@@ -202,6 +204,9 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const setViewerTargets = useCallback((next: PoolTarget[]) => setViewerTargetsState((previous) => (sameTargets(previous, next) ? previous : next)), []);
   const [gridTargets, setGridTargets] = useState<PoolTarget[]>([]);
   const [sound, setSound] = useState(false);
+  const poolControl = useRef<PoolControl | null>(null);
+  const soundTo = useCallback((video: string) => poolControl.current?.unmute(video), []);
+  const muteAll = useCallback(() => setSound(false), []);
   // The full screen dragged to close: the pool's player there moves with it.
   const [viewerMotion, setViewerMotion] = useState<ViewerMotion>(restingMotion);
   // The collection being switched to: the panel stays open until its videos play.
@@ -239,6 +244,17 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const ratios = useRef(new Map<string, { order: number; ratio: number }>());
   const focusTimer = useRef<number | undefined>(undefined);
   const [focus, setFocus] = useState<{ visible: string[] }>({ visible: [] });
+  // Which way the page last scrolled (the row ahead is below, or above).
+  const scrollingUp = useRef(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      if (window.scrollY !== last) scrollingUp.current = window.scrollY < last;
+      last = window.scrollY;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const seen = useCallback((key: string, order: number, ratio: number) => {
     ratios.current.set(key, { order, ratio });
     window.clearTimeout(focusTimer.current);
@@ -280,13 +296,24 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   // collections panel: a video paused and played again shows YouTube's ⏸ on an iPhone. While switching
   // collection, the new videos load behind it.
   useEffect(() => {
-    const next = focus.visible.flatMap((key): PoolTarget[] => {
+    const target = (key: string, visible: boolean): PoolTarget[] => {
       const dish = menu.dishes[key];
       const element = boxes.current.get(key) ?? null;
-      return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: true, visible: true }] : [];
-    });
+      return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: visible, prime: !visible, visible }] : [];
+    };
+    // The row ahead: the next dishes in the list after those on screen (before them, scrolling up).
+    // Not while switching collection (the dishes on screen load first).
+    const keys = dishes.map(({ key }) => key);
+    const orders = focus.visible.map((key) => keys.indexOf(key)).filter((order) => order >= 0);
+    const ahead =
+      switching || !orders.length
+        ? []
+        : Array.from({ length: aheadCount }, (_, step) => (scrollingUp.current ? Math.min(...orders) - 1 - step : Math.max(...orders) + 1 + step))
+            .filter((order) => order >= 0 && order < keys.length)
+            .map((order) => keys[order]);
+    const next = [...focus.visible.flatMap((key) => target(key, true)), ...ahead.flatMap((key) => target(key, false))];
     setGridTargets((previous) => (sameTargets(previous, next) ? previous : next));
-  }, [focus, menu.dishes]);
+  }, [focus, menu.dishes, dishes, switching]);
   // While the full screen is open, the players it leaves keep playing grid dishes behind it (seen as
   // it is dragged away); the full screen's own videos first.
   const poolTargets = useMemo(() => {
@@ -424,7 +451,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => setViewer(index)} />
+            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => {
+                // Full screen opens with sound (owner, 2026-10-14: «quero som nos vídeos»), given inside this tap.
+                soundTo(dish.video);
+                setSound(true);
+                setViewer(index);
+              }}
+            />
           ))}
         </ul>
         <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de canais de culinária no YouTube e preços de exemplo.</p>
@@ -505,12 +538,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
           label={`${menu.business}: ${collection.name}`}
           sound={sound}
           onSound={() => setSound((on) => !on)}
+          soundTo={soundTo}
           onTargets={setViewerTargets}
           onMotion={setViewerMotion}
           onClose={closeViewer}
         />
       ) : null}
-      <VideoPool targets={poolTargets} sound={sound} enabled motion={viewerMotion} onReady={setReady} />
+      <VideoPool targets={poolTargets} sound={sound} enabled motion={viewerMotion} onReady={setReady} controlRef={poolControl} onSoundBlocked={muteAll} />
       <MosaicSplash
         logo={menu.logo}
         business={menu.business}
