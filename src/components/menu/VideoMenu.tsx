@@ -18,6 +18,11 @@ const focusAfter = 120;
 const focusCount = poolSize;
 /** Changing collection: the panel stays until the new collection's videos play, at most this long (ms). */
 const switchWaitMs = 2500;
+/**
+ * A new collection starts at its top (owner, 2026-10-14). At once: the page scrolls smoothly by
+ * default, and a smooth scroll is dropped while the panel holds the page still (iPhone).
+ */
+const toTop = () => window.scrollTo({ top: 0, behavior: "instant" });
 /** A card must be at least this much on screen to play. */
 const focusMinRatio = 0.4;
 /** The collections panel closes when dragged this share of its width to the right (or flicked). */
@@ -301,11 +306,12 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     setFocus({ visible: [] });
     setActive(id);
     setSwitching(id);
-    window.scrollTo({ top: 0 });
+    toTop();
   };
   useEffect(() => {
     if (!switching) return;
     const done = () => {
+      toTop();
       setSwitching(null);
       closeSheet();
     };
