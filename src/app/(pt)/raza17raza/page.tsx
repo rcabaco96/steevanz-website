@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { preconnect } from "react-dom";
-import { YouTubeReel } from "@/components/marketing/YouTubeReel";
+import { ShortsCollection } from "@/components/marketing/YouTubeShorts";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { showcaseCollections } from "@/content/showcase-youtube";
 import { loadPlaylist } from "@/lib/youtube/feed";
@@ -27,19 +27,7 @@ export default async function YouTubeReelsPage() {
         <section key={collection.playlistId} aria-label={collection.title ?? playlist?.title ?? "Coleção"} className="mt-12 flex flex-col gap-5">
           <h2 className="display text-2xl sm:text-3xl">{collection.title ?? playlist?.title ?? "Coleção"}</h2>
           {playlist?.videos.length ? (
-            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {playlist.videos.map((video) => (
-                <li key={video.id} className="card flex flex-col gap-3 p-3">
-                  <YouTubeReel id={video.id} title={video.title} />
-                  <div className="flex flex-col gap-0.5 px-1 pb-1">
-                    <span className="line-clamp-2 font-semibold text-text">{video.title}</span>
-                    <a href={`https://www.youtube.com/shorts/${video.id}`} target="_blank" rel="noopener" className="text-sm font-semibold text-accent-text hover:underline">
-                      {playlist.channel} no YouTube
-                    </a>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <ShortsCollection videos={playlist.videos.map(({ id, title }) => ({ id, title }))} channel={playlist.channel} />
           ) : (
             <p className="text-muted">Não foi possível ler esta playlist do YouTube agora.</p>
           )}
