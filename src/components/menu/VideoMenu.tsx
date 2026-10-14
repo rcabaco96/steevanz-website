@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
-import { lastPosition, ShortPlayer, ShortsViewer, type ShortItem } from "./VideoShorts";
+import { VideoPool, type PoolTarget } from "./VideoPool";
+import { ShortCover, ShortsViewer, type ShortItem } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
@@ -10,14 +11,25 @@ const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR"
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
 
 /**
- * In the grid only the row most on screen plays (its first `focusCount` dishes), once the scroll has
- * stopped this long (ms). Many YouTube players at once, made and dropped while scrolling, made iPhones
- * reload the page; one at a time left the dish beside it still (owner, 2026-10-14).
+ * In the grid the row most on screen plays (its first `focusCount` dishes), once the scroll has
+ * stopped this long (ms), in the players of the pool (VideoPool).
  */
 const focusAfter = 350;
 const focusCount = 2;
-/** A card must be at least this much on screen to be the one that plays. */
+/** A card must be at least this much on screen to be one that plays. */
 const focusMinRatio = 0.6;
+/** The collections panel closes when dragged this share of its width to the right (or flicked). */
+const sheetCloseShare = 0.3;
+const sheetCloseSpeed = 0.5; // px per ms
+const sheetSlideMs = 260;
+
+/** Same targets (by what the pool uses), so an unchanged list never re-renders the pool. */
+const sameTargets = (a: PoolTarget[], b: PoolTarget[]) =>
+  a.length === b.length &&
+  a.every((target, index) => {
+    const other = b[index];
+    return target.key === other.key && target.video === other.video && target.element === other.element && target.fixed === other.fixed && target.play === other.play && target.visible === other.visible;
+  });
 
 function MenuIcon() {
   return (
@@ -27,21 +39,39 @@ function MenuIcon() {
   );
 }
 
-/** A dish of the grid: its video plays (muted) when it is the one in focus; a tap opens the collection full screen. */
-function DishCard({ id, order, dish, playing, onSeen, onOpen }: { id: string; order: number; dish: MenuDish; playing: boolean; onSeen: (id: string, order: number, ratio: number) => void; onOpen: () => void }) {
+/** A dish of the grid: its thumbnail, covered by one of the pool's players when it plays; a tap opens the collection full screen. */
+function DishCard({
+  id,
+  order,
+  dish,
+  onSeen,
+  onBox,
+  onOpen,
+}: {
+  id: string;
+  order: number;
+  dish: MenuDish;
+  onSeen: (id: string, order: number, ratio: number) => void;
+  onBox: (id: string, box: HTMLDivElement | null) => void;
+  onOpen: () => void;
+}) {
   const holder = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = holder.current;
+    onBox(id, element);
     if (!element) return;
     const observer = new IntersectionObserver(([entry]) => onSeen(id, order, entry.intersectionRatio), { threshold: [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] });
     observer.observe(element);
-    return () => observer.disconnect();
-  }, [id, order, onSeen]);
+    return () => {
+      observer.disconnect();
+      onBox(id, null);
+    };
+  }, [id, order, onSeen, onBox]);
   return (
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
-        <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          <ShortPlayer video={dish.video} title={dish.name} load={playing} active={playing} sound={false} />
+        <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
+          <ShortCover video={dish.video} />
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
@@ -58,31 +88,38 @@ function DishCard({ id, order, dish, playing, onSeen, onOpen }: { id: string; or
 }
 
 /**
- * The opening (owner, 2026-10-14; slower and softer after «um pouco rápida demais»): the business's
- * logo fades and grows in gently on its colours, its name follows, a short pause, then the whole thing
- * fades slowly over the menu (~2.6 s). Only opacity and scale (smooth on phones). Drawn by the server,
- * so it covers the page from the first frame; `onDone` lets the videos start only after it.
+ * The opening (owner, 2026-10-14, «B»: a circular reveal): on the business's colours, the logo comes
+ * into focus (blur to sharp) with its name; then a circle opens from the logo like a lens and reveals
+ * the menu behind, while the logo grows and fades. ~2 s. The circle is a mask whose radius is a
+ * registered CSS property (--menu-reveal); where that isn't supported, the cover leaves after 3 s.
+ * Drawn by the server, so it covers the page from the first frame; `onDone` lets the videos start.
  */
 function MenuSplash({ logo, business, onDone }: { logo: string; business: string; onDone: () => void }) {
   const [done, setDone] = useState(false);
+  const finish = useCallback(() => {
+    setDone(true);
+    onDone();
+  }, [onDone]);
+  useEffect(() => {
+    const timer = window.setTimeout(finish, 3000);
+    return () => window.clearTimeout(timer);
+  }, [finish]);
   if (done) return null;
   return (
-    <div
-      aria-hidden="true"
-      onAnimationEnd={(event) => {
-        if (event.target !== event.currentTarget) return;
-        setDone(true);
-        onDone();
-      }}
-      className="menu-splash fixed inset-0 z-[100] grid place-items-center"
-      style={{ background: "radial-gradient(circle at 50% 42%, #ffffff 0%, #fde7f0 55%, #f8cfe0 100%)" }}
-    >
-      <div className="menu-splash-content flex flex-col items-center gap-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logo} alt="" width={176} height={176} className="menu-splash-logo h-44 w-44 rounded-full shadow-[0_18px_50px_rgba(194,61,122,0.25)]" />
-        <span className="menu-splash-name display text-2xl" style={{ color: "#5f2a44" }}>
-          {business}
-        </span>
+    <div aria-hidden="true" className="fixed inset-0 z-[100]">
+      <div
+        className="menu-splash-bg absolute inset-0"
+        onAnimationEnd={(event) => event.target === event.currentTarget && finish()}
+        style={{ background: "radial-gradient(circle at 50% 45%, #ffffff 0%, #fde7f0 55%, #f6c9dc 100%)" }}
+      />
+      <div className="pointer-events-none absolute inset-0 grid place-items-center">
+        <div className="menu-splash-mark flex flex-col items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={logo} alt="" width={176} height={176} className="h-44 w-44 rounded-full shadow-[0_18px_50px_rgba(194,61,122,0.28)]" />
+          <span className="display text-2xl" style={{ color: "#5f2a44" }}>
+            {business}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -90,16 +127,26 @@ function MenuSplash({ logo, business, onDone }: { logo: string; business: string
 
 /**
  * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
- * the bar, ☰ opens the list of collections, «Todos» first; a tap on a dish opens the collection full
- * screen, one dish per screen.
+ * the bar, ☰ opens the list of collections (the first opens by default); a tap on a dish opens the
+ * collection full screen, one dish per screen. Every video plays in a fixed pool of 3 players
+ * (VideoPool), never created again: the cards and slides hold thumbnails.
  */
 export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [active, setActive] = useState(menu.collections[0].id);
   const [sheet, setSheet] = useState(false);
-  const [viewer, setViewer] = useState<{ start: number; startAt: number } | null>(null);
+  const [sheetClosing, setSheetClosing] = useState(false);
+  const [drag, setDrag] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragStart = useRef<{ x: number; y: number; at: number; mode: "drag" | "scroll" | null } | null>(null);
+  const [viewer, setViewer] = useState<number | null>(null);
+  const [viewerTargets, setViewerTargetsState] = useState<PoolTarget[]>([]);
+  const setViewerTargets = useCallback((next: PoolTarget[]) => setViewerTargetsState((previous) => (sameTargets(previous, next) ? previous : next)), []);
+  const [gridTargets, setGridTargets] = useState<PoolTarget[]>([]);
+  const [sound, setSound] = useState(false);
   // No video starts while the opening plays (it would take the phone's attention from the animation).
   const [opening, setOpening] = useState(true);
   const opened = useCallback(() => setOpening(false), []);
+
   // No «pull to refresh» on this page: in a long menu of videos it reloaded the page by accident (owner, 2026-10-14).
   useEffect(() => {
     const root = document.documentElement;
@@ -110,13 +157,14 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       [root.style.overscrollBehaviorY, document.body.style.overscrollBehaviorY] = before;
     };
   }, []);
-  // Should the browser never report the end of the animation (e.g. a tab in the background).
-  useEffect(() => {
-    const timer = window.setTimeout(opened, 3500);
-    return () => window.clearTimeout(timer);
-  }, [opened]);
-  const closeViewer = useCallback(() => setViewer(null), []);
-  // The grid's single playing card: how much of each card is on screen, the winner picked once the scroll rests.
+
+  const closeViewer = useCallback(() => {
+    setViewer(null);
+    setViewerTargets([]);
+    setSound(false);
+  }, [setViewerTargets]);
+
+  // The grid's playing row: how much of each card is on screen, the winners picked once the scroll rests.
   const ratios = useRef(new Map<string, { order: number; ratio: number }>());
   const focusTimer = useRef<number | undefined>(undefined);
   const [focus, setFocus] = useState<string[]>([]);
@@ -126,26 +174,57 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     focusTimer.current = window.setTimeout(() => {
       // The most visible dishes; on a tie, the ones higher in the grid (the same row, side by side).
       const ranked = [...ratios.current]
-        .filter(([, seen]) => seen.ratio >= focusMinRatio)
+        .filter(([, entry]) => entry.ratio >= focusMinRatio)
         .sort(([, a], [, b]) => b.ratio - a.ratio || a.order - b.order)
         .slice(0, focusCount)
         .map(([candidate]) => candidate);
       setFocus(ranked);
     }, focusAfter);
   }, []);
+  const boxes = useRef(new Map<string, HTMLDivElement>());
+  const onBox = useCallback((key: string, box: HTMLDivElement | null) => {
+    if (box) boxes.current.set(key, box);
+    else boxes.current.delete(key);
+  }, []);
 
   const collection = menu.collections.find((candidate) => candidate.id === active) ?? menu.collections[0];
-  const dishes = collection.dishes.map((key) => ({ key, dish: menu.dishes[key] }));
-  const items: ShortItem[] = dishes.map(({ key, dish }) => ({
-    key,
-    video: dish.video,
-    title: dish.name,
-    details: (
-      <>
-        <span className="font-semibold text-white">{euro.format(dish.price)}</span> · {dish.description}
-      </>
-    ),
-  }));
+  const dishes = useMemo(() => collection.dishes.map((key) => ({ key, dish: menu.dishes[key] })), [collection, menu.dishes]);
+  // Made once per collection: the full screen reacts to a new list (a new one each render looped).
+  const items: ShortItem[] = useMemo(
+    () =>
+      dishes.map(({ key, dish }) => ({
+        key,
+        video: dish.video,
+        title: dish.name,
+        details: (
+          <>
+            <span className="font-semibold text-white">{euro.format(dish.price)}</span> · {dish.description}
+          </>
+        ),
+      })),
+    [dishes],
+  );
+
+  // What the grid asks of the pool: its playing row, paused while the collections panel is open.
+  useEffect(() => {
+    const next = focus.flatMap((key): PoolTarget[] => {
+      const dish = menu.dishes[key];
+      const element = boxes.current.get(key) ?? null;
+      return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: !sheet, visible: !sheet }] : [];
+    });
+    setGridTargets((previous) => (sameTargets(previous, next) ? previous : next));
+  }, [focus, sheet, menu.dishes]);
+  // While the full screen opens, the grid's players stay as they are until it says what it wants (no pause).
+  const poolTargets = viewer !== null && viewerTargets.length ? viewerTargets : gridTargets;
+
+  const closeSheet = useCallback(() => {
+    setSheetClosing(true);
+    window.setTimeout(() => {
+      setSheet(false);
+      setSheetClosing(false);
+      setDrag(0);
+    }, sheetSlideMs);
+  }, []);
 
   // The collections panel: Esc closes it and the page behind stays put.
   useEffect(() => {
@@ -153,24 +232,52 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     const root = document.documentElement;
     const overflow = root.style.overflow;
     root.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setSheet(false);
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && closeSheet();
     window.addEventListener("keydown", onKey);
     return () => {
       root.style.overflow = overflow;
       window.removeEventListener("keydown", onKey);
     };
-  }, [sheet]);
+  }, [sheet, closeSheet]);
 
   const choose = (id: string) => {
     ratios.current.clear();
     setFocus([]);
     setActive(id);
-    setSheet(false);
+    closeSheet();
     window.scrollTo({ top: 0 });
   };
 
+  // Dragging the panel to the right closes it, following the finger (vertical moves scroll its list).
+  const onSheetTouchStart = (event: TouchEvent) => {
+    const touch = event.touches[0];
+    dragStart.current = { x: touch.clientX, y: touch.clientY, at: performance.now(), mode: null };
+  };
+  const onSheetTouchMove = (event: TouchEvent) => {
+    const start = dragStart.current;
+    if (!start) return;
+    const touch = event.touches[0];
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    if (!start.mode && Math.max(Math.abs(dx), Math.abs(dy)) > 8) start.mode = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "drag" : "scroll";
+    if (start.mode === "drag") {
+      setDragging(true);
+      setDrag(Math.max(0, dx));
+    }
+  };
+  const onSheetTouchEnd = (event: TouchEvent) => {
+    const start = dragStart.current;
+    dragStart.current = null;
+    setDragging(false);
+    if (!start || start.mode !== "drag") return;
+    const width = (event.currentTarget as HTMLElement).offsetWidth || 1;
+    const speed = drag / Math.max(1, performance.now() - start.at);
+    if (drag > width * sheetCloseShare || speed > sheetCloseSpeed) closeSheet();
+    else setDrag(0);
+  };
+
   return (
-    <div style={brand} className="min-h-dvh">
+    <div style={brand} className="relative min-h-dvh">
       <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -197,17 +304,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard
-              key={`${collection.id}-${key}`}
-              id={key}
-              order={index}
-              dish={dish}
-              // While the full screen or the collections panel is open, the grid plays nothing (memory).
-              playing={focus.includes(key) && viewer === null && !sheet && !opening}
-              onSeen={seen}
-              // The full screen carries on where the card's video was.
-              onOpen={() => setViewer({ start: index, startAt: focus.includes(key) ? lastPosition(dish.video) : 0 })}
-            />
+            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => setViewer(index)} />
           ))}
         </ul>
         <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de canais de culinária no YouTube e preços de exemplo.</p>
@@ -215,13 +312,29 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
 
       {sheet ? (
         <div className="fixed inset-0 z-[80]">
-          <button type="button" aria-label="Fechar o menu" onClick={() => setSheet(false)} className="absolute inset-0 bg-black/40" />
-          <nav aria-label="Coleções do menu" className="absolute inset-y-0 right-0 flex w-[min(85vw,22rem)] flex-col bg-bg shadow-2xl">
+          <button
+            type="button"
+            aria-label="Fechar o menu"
+            onClick={closeSheet}
+            className="menu-sheet-backdrop absolute inset-0 bg-black/40"
+            style={{ opacity: sheetClosing ? 0 : Math.max(0, 1 - drag / 320), transition: dragging ? "none" : `opacity ${sheetSlideMs}ms ease` }}
+          />
+          <nav
+            aria-label="Coleções do menu"
+            onTouchStart={onSheetTouchStart}
+            onTouchMove={onSheetTouchMove}
+            onTouchEnd={onSheetTouchEnd}
+            className="menu-sheet absolute inset-y-0 right-0 flex w-[min(85vw,22rem)] touch-pan-y flex-col bg-bg shadow-2xl"
+            style={{
+              transform: sheetClosing ? "translateX(100%)" : `translateX(${drag}px)`,
+              transition: dragging ? "none" : `transform ${sheetSlideMs}ms cubic-bezier(0.32, 0.72, 0, 1)`,
+            }}
+          >
             <div className="flex items-center gap-3 border-b border-line px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={menu.logo} alt="" width={40} height={40} className="h-10 w-10 rounded-full" />
               <span className="flex-1 font-semibold text-text">{menu.business}</span>
-              <button type="button" onClick={() => setSheet(false)} aria-label="Fechar o menu" className="grid h-10 w-10 place-items-center rounded-full hover:bg-surface-2">
+              <button type="button" onClick={closeSheet} aria-label="Fechar o menu" className="grid h-10 w-10 place-items-center rounded-full hover:bg-surface-2">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M6 6l12 12M18 6 6 18" />
                 </svg>
@@ -262,8 +375,17 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       ) : null}
 
       {viewer !== null ? (
-        <ShortsViewer items={items} start={viewer.start} startAt={viewer.startAt} label={`${menu.business}: ${collection.name}`} onClose={closeViewer} />
+        <ShortsViewer
+          items={items}
+          start={viewer}
+          label={`${menu.business}: ${collection.name}`}
+          sound={sound}
+          onSound={() => setSound((on) => !on)}
+          onTargets={setViewerTargets}
+          onClose={closeViewer}
+        />
       ) : null}
+      <VideoPool targets={poolTargets} sound={sound} enabled={!opening} />
       <MenuSplash logo={menu.logo} business={menu.business} onDone={opened} />
     </div>
   );
