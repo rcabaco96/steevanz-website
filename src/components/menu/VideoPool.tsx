@@ -53,9 +53,10 @@ const shownAfterSeconds = 0.3;
  */
 const bufferGraceMs = 300;
 /**
- * Every player keeps at least this much of itself inside the screen (px), invisible when its box is
- * off it: an iPhone pauses a muted video playing off screen, and YouTube then shows its ⏸ over it
- * when it comes back (the full screen's next and previous videos; the players without a box).
+ * A playing player keeps at least this much of itself inside the screen (px), invisible when its box
+ * is off it: an iPhone pauses a muted video playing off screen (the full screen's next and previous
+ * videos). Paused players without a box wait off screen: an iPhone draws its own video controls (▶,
+ * the timeline) over a paused video even when it is invisible (owner's screen recording, 2026-10-14).
  */
 const keepInView = 2;
 /** Players get a phone's width and are scaled to the box (small YouTube players add a Shorts overlay). */
@@ -367,20 +368,19 @@ export function VideoPool({
         const spot = placements[index];
         const scale = spot ? spot.width / playerWidth : 1;
         const slid = Boolean(spot?.fixed && motion && (motion.x || motion.glide));
-        // Without a box: waits on the screen, unseen and behind everything (see keepInView).
-        const fixed = !spot || spot.fixed;
+        const fixed = Boolean(spot?.fixed);
         return (
           <div
             key={index}
             className="overflow-hidden"
             style={{
               position: fixed ? "fixed" : "absolute",
-              top: spot?.top ?? 0,
+              top: spot?.top ?? -10000,
               left: spot?.left ?? 0,
               width: spot?.width ?? playerWidth,
               height: spot?.height ?? playerHeight,
               opacity: spot?.shown ? 1 : 0,
-              zIndex: !spot ? -1 : spot.fixed ? 95 : 30,
+              zIndex: spot?.fixed ? 95 : 30,
               borderRadius: spot?.fixed ? 0 : 12,
               clipPath: spot && !spot.fixed ? "inset(0 round 12px)" : undefined,
               transform: slid && motion ? `translateX(${motion.x}px)` : undefined,
