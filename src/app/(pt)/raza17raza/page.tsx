@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { preconnect } from "react-dom";
 import { ReelFrame } from "@/components/marketing/ReelFrame";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { reelEmbedUrl, showcaseReels } from "@/content/showcase-reels";
@@ -21,6 +22,8 @@ const igHeader = 54;
 const widthRatio = 16 / 9 / 1.25;
 
 export default function ReelsPage() {
+  // The embeds come from these hosts: the connections are open before the first card needs them.
+  for (const host of ["https://www.instagram.com", "https://static.cdninstagram.com", "https://scontent.cdninstagram.com"]) preconnect(host);
   const reels = showcaseReels.flatMap((reel) => {
     const embed = reelEmbedUrl(reel.url);
     return embed ? [{ ...reel, embed }] : [];
