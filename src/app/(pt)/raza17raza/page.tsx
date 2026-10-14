@@ -26,7 +26,10 @@ const igHeader = 54;
 const overscan = 1.04;
 const widthRatio = (16 / 9 / 1.25) * overscan;
 
-export default function ReelsPage() {
+export default async function ReelsPage({ searchParams }: PageProps<"/raza17raza">) {
+  // ?simples=1 (diagnosis, 2026-10-14): Instagram's embed as it comes, no crop, no nudge, to tell an
+  // iPhone that can't play Instagram embeds at all from one our cropping gets in the way of.
+  const plain = (await searchParams).simples === "1";
   // The embeds come from these hosts: the connections are open before the first card needs them.
   for (const host of ["https://www.instagram.com", "https://static.cdninstagram.com", "https://scontent.cdninstagram.com"]) preconnect(host);
   const reels = showcaseReels.flatMap((reel) => {
@@ -36,7 +39,15 @@ export default function ReelsPage() {
   return (
     <Section labelledBy="reels-title">
       <SectionHeader as="h1" id="reels-title" eyebrow="Reels" title="Os vídeos dos nossos clientes" lead="Os reels dos negócios que trabalham com a Steevanz." />
-      {reels.length ? (
+      {plain ? (
+        <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {reels.slice(0, 3).map((reel) => (
+            <li key={reel.embed} className="card overflow-hidden p-3">
+              <iframe src={reel.embed} title={`Reel de ${reel.name}`} allow="encrypted-media; picture-in-picture; web-share" className="h-[640px] w-full border-0" />
+            </li>
+          ))}
+        </ul>
+      ) : reels.length ? (
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {reels.map((reel) => (
             <li key={reel.embed} className="card flex flex-col gap-3 p-3">
