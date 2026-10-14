@@ -26,9 +26,18 @@ const chromeStrip = 64;
  */
 const playerWidth = 360;
 const playerHeight = (playerWidth * 16) / 9;
+/** In full screen, the next video is prepared only once the current one has been on screen this long (ms). */
+const preloadAfter = 900;
 
-const command = (frame: HTMLIFrameElement | null, func: string) =>
-  frame?.contentWindow?.postMessage(JSON.stringify({ event: "command", func, args: [] }), "*");
+const command = (frame: HTMLIFrameElement | null, func: string, args: unknown[] = []) =>
+  frame?.contentWindow?.postMessage(JSON.stringify({ event: "command", func, args }), "*");
+
+/**
+ * Where each video was last seen playing (seconds), from the players' own reports: opening the full
+ * screen carries on from there instead of starting the video again (owner, 2026-10-14).
+ */
+const positions = new Map<string, number>();
+export const lastPosition = (video: string) => positions.get(video) ?? 0;
 
 const playerParams = (id: string) =>
   new URLSearchParams({
@@ -48,13 +57,30 @@ const playerParams = (id: string) =>
 
 /**
  * One Short in a 9:16 box: YouTube's own thumbnail until the player has drawn. The player exists only
- * while `load` is true and plays while `active` (muted unless `sound`); YouTube's controls stay out
- * of reach under whatever the parent puts on top. Players are removed again when `load` goes false:
- * kept, a dozen of them made an iPhone reload the page while swiping (owner, 2026-10-14).
+ * while `load` is true and plays while `active` (muted unless `sound`), from `startAt` seconds when
+ * given; YouTube's controls stay out of reach under whatever the parent puts on top. Players are
+ * removed again when `load` goes false: kept, a dozen of them made an iPhone reload the page while
+ * swiping (owner, 2026-10-14).
  */
-export function ShortPlayer({ video, title, load, active, sound }: { video: string; title: string; load: boolean; active: boolean; sound: boolean }) {
+export function ShortPlayer({
+  video,
+  title,
+  load,
+  active,
+  sound,
+  startAt = 0,
+}: {
+  video: string;
+  title: string;
+  load: boolean;
+  active: boolean;
+  sound: boolean;
+  startAt?: number;
+}) {
   const frame = useRef<HTMLIFrameElement>(null);
   const box = useRef<HTMLDivElement>(null);
+  /** The time to jump to as soon as YouTube's player answers (its API isn't up at the frame's load). */
+  const pendingSeek = useRef(0);
   const [ready, setReady] = useState(false);
   const [scale, setScale] = useState(1);
   // A removed player starts over (thumbnail first) when it comes back.
@@ -67,6 +93,27 @@ export function ShortPlayer({ video, title, load, active, sound }: { video: stri
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
+
+  // The player reports its time once we listen (YouTube's iframe protocol): kept for the full screen.
+  useEffect(() => {
+    if (!load) return;
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== frame.current?.contentWindow || typeof event.data !== "string") return;
+      try {
+        const data = JSON.parse(event.data) as { event?: string; info?: { currentTime?: number } };
+        if ((data.event === "onReady" || data.event === "infoDelivery") && pendingSeek.current > 0) {
+          command(frame.current, "seekTo", [pendingSeek.current, true]);
+          pendingSeek.current = 0;
+          return;
+        }
+        if (data.event === "infoDelivery" && typeof data.info?.currentTime === "number") positions.set(video, data.info.currentTime);
+      } catch {
+        // Not one of YouTube's messages.
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [load, video]);
 
   useEffect(() => {
     if (!ready) return;
@@ -93,7 +140,11 @@ export function ShortPlayer({ video, title, load, active, sound }: { video: stri
           // YouTube refuses embeds that don't say which site they're on («Error 153»); the public pages'
           // layout sends no referrer (their links carry personal tokens), so this frame sends our origin.
           referrerPolicy="strict-origin-when-cross-origin"
-          onLoad={() => window.setTimeout(() => setReady(true), 900)}
+          onLoad={() => {
+            pendingSeek.current = startAt > 0.5 ? startAt : 0;
+            frame.current?.contentWindow?.postMessage(JSON.stringify({ event: "listening", id: video, channel: "widget" }), "*");
+            window.setTimeout(() => setReady(true), 900);
+          }}
           className="pointer-events-none absolute top-0 left-0 border-0"
           style={{
             width: playerWidth,
@@ -119,19 +170,25 @@ function SoundIcon({ on }: { on: boolean }) {
 
 /**
  * Full screen, one video per screen: swipe (or scroll, or the arrow keys) to the next or previous
- * one. Only the video on screen plays; it and its neighbours are loaded (at most 3 players). The
- * sound, once on, stays on from video to video. Closes with ✕, Esc or the phone's back button.
+ * one. Only the video on screen plays; the next one is prepared once the current one has stayed on
+ * screen a moment (at most 2 players). The tapped video carries on from `startAt`. The sound, once
+ * on, stays on from video to video. After the last video comes the first again (owner, 2026-10-14:
+ * «efeito carrossel»): a copy of the first follows the last, and landing on it jumps to the real one.
+ * Closes with ✕, Esc or the phone's back button.
  */
-export function ShortsViewer({ items, start, label, onClose }: { items: ShortItem[]; start: number; label: string; onClose: () => void }) {
+export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { items: ShortItem[]; start: number; startAt?: number; label: string; onClose: () => void }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(start);
+  const [settledOn, setSettledOn] = useState<number | null>(null);
+  const [leftStart, setLeftStart] = useState(false);
   const [sound, setSound] = useState(false);
 
   const goTo = useCallback(
     (index: number) => {
       const element = scroller.current;
       if (!element) return;
-      element.scrollTo({ top: Math.max(0, Math.min(items.length - 1, index)) * element.clientHeight, behavior: "smooth" });
+      // Up to the copy of the first video after the last one (carousel), which then jumps to the first.
+      element.scrollTo({ top: Math.max(0, Math.min(items.length > 1 ? items.length : 0, index)) * element.clientHeight, behavior: "smooth" });
     },
     [items.length],
   );
@@ -152,6 +209,12 @@ export function ShortsViewer({ items, start, label, onClose }: { items: ShortIte
     };
   }, [start, onClose]);
 
+  // The next video is prepared only when the viewer stays on this one (fast swipes create nothing).
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSettledOn(current), preloadAfter);
+    return () => window.clearTimeout(timer);
+  }, [current]);
+
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") window.history.back();
@@ -168,15 +231,33 @@ export function ShortsViewer({ items, start, label, onClose }: { items: ShortIte
         ref={scroller}
         onScroll={(event) => {
           const element = event.currentTarget;
-          const index = Math.round(element.scrollTop / Math.max(1, element.clientHeight));
-          if (index !== current) setCurrent(index);
+          const height = Math.max(1, element.clientHeight);
+          // Settled on the copy of the first video: on to the real first one, without a visible jump.
+          if (items.length > 1 && Math.abs(element.scrollTop - items.length * height) < 2) {
+            element.scrollTop = 0;
+            setCurrent(0);
+            setLeftStart(true);
+            return;
+          }
+          const index = Math.min(items.length - 1, Math.round(element.scrollTop / height));
+          if (index !== current) {
+            setCurrent(index);
+            if (index !== start) setLeftStart(true);
+          }
         }}
         className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain [scrollbar-width:none]"
       >
         {items.map((item, index) => (
           <section key={item.key} aria-label={`${index + 1} de ${items.length}: ${item.title}`} className="relative grid h-[100dvh] snap-start snap-always place-items-center">
             <div className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden sm:rounded-2xl">
-              <ShortPlayer video={item.video} title={item.title} load={Math.abs(index - current) <= 1} active={index === current} sound={sound} />
+              <ShortPlayer
+                video={item.video}
+                title={item.title}
+                load={index === current || (index === current + 1 && settledOn === current)}
+                active={index === current}
+                sound={sound}
+                startAt={index === start && !leftStart ? startAt : 0}
+              />
               {/* Over the player: a tap turns the sound on or off. */}
               <button type="button" onClick={() => setSound(!sound)} aria-label={sound ? "Tirar o som" : "Ligar o som"} className="absolute inset-0" />
             </div>
@@ -189,6 +270,14 @@ export function ShortsViewer({ items, start, label, onClose }: { items: ShortIte
             </div>
           </section>
         ))}
+        {items.length > 1 ? (
+          // The copy of the first video after the last one (carousel): its thumbnail only, no player.
+          <section aria-hidden="true" className="relative grid h-[100dvh] snap-start snap-always place-items-center">
+            <div className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden sm:rounded-2xl">
+              <ShortPlayer video={items[0].video} title={items[0].title} load={false} active={false} sound={false} />
+            </div>
+          </section>
+        ) : null}
       </div>
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
         <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">

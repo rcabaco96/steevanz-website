@@ -2,12 +2,21 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
-import { ShortPlayer, ShortsViewer, type ShortItem } from "./VideoShorts";
+import { lastPosition, ShortPlayer, ShortsViewer, type ShortItem } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
 /** The business's colours (Dolci e Salati's logo), for accents only: the page keeps the theme's text and background. */
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
+
+/**
+ * In the grid only one video plays: the dish most on screen, once the scroll has stopped this long
+ * (ms). Several YouTube players at once, made and dropped while scrolling, made iPhones reload the
+ * page (owner, 2026-10-14).
+ */
+const focusAfter = 350;
+/** A card must be at least this much on screen to be the one that plays. */
+const focusMinRatio = 0.6;
 
 function MenuIcon() {
   return (
@@ -17,23 +26,20 @@ function MenuIcon() {
   );
 }
 
-/** A dish of the grid: its video plays muted while mostly on screen; a tap opens the collection full screen. */
-function DishCard({ dish, paused, onOpen }: { dish: MenuDish; paused: boolean; onOpen: () => void }) {
+/** A dish of the grid: its video plays (muted) when it is the one in focus; a tap opens the collection full screen. */
+function DishCard({ id, dish, playing, onSeen, onOpen }: { id: string; dish: MenuDish; playing: boolean; onSeen: (id: string, ratio: number) => void; onOpen: () => void }) {
   const holder = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
   useEffect(() => {
     const element = holder.current;
     if (!element) return;
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.75 });
+    const observer = new IntersectionObserver(([entry]) => onSeen(id, entry.intersectionRatio), { threshold: [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
-  const playing = inView && !paused;
+  }, [id, onSeen]);
   return (
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
         <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          {/* While the full screen is open, the grid's players are removed (memory). */}
           <ShortPlayer video={dish.video} title={dish.name} load={playing} active={playing} sound={false} />
         </div>
       </button>
@@ -51,6 +57,32 @@ function DishCard({ dish, paused, onOpen }: { dish: MenuDish; paused: boolean; o
 }
 
 /**
+ * The opening (owner, 2026-10-14): the business's logo grows in on its colours, its name follows,
+ * then the whole thing fades away over the menu (~1.6 s). Drawn by the server, so it covers the page
+ * from the first frame while the videos start loading behind it.
+ */
+function MenuSplash({ logo, business }: { logo: string; business: string }) {
+  const [done, setDone] = useState(false);
+  if (done) return null;
+  return (
+    <div
+      aria-hidden="true"
+      onAnimationEnd={(event) => event.target === event.currentTarget && setDone(true)}
+      className="menu-splash fixed inset-0 z-[100] grid place-items-center"
+      style={{ background: "radial-gradient(circle at 50% 42%, #ffffff 0%, #fde7f0 55%, #f8cfe0 100%)" }}
+    >
+      <div className="flex flex-col items-center gap-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={logo} alt="" width={176} height={176} className="menu-splash-logo h-44 w-44 rounded-full shadow-[0_18px_50px_rgba(194,61,122,0.25)]" />
+        <span className="menu-splash-name display text-2xl" style={{ color: "#5f2a44" }}>
+          {business}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/**
  * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
  * the bar, ☰ opens the list of collections, «Todos» first; a tap on a dish opens the collection full
  * screen, one dish per screen.
@@ -58,8 +90,23 @@ function DishCard({ dish, paused, onOpen }: { dish: MenuDish; paused: boolean; o
 export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [active, setActive] = useState(menu.collections[0].id);
   const [sheet, setSheet] = useState(false);
-  const [viewer, setViewer] = useState<number | null>(null);
+  const [viewer, setViewer] = useState<{ start: number; startAt: number } | null>(null);
   const closeViewer = useCallback(() => setViewer(null), []);
+  // The grid's single playing card: how much of each card is on screen, the winner picked once the scroll rests.
+  const ratios = useRef(new Map<string, number>());
+  const focusTimer = useRef<number | undefined>(undefined);
+  const [focus, setFocus] = useState<string | null>(null);
+  const seen = useCallback((key: string, ratio: number) => {
+    ratios.current.set(key, ratio);
+    window.clearTimeout(focusTimer.current);
+    focusTimer.current = window.setTimeout(() => {
+      let best: string | null = null;
+      let bestRatio = focusMinRatio;
+      for (const [candidate, value] of ratios.current) if (value >= bestRatio && (best === null || value > bestRatio)) [best, bestRatio] = [candidate, value];
+      setFocus(best);
+    }, focusAfter);
+  }, []);
+
   const collection = menu.collections.find((candidate) => candidate.id === active) ?? menu.collections[0];
   const dishes = collection.dishes.map((key) => ({ key, dish: menu.dishes[key] }));
   const items: ShortItem[] = dishes.map(({ key, dish }) => ({
@@ -88,6 +135,8 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   }, [sheet]);
 
   const choose = (id: string) => {
+    ratios.current.clear();
+    setFocus(null);
     setActive(id);
     setSheet(false);
     window.scrollTo({ top: 0 });
@@ -121,7 +170,16 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} dish={dish} paused={viewer !== null || sheet} onOpen={() => setViewer(index)} />
+            <DishCard
+              key={`${collection.id}-${key}`}
+              id={key}
+              dish={dish}
+              // While the full screen or the collections panel is open, the grid plays nothing (memory).
+              playing={focus === key && viewer === null && !sheet}
+              onSeen={seen}
+              // The full screen carries on where the card's video was.
+              onOpen={() => setViewer({ start: index, startAt: focus === key ? lastPosition(dish.video) : 0 })}
+            />
           ))}
         </ul>
         <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de canais de culinária no YouTube e preços de exemplo.</p>
@@ -175,7 +233,10 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         </div>
       ) : null}
 
-      {viewer !== null ? <ShortsViewer items={items} start={viewer} label={`${menu.business}: ${collection.name}`} onClose={closeViewer} /> : null}
+      {viewer !== null ? (
+        <ShortsViewer items={items} start={viewer.start} startAt={viewer.startAt} label={`${menu.business}: ${collection.name}`} onClose={closeViewer} />
+      ) : null}
+      <MenuSplash logo={menu.logo} business={menu.business} />
     </div>
   );
 }
