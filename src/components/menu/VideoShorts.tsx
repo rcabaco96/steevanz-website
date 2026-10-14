@@ -39,6 +39,12 @@ const swipeShare = 0.18;
 const swipeSpeed = 0.35;
 /** One video per wheel gesture (ms between moves). */
 const wheelGap = 450;
+/** A gesture's direction is decided after this many px: vertical changes video, left-to-right closes. */
+const axisAfter = 8;
+/** The full screen closes when dragged right past this share of its width, or this fast (px/ms). */
+const closeShare = 0.3;
+const closeSpeed = 0.5;
+const slideOutMs = 250;
 
 function SoundIcon({ on }: { on: boolean }) {
   return (
@@ -63,6 +69,7 @@ export function ShortsViewer({
   sound,
   onSound,
   onTargets,
+  onShift,
   onClose,
 }: {
   items: ShortItem[];
@@ -71,12 +78,23 @@ export function ShortsViewer({
   sound: boolean;
   onSound: () => void;
   onTargets: (targets: PoolTarget[]) => void;
+  /** How far the full screen is dragged to the right (the pool's players follow it), and whether it glides there. */
+  onShift: (px: number, glide: boolean) => void;
   onClose: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
   const boxes = useRef<(HTMLDivElement | null)[]>([]);
   const restTimer = useRef<number | undefined>(undefined);
-  const gesture = useRef<{ y: number; top: number; at: number; moved: boolean } | null>(null);
+  const gesture = useRef<{ x: number; y: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
+  // Dragged to the right to close (owner, 2026-10-14: like the collections panel, following the finger).
+  const [shift, setShift] = useState({ px: 0, glide: false });
+  const moveTo = useCallback(
+    (px: number, glide: boolean) => {
+      setShift({ px, glide });
+      onShift(px, glide);
+    },
+    [onShift],
+  );
   const lastWheel = useRef(0);
   const [current, setCurrent] = useState(start);
   // The tapped video shows at once: its player is the one that was playing it in the grid.
@@ -164,29 +182,44 @@ export function ShortsViewer({
   /*
    * The gestures are ours, on a layer above everything (owner, 2026-10-14: swiping stopped working on
    * an iPhone): YouTube's frames sit over the slides and an iPhone can give them the touch even when
-   * they let taps through. The list follows the finger; on release it moves to the next or previous
-   * video (or back); a tap without moving turns the sound on or off.
+   * they let taps through. A vertical drag moves the list with the finger and, on release, to the next
+   * or previous video (or back); a left-to-right drag moves the whole full screen with the finger and,
+   * on release, closes it (or slides it back); a tap without moving turns the sound on or off.
    */
   const onGestureStart = (event: TouchEvent) => {
     if ((event.target as HTMLElement).closest("button")) return;
     const element = scroller.current;
     if (!element) return;
-    gesture.current = { y: event.touches[0].clientY, top: element.scrollTop, at: performance.now(), moved: false };
+    const touch = event.touches[0];
+    gesture.current = { x: touch.clientX, y: touch.clientY, top: element.scrollTop, at: performance.now(), axis: null };
   };
   const onGestureMove = (event: TouchEvent) => {
     const start = gesture.current;
     const element = scroller.current;
     if (!start || !element) return;
-    const dy = event.touches[0].clientY - start.y;
-    if (Math.abs(dy) > 6) start.moved = true;
-    element.scrollTop = start.top - dy;
+    const touch = event.touches[0];
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    if (!start.axis && Math.max(Math.abs(dx), Math.abs(dy)) > axisAfter) start.axis = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "close" : "vertical";
+    if (start.axis === "vertical") element.scrollTop = start.top - dy;
+    if (start.axis === "close") moveTo(Math.max(0, dx), false);
   };
-  const onGestureEnd = () => {
+  const onGestureEnd = (event: TouchEvent) => {
     const start = gesture.current;
     const element = scroller.current;
     gesture.current = null;
-    if (!start || !element) return;
-    if (!start.moved) return;
+    if (!start || !element || !start.axis) return;
+    if (start.axis === "close") {
+      const dx = Math.max(0, (event.changedTouches[0]?.clientX ?? start.x) - start.x);
+      const width = Math.max(1, window.innerWidth);
+      if (dx > width * closeShare || dx / Math.max(1, performance.now() - start.at) > closeSpeed) {
+        moveTo(width, true);
+        window.setTimeout(() => window.history.back(), slideOutMs);
+      } else {
+        moveTo(0, true);
+      }
+      return;
+    }
     const height = Math.max(1, element.clientHeight);
     const moved = element.scrollTop - start.top;
     const speed = moved / Math.max(1, performance.now() - start.at);
@@ -209,7 +242,10 @@ export function ShortsViewer({
 
   return (
     <div role="dialog" aria-modal="true" aria-label={label}>
-      <div className="fixed inset-0 z-[90] bg-black">
+      <div
+        className="fixed inset-0 z-[90] bg-black"
+        style={{ transform: `translateX(${shift.px}px)`, transition: shift.glide ? `transform ${slideOutMs}ms cubic-bezier(0.32, 0.72, 0, 1)` : "none" }}
+      >
         <div
           ref={scroller}
           onScroll={(event) => {
@@ -265,6 +301,7 @@ export function ShortsViewer({
         onWheel={onGestureWheel}
         onClick={onGestureTap}
         className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
+        style={{ transform: `translateX(${shift.px}px)`, transition: shift.glide ? `transform ${slideOutMs}ms cubic-bezier(0.32, 0.72, 0, 1)` : "none" }}
       >
         <div className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
           <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">

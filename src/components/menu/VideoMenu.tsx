@@ -177,6 +177,9 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const setViewerTargets = useCallback((next: PoolTarget[]) => setViewerTargetsState((previous) => (sameTargets(previous, next) ? previous : next)), []);
   const [gridTargets, setGridTargets] = useState<PoolTarget[]>([]);
   const [sound, setSound] = useState(false);
+  // The full screen dragged to the right to close: the pool's players there move with it.
+  const [viewerShift, setViewerShift] = useState({ px: 0, glide: false });
+  const shiftViewer = useCallback((px: number, glide: boolean) => setViewerShift({ px, glide }), []);
   // The videos on screen load and start, muted and hidden, while the opening plays (owner,
   // 2026-10-14): when it ends they are already playing. Nothing waits for the opening's end.
   const opened = useCallback(() => {}, []);
@@ -196,6 +199,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     setViewer(null);
     setViewerTargets([]);
     setSound(false);
+    setViewerShift({ px: 0, glide: false });
   }, [setViewerTargets]);
 
   // The grid's playing row: how much of each card is on screen, the winners picked once the scroll rests.
@@ -416,10 +420,11 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
           sound={sound}
           onSound={() => setSound((on) => !on)}
           onTargets={setViewerTargets}
+          onShift={shiftViewer}
           onClose={closeViewer}
         />
       ) : null}
-      <VideoPool targets={poolTargets} sound={sound} enabled />
+      <VideoPool targets={poolTargets} sound={sound} enabled shift={viewerShift} />
       <MosaicSplash logo={menu.logo} business={menu.business} videos={Object.values(menu.dishes).map((dish) => dish.video)} onDone={opened} />
     </div>
   );

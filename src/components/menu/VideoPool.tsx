@@ -92,7 +92,18 @@ const embedSrc = (video: string, origin: string, autoplay: boolean) =>
     origin,
   })}`;
 
-export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; sound: boolean; enabled: boolean }) {
+export function VideoPool({
+  targets,
+  sound,
+  enabled,
+  shift = { px: 0, glide: false },
+}: {
+  targets: PoolTarget[];
+  sound: boolean;
+  enabled: boolean;
+  /** The full screen dragged sideways: its players (fixed) move with it, gliding or following the finger. */
+  shift?: { px: number; glide: boolean };
+}) {
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
   const players = useRef<Player[]>(
@@ -284,6 +295,8 @@ export function VideoPool({ targets, sound, enabled }: { targets: PoolTarget[]; 
               opacity: spot?.shown ? 1 : 0,
               zIndex: spot?.fixed ? 95 : 30,
               borderRadius: spot?.fixed ? 0 : 12,
+              transform: spot?.fixed && shift.px ? `translateX(${shift.px}px)` : undefined,
+              transition: shift.glide ? "opacity 200ms, transform 250ms cubic-bezier(0.32, 0.72, 0, 1)" : "opacity 200ms",
               clipPath: spot?.fixed ? undefined : "inset(0 round 12px)",
             }}
           >
