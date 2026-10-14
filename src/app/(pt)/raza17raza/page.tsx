@@ -19,7 +19,12 @@ export const metadata: Metadata = {
  * numbers change with it.
  */
 const igHeader = 54;
-const widthRatio = 16 / 9 / 1.25;
+/**
+ * The video is shown 4% larger than the card, centred: phones lay the embed out a few pixels
+ * differently (an iPhone showed a line of Instagram's footer, 2026-10-14), and the margin hides them.
+ */
+const overscan = 1.04;
+const widthRatio = (16 / 9 / 1.25) * overscan;
 
 export default function ReelsPage() {
   // The embeds come from these hosts: the connections are open before the first card needs them.
@@ -35,7 +40,11 @@ export default function ReelsPage() {
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {reels.map((reel) => (
             <li key={reel.embed} className="card flex flex-col gap-3 p-3">
-              <div className="relative aspect-[9/16] w-full overflow-hidden rounded-2xl bg-surface-inverse">
+              {/* The mask makes iPhones (WebKit) clip the playing video to the rounded corners too. */}
+              <div
+                className="relative aspect-[9/16] w-full overflow-hidden rounded-2xl bg-surface-inverse"
+                style={{ WebkitMaskImage: "-webkit-radial-gradient(white, black)", transform: "translateZ(0)" }}
+              >
                 <ReelFrame
                   src={reel.embed}
                   title={`Reel de ${reel.name}`}
@@ -43,8 +52,8 @@ export default function ReelsPage() {
                     maxWidth: "none",
                     width: `${widthRatio * 100}%`,
                     left: `${((1 - widthRatio) / 2) * 100}%`,
-                    top: -igHeader,
-                    height: `calc(100% + ${igHeader + 4}px)`,
+                    top: `calc(${-((overscan - 1) / 2) * 100}% - ${igHeader}px)`,
+                    height: `calc(${overscan * 100}% + ${igHeader + 4}px)`,
                   }}
                 />
               </div>
