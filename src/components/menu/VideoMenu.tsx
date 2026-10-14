@@ -100,6 +100,16 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   // No video starts while the opening plays (it would take the phone's attention from the animation).
   const [opening, setOpening] = useState(true);
   const opened = useCallback(() => setOpening(false), []);
+  // No «pull to refresh» on this page: in a long menu of videos it reloaded the page by accident (owner, 2026-10-14).
+  useEffect(() => {
+    const root = document.documentElement;
+    const before = [root.style.overscrollBehaviorY, document.body.style.overscrollBehaviorY];
+    root.style.overscrollBehaviorY = "none";
+    document.body.style.overscrollBehaviorY = "none";
+    return () => {
+      [root.style.overscrollBehaviorY, document.body.style.overscrollBehaviorY] = before;
+    };
+  }, []);
   // Should the browser never report the end of the animation (e.g. a tab in the background).
   useEffect(() => {
     const timer = window.setTimeout(opened, 3500);

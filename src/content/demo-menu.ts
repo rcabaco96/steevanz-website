@@ -25,7 +25,7 @@ export interface VideoMenuData {
   logo: string;
   instagram: string | null;
   dishes: Record<string, MenuDish>;
-  /** The first one opens by default and holds every dish. */
+  /** The first one opens by default («Brunch», owner 2026-10-14); «Todos» holds every dish. */
   collections: MenuCollection[];
 }
 
@@ -60,8 +60,15 @@ const dishes: Record<string, MenuDish> = {
   shrimp: { video: "dcbMh6D6JMk", name: "Camarão salteado", description: "Camarão salteado em manteiga de alho.", price: 14.5 },
   pizza: { video: "NvX2UjsCTE8", name: "Pizza no forno", description: "Massa fina e estaladiça, com molho de tomate caseiro.", price: 10.9 },
   "kids-menu": { video: "9D63hnLlFOg", name: "Menu criança", description: "Uma caixa com pequenas porções para os mais novos.", price: 7.5 },
+  latte: { video: "8_6ZMG9bd_4", name: "Latte de abóbora", description: "Café, leite cremoso e especiarias de outono.", price: 3.9 },
+  shakshuka: { video: "9wis1WBJx-0", name: "Shakshuka", description: "Ovo escalfado em molho de tomate e pimento, com queijo feta.", price: 8.5 },
+  croissants: { video: "KVNFyupD_pk", name: "Croissant de amêndoa", description: "Massa folhada estaladiça com creme e amêndoa laminada.", price: 3.2 },
+  "pumpkin-muffins": { video: "1yiE_3d_src", name: "Muffin de abóbora", description: "Muffin fofo de abóbora com crumble de canela.", price: 2.9 },
+  "apple-muffins": { video: "iehPPojb51g", name: "Muffin de maçã", description: "Muffin de maçã com cobertura estaladiça.", price: 2.9 },
+  "cheese-toast": { video: "9yBWV4TnqAA", name: "Tosta de queijo", description: "Pão tostado na manteiga com queijo derretido.", price: 4.5 },
 };
 
+const brunch = ["latte", "shakshuka", "croissants", "pumpkin-muffins", "apple-muffins", "cheese-toast", "crepes", "boiled-egg", "fruit-salad", "donuts"];
 const sweet = ["fried-ice-cream", "tiramisu", "creme-brulee", "brownie", "donuts", "orange-cake", "crepes", "fruit-salad"];
 const snacks = ["arancini", "popcorn", "nachos", "crispy-chicken", "boiled-egg", "pierogi"];
 const burgers = ["burger", "sandwich", "fish-and-chips", "tacos"];
@@ -73,7 +80,8 @@ export const demoMenu: VideoMenuData = {
   instagram: "dolciesalati.ap",
   dishes,
   collections: [
-    { id: "todos", name: "Todos", dishes: [...sweet, ...snacks, ...burgers, ...mains] },
+    { id: "brunch", name: "Brunch", dishes: brunch },
+    { id: "todos", name: "Todos", dishes: [...new Set([...brunch, ...sweet, ...snacks, ...burgers, ...mains])] },
     { id: "gelados", name: "Gelados e sobremesas", dishes: sweet },
     { id: "salgados", name: "Salgados e snacks", dishes: snacks },
     { id: "hamburgueres", name: "Hambúrgueres e sandes", dishes: burgers },

@@ -26,7 +26,13 @@ const chromeStrip = 64;
  */
 const playerWidth = 360;
 const playerHeight = (playerWidth * 16) / 9;
-/** In full screen, the next video is prepared only once the current one has been on screen this long (ms). */
+/**
+ * In full screen a video's player is created only once the viewer has stopped on it this long (ms),
+ * and the next one is prepared after `preloadAfter`: swiping fast through many videos creates no
+ * player at all (thumbnails only). Players made and dropped one after another made iPhones reload the
+ * page (owner, 2026-10-14).
+ */
+const showAfter = 250;
 const preloadAfter = 900;
 
 const command = (frame: HTMLIFrameElement | null, func: string, args: unknown[] = []) =>
@@ -188,6 +194,7 @@ function SoundIcon({ on }: { on: boolean }) {
 export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { items: ShortItem[]; start: number; startAt?: number; label: string; onClose: () => void }) {
   const scroller = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(start);
+  const [shownOn, setShownOn] = useState<number | null>(null);
   const [settledOn, setSettledOn] = useState<number | null>(null);
   const [leftStart, setLeftStart] = useState(false);
   const [sound, setSound] = useState(false);
@@ -222,8 +229,12 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
 
   // The next video is prepared only when the viewer stays on this one (fast swipes create nothing).
   useEffect(() => {
-    const timer = window.setTimeout(() => setSettledOn(current), preloadAfter);
-    return () => window.clearTimeout(timer);
+    const show = window.setTimeout(() => setShownOn(current), showAfter);
+    const preload = window.setTimeout(() => setSettledOn(current), preloadAfter);
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(preload);
+    };
   }, [current]);
 
   useEffect(() => {
@@ -262,7 +273,7 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
             if (index !== start) setLeftStart(true);
           }
         }}
-        className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain [scrollbar-width:none]"
+        className="h-full snap-y snap-mandatory overflow-y-auto overscroll-none [scrollbar-width:none]"
       >
         {items.length > 1 ? (
           // The copy of the last video before the first one (carousel): its thumbnail only, no player.
@@ -278,7 +289,7 @@ export function ShortsViewer({ items, start, startAt = 0, label, onClose }: { it
               <ShortPlayer
                 video={item.video}
                 title={item.title}
-                load={index === current || (index === current + 1 && settledOn === current)}
+                load={(index === current && shownOn === current) || (index === current + 1 && settledOn === current)}
                 active={index === current}
                 sound={sound}
                 startAt={index === start && !leftStart ? startAt : 0}
