@@ -26,12 +26,6 @@ export function ShortCover({ video }: { video: string }) {
   );
 }
 
-/**
- * In full screen, a video's player shows only once the viewer has stopped on it this long (ms); the
- * next one is prepared (loaded, paused) after \`preloadAfter\`. While swiping, the thumbnails slide.
- */
-const showAfter = 250;
-const preloadAfter = 900;
 /** No scroll event for this long: the swipe has ended. */
 const scrollRest = 140;
 /** A swipe moves to the next or previous video past this share of the screen, or this fast (px/ms). */
@@ -42,9 +36,30 @@ const wheelGap = 450;
 /** A gesture's direction is decided after this many px: vertical changes video, left-to-right closes. */
 const axisAfter = 8;
 /** The full screen closes when dragged right past this share of its width, or this fast (px/ms). */
-const closeShare = 0.3;
+const closeShare = 0.25;
 const closeSpeed = 0.5;
-const slideOutMs = 250;
+/** The video shrinking back into its card, or back to full screen (ms). */
+const closeMs = 320;
+const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
+
+/**
+ * Where the full screen's video is while it is dragged to close (owner, 2026-10-14: «igualzinho aos
+ * reels do Instagram»): moved with the finger, shrunk, rounded, over a fading backdrop; then into its
+ * card in the grid. Shared with the pool, whose player there moves the same way.
+ */
+export interface ViewerMotion {
+  x: number;
+  y: number;
+  scale: number;
+  /** Corner radius as seen on screen (px). */
+  radius: number;
+  /** Opacity of the black behind (1 = full screen, 0 = the menu shows). */
+  backdrop: number;
+  /** Glides there (release) instead of following the finger. */
+  glide: boolean;
+}
+
+export const restingMotion: ViewerMotion = { x: 0, y: 0, scale: 1, radius: 0, backdrop: 1, glide: false };
 
 function SoundIcon({ on }: { on: boolean }) {
   return (
@@ -60,7 +75,8 @@ function SoundIcon({ on }: { on: boolean }) {
  * one (no CSS snapping: the moves are ours and land exactly on a slide). The slides hold thumbnails; the pool's players (VideoPool) cover the one on screen once the
  * swipe has ended, and the next video is prepared in another player. A carousel both ways (owner,
  * 2026-10-14): copies of the last and of the first sit before and after the list, and landing on one
- * jumps to the real video. The sound, once on, stays on. Closes with ✕, Esc or the phone's back button.
+ * jumps to the real video. The sound, once on, stays on. Closes with ✕, Esc, the phone's back button,
+ * or dragging it to the right: it shrinks with the finger and goes back into its card, like Instagram.
  */
 export function ShortsViewer({
   items,
@@ -69,7 +85,9 @@ export function ShortsViewer({
   sound,
   onSound,
   onTargets,
-  onShift,
+  onMotion,
+  cardFor,
+  revealCard,
   onClose,
 }: {
   items: ShortItem[];
@@ -78,28 +96,32 @@ export function ShortsViewer({
   sound: boolean;
   onSound: () => void;
   onTargets: (targets: PoolTarget[]) => void;
-  /** How far the full screen is dragged to the right (the pool's players follow it), and whether it glides there. */
-  onShift: (px: number, glide: boolean) => void;
+  /** The video dragged to close (the pool's player there follows it). */
+  onMotion: (motion: ViewerMotion) => void;
+  /** The grid's card of a dish (where the video shrinks back to), and bringing it on screen first. */
+  cardFor: (key: string) => HTMLElement | null;
+  revealCard: (key: string) => void;
   onClose: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
   const boxes = useRef<(HTMLDivElement | null)[]>([]);
+  // The carousel's copies (of the last video, before the list; of the first, after it).
+  const copyBefore = useRef<HTMLDivElement | null>(null);
+  const copyAfter = useRef<HTMLDivElement | null>(null);
   const restTimer = useRef<number | undefined>(undefined);
-  const gesture = useRef<{ x: number; y: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
-  // Dragged to the right to close (owner, 2026-10-14: like the collections panel, following the finger).
-  const [shift, setShift] = useState({ px: 0, glide: false });
+  const gesture = useRef<{ x: number; y: number; dx: number; dy: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
+  const [motion, setMotion] = useState<ViewerMotion>(restingMotion);
+  // The video's box on screen while it is dragged (the origin of the shrink, the clip of the rest).
+  const [frame, setFrame] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
   const moveTo = useCallback(
-    (px: number, glide: boolean) => {
-      setShift({ px, glide });
-      onShift(px, glide);
+    (next: ViewerMotion) => {
+      setMotion(next);
+      onMotion(next);
     },
-    [onShift],
+    [onMotion],
   );
   const lastWheel = useRef(0);
   const [current, setCurrent] = useState(start);
-  // The tapped video shows at once: its player is the one that was playing it in the grid.
-  const [shownOn, setShownOn] = useState<number | null>(start);
-  const [settledOn, setSettledOn] = useState<number | null>(null);
   const [scrolling, setScrolling] = useState(false);
   const loop = items.length > 1;
 
@@ -132,27 +154,26 @@ export function ShortsViewer({
     };
   }, [start, onClose]);
 
-  useEffect(() => {
-    const show = window.setTimeout(() => setShownOn(current), showAfter);
-    const preload = window.setTimeout(() => setSettledOn(current), preloadAfter);
-    return () => {
-      window.clearTimeout(show);
-      window.clearTimeout(preload);
-    };
-  }, [current]);
-
-  // What the pool should play: the video on screen (shown once the swipe rests), and the next one prepared.
+  /*
+   * What the pool should play, like Reels (owner, 2026-10-14): the video on screen playing, the one
+   * above and the one below primed (a real frame, paused), all shown and following the swipe frame by
+   * frame (the pool tracks their boxes), so the next video comes up with the finger and starts at once.
+   * The tapped video's player is the one that was playing it in the grid: it carries on.
+   */
   useEffect(() => {
     const targets: PoolTarget[] = [];
-    if (shownOn !== null && items[shownOn]) {
-      targets.push({ key: "viewer-current", video: items[shownOn].video, element: boxes.current[shownOn], fixed: true, play: true, visible: shownOn === current && !scrolling });
-    }
-    if (settledOn === current && items.length > 1) {
+    const item = items[current];
+    if (item) targets.push({ key: "viewer-current", video: item.video, element: boxes.current[current], fixed: true, play: true, visible: true });
+    if (items.length > 1) {
       const next = (current + 1) % items.length;
-      targets.push({ key: "viewer-next", video: items[next].video, element: boxes.current[next], fixed: true, play: false, visible: false });
+      const previous = (current - 1 + items.length) % items.length;
+      const nextBox = current === items.length - 1 ? copyAfter.current : boxes.current[next];
+      const previousBox = current === 0 ? copyBefore.current : boxes.current[previous];
+      targets.push({ key: "viewer-next", video: items[next].video, element: nextBox, fixed: true, play: false, prime: true, visible: true });
+      if (previous !== next) targets.push({ key: "viewer-previous", video: items[previous].video, element: previousBox, fixed: true, play: false, prime: true, visible: true });
     }
     onTargets(targets);
-  }, [items, current, shownOn, settledOn, scrolling, onTargets]);
+  }, [items, current, onTargets]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -164,15 +185,13 @@ export function ShortsViewer({
     return () => window.removeEventListener("keydown", onKey);
   }, [current, goTo]);
 
-  const slide = (item: ShortItem, index: number | null) => (
+  const slide = (item: ShortItem, index: number | "before" | "after") => (
     <div
-      ref={
-        index === null
-          ? undefined
-          : (box) => {
-              boxes.current[index] = box;
-            }
-      }
+      ref={(box) => {
+        if (index === "before") copyBefore.current = box;
+        else if (index === "after") copyAfter.current = box;
+        else boxes.current[index] = box;
+      }}
       className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden"
     >
       <ShortCover video={item.video} />
@@ -191,7 +210,7 @@ export function ShortsViewer({
     const element = scroller.current;
     if (!element) return;
     const touch = event.touches[0];
-    gesture.current = { x: touch.clientX, y: touch.clientY, top: element.scrollTop, at: performance.now(), axis: null };
+    gesture.current = { x: touch.clientX, y: touch.clientY, dx: 0, dy: 0, top: element.scrollTop, at: performance.now(), axis: null };
   };
   const onGestureMove = (event: TouchEvent) => {
     const start = gesture.current;
@@ -200,23 +219,55 @@ export function ShortsViewer({
     const touch = event.touches[0];
     const dx = touch.clientX - start.x;
     const dy = touch.clientY - start.y;
-    if (!start.axis && Math.max(Math.abs(dx), Math.abs(dy)) > axisAfter) start.axis = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "close" : "vertical";
+    start.dx = dx;
+    start.dy = dy;
+    if (!start.axis && Math.max(Math.abs(dx), Math.abs(dy)) > axisAfter) {
+      start.axis = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "close" : "vertical";
+      if (start.axis === "close") {
+        // The card it goes back to is brought on screen behind (the black still covers the page).
+        const item = items[current];
+        if (item) revealCard(item.key);
+        const box = boxes.current[current]?.getBoundingClientRect();
+        if (box) setFrame({ top: box.top, left: box.left, width: box.width, height: box.height });
+      }
+    }
     if (start.axis === "vertical") element.scrollTop = start.top - dy;
-    if (start.axis === "close") moveTo(Math.max(0, dx), false);
+    if (start.axis === "close") {
+      // Follows the finger, shrinking and rounding as it goes; the menu shows through behind.
+      const distance = Math.hypot(dx, dy);
+      const width = Math.max(1, window.innerWidth);
+      const scale = Math.max(0.55, 1 - distance / (width * 1.6));
+      moveTo({ x: dx, y: dy, scale, radius: Math.min(28, ((1 - scale) / 0.45) * 28), backdrop: Math.max(0, 1 - distance / (width * 0.9)), glide: false });
+    }
   };
-  const onGestureEnd = (event: TouchEvent) => {
+  const onGestureEnd = () => {
     const start = gesture.current;
     const element = scroller.current;
     gesture.current = null;
     if (!start || !element || !start.axis) return;
     if (start.axis === "close") {
-      const dx = Math.max(0, (event.changedTouches[0]?.clientX ?? start.x) - start.x);
       const width = Math.max(1, window.innerWidth);
-      if (dx > width * closeShare || dx / Math.max(1, performance.now() - start.at) > closeSpeed) {
-        moveTo(width, true);
-        window.setTimeout(() => window.history.back(), slideOutMs);
+      const item = items[current];
+      if (start.dx > width * closeShare || start.dx / Math.max(1, performance.now() - start.at) > closeSpeed) {
+        // Into its card in the grid (where its player carries on), else out to the right.
+        const card = item ? cardFor(item.key)?.getBoundingClientRect() : null;
+        const box = frame;
+        if (card && box && card.width > 0) {
+          moveTo({
+            x: card.left + card.width / 2 - (box.left + box.width / 2),
+            y: card.top + card.height / 2 - (box.top + box.height / 2),
+            scale: card.width / box.width,
+            radius: 12,
+            backdrop: 0,
+            glide: true,
+          });
+        } else {
+          moveTo({ x: width, y: start.dy, scale: 0.7, radius: 24, backdrop: 0, glide: true });
+        }
+        window.setTimeout(() => window.history.back(), closeMs);
       } else {
-        moveTo(0, true);
+        moveTo({ ...restingMotion, glide: true });
+        window.setTimeout(() => setFrame(null), closeMs);
       }
       return;
     }
@@ -239,15 +290,25 @@ export function ShortsViewer({
     onSound();
   };
   const item = items[current];
+  const glide = motion.glide ? `${closeMs}ms ${glideEase}` : null;
+  const dragged = frame !== null;
 
   return (
     <div role="dialog" aria-modal="true" aria-label={label}>
-      <div
-        className="fixed inset-0 z-[90] bg-black"
-        style={{ transform: `translateX(${shift.px}px)`, transition: shift.glide ? `transform ${slideOutMs}ms cubic-bezier(0.32, 0.72, 0, 1)` : "none" }}
-      >
+      <div className="fixed inset-0 z-[90]">
+        <div className="absolute inset-0 bg-black" style={{ opacity: motion.backdrop, transition: glide ? `opacity ${glide}` : "none" }} />
         <div
           ref={scroller}
+          style={
+            dragged
+              ? {
+                  transform: `translate(${motion.x}px, ${motion.y}px) scale(${motion.scale})`,
+                  transformOrigin: `${frame.left + frame.width / 2}px ${frame.top + frame.height / 2}px`,
+                  clipPath: `inset(${frame.top}px ${window.innerWidth - frame.left - frame.width}px ${window.innerHeight - frame.top - frame.height}px ${frame.left}px round ${motion.radius / motion.scale}px)`,
+                  transition: glide ? `transform ${glide}, clip-path ${glide}` : "none",
+                }
+              : undefined
+          }
           onScroll={(event) => {
             const element = event.currentTarget;
             setScrolling(true);
@@ -273,11 +334,11 @@ export function ShortsViewer({
             const index = Math.max(0, Math.min(items.length - 1, Math.round(element.scrollTop / height) - 1));
             if (index !== current) setCurrent(index);
           }}
-          className="h-full overflow-y-auto overscroll-none [scrollbar-width:none]"
+          className="absolute inset-0 overflow-y-auto overscroll-none [scrollbar-width:none]"
         >
           {loop ? (
             <section aria-hidden="true" className="grid h-[100dvh] place-items-center">
-              {slide(items[items.length - 1], null)}
+              {slide(items[items.length - 1], "before")}
             </section>
           ) : null}
           {items.map((entry, index) => (
@@ -287,7 +348,7 @@ export function ShortsViewer({
           ))}
           {loop ? (
             <section aria-hidden="true" className="grid h-[100dvh] place-items-center">
-              {slide(items[0], null)}
+              {slide(items[0], "after")}
             </section>
           ) : null}
         </div>
@@ -301,9 +362,11 @@ export function ShortsViewer({
         onWheel={onGestureWheel}
         onClick={onGestureTap}
         className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
-        style={{ transform: `translateX(${shift.px}px)`, transition: shift.glide ? `transform ${slideOutMs}ms cubic-bezier(0.32, 0.72, 0, 1)` : "none" }}
       >
-        <div className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
+        <div
+          className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] transition-opacity duration-150"
+          style={{ opacity: dragged ? 0 : 1 }}
+        >
           <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
@@ -315,7 +378,7 @@ export function ShortsViewer({
         </div>
         {item ? (
           <div
-            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling ? "opacity-0" : "opacity-100"}`}
+            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling || dragged ? "opacity-0" : "opacity-100"}`}
           >
             <span className="text-xs font-semibold tracking-wide text-white/70">
               {current + 1} / {items.length}

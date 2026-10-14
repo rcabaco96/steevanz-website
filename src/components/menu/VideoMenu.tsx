@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
 import { VideoPool, type PoolTarget } from "./VideoPool";
-import { ShortCover, ShortsViewer, type ShortItem } from "./VideoShorts";
+import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
@@ -11,12 +11,16 @@ const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR"
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
 
 /**
- * In the grid every dish on screen plays (up to `focusCount`, the four of two rows; owner 2026-10-14:
- * «devem começar logo os vídeos que aparecem no ecrã»), once the scroll has stopped this long (ms), in
- * the players of the pool (VideoPool).
+ * In the grid every dish on screen plays (up to `focusCount`, the four of two rows), and the row below
+ * and the row above (`aheadOffsets`, by position in the list) are already playing, hidden, so a dish
+ * scrolled into view is playing as it appears (owner, 2026-10-14: «os vídeos assim que aparecem no ecrã
+ * têm logo de já estar a dar»). Recomputed this soon after the scroll moves (ms).
  */
-const focusAfter = 350;
+const focusAfter = 120;
 const focusCount = 4;
+const aheadOffsets = [1, 2, -1, -2];
+/** Changing collection: the panel stays until the new collection's videos play, at most this long (ms). */
+const switchWaitMs = 2500;
 /** A card must be at least this much on screen to play. */
 const focusMinRatio = 0.4;
 /** The collections panel closes when dragged this share of its width to the right (or flicked). */
@@ -29,7 +33,7 @@ const sameTargets = (a: PoolTarget[], b: PoolTarget[]) =>
   a.length === b.length &&
   a.every((target, index) => {
     const other = b[index];
-    return target.key === other.key && target.video === other.video && target.element === other.element && target.fixed === other.fixed && target.play === other.play && target.visible === other.visible;
+    return target.key === other.key && target.video === other.video && target.element === other.element && target.fixed === other.fixed && target.play === other.play && target.prime === other.prime && target.visible === other.visible;
   });
 
 function MenuIcon() {
@@ -162,7 +166,7 @@ function MosaicSplash({ logo, business, videos, onDone }: { logo: string; busine
 /**
  * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
  * the bar, ☰ opens the list of collections (the first opens by default); a tap on a dish opens the
- * collection full screen, one dish per screen. Every video plays in a fixed pool of 3 players
+ * collection full screen, one dish per screen. Every video plays in a fixed pool of players
  * (VideoPool), never created again: the cards and slides hold thumbnails.
  */
 export function VideoMenu({ menu }: { menu: VideoMenuData }) {
@@ -177,9 +181,12 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const setViewerTargets = useCallback((next: PoolTarget[]) => setViewerTargetsState((previous) => (sameTargets(previous, next) ? previous : next)), []);
   const [gridTargets, setGridTargets] = useState<PoolTarget[]>([]);
   const [sound, setSound] = useState(false);
-  // The full screen dragged to the right to close: the pool's players there move with it.
-  const [viewerShift, setViewerShift] = useState({ px: 0, glide: false });
-  const shiftViewer = useCallback((px: number, glide: boolean) => setViewerShift({ px, glide }), []);
+  // The full screen dragged to close: the pool's player there moves with it.
+  const [viewerMotion, setViewerMotion] = useState<ViewerMotion>(restingMotion);
+  // The collection being switched to: the panel stays open until its videos play.
+  const [switching, setSwitching] = useState<string | null>(null);
+  // Targets (grid-<dish>) whose player is showing the video: from the pool.
+  const [ready, setReady] = useState<string[]>([]);
   // The videos on screen load and start, muted and hidden, while the opening plays (owner,
   // 2026-10-14): when it ends they are already playing. Nothing waits for the opening's end.
   const opened = useCallback(() => {}, []);
@@ -199,13 +206,15 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     setViewer(null);
     setViewerTargets([]);
     setSound(false);
-    setViewerShift({ px: 0, glide: false });
+    setViewerMotion(restingMotion);
   }, [setViewerTargets]);
 
-  // The grid's playing row: how much of each card is on screen, the winners picked once the scroll rests.
+  // The grid's playing dishes: how much of each card is on screen; the visible ones, and the rows
+  // around them (ahead) prepared.
   const ratios = useRef(new Map<string, { order: number; ratio: number }>());
+  const orderKeys = useRef<string[]>([]);
   const focusTimer = useRef<number | undefined>(undefined);
-  const [focus, setFocus] = useState<string[]>([]);
+  const [focus, setFocus] = useState<{ visible: string[]; ahead: string[] }>({ visible: [], ahead: [] });
   const seen = useCallback((key: string, order: number, ratio: number) => {
     ratios.current.set(key, { order, ratio });
     window.clearTimeout(focusTimer.current);
@@ -215,8 +224,18 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         .filter(([, entry]) => entry.ratio >= focusMinRatio)
         .sort(([, a], [, b]) => b.ratio - a.ratio || a.order - b.order)
         .slice(0, focusCount)
-        .map(([candidate]) => candidate);
-      setFocus(ranked);
+        .sort(([, a], [, b]) => a.order - b.order);
+      const visible = ranked.map(([candidate]) => candidate);
+      const orders = ranked.map(([, entry]) => entry.order);
+      const keys = orderKeys.current;
+      const ahead = orders.length
+        ? aheadOffsets
+            .map((offset) => (offset > 0 ? Math.max(...orders) + offset : Math.min(...orders) + offset))
+            .filter((order) => order >= 0 && order < keys.length)
+            .map((order) => keys[order])
+            .filter((candidate) => !visible.includes(candidate))
+        : [];
+      setFocus({ visible, ahead });
     }, focusAfter);
   }, []);
   const boxes = useRef(new Map<string, HTMLDivElement>());
@@ -243,15 +262,25 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     [dishes],
   );
 
-  // What the grid asks of the pool: its playing row, paused while the collections panel is open.
   useEffect(() => {
-    const next = focus.flatMap((key): PoolTarget[] => {
+    orderKeys.current = dishes.map(({ key }) => key);
+  }, [dishes]);
+
+  // What the grid asks of the pool: the dishes on screen playing and shown, the rows around them
+  // playing hidden (ready); all paused while the collections panel is open, unless it is switching
+  // collection (then the new videos load behind it).
+  useEffect(() => {
+    const live = !sheet || switching !== null;
+    // On screen: playing. Around: primed (a real frame, paused), shown as soon as they come into view.
+    const target = (key: string, visible: boolean): PoolTarget[] => {
       const dish = menu.dishes[key];
       const element = boxes.current.get(key) ?? null;
-      return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: !sheet, visible: !sheet }] : [];
-    });
+      return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: live && visible, prime: !visible, visible: visible && live }] : [];
+    };
+    // While switching collection, only the dishes on screen load (all at once would slow them down).
+    const next = [...focus.visible.flatMap((key) => target(key, true)), ...(switching ? [] : focus.ahead.flatMap((key) => target(key, false)))];
     setGridTargets((previous) => (sameTargets(previous, next) ? previous : next));
-  }, [focus, sheet, menu.dishes]);
+  }, [focus, sheet, switching, menu.dishes]);
   // While the full screen opens, the grid's players stay as they are until it says what it wants (no pause).
   const poolTargets = viewer !== null && viewerTargets.length ? viewerTargets : gridTargets;
 
@@ -278,13 +307,41 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     };
   }, [sheet, closeSheet]);
 
+  // Another collection: its grid is built behind the panel and its videos start; the panel closes
+  // once those on screen are playing (or after switchWaitMs), so the new grid appears already moving.
   const choose = (id: string) => {
+    if (id === collection.id) {
+      closeSheet();
+      return;
+    }
     ratios.current.clear();
-    setFocus([]);
+    setFocus({ visible: [], ahead: [] });
     setActive(id);
-    closeSheet();
+    setSwitching(id);
     window.scrollTo({ top: 0 });
   };
+  useEffect(() => {
+    if (!switching) return;
+    const done = () => {
+      setSwitching(null);
+      closeSheet();
+    };
+    if (focus.visible.length && focus.visible.every((key) => ready.includes(`grid-${key}`))) {
+      done();
+      return;
+    }
+    const timer = window.setTimeout(done, switchWaitMs);
+    return () => window.clearTimeout(timer);
+  }, [switching, focus, ready, closeSheet]);
+
+  // The full screen closes into a dish's card: which one, and bringing it on screen first.
+  const cardFor = useCallback((key: string) => boxes.current.get(key) ?? null, []);
+  const revealCard = useCallback((key: string) => {
+    const card = boxes.current.get(key);
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    if (rect.top < 64 || rect.bottom > window.innerHeight) window.scrollTo({ top: window.scrollY + rect.top - (window.innerHeight - rect.height) / 2 });
+  }, []);
 
   // Dragging the panel to the right closes it, following the finger (vertical moves scroll its list).
   const onSheetTouchStart = (event: TouchEvent) => {
@@ -391,7 +448,11 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
                       style={current ? { background: "var(--menu-accent-soft)", color: "var(--menu-accent)" } : undefined}
                     >
                       <span>{option.name}</span>
-                      <span className="text-sm font-normal text-muted">{option.dishes.length}</span>
+                      {switching === option.id ? (
+                        <span role="status" aria-label="A carregar os vídeos" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      ) : (
+                        <span className="text-sm font-normal text-muted">{option.dishes.length}</span>
+                      )}
                     </button>
                   </li>
                 );
@@ -420,11 +481,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
           sound={sound}
           onSound={() => setSound((on) => !on)}
           onTargets={setViewerTargets}
-          onShift={shiftViewer}
+          onMotion={setViewerMotion}
+          cardFor={cardFor}
+          revealCard={revealCard}
           onClose={closeViewer}
         />
       ) : null}
-      <VideoPool targets={poolTargets} sound={sound} enabled shift={viewerShift} />
+      <VideoPool targets={poolTargets} sound={sound} enabled motion={viewerMotion} onReady={setReady} />
       <MosaicSplash logo={menu.logo} business={menu.business} videos={Object.values(menu.dishes).map((dish) => dish.video)} onDone={opened} />
     </div>
   );

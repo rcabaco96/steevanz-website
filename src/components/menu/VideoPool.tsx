@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { ViewerMotion } from "./VideoShorts";
 
 /**
  * Where a video should be: a box on the page (a grid card, or a full-screen slide) that the pool
@@ -12,8 +13,14 @@ export interface PoolTarget {
   element: HTMLElement | null;
   /** In the full screen (viewport coordinates, above it); else on the page (scrolls with it). */
   fixed: boolean;
-  /** Plays (else loaded and paused, e.g. the next video, prepared). */
+  /** Plays (else paused). */
   play: boolean;
+  /**
+   * Not playing, but primed: loaded and played until its first frames are on, then paused there, so
+   * it shows a real frame (not the thumbnail) and starts at once when it plays (the next video in
+   * full screen, the rows around the grid's).
+   */
+  prime?: boolean;
   /** Shown (once playing); hidden players keep their video, under the covers. */
   visible: boolean;
 }
@@ -27,8 +34,12 @@ export interface PoolTarget {
  * until its player reports the video playing, so YouTube's black loading screen never shows. The
  * player that was playing a card is the one that grows to full screen: the video carries on.
  */
-/** 4: the grid plays every dish on screen (two rows of two, owner 2026-10-14); full screen uses 2. */
-const poolSize = 4;
+/**
+ * 8: the grid plays the dishes on screen (two rows of two) and has the row below and the row above
+ * already playing, hidden, so they play as they appear (owner, 2026-10-14); full screen uses 2. Each
+ * player is a whole YouTube page (memory): one per dish would make an iPhone reload the page.
+ */
+const poolSize = 8;
 /**
  * A player shows over the thumbnail only once its own video (by the id YouTube reports) has played
  * this far (s): at YouTube's first «playing» the video hasn't drawn a frame yet (a black break), and
@@ -96,13 +107,16 @@ export function VideoPool({
   targets,
   sound,
   enabled,
-  shift = { px: 0, glide: false },
+  motion,
+  onReady,
 }: {
   targets: PoolTarget[];
   sound: boolean;
   enabled: boolean;
-  /** The full screen dragged sideways: its players (fixed) move with it, gliding or following the finger. */
-  shift?: { px: number; glide: boolean };
+  /** The full screen dragged to close: its player (fixed) moves, shrinks and rounds with it. */
+  motion?: ViewerMotion;
+  /** The targets whose player is showing their video (e.g. a new collection is ready). */
+  onReady?: (keys: string[]) => void;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
@@ -113,6 +127,11 @@ export function VideoPool({
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
   const [, setTick] = useState(0);
   const targetsRef = useRef(targets);
+  const reported = useRef("");
+  const onReadyRef = useRef(onReady);
+  useLayoutEffect(() => {
+    onReadyRef.current = onReady;
+  });
   useLayoutEffect(() => {
     targetsRef.current = targets;
   });
@@ -137,13 +156,13 @@ export function VideoPool({
     const initial = players.current.map((player, index) => {
       const target = start[index];
       player.video = target?.video ?? fallback;
-      // A player made for a box that plays starts by itself: a «play» command would make YouTube
-      // show its ⏸ over the video for a few seconds.
-      if (target?.play) {
+      // A player made for a box that plays (or is primed) starts by itself: a «play» command would make
+      // YouTube show its ⏸ over the video for a few seconds. A primed one pauses on its first frames.
+      if (target?.play || target?.prime) {
         player.target = target.key;
-        player.playing = true;
+        player.playing = Boolean(target.play);
       }
-      return embedSrc(player.video, origin, Boolean(target?.play));
+      return embedSrc(player.video, origin, Boolean(target?.play || target?.prime));
     });
     setSources(initial);
   }, [enabled, sources, targets]);
@@ -176,6 +195,8 @@ export function VideoPool({
       const showing = player.showing;
       // Frames are on screen: its own video, playing, a moment in.
       if (player.reported === player.video && player.state === 1 && player.time >= shownAfterSeconds) player.showing = player.video;
+      // A primed player stops on its first frames.
+      if (player.showing !== showing && !player.playing) frames.current[index]?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
       const state = data.event === "onStateChange" && typeof data.info === "number" ? data.info : typeof info.playerState === "number" ? info.playerState : null;
       if (state === null || state === player.state) {
         if (player.showing !== showing) setTick((tick) => tick + 1);
@@ -220,13 +241,15 @@ export function VideoPool({
       player.video = target.video;
       player.state = -1;
       player.showing = null;
-      send(free, target.play ? "loadVideoById" : "cueVideoById", [target.video, 0]);
+      send(free, target.play || target.prime ? "loadVideoById" : "cueVideoById", [target.video, 0]);
     }
     pool.forEach((player, index) => {
       const target = targets.find((candidate) => assignment.get(candidate.key) === index) ?? null;
       player.target = target?.key ?? null;
       const play = Boolean(target?.play);
-      if (play !== player.playing || (play && player.state === 2)) send(index, play ? "playVideo" : "pauseVideo");
+      // A primed player still loading must not be paused yet (it pauses itself on its first frames).
+      const priming = !play && target?.prime && player.showing !== player.video;
+      if (!priming && (play !== player.playing || (play && player.state === 2))) send(index, play ? "playVideo" : "pauseVideo");
       player.playing = play;
     });
   }, [targets, sources, send]);
@@ -255,11 +278,21 @@ export function VideoPool({
           width: rect.width,
           height: rect.height,
           fixed: target.fixed,
-          shown: target.visible && target.play && player.video === target.video && player.showing === target.video,
+          // Not while YouTube buffers (state 3): its loading circle would show over the video; the thumbnail does instead.
+          shown: target.visible && player.video === target.video && player.showing === target.video && player.state !== 3,
         };
       });
     // Only a real change re-renders (this runs after every render).
     setPlacements((previous) => (previous.every((spot, index) => samePlacement(spot, next[index])) ? previous : next));
+    const showing = players.current
+      .map((player) => (player.target && player.video && player.showing === player.video ? player.target : null))
+      .filter((key): key is string => key !== null)
+      .sort()
+      .join(",");
+    if (showing !== reported.current) {
+      reported.current = showing;
+      onReadyRef.current?.(showing ? showing.split(",") : []);
+    }
   }, []);
 
   useLayoutEffect(() => {
@@ -270,9 +303,21 @@ export function VideoPool({
     const observer = new ResizeObserver(() => place());
     for (const target of targets) if (target.element) observer.observe(target.element);
     window.addEventListener("resize", place);
+    // Any scrolling box (the full screen's slides): the players follow their boxes frame by frame.
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        place();
+      });
+    };
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", place);
+      document.removeEventListener("scroll", onScroll, { capture: true });
+      window.cancelAnimationFrame(frame);
     };
   }, [targets, place]);
 
@@ -282,6 +327,9 @@ export function VideoPool({
       {sources.map((src, index) => {
         const spot = placements[index];
         const scale = spot ? spot.width / playerWidth : 1;
+        // Dragged to close (full screen only): radius as seen, so divided by the shrink.
+        const moved = Boolean(motion && (motion.x || motion.y || motion.scale !== 1 || motion.glide));
+        const radius = motion ? motion.radius / motion.scale : 0;
         return (
           <div
             key={index}
@@ -294,10 +342,10 @@ export function VideoPool({
               height: spot?.height ?? playerHeight,
               opacity: spot?.shown ? 1 : 0,
               zIndex: spot?.fixed ? 95 : 30,
-              borderRadius: spot?.fixed ? 0 : 12,
-              transform: spot?.fixed && shift.px ? `translateX(${shift.px}px)` : undefined,
-              transition: shift.glide ? "opacity 200ms, transform 250ms cubic-bezier(0.32, 0.72, 0, 1)" : "opacity 200ms",
-              clipPath: spot?.fixed ? undefined : "inset(0 round 12px)",
+              borderRadius: spot?.fixed ? (moved ? radius : 0) : 12,
+              clipPath: spot?.fixed ? (moved ? `inset(0 round ${radius}px)` : undefined) : "inset(0 round 12px)",
+              transform: spot?.fixed && moved && motion ? `translate(${motion.x}px, ${motion.y}px) scale(${motion.scale})` : undefined,
+              transition: spot?.fixed && motion?.glide ? "opacity 200ms, transform 320ms cubic-bezier(0.32, 0.72, 0, 1), border-radius 320ms, clip-path 320ms" : "opacity 200ms",
             }}
           >
             <iframe
