@@ -166,6 +166,8 @@ export function VideoPool({
   const [sources, setSources] = useState<(string | null)[] | null>(() => (early.length ? Array.from({ length: poolSize }, (_, index) => (early[index] ? embedSrc(early[index], productionOrigin, true) : null)) : null));
   // How many players exist (made), and how many may (batches × batchSize).
   const made = useRef(early.length);
+  // How many players show their video (the ones ready ahead wait until all made ones do).
+  const showingCount = useRef(0);
   const [batches, setBatches] = useState(1);
   // Players from the HTML wait on the screen (unseen) until the grid gives them their cards.
   const [placedOnce, setPlacedOnce] = useState(false);
@@ -238,7 +240,11 @@ export function VideoPool({
     // The dishes on screen first, then the ones ready ahead.
     const pool = players.current;
     const rank = (index: number) => (pool[index].playing ? 0 : pool[index].running ? 1 : 2);
-    const chosen = new Set(missing.sort((a, b) => rank(a) - rank(b) || a - b).slice(0, allowed - made.current));
+    // Players ready ahead only once every made player shows its video: on a slow connection they took
+    // the bandwidth from the dishes on screen.
+    const ready = showingCount.current >= made.current;
+    const chosen = new Set(missing.filter((index) => ready || rank(index) === 0).sort((a, b) => rank(a) - rank(b) || a - b).slice(0, allowed - made.current));
+    if (!chosen.size) return;
     made.current += chosen.size;
     const origin = window.location.origin;
     const fallback = pool.find((player) => player.video)?.video ?? "";
@@ -397,6 +403,7 @@ export function VideoPool({
       .join(",");
     if (showing !== reported.current) {
       reported.current = showing;
+      showingCount.current = showing.split(",").filter(Boolean).length;
       onReadyRef.current?.(showing ? showing.split(",") : []);
       // Every made player shows its video: the next batch.
       if (made.current < poolSize && showing.split(",").filter(Boolean).length >= made.current) setBatches((count) => Math.max(count, Math.ceil(made.current / batchSize) + 1));
