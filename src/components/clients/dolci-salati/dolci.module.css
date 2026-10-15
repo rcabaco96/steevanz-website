@@ -1,0 +1,302 @@
+/* Dolci e Salati's landing page: its own colours (the logo's pistachio ring, raspberry ribbon and cone),
+   scoped to this route so nothing leaks into the rest of the site. Dark mode follows the site's theme. */
+
+.root {
+  --dz-bg: #f7f2e8;
+  --dz-bg-2: #edf2e3;
+  --dz-surface: #fffdf8;
+  --dz-ink: #1d382f;
+  --dz-ink-2: #4b6157;
+  --dz-line: rgb(29 56 47 / 0.14);
+  --dz-berry: #ad2c5c;
+  --dz-berry-soft: #fadbe6;
+  --dz-pista: #b5ca91;
+  --dz-pista-deep: #55712e;
+  --dz-cone: #e5ba83;
+  --dz-cta-bg: #1d382f;
+  --dz-cta-fg: #fffdf8;
+  --dz-dot: #ad2c5c;
+  --dz-dot-fg: #ffffff;
+  --dz-shadow: 29 56 47;
+  --dz-c1: #f7c6d3;
+  --dz-c2: #ef6f94;
+  --dz-c3: #c8325f;
+  --dz-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--dz-bg);
+  color: var(--dz-ink);
+  font-family: var(--font-sans);
+}
+
+:global(:root[data-theme="dark"]) .root {
+  --dz-bg: #0e1b16;
+  --dz-bg-2: #13241d;
+  --dz-surface: #182c24;
+  --dz-ink: #f4eee3;
+  --dz-ink-2: #c3cdbf;
+  --dz-line: rgb(244 238 227 / 0.14);
+  --dz-berry: #f59bbd;
+  --dz-berry-soft: #3b1a29;
+  --dz-pista-deep: #c4d89e;
+  --dz-cta-bg: #f59bbd;
+  --dz-cta-fg: #2a0f1b;
+  --dz-dot: #2a0f1b;
+  --dz-dot-fg: #f59bbd;
+  --dz-shadow: 0 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme])) .root {
+    --dz-bg: #0e1b16;
+    --dz-bg-2: #13241d;
+    --dz-surface: #182c24;
+    --dz-ink: #f4eee3;
+    --dz-ink-2: #c3cdbf;
+    --dz-line: rgb(244 238 227 / 0.14);
+    --dz-berry: #f59bbd;
+    --dz-berry-soft: #3b1a29;
+    --dz-pista-deep: #c4d89e;
+    --dz-cta-bg: #f59bbd;
+    --dz-cta-fg: #2a0f1b;
+    --dz-dot: #2a0f1b;
+    --dz-dot-fg: #f59bbd;
+    --dz-shadow: 0 0 0;
+  }
+}
+
+/* ---------- Hero ---------- */
+
+/* The static backdrop: the flavour's colours as soft blobs. The shader, when it runs, fades in over it. */
+.heroBackdrop {
+  background:
+    radial-gradient(60% 45% at 78% 30%, color-mix(in oklab, var(--dz-c2) 55%, transparent), transparent 70%),
+    radial-gradient(55% 40% at 12% 78%, color-mix(in oklab, var(--dz-pista) 60%, transparent), transparent 70%),
+    radial-gradient(70% 60% at 50% 50%, color-mix(in oklab, var(--dz-c1) 80%, transparent), transparent 80%),
+    var(--dz-bg);
+  transition: background 0.8s ease;
+}
+
+:global(:root[data-theme="dark"]) .heroBackdrop {
+  background:
+    radial-gradient(60% 45% at 78% 30%, color-mix(in oklab, var(--dz-c3) 40%, transparent), transparent 70%),
+    radial-gradient(55% 40% at 12% 78%, color-mix(in oklab, var(--dz-pista-deep) 22%, transparent), transparent 70%),
+    var(--dz-bg);
+}
+
+/* The hero shows without JavaScript: these entrances are pure CSS, so nothing waits for hydration. */
+.rise {
+  animation: dz-rise 1s var(--dz-ease) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.cupIn {
+  animation: dz-cup-in 1.3s var(--dz-ease) both;
+  animation-delay: 120ms;
+}
+
+.float {
+  animation: dz-float 6s ease-in-out infinite;
+}
+
+.spin {
+  animation: dz-spin 28s linear infinite;
+}
+
+.spinSlow {
+  animation: dz-spin 40s linear infinite;
+}
+
+.wordMask {
+  display: inline-block;
+  overflow: clip;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.wordIn {
+  display: inline-block;
+  animation: dz-word 1.1s var(--dz-ease) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* A light sweep across the main buttons (after React Bits' ShinyText). */
+.shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: dz-shine 3.6s ease-in-out 1.6s infinite;
+}
+
+.sprinkle {
+  position: absolute;
+  border-radius: 999px;
+  animation: dz-float 7s ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+
+/* ---------- Scroll reveals (RevealObserver) ---------- */
+
+.root[data-reveal-ready] [data-reveal] {
+  transition:
+    opacity 0.9s var(--dz-ease),
+    transform 0.9s var(--dz-ease),
+    filter 0.9s var(--dz-ease),
+    clip-path 1.2s var(--dz-ease);
+  transition-delay: var(--d, 0ms);
+}
+
+.root[data-reveal-ready] [data-reveal]:not([data-shown]) {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+.root[data-reveal-ready] [data-reveal="blur"]:not([data-shown]) {
+  filter: blur(8px);
+}
+
+.root[data-reveal-ready] [data-reveal="clip"]:not([data-shown]) {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(18% 8% 18% 8% round 2rem);
+}
+
+.root[data-reveal-ready] [data-reveal="clip"][data-shown] {
+  clip-path: inset(0 0 0 0 round 2rem);
+}
+
+.sideIn {
+  animation: dz-side 0.7s var(--dz-ease) both;
+}
+
+/* ---------- Brunch ring, marquee fallback ---------- */
+
+.marqueeTrack {
+  animation: dz-marquee 30s linear infinite;
+}
+
+.underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--dz-ease);
+}
+
+.underline:hover,
+.underline:focus-visible {
+  background-size: 100% 1.5px;
+}
+
+.noScrollbar {
+  scrollbar-width: none;
+}
+
+.noScrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes dz-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dz-side {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes dz-word {
+  from {
+    transform: translate3d(0, 105%, 0) rotate(4deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes dz-cup-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0) scale(0.86) rotate(-6deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dz-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(1.5deg);
+  }
+}
+
+@keyframes dz-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dz-shine {
+  0% {
+    transform: translateX(-120%);
+  }
+  45%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes dz-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .cupIn,
+  .wordIn,
+  .sideIn,
+  .float,
+  .spin,
+  .spinSlow,
+  .sprinkle,
+  .marqueeTrack,
+  .shine::after {
+    animation: none;
+  }
+
+  .root[data-reveal-ready] [data-reveal]:not([data-shown]) {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: none;
+  }
+}
