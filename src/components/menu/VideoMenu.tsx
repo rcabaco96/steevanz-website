@@ -82,7 +82,7 @@ function DishCard({
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
         <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} /> : dish.video ? <ShortCover video={dish.video} /> : null}
+          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} /> : dish.video ? <ShortCover video={dish.video} /> : null}
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
@@ -189,7 +189,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
   const [opening] = useState(() => {
     const firstDishes = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]).filter((dish) => Boolean(dish));
     // The dishes' pictures: their own (Bunny) video's, else their YouTube video's.
-    const pictureOf = (dish: MenuDish) => dishPicture({ video_id: dish.video ?? null, bunny_video_id: hasBunnyVideo(dish.bunny) ? dish.bunny : null });
+    const pictureOf = (dish: MenuDish) => dishPicture({ video_id: dish.video ?? null, bunny_video_id: hasBunnyVideo(dish.bunny) ? dish.bunny : null, bunny_thumbnail: dish.bunnyThumbnail });
     const pictures = firstDishes.map(pictureOf).filter((picture): picture is string => Boolean(picture));
     // Only YouTube dishes get pool players in the HTML (a Bunny one plays its own <video>).
     const first = firstDishes.slice(0, 4).flatMap((dish) => (!hasBunnyVideo(dish.bunny) && dish.video ? [dish.video] : []));
@@ -279,6 +279,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         key,
         video: dish.video,
         bunny: dish.bunny,
+        bunnyThumbnail: dish.bunnyThumbnail,
         title: dish.name,
         details: (
           <>

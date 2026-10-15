@@ -58,15 +58,18 @@ export function bunnyHost(): string | null {
   return pullZone ? `https://${pullZone}.b-cdn.net` : null;
 }
 
-/** A dish's own video's picture (Bunny Stream's thumbnail); null without the pull zone. */
-export function bunnyThumbnail(videoId: string): string | null {
+/**
+ * A dish's own video's picture: its small one (`file`, set when Bunny finished it), else Bunny's
+ * full-size thumbnail.jpg; null without the pull zone.
+ */
+export function bunnyThumbnail(videoId: string, file?: string | null): string | null {
   const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
-  return pullZone ? `https://${pullZone}.b-cdn.net/${videoId}/thumbnail.jpg` : null;
+  return pullZone ? `https://${pullZone}.b-cdn.net/${videoId}/${file || "thumbnail.jpg"}` : null;
 }
 
 /** A dish's picture: its own (Bunny) video's when it has one, else its YouTube video's; null with neither. */
-export function dishPicture(dish: { video_id: string | null; bunny_video_id?: string | null }): string | null {
-  return (dish.bunny_video_id ? bunnyThumbnail(dish.bunny_video_id) : null) ?? (dish.video_id ? youTubeThumbnail(dish.video_id) : null);
+export function dishPicture(dish: { video_id: string | null; bunny_video_id?: string | null; bunny_thumbnail?: string | null }): string | null {
+  return (dish.bunny_video_id ? bunnyThumbnail(dish.bunny_video_id, dish.bunny_thumbnail) : null) ?? (dish.video_id ? youTubeThumbnail(dish.video_id) : null);
 }
 
 // Prices -------------------------------------------------------------------------------------------
@@ -213,6 +216,8 @@ export interface VideoMenuDishRow {
   position: number;
   /** Its own video on Bunny Stream (played instead of the YouTube one), and an upload in progress. */
   bunny_video_id?: string | null;
+  /** The small picture of the Bunny video (file name on Bunny); null: its thumbnail.jpg. */
+  bunny_thumbnail?: string | null;
   pending_video_id?: string | null;
   pending_video_status?: "uploading" | "processing" | "failed" | null;
 }
@@ -251,7 +256,7 @@ export function toVideoMenuData(
   for (const dish of ordered) {
     dishes[dish.id] = {
       ...(dish.video_id ? { video: dish.video_id } : {}),
-      ...(dish.bunny_video_id ? { bunny: dish.bunny_video_id } : {}),
+      ...(dish.bunny_video_id ? { bunny: dish.bunny_video_id, ...(dish.bunny_thumbnail ? { bunnyThumbnail: dish.bunny_thumbnail } : {}) } : {}),
       name: dish.name,
       description: dish.description,
       price: dish.price_cents / 100,

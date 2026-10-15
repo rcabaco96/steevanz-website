@@ -100,7 +100,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
                       </div>
                       <MoveButtons action={moveDish} id={dish.id} name={dish.name} first={index === 0} last={index === dishes.length - 1} className="hidden sm:flex" />
                     </div>
-                    <DishVideoUpload dishId={dish.id} dishName={dish.name} bunnyVideoId={dish.bunny_video_id ?? null} pendingStatus={dish.pending_video_status ?? null} hasYouTube={Boolean(dish.video_id)} />
+                    <DishVideoUpload dishId={dish.id} dishName={dish.name} bunnyVideoId={dish.bunny_video_id ?? null} pendingStatus={dish.pending_video_status ?? null} hasYouTube={Boolean(dish.video_id)} thumbnail={dish.bunny_thumbnail} />
                     <details className="group">
                       <summary className={summaryClasses}>
                         Editar ou apagar

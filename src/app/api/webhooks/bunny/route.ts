@@ -1,9 +1,9 @@
-import { bunnyConfig, bunnyStatus, deleteBunnyVideo, verifyBunnyWebhook } from "@/lib/bunny";
+import { bunnyConfig, bunnyStatus, deleteBunnyVideo, setSmallBunnyThumbnail, verifyBunnyWebhook } from "@/lib/bunny";
 import { bunnyDishColumns, dishesTable, refreshDishMenu, type BunnyDishRow } from "@/lib/video-menus/bunny-dishes";
 
 /**
  * Bunny Stream's webhook (library-wide): a dish's pending video moves on as Bunny encodes it.
- * Finished (3): it becomes the dish's video and the previous Bunny video is deleted. Failed (5, 8):
+ * Finished (3): it gets its small picture, becomes the dish's video and the previous Bunny video is deleted. Failed (5, 8):
  * marked failed. Created, uploaded, processing, upload finished (0, 1, 2, 7): processing. Anything
  * else, an unknown video or a bad signature is ignored. Always answers 200 (Bunny would retry).
  */
@@ -30,8 +30,13 @@ export async function POST(request: Request) {
 
     if (event.Status === bunnyStatus.finished) {
       const previous = dish.bunny_video_id;
+      // Without it, the menu shows Bunny's full-size thumbnail: never a reason to hold the video back.
+      const thumbnail = await setSmallBunnyThumbnail(event.VideoGuid).catch((reason) => {
+        console.warn("[bunny] small thumbnail not set:", reason instanceof Error ? reason.message : reason);
+        return null;
+      });
       const saved = await dishesTable()
-        .update({ bunny_video_id: event.VideoGuid, pending_video_id: null, pending_video_status: null })
+        .update({ bunny_video_id: event.VideoGuid, bunny_thumbnail: thumbnail, pending_video_id: null, pending_video_status: null })
         .eq("id", dish.id)
         .eq("pending_video_id", event.VideoGuid);
       if (saved.error) throw new Error(saved.error.message);

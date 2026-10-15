@@ -12,6 +12,8 @@ export interface ShortItem {
   video?: string;
   /** Its own video on Bunny Stream: played by a plain <video> in its slide (no pool player). */
   bunny?: string;
+  /** That video's small picture (file name on Bunny). */
+  bunnyThumbnail?: string;
   title: string;
   /** Shown under the title (e.g. the price and the description of a dish). */
   details?: ReactNode;
@@ -190,7 +192,7 @@ export function ShortsViewer({
       }}
       className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
     >
-      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} playing={index === current} /> : item.video ? <ShortCover video={item.video} /> : null}
+      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} thumbnail={item.bunnyThumbnail} playing={index === current} /> : item.video ? <ShortCover video={item.video} /> : null}
     </div>
   );
 

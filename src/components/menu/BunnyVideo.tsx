@@ -34,7 +34,7 @@ function cardRendition(element: HTMLElement): string {
  * depois o vídeo», «pára com os flashes»). Silent, looping, inline: in the grid while half on screen, in
  * full screen when `playing` (its neighbours load ahead).
  */
-export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
+export function BunnyVideo({ id, thumbnail, playing }: { id: string; /** Its small picture's file name. */ thumbnail?: string; playing?: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
   const hls = useRef<Hls | null>(null);
   const [near, setNear] = useState(false);
@@ -136,7 +136,7 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-img-element -- Bunny's own picture of the video */}
-      <img src={`${base}/thumbnail.jpg`} alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      <img src={`${base}/${thumbnail || "thumbnail.jpg"}`} alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
       <video
         ref={video}
         muted

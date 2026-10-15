@@ -42,7 +42,7 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
   }, null);
 
   const videoId = video.trim() ? parseYouTubeId(video) : null;
-  const picture = dishPicture({ video_id: videoId, bunny_video_id: dish?.bunny_video_id });
+  const picture = dishPicture({ video_id: videoId, bunny_video_id: dish?.bunny_video_id, bunny_thumbnail: dish?.bunny_thumbnail });
   const priceCents = price.trim() ? parsePriceCents(price) : null;
   const fieldId = dish?.id ?? `new-${menuId}`;
 

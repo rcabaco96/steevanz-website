@@ -48,6 +48,7 @@ export function DishVideoUpload({
   bunnyVideoId,
   pendingStatus,
   hasYouTube,
+  thumbnail,
 }: {
   dishId: string;
   dishName: string;
@@ -55,6 +56,8 @@ export function DishVideoUpload({
   pendingStatus: "uploading" | "processing" | "failed" | null;
   /** The dish also has a YouTube video (shown until its own is ready). */
   hasYouTube: boolean;
+  /** The video's small picture (file name on Bunny). */
+  thumbnail?: string | null;
 }) {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
@@ -123,7 +126,7 @@ export function DishVideoUpload({
   };
 
   const busy = phase.kind === "starting" || phase.kind === "sending";
-  const thumbnail = bunnyVideoId && pullZone ? `https://${pullZone}.b-cdn.net/${bunnyVideoId}/thumbnail.jpg` : null;
+  const picture = bunnyVideoId && pullZone ? `https://${pullZone}.b-cdn.net/${bunnyVideoId}/${thumbnail || "thumbnail.jpg"}` : null;
   const status =
     phase.kind === "starting"
       ? "A preparar o envio…"
@@ -146,9 +149,9 @@ export function DishVideoUpload({
   return (
     <div className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3">
       <div className="flex items-center gap-3">
-        {thumbnail ? (
+        {picture ? (
           // eslint-disable-next-line @next/next/no-img-element -- Bunny's own thumbnail of the video
-          <img src={thumbnail} alt="" width={36} height={64} loading="lazy" className="h-16 w-9 shrink-0 rounded-md bg-surface-2 object-cover" />
+          <img src={picture} alt="" width={36} height={64} loading="lazy" className="h-16 w-9 shrink-0 rounded-md bg-surface-2 object-cover" />
         ) : null}
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-text">Vídeo do prato</p>

@@ -13,6 +13,8 @@ export interface MenuDish {
   price: number;
   /** Its own video on Bunny Stream, played instead of the YouTube one. */
   bunny?: string;
+  /** That video's small picture (file name on Bunny); without it, Bunny's thumbnail.jpg. */
+  bunnyThumbnail?: string;
 }
 
 export interface MenuCollection {

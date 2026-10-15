@@ -1,5 +1,6 @@
 import "server-only";
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { siteUrl } from "@/lib/site";
 
 /**
  * Bunny Stream (owner, 2026-10-15): the menu's dishes can carry their own video, uploaded from the
@@ -58,6 +59,36 @@ export async function deleteBunnyVideo(videoId: string): Promise<void> {
     cache: "no-store",
   });
   if (!response.ok && response.status !== 404) throw new BunnyError(`Bunny delete video: HTTP ${response.status}`);
+}
+
+/** The small picture's width (px): a grid card is ~170 px wide × the screen's density. */
+const smallThumbnailWidth = 540;
+
+/**
+ * Gives a finished video a small picture (owner, 2026-10-16): Bunny's own thumbnail is the video's full
+ * size (up to 4K, ~270 KB) for a card of ~170 px. It is shrunk to 540 px (~25 KB) and set as the
+ * video's thumbnail; Bunny keeps it under a new name (thumbnail_<hash>.jpg), which is returned.
+ */
+export async function setSmallBunnyThumbnail(videoId: string): Promise<string> {
+  const { libraryId, apiKey } = config();
+  const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE?.trim();
+  if (!pullZone) throw new BunnyError("Bunny Stream: falta NEXT_PUBLIC_BUNNY_PULL_ZONE.");
+  // The pull zone refuses requests without a referrer.
+  const original = await fetch(`https://${pullZone}.b-cdn.net/${encodeURIComponent(videoId)}/thumbnail.jpg`, { headers: { Referer: `${siteUrl}/` }, cache: "no-store" });
+  if (!original.ok) throw new BunnyError(`Bunny thumbnail: HTTP ${original.status}`);
+  const { default: sharp } = await import("sharp");
+  const small = await sharp(Buffer.from(await original.arrayBuffer()))
+    .resize({ width: smallThumbnailWidth, withoutEnlargement: true })
+    .jpeg({ quality: 72, mozjpeg: true })
+    .toBuffer();
+  const video = `${apiBase}/library/${libraryId}/videos/${encodeURIComponent(videoId)}`;
+  const set = await fetch(`${video}/thumbnail`, { method: "POST", headers: { AccessKey: apiKey, "Content-Type": "image/jpeg" }, body: new Uint8Array(small), cache: "no-store" });
+  if (!set.ok) throw new BunnyError(`Bunny set thumbnail: HTTP ${set.status}`);
+  const info = await fetch(video, { headers: { AccessKey: apiKey, Accept: "application/json" }, cache: "no-store" });
+  if (!info.ok) throw new BunnyError(`Bunny video: HTTP ${info.status}`);
+  const name = ((await info.json()) as { thumbnailFileName?: string }).thumbnailFileName;
+  if (!name || !/^thumbnail[A-Za-z0-9_-]*\.(jpg|jpeg|png|webp)$/.test(name)) throw new BunnyError(`Bunny thumbnail name: ${name}`);
+  return name;
 }
 
 export interface TusCredentials {
