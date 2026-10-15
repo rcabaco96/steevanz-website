@@ -53,6 +53,13 @@ const shownAfterSeconds = 0.3;
  * on a phone they slowed each other down (owner, 2026-10-15: «os vídeos estão a demorar imenso»).
  */
 const extraPlayersAfterMs = 4000;
+/**
+ * The site's address, for the players written into the page's HTML (`first`): the browser starts
+ * loading them while the page's own code is still downloading (owner, 2026-10-15: on an Android the
+ * videos took ~25 s; the players only started after ~4.7 s of page start-up). Anywhere else (a preview,
+ * dev) the players are made again on the right address once the page runs.
+ */
+const productionOrigin = "https://www.steevanz.com";
 
 /**
  * YouTube buffering this long (ms) hides the video under its thumbnail (its loading circle would show);
@@ -134,9 +141,12 @@ export function VideoPool({
   enabled,
   motion,
   onReady,
+  first,
 }: {
   targets: PoolTarget[];
   enabled: boolean;
+  /** The videos on screen when the page opens: their players are in the page's HTML, already loading. */
+  first?: string[];
   /** The full screen dragged to close: its players (fixed) slide with it. */
   motion?: ViewerMotion;
   /** The targets whose player is showing their video (e.g. a new collection is ready). */
@@ -144,12 +154,25 @@ export function VideoPool({
 }) {
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
+  const early = (first ?? []).slice(0, poolSize);
   const players = useRef<Player[]>(
-    Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
+    Array.from({ length: poolSize }, (_, index) => ({ video: early[index] ?? null, target: null, ready: false, state: -1, queue: [], playing: false, running: Boolean(early[index]), from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
   );
-  const [sources, setSources] = useState<(string | null)[] | null>(null);
+  const [sources, setSources] = useState<(string | null)[] | null>(() => (early.length ? Array.from({ length: poolSize }, (_, index) => (early[index] ? embedSrc(early[index], productionOrigin, true) : null)) : null));
   // How many players were made first (for the dishes on screen); the rest come after.
-  const firstCount = useRef(0);
+  const firstCount = useRef(early.length);
+  // Players from the HTML wait on the screen (unseen) until the grid gives them their cards.
+  const [placedOnce, setPlacedOnce] = useState(false);
+  // Not on the site's address (a preview, dev): YouTube would answer the wrong page; made again here.
+  useEffect(() => {
+    if (!early.length || window.location.origin === productionOrigin) return;
+    players.current.forEach((player) => Object.assign(player, { video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null }));
+    firstCount.current = 0;
+    const timer = window.setTimeout(() => setSources(null));
+    return () => window.clearTimeout(timer);
+    // Only on the first run: the HTML's players.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [extra, setExtra] = useState(false);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
   const [, setTick] = useState(0);
@@ -353,6 +376,7 @@ export function VideoPool({
       });
     // Only a real change re-renders (this runs after every render).
     setPlacements((previous) => (previous.every((spot, index) => samePlacement(spot, next[index])) ? previous : next));
+    if (next.some(Boolean)) setPlacedOnce(true);
     const showing = players.current
       .map((player) => (player.target && player.video && player.showing === player.video ? player.target : null))
       .filter((key): key is string => key !== null)
@@ -398,14 +422,17 @@ export function VideoPool({
         const spot = placements[index];
         const scale = spot ? spot.width / playerWidth : 1;
         const slid = Boolean(spot?.fixed && motion && (motion.x || motion.glide));
-        const fixed = Boolean(spot?.fixed);
+        // A player from the HTML before the grid places it: on the screen, unseen (a browser slows down
+        // or pauses a video playing off screen).
+        const waiting = !spot && !placedOnce && Boolean(early[index]);
+        const fixed = Boolean(spot?.fixed) || waiting;
         return (
           <div
             key={index}
             className={src ? "overflow-hidden" : "hidden"}
             style={{
               position: fixed ? "fixed" : "absolute",
-              top: spot?.top ?? -10000,
+              top: spot?.top ?? (waiting ? 0 : -10000),
               left: spot?.left ?? 0,
               width: spot?.width ?? playerWidth,
               height: spot?.height ?? playerHeight,

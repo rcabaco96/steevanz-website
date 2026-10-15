@@ -178,6 +178,11 @@ function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string;
  */
 export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [active, setActive] = useState(menu.collections[0].id);
+  // What the page opens on: the first collection's dishes (their players in the HTML, their pictures in the opening).
+  const [opening] = useState(() => {
+    const videos = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]?.video).filter((video): video is string => Boolean(video));
+    return { first: videos.slice(0, 4), pictures: videos.length >= 4 ? videos : Object.values(menu.dishes).map((dish) => dish.video) };
+  });
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
   const [drag, setDrag] = useState(0);
@@ -514,11 +519,11 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
           onClose={closeViewer}
         />
       ) : null}
-      <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} />
+      <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} first={opening.first} />
       <MosaicSplash
         logo={menu.logo}
         business={menu.business}
-        videos={Object.values(menu.dishes).map((dish) => dish.video)}
+        videos={opening.pictures}
         ready={focus.visible.length > 0 && focus.visible.every((key) => ready.includes(`grid-${key}`))}
         onDone={opened}
       />
