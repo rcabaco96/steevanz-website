@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { preconnect } from "react-dom";
 import { VideoMenu } from "@/components/menu/VideoMenu";
 import { demoMenu, type VideoMenuData } from "@/content/demo-menu";
+import { bunnyHost, menuReferrer } from "@/lib/video-menus/rules";
 import { getPublicMenu } from "@/lib/video-menus/store";
 
 // Hidden test page (owner, 2026-10-14): a client's digital menu in videos. Since 2026-10-15 it is the
@@ -26,12 +27,12 @@ async function loadMenu(): Promise<VideoMenuData | null> {
 
 export async function generateMetadata(): Promise<Metadata> {
   const menu = await loadMenu();
-  return { title: `Menu · ${menu?.business ?? demoMenu.business}` };
+  return { title: `Menu · ${menu?.business ?? demoMenu.business}`, referrer: menuReferrer };
 }
 
 export default async function DemoVideoMenuPage() {
   // The players and thumbnails come from these hosts: the connections are open before they're needed.
-  for (const host of ["https://www.youtube-nocookie.com", "https://i.ytimg.com", "https://www.google.com"]) preconnect(host);
+  for (const host of ["https://www.youtube-nocookie.com", "https://i.ytimg.com", "https://www.google.com", bunnyHost()]) if (host) preconnect(host);
   const menu = await loadMenu();
   if (!menu) notFound();
   return <VideoMenu menu={menu} />;

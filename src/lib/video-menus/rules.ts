@@ -45,6 +45,19 @@ export function youTubeThumbnail(videoId: string): string {
 
 // Bunny Stream -------------------------------------------------------------------------------------
 
+/**
+ * The menu pages send our origin (only it, never the path) to other sites: Bunny's pull zone refuses
+ * requests without a referrer, and the public layout sends none outside the site (same-origin). A
+ * menu's address carries nothing personal.
+ */
+export const menuReferrer = "strict-origin";
+
+/** Bunny's pull zone host (the dishes' own videos), to connect to early; null when not configured. */
+export function bunnyHost(): string | null {
+  const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
+  return pullZone ? `https://${pullZone}.b-cdn.net` : null;
+}
+
 /** A dish's own video's picture (Bunny Stream's thumbnail); null without the pull zone. */
 export function bunnyThumbnail(videoId: string): string | null {
   const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
