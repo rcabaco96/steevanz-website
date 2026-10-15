@@ -11,53 +11,97 @@ export const hasBunnyVideo = (bunny?: string): bunny is string => Boolean(bunny 
 
 /** A card plays once this much of it is on screen. */
 const playAtRatio = 0.5;
+/** A video loads once it's within this distance of the screen (a screen ahead), and is let go beyond it. */
+const nearMargin = "100% 0px";
 
 /**
- * A dish's own video from Bunny Stream (owner, 2026-10-15): Bunny's adaptive stream (HLS), like
- * Instagram's: it starts at once and rises to the best quality the screen and the network allow,
- * up to the library's highest resolution (owner: «quero tipo 4k, os clientes vão gravar com
- * iPhone»). The phone decodes it itself: no player to load, no ⏸, no YouTube overlays. An iPhone
- * plays HLS natively; elsewhere hls.js (loaded only when a Bunny video plays) caps the quality to
- * the box's size × the screen's density, so a grid card doesn't pull full-screen quality. The 720p
- * MP4 is the fallback. Silent, looping, inline, nothing loaded until it plays: in the grid while on
- * screen (IntersectionObserver), in full screen when `playing`.
+ * A dish's own video from Bunny Stream. In the grid, the 720p MP4 (owner's iPhone, 2026-10-16: «há
+ * alguns que não chegam a carregar»: each card on Bunny's adaptive stream took 1080p or 4K, and an iPhone
+ * gave up decoding several at once; a card needs no more than 720p, starts at once and is cached for 30
+ * days). Full screen, Bunny's adaptive stream (HLS) up to the library's best resolution (owner: «quero
+ * tipo 4k»): natively on an iPhone, hls.js elsewhere (loaded only then), capped to the screen's size.
+ * Each video loads a screen ahead and is let go a screen behind (the phone never holds dozens of them);
+ * its picture stays under it until it has frames playing, then it fades in (owner: «aparece só a imagem e
+ * depois o vídeo», «pára com os flashes»). Silent, looping, inline: in the grid while half on screen, in
+ * full screen when `playing` (its neighbours load ahead).
  */
 export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
   const hls = useRef<Hls | null>(null);
+  const [near, setNear] = useState(false);
   const [seen, setSeen] = useState(false);
-  // The video shows only once it has frames on screen: until then its picture (no white flash on an
-  // iPhone, owner 2026-10-15: «faz um flash branco», «pára com os flashes»).
   const [shown, setShown] = useState(false);
-  const active = playing ?? seen;
-  const activeNow = useRef(active);
-  useEffect(() => {
-    activeNow.current = active;
-  }, [active]);
+  const full = playing !== undefined;
+  const active = full ? playing : seen;
+  const load = near || active;
   const base = `https://${pullZone}.b-cdn.net/${id}`;
 
-  // The browser's own HLS failed (or the stream did): the MP4 instead; that one failing too leaves the picture.
+  // Near the screen (loads), and half on it (a grid card plays).
   useEffect(() => {
     const element = video.current;
     if (!element) return;
-    const onError = () => {
-      if (!element.src.endsWith(".m3u8")) return;
-      element.src = `${base}/play_720p.mp4`;
-      if (activeNow.current) void element.play().catch(() => {});
+    const nearby = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), { rootMargin: nearMargin });
+    const onScreen = new IntersectionObserver(([entry]) => setSeen(entry.intersectionRatio >= playAtRatio), { threshold: [0, playAtRatio, 1] });
+    nearby.observe(element);
+    onScreen.observe(element);
+    return () => {
+      nearby.disconnect();
+      onScreen.disconnect();
     };
-    element.addEventListener("error", onError);
-    return () => element.removeEventListener("error", onError);
-  }, [base]);
+  }, []);
 
-  // In the grid: on screen or not.
+  // Loads the source when near, lets it go when far.
   useEffect(() => {
     const element = video.current;
-    if (!element || playing !== undefined) return;
-    const observer = new IntersectionObserver(([entry]) => setSeen(entry.intersectionRatio >= playAtRatio), { threshold: [0, playAtRatio, 1] });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [playing]);
+    if (!element) return;
+    const mp4 = `${base}/play_720p.mp4`;
+    if (!load) {
+      if (!element.getAttribute("src") && !hls.current) return;
+      hls.current?.destroy();
+      hls.current = null;
+      element.removeAttribute("src");
+      element.load();
+      setShown(false);
+      return;
+    }
+    if (element.getAttribute("src") || hls.current) return;
+    let cancelled = false;
+    const attach = async () => {
+      if (!full) {
+        element.src = mp4;
+        return;
+      }
+      // An iPhone (Safari, and every iOS browser: all WebKit) plays HLS itself. Not Chrome or Edge:
+      // they answer «maybe» too, but refused their own HLS (ERR_BLOCKED_BY_ORB, 2026-10-15).
+      const canNative = element.canPlayType("application/vnd.apple.mpegurl") !== "";
+      if (/Apple/.test(navigator.vendor) && canNative) {
+        element.src = `${base}/playlist.m3u8`;
+        return;
+      }
+      const { default: HlsPlayer } = await import("hls.js");
+      if (cancelled) return;
+      if (!HlsPlayer.isSupported()) {
+        element.src = canNative ? `${base}/playlist.m3u8` : mp4;
+        return;
+      }
+      const player = new HlsPlayer({ capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 });
+      hls.current = player;
+      player.on(HlsPlayer.Events.ERROR, (_event, data) => {
+        if (!data.fatal) return;
+        player.destroy();
+        hls.current = null;
+        element.src = mp4;
+      });
+      player.loadSource(`${base}/playlist.m3u8`);
+      player.attachMedia(element);
+    };
+    void attach();
+    return () => {
+      cancelled = true;
+    };
+  }, [load, full, base]);
 
+  // Plays while active (once the source is there), pauses otherwise.
   useEffect(() => {
     const element = video.current;
     if (!element) return;
@@ -65,42 +109,12 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
       element.pause();
       return;
     }
-    let cancelled = false;
     const play = () => void element.play().catch(() => {});
-    const fallback = () => {
-      hls.current?.destroy();
-      hls.current = null;
-      element.src = `${base}/play_720p.mp4`;
-      play();
-    };
-    const native = () => {
-      element.src = `${base}/playlist.m3u8`;
-      play();
-    };
-    const start = async () => {
-      if (element.src || hls.current) return play();
-      // An iPhone (Safari, and every iOS browser: all WebKit) plays HLS itself. Not Chrome or Edge:
-      // they now answer «maybe» too, but their own HLS was refused (ERR_BLOCKED_BY_ORB, 2026-10-15).
-      const apple = /Apple/.test(navigator.vendor);
-      const canNative = element.canPlayType("application/vnd.apple.mpegurl") !== "";
-      if (apple && canNative) return native();
-      const { default: HlsPlayer } = await import("hls.js");
-      if (cancelled) return;
-      if (!HlsPlayer.isSupported()) return canNative ? native() : fallback();
-      const player = new HlsPlayer({ capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 });
-      hls.current = player;
-      player.on(HlsPlayer.Events.ERROR, (_event, data) => {
-        if (data.fatal) fallback();
-      });
-      player.loadSource(`${base}/playlist.m3u8`);
-      player.attachMedia(element);
-      play();
-    };
-    void start();
-    return () => {
-      cancelled = true;
-    };
-  }, [active, base]);
+    play();
+    // The source may only just be attaching (hls.js loads first): play once it can.
+    element.addEventListener("canplay", play);
+    return () => element.removeEventListener("canplay", play);
+  }, [active, load]);
 
   useEffect(
     () => () => {
@@ -119,12 +133,19 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
         muted
         loop
         playsInline
-        preload="none"
+        preload="auto"
         disablePictureInPicture
         onTimeUpdate={(event) => {
           if (!shown && event.currentTarget.currentTime > 0) setShown(true);
         }}
-        className={`absolute inset-0 h-full w-full object-cover ${shown ? "" : "opacity-0"}`}
+        onError={(event) => {
+          // The browser's own HLS failed: the MP4 instead (that one failing too leaves the picture).
+          const element = event.currentTarget;
+          if (!element.getAttribute("src")?.endsWith(".m3u8")) return;
+          element.src = `${base}/play_720p.mp4`;
+          if (active) void element.play().catch(() => {});
+        }}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-200 ${shown ? "opacity-100" : "opacity-0"}`}
       />
     </>
   );
