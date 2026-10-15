@@ -59,7 +59,7 @@ async function placasSvg({ logoDataUri, qrUrl, rosa, rosaEscuro, relSombra = "#c
   // Placa em pé (esquerda) — 0..250 × 0..420
   const W = 560, H = 440;
   const up = { x: 30, y: 10, w: 200, h: 340 };
-  const qrS = 74, qrUnit = qrS / (qn + 2);
+  const qrS = 70, qrUnit = qrS / (qn + 2);
   const upright = `
     <g>
       <rect x="10" y="372" width="240" height="40" rx="8" fill="${granito}"/>
@@ -70,10 +70,9 @@ async function placasSvg({ logoDataUri, qrUrl, rosa, rosaEscuro, relSombra = "#c
       <text x="${up.x + up.w / 2}" y="${up.y + 62}" text-anchor="middle" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-weight="600" font-size="46" letter-spacing="-1" fill="${rosaEscuro}">Menu</text>
       <circle cx="${up.x + up.w / 2}" cy="${up.y + 148}" r="56" fill="${creme}"/>
       <image href="${logoDataUri}" x="${up.x + up.w / 2 - 54}" y="${up.y + 94}" width="108" height="108" clip-path="url(#cl1)"/>
-      ${iconeToque(up.x + up.w / 2 + 4, up.y + 232, 1.05, verde, creme)}
-      <text x="${up.x + up.w / 2}" y="${up.y + 268}" text-anchor="middle" font-family="Hanken Grotesk, Segoe UI, sans-serif" font-weight="700" font-size="11" letter-spacing="1.5" fill="${verde}">TAP-IN</text>
-      <rect x="${up.x + up.w / 2 - qrS / 2}" y="${up.y + 276}" width="${qrS}" height="${qrS}" rx="4" fill="${creme}"/>
-      <g transform="translate(${up.x + up.w / 2 - qrS / 2 + qrUnit} ${up.y + 276 + qrUnit}) scale(${qrUnit})"><path d="${qd}" fill="${rosaEscuro}"/></g>
+      ${iconeToque(up.x + 62, up.y + 290, 1.0, rosaEscuro, creme)}
+      <rect x="${up.x + 112}" y="${up.y + 255}" width="${qrS}" height="${qrS}" rx="4" fill="${creme}"/>
+      <g transform="translate(${up.x + 112 + qrUnit} ${up.y + 255 + qrUnit}) scale(${qrUnit})"><path d="${qd}" fill="${rosaEscuro}"/></g>
     </g>`;
   // Placa plana (direita): cor sólida com relevo creme
   const fl = { x: 290, y: 70, w: 250, h: 330 };
@@ -88,11 +87,11 @@ async function placasSvg({ logoDataUri, qrUrl, rosa, rosaEscuro, relSombra = "#c
       <circle cx="${fl.x + fl.w / 2 + 2}" cy="${fl.y + 130}" r="54" fill="${relSombra}"/>
       <circle cx="${fl.x + fl.w / 2}" cy="${fl.y + 128}" r="54" fill="${creme}"/>
       <image href="${logoDataUri}" x="${fl.x + fl.w / 2 - 50}" y="${fl.y + 78}" width="100" height="100" clip-path="url(#cl2)"/>
-      ${iconeToque(fl.x + fl.w / 2 + 6, fl.y + 213, 1.1, relSombra, rosa).replace(/translate\(([\d.]+) ([\d.]+)\)/, (m, a, b) => `translate(${+a + 1.5} ${+b + 2})`)}
-      ${iconeToque(fl.x + fl.w / 2 + 4, fl.y + 211, 1.1, rel, rosa)}
-      <rect x="${fl.x + fl.w / 2 - qrS2 / 2 + 2}" y="${fl.y + 238}" width="${qrS2}" height="${qrS2}" rx="6" fill="${relSombra}"/>
-      <rect x="${fl.x + fl.w / 2 - qrS2 / 2}" y="${fl.y + 236}" width="${qrS2}" height="${qrS2}" rx="6" fill="${rel}"/>
-      <g transform="translate(${fl.x + fl.w / 2 - qrS2 / 2 + qrUnit2} ${fl.y + 236 + qrUnit2}) scale(${qrUnit2})"><path d="${qd}" fill="${rosaEscuro}"/></g>
+      ${iconeToque(fl.x + 80, fl.y + 266, 1.1, relSombra, rosa).replace(/translate\(([\d.]+) ([\d.]+)\)/, (m, a, b) => `translate(${+a + 1.5} ${+b + 2})`)}
+      ${iconeToque(fl.x + 78, fl.y + 264, 1.1, rel, rosa)}
+      <rect x="${fl.x + 142}" y="${fl.y + 226}" width="${qrS2}" height="${qrS2}" rx="6" fill="${relSombra}"/>
+      <rect x="${fl.x + 140}" y="${fl.y + 224}" width="${qrS2}" height="${qrS2}" rx="6" fill="${rel}"/>
+      <g transform="translate(${fl.x + 140 + qrUnit2} ${fl.y + 224 + qrUnit2}) scale(${qrUnit2})"><path d="${qd}" fill="${rosaEscuro}"/></g>
     </g>`;
   const defs = `<defs><clipPath id="cl1"><circle cx="${up.x + up.w / 2}" cy="${up.y + 148}" r="53"/></clipPath><clipPath id="cl2"><circle cx="${fl.x + fl.w / 2}" cy="${fl.y + 128}" r="49"/></clipPath></defs>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Placas de mesa: abrem o menu com um toque ou com o QR code">${defs}${upright}${flat}</svg>`;
