@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /** The pull zone that serves the dishes' own videos (Bunny Stream). */
 const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
@@ -12,13 +12,16 @@ export const hasBunnyVideo = (bunny?: string): bunny is string => Boolean(bunny 
 const playAtRatio = 0.5;
 
 /**
- * A dish's own video from Bunny Stream (owner, 2026-10-15): a plain MP4 (480p, the phone decodes it
+ * A dish's own video from Bunny Stream (owner, 2026-10-15): a plain MP4 (the phone decodes it
  * itself: no player to load, no ⏸, no YouTube overlays), with Bunny's thumbnail as poster. Silent,
  * looping, inline, nothing loaded until it plays. In the grid it plays while on screen
- * (IntersectionObserver); in full screen `playing` decides.
+ * (IntersectionObserver) in 480p (a half-width card; light on 4G); in full screen `playing` decides
+ * and it plays in 720p («480p não tem qualidade nenhuma»), the best MP4 Bunny makes, falling back to
+ * 480p when the source was too small for a 720p file.
  */
-export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
+export function BunnyVideo({ id, playing, quality = "480p" }: { id: string; playing?: boolean; quality?: "480p" | "720p" }) {
   const video = useRef<HTMLVideoElement>(null);
+  const [rendition, setRendition] = useState(quality);
 
   useEffect(() => {
     const element = video.current;
@@ -45,7 +48,15 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   return (
     <video
       ref={video}
-      src={`${base}/play_480p.mp4`}
+      src={`${base}/play_${rendition}.mp4`}
+      onError={() => {
+        if (rendition === "480p") return;
+        setRendition("480p");
+        // The new source starts again where it was meant to (playing or not).
+        window.setTimeout(() => {
+          if (playing) void video.current?.play().catch(() => {});
+        });
+      }}
       poster={`${base}/thumbnail.jpg`}
       muted
       loop
