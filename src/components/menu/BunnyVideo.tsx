@@ -15,10 +15,19 @@ const playAtRatio = 0.5;
 const nearMargin = "100% 0px";
 
 /**
- * A dish's own video from Bunny Stream. In the grid, the 720p MP4 (owner's iPhone, 2026-10-16: «há
- * alguns que não chegam a carregar»: each card on Bunny's adaptive stream took 1080p or 4K, and an iPhone
- * gave up decoding several at once; a card needs no more than 720p, starts at once and is cached for 30
- * days). Full screen, Bunny's adaptive stream (HLS) up to the library's best resolution (owner: «quero
+ * A card's quality: Bunny's rendition that fills its box on this screen (its width × the screen's
+ * density), 480p on a phone. One fixed rendition, small segments: it starts at once.
+ */
+function cardRendition(element: HTMLElement): string {
+  const pixels = element.clientWidth * (window.devicePixelRatio || 1);
+  return pixels <= 540 ? "480p" : pixels <= 800 ? "720p" : "1080p";
+}
+
+/**
+ * A dish's own video from Bunny Stream. In the grid, the one rendition that fills the card (480p on a
+ * phone; owner's iPhone, 2026-10-16: «há alguns que não chegam a carregar»: each card on Bunny's adaptive
+ * stream took 1080p or 4K, and an iPhone gave up decoding several at once; the 720p MP4 was too heavy for
+ * four cards at once). Full screen, Bunny's adaptive stream (HLS) up to the library's best resolution (owner: «quero
  * tipo 4k»): natively on an iPhone, hls.js elsewhere (loaded only then), capped to the screen's size.
  * Each video loads a screen ahead and is let go a screen behind (the phone never holds dozens of them);
  * its picture stays under it until it has frames playing, then it fades in (owner: «aparece só a imagem e
@@ -66,22 +75,20 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
     }
     if (element.getAttribute("src") || hls.current) return;
     let cancelled = false;
+    // Full screen: the adaptive stream (every rendition); a card: its one rendition.
+    const stream = full ? `${base}/playlist.m3u8` : `${base}/${cardRendition(element)}/video.m3u8`;
     const attach = async () => {
-      if (!full) {
-        element.src = mp4;
-        return;
-      }
       // An iPhone (Safari, and every iOS browser: all WebKit) plays HLS itself. Not Chrome or Edge:
       // they answer «maybe» too, but refused their own HLS (ERR_BLOCKED_BY_ORB, 2026-10-15).
       const canNative = element.canPlayType("application/vnd.apple.mpegurl") !== "";
       if (/Apple/.test(navigator.vendor) && canNative) {
-        element.src = `${base}/playlist.m3u8`;
+        element.src = stream;
         return;
       }
       const { default: HlsPlayer } = await import("hls.js");
       if (cancelled) return;
       if (!HlsPlayer.isSupported()) {
-        element.src = canNative ? `${base}/playlist.m3u8` : mp4;
+        element.src = canNative ? stream : mp4;
         return;
       }
       const player = new HlsPlayer({ capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 });
@@ -92,7 +99,7 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
         hls.current = null;
         element.src = mp4;
       });
-      player.loadSource(`${base}/playlist.m3u8`);
+      player.loadSource(stream);
       player.attachMedia(element);
     };
     void attach();
