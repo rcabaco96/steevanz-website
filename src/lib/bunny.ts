@@ -41,7 +41,8 @@ export async function createBunnyVideo(title: string): Promise<string> {
   const response = await fetch(`${apiBase}/library/${libraryId}/videos`, {
     method: "POST",
     headers: { AccessKey: apiKey, "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ title: title.slice(0, 200) }),
+    // The thumbnail from the first frame (ms): the menu shows it until the video plays from there.
+    body: JSON.stringify({ title: title.slice(0, 200), thumbnailTime: 0 }),
     cache: "no-store",
   });
   if (!response.ok) throw new BunnyError(`Bunny create video: HTTP ${response.status}`);
@@ -61,12 +62,15 @@ export async function deleteBunnyVideo(videoId: string): Promise<void> {
   if (!response.ok && response.status !== 404) throw new BunnyError(`Bunny delete video: HTTP ${response.status}`);
 }
 
-/** The small picture's width (px): a grid card is ~170 px wide × the screen's density. */
-const smallThumbnailWidth = 540;
+/**
+ * The small picture (px): a grid card is ~170 px wide × the screen's density, 9:16. A wide video is cut
+ * to its centre, as the card shows it (object-cover).
+ */
+const smallThumbnail = { width: 540, height: 960 };
 
 /**
  * Gives a finished video a small picture (owner, 2026-10-16): Bunny's own thumbnail is the video's full
- * size (up to 4K, ~270 KB) for a card of ~170 px. It is shrunk to 540 px (~25 KB) and set as the
+ * size (up to 4K, ~270 KB) for a card of ~170 px. It is cut to 540×960 (~30 KB) and set as the
  * video's thumbnail; Bunny keeps it under a new name (thumbnail_<hash>.jpg), which is returned.
  */
 export async function setSmallBunnyThumbnail(videoId: string): Promise<string> {
@@ -78,7 +82,7 @@ export async function setSmallBunnyThumbnail(videoId: string): Promise<string> {
   if (!original.ok) throw new BunnyError(`Bunny thumbnail: HTTP ${original.status}`);
   const { default: sharp } = await import("sharp");
   const small = await sharp(Buffer.from(await original.arrayBuffer()))
-    .resize({ width: smallThumbnailWidth, withoutEnlargement: true })
+    .resize({ ...smallThumbnail, fit: "cover", position: "centre" })
     .jpeg({ quality: 72, mozjpeg: true })
     .toBuffer();
   const video = `${apiBase}/library/${libraryId}/videos/${encodeURIComponent(videoId)}`;

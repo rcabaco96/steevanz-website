@@ -15,6 +15,18 @@ const playAtRatio = 0.5;
 const nearMargin = "100% 0px";
 
 /**
+ * Videos on screen still waiting for their first frames: the ones near but off screen wait for them
+ * before loading (2026-10-16: those off screen were ready before the ones on it), at most this long (ms).
+ */
+const starting = new Set<HTMLVideoElement>();
+const whenStarted = new Set<() => void>();
+const aheadWaitMs = 2500;
+function markStarting(element: HTMLVideoElement, on: boolean) {
+  if (on) starting.add(element);
+  else if (starting.delete(element) && !starting.size) for (const go of whenStarted) go();
+}
+
+/**
  * A card's quality: Bunny's rendition that fills its box on this screen (its width × the screen's
  * density), 480p on a phone. One fixed rendition, small segments: it starts at once.
  */
@@ -40,9 +52,11 @@ export function BunnyVideo({ id, thumbnail, playing }: { id: string; /** Its sma
   const [near, setNear] = useState(false);
   const [seen, setSeen] = useState(false);
   const [shown, setShown] = useState(false);
+  const [ahead, setAhead] = useState(false);
   const full = playing !== undefined;
   const active = full ? playing : seen;
-  const load = near || active;
+  // On screen (or full screen): at once. Near in the grid: once those on screen have started.
+  const load = active || (near && (full || ahead));
   const base = `https://${pullZone}.b-cdn.net/${id}`;
 
   // Near the screen (loads), and half on it (a grid card plays).
@@ -58,6 +72,27 @@ export function BunnyVideo({ id, thumbnail, playing }: { id: string; /** Its sma
       onScreen.disconnect();
     };
   }, []);
+
+  // A card near the screen loads ahead once the cards on screen have their first frames.
+  useEffect(() => {
+    if (!near || full || ahead) return;
+    const go = () => setAhead(true);
+    if (!starting.size) return go();
+    whenStarted.add(go);
+    const timer = window.setTimeout(go, aheadWaitMs);
+    return () => {
+      whenStarted.delete(go);
+      window.clearTimeout(timer);
+    };
+  }, [near, full, ahead]);
+
+  // On screen and not playing yet: the cards off screen wait for it.
+  useEffect(() => {
+    const element = video.current;
+    if (!element || !active || shown) return;
+    markStarting(element, true);
+    return () => markStarting(element, false);
+  }, [active, shown]);
 
   // Loads the source when near, lets it go when far.
   useEffect(() => {
