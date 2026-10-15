@@ -91,7 +91,9 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
         element.src = canNative ? stream : mp4;
         return;
       }
-      const player = new HlsPlayer({ capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 });
+      // A card buffers one segment ahead (4 s): the cards waiting off screen hold only their start, not
+      // the whole clip each (7.6 MB in the first seconds, 2026-10-16).
+      const player = new HlsPlayer(full ? { capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 } : { maxBufferLength: 4, maxMaxBufferLength: 8 });
       hls.current = player;
       player.on(HlsPlayer.Events.ERROR, (_event, data) => {
         if (!data.fatal) return;
@@ -140,7 +142,7 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
         muted
         loop
         playsInline
-        preload="auto"
+        preload={active ? "auto" : "metadata"}
         disablePictureInPicture
         onTimeUpdate={(event) => {
           if (!shown && event.currentTarget.currentTime > 0) setShown(true);
