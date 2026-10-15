@@ -423,12 +423,27 @@ body.only-quote .slide { display: none; }
 #s6 .step p { font-size: 1.02em; }
 #s6 .steps { gap: calc(26 * var(--u)); }
 #s11 .path { font-size: 1.1em; }
-#s12 .split { align-items: center; align-content: center; }
-#s12 .ptable td { font-size: 1.08em; padding-top: 0.7em; padding-bottom: 0.7em; }
+#s12 .split { align-items: start; align-content: center; }
+#s12 .ptable td { font-size: 0.95em; padding-top: 0.42em; padding-bottom: 0.42em; }
+#s12 .ptable tr.sub td { padding-top: 0.22em; padding-bottom: 0.22em; }
+#s12 .card { padding-top: calc(16 * var(--u)); padding-bottom: calc(16 * var(--u)); gap: calc(4 * var(--u)); }
+#s12 h2 { font-size: 2.5em; }
+#s12 .inner { gap: calc(16 * var(--u)); }
 #s12 .ptable tr.sub td { padding-top: 0.35em; padding-bottom: 0.35em; }
 #s14 .closing .sign { font-size: 1.12em; }
 .cover .cover-h1 { font-size: 3.5em; }
 @media screen and (max-width: 760px) { .cover .cover-h1 { font-size: 2.4em; } }
+#s12 .rec-card { border: 2px solid var(--gold); position: relative; }
+#s12 .rec-badge { position: absolute; top: calc(-22 * var(--u)); right: calc(20 * var(--u)); font-size: 0.78em; }
+#s12 .rec-card .tag { margin-top: calc(14 * var(--u)); }
+#s12 .save { font-weight: 700; color: var(--gold-text); font-size: 0.92em; margin-top: calc(4 * var(--u)); }
+.cheio { color: var(--subtle); font-weight: 500; font-size: 0.86em; margin-right: 0.35em; text-decoration-thickness: 1.5px; }
+.poupa { display: inline-block; background: var(--ok-soft); color: var(--ok); font-weight: 800; border-radius: 999px; padding: 0.05em 0.6em; font-size: 0.95em; white-space: nowrap; }
+.poupa.big { font-size: 1.05em; padding: 0.15em 0.75em; }
+#s12 .alt { font-size: 0.9em; }
+.adj-line { font-size: 0.98em; color: var(--text); }
+.adj-line span { color: var(--muted); }
+@media screen and (max-width: 760px) { #s12 .rec-badge { position: static; align-self: flex-start; margin-bottom: 6px; } }
 .para { display: flex; align-items: center; gap: calc(16 * var(--u)); flex-wrap: wrap; }
 .para-l { font-size: 0.72em; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 0.45em 1em; transform: rotate(-3deg); }
 .para-n { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2.1em; line-height: 1.05; color: var(--text); letter-spacing: -0.02em; }
@@ -469,7 +484,7 @@ body.only-quote .slide { display: none; }
         <p class="lead">Uma página para o encontrarem e escolherem. Um menu em vídeo para verem os pratos antes de pedir.</p>
         <div class="para"><span class="para-l">Para</span><span class="para-n">{{cliente}}</span></div>
         <p class="meta-line">Proposta de {{dataFmt}} · válida até {{validadeFmt}} ({{validadeDias}} dias)</p>
-        <p class="sign">Tecnologia do amanhã, com os bons modos de sempre.</p>
+        <p class="sign">Tecnologia do amanhã, com os bons modos de antigamente.</p>
       </div>
       <div class="phones" style="--ph: 480;">
         <figure class="phone ph-tilt-l"><div class="ph"><img src="@@lp-hero@@" alt="Landing page Dolci e Salati no telemóvel"></div></figure>
@@ -519,14 +534,14 @@ body.only-quote .slide { display: none; }
         <div class="tag">1 · Landing page</div>
         <h3>A sua casa, numa página</h3>
         <p>Rápida, feita para telemóvel, com um botão claro: ver o menu, reservar ou chegar lá.</p>
-        <span class="price-chip">{{lpPreco}} € + IVA · depois {{lpMensal}} €/mês</span>
+        <span class="price-chip">{{lpPreco}} € + IVA · depois {{lpAnual}} €/ano</span>
       </div>
       <div class="card">
         <div class="thumb pos-c"><img src="@@vm-grid-gel-b@@" alt="Menu digital em vídeo"></div>
         <div class="tag">2 · Menu digital em vídeo</div>
         <h3>Os pratos a mexer</h3>
         <p>Um vídeo curto por prato, com nome e preço. Desliza-se como nos Reels.</p>
-        <span class="price-chip">{{menuMensal}} €/mês + IVA</span>
+        <span class="price-chip">{{menuAnual}} €/ano + IVA</span>
       </div>
       <div class="card">
         <div class="thumb"><div class="mini-plate"><div class="qr">@@qr-menu@@</div></div></div>
@@ -600,14 +615,14 @@ body.only-quote .slide { display: none; }
         <div class="step"><span class="num">4</span><div><h3>No ar, no seu domínio</h3><p>E registada no Google.</p></div></div>
       </div>
       <div class="big-card" style="background: var(--accent); border-color: var(--accent);">
-        <div class="tag" style="color: var(--gold);">Depois · {{lpMensal}} €/mês + IVA</div>
+        <div class="tag" style="color: var(--gold);">Depois · {{lpAnual}} €/ano ou {{lpMensal}} €/mês + IVA</div>
         <h3 style="color: var(--on-accent);">Nós tratamos do resto.</h3>
         <ul class="list" style="color: var(--on-accent);">
           <li style="color: var(--on-accent);">Alojamento, segurança e cópias de segurança</li>
           <li style="color: var(--on-accent);">Até 30 minutos de pequenas alterações por mês</li>
           <li style="color: var(--on-accent);">Uma pessoa real do outro lado do WhatsApp</li>
         </ul>
-        <p style="color: var(--on-accent); opacity: .9; margin-top: auto;">Sem período mínimo: fica porque funciona, não porque é obrigado.</p>
+        <p style="color: var(--on-accent); opacity: .9; margin-top: auto;">Anual com {{mesesOferta}} meses grátis, ou mensal sem período mínimo: fica porque funciona, não porque é obrigado.</p>
       </div>
     </div>
     <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>6 / 14</span></div>
@@ -767,19 +782,23 @@ body.only-quote .slide { display: none; }
           </tbody>
         </table>
       </div>
-      <div class="card">
-        <div class="tag">Por mês · sem período mínimo</div>
+      <div class="card rec-card">
+        <span class="sticker rec-badge">Recomendado · {{mesesOferta}} meses grátis</span>
+        <div class="tag">Plano anual · 12 meses pelo preço de {{mesesPagos}}</div>
         <table class="ptable">
           <tbody>
-            <tr><td>Alojamento e manutenção da landing page<small>Cancela com 30 dias de aviso</small></td><td class="r">{{lpMensalEur}}/mês</td></tr>
-            <tr><td>Menu digital em vídeo<small>Montagem e alojamento incluídos</small></td><td class="r">{{menuMensalEur}}/mês</td></tr>
-            <tr class="sub"><td>Subtotal (+ IVA)</td><td class="r">{{mensalSubEur}}/mês</td></tr>
-            <tr class="sub"><td>IVA {{ivaPct}}%</td><td class="r">{{mensalIvaEur}}/mês</td></tr>
-            <tr class="tot"><td>Total com IVA</td><td class="r">{{mensalTotEur}}/mês</td></tr>
+            <tr><td>Alojamento e manutenção da landing page<small>{{lpMensal}} €/mês × {{mesesPagos}} <span class="poupa">poupa {{lpPoupa}} €</span></small></td><td class="r"><s class="cheio">{{lpAnualCheio}} €</s> {{lpAnualEur}}/ano</td></tr>
+            <tr><td>Menu digital em vídeo<small>Montagem e alojamento incluídos · {{menuMensal}} €/mês × {{mesesPagos}} <span class="poupa">poupa {{menuPoupa}} €</span></small></td><td class="r"><s class="cheio">{{menuAnualCheio}} €</s> {{menuAnualEur}}/ano</td></tr>
+            <tr class="sub"><td>Subtotal (+ IVA)</td><td class="r"><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano</td></tr>
+            <tr class="sub"><td>IVA {{ivaPct}}%</td><td class="r">{{anualIvaEur}}/ano</td></tr>
+            <tr class="tot"><td>Total com IVA</td><td class="r">{{anualTotEur}}/ano</td></tr>
           </tbody>
         </table>
+        <p class="save"><span class="poupa big">Poupa {{poupanca}} € por ano</span> + IVA · {{poupancaComIvaEur}} com IVA</p>
+        <p class="alt">Ou {{mensalSub}} €/mês + IVA ({{mensalTotEur}} com IVA), sem período mínimo.</p>
       </div>
     </div>
+    <p class="adj-line"><b>Na adjudicação:</b> itens únicos + 1.º ano = {{adjAnualSubEur}} + IVA {{adjAnualIvaEur}} = <b>{{adjAnualTotEur}}</b> <span>· com pagamento mensal: {{adjMensalSubEur}} + IVA</span></p>
     <p class="small">Preços + IVA ({{ivaPct}}%). O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.</p>
     <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>12 / 14</span></div>
   </div>
@@ -828,7 +847,7 @@ body.only-quote .slide { display: none; }
       </div>
     </div>
     <div class="closing">
-      <p class="sign">Obrigado pelo seu tempo. O resto tratamos nós, com os bons modos de sempre.</p>
+      <p class="sign">Obrigado pelo seu tempo. O resto tratamos nós, com os bons modos de antigamente.</p>
       <p class="contact-line">WhatsApp/telefone <b>961 292 679</b> · www.steevanz.com</p>
     </div>
     <div class="foot"><span><b>Steevanz</b> · Feito em Portugal</span><span>14 / 14</span></div>

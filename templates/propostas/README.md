@@ -35,11 +35,12 @@ npm install
    | `aceitacaoUrl` | Endereço da página de adjudicação online, que dá o QR code e o botão do último diapositivo |
    | `landingPage.preco`, `landingPage.mensal` | Preço da landing page e mensalidade |
    | `menu.mensal` | Mensalidade do menu digital em vídeo |
+   | `planoAnual.mesesOferta` | Meses oferecidos no plano anual pago adiantado (2 = «12 meses pelo preço de 10»). Calcula o preço anual, o preço riscado (×12) e a poupança de cada linha e do total |
    | `placas.quantidade` | Número de placas |
    | `placas.precoUnitario`, `placas.precoQuantidade`, `placas.aPartirDe` | Preço normal por placa, preço de quantidade e a partir de quantas placas se aplica |
    | `exemplos` | Títulos e legendas dos diapositivos de exemplo (opcional; sem este campo usam-se textos genéricos) |
 
-   Subtotais, IVA, totais e o desconto de quantidade são calculados automaticamente. Todos os preços são sem IVA.
+   Subtotais, IVA, totais, o desconto de quantidade, o plano anual (recomendado) e os valores na adjudicação são calculados automaticamente. Todos os preços são sem IVA.
 
 3. Gere tudo:
 
@@ -86,3 +87,4 @@ Para mudar textos comuns a todas as propostas, edite `deck.html` e `build-pptx.j
 - Sem «fidelização»: «sem período mínimo».
 - Nada de testemunhos, números ou avaliações inventados.
 - Os vídeos e o menu são alojados pela Steevanz: não falar em YouTube.
+- A frase da marca é «com os bons modos de antigamente».

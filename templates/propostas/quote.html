@@ -213,7 +213,7 @@ input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -we
   display: flex; flex-direction: column; gap: 14px; position: relative;
 }
 .quote p, .quote li { color: var(--muted); }
-.q-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; border-bottom: 2px solid var(--accent); padding-bottom: 14px; }
+.q-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
 .logo { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-variation-settings: "opsz" 22; letter-spacing: -0.025em; line-height: 1.04; color: var(--text); white-space: nowrap; }
 .logo .dot { color: var(--gold); padding-left: 0.185em; }
 .q-brand { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
@@ -236,7 +236,16 @@ input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -we
 .qtable td small { display: block; color: var(--subtle); font-size: 10.6px; line-height: 1.35; margin-top: 1px; }
 .qtable tr.grp td { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-bottom: none; }
 .qtable tr.disc td { color: var(--ok); }
-.q-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.q-totals { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 10px; }
+.rec { display: inline-block; margin-left: 8px; background: var(--gold); color: #1d1220; border-radius: 999px; padding: 1px 8px; font-size: 9px; letter-spacing: 0.06em; }
+.qtable tr.note-row td { font-size: 10.6px; color: var(--subtle); padding-top: 4px; padding-bottom: 4px; }
+.rec-box { border: 1.5px solid var(--gold); background: var(--gold-soft); }
+.cheio { color: var(--subtle); font-weight: 400; font-size: 0.9em; margin-right: 0.3em; }
+.poupa { display: inline-block; background: var(--ok-soft); color: var(--ok); font-weight: 800; border-radius: 999px; padding: 0 0.55em; font-size: 0.95em; white-space: nowrap; }
+.q-save { margin-top: 4px; font-size: 10.4px; font-weight: 700; color: var(--gold-text); }
+.q-adj { border: 1px solid var(--line-strong); border-radius: 8px; padding: 7px 12px; display: grid; gap: 2px; }
+.q-adj .q-row.t { border-top: none; margin-top: 0; padding-top: 0; font-size: 12.4px; }
+.q-adj .q-row span:last-child { white-space: nowrap; }
 .q-box { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
 .q-box h4 { margin: 0 0 4px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); }
 .q-row { display: flex; justify-content: space-between; padding: 2px 0; color: var(--muted); }
@@ -348,7 +357,7 @@ input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -we
   .bar { display: none; }
   .deck { display: block; padding: 0; }
   .slide { page: deck; width: 338.67mm; height: 190.5mm; aspect-ratio: auto; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; }
-  .quote { page: quote; width: 210mm; height: 296.5mm; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; margin: 0; padding: 11mm 13mm 9mm; gap: 11px; }
+  .quote { page: quote; width: 210mm; height: 296.5mm; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; margin: 0; padding: 9mm 13mm 7mm; gap: 8px; }
   body.only-quote .slide { display: none; }
   body.only-quote .quote { break-after: auto; page-break-after: auto; }
   input.qty { background: none; border: none; width: 2em; }
@@ -389,12 +398,13 @@ body.only-quote .slide { display: none; }
     <thead><tr><th>Descrição</th><th class="c">Qtd.</th><th class="r">Preço unit.</th><th class="r">Total</th></tr></thead>
     <tbody>
       <tr class="grp"><td colspan="4">Pagamento único</td></tr>
-      <tr><td><b>Landing page</b><small>Uma página com até 8 secções, design personalizado e pensada para telemóvel; formulário, WhatsApp e mapa; SEO base e ligação ao perfil no Google; cookies, privacidade e Livro de Reclamações; 2 rondas de alterações; publicação com certificado de segurança. Entrega em 5 dias úteis após a receção dos conteúdos.</small></td><td class="c">1</td><td class="r">{{lpPrecoEur}}</td><td class="r">{{lpPrecoEur}}</td></tr>
+      <tr><td><b>Landing page</b><small>Até 8 secções, design personalizado e pensada para telemóvel; formulário, WhatsApp e mapa; SEO base e perfil no Google; cookies, privacidade e Livro de Reclamações; 2 rondas de alterações; certificado de segurança. Entrega em 5 dias úteis após os conteúdos.</small></td><td class="c">1</td><td class="r">{{lpPrecoEur}}</td><td class="r">{{lpPrecoEur}}</td></tr>
       <tr><td><b>Placas de mesa · Menu digital</b><small>Placa circular com QR code impresso e texto personalizado, gravada, bloqueada e testada em iPhone e Android.</small></td><td class="c"><b>{{placasQtd}}</b></td><td class="r">{{placasUnitEur}}</td><td class="r">{{placasBrutoEur}}</td></tr>
       <tr class="disc" style="{{descontoStyle}}"><td>Desconto de quantidade (a partir de {{placasDe}} placas: {{placasVol}} €/un.)</td><td class="c"></td><td class="r"></td><td class="r">− {{placasDescontoEur}}</td></tr>
-      <tr class="grp"><td colspan="4">Mensalidade</td></tr>
-      <tr><td><b>Alojamento e manutenção da landing page</b><small>Alojamento, certificado de segurança, monitorização e cópias de segurança, atualizações, até 30 minutos de pequenas alterações por mês, suporte por WhatsApp e email.</small></td><td class="c">1</td><td class="r">{{lpMensalEur}}/mês</td><td class="r">{{lpMensalEur}}/mês</td></tr>
-      <tr><td><b>Menu digital em vídeo</b><small>Um vídeo vertical por prato com nome, preço e descrição, coleções, ecrã inteiro ao estilo Reels e abertura com o logótipo. Montagem do menu e alojamento do menu e dos vídeos incluídos.</small></td><td class="c">1</td><td class="r">{{menuMensalEur}}/mês</td><td class="r">{{menuMensalEur}}/mês</td></tr>
+      <tr class="grp"><td colspan="4">Mensalidades · plano anual <span class="rec">Recomendado · {{mesesOferta}} meses grátis</span></td></tr>
+      <tr><td><b>Alojamento e manutenção da landing page</b><small>Alojamento, certificado, monitorização e cópias de segurança, atualizações, até 30 min de pequenas alterações por mês, suporte por WhatsApp e email. <span class="poupa">poupa {{lpPoupa}} €</span></small></td><td class="c">12 meses</td><td class="r">{{lpMensalEur}}/mês</td><td class="r"><s class="cheio">{{lpAnualCheioEur}}</s><br>{{lpAnualEur}}/ano</td></tr>
+      <tr><td><b>Menu digital em vídeo</b><small>Um vídeo vertical por prato com nome, preço e descrição, coleções, ecrã inteiro ao estilo Reels e abertura com o logótipo. Montagem do menu e alojamento do menu e dos vídeos incluídos. <span class="poupa">poupa {{menuPoupa}} €</span></small></td><td class="c">12 meses</td><td class="r">{{menuMensalEur}}/mês</td><td class="r"><s class="cheio">{{menuAnualCheioEur}}</s><br>{{menuAnualEur}}/ano</td></tr>
+      <tr class="note-row"><td colspan="4">Plano anual pago adiantado: 12 meses pelo preço de {{mesesPagos}}. Alternativa: pagamento mensal de {{mensalSubEur}}/mês + IVA, sem período mínimo.</td></tr>
     </tbody>
   </table>
 
@@ -405,21 +415,33 @@ body.only-quote .slide { display: none; }
       <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{unicoIvaEur}}</span></div>
       <div class="q-row t"><span>Total com IVA</span><span>{{unicoTotEur}}</span></div>
     </div>
+    <div class="q-box rec-box">
+      <h4>Plano anual · recomendado</h4>
+      <div class="q-row"><span>Subtotal</span><span><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano</span></div>
+      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{anualIvaEur}}/ano</span></div>
+      <div class="q-row t"><span>Total com IVA</span><span>{{anualTotEur}}/ano</span></div>
+      <div class="q-save"><span class="poupa">Poupa {{poupanca}} € por ano</span> + IVA ({{poupancaComIvaEur}} com IVA)</div>
+    </div>
     <div class="q-box">
-      <h4>Mensalidade</h4>
+      <h4>Ou plano mensal</h4>
       <div class="q-row"><span>Subtotal</span><span>{{mensalSubEur}}/mês</span></div>
       <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{mensalIvaEur}}/mês</span></div>
       <div class="q-row t"><span>Total com IVA</span><span>{{mensalTotEur}}/mês</span></div>
     </div>
   </div>
 
+  <div class="q-adj">
+    <div class="q-row t"><span>Na adjudicação (plano anual): itens únicos + 1.º ano</span><span>{{adjAnualSubEur}} + IVA {{adjAnualIvaEur}} = {{adjAnualTotEur}}</span></div>
+    <div class="q-row"><span>Com pagamento mensal: itens únicos + 1.ª mensalidade</span><span>{{adjMensalSubEur}} + IVA</span></div>
+  </div>
 
   <div>
     <div class="q-sec" style="margin-bottom: 5px;">Condições</div>
     <ul class="q-cond">
       <li>Preços em euros, sem IVA. Acresce IVA à taxa legal em vigor ({{ivaPct}}%).</li>
-      <li>Na adjudicação: itens únicos + 1.ª mensalidade.</li>
-      <li>Mensalidades pagas no início de cada mês, sem período mínimo: cancela com 30 dias de aviso. Ao cancelar o alojamento, entregamos-lhe os ficheiros da página.</li>
+      <li>Na adjudicação: itens únicos + 1.º ano (plano anual) ou + 1.ª mensalidade (plano mensal).</li>
+      <li>Plano anual pago adiantado: 12 meses pelo preço de {{mesesPagos}}. Renova por mais 12 meses, salvo aviso com 30 dias de antecedência.</li>
+      <li>Plano mensal: pago no início de cada mês, sem período mínimo; cancela com 30 dias de aviso. Ao cancelar o alojamento, entregamos-lhe os ficheiros da página.</li>
       <li>Domínio e email profissional pagos à parte, diretamente ao fornecedor. O domínio fica sempre em nome do cliente.</li>
       <li>Landing page entregue em 5 dias úteis após a receção dos conteúdos, com 2 rondas de alterações incluídas.</li>
       <li>Textos, fotografias e vídeos fornecidos pelo cliente devem ser seus ou ter licença de uso.</li>
@@ -428,7 +450,7 @@ body.only-quote .slide { display: none; }
   </div>
 
   <div>
-    <div class="q-sec" style="margin-bottom: 18px;">Aceitação</div>
+    <div class="q-sec" style="margin-bottom: 12px;">Aceitação</div>
     <div class="q-sign"><div>Nome</div><div>Assinatura</div><div>Data</div></div>
   </div>
 

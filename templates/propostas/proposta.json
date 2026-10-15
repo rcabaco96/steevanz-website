@@ -11,6 +11,7 @@
   "iva": 0.23,
   "landingPage": { "preco": 350, "mensal": 15 },
   "menu": { "mensal": 30 },
+  "planoAnual": { "mesesOferta": 2, "recomendado": true },
   "placas": { "quantidade": 15, "precoUnitario": 20, "precoQuantidade": 15, "aPartirDe": 10 },
   "exemplos": {
     "landingTitulo": "A sua página <span class=\"hl\">já está a mexer</span>.",

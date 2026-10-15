@@ -89,7 +89,7 @@ function label(s, t, x, y, w) {
     sticker(s, "PARA", 0.75, 4.95, 0.95, "plum", -3, 10);
     s.addText(v.cliente, { x: 1.9, y: 4.85, w: 5.8, h: 0.6, fontFace: SERIF, fontSize: 26, bold: true, color: C.text, margin: 0, valign: "middle" });
     text(s, `Proposta de ${v.dataFmt} · válida até ${v.validadeFmt} (${v.validadeDias} dias)`, 0.7, 5.6, 7.0, 0.3, { fontSize: 12, color: C.subtle });
-    text(s, "Tecnologia do amanhã, com os bons modos de sempre.", 0.7, 6.15, 7.0, 0.35, { fontFace: SERIF, italic: true, fontSize: 14, color: C.accent });
+    text(s, "Tecnologia do amanhã, com os bons modos de antigamente.", 0.7, 6.15, 7.0, 0.35, { fontFace: SERIF, italic: true, fontSize: 14, color: C.accent });
     phone(s, "lp-hero.jpg", 8.35, 1.45, 4.7);
     phone(s, "vm-full-brownie.jpg", 10.65, 1.2, 4.7);
   }
@@ -117,8 +117,8 @@ function label(s, t, x, y, w) {
     kicker(s, "O que propomos");
     title(s, 'Duas peças, um objetivo: <span class="hl">mais gente à sua mesa</span>.');
     const items = [
-      ["1 · Landing page", "A sua casa, numa página", "Rápida, feita para telemóvel, com um botão claro: ver o menu, reservar ou chegar lá.", `${v.lpPreco} € + IVA · depois ${v.lpMensal} €/mês`, "lp-hero.jpg", 0.15],
-      ["2 · Menu digital em vídeo", "Os pratos a mexer", "Um vídeo curto por prato, com nome e preço. Desliza-se como nos Reels.", `${v.menuMensal} €/mês + IVA`, "vm-grid-gel-b.jpg", 0.95],
+      ["1 · Landing page", "A sua casa, numa página", "Rápida, feita para telemóvel, com um botão claro: ver o menu, reservar ou chegar lá.", `${v.lpPreco} € + IVA · depois ${v.lpAnual} €/ano`, "lp-hero.jpg", 0.15],
+      ["2 · Menu digital em vídeo", "Os pratos a mexer", "Um vídeo curto por prato, com nome e preço. Desliza-se como nos Reels.", `${v.menuAnual} €/ano + IVA`, "vm-grid-gel-b.jpg", 0.95],
       ["3 · Placas de mesa", "O menu num toque", "Uma placa por mesa. Um toque do telemóvel ou o QR code, e o menu abre. Sem apps.", `${v.placasUnit} € + IVA · ${v.placasVol} € a partir de ${v.placasDe}`, null, 0],
     ];
     items.forEach(([tg, t, b, price, img, cropY], i) => {
@@ -176,10 +176,10 @@ function label(s, t, x, y, w) {
       text(s, b, 1.25, y + 0.38, 5.6, 0.6, { fontSize: 14 });
     });
     card(s, 7.3, 1.95, 5.3, 3.4, C.accent, C.accent);
-    tag(s, `Depois · ${v.lpMensal} €/mês + IVA`, 7.6, 2.2, 4.8, C.gold);
+    tag(s, `Depois · ${v.lpAnual} €/ano ou ${v.lpMensal} €/mês + IVA`, 7.6, 2.2, 4.8, C.gold);
     h3(s, "Nós tratamos do resto.", 7.6, 2.5, 4.8, "FFFFFF", 20);
     text(s, ["Alojamento, segurança e cópias de segurança", "Até 30 minutos de pequenas alterações por mês", "Uma pessoa real do outro lado do WhatsApp"].map((t, i, a) => ({ text: t, options: { bullet: { code: "25CF", indent: 16 }, breakLine: i < a.length - 1 } })), 7.6, 3.05, 4.8, 1.3, { fontSize: 14, color: "FFFFFF" });
-    text(s, "Sem período mínimo: fica porque funciona, não porque é obrigado.", 7.6, 4.5, 4.8, 0.6, { fontSize: 13, color: "FFFFFF" });
+    text(s, `Anual com ${v.mesesOferta} meses grátis, ou mensal sem período mínimo: fica porque funciona, não porque é obrigado.`, 7.6, 4.4, 4.8, 0.8, { fontSize: 13, color: "FFFFFF" });
   }
 
   // 7 · Menu
@@ -284,8 +284,10 @@ function label(s, t, x, y, w) {
     const cell = (t, o = {}) => ({ text: t, options: Object.assign({ fontFace: SANS, fontSize: 13, color: C.text, border: [{ type: "none" }, { type: "none" }, { pt: 0.75, color: C.line }, { type: "none" }], valign: "middle" }, o) });
     const rich = (t1, t2, o = {}) => ({ text: [{ text: t1, options: { breakLine: true } }, { text: t2, options: { fontSize: 10, color: C.subtle } }], options: cell("", o).options });
     const sub = { color: C.muted, border: none };
+    const richSave = (t1, t2, save) => ({ text: [{ text: t1, options: { breakLine: true } }, { text: t2, options: { fontSize: 10, color: C.subtle } }, { text: save, options: { fontSize: 10, bold: true, color: "1E7A4C", highlight: "E3F3EA" } }], options: cell("").options });
+    const struck = (old, val, o = {}) => ({ text: [{ text: old + "  ", options: { strike: "sngStrike", color: C.subtle, fontSize: 11 } }, { text: val }], options: cell("", { ...o, align: "right" }).options });
     const tot = { bold: true, fontSize: 15, color: C.accent, border: [{ pt: 1.5, color: C.text }, { type: "none" }, { type: "none" }, { type: "none" }] };
-    card(s, 0.7, 1.95, 5.85, 4.3);
+    card(s, 0.7, 1.95, 5.85, 3.55);
     tag(s, "Uma vez", 0.95, 2.15, 5);
     s.addTable([
       [rich("Landing page", "Até 8 secções, 2 rondas de alterações"), cell(v.lpPrecoEur, { align: "right" })],
@@ -294,15 +296,24 @@ function label(s, t, x, y, w) {
       [cell(`IVA ${v.ivaPct}%`, sub), cell(v.unicoIvaEur, { ...sub, align: "right" })],
       [cell("Total com IVA", tot), cell(v.unicoTotEur, { ...tot, align: "right" })],
     ], { x: 0.9, y: 2.5, w: 5.45, colW: [3.25, 2.2], rowH: [0.7, 0.7, 0.4, 0.4, 0.5] });
-    card(s, 6.75, 1.95, 5.85, 4.3);
-    tag(s, "Por mês · sem período mínimo", 7.0, 2.15, 5);
+    card(s, 6.75, 1.95, 5.85, 4.3, C.surface, C.gold);
+    sticker(s, `Recomendado · ${v.mesesOferta} meses grátis`, 9.65, 1.72, 2.8, "gold", -3, 11);
+    tag(s, `Plano anual · 12 meses pelo preço de ${v.mesesPagos}`, 7.0, 2.15, 4.5);
     s.addTable([
-      [rich("Alojamento e manutenção da landing page", "Cancela com 30 dias de aviso"), cell(`${v.lpMensalEur}/mês`, { align: "right" })],
-      [rich("Menu digital em vídeo", "Montagem e alojamento incluídos"), cell(`${v.menuMensalEur}/mês`, { align: "right" })],
-      [cell("Subtotal (+ IVA)", sub), cell(`${v.mensalSubEur}/mês`, { ...sub, align: "right" })],
-      [cell(`IVA ${v.ivaPct}%`, sub), cell(`${v.mensalIvaEur}/mês`, { ...sub, align: "right" })],
-      [cell("Total com IVA", tot), cell(`${v.mensalTotEur}/mês`, { ...tot, align: "right" })],
+      [richSave("Alojamento e manutenção da landing page", `${v.lpMensal} €/mês × ${v.mesesPagos}  `, `poupa ${v.lpPoupa} €`), struck(`${v.lpAnualCheio} €`, `${v.lpAnualEur}/ano`)],
+      [richSave("Menu digital em vídeo", `Montagem e alojamento incluídos · ${v.menuMensal} €/mês × ${v.mesesPagos}  `, `poupa ${v.menuPoupa} €`), struck(`${v.menuAnualCheio} €`, `${v.menuAnualEur}/ano`)],
+      [cell("Subtotal (+ IVA)", sub), struck(`${v.anualCheio} €`, `${v.anualSubEur}/ano`, sub)],
+      [cell(`IVA ${v.ivaPct}%`, sub), cell(`${v.anualIvaEur}/ano`, { ...sub, align: "right" })],
+      [cell("Total com IVA", tot), cell(`${v.anualTotEur}/ano`, { ...tot, align: "right" })],
     ], { x: 6.95, y: 2.5, w: 5.45, colW: [3.6, 1.85], rowH: [0.7, 0.7, 0.4, 0.4, 0.5] });
+    s.addText([{ text: ` Poupa ${v.poupanca} € por ano `, options: { bold: true, color: "1E7A4C", highlight: "E3F3EA" } }, { text: ` + IVA · ${v.poupancaComIvaEur} com IVA`, options: { bold: true, color: C.goldText } }], { x: 7.0, y: 5.3, w: 5.4, h: 0.3, fontFace: SANS, fontSize: 12.5, margin: 0, valign: "top" });
+    text(s, `Ou ${v.mensalSub} €/mês + IVA (${v.mensalTotEur} com IVA), sem período mínimo.`, 7.0, 5.65, 5.4, 0.3, { fontSize: 12 });
+    s.addText([
+      { text: "Na adjudicação: ", options: { bold: true, color: C.text } },
+      { text: `itens únicos + 1.º ano = ${v.adjAnualSubEur} + IVA ${v.adjAnualIvaEur} = `, options: { color: C.text } },
+      { text: v.adjAnualTotEur, options: { bold: true, color: C.text } },
+      { text: ` · com pagamento mensal: ${v.adjMensalSubEur} + IVA`, options: { color: C.muted } },
+    ], { x: 0.7, y: 5.7, w: 5.85, h: 0.6, fontFace: SANS, fontSize: 12, margin: 0, valign: "top" });
     text(s, `Preços + IVA (${v.ivaPct}%). O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.`, 0.7, 6.45, 11.9, 0.3, { fontSize: 11, color: C.subtle });
   }
 
@@ -347,7 +358,7 @@ function label(s, t, x, y, w) {
     s.addShape(pptx.ShapeType.roundRect, { x: 8.95, y: 1.75, w: 3.2, h: 3.75, fill: { color: "FFFFFF" }, line: { color: C.accent, width: 4 }, rectRadius: 0.18 });
     s.addImage({ data: qrAceitacao, x: 9.15, y: 1.95, w: 2.8, h: 2.8, hyperlink: { url: v.aceitacaoUrl } });
     s.addText("Leia com a câmara do telemóvel", { x: 8.95, y: 4.85, w: 3.2, h: 0.4, fontFace: SANS, fontSize: 11, bold: true, color: C.muted, align: "center", margin: 0 });
-    text(s, "Obrigado pelo seu tempo. O resto tratamos nós, com os bons modos de sempre.", 0.7, 6.15, 7.8, 0.4, { fontFace: SERIF, italic: true, fontSize: 15, color: C.accent });
+    text(s, "Obrigado pelo seu tempo. O resto tratamos nós, com os bons modos de antigamente.", 0.7, 6.15, 7.8, 0.4, { fontFace: SERIF, italic: true, fontSize: 15, color: C.accent });
     s.addText([{ text: "WhatsApp/telefone ", options: { color: C.muted } }, { text: "961 292 679", options: { bold: true, color: C.accent } }, { text: " · www.steevanz.com", options: { color: C.muted } }], { x: 8.4, y: 6.15, w: 4.2, h: 0.4, fontFace: SANS, fontSize: 12, align: "right", margin: 0 });
   }
 
