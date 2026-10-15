@@ -12,7 +12,7 @@ export const copy: ProductCopyByLocale = {
       "Lista de espera digital para restaurantes, clínicas e salões: o cliente entra na fila com um toque ou QR code e é avisado no telemóvel quando chega a sua vez.",
     heroTitle: "Acabe com a fila à porta",
     heroSubtitle:
-      "O cliente entra na lista de espera com um toque ou uma leitura de QR code, acompanha a posição e o tempo estimado no telemóvel e é avisado quando a mesa ou a vez estiver pronta. Sabe quanto falta e, quando é chamado, entra logo.",
+      "O cliente entra na lista de espera com um toque ou uma leitura de QR code, acompanha a senha que está a ser atendida e o tempo estimado no telemóvel e é avisado quando a mesa ou a vez estiver pronta. Sabe quanto falta e, quando é chamado, entra logo.",
     problem: {
       title: "A espera à porta afasta clientes",
       body:
@@ -26,11 +26,11 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Uma fila que não obriga ninguém a ficar parado",
       body:
-        "Com a lista de espera digital, cada cliente sabe a sua posição e o tempo estimado, e é avisado no telemóvel quando for a sua vez. A equipa só carrega em «Chamar o seguinte».",
+        "Com a lista de espera digital, cada cliente sabe que senha está a ser atendida e o tempo estimado, e é avisado no telemóvel quando for a sua vez. A equipa só carrega em «Chamar o seguinte».",
       points: [
         "Entrada na lista por QR code, com um toque ou pela equipa",
         "Tempo de espera estimado visível para o cliente",
-        "Aviso no telemóvel e por email",
+        "Aviso no telemóvel",
         "Painel simples para chamar o próximo cliente",
       ],
     },
@@ -41,11 +41,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Vê o tempo estimado",
-        body: "Recebe a posição na fila e uma estimativa de espera, e sabe a que horas deve estar à porta.",
+        body: "Vê a senha que está a ser atendida e uma estimativa de espera, e sabe a que horas deve estar à porta.",
       },
       {
         title: "É avisado no telemóvel",
-        body: "Quando a mesa ou a vez estiver pronta, a equipa carrega num botão: o telemóvel do cliente toca e, se deixou email, recebe também um email."
+        body: "Quando a mesa ou a vez estiver pronta, a equipa carrega num botão e o telemóvel do cliente toca."
       },
     ],
     features: [
@@ -59,7 +59,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Aviso no telemóvel",
-        body: "Quando chega a vez, a página da senha toca e mostra para onde se dirigir; quem ligou os avisos recebe uma notificação no telemóvel e quem deixou email recebe também um email. Sem gritar nomes pela sala.",
+        body: "Quando chega a vez, a página da senha toca e mostra para onde se dirigir; quem ligou os avisos recebe uma notificação no telemóvel. Sem gritar nomes pela sala.",
       },
       {
         title: "Painel para a equipa",
@@ -71,7 +71,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Liga-se às reservas",
-        body: "Se também usar o nosso sistema de reservas, a fila e as reservas de hoje ficam lado a lado no Balcão, para gerir a sala sem surpresas.",
+        body: "Se também usar o nosso sistema de reservas, a fila e as reservas de hoje ficam lado a lado no Atendimento, para gerir a sala sem surpresas.",
       },
     ],
     useCases: [
@@ -114,7 +114,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Que dados são guardados?",
-        a: "Apenas o nome (e o email, se o cliente o deixar para ser avisado). Os dados são apagados ao fim de 30 dias, tratados de acordo com o RGPD e não são usados para outros fins.",
+        a: "Apenas o nome (e o telemóvel, se o cliente o deixar). Os dados são apagados ao fim de 30 dias, tratados de acordo com o RGPD e não são usados para outros fins.",
       },
       {
         q: "Posso cancelar o plano mensal?",
@@ -133,7 +133,7 @@ export const copy: ProductCopyByLocale = {
       "Digital waitlist for restaurants, clinics and salons: customers join the queue with a tap or a QR code and are alerted on their phone when it's their turn.",
     heroTitle: "No more queue at the door",
     heroSubtitle:
-      "Customers join the waitlist with a tap or a QR scan, follow their position and estimated wait on their phone and are alerted when their table or turn is ready. They know how long is left and, when called, come straight in.",
+      "Customers join the waitlist with a tap or a QR scan, follow the ticket being served and their estimated wait on their phone and are alerted when their table or turn is ready. They know how long is left and, when called, come straight in.",
     problem: {
       title: "Waiting at the door drives customers away",
       body:
@@ -147,11 +147,11 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "A queue that doesn't keep anyone standing still",
       body:
-        "With a digital waitlist, every customer knows their position and estimated wait, and is alerted on their phone when it's their turn. Your team just taps «Call next».",
+        "With a digital waitlist, every customer knows which ticket is being served and their estimated wait, and is alerted on their phone when it's their turn. Your team just taps «Call next».",
       points: [
         "Join by QR code, a tap or via your staff",
         "Estimated waiting time visible to the customer",
-        "Alert on the phone and by email",
+        "Alert on the phone",
         "Simple dashboard to call the next customer",
       ],
     },
@@ -162,11 +162,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "They see the estimated wait",
-        body: "They get their position in the queue and an estimated wait, and know when to be at the door.",
+        body: "They see the ticket being served and an estimated wait, and know when to be at the door.",
       },
       {
         title: "They're alerted by phone",
-        body: "When the table or turn is ready, your staff press a button: the customer's phone rings and, if they left an email, they get an email too.",
+        body: "When the table or turn is ready, your staff press a button and the customer's phone rings.",
       },
     ],
     features: [
@@ -180,7 +180,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Alert on the phone",
-        body: "When it's their turn, the ticket page rings and shows where to go; customers who left an email get an email too. No shouting names across the room.",
+        body: "When it's their turn, the ticket page rings and shows where to go; customers who switched alerts on get a notification on their phone. No shouting names across the room.",
       },
       {
         title: "Staff dashboard",
@@ -235,7 +235,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "What data is stored?",
-        a: "Only the name (and the email, if the customer leaves one to be alerted). Data is deleted after 30 days, handled in line with GDPR and never used for anything else.",
+        a: "Only the name (and the phone number, if the customer leaves one). Data is deleted after 30 days, handled in line with GDPR and never used for anything else.",
       },
       {
         q: "Can I cancel the monthly plan?",

@@ -4,6 +4,8 @@ export interface CalendarEvent {
   end: string;
   title: string;
   description: string;
+  /** Where: the place's name and address (calendars turn it into a map link). */
+  location?: string;
 }
 
 function icsDate(iso: string): string {
@@ -28,6 +30,7 @@ export function buildIcs(event: CalendarEvent): string {
     `DTEND:${icsDate(event.end)}`,
     `SUMMARY:${escapeIcs(event.title)}`,
     `DESCRIPTION:${escapeIcs(event.description)}`,
+    ...(event.location ? [`LOCATION:${escapeIcs(event.location)}`] : []),
     "END:VEVENT",
     "END:VCALENDAR",
     "",
@@ -40,6 +43,7 @@ export function googleCalendarUrl(event: CalendarEvent): string {
     text: event.title,
     dates: `${icsDate(event.start)}/${icsDate(event.end)}`,
     details: event.description,
+    ...(event.location ? { location: event.location } : {}),
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }

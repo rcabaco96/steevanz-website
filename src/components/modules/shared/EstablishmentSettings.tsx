@@ -63,6 +63,19 @@ function Details({ bundle, viewer }: { bundle: EstablishmentBundle; viewer: "cli
             <span className="text-xs font-normal text-subtle">Mudar o endereço invalida os QR codes e placas já impressos.</span>
           </label>
         ) : null}
+        {viewer === "admin" ? (
+          <label className={`${adminLabelClasses} sm:col-span-2`}>
+            Link do Google Maps
+            <input name="maps_url" type="url" maxLength={1000} defaultValue={establishment.maps_url ?? ""} placeholder="https://maps.app.goo.gl/…" className={input} />
+            <span className="text-xs font-normal text-subtle">
+              {establishment.maps_url
+                ? establishment.review_url
+                  ? "As páginas da fila, do cartão e das reservas mostram «Ver no Google Maps» e «Deixar avaliação»."
+                  : "Sem link de avaliação: cole o link da barra de endereço do Google Maps, com o negócio aberto."
+                : "Cole o link do negócio no Google Maps (barra de endereço ou «Partilhar»). As páginas dos clientes passam a ter «Ver no Google Maps» e «Deixar avaliação»."}
+            </span>
+          </label>
+        ) : null}
         <div className="sm:col-span-2">
           <SubmitButton size="sm">Guardar</SubmitButton>
         </div>

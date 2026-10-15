@@ -29,7 +29,7 @@ export const copy: ProductCopyByLocale = {
         "O cartão vive no telemóvel do cliente e cada visita é carimbada pela equipa em segundos. Quando os carimbos estão completos, a recompensa fica disponível automaticamente.",
       points: [
         "Cartão no telemóvel, a um toque do ecrã principal, sem app",
-        "Carimbo dado pela equipa: com o PIN no telemóvel do cliente ou lendo o QR do cartão",
+        "Carimbo dado pela equipa, lendo o QR do cartão",
         "Recompensa desbloqueada automaticamente",
         "Estatísticas simples sobre visitas e clientes habituais",
       ],
@@ -45,7 +45,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Carimbe a cada visita",
-        body: "Em cada compra, o cliente mostra o cartão e a equipa dá o carimbo: escreve o PIN no telemóvel do cliente ou lê o QR do cartão.",
+        body: "Em cada compra, o cliente mostra o cartão e a equipa dá o carimbo, lendo o QR do cartão.",
       },
       {
         title: "Recompensa automática",
@@ -59,7 +59,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Carimbo em segundos",
-        body: "A equipa escreve o PIN de carimbo no telemóvel do cliente ou lê o QR do cartão com o telemóvel do balcão. A placa com QR serve para os clientes aderirem.",
+        body: "A equipa lê o QR do cartão com o telemóvel do balcão e carrega em «Dar carimbo». A placa com QR serve para os clientes aderirem.",
       },
       {
         title: "Recompensas automáticas",
@@ -158,7 +158,7 @@ export const copy: ProductCopyByLocale = {
         "The card lives on the customer's phone and your staff stamp every visit in seconds. When the card is full, the reward becomes available automatically.",
       points: [
         "Card on the phone, one tap from the home screen, no app",
-        "Stamps given by your staff: with the PIN on the customer's phone or by scanning the card's QR",
+        "Stamps given by your staff, by scanning the card's QR",
         "Reward unlocked automatically",
         "Simple stats on visits and regular customers",
       ],
@@ -174,7 +174,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Stamp every visit",
-        body: "At each purchase, the customer shows the card and your staff give the stamp: they type the PIN on the customer's phone or scan the card's QR.",
+        body: "At each purchase, the customer shows the card and your staff give the stamp by scanning the card's QR.",
       },
       {
         title: "Automatic reward",
@@ -188,7 +188,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Stamps in seconds",
-        body: "Your staff type the stamp PIN on the customer's phone or scan the card's QR with the counter phone. The plate with QR is how customers join.",
+        body: "Your staff scan the card's QR with the counter phone and tap «Give stamp». The plate with QR is how customers join.",
       },
       {
         title: "Automatic rewards",

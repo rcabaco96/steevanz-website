@@ -20,7 +20,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: P
     <>
       <AdminPageHeader
         title="Contactos"
-        description="Demonstrações marcadas no site e pedidos de informação."
+        description="Demonstrações marcadas no site, pedidos de informação e negócios a contactar."
         actions={
           <a href={`/admin/export/leads${filtersToQuery(filters)}`} className={buttonClasses("secondary", "sm")}>
             Exportar CSV

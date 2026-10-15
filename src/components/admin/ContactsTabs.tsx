@@ -3,12 +3,13 @@ import Link from "next/link";
 const tabs = [
   { id: "bookings", href: "/admin/bookings", label: "Demonstrações" },
   { id: "leads", href: "/admin/leads", label: "Pedidos de informação" },
+  { id: "prospects", href: "/admin/prospecao", label: "Encontrar clientes" },
   { id: "availability", href: "/admin/availability", label: "Horário" },
 ] as const;
 
 /**
  * The «Contactos» section of the admin: people who want to know more (demos booked on the site and
- * information requests) and the hours offered for demos. One tab in the main navigation, three here.
+ * information requests), businesses to contact (prospecting) and the hours offered for demos.
  */
 export function ContactsTabs({ current }: { current: (typeof tabs)[number]["id"] }) {
   return (

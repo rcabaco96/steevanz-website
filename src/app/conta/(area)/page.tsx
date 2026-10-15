@@ -31,7 +31,7 @@ export default async function AccountHomePage() {
           className="card card-interactive flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
         >
           <span className="flex flex-col gap-1">
-            <span className="text-lg font-semibold text-text">Balcão</span>
+            <span className="text-lg font-semibold text-text">Atendimento</span>
             <span className="text-sm text-muted">
               {[
                 counter.some((space) => space.products.includes("waitlist")) ? "chamar o seguinte" : null,
@@ -46,7 +46,7 @@ export default async function AccountHomePage() {
             </span>
           </span>
           <span className={buttonClasses("primary", "md", "shrink-0")}>
-            Abrir o Balcão
+            Abrir o Atendimento
             <ArrowRight size={16} />
           </span>
         </Link>

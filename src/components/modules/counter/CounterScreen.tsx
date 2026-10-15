@@ -23,7 +23,7 @@ const tabs: Record<ModuleProduct, { id: string; label: string }> = {
 };
 
 /**
- * The Balcão: what needs a tap during the day (queue, today's bookings, loyalty card) for one space,
+ * The Atendimento: what needs a tap during the day (queue, today's bookings, loyalty card) for one space,
  * as tabs in the backoffice. Settings, history and stats stay in each module. `basePath` is the
  * client area's or the admin's page; `ownerId` is the client whose spaces it shows.
  */
@@ -47,7 +47,7 @@ export async function CounterScreen({ ownerId, viewer, basePath, query }: { owne
   const bundle = await loadBundle(establishment);
   const hasQueue = products.includes("waitlist");
   const [queueData, bookingData] = await Promise.all([
-    hasQueue ? currentSettings(establishment, bundle).then(async (settings) => ({ settings, queue: await loadQueue(establishment, settings) })) : null,
+    hasQueue ? currentSettings(establishment, bundle).then(async (settings) => ({ settings, queue: await loadQueue(establishment) })) : null,
     products.includes("bookings") ? ensureBookingPage(establishment).then(async (page) => ({ page, today: await loadAgendaDay(bundle, page, zonedDateString(new Date(), establishment.time_zone)) })) : null,
   ]);
   const waiting = queueData?.queue.live.filter((entry) => entry.status === "waiting") ?? [];

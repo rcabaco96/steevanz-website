@@ -18,39 +18,9 @@ export function normalizeCardCode(input: string): string {
   return input.toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
-export const staffCodeLength = 6;
-
-export function isStaffCode(value: string): boolean {
-  return new RegExp(`^\\d{${staffCodeLength}}$`).test(value);
-}
-
-/** Wrong staff codes on one card before it is locked for a while (stops guessing). */
-export const maxCodeAttempts = 5;
-export const codeLockMinutes = 15;
-
-export function isLocked(lockedUntil: string | null, now: number): boolean {
-  return Boolean(lockedUntil && Date.parse(lockedUntil) > now);
-}
-
 /** Stamp circles of the card: filled, then empty. */
 export function stampSlots(stamps: number, required: number): boolean[] {
   return Array.from({ length: required }, (_, index) => index < stamps);
-}
-
-/** "Pode receber outro carimbo às 15:40". */
-export function cooldownMessage(nextAllowedAt: string, timeZone: string): string {
-  const time = new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(nextAllowedAt));
-  const sameDay =
-    new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date(nextAllowedAt)) === new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date());
-  return sameDay
-    ? `Este cartão já recebeu um carimbo há pouco. O próximo pode ser dado a partir das ${time}.`
-    : `Este cartão já recebeu um carimbo há pouco. O próximo pode ser dado a partir de ${new Intl.DateTimeFormat("pt-PT", {
-        timeZone,
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date(nextAllowedAt))}.`;
 }
 
 /**
@@ -115,9 +85,9 @@ export function eurosText(cents: number): string {
   return `${new Intl.NumberFormat("pt-PT", { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(cents / 100)} €`;
 }
 
-/** "1 carimbo por visita, a partir de 10 € de consumo" (or per visit, with no minimum). */
+/** "1 carimbo por serviço pago, a partir de 10 €" (or per paid service, with no minimum). */
 export function stampRuleText(minSpendCents: number | null): string {
-  return minSpendCents ? `1 carimbo por visita, a partir de ${eurosText(minSpendCents)} de consumo` : "1 carimbo por visita";
+  return minSpendCents ? `1 carimbo por serviço pago, a partir de ${eurosText(minSpendCents)}` : "1 carimbo por serviço pago";
 }
 
 /** "5", "7,50", "7.5" → cents; empty → null; anything else → undefined (invalid). */

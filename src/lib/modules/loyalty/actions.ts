@@ -8,18 +8,13 @@ import type { ActionState } from "@/lib/action-state";
 import { sendOwnerEmail } from "@/lib/booking/email";
 import { requestOrigin } from "@/lib/booking/request";
 import { accessErrorMessage, requireEstablishmentAccess } from "@/lib/establishments/access";
-import { getEstablishment, isUuid } from "@/lib/establishments/store";
+import { isUuid } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
-import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken, tokenPattern } from "../common";
+import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken } from "../common";
 import { publicEstablishment } from "../public";
 import {
   cardRewards,
-  codeLockMinutes,
-  cooldownMessage,
-  isLocked,
-  isStaffCode,
-  maxCodeAttempts,
   maxMilestones,
   missingText,
   parseEuros,
@@ -30,10 +25,7 @@ import {
 import {
   ensureProgram,
   getCard,
-  getCardByToken,
   newCardCode,
-  newStaffCodeHash,
-  staffCodeMatches,
   type LoyaltyCardRow,
   type LoyaltyProgramRow,
 } from "./store";
@@ -52,8 +44,9 @@ interface StampOutcome {
   next_allowed_at: string | null;
 }
 
-async function stamp(cardId: string, amount: number, source: "staff_code" | "staff_panel" | "welcome" | "migration", enforceCooldown: boolean): Promise<StampOutcome> {
-  const { data, error } = await createServiceClient().rpc("loyalty_stamp", { p_card: cardId, p_amount: amount, p_source: source, p_enforce_cooldown: enforceCooldown });
+/** Adds (or, negative, removes) stamps. Never limited by time: the business decides when to stamp. */
+async function stamp(cardId: string, amount: number, source: "staff_panel" | "welcome" | "migration"): Promise<StampOutcome> {
+  const { data, error } = await createServiceClient().rpc("loyalty_stamp", { p_card: cardId, p_amount: amount, p_source: source, p_enforce_cooldown: false });
   if (error) throw new Error(error.message);
   const row = (Array.isArray(data) ? data[0] : data) as StampOutcome | undefined;
   if (!row) throw new Error("loyalty_stamp returned nothing");
@@ -61,8 +54,7 @@ async function stamp(cardId: string, amount: number, source: "staff_code" | "sta
 }
 
 /** After a stamp: the reward it gave (a milestone or the full card), or what is missing for the next. */
-function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, establishment: EstablishmentRow, before: number): ActionState {
-  if (result.outcome === "cooldown") return { ok: false, message: cooldownMessage(result.next_allowed_at!, establishment.time_zone) };
+function stampMessage(result: StampOutcome, program: LoyaltyProgramRow, before: number): { ok: boolean; message: string } {
   const reached = rewardsCrossed(before, 1, program)[0];
   if (reached) {
     const full = reached.at === program.stamps_required;
@@ -86,6 +78,7 @@ function sendCardEmail(establishment: EstablishmentRow, card: LoyaltyCardRow, pr
         { label: "Cartão", value: `${card.name} · código ${card.code.slice(0, 3)} ${card.code.slice(3)}` },
         { label: "Recompensas", value: cardRewards(program).map((item) => `${item.at} carimbos: ${item.reward}`).join(" · ") },
         { label: "Carimbos", value: stampRuleText(program.min_spend_cents) },
+        { label: "Condições", value: program.terms },
         { label: "Dica", value: "Abra o link no telemóvel e escolha «Adicionar ao ecrã principal» para ter o cartão sempre à mão." },
       ],
       adminUrl: link,
@@ -100,7 +93,6 @@ const joinSchema = z.object({
   name: z.string().trim().min(1).max(60),
   email: z.union([z.email().max(200), z.literal("")]).transform((email) => email.toLowerCase() || null),
   phone: z.string().trim().max(40).transform((text) => text || null),
-  consent: z.literal(true),
 });
 
 /** Public: a customer gets a card (with the welcome stamp, if the program gives one). Only the name is required. */
@@ -114,11 +106,10 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
       name: formText(formData, "name"),
       email: formText(formData, "email"),
       phone: "",
-      consent: formData.get("consent") === "on",
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? "");
-      return { ok: false, message: field === "consent" ? "Para criar o cartão tem de aceitar o tratamento dos dados." : field === "email" ? "Indique um email válido." : "Indique o seu nome." };
+      return { ok: false, message: field === "email" ? "Indique um email válido." : "Indique o seu nome." };
     }
     const typedPhone = phoneFrom(formData);
     if ("error" in typedPhone) return { ok: false, message: typedPhone.error };
@@ -148,6 +139,7 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
           name: parsed.data.name,
           email: parsed.data.email,
           phone: parsed.data.phone,
+          // Creating the card is accepting the note under the button (data kept only to run the card).
           consent_at: new Date().toISOString(),
         })
         .select("*")
@@ -157,78 +149,16 @@ export async function joinLoyalty(_previous: ActionState, formData: FormData): P
     }
     if (!card) throw new Error("no free card code");
     await client.from("loyalty_events").insert({ card_id: card.id, establishment_id: establishment.id, kind: "joined", amount: 0 });
-    if (program.welcome_stamp) await stamp(card.id, 1, "welcome", false);
+    if (program.welcome_stamp) await stamp(card.id, 1, "welcome");
     sendCardEmail(establishment, card, program, await cardLink(establishment, card), true);
     refresh(establishment);
-    target = `/cartao/${establishment.slug}/${card.token}`;
+    // «novo»: created on this phone, so the card page keeps it here.
+    target = `/cartao/${establishment.slug}/${card.token}?novo=1`;
   } catch (error) {
     console.error("[loyalty] join failed:", error instanceof Error ? error.message : error);
     return { ok: false, message: "Não foi possível criar o cartão. Tente novamente." };
   }
   redirect(target);
-}
-
-/** Checks the team's code typed on the customer's phone, with a lock after repeated mistakes. */
-async function verifyCodeOnCard(card: LoyaltyCardRow, program: LoyaltyProgramRow, code: string): Promise<ActionState | null> {
-  if (!program.staff_code_set_at) return { ok: false, message: "O PIN de carimbo ainda não foi definido. Peça ao funcionário para carimbar no painel." };
-  if (isLocked(card.locked_until, Date.now())) return { ok: false, message: `Demasiadas tentativas erradas. Tente de novo daqui a ${codeLockMinutes} minutos.` };
-  if (isStaffCode(code) && staffCodeMatches(program, code)) return null;
-  const attempts = card.failed_code_attempts + 1;
-  const lock = attempts >= maxCodeAttempts;
-  await createServiceClient()
-    .from("loyalty_cards")
-    .update({ failed_code_attempts: lock ? 0 : attempts, locked_until: lock ? new Date(Date.now() + codeLockMinutes * 60_000).toISOString() : null })
-    .eq("id", card.id);
-  return { ok: false, message: lock ? `PIN errado. O cartão fica bloqueado durante ${codeLockMinutes} minutos.` : "PIN errado. Peça ao funcionário para o escrever." };
-}
-
-async function publicCard(formData: FormData) {
-  const token = formText(formData, "token");
-  if (!tokenPattern.test(token)) return null;
-  const card = await getCardByToken(token);
-  if (!card) return null;
-  const establishment = await getEstablishment(card.establishment_id);
-  if (!establishment) return null;
-  return { card, establishment, program: await ensureProgram(establishment) };
-}
-
-/** Public: the team types its code on the customer's phone to give a stamp. */
-export async function stampWithCode(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    const found = await publicCard(formData);
-    if (!found) return { ok: false, message: "Cartão não encontrado." };
-    const { card, establishment, program } = found;
-    if (!program.active) return { ok: false, message: "O cartão de cliente está temporariamente indisponível." };
-    if (await isModuleRateLimited(createServiceClient(), "loyalty_stamp")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
-    const refused = await verifyCodeOnCard(card, program, formText(formData, "code"));
-    if (refused) return refused;
-    const result = await stamp(card.id, 1, "staff_code", true);
-    refresh(establishment);
-    return stampMessage(result, program, establishment, card.stamps);
-  } catch (error) {
-    console.error("[loyalty] stamp failed:", error instanceof Error ? error.message : error);
-    return { ok: false, message: "Não foi possível dar o carimbo. Tente novamente." };
-  }
-}
-
-/** Public: the team confirms a reward was handed over (with its code, on the customer's phone). */
-export async function redeemWithCode(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    const found = await publicCard(formData);
-    if (!found) return { ok: false, message: "Cartão não encontrado." };
-    const { card, establishment, program } = found;
-    if (await isModuleRateLimited(createServiceClient(), "loyalty_stamp")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
-    const refused = await verifyCodeOnCard(card, program, formText(formData, "code"));
-    if (refused) return refused;
-    const redeemed = await redeemReward(card, formText(formData, "reward_id"));
-    if (!redeemed) return { ok: false, message: "Esta recompensa já foi usada ou expirou." };
-    await createServiceClient().from("loyalty_cards").update({ failed_code_attempts: 0 }).eq("id", card.id);
-    refresh(establishment);
-    return { ok: true, message: `Recompensa entregue: ${redeemed.label ?? program.reward}. Bom proveito!` };
-  } catch (error) {
-    console.error("[loyalty] redeem failed:", error instanceof Error ? error.message : error);
-    return { ok: false, message: "Não foi possível registar. Tente novamente." };
-  }
 }
 
 /** Marks a reward as handed over; returns it (with the text it was earned with), or null if it was used or expired. */
@@ -291,15 +221,15 @@ async function staffCard(formData: FormData) {
 
 const paused: ActionState = { ok: false, message: "O cartão de cliente está em pausa. Ative-o em Definições para dar ou retirar carimbos." };
 
-/** Staff panel: one stamp (respects the time window between stamps). */
+/** Staff panel: one stamp, whenever the team gives it. */
 export async function staffStamp(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
     if (!program.active) return paused;
-    const result = await stamp(card.id, 1, "staff_panel", true);
+    const result = await stamp(card.id, 1, "staff_panel");
     refresh(establishment);
-    const outcome = stampMessage(result, program, establishment, card.stamps)!;
+    const outcome = stampMessage(result, program, card.stamps);
     return { ok: outcome.ok, message: `${card.name}: ${outcome.message}` };
   });
 }
@@ -310,7 +240,7 @@ export async function staffRemoveStamp(_previous: ActionState, formData: FormDat
     const { establishment, card, program } = await staffCard(formData);
     if (!card) return { ok: false, message: "Cartão não encontrado." };
     if (!program.active) return paused;
-    const result = await stamp(card.id, -1, "staff_panel", false);
+    const result = await stamp(card.id, -1, "staff_panel");
     if (result.outcome === "nothing") return { ok: false, message: "Este cartão não tem carimbos para retirar." };
     refresh(establishment);
     return {
@@ -323,7 +253,7 @@ export async function staffRemoveStamp(_previous: ActionState, formData: FormDat
   });
 }
 
-/** Staff panel: stamps a customer already had on the paper card (no time window). */
+/** Staff panel: stamps a customer already had on the paper card. */
 export async function staffMigrateStamps(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment, card, program } = await staffCard(formData);
@@ -331,7 +261,7 @@ export async function staffMigrateStamps(_previous: ActionState, formData: FormD
     if (!program.active) return paused;
     const amount = Number(formText(formData, "amount"));
     if (!Number.isInteger(amount) || amount < 1 || amount > program.stamps_required * 3) return { ok: false, message: "Indique quantos carimbos tinha no cartão de papel." };
-    await stamp(card.id, amount, "migration", false);
+    await stamp(card.id, amount, "migration");
     refresh(establishment);
     const reached = rewardsCrossed(card.stamps, amount, program).map((item) => item.reward);
     return { ok: true, message: `${amount} carimbos do cartão de papel passados para ${card.name}.${reached.length ? ` Ganhou: ${reached.join(", ")}.` : ""}` };
@@ -366,7 +296,6 @@ const programSchema = z.object({
   stamps_required: z.coerce.number().int().min(2).max(50),
   reward: z.string().trim().min(1).max(120),
   welcome_stamp: z.boolean(),
-  cooldown_minutes: z.coerce.number().int().min(0).max(10080),
   reward_valid_days: z
     .string()
     .trim()
@@ -399,7 +328,6 @@ export async function saveProgram(_previous: ActionState, formData: FormData): P
       stamps_required: formText(formData, "stamps_required"),
       reward: formText(formData, "reward"),
       welcome_stamp: formData.get("welcome_stamp") === "on",
-      cooldown_minutes: formText(formData, "cooldown_minutes"),
       reward_valid_days: formText(formData, "reward_valid_days"),
       terms: formText(formData, "terms"),
     });
@@ -426,26 +354,5 @@ export async function saveProgram(_previous: ActionState, formData: FormData): P
         ? `Regras guardadas. ${count === 1 ? "1 cartão já tinha" : `${count} cartões já tinham`} os carimbos necessários e ${count === 1 ? "ficou completo" : "ficaram completos"}.`
         : "Regras guardadas. Valem para todos os cartões a partir de agora.",
     };
-  });
-}
-
-/** The stamp PIN (6 digits) staff type on the customer's phone. Only its salted hash is stored. */
-export async function setStaffCode(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  return staffGuard(async () => {
-    const { establishment } = await requireEstablishmentAccess(formText(formData, "establishment_id"), "loyalty");
-    const code = formText(formData, "code");
-    if (!isStaffCode(code)) return { ok: false, message: "O PIN tem de ter 6 algarismos." };
-    if (code !== formText(formData, "confirm")) return { ok: false, message: "Os dois PIN não coincidem." };
-    if (/^(\d)\1{5}$/.test(code) || "0123456789".includes(code) || "9876543210".includes(code)) {
-      return { ok: false, message: "Escolha um PIN menos óbvio (sem algarismos todos iguais ou seguidos)." };
-    }
-    await ensureProgram(establishment);
-    const { error } = await createServiceClient()
-      .from("loyalty_programs")
-      .update({ ...newStaffCodeHash(code), staff_code_set_at: new Date().toISOString() })
-      .eq("establishment_id", establishment.id);
-    if (error) throw new Error(error.message);
-    refresh(establishment);
-    return { ok: true, message: "PIN de carimbo guardado. O PIN anterior deixa de funcionar." };
   });
 }

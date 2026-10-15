@@ -1,4 +1,4 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { kindDefaults } from "@/lib/establishments/kinds";
 import { isUuid } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
@@ -13,14 +13,16 @@ export interface LoyaltyProgramRow {
   reward: string;
   /** Rewards along the way, before the full card (up to 3). */
   milestones: Milestone[];
-  /** «1 carimbo por visita a partir de X €»: shown to customers and staff, applied by the team. */
+  /** «1 carimbo por serviço pago a partir de X €»: shown to customers and staff, applied by the team. */
   min_spend_cents: number | null;
   welcome_stamp: boolean;
+  /** Not used any more: stamps are never limited by time. */
   cooldown_minutes: number;
   reward_valid_days: number | null;
   staff_code_hash: string | null;
   staff_code_salt: string | null;
   staff_code_set_at: string | null;
+  /** The card's own conditions («Não acumula com outras promoções»), shown with the stamp rule. */
   terms: string | null;
   updated_at: string;
 }
@@ -75,22 +77,6 @@ export async function ensureProgram(establishment: EstablishmentRow): Promise<Lo
     .single();
   if (insertError) throw new Error(`loyalty program insert: ${insertError.message}`);
   return created as LoyaltyProgramRow;
-}
-
-export function hashStaffCode(code: string, salt: string): string {
-  return createHash("sha256").update(`${salt}:${code}`).digest("hex");
-}
-
-export function newStaffCodeHash(code: string): { staff_code_hash: string; staff_code_salt: string } {
-  const salt = randomBytes(16).toString("hex");
-  return { staff_code_hash: hashStaffCode(code, salt), staff_code_salt: salt };
-}
-
-export function staffCodeMatches(program: LoyaltyProgramRow, code: string): boolean {
-  if (!program.staff_code_hash || !program.staff_code_salt) return false;
-  const given = Buffer.from(hashStaffCode(code, program.staff_code_salt), "hex");
-  const stored = Buffer.from(program.staff_code_hash, "hex");
-  return given.length === stored.length && timingSafeEqual(given, stored);
 }
 
 export function newCardCode(): string {

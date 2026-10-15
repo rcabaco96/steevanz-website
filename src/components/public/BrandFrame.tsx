@@ -26,10 +26,47 @@ function PinIcon() {
   );
 }
 
+function StarIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4.5 w-4.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinejoin="round">
+      <path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" />
+    </svg>
+  );
+}
+
+/** «Deixar avaliação» on Google: the write-a-review window of the establishment's place. */
+export function ReviewLink({ establishment, className = brandSecondaryButton, label = "Deixar avaliação" }: { establishment: EstablishmentRow; className?: string; label?: string }) {
+  if (!establishment.review_url) return null;
+  return (
+    <a href={establishment.review_url} target="_blank" rel="noopener noreferrer" className={className}>
+      <StarIcon />
+      {label}
+    </a>
+  );
+}
+
+/** The establishment on Google, on every customer page: open it in Maps and leave a review. */
+function PlaceLinks({ establishment }: { establishment: EstablishmentRow }) {
+  if (!establishment.maps_url && !establishment.review_url) return null;
+  const both = Boolean(establishment.maps_url && establishment.review_url);
+  return (
+    <div className={`grid gap-3 ${both ? "grid-cols-2" : "grid-cols-1"}`}>
+      {establishment.maps_url ? (
+        <a href={establishment.maps_url} target="_blank" rel="noopener noreferrer" className={`${brandSecondaryButton} px-3 text-[0.95rem] whitespace-nowrap`}>
+          <PinIcon />
+          Google Maps
+        </a>
+      ) : null}
+      <ReviewLink establishment={establishment} className={`${brandSecondaryButton} px-3 text-[0.95rem] whitespace-nowrap`} />
+    </div>
+  );
+}
+
 /**
  * Page of an establishment for its customers: the shop's front in the Steevanz colour, with one quiet
  * detail of its kind (a restaurant's awning, a barber's pole, a pitch's lines…), one calm column
- * underneath, Steevanz only in small print. `service` names what the page is for.
+ * underneath, the place on Google (Maps and review) at its end, Steevanz only in small print.
+ * `service` names what the page is for.
  */
 export function BrandFrame({ establishment, service, children }: { establishment: EstablishmentRow; service: string; children: ReactNode }) {
   return (
@@ -42,14 +79,24 @@ export function BrandFrame({ establishment, service, children }: { establishment
           </span>
           <h1 className="display text-[2.35rem] leading-[1.02] text-balance">{establishment.name}</h1>
           {establishment.address ? (
-            <p className="flex items-center gap-1.5 text-sm opacity-85">
-              <PinIcon />
-              {establishment.address}
-            </p>
+            establishment.maps_url ? (
+              <a href={establishment.maps_url} target="_blank" rel="noopener noreferrer" className="flex w-fit items-center gap-1.5 text-sm opacity-85 underline-offset-2 hover:underline">
+                <PinIcon />
+                {establishment.address}
+              </a>
+            ) : (
+              <p className="flex items-center gap-1.5 text-sm opacity-85">
+                <PinIcon />
+                {establishment.address}
+              </p>
+            )
           ) : null}
         </div>
       </header>
-      <main className="mx-auto mt-8 flex w-full max-w-md flex-1 flex-col gap-5 px-4 pb-10">{children}</main>
+      <main className="mx-auto mt-8 flex w-full max-w-md flex-1 flex-col gap-5 px-4 pb-10">
+        {children}
+        <PlaceLinks establishment={establishment} />
+      </main>
       <footer className="mx-auto flex w-full max-w-md flex-col items-center gap-1.5 px-5 pb-8 text-center text-xs text-subtle">
         {establishment.phone ? (
           <a href={`tel:${establishment.phone.replace(/\s+/g, "")}`} className="rounded-full border border-line px-3 py-1.5 text-sm font-medium text-muted hover:text-text">

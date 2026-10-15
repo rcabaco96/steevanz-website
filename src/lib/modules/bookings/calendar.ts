@@ -7,6 +7,8 @@ export interface FeedEvent {
   end: string;
   title: string;
   description: string;
+  /** Where: the place's name and address. */
+  location?: string;
   cancelled?: boolean;
 }
 
@@ -45,6 +47,7 @@ export function buildCalendar(name: string, events: FeedEvent[]): string {
       `DTEND:${icsDate(event.end)}`,
       `SUMMARY:${escapeIcs(event.title)}`,
       `DESCRIPTION:${escapeIcs(event.description)}`,
+      ...(event.location ? [`LOCATION:${escapeIcs(event.location)}`] : []),
       `STATUS:${event.cancelled ? "CANCELLED" : "CONFIRMED"}`,
       "END:VEVENT",
     ]),

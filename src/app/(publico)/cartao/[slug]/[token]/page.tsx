@@ -4,14 +4,15 @@ import type { ReactNode } from "react";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { QrCode } from "@/components/modules/shared/QrCode";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
-import { RedeemWithCodeForm, RememberCard, StampWithCodeForm } from "@/components/public/loyalty/CardForms";
+import { CardOnThisPhone } from "@/components/public/loyalty/CardForms";
+import { RewardReveal } from "@/components/public/loyalty/RewardReveal";
 import { StampCard } from "@/components/public/loyalty/StampCard";
 import { requestOrigin } from "@/lib/booking/request";
 import { cardRewards, formatCardCode, missingText, nextReward, stampRuleText } from "@/lib/modules/loyalty/rules";
 import { availableRewards, ensureProgram, getCardByToken, recentlyRedeemed } from "@/lib/modules/loyalty/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
-type Props = { params: Promise<{ slug: string; token: string }> };
+type Props = { params: Promise<{ slug: string; token: string }>; searchParams: Promise<{ novo?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, token } = await params;
@@ -39,8 +40,9 @@ function Disclosure({ title, children }: { title: string; children: ReactNode })
   );
 }
 
-export default async function LoyaltyCardPage({ params }: Props) {
+export default async function LoyaltyCardPage({ params, searchParams }: Props) {
   const { slug, token } = await params;
+  const { novo } = await searchParams;
   const establishment = await publicEstablishment(slug, "loyalty");
   if (!establishment) notFound();
   const card = await getCardByToken(token);
@@ -51,7 +53,6 @@ export default async function LoyaltyCardPage({ params }: Props) {
 
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
-      <RememberCard slug={establishment.slug} token={card.token} />
       {/* A stamp given from the staff panel shows up while the customer is at the counter. */}
       <AutoRefresh intervalMs={10_000} />
       <StampCard
@@ -65,38 +66,43 @@ export default async function LoyaltyCardPage({ params }: Props) {
       />
       <div className="-mt-1 flex flex-col gap-1 text-center">
         <p className="text-muted">{missingText(card.stamps, program)}</p>
-        <p className="text-sm text-subtle">{stampRuleText(program.min_spend_cents)}.</p>
+        <p className="text-sm text-subtle">
+          {stampRuleText(program.min_spend_cents)}.{program.terms ? ` ${program.terms}` : ""}
+        </p>
         {rewardAt.length > 1 ? (
           <p className="text-sm text-subtle">{cardRewards(program).map((item) => `${item.at}.º carimbo: ${item.reward}`).join(" · ")}</p>
         ) : null}
       </div>
 
       {redeemed?.redeemed_at ? (
-        <p role="status" className="rounded-2xl border border-success/30 bg-success-soft px-4 py-3 text-center font-semibold text-success">
-          Recompensa entregue às{" "}
-          {new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(redeemed.redeemed_at))}. Bom proveito!
-        </p>
+        <RewardReveal id={`entregue-${redeemed.id}`} className="rounded-2xl">
+          <p role="status" className="rounded-2xl border border-success/30 bg-success-soft px-4 py-3 text-center font-semibold text-success">
+            {redeemed.label ?? program.reward}: entregue às{" "}
+            {new Intl.DateTimeFormat("pt-PT", { timeZone: establishment.time_zone, hour: "2-digit", minute: "2-digit" }).format(new Date(redeemed.redeemed_at))}. Obrigado e até à próxima!
+          </p>
+        </RewardReveal>
       ) : null}
 
       {rewards.length ? (
-        <article className="ticket overflow-hidden">
-          <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">{rewards.length === 1 ? "Tem uma recompensa à espera" : `Tem ${rewards.length} recompensas à espera`}</p>
-            <p className="display mt-1 text-[1.9rem] leading-tight">{rewards[0].label ?? program.reward}</p>
-            {rewards.length > 1 ? <p className="mt-1 text-sm text-muted">Depois: {rewards.slice(1).map((reward) => reward.label ?? program.reward).join(", ")}.</p> : null}
-            {rewards[0].expires_at ? <p className="mt-1 text-sm text-muted">Válida até {format.format(new Date(rewards[0].expires_at))}.</p> : null}
-          </div>
-          <div className="ticket-tear" />
-          <div className="flex flex-col gap-3 px-6 pt-5 pb-6">
-            <p className="text-sm text-muted">Na altura de usar, mostre este ecrã ao balcão: o funcionário escreve aqui o PIN de carimbo.</p>
-            <RedeemWithCodeForm token={card.token} rewardId={rewards[0].id} />
-          </div>
-        </article>
+        <RewardReveal id={rewards[0].id}>
+          <article className="ticket overflow-hidden">
+            <div className="bg-[color-mix(in_oklab,var(--brand)_10%,var(--surface))] px-6 pt-5 pb-6">
+              <p className="text-sm text-muted">{rewards.length === 1 ? "Tem uma recompensa à espera" : `Tem ${rewards.length} recompensas à espera`}</p>
+              <p className="display mt-1 text-[1.9rem] leading-tight">{rewards[0].label ?? program.reward}</p>
+              {rewards.length > 1 ? <p className="mt-1 text-sm text-muted">Depois: {rewards.slice(1).map((reward) => reward.label ?? program.reward).join(", ")}.</p> : null}
+              {rewards[0].expires_at ? <p className="mt-1 text-sm text-muted">Válida até {format.format(new Date(rewards[0].expires_at))}.</p> : null}
+            </div>
+            <div className="ticket-tear" />
+            <div className="px-6 pt-5 pb-6">
+              <p className="text-sm text-muted">Para usar, mostre este cartão ao balcão: o funcionário lê o código QR em baixo e entrega-lhe a recompensa.</p>
+            </div>
+          </article>
+        </RewardReveal>
       ) : null}
 
       <PublicCard>
         <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold text-text">Pedir carimbo</h2>
+          <h2 className="text-lg font-semibold text-text">{rewards.length ? "Pedir carimbo ou usar a recompensa" : "Pedir carimbo"}</h2>
           <p className="text-muted">Mostre este ecrã ao balcão. O carimbo aparece no cartão em segundos.</p>
         </div>
         {program.active ? (
@@ -107,12 +113,6 @@ export default async function LoyaltyCardPage({ params }: Props) {
               </div>
               <p className="text-sm text-muted">O funcionário lê este código com o telemóvel ou tablet do estabelecimento.</p>
             </div>
-            <details className="group text-sm">
-              <summary className="cursor-pointer text-center font-medium text-muted hover:text-text">Sem leitor de QR? O funcionário escreve o PIN</summary>
-              <div className="mt-4">
-                <StampWithCodeForm token={card.token} />
-              </div>
-            </details>
           </>
         ) : (
           <p className="text-muted">Os carimbos estão em pausa de momento.</p>
@@ -121,6 +121,8 @@ export default async function LoyaltyCardPage({ params }: Props) {
           O funcionário também encontra o cartão pelo código <strong className="font-semibold text-muted">{formatCardCode(card.code)}</strong>.
         </p>
       </PublicCard>
+
+      <CardOnThisPhone slug={establishment.slug} token={card.token} name={card.name} createdHere={novo === "1"} />
 
       <Disclosure title="Ter o cartão sempre à mão">
         <ul className="flex list-disc flex-col gap-1.5 pl-5">

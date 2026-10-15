@@ -10,11 +10,11 @@ import { accessErrorMessage, requireEstablishmentAccess } from "@/lib/establishm
 import { getEstablishment, getEstablishmentBySlug, isUuid, loadBundle } from "@/lib/establishments/store";
 import type { EstablishmentRow } from "@/lib/establishments/types";
 import { createServiceClient } from "@/lib/supabase/service";
-import { formText, isBot, isModuleRateLimited, publicToken, startOfLocalDay, tokenPattern } from "../common";
+import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken, startOfLocalDay, tokenPattern } from "../common";
 import { notifyCalled } from "./notify";
 import { pushTest } from "./push";
 import { parseSubscription } from "./push-rules";
-import { ensureWaitlistSettings, getEntryByToken, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
+import { currentSettings, ensureWaitlistSettings, getEntryByToken, servingCapacity, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
 
 function refreshQueue(establishment: EstablishmentRow) {
   revalidatePath("/conta", "layout");
@@ -25,20 +25,26 @@ function refreshQueue(establishment: EstablishmentRow) {
 const joinErrors: Record<string, string> = {
   waitlist_closed: "A fila não está aberta neste momento. Fale com a equipa.",
   waitlist_full: "A fila está cheia neste momento. Fale com a equipa.",
+  waitlist_name_taken: "Já está alguém na fila com este nome. Escreva outro (por exemplo, com o apelido).",
 };
+
+function joinError(message: string): string | null {
+  const known = Object.keys(joinErrors).find((key) => message.includes(key));
+  return known ? joinErrors[known] : null;
+}
 
 const entrySchema = z.object({
   name: z.string().trim().min(1).max(60),
   party: z.number().int().min(1).max(100).nullable(),
   service: z.uuid().nullable(),
   staff: z.uuid().nullable(),
-  email: z.union([z.email().max(200), z.literal("")]).transform((email) => email.toLowerCase() || null),
   notes: z.string().trim().max(200).transform((text) => text || null),
 });
 
 async function parseEntry(formData: FormData, establishment: EstablishmentRow) {
-  const settings = await ensureWaitlistSettings(establishment);
   const bundle = await loadBundle(establishment);
+  // With the opening hours applied, so a queue past its closing time turns away a join sent from a page left open.
+  const settings = await currentSettings(establishment, bundle);
   const partyText = formText(formData, "party");
   const service = formText(formData, "service");
   const staff = formText(formData, "staff");
@@ -47,11 +53,12 @@ async function parseEntry(formData: FormData, establishment: EstablishmentRow) {
     party: settings.ask_party && partyText ? Number(partyText) : null,
     service: settings.ask_service && service ? service : null,
     staff: settings.ask_staff && staff ? staff : null,
-    email: formText(formData, "email"),
     notes: formText(formData, "notes"),
   });
   if (!parsed.success) return { error: "Indique o seu nome e verifique os dados." } as const;
-  const data = parsed.data;
+  const phone = phoneFrom(formData);
+  if ("error" in phone) return { error: phone.error } as const;
+  const data = { ...parsed.data, phone: phone.phone };
   if (settings.ask_party && (!data.party || data.party > settings.max_party)) return { error: `Indique o número de pessoas (1 a ${settings.max_party}).` } as const;
   if (data.service && !bundle.services.some((item) => item.id === data.service && item.active)) return { error: "Escolha um serviço da lista." } as const;
   if (data.staff && !bundle.staff.some((item) => item.id === data.staff && item.active)) return { error: "Escolha um profissional da lista." } as const;
@@ -77,14 +84,14 @@ export async function joinWaitlist(_previous: ActionState, formData: FormData): 
       p_party: parsed.data.party,
       p_service: parsed.data.service,
       p_staff: parsed.data.staff,
-      p_email: parsed.data.email,
+      p_phone: parsed.data.phone,
       p_notes: parsed.data.notes,
       p_source: "online",
       p_day_start: startOfLocalDay(establishment.time_zone).toISOString(),
     });
     if (error) {
-      const known = Object.keys(joinErrors).find((key) => error.message.includes(key));
-      if (known) return { ok: false, message: joinErrors[known] };
+      const known = joinError(error.message);
+      if (known) return { ok: false, message: known };
       throw new Error(error.message);
     }
     refreshQueue(establishment);
@@ -200,16 +207,40 @@ export async function setQueueState(_previous: ActionState, formData: FormData):
   return staffGuard(async () => {
     const { establishment } = await staffAccess(formData);
     const state = formText(formData, "state");
-    if (!["open", "paused", "closed"].includes(state)) return { ok: false, message: "Pedido inválido." };
+    if (!["open", "closed"].includes(state)) return { ok: false, message: "Pedido inválido." };
     await ensureWaitlistSettings(establishment);
     const { error } = await createServiceClient().from("waitlist_settings").update({ state }).eq("establishment_id", establishment.id);
     if (error) throw new Error(error.message);
     refreshQueue(establishment);
-    return { ok: true, message: state === "open" ? "Fila aberta." : state === "paused" ? "Entradas em pausa." : "Fila fechada. Quem já está na fila continua a ser atendido." };
+    return { ok: true, message: state === "open" ? "Fila aberta." : "Fila fechada. As senhas voltam a começar no 1; quem já está na fila continua a ser atendido." };
   });
 }
 
-/** Calls someone: their status page rings and, with an email, they also get one. */
+/**
+ * Whoever is called is being served. Once more people are called than there are professionals
+ * working, the ones called longest ago are done: closed as served, with nobody marking anything.
+ */
+async function closeFinishedCalls(establishment: EstablishmentRow): Promise<void> {
+  const client = createServiceClient();
+  const { data, error } = await client
+    .from("waitlist_entries")
+    .select("id")
+    .eq("establishment_id", establishment.id)
+    .eq("status", "called")
+    .order("called_at", { ascending: false })
+    .limit(200);
+  if (error) throw new Error(error.message);
+  const finished = ((data ?? []) as { id: string }[]).slice(servingCapacity(await loadBundle(establishment))).map((row) => row.id);
+  if (!finished.length) return;
+  const { error: updateError } = await client
+    .from("waitlist_entries")
+    .update({ status: "served", finished_at: new Date().toISOString(), close_reason: "auto" })
+    .in("id", finished)
+    .eq("status", "called");
+  if (updateError) throw new Error(updateError.message);
+}
+
+/** Calls someone (out of order): their ticket page rings and the phone gets a notification. */
 export async function callEntry(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment } = await staffAccess(formData);
@@ -220,22 +251,7 @@ export async function callEntry(_previous: ActionState, formData: FormData): Pro
       .update({ status: "called", called_at: new Date().toISOString(), reply: null, replied_at: null })
       .eq("id", entry.id);
     if (error) throw new Error(error.message);
-    const origin = await requestOrigin();
-    after(() => notifyCalled(establishment, entry, origin));
-    refreshQueue(establishment);
-    return { ok: true, message: `${entry.name} foi chamado.` };
-  });
-}
-
-/** "Chamar o seguinte": the next ticket in order (for one professional, or anyone). */
-export async function callNext(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  return staffGuard(async () => {
-    const { establishment } = await staffAccess(formData);
-    const staff = formText(formData, "staff_id");
-    const { data, error } = await createServiceClient().rpc("waitlist_call_next", { p_establishment: establishment.id, p_staff: isUuid(staff) ? staff : null });
-    if (error) throw new Error(error.message);
-    const entry = ((data ?? []) as WaitlistEntryRow[])[0];
-    if (!entry) return { ok: false, message: "Não há ninguém à espera." };
+    await closeFinishedCalls(establishment);
     const origin = await requestOrigin();
     after(() => notifyCalled(establishment, entry, origin));
     refreshQueue(establishment);
@@ -243,9 +259,25 @@ export async function callNext(_previous: ActionState, formData: FormData): Prom
   });
 }
 
-const finishing: EntryStatus[] = ["served", "no_show", "cancelled", "waiting"];
+/** "Chamar o seguinte": the next ticket in order, whoever they asked for. */
+export async function callNext(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return staffGuard(async () => {
+    const { establishment } = await staffAccess(formData);
+    const { data, error } = await createServiceClient().rpc("waitlist_call_next", { p_establishment: establishment.id, p_staff: null });
+    if (error) throw new Error(error.message);
+    const entry = ((data ?? []) as WaitlistEntryRow[])[0];
+    if (!entry) return { ok: false, message: "Não há ninguém à espera." };
+    await closeFinishedCalls(establishment);
+    const origin = await requestOrigin();
+    after(() => notifyCalled(establishment, entry, origin));
+    refreshQueue(establishment);
+    return { ok: true, message: `Senha ${entry.number} chamada: ${entry.name}.` };
+  });
+}
 
-/** Atendido, não apareceu, desistiu, or back to waiting (keeps the place). */
+const finishing: EntryStatus[] = ["served", "no_show", "cancelled"];
+
+/** The exceptions: atendido (before calling the next), não apareceu, desistiu. */
 export async function setEntryStatus(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment } = await staffAccess(formData);
@@ -253,10 +285,8 @@ export async function setEntryStatus(_previous: ActionState, formData: FormData)
     if (!finishing.includes(status)) return { ok: false, message: "Pedido inválido." };
     const entry = await entryOf(establishment, formData);
     if (!entry) return { ok: false, message: "Entrada não encontrada." };
-    const changes =
-      status === "waiting"
-        ? { status, called_at: null, finished_at: null, reply: null, replied_at: null, arrived_at: null, close_reason: null }
-        : { status, finished_at: new Date().toISOString(), close_reason: "staff" };
+    if (!["waiting", "called"].includes(entry.status)) return { ok: false, message: "Esta senha já terminou." };
+    const changes = { status, finished_at: new Date().toISOString(), close_reason: "staff" };
     const { error } = await createServiceClient().from("waitlist_entries").update(changes).eq("id", entry.id);
     if (error) throw new Error(error.message);
     if (status === "no_show" && entry.status === "called" && (await ensureWaitlistSettings(establishment)).auto_next) {
@@ -306,7 +336,7 @@ export async function moveEntry(_previous: ActionState, formData: FormData): Pro
   });
 }
 
-/** Someone at the counter without a phone (or who prefers to talk): added by the team, even with the queue closed. */
+/** Someone without a phone (or who prefers to talk): added by the team, even with the queue closed. */
 export async function addEntryByStaff(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return staffGuard(async () => {
     const { establishment } = await staffAccess(formData);
@@ -319,12 +349,16 @@ export async function addEntryByStaff(_previous: ActionState, formData: FormData
       p_party: parsed.data.party,
       p_service: parsed.data.service,
       p_staff: parsed.data.staff,
-      p_email: parsed.data.email,
+      p_phone: parsed.data.phone,
       p_notes: parsed.data.notes,
       p_source: "staff",
       p_day_start: startOfLocalDay(establishment.time_zone).toISOString(),
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      const known = joinError(error.message);
+      if (known) return { ok: false, message: known };
+      throw new Error(error.message);
+    }
     refreshQueue(establishment);
     return { ok: true, message: `${parsed.data.name} entrou na fila.` };
   });
@@ -334,7 +368,6 @@ const settingsSchema = z.object({
   avg_minutes: z.coerce.number().int().min(1).max(240),
   max_party: z.coerce.number().int().min(1).max(100),
   max_waiting: z.coerce.number().int().min(1).max(500),
-  grace_minutes: z.coerce.number().int().min(1).max(120),
   ask_party: z.boolean(),
   ask_service: z.boolean(),
   ask_staff: z.boolean(),
@@ -350,7 +383,6 @@ export async function saveWaitlistSettings(_previous: ActionState, formData: For
       avg_minutes: formText(formData, "avg_minutes"),
       max_party: formText(formData, "max_party"),
       max_waiting: formText(formData, "max_waiting"),
-      grace_minutes: formText(formData, "grace_minutes"),
       ask_party: formData.get("ask_party") === "on",
       ask_service: formData.get("ask_service") === "on",
       ask_staff: formData.get("ask_staff") === "on",

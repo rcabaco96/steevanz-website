@@ -3,11 +3,12 @@ import { describe, it } from "node:test";
 import { kindFromCategory, slugify } from "../src/lib/establishments/kinds.ts";
 import { estimateWait, formatWait, observedPace, roundUpToFive } from "../src/lib/modules/waitlist/eta.ts";
 import { nextScheduleChange, scheduledState } from "../src/lib/modules/waitlist/schedule.ts";
-import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, isLocked, isStaffCode, missingText, nextReward, normalizeCardCode, parseEuros, rewardInSentence, rewardsCrossed, rewardsSentence, stampRuleText, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
+import { cardCodeFrom, cardRewards, codeAlphabet, eurosText, formatCardCode, missingText, nextReward, normalizeCardCode, parseEuros, rewardInSentence, rewardsCrossed, rewardsSentence, stampRuleText, stampSlots } from "../src/lib/modules/loyalty/rules.ts";
 import { bookingAvailability, canChangeOnline, findBookingSlot } from "../src/lib/modules/bookings/availability.ts";
 import { normalizePhone, splitPhone } from "../src/lib/phone.ts";
 import { parseSubscription } from "../src/lib/modules/waitlist/push-rules.ts";
 import { iconColor, iconSize, iconUrl, imageTypeOf, initialsOf, logoPathFor, logoVersion, ownsLogoPath } from "../src/lib/establishments/logo-rules.ts";
+import { opportunities, parseCsv, pickEmail, prospectFromRow, reasons, siteKind } from "../src/lib/prospects/rules.ts";
 
 const minute = 60_000;
 
@@ -82,6 +83,22 @@ describe("waitlist estimate", () => {
     assert.equal(estimateWait({ ahead, self: { serviceMinutes: 30, staffId: "rui" }, avgMinutes: 20, activeStaff: 2, staffIds: ["rui", "pedro"], recentCalls: [], now }), 45);
   });
 
+  it("counts what is left of the services being done now", () => {
+    const staffIds = ["rui", "pedro"];
+    // Both chairs busy (20 and 5 minutes left): someone joining now waits for the first one free.
+    const inService = [
+      { staffId: "rui", minutesLeft: 20 },
+      { staffId: null, minutesLeft: 5 },
+    ];
+    assert.equal(estimateWait({ ahead: [], inService, avgMinutes: 20, activeStaff: 2, staffIds, recentCalls: [], now }), 5);
+    // One ahead (30 min) takes the chair free in 5: the next free one is Rui's, in 20.
+    assert.equal(estimateWait({ ahead: [{ serviceMinutes: 30, staffId: null }], inService, avgMinutes: 20, activeStaff: 2, staffIds, recentCalls: [], now }), 20);
+    // Waiting for Rui: his current customer, then the one ahead for him.
+    assert.equal(estimateWait({ ahead: [{ serviceMinutes: 30, staffId: "rui" }], self: { serviceMinutes: 30, staffId: "rui" }, inService, avgMinutes: 20, activeStaff: 2, staffIds, recentCalls: [], now }), 50);
+    // A service running late counts as about to finish.
+    assert.equal(estimateWait({ ahead: [], inService: [{ staffId: "rui", minutesLeft: -10 }], avgMinutes: 20, activeStaff: 1, staffIds: ["rui"], recentCalls: [], now }), 0);
+  });
+
   it("rounds and formats", () => {
     assert.equal(roundUpToFive(1), 5);
     assert.equal(roundUpToFive(21), 25);
@@ -107,9 +124,9 @@ describe("waitlist opening hours", () => {
   it("leaves it closed when the team closed it during this service", () => {
     assert.equal(scheduledState({ ...base, state: "closed", stateChangedAt: at("13:00"), now: at("13:30") }), null);
   });
-  it("closes an open or paused queue after closing time", () => {
+  it("closes an open queue after closing time", () => {
     assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("12:00"), now: at("15:10") }), "closed");
-    assert.equal(scheduledState({ ...base, state: "paused", stateChangedAt: at("14:00"), now: at("16:00") }), "closed");
+    assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("14:00"), now: at("16:00") }), "closed");
   });
   it("respects a queue opened by hand after closing time", () => {
     assert.equal(scheduledState({ ...base, state: "open", stateChangedAt: at("15:20"), now: at("16:00") }), null);
@@ -140,16 +157,6 @@ describe("loyalty rules", () => {
     for (const char of code) assert.ok(codeAlphabet.includes(char));
     assert.equal(formatCardCode("K7P29Q"), "K7P 29Q");
     assert.equal(normalizeCardCode(" k7p-29q "), "K7P29Q");
-  });
-
-  it("checks staff codes and locks", () => {
-    assert.ok(isStaffCode("123456"));
-    assert.ok(!isStaffCode("12345"));
-    assert.ok(!isStaffCode("12a456"));
-    const now = Date.now();
-    assert.ok(isLocked(new Date(now + minute).toISOString(), now));
-    assert.ok(!isLocked(new Date(now - minute).toISOString(), now));
-    assert.ok(!isLocked(null, now));
   });
 
   it("draws the stamp slots", () => {
@@ -331,8 +338,8 @@ describe("loyalty rewards along the way", () => {
   it("writes the rewards and the stamp rule for customers", () => {
     assert.equal(rewardsSentence(barber), "Junte 10 carimbos e ganhe um corte oferecido.");
     assert.equal(rewardsSentence(restaurant), "Ganhe um café oferecido ao 3.º carimbo, uma sobremesa oferecida ao 6.º e um prato do dia oferecido ao 10.º.");
-    assert.equal(stampRuleText(null), "1 carimbo por visita");
-    assert.equal(stampRuleText(1000), "1 carimbo por visita, a partir de 10 € de consumo");
+    assert.equal(stampRuleText(null), "1 carimbo por serviço pago");
+    assert.equal(stampRuleText(1000), "1 carimbo por serviço pago, a partir de 10 €");
     assert.equal(eurosText(750), "7,50 €");
   });
   it("reads the minimum spend typed by the owner", () => {
@@ -406,5 +413,55 @@ describe("establishment logo and icon", () => {
     assert.equal(iconColor("#12ab34"), "#12ab34");
     assert.equal(iconColor("red"), "#7a2d60");
     assert.equal(iconColor(null), "#7a2d60");
+  });
+});
+
+describe("prospecting", () => {
+  it("reads the scraper's CSV, quotes, commas and line breaks included", () => {
+    const csv = 'title,category,review_rating,review_count,website,emails,place_id,link\n"Barbearia ""Zé"", Lda",Barbearia,4.1,"23",,"info@ze.pt, logo@2x.png",ChIJ1,https://maps.google.com/?cid=1\nCafé Central,Café,4.8,512,https://central.pt,,ChIJ2,\n';
+    const rows = parseCsv(csv);
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0].title, 'Barbearia "Zé", Lda');
+    const first = prospectFromRow(rows[0]);
+    assert.equal(first.email, "info@ze.pt");
+    assert.equal(first.rating, 4.1);
+    assert.equal(first.reviews, 23);
+    assert.equal(first.website, null);
+    assert.equal(prospectFromRow({ title: "Sem lugar" }), null);
+  });
+  it("picks a real email, not images or placeholders", () => {
+    assert.equal(pickEmail("mailto:GERAL@Loja.PT"), "geral@loja.pt");
+    assert.equal(pickEmail("icon@2x.png user@example.com"), null);
+    assert.equal(pickEmail(""), null);
+  });
+  it("tags what each business could buy", () => {
+    assert.deepEqual(opportunities({ rating: 4.1, reviews: 23, website: null, category: "Barbearia" }), ["site", "modules"]);
+    assert.deepEqual(opportunities({ rating: 4.8, reviews: 512, website: "https://x.pt", category: "Loja de roupa" }), []);
+    assert.deepEqual(opportunities({ rating: 4.6, reviews: 30, website: "https://x.pt", category: "Restaurante" }), ["modules"]);
+    // Google calls barbershops «Barbeiro»; a Facebook page is not a site of their own.
+    assert.deepEqual(opportunities({ rating: 4.9, reviews: 300, website: "https://www.facebook.com/barbearia", category: "Barbeiro" }), ["site", "modules"]);
+  });
+  it("says why to call in plain words", () => {
+    const texts = (prospect) => reasons(prospect).map((reason) => (reason.note ? `nota: ${reason.text}` : reason.text));
+    assert.deepEqual(texts({ rating: 4.1, reviews: 23, website: "https://www.facebook.com/x", category: "Barbeiro" }), [
+      "Reservas Online e Cartão Fidelização",
+      "nota: Sem site próprio: só tem Facebook",
+    ]);
+    assert.deepEqual(texts({ rating: 4.9, reviews: 300, website: "https://barbearia-x.buk.pt", category: "Barbeiro" }), ["Reservas Online e Cartão Fidelização", "nota: Já reserva com Buk", "nota: Sem site próprio"]);
+    assert.deepEqual(texts({ rating: 4.7, reviews: 900, website: "https://tasca.pt", category: "Restaurante" }), ["Lista de Espera e Reservas Online"]);
+    assert.deepEqual(texts({ rating: 4.8, reviews: 400, website: "https://loja.pt", category: "Loja de roupa" }), []);
+    // Reviews are only a filter: we cannot tell from Google whether a place already has review plates.
+    assert.deepEqual(texts({ rating: 0, reviews: 0, website: "https://loja.pt", category: "Loja" }), []);
+  });
+  it("tells a site of its own from social pages, directories and booking platforms", () => {
+    assert.equal(siteKind(null), "none");
+    assert.equal(siteKind("https://www.barbeariaorlando.pt"), "own");
+    assert.equal(siteKind("https://domfelipebarbearia.wixsite.com/x"), "own");
+    assert.equal(siteKind("https://www.instagram.com/x"), "social");
+    assert.equal(siteKind("https://play.google.com/store/apps/details?id=x"), "social");
+    assert.equal(siteKind("https://www.pai.pt/x"), "social");
+    assert.equal(siteKind("https://barbearia-areosa.buk.pt"), "booking");
+    assert.equal(siteKind("https://sites.appbarber.com.br/x"), "booking");
+    assert.equal(siteKind("https://www.fresha.com/a/x"), "booking");
   });
 });

@@ -42,7 +42,7 @@ export default async function AccountProductPage({
         actions={
           (counterProducts as string[]).includes(product) ? (
             <Link href="/conta/balcao" className={buttonClasses("primary", "md")}>
-              Abrir o Balcão
+              Abrir o Atendimento
             </Link>
           ) : null
         }

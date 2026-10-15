@@ -19,9 +19,6 @@ export default async function LoyaltyJoinPage({ params }: Props) {
   const establishment = await publicEstablishment(slug, "loyalty");
   if (!establishment) notFound();
   const program = await ensureProgram(establishment);
-  const terms =
-    program.terms ??
-    `Aceito que ${establishment.name} guarde o meu nome e contacto para gerir o cartão de cliente. Posso pedir para apagar os dados a qualquer momento.`;
 
   return (
     <BrandFrame establishment={establishment} service="Cartão de cliente">
@@ -30,6 +27,7 @@ export default async function LoyaltyJoinPage({ params }: Props) {
         <p className="text-muted">
           {stampRuleText(program.min_spend_cents)}. O cartão fica no seu telemóvel: sem aplicação, sem papel para perder.
         </p>
+        {program.terms ? <p className="text-sm text-subtle">{program.terms}</p> : null}
       </div>
       <StampCard
         name={establishment.name}
@@ -42,7 +40,7 @@ export default async function LoyaltyJoinPage({ params }: Props) {
       {program.active ? (
         <PublicCard>
           <h2 className="text-lg font-semibold text-text">{program.welcome_stamp ? "Crie o cartão e ganhe já o primeiro carimbo" : "Crie o seu cartão"}</h2>
-          <JoinCardForm slug={establishment.slug} terms={terms} welcomeStamp={program.welcome_stamp} />
+          <JoinCardForm slug={establishment.slug} businessName={establishment.name} welcomeStamp={program.welcome_stamp} />
         </PublicCard>
       ) : (
         <PublicCard>

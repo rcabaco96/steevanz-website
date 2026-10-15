@@ -151,6 +151,14 @@ export function CallAlert({
   // Allowed already (an earlier ticket) but not subscribed yet: the effect below is subscribing.
   const autoStarting = usePush && status === "waiting" && !pushOn && phase === null && current === "granted";
 
+  // iPhone only plays sound after a tap, and forgets it when the page goes to the background: every
+  // tap on the ticket unlocks the audio again, so the call can ring while the page is open.
+  useEffect(() => {
+    if (status !== "waiting" && status !== "called") return;
+    document.addEventListener("pointerdown", unlockAlerts, { passive: true });
+    return () => document.removeEventListener("pointerdown", unlockAlerts);
+  }, [status]);
+
   // The worker ready before the tap, so the subscription follows the permission prompt quickly.
   useEffect(() => {
     if (usePush && status === "waiting") registerQueueWorker();
@@ -236,8 +244,9 @@ export function CallAlert({
 
   if (status !== "waiting") return null;
 
-  // iPhone in a Safari tab: steps to put the ticket on the home screen, where push exists.
-  if (needsHomeScreen && !canPush) return <IphoneSteps onTestSound={testSound} />;
+  // iPhone in a Safari tab: steps to put the ticket on the home screen, the only place where iPhone
+  // allows push (even if a version shows the push API in the tab, subscribing there fails).
+  if (needsHomeScreen) return <IphoneSteps onTestSound={testSound} />;
 
   if (usePush) {
     if (pushOn) {

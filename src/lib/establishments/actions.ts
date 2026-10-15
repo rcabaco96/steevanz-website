@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
 import { formText } from "@/lib/modules/common";
+import { mapsPlaceLinks } from "@/lib/reviews/maps-resolve";
 import { createServiceClient } from "@/lib/supabase/service";
 import { accessErrorMessage, requireAdminSession, requireEstablishmentAccess } from "./access";
 import { businessKinds, slugify } from "./kinds";
@@ -113,13 +114,28 @@ export async function updateEstablishment(_previous: ActionState, formData: Form
       if (!slug) return { ok: false, message: "O endereço só pode ter letras, números e hífens." };
       changes.slug = slug;
     }
+    // The place on Google Maps: admins only. Empty removes it; a new link is read once, here.
+    let mapsNote = "";
+    const mapsInput = formText(formData, "maps_url");
+    if (viewer === "admin" && formData.has("maps_url") && mapsInput !== (establishment.maps_url ?? "")) {
+      if (!mapsInput) {
+        changes.maps_url = null;
+        changes.review_url = null;
+      } else {
+        const links = await mapsPlaceLinks(mapsInput);
+        if (!links) return { ok: false, message: "O link do Google Maps tem de ser um link https do Google (google.com/maps/place/… ou maps.app.goo.gl/…)." };
+        changes.maps_url = links.mapsUrl;
+        changes.review_url = links.reviewUrl;
+        if (!links.reviewUrl) mapsNote = " Não foi possível tirar o link de avaliação deste link: abra o negócio no Google Maps e copie o link da barra de endereço.";
+      }
+    }
     const { error } = await createServiceClient().from("establishments").update(changes).eq("id", establishment.id);
     if (error) {
       if (error.code === "23505") return { ok: false, message: "Esse endereço já está a ser usado." };
       throw new Error(error.message);
     }
     refresh();
-    return { ok: true, message: "Dados guardados." };
+    return { ok: true, message: `Dados guardados.${mapsNote}` };
   });
 }
 

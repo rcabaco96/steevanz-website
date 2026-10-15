@@ -5,7 +5,7 @@ import { normalizeCardCode } from "@/lib/modules/loyalty/rules";
 
 /**
  * Where the QR on a customer's loyalty card points. Staff scan it with the shop's phone or tablet
- * (any camera app): signed in as the owner or an admin, it opens the Balcão on that card, ready
+ * (any camera app): signed in as the owner or an admin, it opens the Atendimento on that card, ready
  * for "Dar carimbo". Signed out, it asks to sign in first; signed in as another client, it
  * opens the public card page. The QR only carries the card code, which is not a secret: the stamp
  * still needs the staff session.

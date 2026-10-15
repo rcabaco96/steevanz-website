@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { JoinForm } from "@/components/public/waitlist/JoinForm";
 import { QueueLine } from "@/components/public/waitlist/QueueLine";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
-import { estimateWait, formatWait } from "@/lib/modules/waitlist/eta";
-import { currentSettings, loadQueue } from "@/lib/modules/waitlist/store";
+import { formatWait } from "@/lib/modules/waitlist/eta";
+import { currentSettings, loadQueue, queueWait, servingNumber } from "@/lib/modules/waitlist/store";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -31,20 +32,11 @@ export default async function WaitlistJoinPage({ params }: Props) {
   if (!establishment) notFound();
   const bundle = await loadBundle(establishment);
   const settings = await currentSettings(establishment, bundle);
-  const queue = await loadQueue(establishment, settings);
+  const queue = await loadQueue(establishment);
   const words = kindWords[establishment.kind];
   const waiting = queue.live.filter((entry) => entry.status === "waiting");
-  const minutes = estimateWait({
-    ahead: waiting.map((entry) => ({
-      serviceMinutes: settings.ask_service ? (bundle.services.find((item) => item.id === entry.service_id)?.duration_minutes ?? settings.avg_minutes) : null,
-      staffId: entry.staff_id,
-    })),
-    avgMinutes: settings.avg_minutes,
-    activeStaff: bundle.staff.filter((item) => item.active).length,
-    staffIds: bundle.staff.filter((item) => item.active).map((item) => item.id),
-    recentCalls: queue.recentCalls,
-    now: queue.now,
-  });
+  const minutes = queueWait(queue, bundle, settings);
+  const serving = servingNumber(queue);
   const services = settings.ask_service ? bundle.services.filter((item) => item.active) : [];
   const staff = settings.ask_staff ? bundle.staff.filter((item) => item.active) : [];
   const open = settings.state === "open";
@@ -53,8 +45,15 @@ export default async function WaitlistJoinPage({ params }: Props) {
 
   return (
     <BrandFrame establishment={establishment} service="Lista de espera">
+      {/* Kept up to date: the estimate moves with the queue, and a queue that closes hides the form at once. */}
+      <AutoRefresh intervalMs={5000} />
       {open || waiting.length ? (
         <PublicCard>
+          {serving ? (
+            <p className="text-sm text-muted">
+              A atender agora: <strong className="font-semibold text-text">senha {serving}</strong>
+            </p>
+          ) : null}
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="display text-[2.6rem] leading-none tabular-nums">{waiting.length}</p>
@@ -73,7 +72,7 @@ export default async function WaitlistJoinPage({ params }: Props) {
         <PublicCard>
           <div className="flex flex-col gap-1">
             <h2 className="display text-[1.7rem] leading-tight">{words.joinTitle}</h2>
-            <p className="text-muted">Avisamos quando for a sua vez: na senha, ative os avisos no telemóvel ou deixe o email.</p>
+            <p className="text-muted">Avisamos quando for a sua vez: na página da senha, ative os avisos no telemóvel.</p>
           </div>
           {settings.message ? <p className="rounded-2xl border border-line bg-surface-2/60 px-4 py-3 text-sm text-text">{settings.message}</p> : null}
           <JoinForm
@@ -92,12 +91,8 @@ export default async function WaitlistJoinPage({ params }: Props) {
             <ClockIcon />
           </span>
           <div className="flex flex-col gap-1.5">
-            <h2 className="display text-[1.7rem] leading-tight">{settings.state === "paused" ? "Entradas em pausa" : "A fila está fechada"}</h2>
-            <p className="mx-auto max-w-[30ch] text-muted">
-              {settings.state === "paused"
-                ? "Não estamos a aceitar novas entradas neste momento. Volte a tentar daqui a pouco."
-                : "A lista de espera abre nas horas de maior movimento. Pode falar diretamente com a equipa."}
-            </p>
+            <h2 className="display text-[1.7rem] leading-tight">A fila está fechada</h2>
+            <p className="mx-auto max-w-[30ch] text-muted">Não estamos a aceitar entradas neste momento. Pode falar diretamente com a equipa.</p>
           </div>
         </PublicCard>
       )}

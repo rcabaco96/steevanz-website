@@ -93,7 +93,8 @@ export async function createBooking(_previous: ActionState, formData: FormData):
     const typedPhone = phoneFrom(formData);
     if ("error" in typedPhone) return { ok: false, message: typedPhone.error };
     contact.data.phone = typedPhone.phone;
-    if (!contact.data.email && !contact.data.phone) return { ok: false, message: "Indique o email ou o telemóvel, para o estabelecimento o poder contactar." };
+    // The email is where the confirmation (and the link to change or cancel) goes; the phone is optional.
+    if (!contact.data.email) return { ok: false, message: "Indique o seu email, para receber a confirmação da reserva." };
     const client = createServiceClient();
     if (await isModuleRateLimited(client, "booking_module")) return { ok: false, message: "Demasiados pedidos. Aguarde uns minutos." };
 
