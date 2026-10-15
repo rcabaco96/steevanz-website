@@ -48,11 +48,14 @@ export const poolSize = 6;
  */
 const shownAfterSeconds = 0.3;
 /**
- * The players for the dishes on screen are made first; the others (ready ahead) once those show their
- * video, or after this long (ms): each player is a whole YouTube page (~2 MB), and made all at once
- * on a phone they slowed each other down (owner, 2026-10-15: «os vídeos estão a demorar imenso»).
+ * Players are made in batches of `batchSize`, the dishes on screen first (the top row, then the next),
+ * the ones ready ahead last; the next batch once the made ones show their videos, or after
+ * `extraPlayersAfterMs`. Each YouTube player costs ~3 s of a mid-range Android's processor to start
+ * (measured 2026-10-15: YouTube's code took 11 of 18 s; ours 0.4 s), so 4 at once made every video wait
+ * ~17 s; two at a time, the first row shows in about half that (owner: «os vídeos demoram imenso»).
  */
-const extraPlayersAfterMs = 4000;
+const batchSize = 2;
+const extraPlayersAfterMs = 3000;
 /**
  * The site's address, for the players written into the page's HTML (`first`): the browser starts
  * loading them while the page's own code is still downloading (owner, 2026-10-15: on an Android the
@@ -154,26 +157,28 @@ export function VideoPool({
 }) {
   const root = useRef<HTMLDivElement>(null);
   const frames = useRef<(HTMLIFrameElement | null)[]>([]);
-  const early = (first ?? []).slice(0, poolSize);
+  // The page's first videos: the first batch's players are in the HTML; the others already know their video.
+  const opening = (first ?? []).slice(0, poolSize);
+  const early = opening.slice(0, batchSize);
   const players = useRef<Player[]>(
-    Array.from({ length: poolSize }, (_, index) => ({ video: early[index] ?? null, target: null, ready: false, state: -1, queue: [], playing: false, running: Boolean(early[index]), from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
+    Array.from({ length: poolSize }, (_, index) => ({ video: opening[index] ?? null, target: null, ready: false, state: -1, queue: [], playing: false, running: Boolean(opening[index]), from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
   );
   const [sources, setSources] = useState<(string | null)[] | null>(() => (early.length ? Array.from({ length: poolSize }, (_, index) => (early[index] ? embedSrc(early[index], productionOrigin, true) : null)) : null));
-  // How many players were made first (for the dishes on screen); the rest come after.
-  const firstCount = useRef(early.length);
+  // How many players exist (made), and how many may (batches × batchSize).
+  const made = useRef(early.length);
+  const [batches, setBatches] = useState(1);
   // Players from the HTML wait on the screen (unseen) until the grid gives them their cards.
   const [placedOnce, setPlacedOnce] = useState(false);
   // Not on the site's address (a preview, dev): YouTube would answer the wrong page; made again here.
   useEffect(() => {
     if (!early.length || window.location.origin === productionOrigin) return;
     players.current.forEach((player) => Object.assign(player, { video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null }));
-    firstCount.current = 0;
+    made.current = 0;
     const timer = window.setTimeout(() => setSources(null));
     return () => window.clearTimeout(timer);
     // Only on the first run: the HTML's players.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [extra, setExtra] = useState(false);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
   const [, setTick] = useState(0);
   const targetsRef = useRef(targets);
@@ -213,26 +218,34 @@ export function VideoPool({
         player.playing = Boolean(target.play);
         player.running = true;
       }
-      // Only the dishes on screen now; the rest later (extraPlayersAfterMs).
-      return target?.play ? embedSrc(player.video, origin, true) : null;
+      // Only the first batch of dishes on screen now; the rest in later batches.
+      return target?.play && index < batchSize ? embedSrc(player.video, origin, true) : null;
     });
-    firstCount.current = initial.filter(Boolean).length;
+    made.current = initial.filter(Boolean).length;
     setSources(initial);
   }, [enabled, sources, targets]);
-  // The rest of the players: once the first show their videos (place() sets extra), or after a while.
+  // The next batch: once the made players show their videos (place() moves on), or after a while.
   useEffect(() => {
-    if (!sources || extra) return;
-    const timer = window.setTimeout(() => setExtra(true), extraPlayersAfterMs);
+    if (!sources || made.current >= poolSize) return;
+    const timer = window.setTimeout(() => setBatches((count) => count + 1), extraPlayersAfterMs);
     return () => window.clearTimeout(timer);
-  }, [sources, extra]);
+  }, [sources, batches]);
   useEffect(() => {
-    if (!extra || !sources?.some((src) => src === null)) return;
+    if (!sources) return;
+    const allowed = Math.min(poolSize, batches * batchSize);
+    const missing = sources.map((src, index) => (src ? -1 : index)).filter((index) => index >= 0);
+    if (!missing.length || made.current >= allowed) return;
+    // The dishes on screen first, then the ones ready ahead.
+    const pool = players.current;
+    const rank = (index: number) => (pool[index].playing ? 0 : pool[index].running ? 1 : 2);
+    const chosen = new Set(missing.sort((a, b) => rank(a) - rank(b) || a - b).slice(0, allowed - made.current));
+    made.current += chosen.size;
     const origin = window.location.origin;
-    const fallback = players.current.find((player) => player.video)?.video ?? "";
+    const fallback = pool.find((player) => player.video)?.video ?? "";
     setSources((previous) =>
       previous
         ? previous.map((src, index) => {
-            if (src) return src;
+            if (src || !chosen.has(index)) return src;
             // Made on whatever video it was given meanwhile (the commands queued for it are dropped).
             const player = players.current[index];
             player.queue = [];
@@ -244,7 +257,7 @@ export function VideoPool({
           })
         : previous,
     );
-  }, [extra, sources]);
+  }, [batches, sources]);
 
   // YouTube's messages: ready, state changes, the video looping when it ends.
   useEffect(() => {
@@ -385,7 +398,8 @@ export function VideoPool({
     if (showing !== reported.current) {
       reported.current = showing;
       onReadyRef.current?.(showing ? showing.split(",") : []);
-      if (firstCount.current && showing.split(",").filter(Boolean).length >= firstCount.current) setExtra(true);
+      // Every made player shows its video: the next batch.
+      if (made.current < poolSize && showing.split(",").filter(Boolean).length >= made.current) setBatches((count) => Math.max(count, Math.ceil(made.current / batchSize) + 1));
     }
   }, []);
 
@@ -424,7 +438,7 @@ export function VideoPool({
         const slid = Boolean(spot?.fixed && motion && (motion.x || motion.glide));
         // A player from the HTML before the grid places it: on the screen, unseen (a browser slows down
         // or pauses a video playing off screen).
-        const waiting = !spot && !placedOnce && Boolean(early[index]);
+        const waiting = !spot && !placedOnce && Boolean(opening[index]);
         const fixed = Boolean(spot?.fixed) || waiting;
         return (
           <div
