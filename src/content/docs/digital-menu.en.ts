@@ -30,10 +30,8 @@ export const en: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Quantity", "Price", "Per plate"],
         rows: [
-          ["1 plate", "€15", "€15"],
-          ["Pack of 5", "€60", "€12"],
-          ["Pack of 10", "€100", "€10"],
-          ["Pack of 20", "€180", "€9"],
+          ["1 to 9 plates", "€20 each", "€20"],
+          ["10 plates or more", "€15 each (10 plates: €150)", "€15"],
         ],
       },
       {
@@ -196,7 +194,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           { q: "Do guests need to install an app?", a: "No. The phone opens Instagram or YouTube; if the app isn't installed, it opens in the browser." },
           { q: "Does it work on iPhone and Android?", a: "Yes. Recent iPhones read the plate with nothing to turn on; on Android, the contactless (tap) reading option must be on. There's always the printed QR code." },
           { q: "Does it replace the printed menu?", a: "It complements it. Seeing dishes as videos and photos helps guests choose, but the printed menu is still useful for those who prefer it." },
-          { q: "How much does it cost?", a: "€15 per plate, or packs of 5 for €60, 10 for €100 and 20 for €180. The logo is charged once per order." },
+          { q: "How much does it cost?", a: "€20 per plate, or €15 per plate from 10 plates. The logo is charged once per order." },
           { q: "Do you create the videos?", a: "Not directly: we work with partners who create videos, photos and carousels of dishes, and we'll get you a quote." },
           { q: "Can I change the destination later?", a: "Yes, without reprinting the plates. Just send us the new highlight or playlist." },
         ],

@@ -30,10 +30,8 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Quantidade", "Preço", "Por placa"],
         rows: [
-          ["1 placa", "15 €", "15 €"],
-          ["Pack de 5", "60 €", "12 €"],
-          ["Pack de 10", "100 €", "10 €"],
-          ["Pack de 20", "180 €", "9 €"],
+          ["1 a 9 placas", "20 € cada", "20 €"],
+          ["10 placas ou mais", "15 € cada (10 placas: 150 €)", "15 €"],
         ],
       },
       {
@@ -196,7 +194,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
           { q: "O cliente precisa de instalar alguma aplicação?", a: "Não. O telemóvel abre o Instagram ou o YouTube; se a aplicação não estiver instalada, abre no navegador." },
           { q: "Funciona em iPhone e Android?", a: "Sim. Os iPhones recentes leem a placa sem fazer nada; no Android, a leitura por aproximação tem de estar ligada. Há sempre o QR code impresso." },
           { q: "Substitui o menu em papel?", a: "Complementa-o. Mostra os pratos em vídeo e foto, o que ajuda a escolher, mas o menu em papel continua útil para quem prefere." },
-          { q: "Quanto custa?", a: "15 € por placa, ou packs de 5 por 60 €, 10 por 100 € e 20 por 180 €. O logotipo paga-se uma vez por encomenda." },
+          { q: "Quanto custa?", a: "20 € por placa, ou 15 € por placa a partir de 10 placas. O logotipo paga-se uma vez por encomenda." },
           { q: "Vocês criam os vídeos?", a: "Não diretamente: trabalhamos com parceiros que criam vídeos, fotos e carrosséis dos pratos e pedimos orçamento por si." },
           { q: "Posso mudar o destino mais tarde?", a: "Sim, sem reimprimir as placas. Basta enviar-nos o novo destaque ou a nova playlist." },
         ],

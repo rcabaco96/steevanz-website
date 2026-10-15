@@ -9,7 +9,7 @@ export const copy: ProductCopyByLocale = {
       "Placas circulares e pequenas, uma por mesa, que abrem um destaque do Instagram ou uma playlist do YouTube com os seus pratos e preços. O cliente vê o menu como se folheasse a ementa.",
     metaTitle: "Menu Digital para Restaurantes | Steevanz",
     metaDescription:
-      "Placa circular para a mesa que abre o menu em vídeo e fotografia no Instagram ou no YouTube, com preços. Desde 15 € por placa, com packs para todas as mesas.",
+      "Placa circular para a mesa que abre o menu em vídeo e fotografia no Instagram ou no YouTube, com preços. 20 € por placa, 15 € a partir de 10 placas.",
     heroTitle: "O menu ganha vida num toque na mesa",
     heroSubtitle:
       "Uma pequena placa circular em cada mesa abre um destaque do Instagram ou uma playlist do YouTube com vídeos, fotografias e carrosséis dos seus pratos, com o preço de cada um. O cliente vê o que vai comer antes de pedir. Nós configuramos tudo.",
@@ -119,7 +119,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quanto custa?",
-        a: "Desde 15 € por placa, com configuração incluída. Há packs com desconto: 5 placas por 60 €, 10 por 100 € e 20 por 180 €. O logótipo e as cores custam mais 10 €, uma só vez por pack. Valores sem IVA, confirmados na proposta.",
+        a: "20 € por placa, com configuração incluída, e 15 € por placa a partir de 10 placas. O logótipo e as cores custam mais 10 €, uma só vez por encomenda. Valores sem IVA, confirmados na proposta.",
       },
       {
         q: "Como mantenho os preços atualizados?",
@@ -143,7 +143,7 @@ export const copy: ProductCopyByLocale = {
       "Small round plates, one per table, that open an Instagram highlight or a YouTube playlist with your dishes and prices. Guests browse the menu as if they were leafing through it.",
     metaTitle: "Digital Menu for Restaurants | Steevanz",
     metaDescription:
-      "A round table plate that opens your menu on video and in photos on Instagram or YouTube, with prices. From €15 per plate, with packs for every table.",
+      "A round table plate that opens your menu on video and in photos on Instagram or YouTube, with prices. €20 per plate, €15 each from 10 plates.",
     heroTitle: "Your menu comes alive with a tap at the table",
     heroSubtitle:
       "A small round plate on each table opens an Instagram highlight or a YouTube playlist with videos, photos and carousels of your dishes, each with its price. Guests see what they'll eat before they order. We set it all up.",
@@ -253,7 +253,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "How much does it cost?",
-        a: "From €15 per plate, setup included. There are discounted packs: 5 plates for €60, 10 for €100 and 20 for €180. Your logo and colours cost €10 extra, once per pack. Prices exclude VAT and are confirmed in your proposal.",
+        a: "€20 per plate, setup included, and €15 per plate from 10 plates. Your logo and colours cost €10 extra, once per order. Prices exclude VAT and are confirmed in your proposal.",
       },
       {
         q: "How do I keep prices up to date?",
