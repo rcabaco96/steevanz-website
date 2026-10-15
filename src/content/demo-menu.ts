@@ -11,6 +11,8 @@ export interface MenuDish {
   description: string;
   /** Euros. */
   price: number;
+  /** Its own video on Bunny Stream, played as a plain MP4 instead of the YouTube one. */
+  bunny?: string;
 }
 
 export interface MenuCollection {

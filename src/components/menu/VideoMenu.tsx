@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
 import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
+import { BunnyVideo, hasBunnyVideo } from "./BunnyVideo";
 import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
@@ -80,7 +81,7 @@ function DishCard({
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
         <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          <ShortCover video={dish.video} />
+          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} /> : <ShortCover video={dish.video} />}
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
@@ -180,8 +181,11 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   const [active, setActive] = useState(menu.collections[0].id);
   // What the page opens on: the first collection's dishes (their players in the HTML, their pictures in the opening).
   const [opening] = useState(() => {
-    const videos = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]?.video).filter((video): video is string => Boolean(video));
-    return { first: videos.slice(0, 4), pictures: videos.length >= 4 ? videos : Object.values(menu.dishes).map((dish) => dish.video) };
+    const firstDishes = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]).filter((dish) => Boolean(dish));
+    const videos = firstDishes.map((dish) => dish.video);
+    // Only YouTube dishes get pool players in the HTML (a Bunny one plays its own <video>).
+    const first = firstDishes.slice(0, 4).filter((dish) => !hasBunnyVideo(dish.bunny)).map((dish) => dish.video);
+    return { first, pictures: videos.length >= 4 ? videos : Object.values(menu.dishes).map((dish) => dish.video) };
   });
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
@@ -266,6 +270,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       dishes.map(({ key, dish }) => ({
         key,
         video: dish.video,
+        bunny: dish.bunny,
         title: dish.name,
         details: (
           <>
@@ -283,6 +288,8 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
     const target = (key: string, visible: boolean): PoolTarget[] => {
       const dish = menu.dishes[key];
       const element = boxes.current.get(key) ?? null;
+      // A dish with its own (Bunny) video plays it in its card: no pool player.
+      if (dish && hasBunnyVideo(dish.bunny)) return [];
       return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: visible, prime: !visible, visible }] : [];
     };
     // The row ahead: the next dishes in the list after those on screen (before them, scrolling up).
@@ -371,13 +378,13 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       setSwitching(null);
       closeSheet();
     };
-    if (focus.visible.length && focus.visible.every((key) => ready.includes(`grid-${key}`))) {
+    if (focus.visible.length && focus.visible.every((key) => hasBunnyVideo(menu.dishes[key]?.bunny) || ready.includes(`grid-${key}`))) {
       done();
       return;
     }
     const timer = window.setTimeout(done, switchWaitMs);
     return () => window.clearTimeout(timer);
-  }, [switching, focus, ready, closeSheet]);
+  }, [switching, focus, ready, closeSheet, menu.dishes]);
 
   // Dragging the panel to the right closes it, following the finger (vertical moves scroll its list).
   const onSheetTouchStart = (event: TouchEvent) => {
@@ -524,7 +531,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
         logo={menu.logo}
         business={menu.business}
         videos={opening.pictures}
-        ready={focus.visible.length > 0 && focus.visible.every((key) => ready.includes(`grid-${key}`))}
+        ready={focus.visible.length > 0 && focus.visible.every((key) => hasBunnyVideo(menu.dishes[key]?.bunny) || ready.includes(`grid-${key}`))}
         onDone={opened}
       />
     </div>

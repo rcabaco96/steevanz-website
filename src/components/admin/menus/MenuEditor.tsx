@@ -1,6 +1,7 @@
 import { BackLink } from "@/components/admin/RecordDetail";
 import { CollectionDishesEditor } from "@/components/admin/menus/CollectionDishesEditor";
 import { DishForm } from "@/components/admin/menus/DishForm";
+import { DishVideoUpload } from "@/components/admin/menus/DishVideoUpload";
 import { MenuDetailsForm } from "@/components/admin/menus/MenuDetailsForm";
 import { MenuStateBadge, MoveButtons } from "@/components/admin/menus/MenuBits";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
@@ -96,6 +97,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
                       </div>
                       <MoveButtons action={moveDish} id={dish.id} name={dish.name} first={index === 0} last={index === dishes.length - 1} className="hidden sm:flex" />
                     </div>
+                    <DishVideoUpload dishId={dish.id} dishName={dish.name} bunnyVideoId={dish.bunny_video_id ?? null} pendingStatus={dish.pending_video_status ?? null} />
                     <details className="group">
                       <summary className={summaryClasses}>
                         Editar ou apagar

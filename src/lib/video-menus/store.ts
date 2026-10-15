@@ -7,7 +7,7 @@ import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuDishRow, ty
 // the public pages read through the cache below, refreshed by every save in the admin.
 
 export const menuColumns = "id, slug, business_name, logo_url, instagram, review_business_id, active, created_at, updated_at";
-const dishColumns = "id, menu_id, video_id, name, description, price_cents, position";
+const dishColumns = "id, menu_id, video_id, name, description, price_cents, position, bunny_video_id, pending_video_id, pending_video_status";
 const collectionColumns = "id, menu_id, name, position, is_default";
 
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

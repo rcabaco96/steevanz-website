@@ -184,6 +184,10 @@ export interface VideoMenuDishRow {
   description: string;
   price_cents: number;
   position: number;
+  /** Its own video on Bunny Stream (played instead of the YouTube one), and an upload in progress. */
+  bunny_video_id?: string | null;
+  pending_video_id?: string | null;
+  pending_video_status?: "uploading" | "processing" | "failed" | null;
 }
 
 export interface VideoMenuCollectionRow {
@@ -217,7 +221,7 @@ export function toVideoMenuData(
   if (!ordered.length) return null;
   const dishes: Record<string, MenuDish> = {};
   for (const dish of ordered) {
-    dishes[dish.id] = { video: dish.video_id, name: dish.name, description: dish.description, price: dish.price_cents / 100 };
+    dishes[dish.id] = { video: dish.video_id, name: dish.name, description: dish.description, price: dish.price_cents / 100, ...(dish.bunny_video_id ? { bunny: dish.bunny_video_id } : {}) };
   }
   const collections: MenuCollection[] = [...collectionRows]
     .sort((a, b) => Number(b.is_default) - Number(a.is_default) || byPosition(a, b))

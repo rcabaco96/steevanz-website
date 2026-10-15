@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type TouchEvent, type WheelEvent } from "react";
+import { BunnyVideo, hasBunnyVideo } from "./BunnyVideo";
 import type { PoolTarget } from "./VideoPool";
 
 /** A vertical YouTube video (Short) with what is shown over it. */
@@ -9,6 +10,8 @@ export interface ShortItem {
   key: string;
   /** YouTube video id. */
   video: string;
+  /** Its own video on Bunny Stream: played by a plain <video> in its slide (no pool player). */
+  bunny?: string;
   title: string;
   /** Shown under the title (e.g. the price and the description of a dish). */
   details?: ReactNode;
@@ -153,14 +156,15 @@ export function ShortsViewer({
   useEffect(() => {
     const targets: PoolTarget[] = [];
     const item = items[current];
-    if (item) targets.push({ key: "viewer-current", video: item.video, element: boxes.current[current], fixed: true, play: true, visible: true });
+    // Dishes with their own (Bunny) video play it in their slide; only YouTube ones take pool players.
+    if (item && !hasBunnyVideo(item.bunny)) targets.push({ key: "viewer-current", video: item.video, element: boxes.current[current], fixed: true, play: true, visible: true });
     if (items.length > 1) {
       const next = (current + 1) % items.length;
       const previous = (current - 1 + items.length) % items.length;
       const nextBox = current === items.length - 1 ? copyAfter.current : boxes.current[next];
       const previousBox = current === 0 ? copyBefore.current : boxes.current[previous];
-      targets.push({ key: "viewer-next", video: items[next].video, element: nextBox, fixed: true, play: false, prime: true, visible: true });
-      if (previous !== next) targets.push({ key: "viewer-previous", video: items[previous].video, element: previousBox, fixed: true, play: false, prime: true, visible: true });
+      if (!hasBunnyVideo(items[next].bunny)) targets.push({ key: "viewer-next", video: items[next].video, element: nextBox, fixed: true, play: false, prime: true, visible: true });
+      if (previous !== next && !hasBunnyVideo(items[previous].bunny)) targets.push({ key: "viewer-previous", video: items[previous].video, element: previousBox, fixed: true, play: false, prime: true, visible: true });
     }
     onTargets(targets);
   }, [items, current, onTargets]);
@@ -184,7 +188,7 @@ export function ShortsViewer({
       }}
       className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
     >
-      <ShortCover video={item.video} />
+      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} playing={index === current} /> : <ShortCover video={item.video} />}
     </div>
   );
 
