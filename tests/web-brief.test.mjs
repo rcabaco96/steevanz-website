@@ -37,8 +37,8 @@ describe("web products in the cart", () => {
 
   it("prices the web products as one-off «desde» amounts before VAT", () => {
     const { oneTime, monthly } = priceCart(sanitizeLines([{ id: "w", productId: "website", quantity: 1 }, { id: "s", productId: "online-shop", quantity: 1 }]));
-    assert.equal(oneTime.subtotalCents, 35000 + 75000);
-    assert.equal(oneTime.vatCents, Math.round((110000 * 23) / 100));
+    assert.equal(oneTime.subtotalCents, 70000 + 75000);
+    assert.equal(oneTime.vatCents, Math.round((145000 * 23) / 100));
     assert.equal(monthly.lines.length, 0);
   });
 

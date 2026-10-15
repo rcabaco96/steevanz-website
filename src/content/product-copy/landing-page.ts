@@ -112,7 +112,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa no total?",
-        a: "A página custa desde 100 € + IVA, uma vez. Depois, o alojamento e a manutenção custam 15 € + IVA por mês, sem fidelização. O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor.",
+        a: "A página custa desde 350 € + IVA, uma vez. Depois, o alojamento e a manutenção custam 15 € + IVA por mês, sem fidelização. O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor.",
       },
       {
         q: "Preciso de ter os textos e as fotos?",
@@ -155,7 +155,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Email profissional: até 5 caixas, DNS e assinatura", price: "40 €" },
         { name: "Domínio gerido por nós, registado em seu nome", price: "20 €/ano" },
         { name: "Medição de conversões para anúncios, com consentimento", price: "60 €" },
-        { name: "Passar para Website nos 6 meses seguintes", price: "descontamos os 100 €" },
+        { name: "Passar para Website nos 6 meses seguintes", price: "descontamos os 350 €" },
       ],
       monthlyPlan: {
         price: "15 €/mês + IVA",
@@ -278,7 +278,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost in total?",
-        a: "The page costs from €100 + VAT, once. After that, hosting and maintenance cost €15 + VAT a month, with no lock-in. The domain and professional email are paid separately, straight to the provider.",
+        a: "The page costs from €350 + VAT, once. After that, hosting and maintenance cost €15 + VAT a month, with no lock-in. The domain and professional email are paid separately, straight to the provider.",
       },
       {
         q: "Do I need to have the texts and photos?",
@@ -321,7 +321,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Professional email: up to 5 mailboxes, DNS and signature", price: "€40" },
         { name: "Domain managed by us, registered in your name", price: "€20/year" },
         { name: "Conversion tracking for ads, with consent", price: "€60" },
-        { name: "Upgrade to a Website within 6 months", price: "we deduct the €100" },
+        { name: "Upgrade to a Website within 6 months", price: "we deduct the €350" },
       ],
       monthlyPlan: {
         price: "€15/month + VAT",
