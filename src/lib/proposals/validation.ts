@@ -1,5 +1,6 @@
 // Billing details the client fills in to accept a proposal, checked on the server. Pure and runnable by
 // `node --test` (tests/proposals.test.mjs).
+import { isPaymentPlan, type PaymentPlan } from "./totals.ts";
 
 export const acceptanceFields = ["company", "nif", "address", "postalCode", "city", "contact", "email", "phone", "notes"] as const;
 export type AcceptanceField = (typeof acceptanceFields)[number];
@@ -7,8 +8,11 @@ export type AcceptanceField = (typeof acceptanceFields)[number];
 /** The checkbox «Li e aceito a proposta e as condições». */
 export const acceptField = "accept";
 
+/** The radio «Como prefere pagar as mensalidades?»: only the plan's name is read, never an amount. */
+export const planField = "plan";
+
 export type AcceptanceValues = Record<AcceptanceField, string>;
-export type AcceptanceErrors = Partial<Record<AcceptanceField | typeof acceptField, string>>;
+export type AcceptanceErrors = Partial<Record<AcceptanceField | typeof acceptField | typeof planField, string>>;
 
 export interface BillingDetails {
   company: string;
@@ -22,6 +26,8 @@ export interface BillingDetails {
   email: string;
   phone: string;
   notes: string;
+  /** How the monthly lines are paid; «monthly» when the proposal offers no choice. */
+  plan: PaymentPlan;
 }
 
 export type AcceptanceResult = { ok: true; data: BillingDetails } | { ok: false; errors: AcceptanceErrors; values: AcceptanceValues };
@@ -101,7 +107,11 @@ export function readAcceptanceValues(source: FormData): AcceptanceValues {
   return Object.fromEntries(acceptanceFields.map((field) => [field, clean(source.get(field), field)])) as AcceptanceValues;
 }
 
-export function validateAcceptance(source: FormData): AcceptanceResult {
+/**
+ * `plans` are the payment plans the proposal offers (planOptions): with more than one the client must
+ * pick one; with one (or none) it is used as is.
+ */
+export function validateAcceptance(source: FormData, plans: readonly PaymentPlan[] = []): AcceptanceResult {
   const values = readAcceptanceValues(source);
   const errors: AcceptanceErrors = {};
 
@@ -128,12 +138,19 @@ export function validateAcceptance(source: FormData): AcceptanceResult {
 
   if (values.phone && values.phone.replace(/\D/g, "").length < 9) errors.phone = "Indique um telefone com pelo menos 9 dígitos.";
 
+  const chosen = source.get(planField);
+  let plan: PaymentPlan = plans.length === 1 ? plans[0] : "monthly";
+  if (plans.length > 1) {
+    if (isPaymentPlan(chosen) && plans.includes(chosen)) plan = chosen;
+    else errors.plan = "Escolha como prefere pagar as mensalidades: anual ou mensal.";
+  }
+
   if (source.get(acceptField) !== "on") errors.accept = "Para adjudicar, confirme que leu e aceita a proposta e as condições.";
 
   if (Object.keys(errors).length || !nif?.ok) return { ok: false, errors, values };
 
   return {
     ok: true,
-    data: { ...values, nif: nif.value, nifIsPortuguese: nif.portuguese, postalCode, email },
+    data: { ...values, nif: nif.value, nifIsPortuguese: nif.portuguese, postalCode, email, plan },
   };
 }

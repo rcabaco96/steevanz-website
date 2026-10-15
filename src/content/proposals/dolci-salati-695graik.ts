@@ -41,6 +41,9 @@ export const proposal: Proposal = {
       unitCents: 3000,
     },
   ],
+  // Owner, 2026-10-15: the monthly fees preferably paid a year upfront, «2 meses grátis»
+  // (45 €/mês → 450 €/ano + IVA 103,50 € = 553,50 €; hosting 150 €/ano, menu 300 €/ano).
+  annual: { freeMonths: 2 },
   included: [
     "A landing page da Dolci e Salati, feita à medida e pensada primeiro para o telemóvel.",
     "15 placas de mesa: um toque ou o QR abre o Menu digital.",
@@ -49,8 +52,9 @@ export const proposal: Proposal = {
   ],
   conditions: [
     "Preços em euros, sem IVA. Acresce IVA à taxa legal (23%).",
-    "Na adjudicação: itens únicos + 1.ª mensalidade.",
-    "Mensalidades pagas no início de cada mês, sem período mínimo; cancela com 30 dias de aviso.",
+    "Na adjudicação: itens únicos + 1.º ano (plano anual) ou 1.ª mensalidade (plano mensal).",
+    "Plano anual pago adiantado: 12 meses pelo preço de 10. Renova por mais 12 meses, salvo aviso com 30 dias de antecedência.",
+    "Plano mensal: mensalidades pagas no início de cada mês, sem período mínimo; cancela com 30 dias de aviso.",
     "Domínio e email profissional pagos à parte; o domínio fica sempre em nome do cliente.",
     "Landing page entregue em 5 dias úteis após a receção dos conteúdos, com 2 rondas de alterações.",
     "Textos, fotografias e vídeos fornecidos pelo cliente devem ser seus ou ter licença de uso.",

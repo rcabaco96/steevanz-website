@@ -38,6 +38,11 @@ export interface Proposal {
   oneOff: ProposalLine[];
   /** Paid every month. */
   monthly: ProposalLine[];
+  /**
+   * Optional: the monthly lines can also be paid a year upfront, with months free (12 months for the
+   * price of 12 − freeMonths). When set, the annual plan is the recommended choice on the page.
+   */
+  annual?: { freeMonths: number };
   /** A short, plain summary of what the client gets. */
   included: string[];
   conditions: string[];

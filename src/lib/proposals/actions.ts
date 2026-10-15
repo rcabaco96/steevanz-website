@@ -13,7 +13,7 @@ import { processAcceptance, type AcceptanceState } from "./accept";
  */
 export async function acceptProposal(proposalId: string, previous: AcceptanceState, formData: FormData): Promise<AcceptanceState> {
   const proposal = getProposal(String(proposalId));
-  if (!proposal) return { status: "error", code: "send_failed", errors: {}, values: null, attempt: 1 };
+  if (!proposal) return { status: "error", code: "send_failed", errors: {}, values: null, plan: null, attempt: 1 };
 
   return processAcceptance(proposal, formData, previous, {
     send: sendOwnerEmail,

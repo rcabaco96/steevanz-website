@@ -101,7 +101,7 @@ export function ThankYou({ clientName, number, nextSteps }: { clientName: string
       </div>
 
       <div className={`border-t border-line pt-5 text-center ${styles.rise}`} style={{ "--delay": "1000ms" } as CSSProperties}>
-        <p className="display-italic text-[1.35rem] text-text">Até já, com os bons modos de sempre.</p>
+        <p className="display-italic text-[1.35rem] text-text">Até já, com os bons modos de antigamente.</p>
         <p className="mt-1 text-sm text-subtle">A equipa Steevanz</p>
         <p className="mt-4 text-sm text-muted">
           Alguma dúvida entretanto? Ligue{" "}

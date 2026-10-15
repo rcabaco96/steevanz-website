@@ -6,6 +6,7 @@ import { AlertIcon } from "@/components/icons";
 import { phoneDisplay, type AcceptanceState } from "@/lib/proposals/accept";
 import { acceptProposal } from "@/lib/proposals/actions";
 import { site } from "@/lib/site";
+import { PlanField } from "./PlanChoice";
 import { ThankYou } from "./ThankYou";
 
 interface Props {
@@ -102,6 +103,8 @@ export function AcceptanceForm({ proposalId, clientName, number, nextSteps, expi
         {state.status === "error" && state.code === "validation" && fieldErrorCount ? (
           <FormAlert>{fieldErrorCount === 1 ? "Há um campo a corrigir." : `Há ${fieldErrorCount} campos a corrigir.`} Veja as indicações a vermelho.</FormAlert>
         ) : null}
+
+        <PlanField error={errors.plan} />
 
         <TextField name="company" label="Nome da empresa / razão social" required autoComplete="organization" maxLength={160} defaultValue={values?.company} error={errors.company} />
         <TextField
