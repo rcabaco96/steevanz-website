@@ -182,7 +182,7 @@ export function ShortsViewer({
         else if (index === "after") copyAfter.current = box;
         else boxes.current[index] = box;
       }}
-      className="relative aspect-[9/16] h-auto max-h-[100dvh] w-full max-w-[calc(100dvh*9/16)] overflow-hidden"
+      className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
     >
       <ShortCover video={item.video} />
     </div>
@@ -281,17 +281,17 @@ export function ShortsViewer({
           className="absolute inset-0 overflow-y-auto overscroll-none [scrollbar-width:none]"
         >
           {loop ? (
-            <section aria-hidden="true" className="grid h-[100dvh] place-items-center">
+            <section aria-hidden="true" className="grid h-[100dvh] place-items-center overflow-hidden">
               {slide(items[items.length - 1], "before")}
             </section>
           ) : null}
           {items.map((entry, index) => (
-            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-[100dvh] place-items-center">
+            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-[100dvh] place-items-center overflow-hidden">
               {slide(entry, index)}
             </section>
           ))}
           {loop ? (
-            <section aria-hidden="true" className="grid h-[100dvh] place-items-center">
+            <section aria-hidden="true" className="grid h-[100dvh] place-items-center overflow-hidden">
               {slide(items[0], "after")}
             </section>
           ) : null}

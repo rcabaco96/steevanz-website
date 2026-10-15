@@ -47,6 +47,12 @@ export const poolSize = 6;
  * after a video change the old video's reports still arrive for a moment.
  */
 const shownAfterSeconds = 0.3;
+/**
+ * The players for the dishes on screen are made first; the others (ready ahead) once those show their
+ * video, or after this long (ms): each player is a whole YouTube page (~2 MB), and made all at once
+ * on a phone they slowed each other down (owner, 2026-10-15: «os vídeos estão a demorar imenso»).
+ */
+const extraPlayersAfterMs = 4000;
 
 /**
  * YouTube buffering this long (ms) hides the video under its thumbnail (its loading circle would show);
@@ -141,7 +147,10 @@ export function VideoPool({
   const players = useRef<Player[]>(
     Array.from({ length: poolSize }, () => ({ video: null, target: null, ready: false, state: -1, queue: [], playing: false, running: false, from: 0, reported: null, time: 0, showing: null, bufferingAt: 0 })),
   );
-  const [sources, setSources] = useState<string[] | null>(null);
+  const [sources, setSources] = useState<(string | null)[] | null>(null);
+  // How many players were made first (for the dishes on screen); the rest come after.
+  const firstCount = useRef(0);
+  const [extra, setExtra] = useState(false);
   const [placements, setPlacements] = useState<(Placement | null)[]>(() => Array(poolSize).fill(null));
   const [, setTick] = useState(0);
   const targetsRef = useRef(targets);
@@ -181,10 +190,38 @@ export function VideoPool({
         player.playing = Boolean(target.play);
         player.running = true;
       }
-      return embedSrc(player.video, origin, Boolean(target?.play || target?.prime));
+      // Only the dishes on screen now; the rest later (extraPlayersAfterMs).
+      return target?.play ? embedSrc(player.video, origin, true) : null;
     });
+    firstCount.current = initial.filter(Boolean).length;
     setSources(initial);
   }, [enabled, sources, targets]);
+  // The rest of the players: once the first show their videos (place() sets extra), or after a while.
+  useEffect(() => {
+    if (!sources || extra) return;
+    const timer = window.setTimeout(() => setExtra(true), extraPlayersAfterMs);
+    return () => window.clearTimeout(timer);
+  }, [sources, extra]);
+  useEffect(() => {
+    if (!extra || !sources?.some((src) => src === null)) return;
+    const origin = window.location.origin;
+    const fallback = players.current.find((player) => player.video)?.video ?? "";
+    setSources((previous) =>
+      previous
+        ? previous.map((src, index) => {
+            if (src) return src;
+            // Made on whatever video it was given meanwhile (the commands queued for it are dropped).
+            const player = players.current[index];
+            player.queue = [];
+            player.state = -1;
+            player.showing = null;
+            player.from = 0;
+            if (!player.video) player.video = fallback;
+            return embedSrc(player.video ?? fallback, origin, player.running);
+          })
+        : previous,
+    );
+  }, [extra, sources]);
 
   // YouTube's messages: ready, state changes, the video looping when it ends.
   useEffect(() => {
@@ -324,6 +361,7 @@ export function VideoPool({
     if (showing !== reported.current) {
       reported.current = showing;
       onReadyRef.current?.(showing ? showing.split(",") : []);
+      if (firstCount.current && showing.split(",").filter(Boolean).length >= firstCount.current) setExtra(true);
     }
   }, []);
 
@@ -364,7 +402,7 @@ export function VideoPool({
         return (
           <div
             key={index}
-            className="overflow-hidden"
+            className={src ? "overflow-hidden" : "hidden"}
             style={{
               position: fixed ? "fixed" : "absolute",
               top: spot?.top ?? -10000,
@@ -381,6 +419,7 @@ export function VideoPool({
               transition: slid && motion?.glide ? `transform 260ms ${glideEase}` : spot?.shown && !spot.fixed ? "opacity 200ms" : "none",
             }}
           >
+            {src ? (
             <iframe
               ref={(frame) => {
                 frames.current[index] = frame;
@@ -402,6 +441,7 @@ export function VideoPool({
                 transformOrigin: "0 0",
               }}
             />
+            ) : null}
           </div>
         );
       })}
