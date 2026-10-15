@@ -328,7 +328,7 @@ function label(s, t, x, y, w) {
       ["", "Página no ar e placas nas mesas", "E nós ficamos por perto, do outro lado do WhatsApp."],
     ];
     steps.forEach(([when, t, b], i) => {
-      const x = 0.7 + (i % 3) * 4.05, y = 2.0 + Math.floor(i / 3) * 2.35, last = i === 5;
+      const x = 0.7 + (i % 3) * 4.05, y = 2.0 + Math.floor(i / 3) * 2.35, last = i === 0;
       card(s, x, y, 3.8, 2.15, last ? C.accent : C.surface, last ? C.accent : C.line);
       num(s, i + 1, x + 0.25, y + 0.22, last ? C.gold : C.accent, last ? C.text : "FFFFFF");
       if (when) shapeText(s, when.toUpperCase(), { shape: pptx.ShapeType.roundRect, x: x + 2.05, y: y + 0.22, w: 1.55, h: 0.32, rectRadius: 0.16, fill: { color: C.goldSoft }, line: { color: C.goldSoft, width: 0 }, fontFace: SANS, fontSize: 8, bold: true, color: C.goldText, align: "center", valign: "middle", margin: 0 });
@@ -342,7 +342,7 @@ function label(s, t, x, y, w) {
     const s = base(14, " · Feito em Portugal");
     kicker(s, "Adjudicação online");
     title(s, 'Vamos a isto? <span class="scrib">Sem papelada.</span>');
-    pill(s, "Leia o código ou toque no botão", 0.7, 2.25, 3.2);
+    pill(s, "Toque no botão", 0.7, 2.25, 3.2);
     s.addText("→", { x: 3.92, y: 2.25, w: 0.3, h: 0.42, fontSize: 14, bold: true, color: C.goldText, align: "center", valign: "middle", margin: 0 });
     pill(s, "Veja o orçamento", 4.25, 2.25, 2.0);
     s.addText("→", { x: 6.27, y: 2.25, w: 0.3, h: 0.42, fontSize: 14, bold: true, color: C.goldText, align: "center", valign: "middle", margin: 0 });
@@ -352,9 +352,6 @@ function label(s, t, x, y, w) {
     text(s, "E está feito. Nós tratamos do resto.", 0.7, 3.55, 7, 0.45, { fontSize: 17 });
     shapeText(s, [{ text: "Ver e adjudicar a proposta  →", options: { hyperlink: { url: v.aceitacaoUrl, tooltip: v.aceitacaoUrl } } }], { shape: pptx.ShapeType.roundRect, x: 0.7, y: 4.25, w: 3.9, h: 0.7, rectRadius: 0.35, fill: { color: C.accent }, line: { color: C.accent, width: 0 }, fontFace: SANS, fontSize: 15, bold: true, color: "FFFFFF", align: "center", valign: "middle", margin: 0 });
     text(s, v.aceitacaoCurta, 0.7, 5.1, 7, 0.3, { fontSize: 11, color: C.subtle });
-    s.addShape(pptx.ShapeType.roundRect, { x: 8.95, y: 1.75, w: 3.2, h: 3.75, fill: { color: "FFFFFF" }, line: { color: C.accent, width: 4 }, rectRadius: 0.18 });
-    s.addImage({ data: qrAceitacao, x: 9.15, y: 1.95, w: 2.8, h: 2.8, hyperlink: { url: v.aceitacaoUrl } });
-    s.addText("Leia com a câmara do telemóvel", { x: 8.95, y: 4.85, w: 3.2, h: 0.4, fontFace: SANS, fontSize: 11, bold: true, color: C.muted, align: "center", margin: 0 });
     text(s, "Obrigado pelo seu tempo. O resto tratamos nós, com os bons modos de antigamente.", 0.7, 6.15, 7.8, 0.4, { fontFace: SERIF, italic: true, fontSize: 15, color: C.accent });
     s.addText([{ text: "WhatsApp/telefone ", options: { color: C.muted } }, { text: "961 292 679", options: { bold: true, color: C.accent } }, { text: " · www.steevanz.com", options: { color: C.muted } }], { x: 8.4, y: 6.15, w: 4.2, h: 0.4, fontFace: SANS, fontSize: 12, align: "right", margin: 0 });
   }
