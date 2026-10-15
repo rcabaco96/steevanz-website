@@ -38,6 +38,7 @@ npm install
    | `planoAnual.mesesOferta` | Meses oferecidos no plano anual pago adiantado (2 = «12 meses pelo preço de 10»). Calcula o preço anual, o preço riscado (×12) e a poupança de cada linha e do total |
    | `placas.quantidade` | Número de placas |
    | `placas.precoUnitario`, `placas.precoQuantidade`, `placas.aPartirDe` | Preço normal por placa, preço de quantidade e a partir de quantas placas se aplica |
+   | `placa` | Logótipo do cliente, endereço do menu (QR das placas) e cores das placas: `cor` (placa plana), `corImpressao` (impressão na placa creme), `corRelevoSombra`, `corSecundaria` (ícone «toque»), `creme`, `base` |
    | `exemplos` | Títulos e legendas dos diapositivos de exemplo (opcional; sem este campo usam-se textos genéricos) |
 
    Subtotais, IVA, totais, o desconto de quantidade, o plano anual (recomendado) e os valores na adjudicação são calculados automaticamente. Todos os preços são sem IVA.
@@ -76,9 +77,15 @@ Opções úteis:
 | `pdf.js` | Exporta os PDF com o Edge |
 | `build-pptx.js` | Gera o PowerPoint |
 | `verificar-qr.js` | Lê o QR gerado e confirma o endereço |
+| `placa.js` | Desenha as duas placas de mesa (SVG) com o logótipo, o QR do menu e as cores do cliente |
 | `assets/` | Capturas de ecrã dos exemplos reais e logótipo |
 
 Para mudar textos comuns a todas as propostas, edite `deck.html` e `build-pptx.js` (o PowerPoint tem os seus próprios textos, iguais aos da apresentação). Para mudar as condições do orçamento, edite `quote.html`.
+
+## Regras de desenho
+
+- Nada de sombras desfocadas, transparências, `filter`, `backdrop-filter`, `mix-blend-mode`, máscaras ou `opacity`: no PDF viram caixas cinzentas no iPhone. Só cores lisas e contornos sólidos.
+- Imagens sem canal alfa (o logótipo do cliente é composto sobre o creme da placa pelo `placa.js`).
 
 ## Regras de texto
 

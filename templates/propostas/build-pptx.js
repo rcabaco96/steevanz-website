@@ -8,6 +8,7 @@ const QRCode = require("qrcode");
 const carregar = require("./dados");
 
 const { v, pastaSaida } = carregar();
+const placasPng = path.join(pastaSaida, "placas.png"); // gerada pelo pdf.js a partir de placas.html
 const A = (n) => path.join(__dirname, "assets", n);
 const C = { bg: "FBF7F1", surface: "FFFFFF", surface2: "F7F0E7", line: "E7DDD0", text: "1D1220", muted: "574659", subtle: "6F5D71", accent: "7A2D60", accentSoft: "F4E4EE", gold: "CFA563", goldSoft: "F6EAD3", goldText: "7F5A1C", hl: "EFD6A0" };
 const SERIF = "Georgia", SANS = "Segoe UI";
@@ -119,20 +120,19 @@ function label(s, t, x, y, w) {
     const items = [
       ["1 · Landing page", "A sua casa, numa página", "Rápida, feita para telemóvel, com um botão claro: ver o menu, reservar ou chegar lá.", `${v.lpPreco} € + IVA · depois ${v.lpAnual} €/ano`, "lp-hero.jpg", 0.15],
       ["2 · Menu digital em vídeo", "Os pratos a mexer", "Um vídeo curto por prato, com nome e preço. Desliza-se como nos Reels.", `${v.menuAnual} €/ano + IVA`, "vm-grid-gel-b.jpg", 0.95],
-      ["3 · Placas de mesa", "O menu num toque", "Uma placa por mesa. Um toque do telemóvel ou o QR code, e o menu abre. Sem apps.", `${v.placasUnit} € + IVA · ${v.placasVol} € a partir de ${v.placasDe}`, null, 0],
+      ["3 · Placas de mesa", "O menu num toque", "As placas da sua mesa: um toque ou o QR, e abre o menu. Sem apps.", `${v.placasUnit} € + IVA · ${v.placasVol} € a partir de ${v.placasDe}`, null, 0],
     ];
     items.forEach(([tg, t, b, price, img, cropY], i) => {
       const x = 0.7 + i * 4.05;
       card(s, x, 2.0, 3.8, 4.7);
-      if (img) s.addImage({ path: A(img), x: x + 0.25, y: 2.22, w: 3.3, h: 3.3 * 844 / 390, sizing: { type: "crop", x: 0, y: cropY, w: 3.3, h: 1.35 } });
+      if (img) s.addImage({ path: A(img), x: x + 0.25, y: 2.22, w: 3.3, h: 3.3 * 844 / 390, sizing: { type: "crop", x: 0, y: cropY, w: 3.3, h: 1.75 } });
       else {
-        s.addShape(pptx.ShapeType.roundRect, { x: x + 0.25, y: 2.22, w: 3.3, h: 1.35, fill: { color: C.surface2 }, line: { color: C.surface2, width: 0 }, rectRadius: 0.08 });
-        s.addShape(pptx.ShapeType.ellipse, { x: x + 1.33, y: 2.27, w: 1.25, h: 1.25, fill: { color: "FFFFFF" }, line: { color: C.accent, width: 4 } });
-        s.addImage({ data: qrMenu, x: x + 1.65, y: 2.59, w: 0.6, h: 0.6 });
+        s.addShape(pptx.ShapeType.rect, { x: x + 0.25, y: 2.22, w: 3.3, h: 1.75, fill: { color: "FBF7F1" }, line: { color: "FBF7F1", width: 0 } });
+        s.addImage({ path: placasPng, x: x + 0.25 + (3.3 - 1.75 * 1120 / 880) / 2, y: 2.22, w: 1.75 * 1120 / 880, h: 1.75 });
       }
-      tag(s, tg, x + 0.25, 3.75, 3.3);
-      h3(s, t, x + 0.25, 4.05, 3.3, C.text, 15, SANS);
-      text(s, b, x + 0.25, 4.45, 3.3, 1.2, { fontSize: 13 });
+      tag(s, tg, x + 0.25, 4.12, 3.3);
+      h3(s, t, x + 0.25, 4.4, 3.3, C.text, 15, SANS);
+      text(s, b, x + 0.25, 4.8, 3.3, 1.1, { fontSize: 12.5 });
       shapeText(s, price, { shape: pptx.ShapeType.roundRect, x: x + 0.25, y: 5.95, w: 3.3, h: 0.42, rectRadius: 0.21, fill: { color: C.accentSoft }, line: { color: C.accentSoft, width: 0 }, fontFace: SANS, fontSize: 11.5, bold: true, color: C.accent, margin: 0, align: "center", valign: "middle" });
     });
   }
@@ -221,14 +221,11 @@ function label(s, t, x, y, w) {
       h3(s, t, x + 0.2, 2.82, 1.95, C.text, 14, SANS);
       text(s, b, x + 0.2, 3.2, 1.95, 1.0, { fontSize: 11.5 });
     });
-    text(s, "Pequenas e redondas, uma por mesa. Saem gravadas e testadas em iPhone e Android, com o texto que quiser. E o destino muda sem trocar as placas.", 0.7, 4.45, 7.3, 0.8, { fontSize: 13.5 });
+    text(s, "Uma por mesa, em pé ou plana, com o seu logótipo e as cores da casa. Saem gravadas e testadas em iPhone e Android, e o destino muda sem trocar as placas.", 0.7, 4.45, 7.3, 0.8, { fontSize: 13.5 });
     sticker(s, `${v.placasUnit} € + IVA por placa`, 0.75, 5.5, 2.4, "plum", 3, 11.5);
     sticker(s, `${v.placasVol} € por placa a partir de ${v.placasDe} placas`, 3.35, 5.45, 3.8, "gold", -3, 11.5);
-    s.addShape(pptx.ShapeType.ellipse, { x: 8.85, y: 2.0, w: 3.2, h: 3.2, fill: { color: "FFFFFF" }, line: { color: C.accent, width: 9 } });
-    s.addText("TOQUE OU LEIA", { x: 8.85, y: 2.4, w: 3.2, h: 0.3, fontFace: SANS, fontSize: 9, bold: true, color: C.subtle, align: "center", charSpacing: 1.5, margin: 0 });
-    s.addImage({ data: qrMenu, x: 9.7, y: 2.78, w: 1.5, h: 1.5 });
-    s.addText("Ver o menu", { x: 8.85, y: 4.35, w: 3.2, h: 0.4, fontFace: SERIF, fontSize: 15, bold: true, color: C.accent, align: "center", margin: 0 });
-    text(s, "Experimente já: leia o código e abra a demonstração.", 8.75, 5.45, 3.4, 0.6, { fontSize: 11, color: C.subtle, align: "center" });
+    s.addImage({ path: placasPng, x: 8.2, y: 1.95, w: 4.4, h: 4.4 * 880 / 1120 });
+    text(s, "As placas da sua mesa, com o seu logótipo. Experimente: leia o QR e abra a demonstração do menu.", 8.3, 5.5, 4.2, 0.6, { fontSize: 11, color: C.subtle, align: "center" });
   }
 
   // 10 · Vídeos

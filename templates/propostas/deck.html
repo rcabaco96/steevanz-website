@@ -57,7 +57,7 @@ b, strong { font-weight: 700; color: var(--text); }
 /* Toolbar */
 .bar {
   position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px);
+  padding: 10px 16px; background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
 .bar .brand { display: flex; align-items: center; gap: 8px; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 18px; margin-right: auto; }
@@ -73,7 +73,7 @@ b, strong { font-weight: 700; color: var(--text); }
 .slide {
   container-type: inline-size; width: min(1280px, 100%); aspect-ratio: 16 / 9; position: relative;
   background: var(--bg); border-radius: 18px; overflow: hidden;
-  box-shadow: 0 18px 50px rgb(var(--shadow) / 0.16), 0 2px 6px rgb(var(--shadow) / 0.08);
+  box-shadow: none;
 }
 .inner {
   --u: calc(100cqw / 1280);
@@ -129,7 +129,7 @@ p, li { color: var(--muted); }
 .ph {
   height: calc(var(--ph, 420) * var(--u)); aspect-ratio: 390 / 844; border-radius: calc(30 * var(--u));
   border: calc(8 * var(--u)) solid var(--bezel); overflow: hidden; background: #000;
-  box-shadow: 0 calc(16 * var(--u)) calc(40 * var(--u)) rgb(var(--shadow) / 0.22);
+  box-shadow: none;
 }
 .ph img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .phone figcaption { font-size: 0.74em; color: var(--muted); text-align: center; max-width: calc(var(--ph, 420) * var(--u) * 0.5); line-height: 1.3; }
@@ -196,7 +196,7 @@ input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -we
 .plate {
   width: calc(300 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--surface);
   border: calc(10 * var(--u)) solid var(--accent); display: grid; place-items: center; text-align: center;
-  box-shadow: 0 calc(20 * var(--u)) calc(50 * var(--u)) rgb(var(--shadow) / 0.2); margin: 0 auto;
+  box-shadow: none; margin: 0 auto;
 }
 .plate .qr { width: calc(140 * var(--u)); background: #fff; padding: calc(8 * var(--u)); border-radius: calc(8 * var(--u)); }
 .plate .qr svg { width: 100%; height: auto; display: block; }
@@ -209,7 +209,7 @@ input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -we
 /* Quote (A4 portrait document) */
 .quote {
   width: min(794px, 100%); background: var(--surface); color: var(--text); border-radius: 6px;
-  box-shadow: 0 18px 50px rgb(var(--shadow) / 0.16); padding: 44px 48px 36px; font-size: 12.4px; line-height: 1.4;
+  box-shadow: none; padding: 44px 48px 36px; font-size: 12.4px; line-height: 1.4;
   display: flex; flex-direction: column; gap: 14px; position: relative;
 }
 .quote p, .quote li { color: var(--muted); }
@@ -372,10 +372,11 @@ body.only-quote .slide { display: none; }
 .sticker {
   display: inline-flex; align-items: center; gap: 0.35em; font-weight: 800; font-size: 0.82em; letter-spacing: 0.01em;
   background: var(--gold); color: #1d1220; border-radius: 999px; padding: 0.45em 1em; transform: rotate(-4deg);
-  box-shadow: 0 calc(6 * var(--u)) calc(16 * var(--u)) rgb(var(--shadow) / 0.18); white-space: nowrap;
+  box-shadow: none; white-space: nowrap;
 }
-.sticker.plum { background: var(--accent); color: var(--on-accent); transform: rotate(3deg); }
-.sticker.cream { background: var(--surface); color: var(--accent); border: 2px dashed var(--gold); transform: rotate(-2deg); box-shadow: none; }
+.sticker { border: 2px solid #b58a4c; }
+.sticker.plum { background: var(--accent); color: var(--on-accent); transform: rotate(3deg); border-color: #5e1f49; }
+.sticker.cream { background: var(--surface); color: var(--accent); border: 2px solid var(--gold); transform: rotate(-2deg); }
 .stickers { display: flex; flex-wrap: wrap; gap: calc(14 * var(--u)); align-items: center; }
 .abs { position: absolute; z-index: 2; }
 .sign { font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--accent); font-size: 1.05em; }
@@ -444,18 +445,26 @@ body.only-quote .slide { display: none; }
 .adj-line { font-size: 0.98em; color: var(--text); }
 .adj-line span { color: var(--muted); }
 @media screen and (max-width: 760px) { #s12 .rec-badge { position: static; align-self: flex-start; margin-bottom: 6px; } }
+.plates-thumb { background: var(--surface-2); }
+#s3 .thumb { height: calc(255 * var(--u)); }
+#s3 .card p { font-size: 0.88em; }
+#s3 h2 { font-size: 2.6em; }
+.plates-thumb svg { height: 100%; width: auto; display: block; }
+.plates-big { width: 100%; max-width: calc(440 * var(--u)); }
+.plates-big svg { width: 100%; height: auto; display: block; }
+@media screen and (max-width: 760px) { .plates-big { max-width: 320px; } .plates-thumb { height: 220px; } }
 .para { display: flex; align-items: center; gap: calc(16 * var(--u)); flex-wrap: wrap; }
 .para-l { font-size: 0.72em; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 0.45em 1em; transform: rotate(-3deg); }
 .para-n { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2.1em; line-height: 1.05; color: var(--text); letter-spacing: -0.02em; }
 .meta-line { font-size: 0.9em; color: var(--subtle); }
-.btn-go { display: inline-flex; align-items: center; gap: 0.6em; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 800; font-size: 1.15em; border-radius: 999px; padding: 0.85em 1.5em; box-shadow: 0 calc(10 * var(--u)) calc(26 * var(--u)) rgb(var(--shadow) / 0.22); align-self: flex-start; }
+.btn-go { display: inline-flex; align-items: center; gap: 0.6em; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 800; font-size: 1.15em; border-radius: 999px; padding: 0.85em 1.5em; box-shadow: none; align-self: flex-start; }
 .btn-go span { color: var(--gold); }
 .url-small { font-size: 0.82em; color: var(--subtle); word-break: break-all; }
 .how-row { display: flex; flex-wrap: wrap; align-items: center; gap: calc(10 * var(--u)); }
 .how-row .pill { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 0.5em 1em; font-weight: 700; font-size: 0.95em; color: var(--text); }
 .how-row .pill.end { background: var(--gold); border-color: var(--gold); color: #1d1220; }
 .how-row .ar { color: var(--gold-text); font-weight: 800; }
-.qr-card { background: #fff; border-radius: calc(24 * var(--u)); padding: calc(26 * var(--u)); box-shadow: 0 calc(18 * var(--u)) calc(44 * var(--u)) rgb(var(--shadow) / 0.2); border: calc(6 * var(--u)) solid var(--accent); display: flex; flex-direction: column; align-items: center; gap: calc(12 * var(--u)); }
+.qr-card { background: #fff; border-radius: calc(24 * var(--u)); padding: calc(26 * var(--u)); box-shadow: none; border: calc(6 * var(--u)) solid var(--accent); display: flex; flex-direction: column; align-items: center; gap: calc(12 * var(--u)); }
 .qr-card .qr { width: calc(270 * var(--u)); }
 .qr-card .qr svg { width: 100%; height: auto; display: block; }
 .qr-card p { color: #574659; font-weight: 700; font-size: 0.92em; text-align: center; }
@@ -544,10 +553,10 @@ body.only-quote .slide { display: none; }
         <span class="price-chip">{{menuAnual}} €/ano + IVA</span>
       </div>
       <div class="card">
-        <div class="thumb"><div class="mini-plate"><div class="qr">@@qr-menu@@</div></div></div>
+        <div class="thumb plates-thumb">@@placas@@</div>
         <div class="tag">3 · Placas de mesa</div>
         <h3>O menu num toque</h3>
-        <p>Uma placa por mesa. Um toque do telemóvel ou o QR code, e o menu abre. Sem apps.</p>
+        <p>As placas da sua mesa: um toque ou o QR, e abre o menu. Sem apps.</p>
         <span class="price-chip">{{placasUnit}} € + IVA · {{placasVol}} € a partir de {{placasDe}}</span>
       </div>
     </div>
@@ -622,7 +631,7 @@ body.only-quote .slide { display: none; }
           <li style="color: var(--on-accent);">Até 30 minutos de pequenas alterações por mês</li>
           <li style="color: var(--on-accent);">Uma pessoa real do outro lado do WhatsApp</li>
         </ul>
-        <p style="color: var(--on-accent); opacity: .9; margin-top: auto;">Anual com {{mesesOferta}} meses grátis, ou mensal sem período mínimo: fica porque funciona, não porque é obrigado.</p>
+        <p style="color: var(--on-accent);  margin-top: auto;">Anual com {{mesesOferta}} meses grátis, ou mensal sem período mínimo: fica porque funciona, não porque é obrigado.</p>
       </div>
     </div>
     <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>6 / 14</span></div>
@@ -693,15 +702,15 @@ body.only-quote .slide { display: none; }
           <div class="card"><span class="num">2</span><h3>QR code</h3><p>Em todas as placas, para qualquer telemóvel com câmara.</p></div>
           <div class="card"><span class="num">3</span><h3>«Ver o menu»</h3><p>O botão da sua página e o link na bio.</p></div>
         </div>
-        <p style="font-size: 0.98em;">Pequenas e redondas, uma por mesa. Saem gravadas e testadas em iPhone e Android, com o texto que quiser. E o destino muda sem trocar as placas.</p>
+        <p style="font-size: 0.98em;">Uma por mesa, em pé ou plana, com o seu logótipo e as cores da casa. Saem gravadas e testadas em iPhone e Android, e o destino muda sem trocar as placas.</p>
         <div class="stickers">
           <span class="sticker plum">{{placasUnit}} € + IVA por placa</span>
           <span class="sticker">{{placasVol}} € por placa a partir de {{placasDe}} placas</span>
         </div>
       </div>
       <div style="display:flex; flex-direction:column; align-items:center; gap: calc(14 * var(--u));">
-        <div class="plate"><div><span class="t2">Toque ou leia</span><div class="qr">@@qr-menu@@</div><span class="t1">Ver o menu</span></div></div>
-        <p class="small" style="text-align:center; max-width: 18em;">Experimente já: leia o código e abra a demonstração.</p>
+        <div class="plates-big">@@placas@@</div>
+        <p class="small" style="text-align:center; max-width: 18em;">As placas da sua mesa, com o seu logótipo. Experimente: leia o QR e abra a demonstração do menu.</p>
       </div>
     </div>
     <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>9 / 14</span></div>
@@ -718,7 +727,7 @@ body.only-quote .slide { display: none; }
     <div class="grid g3 fill" style="align-content: start;">
       <div class="big-card"><span class="num">1</span><h3>Grave com o nosso guia</h3><p>Um guia simples, passo a passo: enquadramento, luz e ângulos. Sem equipamento caro.</p></div>
       <div class="big-card"><span class="num">2</span><h3>Envie-nos os vídeos</h3><p>Um vídeo por prato, com o nome e o preço de cada um.</p></div>
-      <div class="big-card" style="background: var(--accent); border-color: var(--accent);"><span class="num" style="background: var(--gold); color: #1d1220;">3</span><h3 style="color: var(--on-accent);">Nós tratamos do resto</h3><p style="color: var(--on-accent); opacity: .92;">Montamos o menu e tratamos do alojamento do menu e dos vídeos.</p></div>
+      <div class="big-card" style="background: var(--accent); border-color: var(--accent);"><span class="num" style="background: var(--gold); color: #1d1220;">3</span><h3 style="color: var(--on-accent);">Nós tratamos do resto</h3><p style="color: var(--on-accent); ">Montamos o menu e tratamos do alojamento do menu e dos vídeos.</p></div>
     </div>
     <div class="tiles">
       <div class="tile"><b>Na vertical</b><span>Telemóvel de pé, como num Reel</span></div>

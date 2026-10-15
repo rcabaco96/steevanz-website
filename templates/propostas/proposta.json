@@ -8,6 +8,16 @@
   "morada": "",
   "contacto": "",
   "aceitacaoUrl": "https://www.steevanz.com/proposta/dolci-salati-695graik",
+  "placa": {
+    "logo": "assets/dolci-e-salati-logo.png",
+    "menuUrl": "https://www.steevanz.com/raza17raza",
+    "cor": "#ff80b5",
+    "corImpressao": "#e2559a",
+    "corRelevoSombra": "#c84f86",
+    "corSecundaria": "#5f8f45",
+    "creme": "#f3ede2",
+    "base": "#ece5d8"
+  },
   "iva": 0.23,
   "landingPage": { "preco": 350, "mensal": 15 },
   "menu": { "mensal": 30 },
