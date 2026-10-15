@@ -14,7 +14,7 @@ import { formText, isBot, isModuleRateLimited, phoneFrom, publicToken, startOfLo
 import { notifyCalled } from "./notify";
 import { pushTest } from "./push";
 import { parseSubscription } from "./push-rules";
-import { ensureWaitlistSettings, getEntryByToken, servingCapacity, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
+import { currentSettings, ensureWaitlistSettings, getEntryByToken, servingCapacity, type EntryReply, type EntryStatus, type WaitlistEntryRow } from "./store";
 
 function refreshQueue(establishment: EstablishmentRow) {
   revalidatePath("/conta", "layout");
@@ -42,8 +42,9 @@ const entrySchema = z.object({
 });
 
 async function parseEntry(formData: FormData, establishment: EstablishmentRow) {
-  const settings = await ensureWaitlistSettings(establishment);
   const bundle = await loadBundle(establishment);
+  // With the opening hours applied, so a queue past its closing time turns away a join sent from a page left open.
+  const settings = await currentSettings(establishment, bundle);
   const partyText = formText(formData, "party");
   const service = formText(formData, "service");
   const staff = formText(formData, "staff");
