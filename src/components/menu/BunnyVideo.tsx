@@ -27,7 +27,24 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   const hls = useRef<Hls | null>(null);
   const [seen, setSeen] = useState(false);
   const active = playing ?? seen;
+  const activeNow = useRef(active);
+  useEffect(() => {
+    activeNow.current = active;
+  }, [active]);
   const base = `https://${pullZone}.b-cdn.net/${id}`;
+
+  // The browser's own HLS failed (or the stream did): the MP4 instead; that one failing too leaves the poster.
+  useEffect(() => {
+    const element = video.current;
+    if (!element) return;
+    const onError = () => {
+      if (!element.src.endsWith(".m3u8")) return;
+      element.src = `${base}/play_720p.mp4`;
+      if (activeNow.current) void element.play().catch(() => {});
+    };
+    element.addEventListener("error", onError);
+    return () => element.removeEventListener("error", onError);
+  }, [base]);
 
   // In the grid: on screen or not.
   useEffect(() => {
@@ -53,16 +70,20 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
       element.src = `${base}/play_720p.mp4`;
       play();
     };
+    const native = () => {
+      element.src = `${base}/playlist.m3u8`;
+      play();
+    };
     const start = async () => {
       if (element.src || hls.current) return play();
-      // An iPhone (Safari) plays HLS itself.
-      if (element.canPlayType("application/vnd.apple.mpegurl")) {
-        element.src = `${base}/playlist.m3u8`;
-        return play();
-      }
+      // An iPhone (Safari, and every iOS browser: all WebKit) plays HLS itself. Not Chrome or Edge:
+      // they now answer «maybe» too, but their own HLS was refused (ERR_BLOCKED_BY_ORB, 2026-10-15).
+      const apple = /Apple/.test(navigator.vendor);
+      const canNative = element.canPlayType("application/vnd.apple.mpegurl") !== "";
+      if (apple && canNative) return native();
       const { default: HlsPlayer } = await import("hls.js");
       if (cancelled) return;
-      if (!HlsPlayer.isSupported()) return fallback();
+      if (!HlsPlayer.isSupported()) return canNative ? native() : fallback();
       const player = new HlsPlayer({ capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 });
       hls.current = player;
       player.on(HlsPlayer.Events.ERROR, (_event, data) => {
