@@ -35,5 +35,5 @@ export default async function DemoVideoMenuPage() {
   for (const host of ["https://www.youtube-nocookie.com", "https://i.ytimg.com", "https://www.google.com", bunnyHost()]) if (host) preconnect(host);
   const menu = await loadMenu();
   if (!menu) notFound();
-  return <VideoMenu menu={menu} />;
+  return <VideoMenu menu={menu} demo />;
 }

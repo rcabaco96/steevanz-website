@@ -183,7 +183,7 @@ function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: strin
  * collection full screen, one dish per screen. Every video plays in a fixed pool of players
  * (VideoPool), never created again: the cards and slides hold thumbnails.
  */
-export function VideoMenu({ menu }: { menu: VideoMenuData }) {
+export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The demo page (/raza17raza): says its videos and prices are examples. */ demo?: boolean }) {
   const [active, setActive] = useState(menu.collections[0].id);
   // What the page opens on: the first collection's dishes (their players in the HTML, their pictures in the opening).
   const [opening] = useState(() => {
@@ -453,7 +453,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
             <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => setViewer(index)} />
           ))}
         </ul>
-        <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de canais de culinária no YouTube e preços de exemplo.</p>
+        {demo ? <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de banco de imagens e preços de exemplo.</p> : null}
       </main>
 
       {sheet ? (
