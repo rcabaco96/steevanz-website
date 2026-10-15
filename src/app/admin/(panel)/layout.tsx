@@ -6,13 +6,15 @@ import { buttonClasses } from "@/components/ui/Button";
 import { getAdminContext } from "@/lib/admin/auth";
 
 // Day to day first: what to do today, the clients and their orders, the people who asked about us
-// (demos, information requests and the demo hours, as tabs inside «Contactos»), then reviews.
+// (demos, information requests and the demo hours, as tabs inside «Contactos»), then reviews and the
+// clients' digital menus in videos.
 const links = [
   { href: "/admin", label: "Início", exact: true },
   { href: "/admin/clientes", label: "Clientes" },
   { href: "/admin/encomendas", label: "Encomendas" },
   { href: "/admin/bookings", label: "Contactos", also: ["/admin/leads", "/admin/availability"] },
   { href: "/admin/reviews", label: "Reviews" },
+  { href: "/admin/menus", label: "Menus em vídeo" },
 ];
 
 export default async function AdminPanelLayout({ children }: { children: ReactNode }) {
