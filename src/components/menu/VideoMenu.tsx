@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
+import { dishPicture } from "@/lib/video-menus/rules";
 import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
 import { BunnyVideo, hasBunnyVideo } from "./BunnyVideo";
 import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
@@ -81,7 +82,7 @@ function DishCard({
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
         <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} /> : <ShortCover video={dish.video} />}
+          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} /> : dish.video ? <ShortCover video={dish.video} /> : null}
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
@@ -96,6 +97,9 @@ function DishCard({
     </li>
   );
 }
+
+/** The dish plays in one of the pool's YouTube players (not its own Bunny video). */
+const usesPool = (dish?: MenuDish) => Boolean(dish?.video && !hasBunnyVideo(dish.bunny));
 
 /** Tiles of the mosaic opening: 4 columns of 7 rows, filling the screen (and beyond, it is tilted). */
 const mosaicColumns = 4;
@@ -114,7 +118,7 @@ const mosaicExitMs = 700;
  * tilted mosaic from the centre outwards, the logo comes into focus over them, then everything zooms
  * in and fades into the menu. Opacity and transforms only. The videos load and play behind it.
  */
-function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string; business: string; videos: string[]; ready: boolean; onDone: () => void }) {
+function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: string; business: string; pictures: string[]; ready: boolean; onDone: () => void }) {
   const [phase, setPhase] = useState<"in" | "out" | "done">("in");
   const [waited, setWaited] = useState<"no" | "enough" | "max">("no");
   const rows = Math.ceil(mosaicTiles / mosaicColumns);
@@ -149,8 +153,10 @@ function MosaicSplash({ logo, business, videos, ready, onDone }: { logo: string;
             const distance = Math.hypot((index % mosaicColumns) - (mosaicColumns - 1) / 2, Math.floor(index / mosaicColumns) - (rows - 1) / 2);
             return (
               <div key={index} className="menu-mosaic-tile relative aspect-[9/16] overflow-hidden rounded-2xl bg-white/60 shadow-lg" style={{ animationDelay: `${Math.round(distance * 110)}ms` }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`https://i.ytimg.com/vi/${videos[index % videos.length]}/hqdefault.jpg`} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                {pictures.length ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={pictures[index % pictures.length]} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                ) : null}
               </div>
             );
           })}
@@ -182,10 +188,12 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
   // What the page opens on: the first collection's dishes (their players in the HTML, their pictures in the opening).
   const [opening] = useState(() => {
     const firstDishes = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]).filter((dish) => Boolean(dish));
-    const videos = firstDishes.map((dish) => dish.video);
+    // The dishes' pictures: their own (Bunny) video's, else their YouTube video's.
+    const pictureOf = (dish: MenuDish) => dishPicture({ video_id: dish.video ?? null, bunny_video_id: hasBunnyVideo(dish.bunny) ? dish.bunny : null });
+    const pictures = firstDishes.map(pictureOf).filter((picture): picture is string => Boolean(picture));
     // Only YouTube dishes get pool players in the HTML (a Bunny one plays its own <video>).
-    const first = firstDishes.slice(0, 4).filter((dish) => !hasBunnyVideo(dish.bunny)).map((dish) => dish.video);
-    return { first, pictures: videos.length >= 4 ? videos : Object.values(menu.dishes).map((dish) => dish.video) };
+    const first = firstDishes.slice(0, 4).flatMap((dish) => (!hasBunnyVideo(dish.bunny) && dish.video ? [dish.video] : []));
+    return { first, pictures: pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture)) };
   });
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
@@ -289,8 +297,8 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       const dish = menu.dishes[key];
       const element = boxes.current.get(key) ?? null;
       // A dish with its own (Bunny) video plays it in its card: no pool player.
-      if (dish && hasBunnyVideo(dish.bunny)) return [];
-      return dish && element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: visible, prime: !visible, visible }] : [];
+      if (!dish?.video || hasBunnyVideo(dish.bunny)) return [];
+      return element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: visible, prime: !visible, visible }] : [];
     };
     // The row ahead: the next dishes in the list after those on screen (before them, scrolling up).
     // Not while switching collection (the dishes on screen load first).
@@ -378,7 +386,7 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       setSwitching(null);
       closeSheet();
     };
-    if (focus.visible.length && focus.visible.every((key) => hasBunnyVideo(menu.dishes[key]?.bunny) || ready.includes(`grid-${key}`))) {
+    if (focus.visible.length && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`))) {
       done();
       return;
     }
@@ -530,8 +538,8 @@ export function VideoMenu({ menu }: { menu: VideoMenuData }) {
       <MosaicSplash
         logo={menu.logo}
         business={menu.business}
-        videos={opening.pictures}
-        ready={focus.visible.length > 0 && focus.visible.every((key) => hasBunnyVideo(menu.dishes[key]?.bunny) || ready.includes(`grid-${key}`))}
+        pictures={opening.pictures}
+        ready={focus.visible.length > 0 && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`))}
         onDone={opened}
       />
     </div>

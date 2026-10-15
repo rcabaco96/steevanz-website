@@ -5,7 +5,7 @@ import { FormMessage, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import type { ActionState } from "@/lib/action-state";
 import { addDish, updateDish } from "@/lib/video-menus/actions";
-import { formatPriceCents, parsePriceCents, parseYouTubeId, priceInputValue, youTubeThumbnail, type VideoMenuDishRow } from "@/lib/video-menus/rules";
+import { dishPicture, formatPriceCents, parsePriceCents, parseYouTubeId, priceInputValue, type VideoMenuDishRow } from "@/lib/video-menus/rules";
 
 const input = `${adminInputClasses} h-11`;
 
@@ -18,8 +18,9 @@ interface DishFormProps {
 }
 
 /**
- * A dish: its YouTube Short (any link or the id; the picture shows at once from YouTube's image
- * servers), name, description and price in euros. The fields are the component's own, so a refused
+ * A dish: name, description, price in euros and, optionally, a YouTube Short (any link or the id;
+ * the picture shows at once from YouTube's image servers). Its own video is sent apart («Enviar
+ * vídeo», Bunny Stream) and wins over the YouTube one. The fields are the component's own, so a refused
  * save keeps what was typed; adding empties them for the next dish.
  */
 export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
@@ -41,6 +42,7 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
   }, null);
 
   const videoId = video.trim() ? parseYouTubeId(video) : null;
+  const picture = dishPicture({ video_id: videoId, bunny_video_id: dish?.bunny_video_id });
   const priceCents = price.trim() ? parsePriceCents(price) : null;
   const fieldId = dish?.id ?? `new-${menuId}`;
 
@@ -50,19 +52,18 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
       {dish ? <input type="hidden" name="id" value={dish.id} /> : null}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div className="relative aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2 sm:w-28">
-          {videoId ? (
-            // eslint-disable-next-line @next/next/no-img-element -- YouTube's own picture of the video
-            <img key={videoId} src={youTubeThumbnail(videoId)} alt="Imagem do vídeo" className="absolute inset-0 h-full w-full object-cover" />
+          {picture ? (
+            // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny or YouTube)
+            <img key={picture} src={picture} alt="Imagem do vídeo" className="absolute inset-0 h-full w-full object-cover" />
           ) : (
-            <span className="absolute inset-0 grid place-items-center px-2 text-center text-xs text-subtle">{video.trim() ? "Link inválido" : "Sem vídeo"}</span>
+            <span className="absolute inset-0 grid place-items-center px-2 text-center text-xs text-subtle">{video.trim() && !videoId ? "Link inválido" : "Sem vídeo"}</span>
           )}
         </div>
         <div className="grid min-w-0 flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
           <label className={`${adminLabelClasses} sm:col-span-2`}>
-            Vídeo do YouTube
+            Vídeo do YouTube (opcional)
             <input
               name="video"
-              required
               maxLength={300}
               inputMode="url"
               autoComplete="off"
@@ -76,7 +77,13 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
               className={input}
             />
             <span id={`${fieldId}-video-hint`} className={`text-xs font-normal ${video.trim() && !videoId ? "text-danger" : "text-subtle"}`}>
-              {videoId ? `Vídeo ${videoId}` : video.trim() ? "Não é um link de vídeo do YouTube." : "Cole o link do Short (shorts/, watch?v=, youtu.be/…) ou o código de 11 caracteres."}
+              {videoId
+                ? `Vídeo ${videoId}${dish?.bunny_video_id ? " (o menu mostra o vídeo enviado)" : ""}`
+                : video.trim()
+                  ? "Não é um link de vídeo do YouTube."
+                  : dish
+                    ? "Sem link: o menu usa o vídeo enviado em «Enviar vídeo»."
+                    : "Pode ficar em branco: depois de adicionar o prato, envie o vídeo dele em «Enviar vídeo»."}
             </span>
           </label>
           <label className={adminLabelClasses}>

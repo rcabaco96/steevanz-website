@@ -171,6 +171,20 @@ describe("toVideoMenuData", () => {
     assert.equal(toVideoMenuData(menu, [], [], []), null);
   });
 
+  it("shows a dish with only its own (Bunny) video and leaves out one with no video yet", () => {
+    const own = { ...dish("d", 3), video_id: null, bunny_video_id: "66f1c8d2-bfc3-4bfa-a6c1-58e844e3ffde" };
+    const none = { ...dish("e", 4), video_id: null };
+    const links = [
+      { collection_id: "c1", dish_id: "d", position: 0 },
+      { collection_id: "c1", dish_id: "e", position: 1 },
+    ];
+    const data = toVideoMenuData(menu, [...dishes, own, none], [{ id: "c1", menu_id: "m", name: "Doces", position: 0, is_default: true }], links);
+    assert.deepEqual(data.dishes.d, { bunny: own.bunny_video_id, name: "Prato d", description: "", price: 4.53 });
+    assert.equal(data.dishes.e, undefined);
+    assert.deepEqual(data.collections[0].dishes, ["d"]);
+    assert.equal(toVideoMenuData(menu, [none], [], []), null);
+  });
+
   it("rebuilds the static demo exactly from rows seeded like the migration", () => {
     const keys = Object.keys(demoMenu.dishes);
     const dishRows = keys.map((key, position) => {

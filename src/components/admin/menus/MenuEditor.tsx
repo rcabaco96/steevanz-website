@@ -17,7 +17,7 @@ import {
   renameCollection,
   setDefaultCollection,
 } from "@/lib/video-menus/actions";
-import { formatPriceCents, menuPublicPath, youTubeThumbnail } from "@/lib/video-menus/rules";
+import { dishPicture, formatPriceCents, menuPublicPath } from "@/lib/video-menus/rules";
 import type { AdminMenu } from "@/lib/video-menus/store";
 
 const summaryClasses = "inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-muted hover:text-text [&::-webkit-details-marker]:hidden";
@@ -32,7 +32,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
   const collectionNames = new Map(collections.map((collection) => [collection.id, collection.name]));
   const dishCollections = (dishId: string) => links.filter((link) => link.dish_id === dishId).map((link) => collectionNames.get(link.collection_id)).filter(Boolean);
   const collectionDishes = (collectionId: string) => links.filter((link) => link.collection_id === collectionId).map((link) => link.dish_id);
-  const editorDishes = dishes.map(({ id: dishId, name, video_id, price_cents }) => ({ id: dishId, name, video_id, price_cents }));
+  const editorDishes = dishes.map((dish) => ({ id: dish.id, name: dish.name, picture: dishPicture(dish), price_cents: dish.price_cents }));
 
   return (
     <>
@@ -75,13 +75,16 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
             <ol className="flex flex-col divide-y divide-line rounded-2xl border border-line">
               {dishes.map((dish, index) => {
                 const inCollections = dishCollections(dish.id);
+                const picture = dishPicture(dish);
                 return (
                   <li key={dish.id} className="flex flex-col gap-2 p-3 sm:p-4">
                     <div className="flex items-start gap-3">
-                      <a href={`https://www.youtube.com/shorts/${dish.video_id}`} target="_blank" rel="noopener" className="shrink-0" aria-label={`Ver o vídeo de ${dish.name} no YouTube`}>
-                        {/* eslint-disable-next-line @next/next/no-img-element -- YouTube's own picture of the video */}
-                        <img src={youTubeThumbnail(dish.video_id)} alt="" width={48} height={64} loading="lazy" className="h-16 w-12 rounded-lg bg-surface-2 object-cover" />
-                      </a>
+                      {picture ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny or YouTube)
+                        <img src={picture} alt="" width={48} height={64} loading="lazy" className="h-16 w-12 shrink-0 rounded-lg bg-surface-2 object-cover" />
+                      ) : (
+                        <span className="grid h-16 w-12 shrink-0 place-items-center rounded-lg bg-surface-2 px-1 text-center text-[10px] leading-tight text-subtle">Sem vídeo</span>
+                      )}
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-text">
                           <span className="tabular-nums text-subtle">{index + 1}.</span> {dish.name}
@@ -97,7 +100,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
                       </div>
                       <MoveButtons action={moveDish} id={dish.id} name={dish.name} first={index === 0} last={index === dishes.length - 1} className="hidden sm:flex" />
                     </div>
-                    <DishVideoUpload dishId={dish.id} dishName={dish.name} bunnyVideoId={dish.bunny_video_id ?? null} pendingStatus={dish.pending_video_status ?? null} />
+                    <DishVideoUpload dishId={dish.id} dishName={dish.name} bunnyVideoId={dish.bunny_video_id ?? null} pendingStatus={dish.pending_video_status ?? null} hasYouTube={Boolean(dish.video_id)} />
                     <details className="group">
                       <summary className={summaryClasses}>
                         Editar ou apagar
@@ -105,7 +108,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
                       </summary>
                       <div className="mt-3 flex flex-col gap-4 rounded-2xl bg-surface-2/50 p-3 sm:p-4">
                         <DishForm menuId={menu.id} dish={dish} />
-                        <ActionForm action={deleteDish} confirmMessage={`Apagar «${dish.name}»? Sai também de todas as coleções.`} className="border-t border-line pt-3">
+                        <ActionForm action={deleteDish} confirmMessage={`Apagar «${dish.name}»? Sai também de todas as coleções e o vídeo enviado é apagado.`} className="border-t border-line pt-3">
                           <input type="hidden" name="id" value={dish.id} />
                           <SubmitButton variant="ghost" size="sm" className="text-danger" pendingLabel="A apagar…">
                             Apagar prato
@@ -118,7 +121,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
               })}
             </ol>
           ) : (
-            <EmptyState>Ainda não há pratos. Cole o link de um Short do YouTube em «Adicionar prato».</EmptyState>
+            <EmptyState>Ainda não há pratos. Adicione o primeiro em «Adicionar prato» e envie o vídeo dele.</EmptyState>
           )}
         </div>
       </Panel>
@@ -220,7 +223,7 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
       <Panel title="Apagar menu">
         <ActionForm action={deleteMenu} confirmMessage={`Apagar o menu de «${menu.business_name}», os pratos e as coleções? A página ${publicPath} deixa de abrir.`} className="flex flex-col items-start gap-2">
           <input type="hidden" name="id" value={menu.id} />
-          <p className="text-sm text-muted">Apaga o menu, os pratos e as coleções. Os vídeos ficam no YouTube. Para o esconder sem apagar, desligue «Menu ativo».</p>
+          <p className="text-sm text-muted">Apaga o menu, os pratos, as coleções e os vídeos enviados. Para o esconder sem apagar, desligue «Menu ativo».</p>
           <SubmitButton variant="secondary" size="sm" className="text-danger" pendingLabel="A apagar…">
             Apagar menu
           </SubmitButton>

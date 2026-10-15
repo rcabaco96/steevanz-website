@@ -5,13 +5,13 @@
  * 2026-10-14) and the dishes and prices are examples, so the page says it is a demo.
  */
 export interface MenuDish {
-  /** YouTube video id of the Short. */
-  video: string;
+  /** YouTube video id of the Short (a dish with its own Bunny video may have none). */
+  video?: string;
   name: string;
   description: string;
   /** Euros. */
   price: number;
-  /** Its own video on Bunny Stream, played as a plain MP4 instead of the YouTube one. */
+  /** Its own video on Bunny Stream, played instead of the YouTube one. */
   bunny?: string;
 }
 

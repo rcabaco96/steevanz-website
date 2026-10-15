@@ -8,8 +8,8 @@ import type { PoolTarget } from "./VideoPool";
 export interface ShortItem {
   /** Unique within the list. */
   key: string;
-  /** YouTube video id. */
-  video: string;
+  /** YouTube video id (none when it only has its own Bunny video). */
+  video?: string;
   /** Its own video on Bunny Stream: played by a plain <video> in its slide (no pool player). */
   bunny?: string;
   title: string;
@@ -157,14 +157,16 @@ export function ShortsViewer({
     const targets: PoolTarget[] = [];
     const item = items[current];
     // Dishes with their own (Bunny) video play it in their slide; only YouTube ones take pool players.
-    if (item && !hasBunnyVideo(item.bunny)) targets.push({ key: "viewer-current", video: item.video, element: boxes.current[current], fixed: true, play: true, visible: true });
+    if (item?.video && !hasBunnyVideo(item.bunny)) targets.push({ key: "viewer-current", video: item.video, element: boxes.current[current], fixed: true, play: true, visible: true });
     if (items.length > 1) {
       const next = (current + 1) % items.length;
       const previous = (current - 1 + items.length) % items.length;
       const nextBox = current === items.length - 1 ? copyAfter.current : boxes.current[next];
       const previousBox = current === 0 ? copyBefore.current : boxes.current[previous];
-      if (!hasBunnyVideo(items[next].bunny)) targets.push({ key: "viewer-next", video: items[next].video, element: nextBox, fixed: true, play: false, prime: true, visible: true });
-      if (previous !== next && !hasBunnyVideo(items[previous].bunny)) targets.push({ key: "viewer-previous", video: items[previous].video, element: previousBox, fixed: true, play: false, prime: true, visible: true });
+      const nextVideo = items[next].video;
+      const previousVideo = items[previous].video;
+      if (nextVideo && !hasBunnyVideo(items[next].bunny)) targets.push({ key: "viewer-next", video: nextVideo, element: nextBox, fixed: true, play: false, prime: true, visible: true });
+      if (previous !== next && previousVideo && !hasBunnyVideo(items[previous].bunny)) targets.push({ key: "viewer-previous", video: previousVideo, element: previousBox, fixed: true, play: false, prime: true, visible: true });
     }
     onTargets(targets);
   }, [items, current, onTargets]);
@@ -188,7 +190,7 @@ export function ShortsViewer({
       }}
       className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
     >
-      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} playing={index === current} /> : <ShortCover video={item.video} />}
+      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} playing={index === current} /> : item.video ? <ShortCover video={item.video} /> : null}
     </div>
   );
 

@@ -6,12 +6,13 @@ import { adminInputClasses } from "@/components/backoffice/ui";
 import { CloseIcon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
 import { saveCollectionDishes } from "@/lib/video-menus/actions";
-import { formatPriceCents, moveItem, youTubeThumbnail } from "@/lib/video-menus/rules";
+import { formatPriceCents, moveItem } from "@/lib/video-menus/rules";
 
 interface EditorDish {
   id: string;
   name: string;
-  video_id: string;
+  /** Its video's picture (Bunny or YouTube); null without a video yet. */
+  picture: string | null;
   price_cents: number;
 }
 
@@ -61,8 +62,12 @@ export function CollectionDishesEditor({ collectionId, dishes, selected }: { col
             return (
               <li key={id} className="flex items-center gap-2 p-2 sm:pl-3">
                 <span className="hidden w-5 shrink-0 text-right text-xs tabular-nums text-subtle sm:block">{index + 1}</span>
-                {/* eslint-disable-next-line @next/next/no-img-element -- YouTube's own picture of the video */}
-                <img src={youTubeThumbnail(dish.video_id)} alt="" width={36} height={48} loading="lazy" className="h-12 w-9 shrink-0 rounded-md bg-surface-2 object-cover" />
+                {dish.picture ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny or YouTube)
+                  <img src={dish.picture} alt="" width={36} height={48} loading="lazy" className="h-12 w-9 shrink-0 rounded-md bg-surface-2 object-cover" />
+                ) : (
+                  <span aria-hidden="true" className="h-12 w-9 shrink-0 rounded-md bg-surface-2" />
+                )}
                 <span className="min-w-0 flex-1">
                   <span className="block text-sm leading-snug font-medium text-text">{dish.name}</span>
                   <span className="block text-xs text-subtle">{formatPriceCents(dish.price_cents)}</span>

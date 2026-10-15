@@ -43,6 +43,19 @@ export function youTubeThumbnail(videoId: string): string {
   return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 }
 
+// Bunny Stream -------------------------------------------------------------------------------------
+
+/** A dish's own video's picture (Bunny Stream's thumbnail); null without the pull zone. */
+export function bunnyThumbnail(videoId: string): string | null {
+  const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
+  return pullZone ? `https://${pullZone}.b-cdn.net/${videoId}/thumbnail.jpg` : null;
+}
+
+/** A dish's picture: its own (Bunny) video's when it has one, else its YouTube video's; null with neither. */
+export function dishPicture(dish: { video_id: string | null; bunny_video_id?: string | null }): string | null {
+  return (dish.bunny_video_id ? bunnyThumbnail(dish.bunny_video_id) : null) ?? (dish.video_id ? youTubeThumbnail(dish.video_id) : null);
+}
+
 // Prices -------------------------------------------------------------------------------------------
 
 /** 10 000 € (the database allows up to this). */
@@ -179,7 +192,8 @@ export interface VideoMenuRow {
 export interface VideoMenuDishRow {
   id: string;
   menu_id: string;
-  video_id: string;
+  /** YouTube video id; optional since the dishes have their own videos (owner, 2026-10-15). */
+  video_id: string | null;
   name: string;
   description: string;
   price_cents: number;
@@ -209,7 +223,8 @@ const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - 
 /**
  * The menu in the shape the player takes (the same as the static demo): dishes keyed by their id
  * in their order, the default collection first (the player opens the first one), empty collections
- * left out, and «Todos» with every dish when no collection has any. Null when there's no dish.
+ * left out, and «Todos» with every dish when no collection has any. A dish with no video yet (no
+ * YouTube id, its own video not ready) stays off the menu. Null when there's no dish to show.
  */
 export function toVideoMenuData(
   menu: Pick<VideoMenuRow, "business_name" | "logo_url" | "instagram">,
@@ -217,11 +232,17 @@ export function toVideoMenuData(
   collectionRows: VideoMenuCollectionRow[],
   linkRows: VideoMenuLinkRow[],
 ): VideoMenuData | null {
-  const ordered = [...dishRows].sort(byPosition);
+  const ordered = dishRows.filter((dish) => dish.video_id || dish.bunny_video_id).sort(byPosition);
   if (!ordered.length) return null;
   const dishes: Record<string, MenuDish> = {};
   for (const dish of ordered) {
-    dishes[dish.id] = { video: dish.video_id, name: dish.name, description: dish.description, price: dish.price_cents / 100, ...(dish.bunny_video_id ? { bunny: dish.bunny_video_id } : {}) };
+    dishes[dish.id] = {
+      ...(dish.video_id ? { video: dish.video_id } : {}),
+      ...(dish.bunny_video_id ? { bunny: dish.bunny_video_id } : {}),
+      name: dish.name,
+      description: dish.description,
+      price: dish.price_cents / 100,
+    };
   }
   const collections: MenuCollection[] = [...collectionRows]
     .sort((a, b) => Number(b.is_default) - Number(a.is_default) || byPosition(a, b))

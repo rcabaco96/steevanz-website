@@ -13,7 +13,7 @@ export default async function AdminNewVideoMenuPage() {
   return (
     <>
       <BackLink href="/admin/menus" label="Menus em vídeo" />
-      <AdminPageHeader title="Novo menu em vídeo" description="Primeiro os dados do negócio; a seguir, na página do menu, junta os pratos (um Short do YouTube cada) e as coleções." />
+      <AdminPageHeader title="Novo menu em vídeo" description="Primeiro os dados do negócio; a seguir, na página do menu, junta os pratos (cada um com o seu vídeo) e as coleções." />
       <section className="card max-w-3xl p-5 sm:p-6">
         <MenuDetailsForm businesses={businesses} />
       </section>
