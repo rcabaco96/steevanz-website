@@ -26,6 +26,9 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
   const hls = useRef<Hls | null>(null);
   const [seen, setSeen] = useState(false);
+  // The video shows only once it has frames on screen: until then its picture (no white flash on an
+  // iPhone, owner 2026-10-15: «faz um flash branco», «pára com os flashes»).
+  const [shown, setShown] = useState(false);
   const active = playing ?? seen;
   const activeNow = useRef(active);
   useEffect(() => {
@@ -33,7 +36,7 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   }, [active]);
   const base = `https://${pullZone}.b-cdn.net/${id}`;
 
-  // The browser's own HLS failed (or the stream did): the MP4 instead; that one failing too leaves the poster.
+  // The browser's own HLS failed (or the stream did): the MP4 instead; that one failing too leaves the picture.
   useEffect(() => {
     const element = video.current;
     if (!element) return;
@@ -108,15 +111,21 @@ export function BunnyVideo({ id, playing }: { id: string; playing?: boolean }) {
   );
 
   return (
-    <video
-      ref={video}
-      poster={`${base}/thumbnail.jpg`}
-      muted
-      loop
-      playsInline
-      preload="none"
-      disablePictureInPicture
-      className="absolute inset-0 h-full w-full object-cover"
-    />
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element -- Bunny's own picture of the video */}
+      <img src={`${base}/thumbnail.jpg`} alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      <video
+        ref={video}
+        muted
+        loop
+        playsInline
+        preload="none"
+        disablePictureInPicture
+        onTimeUpdate={(event) => {
+          if (!shown && event.currentTarget.currentTime > 0) setShown(true);
+        }}
+        className={`absolute inset-0 h-full w-full object-cover ${shown ? "" : "opacity-0"}`}
+      />
+    </>
   );
 }
