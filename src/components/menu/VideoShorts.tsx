@@ -188,7 +188,7 @@ export function ShortsViewer({
       }}
       className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
     >
-      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} playing={index === current} quality="720p" /> : <ShortCover video={item.video} />}
+      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} playing={index === current} /> : <ShortCover video={item.video} />}
     </div>
   );
 
