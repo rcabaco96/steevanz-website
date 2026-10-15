@@ -1,0 +1,21 @@
+{
+  "cliente": "Dolci e Salati",
+  "slug": "dolci-salati",
+  "data": "2026-10-15",
+  "validadeDias": 30,
+  "numero": "",
+  "nif": "",
+  "morada": "",
+  "contacto": "",
+  "aceitacaoUrl": "https://www.steevanz.com/proposta/dolci-salati-695graik",
+  "iva": 0.23,
+  "landingPage": { "preco": 350, "mensal": 15 },
+  "menu": { "mensal": 30 },
+  "placas": { "quantidade": 15, "precoUnitario": 20, "precoQuantidade": 15, "aPartirDe": 10 },
+  "exemplos": {
+    "landingTitulo": "A sua página <span class=\"hl\">já está a mexer</span>.",
+    "landingEtiqueta": "A página do Dolci e Salati, feita pela Steevanz · Ver ao vivo: steevanz.com/dolci-salati",
+    "menuTitulo": "O seu menu, <span class=\"scrib\">já em demonstração</span>.",
+    "menuEtiqueta": "Demonstração feita pela Steevanz com o logótipo do Dolci e Salati · Ver ao vivo: steevanz.com/raza17raza"
+  }
+}

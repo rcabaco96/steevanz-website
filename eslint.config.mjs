@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node scripts that build the client proposal decks and quotes (not site code).
+    "templates/**",
   ]),
 ]);
 

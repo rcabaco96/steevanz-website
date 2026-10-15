@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposta Steevanz</title>
+<meta name="description" content="Proposta e orçamento Steevanz: landing page e menu digital em vídeo para restaurantes e cafés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fbf7f1; --bg-soft: #f4ece1; --surface: #ffffff; --surface-2: #f7f0e7;
+  --line: #e7ddd0; --line-strong: #d3c4b2;
+  --text: #1d1220; --muted: #574659; --subtle: #6f5d71;
+  --accent: #7a2d60; --accent-strong: #5e1f49; --accent-soft: #f4e4ee; --on-accent: #ffffff;
+  --gold: #cfa563; --gold-soft: #f6ead3; --gold-text: #7f5a1c;
+  --ok: #1e7a4c; --ok-soft: #e3f3ea;
+  --page: #ece4d8; --bezel: #1d1220; --shadow: 60 30 50;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #120a14; --bg-soft: #180e1b; --surface: #1f1223; --surface-2: #28182d;
+    --line: #36233c; --line-strong: #4b3151;
+    --text: #f6efe6; --muted: #cdbfd3; --subtle: #ab98b3;
+    --accent: #e39ac6; --accent-strong: #efb5d7; --accent-soft: #3a1d35; --on-accent: #1d0d1a;
+    --gold: #e9c685; --gold-soft: #3a2c19; --gold-text: #ebcb8e;
+    --ok: #6fd49e; --ok-soft: #16301f;
+    --page: #0b060c; --bezel: #000000; --shadow: 0 0 0;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #120a14; --bg-soft: #180e1b; --surface: #1f1223; --surface-2: #28182d;
+  --line: #36233c; --line-strong: #4b3151;
+  --text: #f6efe6; --muted: #cdbfd3; --subtle: #ab98b3;
+  --accent: #e39ac6; --accent-strong: #efb5d7; --accent-soft: #3a1d35; --on-accent: #1d0d1a;
+  --gold: #e9c685; --gold-soft: #3a2c19; --gold-text: #ebcb8e;
+  --ok: #6fd49e; --ok-soft: #16301f;
+  --page: #0b060c; --bezel: #000000; --shadow: 0 0 0;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--page); color: var(--text);
+  font-family: "Hanken Grotesk", "Segoe UI", system-ui, sans-serif; line-height: 1.45;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+h1, h2, h3, p { margin: 0; }
+.display, h1, h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.015em; }
+img { display: block; max-width: 100%; }
+b, strong { font-weight: 700; color: var(--text); }
+
+/* Toolbar */
+.bar {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.bar .brand { display: flex; align-items: center; gap: 8px; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 18px; margin-right: auto; }
+.bar .brand .logo { font-size: 22px; }
+.bar button {
+  font: 600 14px/1 "Hanken Grotesk", system-ui, sans-serif; color: var(--text); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: 999px; padding: 9px 14px; cursor: pointer; min-height: 38px;
+}
+.bar button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* Deck */
+.deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px 16px 60px; }
+.slide {
+  container-type: inline-size; width: min(1280px, 100%); aspect-ratio: 16 / 9; position: relative;
+  background: var(--bg); border-radius: 18px; overflow: hidden;
+  box-shadow: 0 18px 50px rgb(var(--shadow) / 0.16), 0 2px 6px rgb(var(--shadow) / 0.08);
+}
+.inner {
+  --u: calc(100cqw / 1280);
+  position: absolute; inset: 0; display: flex; flex-direction: column; gap: calc(22 * var(--u));
+  padding: calc(52 * var(--u)) calc(68 * var(--u)) calc(60 * var(--u)); font-size: calc(18.5 * var(--u));
+}
+.kicker { font-size: 0.72em; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+.kicker.gold { color: var(--gold-text); }
+h2 { font-size: 2.3em; line-height: 1.06; max-width: 24em; }
+h2 em { font-style: italic; color: var(--accent); font-weight: 500; }
+h3 { font-size: 1.06em; line-height: 1.25; font-weight: 700; }
+.lead { font-size: 1.12em; color: var(--muted); max-width: 40em; }
+p, li { color: var(--muted); }
+.head { display: flex; flex-direction: column; gap: calc(10 * var(--u)); }
+.fill { flex: 1; min-height: 0; }
+.foot {
+  position: absolute; left: calc(68 * var(--u)); right: calc(68 * var(--u)); bottom: calc(22 * var(--u));
+  display: flex; justify-content: space-between; font-size: calc(12.5 * var(--u)); color: var(--subtle);
+}
+.foot b { color: var(--accent); font-family: "Fraunces", Georgia, serif; font-weight: 600; }
+
+.grid { display: grid; gap: calc(20 * var(--u)); }
+.g2 { grid-template-columns: 1fr 1fr; }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.split { display: grid; gap: calc(40 * var(--u)); grid-template-columns: var(--cols, 1fr 1fr); align-items: stretch; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: calc(18 * var(--u));
+  padding: calc(22 * var(--u)) calc(24 * var(--u)); display: flex; flex-direction: column; gap: calc(8 * var(--u));
+}
+.card p { font-size: 0.92em; }
+.tag { font-size: 0.68em; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--gold-text); }
+.price-chip {
+  margin-top: auto; align-self: flex-start; background: var(--accent-soft); color: var(--accent);
+  border-radius: 999px; padding: 0.3em 0.85em; font-weight: 700; font-size: 0.85em;
+}
+.note { background: var(--gold-soft); border-radius: calc(14 * var(--u)); padding: calc(14 * var(--u)) calc(20 * var(--u)); font-size: 0.92em; color: var(--text); }
+.note.plum { background: var(--accent-soft); }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(9 * var(--u)); }
+.list li { position: relative; padding-left: 1.25em; font-size: 0.95em; }
+.list li::before { content: ""; position: absolute; left: 0.1em; top: 0.5em; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--gold); }
+.list.check li::before { width: 0.62em; height: 0.36em; border-radius: 0; background: none; border-left: 2.5px solid var(--ok); border-bottom: 2.5px solid var(--ok); transform: rotate(-45deg); top: 0.42em; }
+.num {
+  flex: none; display: inline-grid; place-items: center; width: 1.9em; height: 1.9em; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 0.9em;
+}
+.steps { display: grid; gap: calc(14 * var(--u)); }
+.step { display: flex; gap: calc(14 * var(--u)); align-items: flex-start; }
+.step p { font-size: 0.9em; margin-top: 0.15em; }
+
+/* Phones */
+.phones { display: flex; gap: calc(22 * var(--u)); align-items: flex-start; justify-content: center; }
+.phone { margin: 0; display: flex; flex-direction: column; gap: calc(10 * var(--u)); align-items: center; }
+.ph {
+  height: calc(var(--ph, 420) * var(--u)); aspect-ratio: 390 / 844; border-radius: calc(30 * var(--u));
+  border: calc(8 * var(--u)) solid var(--bezel); overflow: hidden; background: #000;
+  box-shadow: 0 calc(16 * var(--u)) calc(40 * var(--u)) rgb(var(--shadow) / 0.22);
+}
+.ph img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.phone figcaption { font-size: 0.74em; color: var(--muted); text-align: center; max-width: calc(var(--ph, 420) * var(--u) * 0.5); line-height: 1.3; }
+.label {
+  display: inline-flex; gap: 0.5em; align-items: center; font-size: 0.74em; font-weight: 600; color: var(--gold-text);
+  background: var(--gold-soft); border-radius: 999px; padding: 0.35em 0.9em; align-self: flex-start;
+}
+.small { font-size: 0.78em; color: var(--subtle); }
+
+/* Cover */
+.cover .inner { background: radial-gradient(circle at 82% 18%, var(--accent-soft), var(--bg) 55%); }
+.cover h1 { font-size: 3.15em; line-height: 1.02; letter-spacing: -0.025em; }
+.cover h1 span { color: var(--accent); }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: calc(12 * var(--u)) calc(24 * var(--u)); max-width: 34em; }
+.field { border-bottom: 1.5px dashed var(--line-strong); padding-bottom: 0.25em; display: flex; flex-direction: column; }
+.field small { font-size: 0.66em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); font-weight: 700; }
+.field span { font-weight: 600; font-size: 1.02em; min-height: 1.35em; outline: none; }
+.field.wide { grid-column: 1 / -1; }
+.ph-tilt-l { transform: rotate(-5deg) translateY(calc(18 * var(--u))); }
+.ph-tilt-r { transform: rotate(4deg); margin-left: calc(-40 * var(--u)); }
+[contenteditable]:empty::before { content: attr(data-placeholder); color: var(--subtle); font-weight: 500; }
+[contenteditable]:focus { background: var(--accent-soft); border-radius: 4px; }
+
+/* Flow diagram */
+.flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1.15fr; align-items: center; gap: calc(14 * var(--u)); }
+.node { background: var(--surface); border: 1px solid var(--line); border-radius: calc(16 * var(--u)); padding: calc(16 * var(--u)) calc(18 * var(--u)); }
+.node h3 { font-size: 1em; }
+.node p { font-size: 0.82em; margin-top: 0.25em; }
+.node.hero { background: var(--accent); border-color: var(--accent); }
+.node.hero h3, .node.hero p { color: var(--on-accent); }
+.arrow { color: var(--accent); font-size: 1.6em; font-weight: 700; text-align: center; line-height: 1; }
+.arrow small { display: block; font-size: 0.42em; font-weight: 700; color: var(--gold-text); letter-spacing: 0.04em; margin-top: 0.2em; white-space: nowrap; }
+
+/* Lanes */
+.lane { display: grid; grid-template-columns: calc(150 * var(--u)) repeat(5, 1fr); gap: calc(10 * var(--u)); align-items: stretch; }
+.lane .who { display: flex; flex-direction: column; justify-content: center; font-weight: 700; color: var(--text); font-size: 0.95em; line-height: 1.2; }
+.lane .who small { font-weight: 500; color: var(--subtle); font-size: 0.78em; margin-top: 0.2em; }
+.chip { border-radius: calc(12 * var(--u)); padding: calc(12 * var(--u)) calc(14 * var(--u)); background: var(--surface); border: 1px solid var(--line); font-size: 0.82em; color: var(--muted); line-height: 1.3; }
+.chip b { display: block; font-size: 1.05em; margin-bottom: 0.2em; }
+.chip.k { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip.k b { color: var(--on-accent); }
+.chip.g { background: var(--gold-soft); border-color: transparent; color: var(--text); }
+
+/* Price tables */
+table { border-collapse: collapse; width: 100%; }
+.ptable th, .ptable td { text-align: left; padding: 0.5em 0.6em; border-bottom: 1px solid var(--line); font-size: 0.92em; vertical-align: top; }
+.ptable th { font-size: 0.68em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); font-weight: 700; }
+.ptable td.r, .ptable th.r { text-align: right; white-space: nowrap; }
+.ptable td { color: var(--text); }
+.ptable td small { display: block; color: var(--subtle); font-size: 0.82em; }
+.ptable tr.sub td { color: var(--muted); border-bottom: none; padding-top: 0.25em; padding-bottom: 0.25em; }
+.ptable tr.sub:first-of-type td { padding-top: 0.6em; }
+.ptable tr.tot td { font-weight: 700; font-size: 1.05em; border-top: 2px solid var(--text); border-bottom: none; }
+.ptable tr.tot td.r { color: var(--accent); }
+.ptable tr.disc td { color: var(--ok); }
+.big-num { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2.6em; line-height: 1; color: var(--accent); }
+input.qty {
+  width: 3.2em; font: inherit; font-weight: 700; color: inherit; text-align: center; background: var(--accent-soft);
+  border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 0.1em; -moz-appearance: textfield; appearance: textfield;
+}
+input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Plate mock */
+.plate {
+  width: calc(300 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--surface);
+  border: calc(10 * var(--u)) solid var(--accent); display: grid; place-items: center; text-align: center;
+  box-shadow: 0 calc(20 * var(--u)) calc(50 * var(--u)) rgb(var(--shadow) / 0.2); margin: 0 auto;
+}
+.plate .qr { width: calc(140 * var(--u)); background: #fff; padding: calc(8 * var(--u)); border-radius: calc(8 * var(--u)); }
+.plate .qr svg { width: 100%; height: auto; display: block; }
+.plate .t1 { font-family: "Fraunces", Georgia, serif; font-weight: 600; color: var(--accent); font-size: 1.05em; line-height: 1.1; }
+.plate .t2 { font-size: 0.66em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); font-weight: 700; }
+.plate > div { display: flex; flex-direction: column; align-items: center; gap: calc(8 * var(--u)); }
+.tap { display: inline-flex; align-items: center; gap: 0.4em; }
+.tap svg { width: 1.2em; height: 1.2em; }
+
+/* Quote (A4 portrait document) */
+.quote {
+  width: min(794px, 100%); background: var(--surface); color: var(--text); border-radius: 6px;
+  box-shadow: 0 18px 50px rgb(var(--shadow) / 0.16); padding: 44px 48px 36px; font-size: 12.4px; line-height: 1.4;
+  display: flex; flex-direction: column; gap: 14px; position: relative;
+}
+.quote p, .quote li { color: var(--muted); }
+.q-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; border-bottom: 2px solid var(--accent); padding-bottom: 14px; }
+.logo { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-variation-settings: "opsz" 22; letter-spacing: -0.025em; line-height: 1.04; color: var(--text); white-space: nowrap; }
+.logo .dot { color: var(--gold); padding-left: 0.185em; }
+.q-brand { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.q-brand .logo { font-size: 32px; }
+.q-brand .c { font-size: 11px; color: var(--subtle); line-height: 1.5; }
+.q-title { text-align: right; }
+.q-title .display { font-size: 30px; color: var(--accent); line-height: 1; }
+.q-meta { display: grid; grid-template-columns: auto auto; gap: 2px 12px; margin-top: 8px; font-size: 11.5px; justify-content: end; }
+.q-meta dt { color: var(--subtle); text-align: right; }
+.q-meta dd { margin: 0; font-weight: 600; text-align: left; min-width: 8.5em; outline: none; border-bottom: 1px dashed var(--line-strong); }
+.q-client { display: grid; grid-template-columns: 1.4fr 1fr; gap: 6px 22px; background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+.q-client .field small { font-size: 9.5px; }
+.q-client .field span { font-size: 12.5px; }
+.q-sec { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--gold-text); }
+.qtable th, .qtable td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+.qtable th { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); font-weight: 700; border-bottom: 1.5px solid var(--line-strong); }
+.qtable .r { text-align: right; white-space: nowrap; }
+.qtable .c { text-align: center; white-space: nowrap; }
+.qtable td b { font-size: 12.8px; }
+.qtable td small { display: block; color: var(--subtle); font-size: 10.6px; line-height: 1.35; margin-top: 1px; }
+.qtable tr.grp td { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-bottom: none; }
+.qtable tr.disc td { color: var(--ok); }
+.q-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.q-box { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.q-box h4 { margin: 0 0 4px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); }
+.q-row { display: flex; justify-content: space-between; padding: 2px 0; color: var(--muted); }
+.q-row.t { border-top: 1.5px solid var(--text); margin-top: 3px; padding-top: 5px; color: var(--text); font-weight: 700; font-size: 13.5px; }
+.q-row.t span:last-child { color: var(--accent); }
+.q-cond { columns: 2; column-gap: 22px; margin: 0; padding-left: 14px; font-size: 10.6px; line-height: 1.38; }
+.q-cond li { margin-bottom: 3px; break-inside: avoid; }
+.q-sign { display: grid; grid-template-columns: 1.3fr 1fr 0.7fr; gap: 18px; margin-top: 4px; }
+.q-sign div { border-top: 1px solid var(--text); padding-top: 3px; font-size: 10px; color: var(--subtle); }
+.q-foot { display: flex; justify-content: space-between; font-size: 10px; color: var(--subtle); border-top: 1px solid var(--line); padding-top: 8px; margin-top: auto; }
+
+.s-big .card { font-size: 1.12em; gap: calc(12 * var(--u)); }
+.s-big .card h3 { font-size: 1.2em; }
+.thumb { height: calc(172 * var(--u)); border-radius: calc(12 * var(--u)); overflow: hidden; background: var(--surface-2); margin-bottom: calc(6 * var(--u)); display: grid; place-items: center; }
+.thumb { position: relative; }
+.thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.thumb.pos-c img { object-position: center 30%; }
+.mini-plate { width: calc(150 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--surface); border: calc(7 * var(--u)) solid var(--accent); display: grid; place-items: center; }
+.mini-plate .qr { width: calc(62 * var(--u)); background: #fff; padding: calc(4 * var(--u)); border-radius: calc(4 * var(--u)); }
+.mini-plate .qr svg { width: 100%; height: auto; display: block; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(16 * var(--u)); }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: calc(16 * var(--u)); padding: calc(14 * var(--u)) calc(18 * var(--u)); display: flex; align-items: baseline; gap: calc(12 * var(--u)); }
+.stat .big-num { font-size: 2em; white-space: nowrap; }
+.stat p { font-size: 0.88em; }
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: calc(12 * var(--u)); }
+.tile { background: var(--gold-soft); border-radius: calc(14 * var(--u)); padding: calc(14 * var(--u)) calc(16 * var(--u)); }
+.tile b { display: block; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.25em; color: var(--accent); line-height: 1.1; margin-bottom: 0.2em; }
+.tile span { font-size: 0.8em; color: var(--muted); }
+.s-flow .node { padding: calc(22 * var(--u)) calc(24 * var(--u)); }
+.s-flow .node h3 { font-size: 1.2em; }
+.s-flow .node p { font-size: 0.92em; }
+.s-lanes .lane { font-size: 1.12em; }
+.s-lanes .chip { padding: calc(18 * var(--u)) calc(16 * var(--u)); }
+.s-steps .step h3 { font-size: 1.2em; }
+.s-steps .step p { font-size: 1em; }
+.s-steps .steps { gap: calc(20 * var(--u)); }
+#s9 .list li { font-size: 0.88em; }
+#s9 .card p { font-size: 0.86em; }
+#s9 .list { gap: calc(6 * var(--u)); }
+
+#s13 .split { align-items: start; }
+#s13 .ptable td { font-size: 1.04em; padding-top: 0.75em; padding-bottom: 0.75em; }
+#s13 .ptable tr.sub td { padding-top: 0.4em; padding-bottom: 0.4em; }
+#s13 .card { padding-bottom: calc(28 * var(--u)); }
+
+/* Phone and narrow screens: slides reflow */
+@media screen and (max-width: 760px) {
+  .deck { gap: 18px; padding: 16px 12px 40px; }
+  .slide { aspect-ratio: auto; border-radius: 16px; }
+  .inner { position: static; --u: 0.62px; font-size: 16px; padding: 26px 20px 46px; gap: 18px; }
+  h2 { font-size: 1.75em; }
+  .cover h1 { font-size: 2.1em; }
+  .lead { font-size: 1.04em; }
+  .g2, .g3, .split, .fields, .q-client, .q-totals { grid-template-columns: 1fr; }
+  .split { --cols: 1fr; gap: 22px; }
+  .phones { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 12px; justify-items: center; }
+  .phones.one { grid-template-columns: 1fr; }
+  .ph { height: auto; width: 100%; max-width: 230px; border-width: 5px; border-radius: 22px; }
+  .phone figcaption { max-width: 100%; font-size: 0.8em; }
+  .ph-tilt-l, .ph-tilt-r { transform: none; margin: 0; }
+  .cover .phones { grid-template-columns: 1fr 1fr; }
+  .flow { grid-template-columns: 1fr; }
+  .arrow { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .arrow .a { display: inline-block; transform: rotate(90deg); }
+  .arrow small { margin: 0; font-size: 0.6em; }
+  .qtable thead { display: none; }
+  .qtable tr { display: grid; grid-template-columns: 1fr auto auto; gap: 0 12px; border-bottom: 1px solid var(--line); padding: 6px 0; }
+  .qtable tr.grp { padding: 0; border-bottom: none; }
+  .qtable td { border-bottom: none; padding: 2px 4px; }
+  .qtable td:first-child { grid-column: 1 / -1; }
+  .qtable td:nth-child(2):not(:empty)::before { content: "Qtd. "; color: var(--subtle); font-size: 0.85em; }
+  .qtable td.c { text-align: left; }
+  .qtable tr.disc td:first-child { grid-column: 1 / 3; }
+  .lane { grid-template-columns: 1fr; }
+  .stats, .tiles { grid-template-columns: 1fr 1fr; }
+  .thumb { height: 170px; }
+  .mini-plate { width: 120px; border-width: 6px; }
+  .mini-plate .qr { width: 52px; }
+  .plate { width: 220px; border-width: 8px; }
+  .plate .qr { width: 96px; }
+  .foot { left: 20px; right: 20px; bottom: 14px; font-size: 11px; }
+  .quote { padding: 22px 16px; font-size: 13px; }
+  .q-head { flex-direction: column; }
+  .q-title { text-align: left; }
+  .q-meta { justify-content: start; }
+  .q-meta dt { text-align: left; }
+  .q-cond { columns: 1; }
+  .q-sign { grid-template-columns: 1fr; gap: 26px; }
+  .qtable th, .qtable td { padding: 6px 4px; }
+  .hide-m { display: none; }
+  .bar .brand span { display: none; }
+}
+
+/* Print: one slide per 16:9 page, quote on its own A4 portrait page */
+@page { size: 338.67mm 190.5mm; margin: 0; }
+@page deck { size: 338.67mm 190.5mm; margin: 0; }
+@page quote { size: A4 portrait; margin: 0; }
+@media print {
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    color-scheme: light;
+    --bg: #fbf7f1; --bg-soft: #f4ece1; --surface: #ffffff; --surface-2: #f7f0e7;
+    --line: #e7ddd0; --line-strong: #d3c4b2;
+    --text: #1d1220; --muted: #574659; --subtle: #6f5d71;
+    --accent: #7a2d60; --accent-strong: #5e1f49; --accent-soft: #f4e4ee; --on-accent: #ffffff;
+    --gold: #cfa563; --gold-soft: #f6ead3; --gold-text: #7f5a1c;
+    --ok: #1e7a4c; --ok-soft: #e3f3ea; --page: #ffffff; --bezel: #1d1220; --shadow: 60 30 50;
+  }
+  body { background: #fff; }
+  .bar { display: none; }
+  .deck { display: block; padding: 0; }
+  .slide { page: deck; width: 338.67mm; height: 190.5mm; aspect-ratio: auto; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; }
+  .quote { page: quote; width: 210mm; height: 296.5mm; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; margin: 0; padding: 11mm 13mm 9mm; gap: 11px; }
+  body.only-quote .slide { display: none; }
+  body.only-quote .quote { break-after: auto; page-break-after: auto; }
+  input.qty { background: none; border: none; width: 2em; }
+  [contenteditable]:empty::before { color: #9b8a9d; }
+}
+body.only-quote .slide { display: none; }
+
+/* ===== v4: more energy ===== */
+.v4 h2 { font-size: 2.85em; line-height: 1.02; letter-spacing: -0.025em; max-width: 19em; }
+.v4 .lead { font-size: 1.22em; }
+.v4 .kicker { font-size: 0.78em; }
+:root { --hl: #efd6a0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --hl: #6b4f22; } }
+:root[data-theme="dark"] { --hl: #6b4f22; }
+@media print { :root, :root[data-theme="dark"], :root:not([data-theme="light"]) { --hl: #efd6a0; } }
+.hl { background: linear-gradient(var(--hl), var(--hl)) no-repeat 0 88% / 100% 0.36em; padding: 0 0.08em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.scrib {
+  font-style: italic; color: var(--accent); font-weight: 500; padding-bottom: 0.12em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C 20 2, 35 11, 55 6 S 90 3, 118 7' fill='none' stroke='%23cfa563' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 0.32em;
+}
+.sticker {
+  display: inline-flex; align-items: center; gap: 0.35em; font-weight: 800; font-size: 0.82em; letter-spacing: 0.01em;
+  background: var(--gold); color: #1d1220; border-radius: 999px; padding: 0.45em 1em; transform: rotate(-4deg);
+  box-shadow: 0 calc(6 * var(--u)) calc(16 * var(--u)) rgb(var(--shadow) / 0.18); white-space: nowrap;
+}
+.sticker.plum { background: var(--accent); color: var(--on-accent); transform: rotate(3deg); }
+.sticker.cream { background: var(--surface); color: var(--accent); border: 2px dashed var(--gold); transform: rotate(-2deg); box-shadow: none; }
+.stickers { display: flex; flex-wrap: wrap; gap: calc(14 * var(--u)); align-items: center; }
+.abs { position: absolute; z-index: 2; }
+.sign { font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--accent); font-size: 1.05em; }
+.chips { display: flex; flex-wrap: wrap; gap: calc(12 * var(--u)); }
+.chipx { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 0.55em 1.05em; font-weight: 700; font-size: 0.95em; color: var(--text); display: inline-flex; gap: 0.45em; align-items: center; }
+.chipx i { font-style: normal; color: var(--gold-text); }
+.big-card { background: var(--surface); border: 1px solid var(--line); border-radius: calc(22 * var(--u)); padding: calc(26 * var(--u)) calc(28 * var(--u)); display: flex; flex-direction: column; gap: calc(10 * var(--u)); position: relative; }
+.big-card h3 { font-size: 1.35em; font-family: "Fraunces", Georgia, serif; font-weight: 600; }
+.big-card p { font-size: 1.02em; }
+.quote-bubble { background: var(--accent-soft); border-radius: calc(18 * var(--u)) calc(18 * var(--u)) calc(18 * var(--u)) calc(4 * var(--u)); padding: calc(12 * var(--u)) calc(16 * var(--u)); font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--accent); font-size: 1.05em; align-self: flex-start; }
+.next { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(16 * var(--u)) calc(18 * var(--u)); }
+.next .n { background: var(--surface); border: 1px solid var(--line); border-radius: calc(18 * var(--u)); padding: calc(18 * var(--u)) calc(20 * var(--u)); display: flex; flex-direction: column; gap: calc(6 * var(--u)); position: relative; }
+.next .n .num { margin-bottom: calc(4 * var(--u)); }
+.next .n h3 { font-size: 1.12em; font-family: "Fraunces", Georgia, serif; font-weight: 600; }
+.next .n p { font-size: 0.86em; }
+.next .n .when { position: absolute; top: calc(16 * var(--u)); right: calc(16 * var(--u)); font-size: 0.68em; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-text); background: var(--gold-soft); border-radius: 999px; padding: 0.3em 0.75em; }
+.next .n.last { background: var(--accent); border-color: var(--accent); }
+.next .n.last h3, .next .n.last p { color: var(--on-accent); }
+.next .n.last .num { background: var(--gold); color: #1d1220; }
+.closing { display: flex; justify-content: space-between; align-items: center; gap: calc(20 * var(--u)); }
+.closing .sign { font-size: 1.35em; }
+.contact-line { font-size: 0.86em; color: var(--muted); white-space: nowrap; }
+.contact-line b { color: var(--accent); }
+.flow2 { display: grid; grid-template-columns: 1fr 1fr; gap: calc(26 * var(--u)); }
+.path { background: var(--surface); border: 1px solid var(--line); border-radius: calc(22 * var(--u)); padding: calc(22 * var(--u)) calc(24 * var(--u)); display: flex; flex-direction: column; gap: calc(12 * var(--u)); }
+.path .steps2 { display: flex; align-items: center; gap: calc(10 * var(--u)); flex-wrap: wrap; }
+.path .pill { background: var(--surface-2); border-radius: 999px; padding: 0.5em 0.95em; font-weight: 700; font-size: 0.92em; color: var(--text); }
+.path .pill.end { background: var(--accent); color: var(--on-accent); }
+.path .ar { color: var(--gold-text); font-weight: 800; font-size: 1.2em; }
+.price-big { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.6em; color: var(--accent); line-height: 1; }
+@media screen and (max-width: 760px) {
+  .v4 h2 { font-size: 2em; }
+  .next, .flow2 { grid-template-columns: 1fr; }
+  .closing { flex-direction: column; align-items: flex-start; }
+  .contact-line { white-space: normal; }
+  .abs { position: static; align-self: flex-start; }
+  .sticker { white-space: normal; }
+}
+#s2 .grid { align-items: start; align-content: center; }
+#s2 .big-card h3 { font-size: 1.6em; }
+#s2 .big-card p { font-size: 1.15em; }
+#s2 .quote-bubble { margin-top: calc(10 * var(--u)) !important; }
+#s6 .split { align-items: start; }
+#s6 .step h3 { font-size: 1.22em; }
+#s6 .step p { font-size: 1.02em; }
+#s6 .steps { gap: calc(26 * var(--u)); }
+#s11 .path { font-size: 1.1em; }
+#s12 .split { align-items: center; align-content: center; }
+#s12 .ptable td { font-size: 1.08em; padding-top: 0.7em; padding-bottom: 0.7em; }
+#s12 .ptable tr.sub td { padding-top: 0.35em; padding-bottom: 0.35em; }
+#s14 .closing .sign { font-size: 1.12em; }
+.cover .cover-h1 { font-size: 3.5em; }
+@media screen and (max-width: 760px) { .cover .cover-h1 { font-size: 2.4em; } }
+.para { display: flex; align-items: center; gap: calc(16 * var(--u)); flex-wrap: wrap; }
+.para-l { font-size: 0.72em; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 0.45em 1em; transform: rotate(-3deg); }
+.para-n { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2.1em; line-height: 1.05; color: var(--text); letter-spacing: -0.02em; }
+.meta-line { font-size: 0.9em; color: var(--subtle); }
+.btn-go { display: inline-flex; align-items: center; gap: 0.6em; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 800; font-size: 1.15em; border-radius: 999px; padding: 0.85em 1.5em; box-shadow: 0 calc(10 * var(--u)) calc(26 * var(--u)) rgb(var(--shadow) / 0.22); align-self: flex-start; }
+.btn-go span { color: var(--gold); }
+.url-small { font-size: 0.82em; color: var(--subtle); word-break: break-all; }
+.how-row { display: flex; flex-wrap: wrap; align-items: center; gap: calc(10 * var(--u)); }
+.how-row .pill { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 0.5em 1em; font-weight: 700; font-size: 0.95em; color: var(--text); }
+.how-row .pill.end { background: var(--gold); border-color: var(--gold); color: #1d1220; }
+.how-row .ar { color: var(--gold-text); font-weight: 800; }
+.qr-card { background: #fff; border-radius: calc(24 * var(--u)); padding: calc(26 * var(--u)); box-shadow: 0 calc(18 * var(--u)) calc(44 * var(--u)) rgb(var(--shadow) / 0.2); border: calc(6 * var(--u)) solid var(--accent); display: flex; flex-direction: column; align-items: center; gap: calc(12 * var(--u)); }
+.qr-card .qr { width: calc(270 * var(--u)); }
+.qr-card .qr svg { width: 100%; height: auto; display: block; }
+.qr-card p { color: #574659; font-weight: 700; font-size: 0.92em; text-align: center; }
+@media screen and (max-width: 760px) {
+  .qr-card .qr { width: 220px; }
+  .para-n { font-size: 1.7em; }
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><span class="logo">Steevanz<span class="dot">.</span></span><span>Proposta</span></div>
+  <button type="button" id="themeBtn" aria-label="Mudar entre tema claro e escuro">Tema</button>
+  <button type="button" id="printDeck" class="primary">Imprimir</button>
+</header>
+
+<main class="deck">
+
+<!-- 1 · Capa -->
+<section class="slide cover v4" id="s1">
+  <div class="inner">
+    <div class="split fill" style="--cols: 1.3fr 1fr; align-items: center;">
+      <div style="display:flex; flex-direction:column; gap: calc(24 * var(--u));">
+        <div class="stickers"><span class="sticker">Proposta · Landing page + Menu digital em vídeo</span></div>
+        <h1 class="cover-h1">O seu restaurante, a <span class="scrib">abrir o apetite</span> no telemóvel.</h1>
+        <p class="lead">Uma página para o encontrarem e escolherem. Um menu em vídeo para verem os pratos antes de pedir.</p>
+        <div class="para"><span class="para-l">Para</span><span class="para-n">{{cliente}}</span></div>
+        <p class="meta-line">Proposta de {{dataFmt}} · válida até {{validadeFmt}} ({{validadeDias}} dias)</p>
+        <p class="sign">Tecnologia do amanhã, com os bons modos de sempre.</p>
+      </div>
+      <div class="phones" style="--ph: 480;">
+        <figure class="phone ph-tilt-l"><div class="ph"><img src="@@lp-hero@@" alt="Landing page Dolci e Salati no telemóvel"></div></figure>
+        <figure class="phone ph-tilt-r"><div class="ph"><img src="@@vm-full-brownie@@" alt="Menu digital em vídeo no telemóvel"></div></figure>
+      </div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · www.steevanz.com · 961 292 679</span><span>1 / 14</span></div>
+  </div>
+</section>
+
+<!-- 2 · Problema -->
+<section class="slide v4" id="s2">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Sejamos honestos</div>
+      <h2>Uma ementa em papel <span class="scrib">não abre o apetite</span>.</h2>
+    </div>
+    <div class="grid g2 fill">
+      <div class="big-card">
+        <div class="tag">Antes de vir</div>
+        <h3>Procuram-no no telemóvel.</h3>
+        <p>Querem ver o que serve, onde fica e a que horas abre. Se não encontram depressa, vão ao vizinho.</p>
+        <div class="quote-bubble" style="margin-top: auto;">«Isto abre hoje? Onde é que fica?»</div>
+      </div>
+      <div class="big-card">
+        <div class="tag">Já à mesa</div>
+        <h3>«O que é isto, ao certo?»</h3>
+        <p>O nome de um prato diz pouco. O cliente hesita, o empregado explica pela enésima vez e sai o de sempre.</p>
+        <div class="quote-bubble" style="margin-top: auto;">«Traga o de sempre, se faz favor.»</div>
+      </div>
+    </div>
+    <div class="note plum" style="font-size: 1.05em;"><b>A boa notícia:</b> resolve-se com duas coisas simples. Nós tratamos da tecnologia, o seu restaurante trata dos clientes.</div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>2 / 14</span></div>
+  </div>
+</section>
+
+<!-- 3 · Proposta -->
+<section class="slide v4" id="s3">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">O que propomos</div>
+      <h2>Duas peças, um objetivo: <span class="hl">mais gente à sua mesa</span>.</h2>
+    </div>
+    <div class="grid g3 fill">
+      <div class="card">
+        <div class="thumb"><img src="@@lp-hero@@" alt="Landing page no telemóvel"></div>
+        <div class="tag">1 · Landing page</div>
+        <h3>A sua casa, numa página</h3>
+        <p>Rápida, feita para telemóvel, com um botão claro: ver o menu, reservar ou chegar lá.</p>
+        <span class="price-chip">{{lpPreco}} € + IVA · depois {{lpMensal}} €/mês</span>
+      </div>
+      <div class="card">
+        <div class="thumb pos-c"><img src="@@vm-grid-gel-b@@" alt="Menu digital em vídeo"></div>
+        <div class="tag">2 · Menu digital em vídeo</div>
+        <h3>Os pratos a mexer</h3>
+        <p>Um vídeo curto por prato, com nome e preço. Desliza-se como nos Reels.</p>
+        <span class="price-chip">{{menuMensal}} €/mês + IVA</span>
+      </div>
+      <div class="card">
+        <div class="thumb"><div class="mini-plate"><div class="qr">@@qr-menu@@</div></div></div>
+        <div class="tag">3 · Placas de mesa</div>
+        <h3>O menu num toque</h3>
+        <p>Uma placa por mesa. Um toque do telemóvel ou o QR code, e o menu abre. Sem apps.</p>
+        <span class="price-chip">{{placasUnit}} € + IVA · {{placasVol}} € a partir de {{placasDe}}</span>
+      </div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>3 / 14</span></div>
+  </div>
+</section>
+
+<!-- 4 · Landing page -->
+<section class="slide v4" id="s4">
+  <div class="inner">
+    <span class="sticker plum abs" style="right: calc(70 * var(--u)); top: calc(60 * var(--u));">Pronta em 5 dias úteis</span>
+    <div class="head">
+      <div class="kicker">Landing page</div>
+      <h2>Uma página, um objetivo: <span class="scrib">mais contactos e reservas</span>.</h2>
+      <p class="lead">Para o link da bio do Instagram, para o Google e para mandar por mensagem. Com o seu logótipo e as suas cores.</p>
+    </div>
+    <div class="fill" style="display:flex; flex-direction:column; justify-content:center; gap: calc(22 * var(--u));">
+      <div class="chips">
+        <span class="chipx"><i>✓</i> Feita primeiro para o telemóvel</span>
+        <span class="chipx"><i>✓</i> Rápida, mesmo com rede fraca</span>
+        <span class="chipx"><i>✓</i> Animações com bom gosto</span>
+        <span class="chipx"><i>✓</i> Botão «Ver o menu»</span>
+        <span class="chipx"><i>✓</i> Google Maps e «Como chegar»</span>
+        <span class="chipx"><i>✓</i> Os seus reels do Instagram</span>
+        <span class="chipx"><i>✓</i> WhatsApp e formulário de contacto</span>
+        <span class="chipx"><i>✓</i> Encontrada no Google</span>
+        <span class="chipx"><i>✓</i> Cookies, privacidade e Livro de Reclamações</span>
+      </div>
+      <p class="small" style="font-size: 0.9em;">Até 8 secções, design a partir de um modelo do seu setor, 2 rondas de alterações e publicação no seu domínio com certificado de segurança.</p>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>4 / 14</span></div>
+  </div>
+</section>
+
+<!-- 5 · Landing page: exemplo -->
+<section class="slide v4" id="s5">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Landing page · trabalho real</div>
+      <h2>{{{exLandingTitulo}}}</h2>
+    </div>
+    <div class="phones fill" style="--ph: 390;">
+      <figure class="phone"><div class="ph"><img src="@@lp-hero@@" alt="Topo da landing page Dolci e Salati"></div><figcaption>O gelado em 3D e o botão «Ver o menu»</figcaption></figure>
+      <figure class="phone"><div class="ph"><img src="@@lp-reels@@" alt="Reels do Instagram na página"></div><figcaption>Os reels do Instagram dentro da página</figcaption></figure>
+      <figure class="phone"><div class="ph"><img src="@@lp-menu@@" alt="Secção do menu em vídeo"></div><figcaption>Direto para o menu em vídeo</figcaption></figure>
+      <figure class="phone"><div class="ph"><img src="@@lp-place@@" alt="O espaço e a esplanada"></div><figcaption>O espaço, a esplanada e como chegar</figcaption></figure>
+    </div>
+    <span class="label">{{exLandingEtiqueta}}</span>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>5 / 14</span></div>
+  </div>
+</section>
+
+<!-- 6 · Landing page: como -->
+<section class="slide v4" id="s6">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Landing page · como fazemos</div>
+      <h2>Do «sim» ao «já está no ar» em <span class="scrib">5 dias úteis</span>.</h2>
+    </div>
+    <div class="split fill" style="--cols: 1.15fr 1fr;">
+      <div class="steps s-big-steps" style="align-content: start;">
+        <div class="step"><span class="num">1</span><div><h3>Conversa de 20 minutos</h3><p>Sobre a casa, os pratos e o estilo. Sem jargão.</p></div></div>
+        <div class="step"><span class="num">2</span><div><h3>Envia-nos os conteúdos</h3><p>Logótipo, fotos, horário e links. Os 5 dias úteis contam a partir daqui.</p></div></div>
+        <div class="step"><span class="num">3</span><div><h3>Primeira versão num link privado</h3><p>Vê, comenta e afinamos: 2 rondas de alterações incluídas.</p></div></div>
+        <div class="step"><span class="num">4</span><div><h3>No ar, no seu domínio</h3><p>E registada no Google.</p></div></div>
+      </div>
+      <div class="big-card" style="background: var(--accent); border-color: var(--accent);">
+        <div class="tag" style="color: var(--gold);">Depois · {{lpMensal}} €/mês + IVA</div>
+        <h3 style="color: var(--on-accent);">Nós tratamos do resto.</h3>
+        <ul class="list" style="color: var(--on-accent);">
+          <li style="color: var(--on-accent);">Alojamento, segurança e cópias de segurança</li>
+          <li style="color: var(--on-accent);">Até 30 minutos de pequenas alterações por mês</li>
+          <li style="color: var(--on-accent);">Uma pessoa real do outro lado do WhatsApp</li>
+        </ul>
+        <p style="color: var(--on-accent); opacity: .9; margin-top: auto;">Sem período mínimo: fica porque funciona, não porque é obrigado.</p>
+      </div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>6 / 14</span></div>
+  </div>
+</section>
+
+<!-- 7 · Menu -->
+<section class="slide v4" id="s7">
+  <div class="inner">
+    <div class="split fill" style="--cols: 1.55fr 1fr; align-items: center;">
+      <div style="display:flex; flex-direction:column; gap: calc(22 * var(--u));">
+        <div class="head">
+          <div class="kicker">Menu digital em vídeo</div>
+          <h2>O menu ganha vida <span class="scrib">num toque na mesa</span>.</h2>
+        </div>
+        <ul class="list" style="font-size: 1.08em;">
+          <li><b>Cada prato, um vídeo.</b> Curto, na vertical, com nome, preço e descrição.</li>
+          <li><b>Coleções.</b> Brunch, Bebidas, Sobremesas… à sua medida.</li>
+          <li><b>Ecrã inteiro, como nos Reels.</b> Toca e desliza.</li>
+          <li><b>Abre com o seu logótipo.</b> Sem apps e sem registos.</li>
+          <li><b>Nós tratamos de tudo.</b> Montamos o menu e tratamos do alojamento do menu e dos vídeos.</li>
+        </ul>
+        <div class="stickers">
+          <span class="sticker">Sem tradução: um vídeo explica o prato</span>
+          <span class="sticker cream">Mudou um preço? Basta uma mensagem</span>
+        </div>
+      </div>
+      <div class="phones one" style="--ph: 540;">
+        <figure class="phone"><div class="ph"><img src="@@vm-full-brownie@@" alt="Prato em ecrã inteiro com nome e preço"></div></figure>
+      </div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>7 / 14</span></div>
+  </div>
+</section>
+
+<!-- 8 · Menu: exemplo -->
+<section class="slide v4" id="s8">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Menu digital em vídeo · a funcionar</div>
+      <h2>{{{exMenuTitulo}}}</h2>
+    </div>
+    <div class="phones fill" style="--ph: 390;">
+      <figure class="phone"><div class="ph"><img src="@@vm-open@@" alt="Abertura com o logótipo"></div><figcaption>Abre com o logótipo da casa</figcaption></figure>
+      <figure class="phone"><div class="ph"><img src="@@vm-grid-gel-b@@" alt="Grelha de pratos em vídeo"></div><figcaption>Os pratos em vídeo, com preço</figcaption></figure>
+      <figure class="phone"><div class="ph"><img src="@@vm-sheet@@" alt="Coleções do menu"></div><figcaption>As coleções</figcaption></figure>
+      <figure class="phone"><div class="ph"><img src="@@vm-full-brownie@@" alt="Ecrã inteiro"></div><figcaption>Ecrã inteiro, a deslizar</figcaption></figure>
+    </div>
+    <div style="display:flex; flex-direction:column; gap: calc(6 * var(--u));">
+      <span class="label">{{exMenuEtiqueta}}</span>
+      <p class="small">Nesta demonstração, os vídeos e os preços são de exemplo. No seu menu, os vídeos, os pratos e os preços são os seus.</p>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>8 / 14</span></div>
+  </div>
+</section>
+
+<!-- 9 · Placas -->
+<section class="slide v4" id="s9">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Placas de mesa</div>
+      <h2>Um toque ou o QR code. <span class="hl">Sem apps, sem complicações.</span></h2>
+    </div>
+    <div class="split fill" style="--cols: 1.45fr 1fr; align-items: center;">
+      <div style="display:flex; flex-direction:column; gap: calc(18 * var(--u));">
+        <div class="grid g3">
+          <div class="card"><span class="num">1</span><h3>Um toque</h3><p>Aproxima o telemóvel da placa e o menu abre. Tecnologia Steevanz.</p></div>
+          <div class="card"><span class="num">2</span><h3>QR code</h3><p>Em todas as placas, para qualquer telemóvel com câmara.</p></div>
+          <div class="card"><span class="num">3</span><h3>«Ver o menu»</h3><p>O botão da sua página e o link na bio.</p></div>
+        </div>
+        <p style="font-size: 0.98em;">Pequenas e redondas, uma por mesa. Saem gravadas e testadas em iPhone e Android, com o texto que quiser. E o destino muda sem trocar as placas.</p>
+        <div class="stickers">
+          <span class="sticker plum">{{placasUnit}} € + IVA por placa</span>
+          <span class="sticker">{{placasVol}} € por placa a partir de {{placasDe}} placas</span>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap: calc(14 * var(--u));">
+        <div class="plate"><div><span class="t2">Toque ou leia</span><div class="qr">@@qr-menu@@</div><span class="t1">Ver o menu</span></div></div>
+        <p class="small" style="text-align:center; max-width: 18em;">Experimente já: leia o código e abra a demonstração.</p>
+      </div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>9 / 14</span></div>
+  </div>
+</section>
+
+<!-- 10 · Vídeos -->
+<section class="slide v4" id="s10">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Os vídeos</div>
+      <h2>Quem grava? Você, com o telemóvel. <span class="scrib">Nós ajudamos.</span></h2>
+    </div>
+    <div class="grid g3 fill" style="align-content: start;">
+      <div class="big-card"><span class="num">1</span><h3>Grave com o nosso guia</h3><p>Um guia simples, passo a passo: enquadramento, luz e ângulos. Sem equipamento caro.</p></div>
+      <div class="big-card"><span class="num">2</span><h3>Envie-nos os vídeos</h3><p>Um vídeo por prato, com o nome e o preço de cada um.</p></div>
+      <div class="big-card" style="background: var(--accent); border-color: var(--accent);"><span class="num" style="background: var(--gold); color: #1d1220;">3</span><h3 style="color: var(--on-accent);">Nós tratamos do resto</h3><p style="color: var(--on-accent); opacity: .92;">Montamos o menu e tratamos do alojamento do menu e dos vídeos.</p></div>
+    </div>
+    <div class="tiles">
+      <div class="tile"><b>Na vertical</b><span>Telemóvel de pé, como num Reel</span></div>
+      <div class="tile"><b>10–20 s</b><span>Por prato</span></div>
+      <div class="tile"><b>Sem som</b><span>O menu toca em silêncio</span></div>
+      <div class="tile"><b>Luz de janela</b><span>De lado, sem flash</span></div>
+      <div class="tile"><b>Prato ao centro</b><span>O nome e o preço escrevemos nós</span></div>
+    </div>
+    <p class="small">Sem tempo para gravar? Trabalhamos com parceiros que criam vídeos de pratos e pedimos orçamento por si (não incluído).</p>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>10 / 14</span></div>
+  </div>
+</section>
+
+<!-- 11 · Juntos -->
+<section class="slide v4" id="s11">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Como funcionam juntos</div>
+      <h2>Antes da visita e à mesa, <span class="scrib">o mesmo menu</span>.</h2>
+    </div>
+    <div class="fill" style="display:flex; flex-direction:column; justify-content:center; gap: calc(22 * var(--u));">
+      <div class="flow2">
+        <div class="path">
+          <div class="tag">Antes de vir</div>
+          <div class="steps2"><span class="pill">Google ou Instagram</span><span class="ar">→</span><span class="pill">A sua página</span><span class="ar">→</span><span class="pill end">«Ver o menu»</span></div>
+          <p>Vê a casa, o espaço e os pratos a mexer. E já vem com vontade.</p>
+        </div>
+        <div class="path">
+          <div class="tag">Já à mesa</div>
+          <div class="steps2"><span class="pill">Placa na mesa</span><span class="ar">→</span><span class="pill">Um toque ou o QR</span><span class="ar">→</span><span class="pill end">O menu</span></div>
+          <p>Escolhe enquanto espera. O empregado chega a uma mesa já decidida.</p>
+        </div>
+      </div>
+      <div class="stickers" style="justify-content: center;">
+        <span class="sticker">Um só menu para atualizar</span>
+        <span class="sticker plum">A mesma imagem em todo o lado</span>
+        <span class="sticker cream">Alojamento do menu e dos vídeos por nossa conta</span>
+      </div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>11 / 14</span></div>
+  </div>
+</section>
+
+<!-- 12 · Investimento -->
+<section class="slide v4" id="s12">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Investimento</div>
+      <h2>Preços claros, <span class="scrib">zero letras miudinhas</span>.</h2>
+    </div>
+    <div class="split fill" style="--cols: 1fr 1fr; align-items: start;">
+      <div class="card">
+        <div class="tag">Uma vez</div>
+        <table class="ptable">
+          <tbody>
+            <tr><td>Landing page<small>Até 8 secções, 2 rondas de alterações</small></td><td class="r">{{lpPrecoEur}}</td></tr>
+            <tr><td>Placas de mesa · {{placasUnit}} € por placa<small>{{placasVol}} € por placa a partir de {{placasDe}} placas</small></td><td class="r">{{placasQtd}} × {{placasUsado}} € = {{placasEur}}</td></tr>
+            <tr class="sub"><td>Subtotal (+ IVA)</td><td class="r">{{unicoSubEur}}</td></tr>
+            <tr class="sub"><td>IVA {{ivaPct}}%</td><td class="r">{{unicoIvaEur}}</td></tr>
+            <tr class="tot"><td>Total com IVA</td><td class="r">{{unicoTotEur}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="tag">Por mês · sem período mínimo</div>
+        <table class="ptable">
+          <tbody>
+            <tr><td>Alojamento e manutenção da landing page<small>Cancela com 30 dias de aviso</small></td><td class="r">{{lpMensalEur}}/mês</td></tr>
+            <tr><td>Menu digital em vídeo<small>Montagem e alojamento incluídos</small></td><td class="r">{{menuMensalEur}}/mês</td></tr>
+            <tr class="sub"><td>Subtotal (+ IVA)</td><td class="r">{{mensalSubEur}}/mês</td></tr>
+            <tr class="sub"><td>IVA {{ivaPct}}%</td><td class="r">{{mensalIvaEur}}/mês</td></tr>
+            <tr class="tot"><td>Total com IVA</td><td class="r">{{mensalTotEur}}/mês</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="small">Preços + IVA ({{ivaPct}}%). O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.</p>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>12 / 14</span></div>
+  </div>
+</section>
+
+<!-- 13 · Próximos passos -->
+<section class="slide v4" id="s13">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Próximos passos</div>
+      <h2>Gostou? <span class="scrib">Isto é o que acontece a seguir.</span></h2>
+    </div>
+    <div class="next fill" style="align-content: center;">
+      <div class="n"><span class="when">Dia 1</span><span class="num">1</span><h3>Diz-nos que sim</h3><p>Online, no próximo diapositivo, ou por WhatsApp ou telefone.</p></div>
+      <div class="n"><span class="when">Logo a seguir</span><span class="num">2</span><h3>Envia-nos o logótipo, fotos e textos</h3><p>E o horário e os links. É daqui que contam os 5 dias úteis da página.</p></div>
+      <div class="n"><span class="when">Ao mesmo tempo</span><span class="num">3</span><h3>Grava os primeiros vídeos com o telemóvel</h3><p>Com o nosso guia ao lado. Não precisa de ser perfeito à primeira.</p></div>
+      <div class="n"><span class="when">5 dias úteis</span><span class="num">4</span><h3>Nós montamos a página e o menu</h3><p>A página em 5 dias úteis; o menu à medida que os vídeos chegam.</p></div>
+      <div class="n"><span class="when">Num link privado</span><span class="num">5</span><h3>Revemos juntos</h3><p>Comenta, afinamos. 2 rondas de alterações incluídas.</p></div>
+      <div class="n last"><span class="num">6</span><h3>Página no ar e placas nas mesas</h3><p>E nós ficamos por perto, do outro lado do WhatsApp.</p></div>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>13 / 14</span></div>
+  </div>
+</section>
+
+<!-- 14 · Adjudicação -->
+<section class="slide v4" id="s14">
+  <div class="inner">
+    <div class="head">
+      <div class="kicker">Adjudicação online</div>
+      <h2>Vamos a isto? <span class="scrib">Sem papelada.</span></h2>
+    </div>
+    <div class="split fill" style="--cols: 1.45fr 1fr; align-items: center;">
+      <div style="display:flex; flex-direction:column; gap: calc(22 * var(--u));">
+        <div class="how-row">
+          <span class="pill">Leia o código ou toque no botão</span><span class="ar">→</span>
+          <span class="pill">Veja o orçamento</span><span class="ar">→</span>
+          <span class="pill">Preencha os dados da empresa</span><span class="ar">→</span>
+          <span class="pill end">«Adjudicar proposta»</span>
+        </div>
+        <p class="lead" style="margin-top: calc(-4 * var(--u));">E está feito. Nós tratamos do resto.</p>
+        <a class="btn-go" href="{{aceitacaoUrl}}">Ver e adjudicar a proposta <span>→</span></a>
+        <p class="url-small">{{aceitacaoCurta}}</p>
+      </div>
+      <div style="display:flex; justify-content:center;">
+        <div class="qr-card"><div class="qr">@@qr-aceitacao@@</div><p>Leia com a câmara do telemóvel</p></div>
+      </div>
+    </div>
+    <div class="closing">
+      <p class="sign">Obrigado pelo seu tempo. O resto tratamos nós, com os bons modos de sempre.</p>
+      <p class="contact-line">WhatsApp/telefone <b>961 292 679</b> · www.steevanz.com</p>
+    </div>
+    <div class="foot"><span><b>Steevanz</b> · Feito em Portugal</span><span>14 / 14</span></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function () {
+  document.getElementById("printDeck").addEventListener("click", function () { window.print(); });
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem("proposta-theme"); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("proposta-theme", next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
