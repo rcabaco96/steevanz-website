@@ -16,8 +16,12 @@ export interface ShortItem {
   details?: ReactNode;
 }
 
-/** No scroll event for this long: the swipe has ended. */
-const scrollRest = 140;
+/**
+ * A slide's height: the scroller's own, to the fraction of a pixel. The slides are exactly as tall
+ * (h-full); with 100dvh slides and the rounded clientHeight, Android's fractional difference added up
+ * slide after slide and the previous video showed as a strip at the top (owner, 2026-10-16, slide 19).
+ */
+const slideHeight = (element: HTMLElement) => Math.max(1, element.getBoundingClientRect().height);
 /** A swipe moves to the next or previous video past this share of the screen, or this fast (px/ms). */
 const swipeShare = 0.18;
 const swipeSpeed = 0.35;
@@ -69,12 +73,10 @@ export function ShortsViewer({
   // The carousel's copies (of the last video, before the list; of the first, after it).
   const copyBefore = useRef<HTMLDivElement | null>(null);
   const copyAfter = useRef<HTMLDivElement | null>(null);
-  const restTimer = useRef<number | undefined>(undefined);
   const gesture = useRef<{ x: number; y: number; dx: number; dy: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
   const [motion, moveTo] = useState<ViewerMotion>(restingMotion);
   const lastWheel = useRef(0);
   const [current, setCurrent] = useState(start);
-  const [scrolling, setScrolling] = useState(false);
   const loop = items.length > 1;
 
   const goTo = useCallback(
@@ -83,7 +85,7 @@ export function ShortsViewer({
       if (!element) return;
       // Slide 0 is the copy of the last video and slide items.length + 1 the copy of the first (carousel).
       const slide = Math.max(loop ? 0 : 1, Math.min(loop ? items.length + 1 : items.length, index + 1));
-      element.scrollTo({ top: slide * element.clientHeight, behavior: "smooth" });
+      element.scrollTo({ top: slide * slideHeight(element), behavior: "smooth" });
     },
     [items.length, loop],
   );
@@ -91,18 +93,16 @@ export function ShortsViewer({
   // Open on the tapped video; lock the page behind; «back» closes.
   useEffect(() => {
     const element = scroller.current;
-    if (element) element.scrollTop = (start + 1) * element.clientHeight;
+    if (element) element.scrollTop = (start + 1) * slideHeight(element);
     const root = document.documentElement;
     const overflow = root.style.overflow;
     root.style.overflow = "hidden";
     window.history.pushState({ shortsViewer: true }, "");
     const onPop = () => onClose();
     window.addEventListener("popstate", onPop);
-    const timer = restTimer;
     return () => {
       root.style.overflow = overflow;
       window.removeEventListener("popstate", onPop);
-      window.clearTimeout(timer.current);
     };
   }, [start, onClose]);
 
@@ -115,7 +115,7 @@ export function ShortsViewer({
     const element = scroller.current;
     if (!element) return;
     const observer = new ResizeObserver(() => {
-      element.scrollTop = (currentRef.current + 1) * element.clientHeight;
+      element.scrollTop = (currentRef.current + 1) * slideHeight(element);
     });
     observer.observe(element);
     return () => observer.disconnect();
@@ -138,7 +138,7 @@ export function ShortsViewer({
         else if (index === "after") copyAfter.current = box;
         else boxes.current[index] = box;
       }}
-      className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
+      className="relative aspect-[9/16] h-full w-auto max-w-none overflow-hidden"
     >
       {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} thumbnail={item.bunnyThumbnail} playing={index === current} /> : null}
     </div>
@@ -186,7 +186,7 @@ export function ShortsViewer({
       }
       return;
     }
-    const height = Math.max(1, element.clientHeight);
+    const height = slideHeight(element);
     const moved = element.scrollTop - start.top;
     const speed = moved / Math.max(1, performance.now() - start.at);
     let target = Math.round(start.top / height);
@@ -210,10 +210,7 @@ export function ShortsViewer({
           ref={scroller}
           onScroll={(event) => {
             const element = event.currentTarget;
-            setScrolling(true);
-            window.clearTimeout(restTimer.current);
-            restTimer.current = window.setTimeout(() => setScrolling(false), scrollRest);
-            const height = Math.max(1, element.clientHeight);
+            const height = slideHeight(element);
             if (gesture.current) {
               const index = Math.max(0, Math.min(items.length - 1, Math.round(element.scrollTop / height) - 1));
               if (index !== current) setCurrent(index);
@@ -236,17 +233,17 @@ export function ShortsViewer({
           className="absolute inset-0 overflow-y-auto overscroll-none [scrollbar-width:none]"
         >
           {loop ? (
-            <section aria-hidden="true" className="grid h-[100dvh] place-items-center overflow-hidden">
+            <section aria-hidden="true" className="grid h-full place-items-center overflow-hidden">
               {slide(items[items.length - 1], "before")}
             </section>
           ) : null}
           {items.map((entry, index) => (
-            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-[100dvh] place-items-center overflow-hidden">
+            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-full place-items-center overflow-hidden">
               {slide(entry, index)}
             </section>
           ))}
           {loop ? (
-            <section aria-hidden="true" className="grid h-[100dvh] place-items-center overflow-hidden">
+            <section aria-hidden="true" className="grid h-full place-items-center overflow-hidden">
               {slide(items[0], "after")}
             </section>
           ) : null}
@@ -271,7 +268,7 @@ export function ShortsViewer({
         </div>
         {item ? (
           <div
-            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-opacity duration-200 ${scrolling ? "opacity-0" : "opacity-100"}`}
+            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))]`}
           >
             <span className="text-xs font-semibold tracking-wide text-white/70">
               {current + 1} / {items.length}

@@ -160,6 +160,13 @@ function markStarting(element: HTMLVideoElement, on: boolean) {
 const cardVideos = new Map<string, HTMLVideoElement>();
 
 /**
+ * Full screen on hls.js starts from this bandwidth estimate (bit/s): its first segments come in the
+ * best rendition for the screen (1080p on a phone) instead of the lowest one, which showed as the video
+ * «losing quality» once it started (owner, 2026-10-16). hls.js then adapts to the real network.
+ */
+const fullStartEstimate = 12_000_000;
+
+/**
  * A card's quality: Bunny's rendition that fills its box on this screen (its width × the screen's
  * density), 480p on a phone. One fixed rendition, small segments: it starts at once.
  */
@@ -369,7 +376,7 @@ export function BunnyVideo({
       const workerPath = hlsWorker(HlsPlayer.version);
       const player = new HlsPlayer(
         full
-          ? { workerPath, capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12, startPosition: at ? at.at + (performance.now() - at.since) / 1000 : -1 }
+          ? { workerPath, capLevelToPlayerSize: true, startLevel: -1, abrEwmaDefaultEstimate: fullStartEstimate, maxBufferLength: 12, startPosition: at ? at.at + (performance.now() - at.since) / 1000 : -1 }
           : { workerPath, maxBufferLength: 4, maxMaxBufferLength: 8 },
       );
       hls.current = player;
