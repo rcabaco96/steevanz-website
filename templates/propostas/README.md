@@ -31,7 +31,7 @@ npm install
    | `data` | Data da proposta, no formato `AAAA-MM-DD` |
    | `validadeDias` | Dias de validade (30 por defeito) |
    | `numero` | N.º do orçamento. Em branco, fica um espaço para preencher |
-   | `nif`, `morada`, `contacto` | Dados do cliente no orçamento. Em branco, ficam espaços para preencher |
+   | `nif` | NIF do cliente no orçamento (o orçamento mostra só o cliente e o NIF). Em branco, fica um espaço para preencher |
    | `aceitacaoUrl` | Endereço da página de adjudicação online, que dá o QR code e o botão do último diapositivo |
    | `landingPage.preco`, `landingPage.mensal` | Preço da landing page e mensalidade |
    | `menu.mensal` | Mensalidade do menu digital em vídeo |
