@@ -199,7 +199,14 @@ export function BunnyVideo({
       }
       // A card buffers one segment ahead (4 s): the cards waiting off screen hold only their start, not
       // the whole clip each (7.6 MB in the first seconds, 2026-10-16).
-      const player = new HlsPlayer(full ? { capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12 } : { maxBufferLength: 4, maxMaxBufferLength: 8 });
+      // Full screen carrying on from its card: hls.js starts there (a seek before its first segment stalled it).
+      const at = full ? resume.current : null;
+      if (at) resume.current = null;
+      const player = new HlsPlayer(
+        full
+          ? { capLevelToPlayerSize: true, startLevel: -1, maxBufferLength: 12, startPosition: at ? at.at + (performance.now() - at.since) / 1000 : -1 }
+          : { maxBufferLength: 4, maxMaxBufferLength: 8 },
+      );
       hls.current = player;
       player.on(HlsPlayer.Events.ERROR, (_event, data) => {
         if (!data.fatal) return;
