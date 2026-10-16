@@ -750,6 +750,56 @@ html.reveal-ready [data-reveal] {
   }
 }
 
+/* Ordering at the table (AddToOrder, ordering/TableOrdering): the bounce of a tap, the order bar
+   rising, the order view sliding up and its short messages. Transforms and opacity only. */
+@layer components {
+  .menu-add-pop {
+    animation: menu-add-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .menu-order-bar {
+    animation: menu-order-rise 0.32s cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+
+  .menu-order-sheet {
+    animation: menu-order-up 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+
+  .menu-order-toast {
+    animation: menu-fade-in 0.2s ease both;
+  }
+
+  @keyframes menu-add-pop {
+    from {
+      transform: scale(0.82);
+    }
+    60% {
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes menu-order-rise {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+    }
+  }
+
+  @keyframes menu-order-up {
+    from {
+      translate: 0 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-add-pop,
+    .menu-order-bar,
+    .menu-order-sheet {
+      animation: none;
+    }
+  }
+}
+
 /* The video menu's opening (VideoMenu: MosaicSplash): tiles rise from the centre into a tilted
    mosaic, the logo comes into focus, then the scene zooms in and fades into the menu. */
 @layer components {

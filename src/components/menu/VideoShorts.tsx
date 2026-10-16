@@ -14,6 +14,8 @@ export interface ShortItem {
   title: string;
   /** Shown under the title (e.g. the price and the description of a dish). */
   details?: ReactNode;
+  /** A button beside them (e.g. «Adicionar» on a table's menu). */
+  action?: ReactNode;
 }
 
 /**
@@ -268,13 +270,16 @@ export function ShortsViewer({
         </div>
         {item ? (
           <div
-            className={`pointer-events-none flex flex-col gap-1 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))]`}
+            className={`pointer-events-none flex items-end gap-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-5 pt-20 pb-[max(1.25rem,env(safe-area-inset-bottom))]`}
           >
-            <span className="text-xs font-semibold tracking-wide text-white/70">
-              {current + 1} / {items.length}
-            </span>
-            <span className="line-clamp-2 text-lg font-semibold">{item.title}</span>
-            {item.details ? <div className="text-sm text-white/85">{item.details}</div> : null}
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-xs font-semibold tracking-wide text-white/70">
+                {current + 1} / {items.length}
+              </span>
+              <span className="line-clamp-2 text-lg font-semibold">{item.title}</span>
+              {item.details ? <div className="text-sm text-white/85">{item.details}</div> : null}
+            </div>
+            {item.action ? <div className="pointer-events-auto shrink-0 pb-0.5">{item.action}</div> : null}
           </div>
         ) : null}
       </div>

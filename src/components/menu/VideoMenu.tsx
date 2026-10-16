@@ -1,9 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
+import { AddToOrder, type TableOrderingConfig } from "./AddToOrder";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
 import { ShortsViewer, type ShortItem } from "./VideoShorts";
+
+/** Ordering at the table: its code comes only on a table's page (/m/<token>), after the menu. */
+const TableOrdering = dynamic(() => import("./ordering/TableOrdering"), { ssr: false });
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
@@ -35,12 +40,17 @@ function MenuIcon() {
  */
 const DishCard = memo(function DishCard({
   order,
+  dishKey,
   dish,
+  orderable,
   onStarted,
   onOpen,
 }: {
   order: number;
+  dishKey: string;
   dish: MenuDish;
+  /** A table's menu: «Adicionar» under the dish (its count is its own, the card isn't redrawn). */
+  orderable: boolean;
   /** One of the first cards shows its video playing (the opening ends once they do). */
   onStarted: (order: number) => void;
   onOpen: (order: number) => void;
@@ -62,6 +72,11 @@ const DishCard = memo(function DishCard({
         </div>
         <p className="line-clamp-2 text-xs leading-snug text-muted">{dish.description}</p>
       </div>
+      {orderable ? (
+        <div className="mt-auto">
+          <AddToOrder dish={dishKey} name={dish.name} />
+        </div>
+      ) : null}
     </li>
   );
 });
@@ -151,7 +166,18 @@ function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: strin
  * collection full screen, one dish per screen. Every dish plays its own video (BunnyVideo) in its
  * card and in its slide; YouTube's players are gone (owner, 2026-10-16).
  */
-export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The demo page (/raza17raza): says its videos and prices are examples. */ demo?: boolean }) {
+export function VideoMenu({
+  menu,
+  demo = false,
+  ordering,
+}: {
+  menu: VideoMenuData;
+  /** The demo page (/raza17raza): says its videos and prices are examples. */
+  demo?: boolean;
+  /** A table's page with ordering on: «Adicionar» on each dish and the table's order. */
+  ordering?: TableOrderingConfig;
+}) {
+  const orderable = Boolean(ordering);
   const [active, setActive] = useState(menu.collections[0].id);
   // What the page opens on: the first collection's dishes (their pictures in the opening).
   const [opening] = useState(() => {
@@ -217,8 +243,9 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
             <span className="font-semibold text-white">{euro.format(dish.price)}</span> · {dish.description}
           </>
         ),
+        action: orderable ? <AddToOrder dish={key} name={dish.name} tone="dark" /> : undefined,
       })),
-    [dishes],
+    [dishes, orderable],
   );
 
   // The panel takes a step in the history (owner's iPhone: «back» with it open left the page and
@@ -340,14 +367,14 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl px-4 pt-5 pb-12">
+      <main className={`mx-auto w-full max-w-5xl px-4 pt-5 ${orderable ? "pb-28" : "pb-12"}`}>
         <div className="mb-4 flex items-baseline justify-between gap-3">
           <h1 className="display text-2xl">{collection.name}</h1>
           <span className="text-sm text-muted">{dishes.length} pratos</span>
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} order={index} dish={dish} onStarted={onStarted} onOpen={setViewer} />
+            <DishCard key={`${collection.id}-${key}`} order={index} dishKey={key} dish={dish} orderable={orderable} onStarted={onStarted} onOpen={setViewer} />
           ))}
         </ul>
         {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
@@ -418,6 +445,8 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
           </nav>
         </div>
       ) : null}
+
+      {ordering ? <TableOrdering {...ordering} dishes={menu.dishes} /> : null}
 
       {viewer !== null ? (
         <ShortsViewer
