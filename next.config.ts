@@ -66,8 +66,18 @@ const nextConfig: NextConfig = {
         source: "/fila-sw.js",
         headers: [{ key: "Cache-Control", value: "no-cache" }],
       },
+      // Proposals are private by link: never indexed, also for crawlers that ignore the meta tag.
+      {
+        source: "/proposta/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
       {
         source: "/media/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      // hls.js's worker, in a folder named after its version (scripts/hls-worker.mjs).
+      {
+        source: "/hls/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
     ];

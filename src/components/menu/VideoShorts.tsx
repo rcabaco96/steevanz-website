@@ -1,29 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type TouchEvent, type WheelEvent } from "react";
-import type { PoolTarget } from "./VideoPool";
+import { BunnyVideo, hasBunnyVideo } from "./BunnyVideo";
 
-/** A vertical YouTube video (Short) with what is shown over it. */
+/** A dish's vertical video with what is shown over it. */
 export interface ShortItem {
   /** Unique within the list. */
   key: string;
-  /** YouTube video id. */
-  video: string;
+  /** Its video on Bunny Stream: played by a plain <video> in its slide. */
+  bunny: string;
+  /** That video's small picture (file name on Bunny). */
+  bunnyThumbnail?: string;
   title: string;
   /** Shown under the title (e.g. the price and the description of a dish). */
   details?: ReactNode;
-}
-
-/**
- * The video's own thumbnail (YouTube's, the 4:3 picture holds the vertical frame in its middle): the
- * box shows it until one of the pool's players covers it with the video playing (VideoPool).
- */
-export function ShortCover({ video }: { video: string }) {
-  return (
-    // Served by YouTube as is (no image optimisation spent on it).
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={`https://i.ytimg.com/vi/${video}/hqdefault.jpg`} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-  );
 }
 
 /** No scroll event for this long: the swipe has ended. */
@@ -40,44 +30,38 @@ const closeShare = 0.25;
 const closeSpeed = 0.5;
 /** The full screen sliding out, or back (ms; the collections panel's). */
 const closeMs = 260;
-export const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
+const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 /**
  * How far the full screen is dragged to the right to close it, like the collections panel (owner,
- * 2026-10-14: the shrink back into the card was dropped). Shared with the pool, whose players there
- * move the same way.
+ * 2026-10-14: the shrink back into the card was dropped).
  */
-export interface ViewerMotion {
+interface ViewerMotion {
   x: number;
   /** Glides there (release) instead of following the finger. */
   glide: boolean;
 }
 
-export const restingMotion: ViewerMotion = { x: 0, glide: false };
+const restingMotion: ViewerMotion = { x: 0, glide: false };
 
 
 /**
  * Full screen, one video per screen: swipe (or scroll, or the arrow keys) to the next or previous
- * one (no CSS snapping: the moves are ours and land exactly on a slide). The slides hold thumbnails; the pool's players (VideoPool) cover the one on screen once the
- * swipe has ended, and the next video is prepared in another player. A carousel both ways (owner,
- * 2026-10-14): copies of the last and of the first sit before and after the list, and landing on one
- * jumps to the real video. Always silent (owner, 2026-10-14: an iPhone refuses sound in YouTube's players). Closes with ✕, Esc, the phone's back button,
+ * one (no CSS snapping: the moves are ours and land exactly on a slide). Each slide plays its dish's
+ * own video (BunnyVideo) while it is the one on screen. A carousel both ways (owner, 2026-10-14):
+ * copies of the last and of the first sit before and after the list, and landing on one jumps to the
+ * real video. Always silent. Closes with ✕, Esc, the phone's back button,
  * or dragging it to the right: it slides out with the finger, like the collections panel.
  */
 export function ShortsViewer({
   items,
   start,
   label,
-  onTargets,
-  onMotion,
   onClose,
 }: {
   items: ShortItem[];
   start: number;
   label: string;
-  onTargets: (targets: PoolTarget[]) => void;
-  /** The full screen dragged to close (the pool's players there follow it). */
-  onMotion: (motion: ViewerMotion) => void;
   onClose: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
@@ -87,14 +71,7 @@ export function ShortsViewer({
   const copyAfter = useRef<HTMLDivElement | null>(null);
   const restTimer = useRef<number | undefined>(undefined);
   const gesture = useRef<{ x: number; y: number; dx: number; dy: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
-  const [motion, setMotion] = useState<ViewerMotion>(restingMotion);
-  const moveTo = useCallback(
-    (next: ViewerMotion) => {
-      setMotion(next);
-      onMotion(next);
-    },
-    [onMotion],
-  );
+  const [motion, moveTo] = useState<ViewerMotion>(restingMotion);
   const lastWheel = useRef(0);
   const [current, setCurrent] = useState(start);
   const [scrolling, setScrolling] = useState(false);
@@ -144,27 +121,6 @@ export function ShortsViewer({
     return () => observer.disconnect();
   }, []);
 
-  /*
-   * What the pool should play, like Reels (owner, 2026-10-14): the video on screen playing, the one
-   * above and the one below primed (a real frame, paused), all shown and following the swipe frame by
-   * frame (the pool tracks their boxes), so the next video comes up with the finger and starts at once.
-   * The tapped video's player is the one that was playing it in the grid: it carries on.
-   */
-  useEffect(() => {
-    const targets: PoolTarget[] = [];
-    const item = items[current];
-    if (item) targets.push({ key: "viewer-current", video: item.video, element: boxes.current[current], fixed: true, play: true, visible: true });
-    if (items.length > 1) {
-      const next = (current + 1) % items.length;
-      const previous = (current - 1 + items.length) % items.length;
-      const nextBox = current === items.length - 1 ? copyAfter.current : boxes.current[next];
-      const previousBox = current === 0 ? copyBefore.current : boxes.current[previous];
-      targets.push({ key: "viewer-next", video: items[next].video, element: nextBox, fixed: true, play: false, prime: true, visible: true });
-      if (previous !== next) targets.push({ key: "viewer-previous", video: items[previous].video, element: previousBox, fixed: true, play: false, prime: true, visible: true });
-    }
-    onTargets(targets);
-  }, [items, current, onTargets]);
-
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") window.history.back();
@@ -184,14 +140,13 @@ export function ShortsViewer({
       }}
       className="relative aspect-[9/16] h-[100dvh] w-auto max-w-none overflow-hidden"
     >
-      <ShortCover video={item.video} />
+      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} thumbnail={item.bunnyThumbnail} playing={index === current} /> : null}
     </div>
   );
 
   /*
    * The gestures are ours, on a layer above everything (owner, 2026-10-14: swiping stopped working on
-   * an iPhone): YouTube's frames sit over the slides and an iPhone can give them the touch even when
-   * they let taps through. A vertical drag moves the list with the finger and, on release, to the next
+   * an iPhone, when YouTube's frames sat over the slides). A vertical drag moves the list with the finger and, on release, to the next
    * or previous video (or back); a left-to-right drag moves the whole full screen with the finger and,
    * on release, closes it (or slides it back).
    */
@@ -297,7 +252,7 @@ export function ShortsViewer({
           ) : null}
         </div>
       </div>
-      {/* Above the pool's players (z 95): the gestures, the buttons and what the dish on screen is. */}
+      {/* Above the slides: the gestures, the buttons and what the dish on screen is. */}
       <div
         onTouchStart={onGestureStart}
         onTouchMove={onGestureMove}

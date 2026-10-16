@@ -138,7 +138,8 @@ export const products: Product[] = [
     slug: { pt: "menu-digital", en: "digital-menu" },
     family: "plates",
     icon: "menu-tap",
-    priceFrom: 15,
+    // Owner, 2026-10-15: 20 € per plate, 15 € each from 10 plates (the old packs of 5/10/20 are gone).
+    priceFrom: 20,
     priceBilling: "one-time",
     priceQualifier: { pt: "por placa, configuração incluída", en: "per plate, setup included" },
     priceIsProvisional: true,
@@ -155,11 +156,7 @@ export const products: Product[] = [
       logoExtraIsProvisional: true,
       textMaxLength: plateTextMaxLength,
     },
-    packs: [
-      { quantity: 5, unitPrice: 12 },
-      { quantity: 10, unitPrice: 10 },
-      { quantity: 20, unitPrice: 9 },
-    ],
+    packs: [{ quantity: 10, unitPrice: 15 }],
   },
   {
     id: "guest-guide",

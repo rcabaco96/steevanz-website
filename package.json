@@ -6,7 +6,9 @@
     "node": ">=24"
   },
   "scripts": {
+    "predev": "node scripts/hls-worker.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/hls-worker.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -21,11 +23,15 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "country-flag-icons": "^1.6.20",
+    "hls.js": "^1.7.3",
     "motion": "^13.4.6",
     "next": "^16.3.8",
     "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
+    "tus-js-client": "^4.3.1",
     "web-push": "^3.6.7",
     "zod": "^4.6.5"
   },

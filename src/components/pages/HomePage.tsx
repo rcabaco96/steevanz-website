@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { homeCopy } from "@/content/home";
+import { getProductCopy } from "@/content/product-copy";
 import { flagshipProduct, products } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import { ui } from "@/content/ui";
@@ -179,23 +180,27 @@ export function HomePage({ locale }: { locale: Locale }) {
         <div className="mt-14 grid gap-5 sm:grid-cols-2">
           {sectors.map((sector, index) => {
             const sectorCopy = sector.copy[locale];
+            const wide = index === sectors.length - 1 && sectors.length % 2 === 1;
             return (
               <article
                 key={sector.id}
                 data-reveal
                 style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }}
                 className={`group relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[1.75rem] p-7 text-white sm:min-h-[26rem] ${
-                  index === sectors.length - 1 && sectors.length % 2 === 1 ? "sm:col-span-2" : ""
+                  wide ? "sm:col-span-2" : ""
                 }`}
               >
-                <Photo
-                  id={sector.photo}
-                  locale={locale}
-                  sizes="(min-width: 640px) 50vw, 100vw"
-                  className="absolute inset-0 -z-20"
-                  imageClassName="transition-transform duration-700 ease-(--ease-out-expo) group-hover:scale-[1.04]"
-                />
-                <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/45 to-black/5" />
+                {/* Photo's own wrapper is `relative` (it beat an `absolute` passed in, leaving it 0 px tall), so the card's background layer is this div. */}
+                <div className="absolute inset-0 -z-20 bg-neutral-800">
+                  <Photo
+                    id={sector.photo}
+                    locale={locale}
+                    sizes={wide ? "(min-width: 1216px) 1152px, 100vw" : "(min-width: 1216px) 576px, (min-width: 640px) 50vw, 100vw"}
+                    className="h-full w-full"
+                    imageClassName="transition-transform duration-700 ease-(--ease-out-expo) group-hover:scale-[1.04]"
+                  />
+                </div>
+                <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/65 to-black/35 sm:from-black/85 sm:via-black/45 sm:to-black/5" />
                 <h3 className="display text-3xl">
                   <Link href={href(locale, { key: "sector", sectorId: sector.id })} className="after:absolute after:inset-0">
                     {sectorCopy.cardTitle}
@@ -208,7 +213,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                     return product ? (
                       <li key={productId} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur">
                         <ProductGlyph icon={product.icon} size={14} />
-                        {t.nav.families[product.family]}
+                        {getProductCopy(product.id, locale).shortName}
                       </li>
                     ) : null;
                   })}

@@ -1,46 +1,65 @@
 // Digital menus in videos: the rules shared by the admin, the public pages and the tests. Pure module
 // (no server or browser APIs), so the admin's forms use it in the browser too.
 
-import type { MenuCollection, MenuDish, VideoMenuData } from "../../content/demo-menu.ts";
 import { initialsOf } from "../establishments/logo-rules.ts";
 
-// YouTube ------------------------------------------------------------------------------------------
+// The public menu's shape ------------------------------------------------------------------------------
 
-const videoIdPattern = /^[A-Za-z0-9_-]{11}$/;
+/** A dish of the public menu: it plays its own video on Bunny Stream (since 2026-10-16, YouTube no more). */
+export interface MenuDish {
+  /** Its video on Bunny Stream. */
+  bunny: string;
+  /** That video's small picture (file name on Bunny); without it, Bunny's thumbnail.jpg. */
+  bunnyThumbnail?: string;
+  name: string;
+  description: string;
+  /** Euros. */
+  price: number;
+}
 
-export function isYouTubeId(value: string): boolean {
-  return videoIdPattern.test(value);
+export interface MenuCollection {
+  id: string;
+  name: string;
+  dishes: string[];
+}
+
+export interface VideoMenuData {
+  business: string;
+  /** A URL, or the initials drawn as an SVG data URL. */
+  logo: string;
+  instagram: string | null;
+  dishes: Record<string, MenuDish>;
+  /** The first one opens by default; «Todos» holds every dish when no collection has any. */
+  collections: MenuCollection[];
+}
+
+// Bunny Stream -------------------------------------------------------------------------------------
+
+/**
+ * The menu pages send our origin (only it, never the path) to other sites: Bunny's pull zone refuses
+ * requests without a referrer, and the public layout sends none outside the site (same-origin). A
+ * menu's address carries nothing personal.
+ */
+export const menuReferrer = "strict-origin";
+
+/** Bunny's pull zone host (the dishes' own videos), to connect to early; null when not configured. */
+export function bunnyHost(): string | null {
+  const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
+  return pullZone ? `https://${pullZone}.b-cdn.net` : null;
 }
 
 /**
- * The 11-character video id from whatever the owner pastes: the id itself or a link in any of
- * YouTube's formats (shorts/, watch?v=, youtu.be/, embed/, live/, with or without https, www or m.).
- * Null when it isn't a YouTube video.
+ * A dish's own video's picture: its small one (`file`, set when Bunny finished it), else Bunny's
+ * full-size thumbnail.jpg; null without the pull zone.
  */
-export function parseYouTubeId(input: string): string | null {
-  const text = input.trim();
-  if (isYouTubeId(text)) return text;
-  let url: URL;
-  try {
-    url = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(text) ? text : `https://${text}`);
-  } catch {
-    return null;
-  }
-  const host = url.hostname.toLowerCase().replace(/^(www|m|music)\./, "");
-  let candidate: string | null = null;
-  if (host === "youtu.be") {
-    candidate = url.pathname.split("/")[1] ?? null;
-  } else if (host === "youtube.com" || host === "youtube-nocookie.com") {
-    const fromQuery = url.searchParams.get("v");
-    const fromPath = url.pathname.match(/^\/(?:shorts|embed|live|v|e)\/([^/]+)/)?.[1];
-    candidate = url.pathname === "/watch" ? fromQuery : (fromPath ?? null);
-  }
-  return candidate && isYouTubeId(candidate) ? candidate : null;
+export function bunnyThumbnail(videoId: string, file?: string | null): string | null {
+  const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
+  return pullZone ? `https://${pullZone}.b-cdn.net/${videoId}/${file || "thumbnail.jpg"}` : null;
 }
 
-/** The video's picture, straight from YouTube's image servers (no API, no key). */
-export function youTubeThumbnail(videoId: string): string {
-  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+/** A dish's picture: its own (Bunny) video's; null without one yet. */
+export function dishPicture(dish: { bunny_video_id?: string | null; bunny_thumbnail?: string | null }): string | null {
+  return dish.bunny_video_id ? bunnyThumbnail(dish.bunny_video_id, dish.bunny_thumbnail) : null;
 }
 
 // Prices -------------------------------------------------------------------------------------------
@@ -179,11 +198,16 @@ export interface VideoMenuRow {
 export interface VideoMenuDishRow {
   id: string;
   menu_id: string;
-  video_id: string;
   name: string;
   description: string;
   price_cents: number;
   position: number;
+  /** Its own video on Bunny Stream, and an upload in progress. */
+  bunny_video_id?: string | null;
+  /** The small picture of the Bunny video (file name on Bunny); null: its thumbnail.jpg. */
+  bunny_thumbnail?: string | null;
+  pending_video_id?: string | null;
+  pending_video_status?: "uploading" | "processing" | "failed" | null;
 }
 
 export interface VideoMenuCollectionRow {
@@ -203,9 +227,10 @@ export interface VideoMenuLinkRow {
 const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - b.position;
 
 /**
- * The menu in the shape the player takes (the same as the static demo): dishes keyed by their id
- * in their order, the default collection first (the player opens the first one), empty collections
- * left out, and «Todos» with every dish when no collection has any. Null when there's no dish.
+ * The menu in the shape the player takes: dishes keyed by their id in their order, the default
+ * collection first (the player opens the first one), empty collections left out, and «Todos» with
+ * every dish when no collection has any. Only dishes with their own (Bunny) video ready are on the
+ * menu (the menu plays no YouTube since 2026-10-16). Null when there's no dish to show.
  */
 export function toVideoMenuData(
   menu: Pick<VideoMenuRow, "business_name" | "logo_url" | "instagram">,
@@ -213,11 +238,17 @@ export function toVideoMenuData(
   collectionRows: VideoMenuCollectionRow[],
   linkRows: VideoMenuLinkRow[],
 ): VideoMenuData | null {
-  const ordered = [...dishRows].sort(byPosition);
+  const ordered = dishRows.filter((dish): dish is VideoMenuDishRow & { bunny_video_id: string } => Boolean(dish.bunny_video_id)).sort(byPosition);
   if (!ordered.length) return null;
   const dishes: Record<string, MenuDish> = {};
   for (const dish of ordered) {
-    dishes[dish.id] = { video: dish.video_id, name: dish.name, description: dish.description, price: dish.price_cents / 100 };
+    dishes[dish.id] = {
+      bunny: dish.bunny_video_id,
+      ...(dish.bunny_thumbnail ? { bunnyThumbnail: dish.bunny_thumbnail } : {}),
+      name: dish.name,
+      description: dish.description,
+      price: dish.price_cents / 100,
+    };
   }
   const collections: MenuCollection[] = [...collectionRows]
     .sort((a, b) => Number(b.is_default) - Number(a.is_default) || byPosition(a, b))

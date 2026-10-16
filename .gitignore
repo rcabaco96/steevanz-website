@@ -48,3 +48,6 @@ supabase/.branches
 # local-only
 /marketing/
 .claude/launch.json
+
+# hls.js's worker, copied there before each build and dev (scripts/hls-worker.mjs)
+/public/hls/

@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orçamento Steevanz</title>
+<meta name="description" content="Proposta e orçamento Steevanz: landing page e menu digital em vídeo para restaurantes e cafés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fbf7f1; --bg-soft: #f4ece1; --surface: #ffffff; --surface-2: #f7f0e7;
+  --line: #e7ddd0; --line-strong: #d3c4b2;
+  --text: #1d1220; --muted: #574659; --subtle: #6f5d71;
+  --accent: #7a2d60; --accent-strong: #5e1f49; --accent-soft: #f4e4ee; --on-accent: #ffffff;
+  --gold: #cfa563; --gold-soft: #f6ead3; --gold-text: #7f5a1c;
+  --ok: #1e7a4c; --ok-soft: #e3f3ea;
+  --page: #ece4d8; --bezel: #1d1220; --shadow: 60 30 50;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #120a14; --bg-soft: #180e1b; --surface: #1f1223; --surface-2: #28182d;
+    --line: #36233c; --line-strong: #4b3151;
+    --text: #f6efe6; --muted: #cdbfd3; --subtle: #ab98b3;
+    --accent: #e39ac6; --accent-strong: #efb5d7; --accent-soft: #3a1d35; --on-accent: #1d0d1a;
+    --gold: #e9c685; --gold-soft: #3a2c19; --gold-text: #ebcb8e;
+    --ok: #6fd49e; --ok-soft: #16301f;
+    --page: #0b060c; --bezel: #000000; --shadow: 0 0 0;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #120a14; --bg-soft: #180e1b; --surface: #1f1223; --surface-2: #28182d;
+  --line: #36233c; --line-strong: #4b3151;
+  --text: #f6efe6; --muted: #cdbfd3; --subtle: #ab98b3;
+  --accent: #e39ac6; --accent-strong: #efb5d7; --accent-soft: #3a1d35; --on-accent: #1d0d1a;
+  --gold: #e9c685; --gold-soft: #3a2c19; --gold-text: #ebcb8e;
+  --ok: #6fd49e; --ok-soft: #16301f;
+  --page: #0b060c; --bezel: #000000; --shadow: 0 0 0;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--page); color: var(--text);
+  font-family: "Hanken Grotesk", "Segoe UI", system-ui, sans-serif; line-height: 1.45;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+h1, h2, h3, p { margin: 0; }
+.display, h1, h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.015em; }
+img { display: block; max-width: 100%; }
+b, strong { font-weight: 700; color: var(--text); }
+
+/* Toolbar */
+.bar {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.bar .brand { display: flex; align-items: center; gap: 8px; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 18px; margin-right: auto; }
+.bar .brand .logo { font-size: 22px; }
+.bar button {
+  font: 600 14px/1 "Hanken Grotesk", system-ui, sans-serif; color: var(--text); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: 999px; padding: 9px 14px; cursor: pointer; min-height: 38px;
+}
+.bar button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* Deck */
+.deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px 16px 60px; }
+.slide {
+  container-type: inline-size; width: min(1280px, 100%); aspect-ratio: 16 / 9; position: relative;
+  background: var(--bg); border-radius: 18px; overflow: hidden;
+  box-shadow: none;
+}
+.inner {
+  --u: calc(100cqw / 1280);
+  position: absolute; inset: 0; display: flex; flex-direction: column; gap: calc(22 * var(--u));
+  padding: calc(52 * var(--u)) calc(68 * var(--u)) calc(60 * var(--u)); font-size: calc(18.5 * var(--u));
+}
+.kicker { font-size: 0.72em; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+.kicker.gold { color: var(--gold-text); }
+h2 { font-size: 2.3em; line-height: 1.06; max-width: 24em; }
+h2 em { font-style: italic; color: var(--accent); font-weight: 500; }
+h3 { font-size: 1.06em; line-height: 1.25; font-weight: 700; }
+.lead { font-size: 1.12em; color: var(--muted); max-width: 40em; }
+p, li { color: var(--muted); }
+.head { display: flex; flex-direction: column; gap: calc(10 * var(--u)); }
+.fill { flex: 1; min-height: 0; }
+.foot {
+  position: absolute; left: calc(68 * var(--u)); right: calc(68 * var(--u)); bottom: calc(22 * var(--u));
+  display: flex; justify-content: space-between; font-size: calc(12.5 * var(--u)); color: var(--subtle);
+}
+.foot b { color: var(--accent); font-family: "Fraunces", Georgia, serif; font-weight: 600; }
+
+.grid { display: grid; gap: calc(20 * var(--u)); }
+.g2 { grid-template-columns: 1fr 1fr; }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.split { display: grid; gap: calc(40 * var(--u)); grid-template-columns: var(--cols, 1fr 1fr); align-items: stretch; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: calc(18 * var(--u));
+  padding: calc(22 * var(--u)) calc(24 * var(--u)); display: flex; flex-direction: column; gap: calc(8 * var(--u));
+}
+.card p { font-size: 0.92em; }
+.tag { font-size: 0.68em; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--gold-text); }
+.price-chip {
+  margin-top: auto; align-self: flex-start; background: var(--accent-soft); color: var(--accent);
+  border-radius: 999px; padding: 0.3em 0.85em; font-weight: 700; font-size: 0.85em;
+}
+.note { background: var(--gold-soft); border-radius: calc(14 * var(--u)); padding: calc(14 * var(--u)) calc(20 * var(--u)); font-size: 0.92em; color: var(--text); }
+.note.plum { background: var(--accent-soft); }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(9 * var(--u)); }
+.list li { position: relative; padding-left: 1.25em; font-size: 0.95em; }
+.list li::before { content: ""; position: absolute; left: 0.1em; top: 0.5em; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--gold); }
+.list.check li::before { width: 0.62em; height: 0.36em; border-radius: 0; background: none; border-left: 2.5px solid var(--ok); border-bottom: 2.5px solid var(--ok); transform: rotate(-45deg); top: 0.42em; }
+.num {
+  flex: none; display: inline-grid; place-items: center; width: 1.9em; height: 1.9em; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 0.9em;
+}
+.steps { display: grid; gap: calc(14 * var(--u)); }
+.step { display: flex; gap: calc(14 * var(--u)); align-items: flex-start; }
+.step p { font-size: 0.9em; margin-top: 0.15em; }
+
+/* Phones */
+.phones { display: flex; gap: calc(22 * var(--u)); align-items: flex-start; justify-content: center; }
+.phone { margin: 0; display: flex; flex-direction: column; gap: calc(10 * var(--u)); align-items: center; }
+.ph {
+  height: calc(var(--ph, 420) * var(--u)); aspect-ratio: 390 / 844; border-radius: calc(30 * var(--u));
+  border: calc(8 * var(--u)) solid var(--bezel); overflow: hidden; background: #000;
+  box-shadow: none;
+}
+.ph img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.phone figcaption { font-size: 0.74em; color: var(--muted); text-align: center; max-width: calc(var(--ph, 420) * var(--u) * 0.5); line-height: 1.3; }
+.label {
+  display: inline-flex; gap: 0.5em; align-items: center; font-size: 0.74em; font-weight: 600; color: var(--gold-text);
+  background: var(--gold-soft); border-radius: 999px; padding: 0.35em 0.9em; align-self: flex-start;
+}
+.small { font-size: 0.78em; color: var(--subtle); }
+
+/* Cover */
+.cover .inner { background: radial-gradient(circle at 82% 18%, var(--accent-soft), var(--bg) 55%); }
+.cover h1 { font-size: 3.15em; line-height: 1.02; letter-spacing: -0.025em; }
+.cover h1 span { color: var(--accent); }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: calc(12 * var(--u)) calc(24 * var(--u)); max-width: 34em; }
+.field { border-bottom: 1.5px dashed var(--line-strong); padding-bottom: 0.25em; display: flex; flex-direction: column; }
+.field small { font-size: 0.66em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); font-weight: 700; }
+.field span { font-weight: 600; font-size: 1.02em; min-height: 1.35em; outline: none; }
+.field.wide { grid-column: 1 / -1; }
+.ph-tilt-l { transform: rotate(-5deg) translateY(calc(18 * var(--u))); }
+.ph-tilt-r { transform: rotate(4deg); margin-left: calc(-40 * var(--u)); }
+[contenteditable]:empty::before { content: attr(data-placeholder); color: var(--subtle); font-weight: 500; }
+[contenteditable]:focus { background: var(--accent-soft); border-radius: 4px; }
+
+/* Flow diagram */
+.flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1.15fr; align-items: center; gap: calc(14 * var(--u)); }
+.node { background: var(--surface); border: 1px solid var(--line); border-radius: calc(16 * var(--u)); padding: calc(16 * var(--u)) calc(18 * var(--u)); }
+.node h3 { font-size: 1em; }
+.node p { font-size: 0.82em; margin-top: 0.25em; }
+.node.hero { background: var(--accent); border-color: var(--accent); }
+.node.hero h3, .node.hero p { color: var(--on-accent); }
+.arrow { color: var(--accent); font-size: 1.6em; font-weight: 700; text-align: center; line-height: 1; }
+.arrow small { display: block; font-size: 0.42em; font-weight: 700; color: var(--gold-text); letter-spacing: 0.04em; margin-top: 0.2em; white-space: nowrap; }
+
+/* Lanes */
+.lane { display: grid; grid-template-columns: calc(150 * var(--u)) repeat(5, 1fr); gap: calc(10 * var(--u)); align-items: stretch; }
+.lane .who { display: flex; flex-direction: column; justify-content: center; font-weight: 700; color: var(--text); font-size: 0.95em; line-height: 1.2; }
+.lane .who small { font-weight: 500; color: var(--subtle); font-size: 0.78em; margin-top: 0.2em; }
+.chip { border-radius: calc(12 * var(--u)); padding: calc(12 * var(--u)) calc(14 * var(--u)); background: var(--surface); border: 1px solid var(--line); font-size: 0.82em; color: var(--muted); line-height: 1.3; }
+.chip b { display: block; font-size: 1.05em; margin-bottom: 0.2em; }
+.chip.k { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip.k b { color: var(--on-accent); }
+.chip.g { background: var(--gold-soft); border-color: transparent; color: var(--text); }
+
+/* Price tables */
+table { border-collapse: collapse; width: 100%; }
+.ptable th, .ptable td { text-align: left; padding: 0.5em 0.6em; border-bottom: 1px solid var(--line); font-size: 0.92em; vertical-align: top; }
+.ptable th { font-size: 0.68em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); font-weight: 700; }
+.ptable td.r, .ptable th.r { text-align: right; white-space: nowrap; }
+.ptable td { color: var(--text); }
+.ptable td small { display: block; color: var(--subtle); font-size: 0.82em; }
+.ptable tr.sub td { color: var(--muted); border-bottom: none; padding-top: 0.25em; padding-bottom: 0.25em; }
+.ptable tr.sub:first-of-type td { padding-top: 0.6em; }
+.ptable tr.tot td { font-weight: 700; font-size: 1.05em; border-top: 2px solid var(--text); border-bottom: none; }
+.ptable tr.tot td.r { color: var(--accent); }
+.ptable tr.disc td { color: var(--ok); }
+.big-num { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2.6em; line-height: 1; color: var(--accent); }
+input.qty {
+  width: 3.2em; font: inherit; font-weight: 700; color: inherit; text-align: center; background: var(--accent-soft);
+  border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 0.1em; -moz-appearance: textfield; appearance: textfield;
+}
+input.qty::-webkit-outer-spin-button, input.qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Plate mock */
+.plate {
+  width: calc(300 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--surface);
+  border: calc(10 * var(--u)) solid var(--accent); display: grid; place-items: center; text-align: center;
+  box-shadow: none; margin: 0 auto;
+}
+.plate .qr { width: calc(140 * var(--u)); background: #fff; padding: calc(8 * var(--u)); border-radius: calc(8 * var(--u)); }
+.plate .qr svg { width: 100%; height: auto; display: block; }
+.plate .t1 { font-family: "Fraunces", Georgia, serif; font-weight: 600; color: var(--accent); font-size: 1.05em; line-height: 1.1; }
+.plate .t2 { font-size: 0.66em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); font-weight: 700; }
+.plate > div { display: flex; flex-direction: column; align-items: center; gap: calc(8 * var(--u)); }
+.tap { display: inline-flex; align-items: center; gap: 0.4em; }
+.tap svg { width: 1.2em; height: 1.2em; }
+
+/* Quote (A4 portrait document) */
+.quote {
+  width: min(794px, 100%); background: var(--surface); color: var(--text); border-radius: 6px;
+  box-shadow: none; padding: 44px 48px 36px; font-size: 12.4px; line-height: 1.4;
+  display: flex; flex-direction: column; gap: 14px; position: relative;
+}
+.quote p, .quote li { color: var(--muted); }
+.q-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+.logo { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-variation-settings: "opsz" 22; letter-spacing: -0.025em; line-height: 1.04; color: var(--text); white-space: nowrap; }
+.logo .dot { color: var(--gold); padding-left: 0.185em; }
+.q-brand { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.q-brand .logo { font-size: 32px; }
+.q-brand .c { font-size: 11px; color: var(--subtle); line-height: 1.5; }
+.q-title { text-align: right; }
+.q-title .display { font-size: 30px; color: var(--accent); line-height: 1; }
+.q-meta { display: grid; grid-template-columns: auto auto; gap: 2px 12px; margin-top: 8px; font-size: 11.5px; justify-content: end; }
+.q-meta dt { color: var(--subtle); text-align: right; }
+.q-meta dd { margin: 0; font-weight: 600; text-align: left; min-width: 8.5em; outline: none; border-bottom: 1px dashed var(--line-strong); }
+.q-client { display: grid; grid-template-columns: 1.4fr 1fr; gap: 6px 22px; background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+.q-client .field small { font-size: 9.5px; }
+.q-client .field span { font-size: 12.5px; }
+.q-sec { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--gold-text); }
+.qtable th, .qtable td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+.qtable th { font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); font-weight: 700; border-bottom: 1.5px solid var(--line-strong); }
+.qtable .r { text-align: right; white-space: nowrap; }
+.qtable .c { text-align: center; white-space: nowrap; }
+.qtable td b { font-size: 12.8px; }
+.qtable td small { display: block; color: var(--subtle); font-size: 10.6px; line-height: 1.35; margin-top: 1px; }
+.qtable tr.grp td { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-bottom: none; }
+.qtable tr.disc td { color: var(--ok); }
+.q-totals { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 10px; }
+.rec { display: inline-block; margin-left: 8px; background: var(--gold); color: #1d1220; border-radius: 999px; padding: 1px 8px; font-size: 9px; letter-spacing: 0.06em; }
+.qtable tr.note-row td { font-size: 10.6px; color: var(--subtle); padding-top: 4px; padding-bottom: 4px; }
+.rec-box { border: 1.5px solid var(--gold); background: var(--gold-soft); }
+.cheio { color: var(--subtle); font-weight: 400; font-size: 0.9em; margin-right: 0.3em; }
+.poupa { display: inline-block; background: var(--ok-soft); color: var(--ok); font-weight: 800; border-radius: 999px; padding: 0 0.55em; font-size: 0.95em; white-space: nowrap; }
+.q-save { margin-top: 4px; font-size: 10.4px; font-weight: 700; color: var(--gold-text); }
+.q-adj { border: 1px solid var(--line-strong); border-radius: 8px; padding: 7px 12px; display: grid; gap: 2px; }
+.q-adj .q-row.t { border-top: none; margin-top: 0; padding-top: 0; font-size: 12.4px; }
+.q-adj .q-row span:last-child { white-space: nowrap; }
+.q-box { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.q-box h4 { margin: 0 0 4px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); }
+.q-row { display: flex; justify-content: space-between; padding: 2px 0; color: var(--muted); }
+.q-row.t { border-top: 1.5px solid var(--text); margin-top: 3px; padding-top: 5px; color: var(--text); font-weight: 700; font-size: 13.5px; }
+.q-row.t span:last-child { color: var(--accent); }
+.q-cond { columns: 2; column-gap: 22px; margin: 0; padding-left: 14px; font-size: 10.6px; line-height: 1.38; }
+.q-cond li { margin-bottom: 3px; break-inside: avoid; }
+.q-sign { display: grid; grid-template-columns: 1.3fr 1fr 0.7fr; gap: 18px; margin-top: 4px; }
+.q-sign div { border-top: 1px solid var(--text); padding-top: 3px; font-size: 10px; color: var(--subtle); }
+.q-foot { display: flex; justify-content: space-between; font-size: 10px; color: var(--subtle); border-top: 1px solid var(--line); padding-top: 8px; margin-top: auto; }
+
+.s-big .card { font-size: 1.12em; gap: calc(12 * var(--u)); }
+.s-big .card h3 { font-size: 1.2em; }
+.thumb { height: calc(172 * var(--u)); border-radius: calc(12 * var(--u)); overflow: hidden; background: var(--surface-2); margin-bottom: calc(6 * var(--u)); display: grid; place-items: center; }
+.thumb { position: relative; }
+.thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.thumb.pos-c img { object-position: center 30%; }
+.mini-plate { width: calc(150 * var(--u)); aspect-ratio: 1; border-radius: 50%; background: var(--surface); border: calc(7 * var(--u)) solid var(--accent); display: grid; place-items: center; }
+.mini-plate .qr { width: calc(62 * var(--u)); background: #fff; padding: calc(4 * var(--u)); border-radius: calc(4 * var(--u)); }
+.mini-plate .qr svg { width: 100%; height: auto; display: block; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(16 * var(--u)); }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: calc(16 * var(--u)); padding: calc(14 * var(--u)) calc(18 * var(--u)); display: flex; align-items: baseline; gap: calc(12 * var(--u)); }
+.stat .big-num { font-size: 2em; white-space: nowrap; }
+.stat p { font-size: 0.88em; }
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: calc(12 * var(--u)); }
+.tile { background: var(--gold-soft); border-radius: calc(14 * var(--u)); padding: calc(14 * var(--u)) calc(16 * var(--u)); }
+.tile b { display: block; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.25em; color: var(--accent); line-height: 1.1; margin-bottom: 0.2em; }
+.tile span { font-size: 0.8em; color: var(--muted); }
+.s-flow .node { padding: calc(22 * var(--u)) calc(24 * var(--u)); }
+.s-flow .node h3 { font-size: 1.2em; }
+.s-flow .node p { font-size: 0.92em; }
+.s-lanes .lane { font-size: 1.12em; }
+.s-lanes .chip { padding: calc(18 * var(--u)) calc(16 * var(--u)); }
+.s-steps .step h3 { font-size: 1.2em; }
+.s-steps .step p { font-size: 1em; }
+.s-steps .steps { gap: calc(20 * var(--u)); }
+#s9 .list li { font-size: 0.88em; }
+#s9 .card p { font-size: 0.86em; }
+#s9 .list { gap: calc(6 * var(--u)); }
+
+#s13 .split { align-items: start; }
+#s13 .ptable td { font-size: 1.04em; padding-top: 0.75em; padding-bottom: 0.75em; }
+#s13 .ptable tr.sub td { padding-top: 0.4em; padding-bottom: 0.4em; }
+#s13 .card { padding-bottom: calc(28 * var(--u)); }
+
+/* Phone and narrow screens: slides reflow */
+@media screen and (max-width: 760px) {
+  .deck { gap: 18px; padding: 16px 12px 40px; }
+  .slide { aspect-ratio: auto; border-radius: 16px; }
+  .inner { position: static; --u: 0.62px; font-size: 16px; padding: 26px 20px 46px; gap: 18px; }
+  h2 { font-size: 1.75em; }
+  .cover h1 { font-size: 2.1em; }
+  .lead { font-size: 1.04em; }
+  .g2, .g3, .split, .fields, .q-client, .q-totals { grid-template-columns: 1fr; }
+  .split { --cols: 1fr; gap: 22px; }
+  .phones { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 12px; justify-items: center; }
+  .phones.one { grid-template-columns: 1fr; }
+  .ph { height: auto; width: 100%; max-width: 230px; border-width: 5px; border-radius: 22px; }
+  .phone figcaption { max-width: 100%; font-size: 0.8em; }
+  .ph-tilt-l, .ph-tilt-r { transform: none; margin: 0; }
+  .cover .phones { grid-template-columns: 1fr 1fr; }
+  .flow { grid-template-columns: 1fr; }
+  .arrow { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .arrow .a { display: inline-block; transform: rotate(90deg); }
+  .arrow small { margin: 0; font-size: 0.6em; }
+  .qtable thead { display: none; }
+  .qtable tr { display: grid; grid-template-columns: 1fr auto auto; gap: 0 12px; border-bottom: 1px solid var(--line); padding: 6px 0; }
+  .qtable tr.grp { padding: 0; border-bottom: none; }
+  .qtable td { border-bottom: none; padding: 2px 4px; }
+  .qtable td:first-child { grid-column: 1 / -1; }
+  .qtable td:nth-child(2):not(:empty)::before { content: "Qtd. "; color: var(--subtle); font-size: 0.85em; }
+  .qtable td.c { text-align: left; }
+  .qtable tr.disc td:first-child { grid-column: 1 / 3; }
+  .lane { grid-template-columns: 1fr; }
+  .stats, .tiles { grid-template-columns: 1fr 1fr; }
+  .thumb { height: 170px; }
+  .mini-plate { width: 120px; border-width: 6px; }
+  .mini-plate .qr { width: 52px; }
+  .plate { width: 220px; border-width: 8px; }
+  .plate .qr { width: 96px; }
+  .foot { left: 20px; right: 20px; bottom: 14px; font-size: 11px; }
+  .quote { padding: 22px 16px; font-size: 13px; }
+  .q-head { flex-direction: column; }
+  .q-title { text-align: left; }
+  .q-meta { justify-content: start; }
+  .q-meta dt { text-align: left; }
+  .q-cond { columns: 1; }
+  .q-sign { grid-template-columns: 1fr; gap: 26px; }
+  .qtable th, .qtable td { padding: 6px 4px; }
+  .hide-m { display: none; }
+  .bar .brand span { display: none; }
+}
+
+/* Print: one slide per 16:9 page, quote on its own A4 portrait page */
+@page { size: 338.67mm 190.5mm; margin: 0; }
+@page deck { size: 338.67mm 190.5mm; margin: 0; }
+@page quote { size: A4 portrait; margin: 0; }
+@media print {
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    color-scheme: light;
+    --bg: #fbf7f1; --bg-soft: #f4ece1; --surface: #ffffff; --surface-2: #f7f0e7;
+    --line: #e7ddd0; --line-strong: #d3c4b2;
+    --text: #1d1220; --muted: #574659; --subtle: #6f5d71;
+    --accent: #7a2d60; --accent-strong: #5e1f49; --accent-soft: #f4e4ee; --on-accent: #ffffff;
+    --gold: #cfa563; --gold-soft: #f6ead3; --gold-text: #7f5a1c;
+    --ok: #1e7a4c; --ok-soft: #e3f3ea; --page: #ffffff; --bezel: #1d1220; --shadow: 60 30 50;
+  }
+  body { background: #fff; }
+  .bar { display: none; }
+  .deck { display: block; padding: 0; }
+  .slide { page: deck; width: 338.67mm; height: 190.5mm; aspect-ratio: auto; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; }
+  .quote { page: quote; width: 210mm; height: 296.5mm; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; margin: 0; padding: 9mm 13mm 7mm; gap: 8px; }
+  body.only-quote .slide { display: none; }
+  body.only-quote .quote { break-after: auto; page-break-after: auto; }
+  input.qty { background: none; border: none; width: 2em; }
+  [contenteditable]:empty::before { color: #9b8a9d; }
+}
+body.only-quote .slide { display: none; }
+@page { size: A4 portrait; margin: 0; }
+@media print { body { background: #fff; } .bar { display: none; } .deck { padding: 0; } }
+</style>
+</head>
+<body class="only-quote">
+<header class="bar">
+  <div class="brand"><span class="logo">Steevanz<span class="dot">.</span></span><span>Orçamento</span></div>
+  <button type="button" id="printQuote" class="primary">Imprimir orçamento</button>
+</header>
+<main class="deck">
+<section class="quote" id="orcamento" aria-label="Orçamento">
+  <div class="q-head">
+    <div class="q-brand"><span class="logo" aria-label="Steevanz">Steevanz<span class="dot">.</span></span><div class="c">www.steevanz.com<br>rcabaco@steevanz.com<br>Telefone e WhatsApp 961 292 679</div></div>
+    <div class="q-title">
+      <div class="display">Orçamento</div>
+      <dl class="q-meta">
+        <dt>N.º</dt><dd contenteditable="true" data-placeholder="ORC-{{ano}}-___">{{numero}}</dd>
+        <dt>Data</dt><dd>{{dataFmt}}</dd>
+        <dt>Válido até</dt><dd>{{validadeFmt}}</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="q-client">
+    <div class="field"><small>Cliente</small><span contenteditable="true" data-placeholder="Nome do cliente / empresa">{{cliente}}</span></div>
+    <div class="field"><small>NIF</small><span contenteditable="true" data-placeholder="NIF do cliente">{{nif}}</span></div>
+    <div class="field"><small>Morada</small><span contenteditable="true" data-placeholder="Morada">{{morada}}</span></div>
+    <div class="field"><small>Contacto</small><span contenteditable="true" data-placeholder="Telefone ou email">{{contacto}}</span></div>
+  </div>
+
+  <table class="qtable">
+    <thead><tr><th>Descrição</th><th class="c">Qtd.</th><th class="r">Preço unit.</th><th class="r">Total</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">Pagamento único</td></tr>
+      <tr><td><b>Landing page</b><small>Até 8 secções, design personalizado e pensada para telemóvel; formulário, WhatsApp e mapa; SEO base e perfil no Google; cookies, privacidade e Livro de Reclamações; 2 rondas de alterações; certificado de segurança. Entrega em 5 dias úteis após os conteúdos.</small></td><td class="c">1</td><td class="r">{{lpPrecoEur}}</td><td class="r">{{lpPrecoEur}}</td></tr>
+      <tr><td><b>Placas de mesa · Menu digital</b><small>Placa circular com QR code impresso e texto personalizado, gravada, bloqueada e testada em iPhone e Android.</small></td><td class="c"><b>{{placasQtd}}</b></td><td class="r">{{placasUnitEur}}</td><td class="r">{{placasBrutoEur}}</td></tr>
+      <tr class="disc" style="{{descontoStyle}}"><td>Desconto de quantidade (a partir de {{placasDe}} placas: {{placasVol}} €/un.)</td><td class="c"></td><td class="r"></td><td class="r">− {{placasDescontoEur}}</td></tr>
+      <tr class="grp"><td colspan="4">Mensalidades · plano anual <span class="rec">Recomendado · {{mesesOferta}} meses grátis</span></td></tr>
+      <tr><td><b>Alojamento e manutenção da landing page</b><small>Alojamento, certificado, monitorização e cópias de segurança, atualizações, até 30 min de pequenas alterações por mês, suporte por WhatsApp e email. <span class="poupa">poupa {{lpPoupa}} €</span></small></td><td class="c">12 meses</td><td class="r">{{lpMensalEur}}/mês</td><td class="r"><s class="cheio">{{lpAnualCheioEur}}</s><br>{{lpAnualEur}}/ano</td></tr>
+      <tr><td><b>Menu digital em vídeo</b><small>Um vídeo vertical por prato com nome, preço e descrição, coleções, ecrã inteiro ao estilo Reels e abertura com o logótipo. Montagem do menu e alojamento do menu e dos vídeos incluídos. <span class="poupa">poupa {{menuPoupa}} €</span></small></td><td class="c">12 meses</td><td class="r">{{menuMensalEur}}/mês</td><td class="r"><s class="cheio">{{menuAnualCheioEur}}</s><br>{{menuAnualEur}}/ano</td></tr>
+      <tr class="note-row"><td colspan="4">Plano anual pago adiantado: 12 meses pelo preço de {{mesesPagos}}. Alternativa: pagamento mensal de {{mensalSubEur}}/mês + IVA, sem período mínimo.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="q-totals">
+    <div class="q-box">
+      <h4>Pagamento único</h4>
+      <div class="q-row"><span>Subtotal</span><span>{{unicoSubEur}}</span></div>
+      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{unicoIvaEur}}</span></div>
+      <div class="q-row t"><span>Total com IVA</span><span>{{unicoTotEur}}</span></div>
+    </div>
+    <div class="q-box rec-box">
+      <h4>Plano anual · recomendado</h4>
+      <div class="q-row"><span>Subtotal</span><span><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano</span></div>
+      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{anualIvaEur}}/ano</span></div>
+      <div class="q-row t"><span>Total com IVA</span><span>{{anualTotEur}}/ano</span></div>
+      <div class="q-save"><span class="poupa">Poupa {{poupanca}} € por ano</span> + IVA ({{poupancaComIvaEur}} com IVA)</div>
+    </div>
+    <div class="q-box">
+      <h4>Ou plano mensal</h4>
+      <div class="q-row"><span>Subtotal</span><span>{{mensalSubEur}}/mês</span></div>
+      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{mensalIvaEur}}/mês</span></div>
+      <div class="q-row t"><span>Total com IVA</span><span>{{mensalTotEur}}/mês</span></div>
+    </div>
+  </div>
+
+  <div class="q-adj">
+    <div class="q-row t"><span>Na adjudicação (plano anual): itens únicos + 1.º ano</span><span>{{adjAnualSubEur}} + IVA {{adjAnualIvaEur}} = {{adjAnualTotEur}}</span></div>
+    <div class="q-row"><span>Com pagamento mensal: itens únicos + 1.ª mensalidade</span><span>{{adjMensalSubEur}} + IVA</span></div>
+  </div>
+
+  <div>
+    <div class="q-sec" style="margin-bottom: 5px;">Condições</div>
+    <ul class="q-cond">
+      <li>Preços em euros, sem IVA. Acresce IVA à taxa legal em vigor ({{ivaPct}}%).</li>
+      <li>Na adjudicação: itens únicos + 1.º ano (plano anual) ou + 1.ª mensalidade (plano mensal).</li>
+      <li>Plano anual pago adiantado: 12 meses pelo preço de {{mesesPagos}}. Renova por mais 12 meses, salvo aviso com 30 dias de antecedência.</li>
+      <li>Plano mensal: pago no início de cada mês, sem período mínimo; cancela com 30 dias de aviso. Ao cancelar o alojamento, entregamos-lhe os ficheiros da página.</li>
+      <li>Domínio e email profissional pagos à parte, diretamente ao fornecedor. O domínio fica sempre em nome do cliente.</li>
+      <li>Landing page entregue em 5 dias úteis após a receção dos conteúdos, com 2 rondas de alterações incluídas.</li>
+      <li>Textos, fotografias e vídeos fornecidos pelo cliente devem ser seus ou ter licença de uso.</li>
+      <li>Preços confirmados nesta proposta. Orçamento válido por {{validadeDias}} dias a contar da data.</li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="q-sec" style="margin-bottom: 12px;">Aceitação</div>
+    <div class="q-sign"><div>Nome</div><div>Assinatura</div><div>Data</div></div>
+  </div>
+
+  <div class="q-foot"><span>Steevanz · www.steevanz.com · rcabaco@steevanz.com · 961 292 679</span><span>Orçamento · página 1 de 1</span></div>
+</section>
+</main>
+<script>document.getElementById("printQuote").addEventListener("click", function () { window.print(); });</script>
+</body>
+</html>

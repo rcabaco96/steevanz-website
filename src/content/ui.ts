@@ -26,7 +26,7 @@ const pt = {
     legalTitle: "Legal",
     contactTitle: "Fale connosco",
     rights: "Todos os direitos reservados.",
-    madeIn: "Feito em Portugal, com os bons modos de sempre.",
+    madeIn: "Feito em Portugal, com os bons modos de antigamente.",
     pricesNote: "Preços sem IVA. Valores indicativos, sujeitos a confirmação na proposta.",
   },
   common: {

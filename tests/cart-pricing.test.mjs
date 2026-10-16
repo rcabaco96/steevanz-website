@@ -8,33 +8,27 @@ function line(productId, quantity, options) {
 
 const menu = (quantity, logo = false) => line("digital-menu", quantity, { format: "round-sticker", logo, text: "" });
 
-describe("digital menu packs", () => {
-  it("charges 15 € for a single plate", () => {
+describe("digital menu plates", () => {
+  it("charges 20 € for a single plate", () => {
     const { oneTime } = priceCart([menu(1)]);
-    assert.equal(oneTime.lines[0].unitCents, 1500);
-    assert.equal(oneTime.subtotalCents, 1500);
+    assert.equal(oneTime.lines[0].unitCents, 2000);
+    assert.equal(oneTime.subtotalCents, 2000);
   });
 
-  it("prices the packs of 5, 10 and 20 at 60 €, 100 € and 180 €", () => {
-    assert.equal(priceCart([menu(5)]).oneTime.subtotalCents, 6000);
-    assert.equal(priceCart([menu(10)]).oneTime.subtotalCents, 10000);
-    assert.equal(priceCart([menu(20)]).oneTime.subtotalCents, 18000);
-  });
-
-  it("keeps the best pack price reached for quantities in between", () => {
-    assert.equal(priceCart([menu(4)]).oneTime.subtotalCents, 4 * 1500);
-    assert.equal(priceCart([menu(7)]).oneTime.subtotalCents, 7 * 1200);
-    assert.equal(priceCart([menu(12)]).oneTime.subtotalCents, 12 * 1000);
-    assert.equal(priceCart([menu(30)]).oneTime.subtotalCents, 30 * 900);
+  it("charges 20 € each up to 9 plates and 15 € each from 10", () => {
+    assert.equal(priceCart([menu(9)]).oneTime.subtotalCents, 9 * 2000);
+    assert.equal(priceCart([menu(10)]).oneTime.subtotalCents, 15000);
+    assert.equal(priceCart([menu(15)]).oneTime.subtotalCents, 22500);
+    assert.equal(priceCart([menu(30)]).oneTime.subtotalCents, 30 * 1500);
   });
 
   it("charges the logo once per line, not per plate", () => {
-    const { oneTime } = priceCart([menu(10, true)]);
-    assert.equal(oneTime.lines[0].unitCents, 1000);
+    const { oneTime } = priceCart([menu(15, true)]);
+    assert.equal(oneTime.lines[0].unitCents, 1500);
     assert.equal(oneTime.lines[0].lineExtraCents, 1000);
-    assert.equal(oneTime.subtotalCents, 11000);
-    assert.equal(oneTime.vatCents, 2530);
-    assert.equal(oneTime.totalCents, 13530);
+    assert.equal(oneTime.subtotalCents, 23500);
+    assert.equal(oneTime.vatCents, 5405);
+    assert.equal(oneTime.totalCents, 28905);
   });
 
   it("ignores packs on products without them", () => {
@@ -68,7 +62,7 @@ describe("other plates", () => {
 
   it("keeps one-off and monthly totals apart", () => {
     const totals = priceCart([menu(5, true), line("loyalty", 1)]);
-    assert.equal(totals.oneTime.subtotalCents, 7000);
+    assert.equal(totals.oneTime.subtotalCents, 11000);
     assert.equal(totals.monthly.subtotalCents, 1900);
   });
 });

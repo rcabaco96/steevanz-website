@@ -1,13 +1,12 @@
 import { unstable_cache } from "next/cache";
-import type { VideoMenuData } from "@/content/demo-menu";
 import { createServiceClient } from "@/lib/supabase/service";
-import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuDishRow, type VideoMenuLinkRow, type VideoMenuRow } from "./rules";
+import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuData, type VideoMenuDishRow, type VideoMenuLinkRow, type VideoMenuRow } from "./rules";
 
 // Reads of the video menus (service role: RLS lets nothing else in). The admin reads fresh rows;
 // the public pages read through the cache below, refreshed by every save in the admin.
 
 export const menuColumns = "id, slug, business_name, logo_url, instagram, review_business_id, active, created_at, updated_at";
-const dishColumns = "id, menu_id, video_id, name, description, price_cents, position";
+const dishColumns = "id, menu_id, name, description, price_cents, position, bunny_video_id, bunny_thumbnail, pending_video_id, pending_video_status";
 const collectionColumns = "id, menu_id, name, position, is_default";
 
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

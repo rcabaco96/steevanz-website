@@ -5,9 +5,10 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionState } from "@/lib/action-state";
 import { AdminAccessError, requireAdmin } from "@/lib/admin/auth";
+import { bunnyConfig, deleteBunnyVideo } from "@/lib/bunny";
 import { imageTypeOf } from "@/lib/establishments/logo-rules";
 import { createServiceClient } from "@/lib/supabase/service";
-import { isLogoUrl, menuPaths, moveItem, parseInstagram, parsePriceCents, parseYouTubeId, slugProblem, type VideoMenuRow } from "./rules";
+import { isLogoUrl, menuPaths, moveItem, parseInstagram, parsePriceCents, slugProblem, type VideoMenuRow } from "./rules";
 import { menuCacheTag, menuColumns, uuidPattern } from "./store";
 
 // Admin: video menus, their dishes and collections. Every change refreshes the menu's public page
@@ -69,6 +70,22 @@ async function findChild(client: ServiceClient, table: "video_menu_dishes" | "vi
   if (!data) throw new MenuMessage(table === "video_menu_dishes" ? "Este prato já não existe." : "Esta coleção já não existe.");
   const row = data as { id: string; menu_id: string; position: number };
   return { row, menu: await findMenu(client, row.menu_id) };
+}
+
+/** The Bunny videos (ready or pending) of a dish or of a whole menu, to delete with them. */
+async function bunnyVideosOf(client: ServiceClient, column: "id" | "menu_id", id: string): Promise<string[]> {
+  if (!bunnyConfig()) return [];
+  const { data, error } = await client.from("video_menu_dishes").select("bunny_video_id, pending_video_id").eq(column, id);
+  if (error) {
+    console.warn("[menus] bunny videos lookup failed:", error.message);
+    return [];
+  }
+  return ((data ?? []) as { bunny_video_id: string | null; pending_video_id: string | null }[]).flatMap((row) => [row.bunny_video_id, row.pending_video_id]).filter((video): video is string => Boolean(video));
+}
+
+/** Best effort: a video Bunny didn't delete only takes space (it no longer shows anywhere). */
+async function deleteBunnyVideos(videos: string[]) {
+  await Promise.all(videos.map((video) => deleteBunnyVideo(video).catch((reason) => console.warn("[menus] bunny video not deleted:", video, reason instanceof Error ? reason.message : reason))));
 }
 
 async function nextPosition(client: ServiceClient, table: "video_menu_dishes" | "video_menu_collections", menuId: string): Promise<number> {
@@ -204,9 +221,11 @@ export async function deleteMenu(_previous: ActionState, formData: FormData): Pr
   const result = await guarded(async () => {
     const client = createServiceClient();
     const menu = await findMenu(client, value(formData, "id"));
+    const videos = await bunnyVideosOf(client, "menu_id", menu.id);
     const { error } = await client.from("video_menus").delete().eq("id", menu.id);
     if (error) fail(error, "deleteMenu");
     await removeOldLogo(client, menu.id, menu.logo_url);
+    await deleteBunnyVideos(videos);
     refresh(menu.slug);
     deleted = true;
     return { ok: true, message: "Menu apagado." };
@@ -218,8 +237,6 @@ export async function deleteMenu(_previous: ActionState, formData: FormData): Pr
 // Dishes -------------------------------------------------------------------------------------------
 
 function dishFields(formData: FormData) {
-  const video_id = parseYouTubeId(value(formData, "video"));
-  if (!video_id) throw new MenuMessage("O vídeo não é do YouTube. Cole o link do Short (ou o código de 11 caracteres).");
   const name = value(formData, "name");
   if (!name) throw new MenuMessage("Indique o nome do prato.");
   if (name.length > 80) throw new MenuMessage("O nome do prato pode ter até 80 caracteres.");
@@ -227,7 +244,7 @@ function dishFields(formData: FormData) {
   if (description.length > 300) throw new MenuMessage("A descrição pode ter até 300 caracteres.");
   const price_cents = parsePriceCents(value(formData, "price"));
   if (price_cents === null) throw new MenuMessage("Indique o preço em euros, por exemplo 4,50.");
-  return { video_id, name, description, price_cents };
+  return { name, description, price_cents };
 }
 
 /** A new dish at the end of the menu, also at the end of the collections ticked in the form. */
@@ -251,7 +268,7 @@ export async function addDish(_previous: ActionState, formData: FormData): Promi
       if (insert.error) fail(insert.error, "addDish collections");
     }
     refresh(menu.slug);
-    return { ok: true, message: `«${fields.name}» adicionado.` };
+    return { ok: true, message: `«${fields.name}» adicionado. Envie o vídeo do prato: só aparece no menu depois disso.` };
   });
 }
 
@@ -267,13 +284,15 @@ export async function updateDish(_previous: ActionState, formData: FormData): Pr
   });
 }
 
-/** Also leaves every collection (the database cascades). */
+/** Also leaves every collection (the database cascades) and deletes its own videos from Bunny. */
 export async function deleteDish(_previous: ActionState, formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const client = createServiceClient();
     const { row, menu } = await findChild(client, "video_menu_dishes", value(formData, "id"));
+    const videos = await bunnyVideosOf(client, "id", row.id);
     const { error } = await client.from("video_menu_dishes").delete().eq("id", row.id);
     if (error) fail(error, "deleteDish");
+    await deleteBunnyVideos(videos);
     refresh(menu.slug);
     return { ok: true, message: "Prato apagado." };
   });

@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { demoMenu } from "../src/content/demo-menu.ts";
 import {
   formatPriceCents,
   initialsLogo,
@@ -10,46 +9,11 @@ import {
   moveItem,
   parseInstagram,
   parsePriceCents,
-  parseYouTubeId,
   priceInputValue,
   slugFromName,
   slugProblem,
   toVideoMenuData,
-  youTubeThumbnail,
 } from "../src/lib/video-menus/rules.ts";
-
-describe("parseYouTubeId", () => {
-  const id = "tzQOn3mU7EA";
-
-  it("takes the id from every link format", () => {
-    for (const link of [
-      `https://www.youtube.com/shorts/${id}`,
-      `https://youtube.com/shorts/${id}?si=abc123`,
-      `youtube.com/shorts/${id}`,
-      `https://m.youtube.com/shorts/${id}/`,
-      `https://www.youtube.com/watch?v=${id}`,
-      `https://www.youtube.com/watch?feature=share&v=${id}&t=10s`,
-      `https://youtu.be/${id}`,
-      `https://youtu.be/${id}?si=xyz`,
-      `https://www.youtube.com/embed/${id}?rel=0`,
-      `https://www.youtube-nocookie.com/embed/${id}`,
-      `https://www.youtube.com/live/${id}`,
-      `  ${id}  `,
-    ]) {
-      assert.equal(parseYouTubeId(link), id, link);
-    }
-  });
-
-  it("refuses what isn't a YouTube video", () => {
-    for (const text of ["", "hello", "tzQOn3mU7E", "tzQOn3mU7EAx", "https://vimeo.com/shorts/tzQOn3mU7EA", "https://www.youtube.com/@channel", "https://www.youtube.com/watch?v=short", "https://www.instagram.com/reel/abc/"]) {
-      assert.equal(parseYouTubeId(text), null, text);
-    }
-  });
-
-  it("gives the thumbnail from YouTube's image servers", () => {
-    assert.equal(youTubeThumbnail(id), `https://i.ytimg.com/vi/${id}/hqdefault.jpg`);
-  });
-});
 
 describe("prices", () => {
   it("reads euros typed the Portuguese way or not", () => {
@@ -136,7 +100,7 @@ describe("instagram and logo", () => {
 
 describe("toVideoMenuData", () => {
   const menu = { business_name: "Café Central", logo_url: null, instagram: "cafecentral" };
-  const dish = (id, position) => ({ id, menu_id: "m", video_id: `video${id.padStart(6, "0")}`, name: `Prato ${id}`, description: "", price_cents: 450 + position, position });
+  const dish = (id, position) => ({ id, menu_id: "m", video_id: null, bunny_video_id: `bunny-${id}`, name: `Prato ${id}`, description: "", price_cents: 450 + position, position });
   const dishes = [dish("b", 1), dish("a", 0), dish("c", 2)];
 
   it("puts the default collection first, drops empty ones and keeps each one's order", () => {
@@ -171,16 +135,17 @@ describe("toVideoMenuData", () => {
     assert.equal(toVideoMenuData(menu, [], [], []), null);
   });
 
-  it("rebuilds the static demo exactly from rows seeded like the migration", () => {
-    const keys = Object.keys(demoMenu.dishes);
-    const dishRows = keys.map((key, position) => {
-      const item = demoMenu.dishes[key];
-      return { id: key, menu_id: "m", video_id: item.video, name: item.name, description: item.description, price_cents: Math.round(item.price * 100), position };
-    });
-    const collectionRows = demoMenu.collections.map((collection, position) => ({ id: collection.id, menu_id: "m", name: collection.name, position, is_default: position === 0 }));
-    const linkRows = demoMenu.collections.flatMap((collection) => collection.dishes.map((dish_id, position) => ({ collection_id: collection.id, dish_id, position })));
-    const data = toVideoMenuData({ business_name: demoMenu.business, logo_url: demoMenu.logo, instagram: demoMenu.instagram }, dishRows, collectionRows, linkRows);
-    assert.deepEqual(data, demoMenu);
+  it("shows only dishes with their own (Bunny) video: none with a YouTube video only, none without a video yet", () => {
+    const own = { ...dish("d", 3), bunny_video_id: "66f1c8d2-bfc3-4bfa-a6c1-58e844e3ffde", bunny_thumbnail: "thumb_540.jpg" };
+    const youTube = { ...dish("e", 4), video_id: "tzQOn3mU7EA", bunny_video_id: null };
+    const none = { ...dish("f", 5), bunny_video_id: null };
+    const links = ["d", "e", "f"].map((dish_id, position) => ({ collection_id: "c1", dish_id, position }));
+    const data = toVideoMenuData(menu, [...dishes, own, youTube, none], [{ id: "c1", menu_id: "m", name: "Doces", position: 0, is_default: true }], links);
+    assert.deepEqual(data.dishes.d, { bunny: own.bunny_video_id, bunnyThumbnail: "thumb_540.jpg", name: "Prato d", description: "", price: 4.53 });
+    assert.equal(data.dishes.e, undefined);
+    assert.equal(data.dishes.f, undefined);
+    assert.deepEqual(data.collections[0].dishes, ["d"]);
+    assert.equal(toVideoMenuData(menu, [youTube, none], [], []), null);
   });
 });
 

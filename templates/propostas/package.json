@@ -1,0 +1,22 @@
+{
+  "name": "steevanz-propostas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gera a proposta (HTML, PDF, PPTX) e o orçamento (HTML, PDF) da Steevanz a partir de um ficheiro de dados.",
+  "type": "commonjs",
+  "scripts": {
+    "html": "node build.js",
+    "pdf": "node pdf.js",
+    "pptx": "node build-pptx.js",
+    "qr": "node verificar-qr.js",
+    "tudo": "node build.js && node pdf.js && node build-pptx.js && node verificar-qr.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "4.0.1",
+    "qrcode": "1.5.4"
+  },
+  "devDependencies": {
+    "jsqr": "1.4.0",
+    "pngjs": "7.0.0"
+  }
+}

@@ -22,7 +22,7 @@ export default async function AdminVideoMenusPage() {
     <>
       <AdminPageHeader
         title="Menus em vídeo"
-        description={menus ? `${menus.length} ${menus.length === 1 ? "menu" : "menus"} · cada prato é um Short do YouTube` : undefined}
+        description={menus ? `${menus.length} ${menus.length === 1 ? "menu" : "menus"} · cada prato com o seu vídeo` : undefined}
         actions={
           <Link href="/admin/menus/novo" className={buttonClasses("primary", "md")}>
             <PlusIcon size={16} />
