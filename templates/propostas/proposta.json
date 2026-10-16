@@ -23,6 +23,7 @@
   "menu": { "mensal": 30 },
   "planoAnual": { "mesesOferta": 2, "recomendado": true },
   "placas": { "quantidade": 15, "precoUnitario": 20, "precoQuantidade": 15, "aPartirDe": 10 },
+  "placasGoogle": { "quantidade": 3, "precoUnitario": 29, "precoPack": 25, "packDe": 3, "logo": 5 },
   "exemplos": {
     "landingTitulo": "A sua página <span class=\"hl\">já está a mexer</span>.",
     "landingEtiqueta": "A página do Dolci e Salati, feita pela Steevanz · Ver ao vivo: steevanz.com/dolci-salati",

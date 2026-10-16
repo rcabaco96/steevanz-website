@@ -289,10 +289,11 @@ function label(s, t, x, y, w) {
     s.addTable([
       [rich("Landing page", "Até 8 secções, 2 rondas de alterações"), cell(v.lpPrecoEur, { align: "right" })],
       [rich(`Placas de mesa · ${v.placasUnit} € por placa`, `${v.placasVol} € por placa a partir de ${v.placasDe} placas`), cell(`${v.placasQtd} × ${v.placasUsado} € = ${v.placasEur}`, { align: "right" })],
+      ...(v.googleStyle ? [] : [[rich(`Placas Google Reviews · ${v.googleNormal} € por placa`, `Pack de ${v.googlePackDe}: ${v.googlePack} € por placa`), cell(`${v.googleQtd} × ${v.googleUsado} € = ${v.googleEur}`, { align: "right" })]]),
       [cell("Subtotal (+ IVA)", sub), cell(v.unicoSubEur, { ...sub, align: "right" })],
       [cell(`IVA ${v.ivaPct}%`, sub), cell(v.unicoIvaEur, { ...sub, align: "right" })],
       [cell("Total com IVA", tot), cell(v.unicoTotEur, { ...tot, align: "right" })],
-    ], { x: 0.9, y: 2.5, w: 5.45, colW: [3.25, 2.2], rowH: [0.7, 0.7, 0.4, 0.4, 0.5] });
+    ], { x: 0.9, y: 2.5, w: 5.45, colW: [3.25, 2.2], rowH: v.googleStyle ? [0.7, 0.7, 0.4, 0.4, 0.5] : [0.62, 0.62, 0.62, 0.36, 0.36, 0.46] });
     card(s, 6.75, 1.95, 5.85, 4.3, C.surface, C.gold);
     sticker(s, `Recomendado · ${v.mesesOferta} meses grátis`, 9.65, 1.72, 2.8, "gold", -3, 11);
     tag(s, `Plano anual · 12 meses pelo preço de ${v.mesesPagos}`, 7.0, 2.15, 4.5);

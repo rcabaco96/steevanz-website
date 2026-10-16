@@ -1,7 +1,8 @@
 import type { Proposal } from "./types.ts";
 
-// Dolci e Salati, quote sent on 15/10/2026. Lines, details and numbers match the PDF the client received:
-// one-off 575 € + IVA 132,25 € = 707,25 €; monthly 45 € + IVA 10,35 € = 55,35 €/mês.
+// Dolci e Salati, quote sent on 15/10/2026, with the 3 Google Reviews plates the client also wanted
+// (owner, 2026-10-16). Lines, details and numbers match the updated PDF:
+// one-off 665 € + IVA 152,95 € = 817,95 €; monthly 45 € + IVA 10,35 € = 55,35 €/mês.
 export const proposal: Proposal = {
   id: "dolci-salati-695graik",
   number: "ORC-2026-001",
@@ -23,6 +24,14 @@ export const proposal: Proposal = {
       quantity: 15,
       unitCents: 2000,
       discount: { description: "Desconto de quantidade (a partir de 10 placas: 15 €/un.)", amountCents: 7500 },
+    },
+    {
+      description: "Placas Google Reviews",
+      detail: "Um toque ou o QR abre a página de avaliação no Google, com o vosso logótipo. Gravadas, bloqueadas e testadas em iPhone e Android.",
+      quantity: 3,
+      // 29 € per plate + 5 € for the logo; the pack of 3 makes it 25 € + 5 €.
+      unitCents: 3400,
+      discount: { description: "Pack de 3 placas: 30 €/un.", amountCents: 1200 },
     },
   ],
   monthly: [
@@ -47,6 +56,7 @@ export const proposal: Proposal = {
   included: [
     "A landing page da Dolci e Salati, feita à medida e pensada primeiro para o telemóvel.",
     "15 placas de mesa: um toque ou o QR abre o Menu digital.",
+    "3 placas Google Reviews: um toque ou o QR abre a página de avaliação da Dolci e Salati no Google.",
     "O Menu digital em vídeo: montamos o menu e alojamos o menu e os vídeos.",
     "Alojamento, manutenção e suporte em português, por pessoas, todos os meses.",
   ],

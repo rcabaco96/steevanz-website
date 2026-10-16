@@ -72,7 +72,7 @@ describe("proposal totals", () => {
 
   it("matches the quote sent to Dolci e Salati", () => {
     const totals = proposalTotals(dolci);
-    assert.deepEqual(totals.oneOff, { subtotalCents: 57500, vatCents: 13225, totalCents: 70725 });
+    assert.deepEqual(totals.oneOff, { subtotalCents: 66500, vatCents: 15295, totalCents: 81795 });
     assert.deepEqual(totals.monthly, { subtotalCents: 4500, vatCents: 1035, totalCents: 5535 });
   });
 
@@ -100,8 +100,8 @@ describe("proposal totals", () => {
   });
 
   it("charges on acceptance the one-off items plus the first year or the first month", () => {
-    assert.deepEqual(dueOnAcceptance(dolci, "annual"), { subtotalCents: 102500, vatCents: 23575, totalCents: 126075 });
-    assert.deepEqual(dueOnAcceptance(dolci, "monthly"), { subtotalCents: 62000, vatCents: 14260, totalCents: 76260 });
+    assert.deepEqual(dueOnAcceptance(dolci, "annual"), { subtotalCents: 111500, vatCents: 25645, totalCents: 137145 });
+    assert.deepEqual(dueOnAcceptance(dolci, "monthly"), { subtotalCents: 71000, vatCents: 16330, totalCents: 87330 });
     assert.equal(dueLabel(dolci, "annual"), "itens únicos + 1.º ano");
     assert.equal(dueLabel(dolci, "monthly"), "itens únicos + 1.ª mensalidade");
   });
@@ -269,8 +269,8 @@ describe("accepting a proposal (emails mocked)", () => {
     assert.equal(rows["Data e hora"], "16/10/2026, 10:05");
     assert.equal(rows.Observações, "Faturar em nome da sociedade.");
     assert.equal(plain(rows.Mensalidades), "Anual, pago adiantado (2 meses grátis): 450 € + IVA/ano");
-    assert.equal(plain(rows["Na adjudicação"]), "1 260,75 € com IVA (itens únicos + 1.º ano)");
-    assert.ok(owner.intro.some((line) => plain(line).includes("1 025 € + IVA 235,75 € = 1 260,75 €")));
+    assert.equal(plain(rows["Na adjudicação"]), "1 371,45 € com IVA (itens únicos + 1.º ano)");
+    assert.ok(owner.intro.some((line) => plain(line).includes("1 115 € + IVA 256,45 € = 1 371,45 €")));
     assert.equal(plain(rows.Poupança), "poupa 90 € + IVA por ano (110,70 € com IVA)");
     assert.deepEqual(
       owner.tables[2].rows.map((row) => plain(row[0]).split("\n")[1]),
@@ -278,7 +278,7 @@ describe("accepting a proposal (emails mocked)", () => {
     );
     assert.equal(owner.adminUrl, "https://www.steevanz.com/proposta/dolci-salati-695graik");
     const tables = owner.tables.map((table) => ({ title: table.title, foot: table.foot.map(([label, value]) => [label, plain(value)]) }));
-    assert.deepEqual(tables[0].foot.at(-1), ["Total com IVA", "707,25 €"]);
+    assert.deepEqual(tables[0].foot.at(-1), ["Total com IVA", "817,95 €"]);
     assert.deepEqual(tables[1].foot.at(-1), ["Total com IVA", "55,35 €/mês"]);
     assert.deepEqual(tables[2].foot.at(-1), ["Total com IVA", "553,50 €/ano"]);
 
@@ -289,7 +289,7 @@ describe("accepting a proposal (emails mocked)", () => {
     assert.equal(client.replyTo, "rcabaco@steevanz.com");
     assert.match(client.heading, /Obrigado, Dolci e Salati! Está feito\./);
     assert.ok(client.intro.some((line) => /entra em contacto em breve/.test(line)));
-    assert.ok(client.intro.some((line) => plain(line).includes("1.º ano (plano anual, 2 meses grátis): 1 025 € + IVA 235,75 € = 1 260,75 €")));
+    assert.ok(client.intro.some((line) => plain(line).includes("1.º ano (plano anual, 2 meses grátis): 1 115 € + IVA 256,45 € = 1 371,45 €")));
     assert.match(plain(client.rows.find((row) => row.label === "Mensalidades").value), /Anual/);
     assert.match(client.note, /bons modos de antigamente/);
     assert.ok(client.intro.some((line) => plain(line).includes("poupa 90 € + IVA por ano (110,70 € com IVA)")));
@@ -300,10 +300,10 @@ describe("accepting a proposal (emails mocked)", () => {
     await processAcceptance(dolci, form({ plan: "monthly" }), { status: "idle" }, d);
     const rows = Object.fromEntries(sent[0].rows.map((row) => [row.label, row.value]));
     assert.equal(plain(rows.Mensalidades), "Mensal: 45 € + IVA/mês");
-    assert.equal(plain(rows["Na adjudicação"]), "762,60 € com IVA (itens únicos + 1.ª mensalidade)");
+    assert.equal(plain(rows["Na adjudicação"]), "873,30 € com IVA (itens únicos + 1.ª mensalidade)");
     assert.equal(sent[0].tables.length, 2);
     assert.equal(rows.Poupança, null);
-    assert.ok(later[0].intro.some((line) => plain(line).includes("1.ª mensalidade: 620 € + IVA 142,60 € = 762,60 €")));
+    assert.ok(later[0].intro.some((line) => plain(line).includes("1.ª mensalidade: 710 € + IVA 163,30 € = 873,30 €")));
   });
 
   it("ignores amounts sent with the form", async () => {
@@ -312,7 +312,7 @@ describe("accepting a proposal (emails mocked)", () => {
     data.set("total", "1");
     data.set("unitCents", "1");
     await processAcceptance(dolci, data, { status: "idle" }, d);
-    assert.equal(plain(Object.fromEntries(sent[0].rows.map((row) => [row.label, row.value]))["Na adjudicação"]), "1 260,75 € com IVA (itens únicos + 1.º ano)");
+    assert.equal(plain(Object.fromEntries(sent[0].rows.map((row) => [row.label, row.value]))["Na adjudicação"]), "1 371,45 € com IVA (itens únicos + 1.º ano)");
   });
 
   it("does not thank the client when the owner email fails", async () => {
@@ -356,6 +356,8 @@ describe("accepting a proposal (emails mocked)", () => {
         ["Landing page", "1", "350 €"],
         ["Placas de mesa · Menu digital", "15 × 20 €", "300 €"],
         ["Desconto de quantidade (a partir de 10 placas: 15 €/un.)", "", "− 75 €"],
+        ["Placas Google Reviews", "3 × 34 €", "102 €"],
+        ["Pack de 3 placas: 30 €/un.", "", "− 12 €"],
       ],
     );
   });

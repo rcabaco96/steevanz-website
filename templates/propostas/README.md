@@ -38,6 +38,7 @@ npm install
    | `planoAnual.mesesOferta` | Meses oferecidos no plano anual pago adiantado (2 = «12 meses pelo preço de 10»). Calcula o preço anual, o preço riscado (×12) e a poupança de cada linha e do total |
    | `placas.quantidade` | Número de placas |
    | `placas.precoUnitario`, `placas.precoQuantidade`, `placas.aPartirDe` | Preço normal por placa, preço de quantidade e a partir de quantas placas se aplica |
+   | `placasGoogle` | Opcional. Placas Google Reviews: `quantidade`, `precoUnitario` (preço por placa), `precoPack` e `packDe` (preço do pack a partir de N placas) e `logo` (acréscimo por placa com o logótipo). Sem este campo, não aparecem |
    | `placa` | Logótipo do cliente, endereço do menu (QR das placas) e cores das placas: `cor` (placa plana), `corImpressao` (impressão na placa creme), `corRelevoSombra`, `corSecundaria` (ícone «toque»), `creme`, `base` |
    | `exemplos` | Títulos e legendas dos diapositivos de exemplo (opcional; sem este campo usam-se textos genéricos) |
 

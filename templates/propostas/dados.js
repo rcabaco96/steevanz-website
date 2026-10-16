@@ -38,7 +38,15 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
   const placasBruto = p.quantidade * p.precoUnitario;
   const desconto = placasBruto - p.quantidade * unitario;
   const placas = placasBruto - desconto;
-  const unicoSub = d.landingPage.preco + placas;
+  // Placas Google Reviews (opcional): preço por placa, preço do pack a partir de N placas e o logótipo por placa.
+  const g = d.placasGoogle && d.placasGoogle.quantidade > 0 ? d.placasGoogle : null;
+  const gLogo = g ? g.logo || 0 : 0;
+  const gNormal = g ? g.precoUnitario + gLogo : 0;
+  const gUsado = g ? (g.quantidade >= g.packDe ? g.precoPack : g.precoUnitario) + gLogo : 0;
+  const gBruto = g ? g.quantidade * gNormal : 0;
+  const gDesconto = g ? gBruto - g.quantidade * gUsado : 0;
+  const google = gBruto - gDesconto;
+  const unicoSub = d.landingPage.preco + placas + google;
   const unicoIva = round(unicoSub * d.iva);
   const mensalSub = d.landingPage.mensal + d.menu.mensal;
   const mensalIva = round(mensalSub * d.iva);
@@ -86,6 +94,18 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
     placasEur: eur(placas),
     temDesconto: desconto > 0,
     descontoStyle: desconto > 0 ? "" : "display: none",
+    googleStyle: g ? "" : "display: none",
+    googleDescontoStyle: gDesconto > 0 ? "" : "display: none",
+    googleQtd: g ? String(g.quantidade) : "0",
+    googleNormal: num(gNormal),
+    googleNormalEur: eur(gNormal),
+    googleUsado: num(gUsado),
+    googleBrutoEur: eur(gBruto),
+    googleDescontoEur: eur(gDesconto),
+    googleEur: eur(google),
+    googlePack: g ? num(g.precoPack + gLogo) : "",
+    googlePackDe: g ? String(g.packDe) : "",
+    googleComLogo: gLogo > 0 ? ", com o vosso logótipo" : "",
     unicoSubEur: eur(unicoSub),
     unicoIvaEur: eur(unicoIva),
     unicoTotEur: eur(unicoSub + unicoIva),
