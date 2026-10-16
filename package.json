@@ -6,7 +6,9 @@
     "node": ">=24"
   },
   "scripts": {
+    "predev": "node scripts/hls-worker.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/hls-worker.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

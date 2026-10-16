@@ -415,6 +415,8 @@ export function VideoPool({
   });
 
   useEffect(() => {
+    // No box to follow (the dishes on screen play their own videos): nothing to do as the page scrolls.
+    if (!targets.length) return;
     const observer = new ResizeObserver(() => place());
     for (const target of targets) if (target.element) observer.observe(target.element);
     window.addEventListener("resize", place);

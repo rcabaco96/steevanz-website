@@ -75,6 +75,11 @@ const nextConfig: NextConfig = {
         source: "/media/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      // hls.js's worker, in a folder named after its version (scripts/hls-worker.mjs).
+      {
+        source: "/hls/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
 };

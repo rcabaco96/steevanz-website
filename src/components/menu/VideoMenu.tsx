@@ -66,7 +66,8 @@ const DishCard = memo(function DishCard({
   id: string;
   order: number;
   dish: MenuDish;
-  onSeen: (id: string, order: number, ratio: number) => void;
+  /** How much of it is on screen, for the pool's YouTube players (none when no dish of the menu uses them). */
+  onSeen?: (id: string, order: number, ratio: number) => void;
   onBox: (id: string, box: HTMLDivElement | null) => void;
   onOpen: (order: number) => void;
 }) {
@@ -74,7 +75,7 @@ const DishCard = memo(function DishCard({
   useEffect(() => {
     const element = holder.current;
     onBox(id, element);
-    if (!element) return;
+    if (!element || !onSeen) return () => onBox(id, null);
     const observer = new IntersectionObserver(([entry]) => onSeen(id, order, entry.intersectionRatio), { threshold: [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] });
     observer.observe(element);
     return () => {
@@ -202,6 +203,9 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
     const first = firstDishes.slice(0, 4).flatMap((dish) => (!hasBunnyVideo(dish.bunny) && dish.video ? [dish.video] : []));
     return { first, pictures: pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture)) };
   });
+  // Some dish plays on YouTube (the pool's players). Else none of the pool's work is done: every dish
+  // plays its own video in its card (the demo menu, 2026-10-16).
+  const hasPool = useMemo(() => Object.values(menu.dishes).some((dish) => usesPool(dish)), [menu.dishes]);
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
   const [drag, setDrag] = useState(0);
@@ -250,6 +254,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
   // Which way the page last scrolled (the row ahead is below, or above).
   const scrollingUp = useRef(false);
   useEffect(() => {
+    if (!hasPool) return;
     let last = window.scrollY;
     const onScroll = () => {
       if (window.scrollY !== last) scrollingUp.current = window.scrollY < last;
@@ -257,7 +262,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [hasPool]);
   const seen = useCallback((key: string, order: number, ratio: number) => {
     ratios.current.set(key, { order, ratio });
     window.clearTimeout(focusTimer.current);
@@ -394,13 +399,13 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
       setSwitching(null);
       closeSheet();
     };
-    if (focus.visible.length && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`))) {
+    if (!hasPool || (focus.visible.length && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`)))) {
       done();
       return;
     }
     const timer = window.setTimeout(done, switchWaitMs);
     return () => window.clearTimeout(timer);
-  }, [switching, focus, ready, closeSheet, menu.dishes]);
+  }, [switching, focus, ready, closeSheet, menu.dishes, hasPool]);
 
   // Dragging the panel to the right closes it, following the finger (vertical moves scroll its list).
   const onSheetTouchStart = (event: TouchEvent) => {
@@ -438,7 +443,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         logo={menu.logo}
         business={menu.business}
         pictures={opening.pictures}
-        ready={focus.visible.length > 0 && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`))}
+        ready={!hasPool || (focus.visible.length > 0 && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`)))}
         onDone={opened}
       />
       <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
@@ -467,7 +472,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={setViewer} />
+            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={hasPool ? seen : undefined} onBox={onBox} onOpen={setViewer} />
           ))}
         </ul>
         {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
@@ -553,7 +558,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
           onClose={closeViewer}
         />
       ) : null}
-      <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} first={opening.first} />
+      {hasPool ? <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} first={opening.first} /> : null}
     </div>
   );
 }
