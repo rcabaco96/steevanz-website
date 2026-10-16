@@ -191,6 +191,8 @@ export interface VideoMenuRow {
   instagram: string | null;
   review_business_id: string | null;
   active: boolean;
+  /** Ordering from the table links (/m/<token>); off by default. */
+  ordering_enabled?: boolean;
   created_at: string;
   updated_at: string;
 }

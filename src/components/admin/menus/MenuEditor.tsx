@@ -4,6 +4,7 @@ import { DishForm } from "@/components/admin/menus/DishForm";
 import { DishVideoUpload } from "@/components/admin/menus/DishVideoUpload";
 import { MenuDetailsForm } from "@/components/admin/menus/MenuDetailsForm";
 import { MenuStateBadge, MoveButtons } from "@/components/admin/menus/MenuBits";
+import { MenuTables } from "@/components/admin/menus/MenuTables";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { AdminPageHeader, EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { ArrowUpRight, PlusIcon } from "@/components/icons";
@@ -18,15 +19,28 @@ import {
   setDefaultCollection,
 } from "@/lib/video-menus/actions";
 import { dishPicture, formatPriceCents, menuPublicPath } from "@/lib/video-menus/rules";
-import type { AdminMenu } from "@/lib/video-menus/store";
+import type { AdminMenu, AdminMenuTable } from "@/lib/video-menus/store";
 
 const summaryClasses = "inline-flex min-h-10 cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-muted hover:text-text [&::-webkit-details-marker]:hidden";
 
 /**
  * A menu's admin page: its details, the dishes (add, edit, order, delete) and the collections
- * (create, rename, order, default, delete, and which dishes each shows in what order).
+ * (create, rename, order, default, delete, and which dishes each shows in what order), and ordering
+ * at the table (the switch and the tables, with their links and QR codes).
  */
-export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: { id: string; name: string }[] }) {
+export function MenuEditor({
+  data,
+  businesses,
+  tables,
+  origin,
+}: {
+  data: AdminMenu;
+  businesses: { id: string; name: string }[];
+  /** For ordering at the table. */
+  tables: AdminMenuTable[];
+  /** The site's address, for the tables' links. */
+  origin: string;
+}) {
   const { menu, dishes, collections, links } = data;
   const publicPath = menuPublicPath(menu.slug);
   const collectionNames = new Map(collections.map((collection) => [collection.id, collection.name]));
@@ -218,6 +232,10 @@ export function MenuEditor({ data, businesses }: { data: AdminMenu; businesses: 
             <EmptyState>Sem coleções, o menu mostra todos os pratos numa lista «Todos».</EmptyState>
           )}
         </div>
+      </Panel>
+
+      <Panel title={`Pedidos e mesas (${tables.length})`}>
+        <MenuTables menuId={menu.id} enabled={Boolean(menu.ordering_enabled)} tables={tables} origin={origin} />
       </Panel>
 
       <Panel title="Apagar menu">

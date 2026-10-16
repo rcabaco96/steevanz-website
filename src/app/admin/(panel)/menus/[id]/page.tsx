@@ -4,7 +4,8 @@ import { MenusNotReady } from "@/components/admin/menus/MenuBits";
 import { MenuEditor } from "@/components/admin/menus/MenuEditor";
 import { EmptyState } from "@/components/backoffice/ui";
 import { requireAdmin } from "@/lib/admin/auth";
-import { getAdminMenu, listReviewBusinessOptions, MenusNotReadyError, type AdminMenu } from "@/lib/video-menus/store";
+import { requestOrigin } from "@/lib/booking/request";
+import { getAdminMenu, listMenuTables, listReviewBusinessOptions, MenusNotReadyError, type AdminMenu } from "@/lib/video-menus/store";
 
 export const metadata: Metadata = { title: "Menu em vídeo" };
 
@@ -31,6 +32,6 @@ export default async function AdminVideoMenuPage({ params }: PageProps<"/admin/m
       </>
     );
   }
-  const businesses = await listReviewBusinessOptions();
-  return <MenuEditor data={data} businesses={businesses} />;
+  const [businesses, tables, origin] = await Promise.all([listReviewBusinessOptions(), listMenuTables(data.menu.id), requestOrigin()]);
+  return <MenuEditor data={data} businesses={businesses} tables={tables} origin={origin} />;
 }

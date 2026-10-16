@@ -5,7 +5,7 @@ import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuData, type 
 // Reads of the video menus (service role: RLS lets nothing else in). The admin reads fresh rows;
 // the public pages read through the cache below, refreshed by every save in the admin.
 
-export const menuColumns = "id, slug, business_name, logo_url, instagram, review_business_id, active, created_at, updated_at";
+export const menuColumns = "id, slug, business_name, logo_url, instagram, review_business_id, active, ordering_enabled, created_at, updated_at";
 const dishColumns = "id, menu_id, name, description, price_cents, position, bunny_video_id, bunny_thumbnail, pending_video_id, pending_video_status";
 const collectionColumns = "id, menu_id, name, position, is_default";
 
@@ -78,6 +78,25 @@ export async function getAdminMenu(id: string): Promise<AdminMenu | null> {
   const { data, error } = await createServiceClient().from("video_menus").select(menuColumns).eq("id", id).maybeSingle();
   if (error) fail(error, "getAdminMenu");
   return data ? loadMenuParts(data as VideoMenuRow) : null;
+}
+
+export interface AdminMenuTable {
+  id: string;
+  name: string;
+  token: string;
+  position: number;
+}
+
+/** Admin: a menu's tables (for ordering at the table), in their order. */
+export async function listMenuTables(menuId: string): Promise<AdminMenuTable[]> {
+  const { data, error } = await createServiceClient()
+    .from("video_menu_tables")
+    .select("id, name, token, position")
+    .eq("menu_id", menuId)
+    .order("position")
+    .order("created_at");
+  if (error) fail(error, "listMenuTables");
+  return (data ?? []) as AdminMenuTable[];
 }
 
 /** Review businesses the menu may be linked to (optional; to know whose menu it is). */
