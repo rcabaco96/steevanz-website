@@ -8,7 +8,7 @@ import { AdminAccessError, requireAdmin } from "@/lib/admin/auth";
 import { bunnyConfig, deleteBunnyVideo } from "@/lib/bunny";
 import { imageTypeOf } from "@/lib/establishments/logo-rules";
 import { createServiceClient } from "@/lib/supabase/service";
-import { isLogoUrl, menuPaths, moveItem, parseInstagram, parsePriceCents, parseYouTubeId, slugProblem, type VideoMenuRow } from "./rules";
+import { isLogoUrl, menuPaths, moveItem, parseInstagram, parsePriceCents, slugProblem, type VideoMenuRow } from "./rules";
 import { menuCacheTag, menuColumns, uuidPattern } from "./store";
 
 // Admin: video menus, their dishes and collections. Every change refreshes the menu's public page
@@ -237,10 +237,6 @@ export async function deleteMenu(_previous: ActionState, formData: FormData): Pr
 // Dishes -------------------------------------------------------------------------------------------
 
 function dishFields(formData: FormData) {
-  // Optional: the dish's own video is sent after it's created («Enviar vídeo»).
-  const video = value(formData, "video");
-  const video_id = video ? parseYouTubeId(video) : null;
-  if (video && !video_id) throw new MenuMessage("O link não é de um vídeo do YouTube. Cole o link do Short (ou o código de 11 caracteres), ou deixe em branco.");
   const name = value(formData, "name");
   if (!name) throw new MenuMessage("Indique o nome do prato.");
   if (name.length > 80) throw new MenuMessage("O nome do prato pode ter até 80 caracteres.");
@@ -248,7 +244,7 @@ function dishFields(formData: FormData) {
   if (description.length > 300) throw new MenuMessage("A descrição pode ter até 300 caracteres.");
   const price_cents = parsePriceCents(value(formData, "price"));
   if (price_cents === null) throw new MenuMessage("Indique o preço em euros, por exemplo 4,50.");
-  return { video_id, name, description, price_cents };
+  return { name, description, price_cents };
 }
 
 /** A new dish at the end of the menu, also at the end of the collections ticked in the form. */
@@ -272,7 +268,7 @@ export async function addDish(_previous: ActionState, formData: FormData): Promi
       if (insert.error) fail(insert.error, "addDish collections");
     }
     refresh(menu.slug);
-    return { ok: true, message: fields.video_id ? `«${fields.name}» adicionado.` : `«${fields.name}» adicionado. Envie o vídeo do prato: só aparece no menu depois disso.` };
+    return { ok: true, message: `«${fields.name}» adicionado. Envie o vídeo do prato: só aparece no menu depois disso.` };
   });
 }
 

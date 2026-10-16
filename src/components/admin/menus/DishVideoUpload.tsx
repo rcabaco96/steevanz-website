@@ -47,15 +47,12 @@ export function DishVideoUpload({
   dishName,
   bunnyVideoId,
   pendingStatus,
-  hasYouTube,
   thumbnail,
 }: {
   dishId: string;
   dishName: string;
   bunnyVideoId: string | null;
   pendingStatus: "uploading" | "processing" | "failed" | null;
-  /** The dish also has a YouTube video (shown until its own is ready). */
-  hasYouTube: boolean;
   /** The video's small picture (file name on Bunny). */
   thumbnail?: string | null;
 }) {
@@ -142,9 +139,7 @@ export function DishVideoUpload({
                 ? "Há um envio por terminar. Escolha o mesmo ficheiro para continuar."
                 : bunnyVideoId
                   ? "Vídeo próprio ativo no menu."
-                  : hasYouTube
-                    ? "Sem vídeo próprio: o menu usa o vídeo do YouTube."
-                    : "Sem vídeo: o prato só aparece no menu depois de o enviar.";
+                  : "Sem vídeo: o prato só aparece no menu depois de o enviar.";
 
   return (
     <div className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3">

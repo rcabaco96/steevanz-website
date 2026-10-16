@@ -9,46 +9,11 @@ import {
   moveItem,
   parseInstagram,
   parsePriceCents,
-  parseYouTubeId,
   priceInputValue,
   slugFromName,
   slugProblem,
   toVideoMenuData,
-  youTubeThumbnail,
 } from "../src/lib/video-menus/rules.ts";
-
-describe("parseYouTubeId", () => {
-  const id = "tzQOn3mU7EA";
-
-  it("takes the id from every link format", () => {
-    for (const link of [
-      `https://www.youtube.com/shorts/${id}`,
-      `https://youtube.com/shorts/${id}?si=abc123`,
-      `youtube.com/shorts/${id}`,
-      `https://m.youtube.com/shorts/${id}/`,
-      `https://www.youtube.com/watch?v=${id}`,
-      `https://www.youtube.com/watch?feature=share&v=${id}&t=10s`,
-      `https://youtu.be/${id}`,
-      `https://youtu.be/${id}?si=xyz`,
-      `https://www.youtube.com/embed/${id}?rel=0`,
-      `https://www.youtube-nocookie.com/embed/${id}`,
-      `https://www.youtube.com/live/${id}`,
-      `  ${id}  `,
-    ]) {
-      assert.equal(parseYouTubeId(link), id, link);
-    }
-  });
-
-  it("refuses what isn't a YouTube video", () => {
-    for (const text of ["", "hello", "tzQOn3mU7E", "tzQOn3mU7EAx", "https://vimeo.com/shorts/tzQOn3mU7EA", "https://www.youtube.com/@channel", "https://www.youtube.com/watch?v=short", "https://www.instagram.com/reel/abc/"]) {
-      assert.equal(parseYouTubeId(text), null, text);
-    }
-  });
-
-  it("gives the thumbnail from YouTube's image servers", () => {
-    assert.equal(youTubeThumbnail(id), `https://i.ytimg.com/vi/${id}/hqdefault.jpg`);
-  });
-});
 
 describe("prices", () => {
   it("reads euros typed the Portuguese way or not", () => {

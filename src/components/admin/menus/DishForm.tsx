@@ -5,7 +5,7 @@ import { FormMessage, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import type { ActionState } from "@/lib/action-state";
 import { addDish, updateDish } from "@/lib/video-menus/actions";
-import { dishPicture, formatPriceCents, parsePriceCents, parseYouTubeId, priceInputValue, type VideoMenuDishRow } from "@/lib/video-menus/rules";
+import { dishPicture, formatPriceCents, parsePriceCents, priceInputValue, type VideoMenuDishRow } from "@/lib/video-menus/rules";
 
 const input = `${adminInputClasses} h-11`;
 
@@ -18,13 +18,11 @@ interface DishFormProps {
 }
 
 /**
- * A dish: name, description, price in euros and, optionally, a YouTube Short (any link or the id;
- * the picture shows at once from YouTube's image servers). Its own video is sent apart («Enviar
- * vídeo», Bunny Stream) and wins over the YouTube one. The fields are the component's own, so a refused
+ * A dish: name, description and price in euros; its video is sent apart («Enviar vídeo», Bunny Stream;
+ * no YouTube since 2026-10-16, owner: «não vamos usar mais isso»). The fields are the component's own, so a refused
  * save keeps what was typed; adding empties them for the next dish.
  */
 export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
-  const [video, setVideo] = useState(dish?.video_id ?? "");
   const [name, setName] = useState(dish?.name ?? "");
   const [description, setDescription] = useState(dish?.description ?? "");
   const [price, setPrice] = useState(dish ? priceInputValue(dish.price_cents) : "");
@@ -33,7 +31,6 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
   const [state, formAction] = useActionState(async (previous: ActionState, formData: FormData) => {
     const result = await (dish ? updateDish : addDish)(previous, formData);
     if (result?.ok && !dish) {
-      setVideo("");
       setName("");
       setDescription("");
       setPrice("");
@@ -41,10 +38,8 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
     return result;
   }, null);
 
-  const videoId = video.trim() ? parseYouTubeId(video) : null;
-  const picture = dishPicture({ video_id: videoId, bunny_video_id: dish?.bunny_video_id, bunny_thumbnail: dish?.bunny_thumbnail });
+  const picture = dish ? dishPicture(dish) : null;
   const priceCents = price.trim() ? parsePriceCents(price) : null;
-  const fieldId = dish?.id ?? `new-${menuId}`;
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
@@ -53,39 +48,14 @@ export function DishForm({ menuId, dish, collections = [] }: DishFormProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div className="relative aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2 sm:w-28">
           {picture ? (
-            // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny or YouTube)
+            // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny)
             <img key={picture} src={picture} alt="Imagem do vídeo" className="absolute inset-0 h-full w-full object-cover" />
           ) : (
-            <span className="absolute inset-0 grid place-items-center px-2 text-center text-xs text-subtle">{video.trim() && !videoId ? "Link inválido" : "Sem vídeo"}</span>
+            <span className="absolute inset-0 grid place-items-center px-2 text-center text-xs text-subtle">Sem vídeo</span>
           )}
         </div>
         <div className="grid min-w-0 flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
-          <label className={`${adminLabelClasses} sm:col-span-2`}>
-            Vídeo do YouTube (opcional)
-            <input
-              name="video"
-              maxLength={300}
-              inputMode="url"
-              autoComplete="off"
-              autoCapitalize="none"
-              spellCheck={false}
-              placeholder="https://youtube.com/shorts/…"
-              value={video}
-              onChange={(event) => setVideo(event.target.value)}
-              aria-invalid={video.trim() && !videoId ? true : undefined}
-              aria-describedby={`${fieldId}-video-hint`}
-              className={input}
-            />
-            <span id={`${fieldId}-video-hint`} className={`text-xs font-normal ${video.trim() && !videoId ? "text-danger" : "text-subtle"}`}>
-              {videoId
-                ? `Vídeo ${videoId}${dish?.bunny_video_id ? " (o menu mostra o vídeo enviado)" : ""}`
-                : video.trim()
-                  ? "Não é um link de vídeo do YouTube."
-                  : dish
-                    ? "Sem link: o menu usa o vídeo enviado em «Enviar vídeo»."
-                    : "Pode ficar em branco: depois de adicionar o prato, envie o vídeo dele em «Enviar vídeo»."}
-            </span>
-          </label>
+          {dish ? null : <p className="text-sm text-muted sm:col-span-2">Depois de adicionar o prato, envie o vídeo dele em «Enviar vídeo»: o prato aparece no menu quando o vídeo estiver pronto.</p>}
           <label className={adminLabelClasses}>
             Nome
             <input name="name" required maxLength={80} autoComplete="off" placeholder="Tosta de queijo" value={name} onChange={(event) => setName(event.target.value)} className={input} />

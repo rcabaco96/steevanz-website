@@ -33,45 +33,6 @@ export interface VideoMenuData {
   collections: MenuCollection[];
 }
 
-// YouTube ------------------------------------------------------------------------------------------
-
-const videoIdPattern = /^[A-Za-z0-9_-]{11}$/;
-
-export function isYouTubeId(value: string): boolean {
-  return videoIdPattern.test(value);
-}
-
-/**
- * The 11-character video id from whatever the owner pastes: the id itself or a link in any of
- * YouTube's formats (shorts/, watch?v=, youtu.be/, embed/, live/, with or without https, www or m.).
- * Null when it isn't a YouTube video.
- */
-export function parseYouTubeId(input: string): string | null {
-  const text = input.trim();
-  if (isYouTubeId(text)) return text;
-  let url: URL;
-  try {
-    url = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(text) ? text : `https://${text}`);
-  } catch {
-    return null;
-  }
-  const host = url.hostname.toLowerCase().replace(/^(www|m|music)\./, "");
-  let candidate: string | null = null;
-  if (host === "youtu.be") {
-    candidate = url.pathname.split("/")[1] ?? null;
-  } else if (host === "youtube.com" || host === "youtube-nocookie.com") {
-    const fromQuery = url.searchParams.get("v");
-    const fromPath = url.pathname.match(/^\/(?:shorts|embed|live|v|e)\/([^/]+)/)?.[1];
-    candidate = url.pathname === "/watch" ? fromQuery : (fromPath ?? null);
-  }
-  return candidate && isYouTubeId(candidate) ? candidate : null;
-}
-
-/** The video's picture, straight from YouTube's image servers (no API, no key). */
-export function youTubeThumbnail(videoId: string): string {
-  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-}
-
 // Bunny Stream -------------------------------------------------------------------------------------
 
 /**
@@ -96,9 +57,9 @@ export function bunnyThumbnail(videoId: string, file?: string | null): string | 
   return pullZone ? `https://${pullZone}.b-cdn.net/${videoId}/${file || "thumbnail.jpg"}` : null;
 }
 
-/** A dish's picture: its own (Bunny) video's when it has one, else its YouTube video's; null with neither. */
-export function dishPicture(dish: { video_id: string | null; bunny_video_id?: string | null; bunny_thumbnail?: string | null }): string | null {
-  return (dish.bunny_video_id ? bunnyThumbnail(dish.bunny_video_id, dish.bunny_thumbnail) : null) ?? (dish.video_id ? youTubeThumbnail(dish.video_id) : null);
+/** A dish's picture: its own (Bunny) video's; null without one yet. */
+export function dishPicture(dish: { bunny_video_id?: string | null; bunny_thumbnail?: string | null }): string | null {
+  return dish.bunny_video_id ? bunnyThumbnail(dish.bunny_video_id, dish.bunny_thumbnail) : null;
 }
 
 // Prices -------------------------------------------------------------------------------------------
@@ -237,13 +198,11 @@ export interface VideoMenuRow {
 export interface VideoMenuDishRow {
   id: string;
   menu_id: string;
-  /** YouTube video id; optional since the dishes have their own videos (owner, 2026-10-15). */
-  video_id: string | null;
   name: string;
   description: string;
   price_cents: number;
   position: number;
-  /** Its own video on Bunny Stream (played instead of the YouTube one), and an upload in progress. */
+  /** Its own video on Bunny Stream, and an upload in progress. */
   bunny_video_id?: string | null;
   /** The small picture of the Bunny video (file name on Bunny); null: its thumbnail.jpg. */
   bunny_thumbnail?: string | null;

@@ -7,7 +7,7 @@ import { uuidPattern } from "@/lib/video-menus/store";
 /**
  * Admin: starts (or resumes) the upload of a dish's own video to Bunny Stream and answers the TUS
  * credentials. An upload still marked «uploading» is signed again for the same video (so it can
- * resume); otherwise a stale pending video is deleted and a new one created. The dish's YouTube
+ * resume); otherwise a stale pending video is deleted and a new one created. The dish's current
  * video stays as it is: the Bunny one only replaces it on the menu once it's ready (webhook).
  */
 export async function POST(_request: Request, ctx: RouteContext<"/api/dishes/[dishId]/video">) {

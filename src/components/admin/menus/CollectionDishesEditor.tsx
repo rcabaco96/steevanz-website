@@ -11,7 +11,7 @@ import { formatPriceCents, moveItem } from "@/lib/video-menus/rules";
 interface EditorDish {
   id: string;
   name: string;
-  /** Its video's picture (Bunny or YouTube); null without a video yet. */
+  /** Its video's picture (Bunny); null without a video yet. */
   picture: string | null;
   price_cents: number;
 }
@@ -63,7 +63,7 @@ export function CollectionDishesEditor({ collectionId, dishes, selected }: { col
               <li key={id} className="flex items-center gap-2 p-2 sm:pl-3">
                 <span className="hidden w-5 shrink-0 text-right text-xs tabular-nums text-subtle sm:block">{index + 1}</span>
                 {dish.picture ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny or YouTube)
+                  // eslint-disable-next-line @next/next/no-img-element -- the video's own picture (Bunny)
                   <img src={dish.picture} alt="" width={36} height={48} loading="lazy" className="h-12 w-9 shrink-0 rounded-md bg-surface-2 object-cover" />
                 ) : (
                   <span aria-hidden="true" className="h-12 w-9 shrink-0 rounded-md bg-surface-2" />
