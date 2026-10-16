@@ -269,10 +269,9 @@ function OrderQr({ token }: { token: string }) {
   );
 }
 
-/** A line of the cart: − quantity +, remove, and its note. */
+/** A line of the cart: − quantity +, remove, and its note (the field always shown; owner, 2026-10-16). */
 function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | undefined; onChange: (line: string, update: { quantity?: number; note?: string }) => void }) {
   const [draft, setDraft] = useState<string | null>(null);
-  const [noteOpen, setNoteOpen] = useState(false);
   const timer = useRef<number | undefined>(undefined);
   const pending = line.id.startsWith("pending-");
   const picture = dish ? bunnyThumbnail(dish.bunny, dish.bunnyThumbnail) : null;
@@ -293,14 +292,6 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
         <div className="min-w-0 flex-1">
           <p className="text-sm leading-snug font-semibold text-text">{line.name || dish?.name}</p>
           <p className="text-xs text-muted">{money(line.priceCents)} cada</p>
-          {line.note && !noteOpen ? (
-            <button type="button" onClick={() => setNoteOpen(true)} className="mt-1 max-w-full text-left text-xs text-text">
-              <span className="font-semibold" style={{ color: "var(--menu-accent)" }}>
-                Nota:
-              </span>{" "}
-              <span className="break-words">{line.note}</span>
-            </button>
-          ) : null}
         </div>
         <span className="shrink-0 text-sm font-semibold text-text tabular-nums">{money(line.priceCents * line.quantity)}</span>
       </div>
@@ -328,11 +319,6 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
             +
           </button>
         </div>
-        {!line.note && !noteOpen ? (
-          <button type="button" disabled={pending} onClick={() => setNoteOpen(true)} className="h-10 rounded-full px-3 text-sm font-semibold disabled:opacity-40" style={{ color: "var(--menu-accent)" }}>
-            + Nota
-          </button>
-        ) : null}
         <button
           type="button"
           disabled={pending}
@@ -342,14 +328,13 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
           Remover
         </button>
       </div>
-      {noteOpen ? (
-        <label className="flex flex-col gap-1">
-          <span className="sr-only">Nota para {line.name}</span>
-          <input
-            autoFocus
+      <label className="flex flex-col gap-1">
+        <span className="sr-only">Nota para {line.name}</span>
+        <input
             value={note}
+            disabled={pending}
             maxLength={maxNoteLength}
-            placeholder="Ex.: sem cebola"
+            placeholder="Nota (ex.: sem cebola)"
             enterKeyHint="done"
             onFocus={() => setDraft(line.note)}
             onChange={(event) => {
@@ -361,18 +346,19 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
             onBlur={(event) => {
               saveNote(event.target.value);
               setDraft(null);
-              setNoteOpen(false);
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter") (event.target as HTMLInputElement).blur();
             }}
-            className="h-11 w-full rounded-xl border border-line bg-bg px-3 text-base text-text outline-none focus:border-[var(--menu-accent)]"
+            className="h-11 w-full rounded-xl border border-line bg-bg px-3 text-base text-text outline-none focus:border-[var(--menu-accent)] disabled:opacity-60"
           />
+        {/* The count only while typing. */}
+        {draft !== null ? (
           <span className="text-right text-[11px] text-subtle tabular-nums">
             {note.length}/{maxNoteLength}
           </span>
-        </label>
-      ) : null}
+        ) : null}
+      </label>
     </li>
   );
 }
