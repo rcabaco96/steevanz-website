@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, 
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
 import { dishPicture } from "@/lib/video-menus/rules";
 import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
-import { BunnyVideo, hasBunnyVideo } from "./BunnyVideo";
+import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
 import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
@@ -82,7 +82,7 @@ function DishCard({
     <li className="flex flex-col gap-2">
       <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
         <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} /> : dish.video ? <ShortCover video={dish.video} /> : null}
+          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} early={order < earlyCards} /> : dish.video ? <ShortCover video={dish.video} /> : null}
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
@@ -97,6 +97,9 @@ function DishCard({
     </li>
   );
 }
+
+/** The first cards (a phone's first screen): on an iPhone their videos start loading with the page. */
+const earlyCards = 4;
 
 /** The dish plays in one of the pool's YouTube players (not its own Bunny video). */
 const usesPool = (dish?: MenuDish) => Boolean(dish?.video && !hasBunnyVideo(dish.bunny));
@@ -454,6 +457,8 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
             <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => setViewer(index)} />
           ))}
         </ul>
+        {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
+        <script dangerouslySetInnerHTML={{ __html: bunnyEarlyScript }} />
         {demo ? <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de banco de imagens e preços de exemplo.</p> : null}
       </main>
 

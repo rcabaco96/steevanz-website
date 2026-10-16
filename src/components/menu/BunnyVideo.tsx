@@ -15,6 +15,15 @@ const playAtRatio = 0.5;
 const nearMargin = "100% 0px";
 
 /**
+ * On an iPhone, the first cards' videos start loading with the page, before its code (owner,
+ * 2026-10-16: «não podem começar logo os vídeos?»; ~1 s earlier): this runs in the page's HTML right
+ * after the grid, on the videos marked data-bunny-early, picks the card's rendition like
+ * cardRendition, and shows the video once it has frames. Anywhere else (Android, computers: their HLS
+ * needs hls.js) it does nothing. A failure takes the source off again, and the card loads as usual.
+ */
+export const bunnyEarlyScript = `(function(){var v=document.querySelectorAll("video[data-bunny-early]");if(!v.length||!/Apple/.test(navigator.vendor)||!v[0].canPlayType("application/vnd.apple.mpegurl"))return;for(var i=0;i<v.length;i++)(function(e){var w=e.clientWidth*(window.devicePixelRatio||1),r=w<=540?"480p":w<=800?"720p":"1080p";e.addEventListener("error",function(){e.removeAttribute("src");e.style.removeProperty("opacity");e.load()},{once:true});e.addEventListener("timeupdate",function t(){if(e.currentTime>0){e.style.opacity="1";e.removeEventListener("timeupdate",t)}});e.src=e.getAttribute("data-bunny-early")+"/"+r+"/video.m3u8";var p=e.play();if(p&&p.catch)p.catch(function(){})})(v[i])})();`;
+
+/**
  * Videos on screen still waiting for their first frames: the ones near but off screen wait for them
  * before loading (2026-10-16: those off screen were ready before the ones on it), at most this long (ms).
  */
@@ -46,11 +55,24 @@ function cardRendition(element: HTMLElement): string {
  * depois o vídeo», «pára com os flashes»). Silent, looping, inline: in the grid while half on screen, in
  * full screen when `playing` (its neighbours load ahead).
  */
-export function BunnyVideo({ id, thumbnail, playing }: { id: string; /** Its small picture's file name. */ thumbnail?: string; playing?: boolean }) {
+export function BunnyVideo({
+  id,
+  thumbnail,
+  playing,
+  early = false,
+}: {
+  id: string;
+  /** Its small picture's file name. */
+  thumbnail?: string;
+  playing?: boolean;
+  /** One of the first cards: on an iPhone it starts loading with the page (bunnyEarlyScript). */
+  early?: boolean;
+}) {
   const video = useRef<HTMLVideoElement>(null);
   const hls = useRef<Hls | null>(null);
-  const [near, setNear] = useState(false);
-  const [seen, setSeen] = useState(false);
+  // The first cards start on screen (one started early must not be let go before the observers report).
+  const [near, setNear] = useState(early);
+  const [seen, setSeen] = useState(early);
   const [shown, setShown] = useState(false);
   const [ahead, setAhead] = useState(false);
   const full = playing !== undefined;
@@ -104,6 +126,7 @@ export function BunnyVideo({ id, thumbnail, playing }: { id: string; /** Its sma
       hls.current?.destroy();
       hls.current = null;
       element.removeAttribute("src");
+      element.style.removeProperty("opacity");
       element.load();
       setShown(false);
       return;
@@ -174,6 +197,7 @@ export function BunnyVideo({ id, thumbnail, playing }: { id: string; /** Its sma
       <img src={`${base}/${thumbnail || "thumbnail.jpg"}`} alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
       <video
         ref={video}
+        data-bunny-early={early ? base : undefined}
         muted
         loop
         playsInline
