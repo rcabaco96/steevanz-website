@@ -36,6 +36,12 @@ function markStarting(element: HTMLVideoElement, on: boolean) {
 }
 
 /**
+ * The grid cards' videos by Bunny id: full screen carries on from where its card is (owner,
+ * 2026-10-16: «quando abri em fullscreen o vídeo recomeça, não devia»).
+ */
+const cardVideos = new Map<string, HTMLVideoElement>();
+
+/**
  * A card's quality: Bunny's rendition that fills its box on this screen (its width × the screen's
  * density), 480p on a phone. One fixed rendition, small segments: it starts at once.
  */
@@ -75,6 +81,9 @@ export function BunnyVideo({
   const [seen, setSeen] = useState(early);
   const [shown, setShown] = useState(false);
   const [ahead, setAhead] = useState(false);
+  // Full screen: the card's frame (shown until this video is there) and where to carry on from.
+  const frame = useRef<HTMLCanvasElement>(null);
+  const resume = useRef<{ at: number; since: number } | null>(null);
   const full = playing !== undefined;
   const active = full ? playing : seen;
   // On screen (or full screen): at once. Near in the grid: once those on screen have started.
@@ -94,6 +103,45 @@ export function BunnyVideo({
       onScreen.disconnect();
     };
   }, []);
+
+  // A grid card: full screen finds it.
+  useEffect(() => {
+    const element = video.current;
+    if (!element || full) return;
+    cardVideos.set(id, element);
+    return () => {
+      if (cardVideos.get(id) === element) cardVideos.delete(id);
+    };
+  }, [id, full]);
+
+  // Full screen, now playing: carries on from its card (the card's frame shown meanwhile).
+  useEffect(() => {
+    const element = video.current;
+    const card = cardVideos.get(id);
+    if (!element || !full || !playing || !card || card.readyState < 2 || card.currentTime <= 0) return;
+    resume.current = { at: card.currentTime, since: performance.now() };
+    const canvas = frame.current;
+    if (canvas && !shown) {
+      canvas.width = card.videoWidth;
+      canvas.height = card.videoHeight;
+      try {
+        canvas.getContext("2d")?.drawImage(card, 0, 0);
+      } catch {
+        // A frame that can't be copied: the picture under it shows instead.
+      }
+    }
+    const seek = () => {
+      const at = resume.current;
+      if (!at || !element.duration) return;
+      resume.current = null;
+      element.currentTime = (at.at + (performance.now() - at.since) / 1000) % element.duration;
+    };
+    if (element.readyState >= 1) seek();
+    element.addEventListener("loadedmetadata", seek);
+    return () => element.removeEventListener("loadedmetadata", seek);
+    // Once per opening: not again when this video starts showing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [full, playing, id]);
 
   // A card near the screen loads ahead once the cards on screen have their first frames.
   useEffect(() => {
@@ -195,6 +243,7 @@ export function BunnyVideo({
     <>
       {/* eslint-disable-next-line @next/next/no-img-element -- Bunny's own picture of the video */}
       <img src={`${base}/${thumbnail || "thumbnail.jpg"}`} alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      {full ? <canvas ref={frame} aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" /> : null}
       <video
         ref={video}
         data-bunny-early={early ? base : undefined}
@@ -204,7 +253,8 @@ export function BunnyVideo({
         preload={active ? "auto" : "metadata"}
         disablePictureInPicture
         onTimeUpdate={(event) => {
-          if (!shown && event.currentTarget.currentTime > 0) setShown(true);
+          // Not while seeking (full screen carrying on from its card): its frames aren't there yet.
+          if (!shown && event.currentTarget.currentTime > 0 && !event.currentTarget.seeking) setShown(true);
         }}
         onError={(event) => {
           // The browser's own HLS failed: the MP4 instead (that one failing too leaves the picture).

@@ -428,6 +428,15 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
 
   return (
     <div style={brand} className="relative min-h-dvh">
+      {/* First in the page: the phone paints it before the menu under it (owner, 2026-10-16: at the end
+          of the HTML, the grid showed for an instant before the opening). */}
+      <MosaicSplash
+        logo={menu.logo}
+        business={menu.business}
+        pictures={opening.pictures}
+        ready={focus.visible.length > 0 && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`))}
+        onDone={opened}
+      />
       <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -541,13 +550,6 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         />
       ) : null}
       <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} first={opening.first} />
-      <MosaicSplash
-        logo={menu.logo}
-        business={menu.business}
-        pictures={opening.pictures}
-        ready={focus.visible.length > 0 && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`))}
-        onDone={opened}
-      />
     </div>
   );
 }
