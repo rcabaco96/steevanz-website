@@ -11,8 +11,13 @@ export const hasBunnyVideo = (bunny?: string): bunny is string => Boolean(bunny 
 
 /** A card plays once this much of it is on screen. */
 const playAtRatio = 0.5;
-/** A video loads once it's within this distance of the screen (a screen ahead), and is let go beyond it. */
+/** A video loads once it's within this distance of the screen (a screen ahead)... */
 const nearMargin = "100% 0px";
+/**
+ * ...and is let go only beyond this one (three screens): letting a video go and loading it again stalls
+ * an iPhone's scroll for an instant (owner, 2026-10-16: «repara nos breaks do scroll»).
+ */
+const keepMargin = "300% 0px";
 
 /**
  * On an iPhone, the first cards' videos start loading with the page, before its code (owner,
@@ -78,6 +83,7 @@ export function BunnyVideo({
   const hls = useRef<Hls | null>(null);
   // The first cards start on screen (one started early must not be let go before the observers report).
   const [near, setNear] = useState(early);
+  const [kept, setKept] = useState(true);
   const [seen, setSeen] = useState(early);
   const [shown, setShown] = useState(false);
   const [ahead, setAhead] = useState(false);
@@ -88,6 +94,8 @@ export function BunnyVideo({
   const active = full ? playing : seen;
   // On screen (or full screen): at once. Near in the grid: once those on screen have started.
   const load = active || (near && (full || ahead));
+  // A loaded video stays loaded while within three screens.
+  const keep = active || near || kept;
   const base = `https://${pullZone}.b-cdn.net/${id}`;
 
   // Near the screen (loads), and half on it (a grid card plays).
@@ -95,11 +103,14 @@ export function BunnyVideo({
     const element = video.current;
     if (!element) return;
     const nearby = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), { rootMargin: nearMargin });
+    const within = new IntersectionObserver(([entry]) => setKept(entry.isIntersecting), { rootMargin: keepMargin });
     const onScreen = new IntersectionObserver(([entry]) => setSeen(entry.intersectionRatio >= playAtRatio), { threshold: [0, playAtRatio, 1] });
     nearby.observe(element);
+    within.observe(element);
     onScreen.observe(element);
     return () => {
       nearby.disconnect();
+      within.disconnect();
       onScreen.disconnect();
     };
   }, []);
@@ -169,8 +180,8 @@ export function BunnyVideo({
     const element = video.current;
     if (!element) return;
     const mp4 = `${base}/play_720p.mp4`;
-    if (!load) {
-      if (!element.getAttribute("src") && !hls.current) return;
+    const attached = Boolean(element.getAttribute("src") || hls.current);
+    if (attached && !keep) {
       hls.current?.destroy();
       hls.current = null;
       element.removeAttribute("src");
@@ -179,7 +190,7 @@ export function BunnyVideo({
       setShown(false);
       return;
     }
-    if (element.getAttribute("src") || hls.current) return;
+    if (attached || !load) return;
     let cancelled = false;
     // Full screen: the adaptive stream (every rendition); a card: its one rendition.
     const stream = full ? `${base}/playlist.m3u8` : `${base}/${cardRendition(element)}/video.m3u8`;
@@ -221,7 +232,7 @@ export function BunnyVideo({
     return () => {
       cancelled = true;
     };
-  }, [load, full, base]);
+  }, [load, keep, full, base]);
 
   // Plays while active (once the source is there), pauses otherwise.
   useEffect(() => {

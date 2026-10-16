@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
 import { dishPicture } from "@/lib/video-menus/rules";
 import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
@@ -50,8 +50,12 @@ function MenuIcon() {
   );
 }
 
-/** A dish of the grid: its thumbnail, covered by one of the pool's players when it plays; a tap opens the collection full screen. */
-function DishCard({
+/**
+ * A dish of the grid: its thumbnail, covered by one of the pool's players when it plays; a tap opens the
+ * collection full screen. Drawn again only when its own props change (the grid's focus changes as it
+ * scrolls; redrawing every card each time made the scroll stutter on an iPhone, 2026-10-16).
+ */
+const DishCard = memo(function DishCard({
   id,
   order,
   dish,
@@ -64,7 +68,7 @@ function DishCard({
   dish: MenuDish;
   onSeen: (id: string, order: number, ratio: number) => void;
   onBox: (id: string, box: HTMLDivElement | null) => void;
-  onOpen: () => void;
+  onOpen: (order: number) => void;
 }) {
   const holder = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -80,7 +84,7 @@ function DishCard({
   }, [id, order, onSeen, onBox]);
   return (
     <li className="flex flex-col gap-2">
-      <button type="button" onClick={onOpen} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
+      <button type="button" onClick={() => onOpen(order)} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
         <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
           {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} early={order < earlyCards} /> : dish.video ? <ShortCover video={dish.video} /> : null}
         </div>
@@ -96,7 +100,7 @@ function DishCard({
       </div>
     </li>
   );
-}
+});
 
 /** The first cards (a phone's first screen): on an iPhone their videos start loading with the page. */
 const earlyCards = 4;
@@ -463,7 +467,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={() => setViewer(index)} />
+            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={seen} onBox={onBox} onOpen={setViewer} />
           ))}
         </ul>
         {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
