@@ -1,8 +1,37 @@
 // Digital menus in videos: the rules shared by the admin, the public pages and the tests. Pure module
 // (no server or browser APIs), so the admin's forms use it in the browser too.
 
-import type { MenuCollection, MenuDish, VideoMenuData } from "../../content/demo-menu.ts";
 import { initialsOf } from "../establishments/logo-rules.ts";
+
+// The public menu's shape ------------------------------------------------------------------------------
+
+/** A dish of the public menu: it plays its own video on Bunny Stream (since 2026-10-16, YouTube no more). */
+export interface MenuDish {
+  /** Its video on Bunny Stream. */
+  bunny: string;
+  /** That video's small picture (file name on Bunny); without it, Bunny's thumbnail.jpg. */
+  bunnyThumbnail?: string;
+  name: string;
+  description: string;
+  /** Euros. */
+  price: number;
+}
+
+export interface MenuCollection {
+  id: string;
+  name: string;
+  dishes: string[];
+}
+
+export interface VideoMenuData {
+  business: string;
+  /** A URL, or the initials drawn as an SVG data URL. */
+  logo: string;
+  instagram: string | null;
+  dishes: Record<string, MenuDish>;
+  /** The first one opens by default; «Todos» holds every dish when no collection has any. */
+  collections: MenuCollection[];
+}
 
 // YouTube ------------------------------------------------------------------------------------------
 
@@ -239,10 +268,10 @@ export interface VideoMenuLinkRow {
 const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - b.position;
 
 /**
- * The menu in the shape the player takes (the same as the static demo): dishes keyed by their id
- * in their order, the default collection first (the player opens the first one), empty collections
- * left out, and «Todos» with every dish when no collection has any. A dish with no video yet (no
- * YouTube id, its own video not ready) stays off the menu. Null when there's no dish to show.
+ * The menu in the shape the player takes: dishes keyed by their id in their order, the default
+ * collection first (the player opens the first one), empty collections left out, and «Todos» with
+ * every dish when no collection has any. Only dishes with their own (Bunny) video ready are on the
+ * menu (the menu plays no YouTube since 2026-10-16). Null when there's no dish to show.
  */
 export function toVideoMenuData(
   menu: Pick<VideoMenuRow, "business_name" | "logo_url" | "instagram">,
@@ -250,13 +279,13 @@ export function toVideoMenuData(
   collectionRows: VideoMenuCollectionRow[],
   linkRows: VideoMenuLinkRow[],
 ): VideoMenuData | null {
-  const ordered = dishRows.filter((dish) => dish.video_id || dish.bunny_video_id).sort(byPosition);
+  const ordered = dishRows.filter((dish): dish is VideoMenuDishRow & { bunny_video_id: string } => Boolean(dish.bunny_video_id)).sort(byPosition);
   if (!ordered.length) return null;
   const dishes: Record<string, MenuDish> = {};
   for (const dish of ordered) {
     dishes[dish.id] = {
-      ...(dish.video_id ? { video: dish.video_id } : {}),
-      ...(dish.bunny_video_id ? { bunny: dish.bunny_video_id, ...(dish.bunny_thumbnail ? { bunnyThumbnail: dish.bunny_thumbnail } : {}) } : {}),
+      bunny: dish.bunny_video_id,
+      ...(dish.bunny_thumbnail ? { bunnyThumbnail: dish.bunny_thumbnail } : {}),
       name: dish.name,
       description: dish.description,
       price: dish.price_cents / 100,

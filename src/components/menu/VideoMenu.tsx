@@ -1,11 +1,9 @@
 "use client";
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
-import type { MenuDish, VideoMenuData } from "@/content/demo-menu";
-import { dishPicture } from "@/lib/video-menus/rules";
-import { poolSize, VideoPool, type PoolTarget } from "./VideoPool";
+import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
-import { restingMotion, ShortCover, ShortsViewer, type ShortItem, type ViewerMotion } from "./VideoShorts";
+import { ShortsViewer, type ShortItem } from "./VideoShorts";
 
 const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
@@ -13,34 +11,14 @@ const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR"
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
 
 /**
- * In the grid every dish on screen plays (up to `focusCount`, the four of two rows; one player each).
- * Recomputed this soon after the scroll moves (ms).
- */
-const focusAfter = 120;
-const focusCount = 4;
-/** The next row (in the scroll's direction) plays hidden, so it is moving as it appears. */
-const aheadCount = poolSize - focusCount;
-/** Changing collection: the panel stays until the new collection's videos play, at most this long (ms). */
-const switchWaitMs = 2500;
-/**
  * A new collection starts at its top (owner, 2026-10-14). At once: the page scrolls smoothly by
  * default, and a smooth scroll is dropped while the panel holds the page still (iPhone).
  */
 const toTop = () => window.scrollTo({ top: 0, behavior: "instant" });
-/** A card must be at least this much on screen to play. */
-const focusMinRatio = 0.4;
 /** The collections panel closes when dragged this share of its width to the right (or flicked). */
 const sheetCloseShare = 0.3;
 const sheetCloseSpeed = 0.5; // px per ms
 const sheetSlideMs = 260;
-
-/** Same targets (by what the pool uses), so an unchanged list never re-renders the pool. */
-const sameTargets = (a: PoolTarget[], b: PoolTarget[]) =>
-  a.length === b.length &&
-  a.every((target, index) => {
-    const other = b[index];
-    return target.key === other.key && target.video === other.video && target.element === other.element && target.fixed === other.fixed && target.play === other.play && target.prime === other.prime && target.visible === other.visible;
-  });
 
 function MenuIcon() {
   return (
@@ -51,43 +29,28 @@ function MenuIcon() {
 }
 
 /**
- * A dish of the grid: its thumbnail, covered by one of the pool's players when it plays; a tap opens the
- * collection full screen. Drawn again only when its own props change (the grid's focus changes as it
- * scrolls; redrawing every card each time made the scroll stutter on an iPhone, 2026-10-16).
+ * A dish of the grid: its own video over its picture; a tap opens the collection full screen. Drawn
+ * again only when its own props change (redrawing every card as the page scrolled made the scroll
+ * stutter on an iPhone, 2026-10-16).
  */
 const DishCard = memo(function DishCard({
-  id,
   order,
   dish,
-  onSeen,
-  onBox,
+  onStarted,
   onOpen,
 }: {
-  id: string;
   order: number;
   dish: MenuDish;
-  /** How much of it is on screen, for the pool's YouTube players (none when no dish of the menu uses them). */
-  onSeen?: (id: string, order: number, ratio: number) => void;
-  onBox: (id: string, box: HTMLDivElement | null) => void;
+  /** One of the first cards shows its video playing (the opening ends once they do). */
+  onStarted: (order: number) => void;
   onOpen: (order: number) => void;
 }) {
-  const holder = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const element = holder.current;
-    onBox(id, element);
-    if (!element || !onSeen) return () => onBox(id, null);
-    const observer = new IntersectionObserver(([entry]) => onSeen(id, order, entry.intersectionRatio), { threshold: [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] });
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      onBox(id, null);
-    };
-  }, [id, order, onSeen, onBox]);
+  const early = order < earlyCards;
   return (
     <li className="flex flex-col gap-2">
       <button type="button" onClick={() => onOpen(order)} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
-        <div ref={holder} className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
-          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} early={order < earlyCards} /> : dish.video ? <ShortCover video={dish.video} /> : null}
+        <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
+          {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} early={early} onShown={early ? () => onStarted(order) : undefined} /> : null}
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
@@ -105,9 +68,6 @@ const DishCard = memo(function DishCard({
 
 /** The first cards (a phone's first screen): on an iPhone their videos start loading with the page. */
 const earlyCards = 4;
-
-/** The dish plays in one of the pool's YouTube players (not its own Bunny video). */
-const usesPool = (dish?: MenuDish) => Boolean(dish?.video && !hasBunnyVideo(dish.bunny));
 
 /** Tiles of the mosaic opening: 4 columns of 7 rows, filling the screen (and beyond, it is tilted). */
 const mosaicColumns = 4;
@@ -188,39 +148,38 @@ function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: strin
 /**
  * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
  * the bar, ☰ opens the list of collections (the first opens by default); a tap on a dish opens the
- * collection full screen, one dish per screen. Every video plays in a fixed pool of players
- * (VideoPool), never created again: the cards and slides hold thumbnails.
+ * collection full screen, one dish per screen. Every dish plays its own video (BunnyVideo) in its
+ * card and in its slide; YouTube's players are gone (owner, 2026-10-16).
  */
 export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The demo page (/raza17raza): says its videos and prices are examples. */ demo?: boolean }) {
   const [active, setActive] = useState(menu.collections[0].id);
-  // What the page opens on: the first collection's dishes (their players in the HTML, their pictures in the opening).
+  // What the page opens on: the first collection's dishes (their pictures in the opening).
   const [opening] = useState(() => {
+    const pictureOf = (dish: MenuDish) => (hasBunnyVideo(dish.bunny) ? bunnyThumbnail(dish.bunny, dish.bunnyThumbnail) : null);
     const firstDishes = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]).filter((dish) => Boolean(dish));
-    // The dishes' pictures: their own (Bunny) video's, else their YouTube video's.
-    const pictureOf = (dish: MenuDish) => dishPicture({ video_id: dish.video ?? null, bunny_video_id: hasBunnyVideo(dish.bunny) ? dish.bunny : null, bunny_thumbnail: dish.bunnyThumbnail });
     const pictures = firstDishes.map(pictureOf).filter((picture): picture is string => Boolean(picture));
-    // Only YouTube dishes get pool players in the HTML (a Bunny one plays its own <video>).
-    const first = firstDishes.slice(0, 4).flatMap((dish) => (!hasBunnyVideo(dish.bunny) && dish.video ? [dish.video] : []));
-    return { first, pictures: pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture)) };
+    return {
+      pictures: pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture)),
+      // The cards whose videos the opening waits for (it leaves at the latest at mosaicWaitMax).
+      awaited: Math.min(earlyCards, firstDishes.length),
+    };
   });
-  // Some dish plays on YouTube (the pool's players). Else none of the pool's work is done: every dish
-  // plays its own video in its card (the demo menu, 2026-10-16).
-  const hasPool = useMemo(() => Object.values(menu.dishes).some((dish) => usesPool(dish)), [menu.dishes]);
   const [sheet, setSheet] = useState(false);
   const [sheetClosing, setSheetClosing] = useState(false);
   const [drag, setDrag] = useState(0);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef<{ x: number; y: number; at: number; mode: "drag" | "scroll" | null } | null>(null);
   const [viewer, setViewer] = useState<number | null>(null);
-  const [viewerTargets, setViewerTargetsState] = useState<PoolTarget[]>([]);
-  const setViewerTargets = useCallback((next: PoolTarget[]) => setViewerTargetsState((previous) => (sameTargets(previous, next) ? previous : next)), []);
-  const [gridTargets, setGridTargets] = useState<PoolTarget[]>([]);
-  // The full screen dragged to close: the pool's player there moves with it.
-  const [viewerMotion, setViewerMotion] = useState<ViewerMotion>(restingMotion);
-  // The collection being switched to: the panel stays open until its videos play.
-  const [switching, setSwitching] = useState<string | null>(null);
-  // Targets (grid-<dish>) whose player is showing the video: from the pool.
-  const [ready, setReady] = useState<string[]>([]);
+  // A collection was just chosen: the panel closes once its grid is there.
+  const switched = useRef(false);
+  // The first cards showing their videos playing: the opening ends once they all do (owner,
+  // 2026-10-14: «quando acabar a animação os vídeos estejam a dar»).
+  const started = useRef(new Set<number>());
+  const [startedCount, setStartedCount] = useState(0);
+  const onStarted = useCallback((order: number) => {
+    started.current.add(order);
+    setStartedCount(started.current.size);
+  }, []);
   // The videos on screen load and start, muted and hidden, while the opening plays (owner,
   // 2026-10-14): when it ends they are already playing. Nothing waits for the opening's end.
   const opened = useCallback(() => {}, []);
@@ -241,46 +200,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
     };
   }, []);
 
-  const closeViewer = useCallback(() => {
-    setViewer(null);
-    setViewerTargets([]);
-    setViewerMotion(restingMotion);
-  }, [setViewerTargets]);
-
-  // The grid's playing dishes: how much of each card is on screen, and the most visible ones.
-  const ratios = useRef(new Map<string, { order: number; ratio: number }>());
-  const focusTimer = useRef<number | undefined>(undefined);
-  const [focus, setFocus] = useState<{ visible: string[] }>({ visible: [] });
-  // Which way the page last scrolled (the row ahead is below, or above).
-  const scrollingUp = useRef(false);
-  useEffect(() => {
-    if (!hasPool) return;
-    let last = window.scrollY;
-    const onScroll = () => {
-      if (window.scrollY !== last) scrollingUp.current = window.scrollY < last;
-      last = window.scrollY;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [hasPool]);
-  const seen = useCallback((key: string, order: number, ratio: number) => {
-    ratios.current.set(key, { order, ratio });
-    window.clearTimeout(focusTimer.current);
-    focusTimer.current = window.setTimeout(() => {
-      // The most visible dishes; on a tie, the ones higher in the grid (the same row, side by side).
-      const ranked = [...ratios.current]
-        .filter(([, entry]) => entry.ratio >= focusMinRatio)
-        .sort(([, a], [, b]) => b.ratio - a.ratio || a.order - b.order)
-        .slice(0, focusCount)
-        .sort(([, a], [, b]) => a.order - b.order);
-      setFocus({ visible: ranked.map(([candidate]) => candidate) });
-    }, focusAfter);
-  }, []);
-  const boxes = useRef(new Map<string, HTMLDivElement>());
-  const onBox = useCallback((key: string, box: HTMLDivElement | null) => {
-    if (box) boxes.current.set(key, box);
-    else boxes.current.delete(key);
-  }, []);
+  const closeViewer = useCallback(() => setViewer(null), []);
 
   const collection = menu.collections.find((candidate) => candidate.id === active) ?? menu.collections[0];
   const dishes = useMemo(() => collection.dishes.map((key) => ({ key, dish: menu.dishes[key] })), [collection, menu.dishes]);
@@ -289,7 +209,6 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
     () =>
       dishes.map(({ key, dish }) => ({
         key,
-        video: dish.video,
         bunny: dish.bunny,
         bunnyThumbnail: dish.bunnyThumbnail,
         title: dish.name,
@@ -301,39 +220,6 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
       })),
     [dishes],
   );
-
-  // What the grid asks of the pool: the dishes on screen playing and shown. Nothing pauses under the
-  // collections panel: a video paused and played again shows YouTube's ⏸ on an iPhone. While switching
-  // collection, the new videos load behind it.
-  useEffect(() => {
-    const target = (key: string, visible: boolean): PoolTarget[] => {
-      const dish = menu.dishes[key];
-      const element = boxes.current.get(key) ?? null;
-      // A dish with its own (Bunny) video plays it in its card: no pool player.
-      if (!dish?.video || hasBunnyVideo(dish.bunny)) return [];
-      return element ? [{ key: `grid-${key}`, video: dish.video, element, fixed: false, play: visible, prime: !visible, visible }] : [];
-    };
-    // The row ahead: the next dishes in the list after those on screen (before them, scrolling up).
-    // Not while switching collection (the dishes on screen load first).
-    const keys = dishes.map(({ key }) => key);
-    const orders = focus.visible.map((key) => keys.indexOf(key)).filter((order) => order >= 0);
-    const ahead =
-      switching || !orders.length
-        ? []
-        : Array.from({ length: aheadCount }, (_, step) => (scrollingUp.current ? Math.min(...orders) - 1 - step : Math.max(...orders) + 1 + step))
-            .filter((order) => order >= 0 && order < keys.length)
-            .map((order) => keys[order]);
-    const next = [...focus.visible.flatMap((key) => target(key, true)), ...ahead.flatMap((key) => target(key, false))];
-    setGridTargets((previous) => (sameTargets(previous, next) ? previous : next));
-  }, [focus, menu.dishes, dishes, switching]);
-  // While the full screen is open, the players it leaves keep playing grid dishes behind it (seen as
-  // it is dragged away); the full screen's own videos first.
-  const poolTargets = useMemo(() => {
-    if (viewer === null || !viewerTargets.length) return gridTargets;
-    const videos = new Set(viewerTargets.map((target) => target.video));
-    const behind = gridTargets.filter((target) => !videos.has(target.video));
-    return [...viewerTargets, ...behind].slice(0, poolSize);
-  }, [viewer, viewerTargets, gridTargets]);
 
   // The panel takes a step in the history (owner's iPhone: «back» with it open left the page and
   // reloaded the players): «back» closes it, and closing it otherwise takes that step back.
@@ -379,33 +265,22 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
     };
   }, [sheet, closeSheet]);
 
-  // Another collection: its grid is built behind the panel and its videos start; the panel closes
-  // once those on screen are playing (or after switchWaitMs), so the new grid appears already moving.
+  // Another collection: its grid is built behind the panel, at its top, and the panel closes.
   const choose = (id: string) => {
     if (id === collection.id) {
       closeSheet();
       return;
     }
-    ratios.current.clear();
-    setFocus({ visible: [] });
+    switched.current = true;
     setActive(id);
-    setSwitching(id);
     toTop();
   };
   useEffect(() => {
-    if (!switching) return;
-    const done = () => {
-      toTop();
-      setSwitching(null);
-      closeSheet();
-    };
-    if (!hasPool || (focus.visible.length && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`)))) {
-      done();
-      return;
-    }
-    const timer = window.setTimeout(done, switchWaitMs);
-    return () => window.clearTimeout(timer);
-  }, [switching, focus, ready, closeSheet, menu.dishes, hasPool]);
+    if (!switched.current) return;
+    switched.current = false;
+    toTop();
+    closeSheet();
+  }, [active, closeSheet]);
 
   // Dragging the panel to the right closes it, following the finger (vertical moves scroll its list).
   const onSheetTouchStart = (event: TouchEvent) => {
@@ -443,7 +318,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         logo={menu.logo}
         business={menu.business}
         pictures={opening.pictures}
-        ready={!hasPool || (focus.visible.length > 0 && focus.visible.every((key) => !usesPool(menu.dishes[key]) || ready.includes(`grid-${key}`)))}
+        ready={startedCount >= opening.awaited}
         onDone={opened}
       />
       <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
@@ -472,7 +347,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
         </div>
         <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
           {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} id={key} order={index} dish={dish} onSeen={hasPool ? seen : undefined} onBox={onBox} onOpen={setViewer} />
+            <DishCard key={`${collection.id}-${key}`} order={index} dish={dish} onStarted={onStarted} onOpen={setViewer} />
           ))}
         </ul>
         {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
@@ -523,11 +398,7 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
                       style={current ? { background: "var(--menu-accent-soft)", color: "var(--menu-accent)" } : undefined}
                     >
                       <span>{option.name}</span>
-                      {switching === option.id ? (
-                        <span role="status" aria-label="A carregar os vídeos" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      ) : (
-                        <span className="text-sm font-normal text-muted">{option.dishes.length}</span>
-                      )}
+                      <span className="text-sm font-normal text-muted">{option.dishes.length}</span>
                     </button>
                   </li>
                 );
@@ -553,12 +424,9 @@ export function VideoMenu({ menu, demo = false }: { menu: VideoMenuData; /** The
           items={items}
           start={viewer}
           label={`${menu.business}: ${collection.name}`}
-          onTargets={setViewerTargets}
-          onMotion={setViewerMotion}
           onClose={closeViewer}
         />
       ) : null}
-      {hasPool ? <VideoPool targets={poolTargets} enabled motion={viewerMotion} onReady={setReady} first={opening.first} /> : null}
     </div>
   );
 }

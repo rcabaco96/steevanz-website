@@ -32,8 +32,9 @@ export async function generateMetadata({ params }: PageProps<"/menu/[slug]">): P
 }
 
 export default async function VideoMenuPage({ params }: PageProps<"/menu/[slug]">) {
-  // The players and thumbnails come from these hosts: the connections are open before they're needed.
-  for (const host of ["https://www.youtube-nocookie.com", "https://i.ytimg.com", "https://www.google.com", bunnyHost()]) if (host) preconnect(host);
+  // The videos and their pictures come from Bunny: the connection is open before they're needed.
+  const bunny = bunnyHost();
+  if (bunny) preconnect(bunny);
   const menu = await loadMenu((await params).slug);
   if (!menu) notFound();
   return <VideoMenu menu={menu} />;

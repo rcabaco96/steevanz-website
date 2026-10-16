@@ -1,7 +1,6 @@
 import { unstable_cache } from "next/cache";
-import type { VideoMenuData } from "@/content/demo-menu";
 import { createServiceClient } from "@/lib/supabase/service";
-import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuDishRow, type VideoMenuLinkRow, type VideoMenuRow } from "./rules";
+import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuData, type VideoMenuDishRow, type VideoMenuLinkRow, type VideoMenuRow } from "./rules";
 
 // Reads of the video menus (service role: RLS lets nothing else in). The admin reads fresh rows;
 // the public pages read through the cache below, refreshed by every save in the admin.

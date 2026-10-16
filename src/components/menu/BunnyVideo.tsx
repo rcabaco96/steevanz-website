@@ -184,6 +184,7 @@ export function BunnyVideo({
   thumbnail,
   playing,
   early = false,
+  onShown,
 }: {
   id: string;
   /** Its small picture's file name. */
@@ -191,6 +192,8 @@ export function BunnyVideo({
   playing?: boolean;
   /** One of the first cards: on an iPhone it starts loading with the page (bunnyEarlyScript). */
   early?: boolean;
+  /** Its video shows, playing (once each time it starts). */
+  onShown?: () => void;
 }) {
   const video = useRef<HTMLVideoElement>(null);
   const picture = useRef<HTMLImageElement>(null);
@@ -435,7 +438,9 @@ export function BunnyVideo({
               ? undefined
               : (event) => {
                   // Not while seeking (full screen carrying on from its card): its frames aren't there yet.
-                  if (event.currentTarget.currentTime > 0 && !event.currentTarget.seeking) setShown(true);
+                  if (event.currentTarget.currentTime <= 0 || event.currentTarget.seeking) return;
+                  setShown(true);
+                  onShown?.();
                 }
           }
           onError={(event) => {
