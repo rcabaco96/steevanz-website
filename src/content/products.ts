@@ -138,10 +138,11 @@ export const products: Product[] = [
     slug: { pt: "menu-digital", en: "digital-menu" },
     family: "plates",
     icon: "menu-tap",
-    // Owner, 2026-10-15: 20 € per plate, 15 € each from 10 plates (the old packs of 5/10/20 are gone).
+    // Owner, 2026-10-15: 20 € per plate, 15 € each from 10 plates (the old packs of 5/10/20 are gone);
+    // 2026-10-18: the video menu (building and hosting the menu and its videos) is 30 €/month, shown on the site.
     priceFrom: 20,
     priceBilling: "one-time",
-    priceQualifier: { pt: "por placa, configuração incluída", en: "per plate, setup included" },
+    priceQualifier: { pt: "por placa + 30 €/mês pelo menu em vídeo", en: "per plate + €30/month for the video menu" },
     priceIsProvisional: true,
     sectors: ["restaurants", "retail"],
     related: ["google-review-plates", "social-plates", "bookings"],

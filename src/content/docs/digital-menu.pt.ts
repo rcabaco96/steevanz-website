@@ -38,7 +38,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "O logótipo e as cores do negócio pagam-se uma vez por encomenda (o design faz-se uma vez para todas as placas), não por placa. A montagem do menu e o alojamento do menu e dos vídeos têm uma mensalidade, indicada na proposta.",
+        text: "O logótipo e as cores do negócio pagam-se uma vez por encomenda (o design faz-se uma vez para todas as placas), não por placa. A montagem do menu e o alojamento do menu e dos vídeos custam 30 € por mês (sem IVA).",
       },
       { type: "h2", id: "como-funciona", text: "Como funciona" },
       {
@@ -207,7 +207,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
           { q: "Preciso de Instagram ou de YouTube?", a: "Não. O menu tem a sua própria página na Steevanz e os vídeos ficam alojados por nós." },
           { q: "Funciona em iPhone e Android?", a: "Sim. Os iPhones recentes leem a placa sem fazer nada; no Android, a leitura por aproximação tem de estar ligada. Há sempre o QR code impresso." },
           { q: "Substitui o menu em papel?", a: "Complementa-o. Mostra os pratos em vídeo, o que ajuda a escolher, mas o menu em papel continua útil para quem prefere." },
-          { q: "Quanto custa?", a: "20 € por placa, ou 15 € por placa a partir de 10 placas. O logótipo paga-se uma vez por encomenda. A montagem e o alojamento do menu têm uma mensalidade, indicada na proposta." },
+          { q: "Quanto custa?", a: "20 € por placa, ou 15 € por placa a partir de 10 placas. O logótipo paga-se uma vez por encomenda. A montagem e o alojamento do menu custam 30 € por mês (sem IVA)." },
           { q: "Quem grava os vídeos?", a: "Normalmente o próprio negócio, com o telemóvel: damos-lhe um guia para gravar os vídeos. Nós montamos o menu e alojamos os vídeos." },
           { q: "Os pedidos à mesa são obrigatórios?", a: "Não. Ligam-se e desligam-se menu a menu. Sem eles, a placa abre o menu só para ver." },
           { q: "Posso mudar o menu mais tarde?", a: "Sim, sem trocar as placas. Envie-nos os pratos, os preços ou os vídeos novos e atualizamos o menu." },

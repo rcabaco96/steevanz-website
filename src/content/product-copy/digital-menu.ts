@@ -123,7 +123,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quanto custa?",
-        a: "As placas custam 20 € cada, com configuração incluída, e 15 € cada a partir de 10 placas. O logótipo e as cores custam mais 10 €, uma só vez por encomenda. A montagem do menu e o alojamento do menu e dos vídeos têm uma mensalidade, indicada na proposta. Valores sem IVA.",
+        a: "As placas custam 20 € cada, com configuração incluída, e 15 € cada a partir de 10 placas. O logótipo e as cores custam mais 10 €, uma só vez por encomenda. A montagem do menu e o alojamento do menu e dos vídeos custam 30 € por mês. Valores sem IVA.",
       },
       {
         q: "Como mantenho os preços atualizados?",
@@ -261,7 +261,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "How much does it cost?",
-        a: "Plates cost €20 each, setup included, and €15 each from 10 plates. Your logo and colours cost €10 extra, once per order. Building the menu and hosting the menu and videos have a monthly fee, shown in your proposal. Prices exclude VAT.",
+        a: "Plates cost €20 each, setup included, and €15 each from 10 plates. Your logo and colours cost €10 extra, once per order. Building the menu and hosting the menu and videos cost €30 a month. Prices exclude VAT.",
       },
       {
         q: "How do I keep prices up to date?",

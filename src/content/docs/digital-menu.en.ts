@@ -38,7 +38,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Your logo and brand colours are charged once per order (the design is made once for all the plates), not per plate. Building the menu and hosting the menu and videos have a monthly fee, shown in your proposal.",
+        text: "Your logo and brand colours are charged once per order (the design is made once for all the plates), not per plate. Building the menu and hosting the menu and videos cost €30 a month (excluding VAT).",
       },
       { type: "h2", id: "how-it-works", text: "How it works" },
       {
@@ -207,7 +207,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           { q: "Do I need Instagram or YouTube?", a: "No. The menu has its own page on Steevanz and we host the videos." },
           { q: "Does it work on iPhone and Android?", a: "Yes. Recent iPhones read the plate with nothing to turn on; on Android, the contactless (tap) reading option must be on. There's always the printed QR code." },
           { q: "Does it replace the printed menu?", a: "It complements it. Seeing dishes on video helps guests choose, but the printed menu is still useful for those who prefer it." },
-          { q: "How much does it cost?", a: "€20 per plate, or €15 per plate from 10 plates. The logo is charged once per order. Building and hosting the menu have a monthly fee, shown in your proposal." },
+          { q: "How much does it cost?", a: "€20 per plate, or €15 per plate from 10 plates. The logo is charged once per order. Building and hosting the menu cost €30 a month (excluding VAT)." },
           { q: "Who films the videos?", a: "Usually the business itself, with a phone: we give you a guide to filming the videos. We build the menu and host the videos." },
           { q: "Is table ordering required?", a: "No. It's switched on or off menu by menu. Without it, the plate opens the menu just for browsing." },
           { q: "Can I change the menu later?", a: "Yes, without changing the plates. Send us the new dishes, prices or videos and we update the menu." },
