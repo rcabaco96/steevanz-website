@@ -27,8 +27,8 @@ The main working tree is shared: an agent with files half-edited there blocks ev
 3. Work, check, commit there. `git push -u origin <name>`.
 4. **Vercel builds a preview for every branch.** Find its URL with the Vercel API
    (`/v6/deployments?projectId=…&limit=20`, match `meta.githubCommitRef`) and give it to the owner.
-   Caveat (2026-10-18): the Supabase and Resend variables exist only for Production, so pages that read the database
-   won't work on previews until the owner decides to add them to Preview.
+   Previews have the Supabase, Resend and admin variables (separate Preview entries in Vercel; checked 2026-10-18), so
+   database pages work there too. Treat previews as touching real data.
 5. After the owner approves: `git rebase origin/main`, push to `main`, and remove the worktree
    (`git worktree remove …`, `git branch -d <name>`).
 
