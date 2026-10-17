@@ -15,6 +15,9 @@ export function MobileBar({ heroId, menuHref, whatsappHref }: { heroId: string; 
   useEffect(() => {
     const fab = document.querySelector<HTMLElement>(".whatsapp-fab");
     if (fab) fab.style.display = "none";
+    // Room at the end of the page so the bar never covers the footer's last lines.
+    const narrow = window.matchMedia("(max-width: 1023px)").matches;
+    if (narrow) document.body.style.paddingBottom = "calc(4.25rem + env(safe-area-inset-bottom))";
     const hero = document.getElementById(heroId);
     let observer: IntersectionObserver | null = null;
     if (hero && "IntersectionObserver" in window) {
@@ -24,6 +27,7 @@ export function MobileBar({ heroId, menuHref, whatsappHref }: { heroId: string; 
     return () => {
       observer?.disconnect();
       if (fab) fab.style.display = "";
+      document.body.style.paddingBottom = "";
     };
   }, [heroId]);
 

@@ -3,22 +3,26 @@ import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
 import { dolci } from "@/content/dolci-salati";
-import { clips, goals, heroClips, novoCopy } from "@/content/novo-home";
+import { clips, dayCopy, goals, heroClips, monthlyExtra, novoCopy } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
 import { href } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import { ClientStrip } from "./ClientStrip";
+import { DayJourney } from "./DayJourney";
 import { Goals, type GoalView } from "./Goals";
 import { MenuShowcase } from "./MenuShowcase";
 import { MobileBar } from "./MobileBar";
+import { HowWeWork, PricesFaq, SectorSolutions } from "./NovoSections";
 import { PhoneVideo } from "./PhoneVideo";
 import styles from "./novo.module.css";
 
 const locale = "pt";
 
 function billingSuffix(product: Product): string {
-  return product.priceBilling === "monthly" ? "/mês" : "";
+  if (product.priceBilling === "monthly") return "/mês";
+  const extra = monthlyExtra(product);
+  return extra ? ` + ${formatEuro(extra, locale)}/mês` : "";
 }
 
 export function NovoHome() {
@@ -100,6 +104,19 @@ export function NovoHome() {
         </div>
       </section>
 
+      {/* 4. Um dia no seu negócio */}
+      <section aria-labelledby="novo-day" className={styles.section} style={{ paddingTop: 0 }}>
+        <div className={styles.wrap}>
+          <h2 id="novo-day" className={styles.h2} data-reveal>
+            {dayCopy.title}
+          </h2>
+          <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
+            {dayCopy.lead}
+          </p>
+          <DayJourney />
+        </div>
+      </section>
+
       {/* 5. Menu digital showcase */}
       <section aria-labelledby="novo-menu" className={styles.showcase}>
         <div className={styles.wrap}>
@@ -129,6 +146,9 @@ export function NovoHome() {
           />
         </div>
       </section>
+
+      {/* 6. Soluções por setor */}
+      <SectorSolutions />
 
       {/* 7. Caso real: Dolci e Salati */}
       <section aria-labelledby="novo-case" className={`${styles.section} ${styles.case}`}>
@@ -170,7 +190,13 @@ export function NovoHome() {
         </div>
       </section>
 
-      {/* 9. Final CTA and close */}
+      {/* 8. Como trabalhamos */}
+      <HowWeWork />
+
+      {/* 9. Preços à vista e perguntas */}
+      <PricesFaq />
+
+      {/* 10. Final CTA and close */}
       <section aria-labelledby="novo-final" className={styles.final}>
         <div className={styles.wrap}>
           <h2 id="novo-final" className={styles.h2} data-reveal>

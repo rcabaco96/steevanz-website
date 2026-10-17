@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { clips, novoCopy, type GoalDemo } from "@/content/novo-home";
 import { PhoneVideo } from "./PhoneVideo";
 import styles from "./novo.module.css";
 
 // «O que quer melhorar?»: four goals of equal weight. Each one shows its product working (a real
 // recording, or the product's own screen drawn live) next to what solves it and what it costs.
+// While the section is on screen the goals advance by themselves, slowly; the first tap, key or
+// hover hands control to the visitor (and with reduced motion they never advance alone).
+
+const ADVANCE_MS = 9000;
 
 export interface GoalProductView {
   id: string;
@@ -96,9 +100,34 @@ function Demo({ demo }: { demo: GoalDemo }) {
 
 export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: string; price: string } }) {
   const [active, setActive] = useState(0);
+  const [auto, setAuto] = useState(true);
+  const [inView, setInView] = useState(false);
+  const [hover, setHover] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const baseId = useId();
   const goal = goals[active];
+  const running = auto && inView && !hover;
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.45 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!running) return;
+    const timer = window.setTimeout(() => setActive((current) => (current + 1) % goals.length), ADVANCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [running, active, goals.length]);
+
+  const choose = (index: number) => {
+    setAuto(false);
+    setActive(index);
+  };
 
   const onKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
@@ -108,12 +137,19 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
     if (event.key === "End") next = goals.length - 1;
     if (next === null) return;
     event.preventDefault();
-    setActive(next);
+    choose(next);
     tabRefs.current[next]?.focus();
   };
 
   return (
-    <>
+    <div
+      ref={rootRef}
+      className={styles.goals}
+      data-running={running ? "" : undefined}
+      onPointerEnter={(event) => event.pointerType === "mouse" && setHover(true)}
+      onPointerLeave={() => setHover(false)}
+      onPointerDown={(event) => event.pointerType === "mouse" && setAuto(false)}
+    >
       <div role="tablist" aria-label={novoCopy.goals.title} className={styles.tabs}>
         {goals.map((item, index) => (
           <button
@@ -128,10 +164,11 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
             aria-controls={`${baseId}-panel`}
             tabIndex={active === index ? 0 : -1}
             className={styles.tab}
-            onClick={() => setActive(index)}
+            onClick={() => choose(index)}
             onKeyDown={(event) => onKey(event, index)}
           >
             {item.title}
+            {active === index && auto ? <span key={active} className={styles.tabProgress} style={{ animationDuration: `${ADVANCE_MS}ms` }} aria-hidden="true" /> : null}
           </button>
         ))}
       </div>
@@ -163,6 +200,6 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
