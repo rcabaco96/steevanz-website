@@ -36,6 +36,9 @@ them needs the owner's confirmation.
 - Never claim a feature that doesn't exist in the code (e.g. the client does NOT edit the menu alone today: Steevanz
   sets it up). Verify in the code before promising.
 - Never describe client work that wasn't done.
+- **Never amounts with IVA calculated** (owner, 2026-10-18, absolute, all projects): no «Total com IVA», no «IVA (23%)»
+  line, no «X € + IVA = Y €». Show the value without VAT and say «+ IVA» / «acresce IVA» / «Preços sem IVA». Businesses
+  have organised accounting and know they pay VAT; VAT maths only confuses everyone.
 - Prices come from `src/content/products.ts` only. Menu digital: «desde 20 € por placa (15 € a partir de 10) + 30 €/mês
   pelo menu em vídeo». Landing page 350 € + 15 €/mês; site 700 € + 25 €/mês.
 
