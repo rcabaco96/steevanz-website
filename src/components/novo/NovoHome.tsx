@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
@@ -8,6 +10,7 @@ import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
 import { href } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
+import { BrandVideo, type BrandFilm } from "./BrandVideo";
 import { ClientStrip } from "./ClientStrip";
 import { DayJourney } from "./DayJourney";
 import { Goals, type GoalView } from "./Goals";
@@ -18,6 +21,16 @@ import { PhoneVideo } from "./PhoneVideo";
 import styles from "./novo.module.css";
 
 const locale = "pt";
+
+/** The brand film, once its four files are in public/home/brand/ (until then, the phone hero). */
+function brandFilm(): BrandFilm | null {
+  const film: BrandFilm = {
+    mobile: { mp4: "/home/brand/hero-mobile.mp4", poster: "/home/brand/hero-mobile.jpg" },
+    desktop: { mp4: "/home/brand/hero-desktop.mp4", poster: "/home/brand/hero-desktop.jpg" },
+  };
+  const files = [film.mobile.mp4, film.mobile.poster, film.desktop.mp4, film.desktop.poster];
+  return files.every((file) => existsSync(path.join(process.cwd(), "public", file))) ? film : null;
+}
 
 function billingSuffix(product: Product): string {
   if (product.priceBilling === "monthly") return "/mês";
@@ -31,6 +44,19 @@ export function NovoHome() {
   const whatsapp = whatsappUrl("Olá! Gostava de saber mais sobre as soluções da Steevanz.");
   const bookHref = href(locale, { key: "book" });
   const menuProductHref = href(locale, { key: "product", productId: "digital-menu" });
+
+  const film = brandFilm();
+  const heroCtas = (
+    <div className={styles.ctaRow}>
+      <Link href={menuLive} className={`${styles.btn} ${styles.btnPrimary}`}>
+        {copy.hero.primary}
+        <ArrowRight size={18} />
+      </Link>
+      <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={`${styles.btn} ${styles.btnGhost}`}>
+        {copy.hero.secondary}
+      </a>
+    </div>
+  );
 
   const goalViews: GoalView[] = goals.map((goal) => ({
     id: goal.id,
@@ -55,7 +81,25 @@ export function NovoHome() {
 
   return (
     <div className={styles.root} data-novo>
-      {/* 1. Hero */}
+      {/* 1. Hero: the brand film when it exists, the phone with real recordings until then */}
+      {film ? (
+        <section id="novo-hero" aria-labelledby="novo-hero-title" className={`${styles.hero} ${styles.heroBrand}`}>
+          <div className={styles.wrap}>
+            <div className={styles.brandText}>
+              <h1 id="novo-hero-title" className={styles.heroTitle}>
+                {copy.hero.titleStart} <span className={styles.heroAccent}>{copy.hero.titleAccent}</span>
+              </h1>
+              <div>
+                <p className={styles.heroSub}>{copy.hero.subtitle}</p>
+                {heroCtas}
+              </div>
+            </div>
+            <div className={styles.filmStage}>
+              <BrandVideo film={film} label="Filme da Steevanz: os produtos da casa, a terminar no logótipo." />
+            </div>
+          </div>
+        </section>
+      ) : (
       <section id="novo-hero" aria-labelledby="novo-hero-title" className={styles.hero}>
         <div className={`${styles.wrap} ${styles.heroGrid}`}>
           <div>
@@ -63,15 +107,7 @@ export function NovoHome() {
               {copy.hero.titleStart} <span className={styles.heroAccent}>{copy.hero.titleAccent}</span>
             </h1>
             <p className={styles.heroSub}>{copy.hero.subtitle}</p>
-            <div className={styles.ctaRow}>
-              <Link href={menuLive} className={`${styles.btn} ${styles.btnPrimary}`}>
-                {copy.hero.primary}
-                <ArrowRight size={18} />
-              </Link>
-              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={`${styles.btn} ${styles.btnGhost}`}>
-                {copy.hero.secondary}
-              </a>
-            </div>
+            {heroCtas}
             <p className={styles.heroSectors}>{copy.hero.sectors}</p>
           </div>
           <div className={styles.stage}>
@@ -87,6 +123,7 @@ export function NovoHome() {
           </div>
         </div>
       </section>
+      )}
 
       {/* 2. Confiam em nós */}
       <ClientStrip />

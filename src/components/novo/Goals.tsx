@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useDeferredValue, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { clips, novoCopy, type GoalDemo } from "@/content/novo-home";
 import { PhoneVideo } from "./PhoneVideo";
 import styles from "./novo.module.css";
@@ -106,7 +106,9 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
   const rootRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const baseId = useId();
-  const goal = goals[active];
+  // The tab answers at once; the heavier panel follows in the next frame (keeps taps responsive).
+  const shown = useDeferredValue(active);
+  const goal = goals[shown];
   const running = auto && inView && !hover;
 
   useEffect(() => {

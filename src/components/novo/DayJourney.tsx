@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { clips, dayCopy, daySectors, momentOrder, type DaySector, type MomentId } from "@/content/novo-home";
 import styles from "./sections.module.css";
 
@@ -154,7 +154,8 @@ export function DayJourney() {
   const [sectorIndex, setSectorIndex] = useState(0);
   const [active, setActive] = useState<MomentId>("found");
   const listRef = useRef<HTMLOListElement>(null);
-  const sector = daySectors[sectorIndex];
+  // The switch answers at once; the ten screens follow in the next frame.
+  const sector = daySectors[useDeferredValue(sectorIndex)];
 
   useEffect(() => {
     const list = listRef.current;

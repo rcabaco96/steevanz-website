@@ -1358,3 +1358,90 @@
 .whatsapp:hover {
   background: #2fe073;
 }
+
+/* ---------- Brand film hero (when public/home/brand/ has the film) ---------- */
+
+.heroBrand {
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .heroBrand {
+    min-height: 0;
+    padding-bottom: 4rem;
+  }
+  .brandText {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: end;
+  }
+  .brandText .heroSub {
+    margin-top: 0;
+  }
+}
+
+.filmStage {
+  margin-top: 2rem;
+  perspective: 1600px;
+}
+
+@media (min-width: 1024px) {
+  .filmStage {
+    margin-top: 3.5rem;
+  }
+}
+
+.film {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  max-height: 80svh;
+  margin-inline: auto;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  background: var(--plum);
+  box-shadow: 0 40px 60px -36px rgb(60 30 50 / 0.55);
+  transform-origin: 50% 0;
+  transform: rotateX(12deg) scale(0.94);
+}
+
+@media (min-width: 768px) {
+  .film {
+    aspect-ratio: 16 / 9;
+    max-height: none;
+    border-radius: 2rem;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .film {
+      animation: film-straighten linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 28rem;
+    }
+  }
+}
+
+@keyframes film-straighten {
+  to {
+    transform: none;
+  }
+}
+
+.filmMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.filmVideo {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.filmVideo[data-playing] {
+  opacity: 1;
+}
