@@ -90,7 +90,7 @@ function label(s, t, x, y, w) {
     sticker(s, "PARA", 0.75, 4.95, 0.95, "plum", -3, 10);
     s.addText(v.cliente, { x: 1.9, y: 4.85, w: 5.8, h: 0.6, fontFace: SERIF, fontSize: 26, bold: true, color: C.text, margin: 0, valign: "middle" });
     text(s, `Proposta de ${v.dataFmt} · válida até ${v.validadeFmt} (${v.validadeDias} dias)`, 0.7, 5.6, 7.0, 0.3, { fontSize: 12, color: C.subtle });
-    text(s, "Tecnologia do amanhã, com os bons modos de antigamente.", 0.7, 6.15, 7.0, 0.35, { fontFace: SERIF, italic: true, fontSize: 14, color: C.accent });
+    text(s, "Tecnologia do futuro. Com os bons modos de antigamente.", 0.7, 6.15, 7.0, 0.35, { fontFace: SERIF, italic: true, fontSize: 14, color: C.accent });
     phone(s, "lp-hero.jpg", 8.35, 1.45, 4.7);
     phone(s, "vm-full-brownie.jpg", 10.65, 1.2, 4.7);
   }

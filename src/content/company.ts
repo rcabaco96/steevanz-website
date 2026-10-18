@@ -39,10 +39,10 @@ export interface ContactCopy {
 
 export const aboutCopy: Localized<AboutCopy> = {
   pt: {
-    metaTitle: "Sobre a Steevanz — tecnologia com os bons modos de antigamente",
+    metaTitle: "Sobre a Steevanz — Tecnologia do futuro. Com os bons modos de antigamente.",
     metaDescription: "Somos uma equipa portuguesa que torna a tecnologia simples e acessível para negócios locais: placas com tecnologia Steevanz, reservas e inteligência artificial com suporte próximo.",
     eyebrow: "Sobre nós",
-    title: "Tecnologia do amanhã, com os bons modos de antigamente.",
+    title: "Tecnologia do futuro. Com os bons modos de antigamente.",
     lead: "A Steevanz nasceu de uma família alentejana de nerds e geeks com uma ideia simples: a tecnologia deve adaptar-se às pessoas, e não o contrário.",
     storyTitle: "A nossa história",
     story: [

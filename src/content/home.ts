@@ -139,7 +139,7 @@ export const homeCopy: Localized<HomeCopy> = {
     },
     proof: {
       eyebrow: "Porquê a Steevanz",
-      title: "Tecnologia simples, com os bons modos de antigamente.",
+      title: "Tecnologia do futuro. Com os bons modos de antigamente.",
       lead: "Somos uma equipa portuguesa pequena, próxima e exigente. Preferimos explicar bem a vender depressa.",
       disclaimer: "Valores que descrevem o funcionamento do produto, não resultados garantidos.",
       stats: [

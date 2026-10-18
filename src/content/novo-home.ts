@@ -78,7 +78,7 @@ export const novoCopy = {
     body: "Uma conversa sem compromisso: mostramos tudo a funcionar e dizemos com franqueza o que faz sentido para o seu negócio.",
     primary: "Agendar demonstração",
     secondary: "Falar no WhatsApp",
-    line: "com os bons modos de antigamente",
+    line: "Tecnologia do futuro. Com os bons modos de antigamente.",
   },
   bar: {
     menu: "Ver um menu",

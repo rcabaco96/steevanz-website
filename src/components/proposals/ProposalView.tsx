@@ -316,7 +316,7 @@ export function ProposalView({ proposal, expired }: { proposal: Proposal; expire
             {site.email}
           </a>
         </div>
-        <p className="display-italic mt-2 text-base text-muted">Steevanz, com os bons modos de antigamente.</p>
+        <p className="display-italic mt-2 text-base text-muted">Steevanz. Tecnologia do futuro. Com os bons modos de antigamente.</p>
       </footer>
     </div>
   );

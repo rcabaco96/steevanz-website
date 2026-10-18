@@ -95,4 +95,4 @@ Para mudar textos comuns a todas as propostas, edite `deck.html` e `build-pptx.j
 - Sem «fidelização»: «sem período mínimo».
 - Nada de testemunhos, números ou avaliações inventados.
 - Os vídeos e o menu são alojados pela Steevanz: não falar em YouTube.
-- A frase da marca é «com os bons modos de antigamente».
+- A frase da marca é «Tecnologia do futuro. Com os bons modos de antigamente.» (as duas frases juntas; nas despedidas pode ficar só «com os bons modos de antigamente»).

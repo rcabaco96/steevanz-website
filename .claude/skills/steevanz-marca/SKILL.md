@@ -16,7 +16,9 @@ them needs the owner's confirmation.
 - **Fonts:** Fraunces 500 (titles; the key word in *italic* or inside a gold box) and Hanken Grotesk (text).
 - **Wordmark:** «Steevanz» followed by a gold dot «.». The short mark is «S.» (owner's favourite profile versions: dark-plum
   or plum background, cream S, gold dot).
-- **Brand line:** «com os bons modos de antigamente» — never «de sempre».
+- **Brand line (owner, 2026-10-18):** «Tecnologia do futuro.» / «Com os bons modos de antigamente.» — the two sentences together
+  in taglines, heroes, footers, end cards and proposal signatures. In a warm sign-off («Até já, com os bons modos de
+  antigamente.») the second half may stand alone. Never «de sempre», never «do amanhã»/«simples» in place of «do futuro».
 - **Look:** warm and light, crafted. Not a dark «tech» look.
 
 ## Palavras

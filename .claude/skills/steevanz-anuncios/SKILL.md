@@ -53,7 +53,8 @@ Learned over the Menu digital, Sites and Cartão de cliente ads (2026-10-16/17).
 
 The «Steevanz» letters type in one by one, the gold dot plays (drops/bounces) on the beat; a short line above
 (e.g. «O seu menu, a mexer.»); a solid pill CTA («PEÇA A SUA DEMONSTRAÇÃO» / «PEÇA O SEU SITE» / «PEÇA O SEU CARTÃO»);
-small text under it with the product, «desde …» and «steevanz.com»; «com os bons modos de antigamente» subtle.
+small text under it with the product, «desde …» and «steevanz.com»; the brand line «Tecnologia do futuro. Com os bons
+modos de antigamente.» subtle (both sentences).
 
 ## Música e som
 
