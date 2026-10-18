@@ -1,0 +1,64 @@
+/*
+ * Manifesto: one sentence, words light up on scroll.
+ * Default (no JS, reduced motion, unsupported without the island): every word fully lit.
+ * Motion: opacity + transform only. Scroll-linked only inside @supports + no-preference.
+ */
+
+.p {
+  text-wrap: pretty;
+}
+
+.w {
+  display: inline-block;
+}
+.keep {
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .p {
+    max-width: 22ch;
+  }
+}
+@media (min-width: 1024px) {
+  .p {
+    margin-left: 16.6%;
+  }
+}
+
+/* Native path: each word owns one 1/n slice of cover 12% -> 54% of the paragraph's view timeline. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .p {
+      view-timeline: --manifesto block;
+    }
+    .w {
+      animation: mf-word linear both;
+      animation-timeline: --manifesto;
+      animation-range: cover calc(12% + var(--i) / var(--n) * 42%) cover calc(12% + (var(--i) + 1) / var(--n) * 42%);
+    }
+  }
+}
+
+@keyframes mf-word {
+  from {
+    opacity: 0.2;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Fallback path: ManifestoFallback sets data-mf and writes --p (0..1) only where the above is unsupported. */
+@media (prefers-reduced-motion: no-preference) {
+  .p[data-mf] .w {
+    --w: clamp(0, calc(var(--p, 0) * var(--n) - var(--i)), 1);
+    opacity: calc(0.2 + 0.8 * var(--w));
+    transform: translateY(calc((1 - var(--w)) * 6px));
+    transition:
+      opacity 0.18s linear,
+      transform 0.18s linear;
+  }
+}

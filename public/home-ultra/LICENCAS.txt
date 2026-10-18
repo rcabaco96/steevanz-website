@@ -1,0 +1,51 @@
+Steevanz — origem e licenças dos ficheiros em public/home-ultra/ (página /novo-ultra)
+Atualizado em 2026-10-18. Todos os ficheiros foram feitos só com fontes gratuitas (gravações do nosso
+próprio site, os masters dos anúncios em Remotion e miniaturas/vídeos já alojados na Bunny). Nenhuma API paga.
+
+1. Material próprio (Steevanz)
+   Gravações e capturas de páginas de www.steevanz.com e dos modelos de demonstração da Steevanz:
+   - hero-site.mp4 / hero-site-720.mp4 / hero-site.jpg — página real do cliente www.steevanz.com/dolci-salati (gravação só de leitura).
+   - hero-reservas.mp4 / hero-reservas-720.mp4 / hero-reservas.jpg — www.steevanz.com/reservar/navalha-douro
+     (barbearia fictícia de demonstração; nada foi submetido).
+   - jornada-reservar-clinica.jpg (www.steevanz.com/reservar/clinica-sorriso) e jornada-fila-clinica.jpg
+     (www.steevanz.com/fila/clinica-sorriso) — clínica fictícia de demonstração; nada foi submetido, ninguém entrou na fila.
+   - jornada-site-alojamento.jpg e jornada-reserva-alojamento.jpg — modelo de alojamento
+     alojamento-template.vercel.app/vista-bb5622 (marca fictícia «Maré Alta», identificada no site como demonstração);
+     datas escolhidas mas não pesquisadas.
+   - caso-dolci-menu.jpg — abertura do logótipo do Menu digital www.steevanz.com/raza17raza. As imagens do mosaico de fundo
+     foram escondidas na captura, para não mostrar pratos de banco de imagens junto à marca Dolci e Salati.
+   - A interface do Menu digital em hero-menu, menu-ecra-inteiro, menu-pedido, menu-grelha e menu-colecoes é a do nosso
+     produto, gravada no menu temporário genérico «O seu restaurante» (sem marca de cliente; já apagado).
+     Em menu-pedido o QR original (apontava para um pedido apagado) foi tapado por um QR que abre
+     https://www.steevanz.com/produtos/menu-digital.
+
+2. Pixabay (Pixabay Content License — uso comercial permitido, sem atribuição obrigatória)
+   As imagens dos pratos que aparecem em hero-menu, menu-ecra-inteiro, menu-pedido, menu-grelha e menu-colecoes, e a imagem
+   prato-latte.jpg, são conteúdo da Pixabay, vindos do menu de demonstração alojado na Bunny
+   (vz-91fae0f5-ec1.b-cdn.net). Não mostram produtos da Dolci e Salati e nunca devem ser legendados como tal.
+   Alguns destes clips estão marcados na Pixabay como «AI generated» (p. ex. Hambúrguer recheado, Cheeseburger,
+   Gelado com chocolate quente, Massa fresca, Panquecas, Croissant, Cone).
+   IDs Bunny dos pratos do menu «O seu restaurante» (os mesmos vídeos do menu de demonstração;
+   lista de clips verticais não-IA em home-ultra-scout/footage-plan.json):
+     Hambúrguer recheado            d6923164-a2e2-40a7-acc7-09c5feec00f5
+     Pizza no forno                 73cb279c-4a0a-4b20-859d-b09a8d1de779
+     Gelado com chocolate quente    0528e7ab-541e-43c2-8db3-9115e2eb6532
+     Massa fresca com tomate cereja c8fabde4-831f-4619-bbd6-e78d09e88a23
+     Panquecas com fruta            f2282d0c-3879-41e9-acf0-87f36d46b7d5
+     Bolo de chocolate e morango    fa234d13-a832-4ac1-9ebe-acab6e5be5b5
+     Entremeada grelhada            ad3e78e9-e09b-4e87-a8cd-1a4b4a7295d2
+     Latte                          6b7ffe21-811e-42a8-ba36-5392bc49133f  (também prato-latte.jpg, da miniatura Bunny)
+     Crepe feito na hora            2a242c9c-17af-4798-88b8-ac56f952dd6d
+     Rolos de sushi                 9d4d452c-4c23-413b-a3a3-1b3961faf8ff
+     Croissant de manteiga          707389cd-108a-474c-8e54-6fdc32507004
+     Mocktail Pink Pearl            9d10b4d9-7e26-48b9-ab1f-83ea4893dafe
+     Cheeseburger                   26a9c571-43d4-45ac-8574-de543761474d
+     Taça de gelado com caramelo    cc574e91-f27c-4bc5-9562-9de2994932fb
+     Caldo verde                    67f5bf58-ae6a-4907-bced-4910ea537e34
+     Cogumelos salteados            807247ee-cbb8-4ea7-9443-090f7c34c48a
+     Cone de baunilha               16b088ca-b139-47be-9c0b-5a8b6555b7e1
+     Espresso                       79c58722-3f21-4c39-b8f4-1774f04c21ff
+
+3. Dolci e Salati (cliente)
+   As fotografias e o logótipo da Dolci e Salati (incluindo o que aparece em hero-site e caso-dolci-menu) são do cliente,
+   usados com autorização do dono (2026-10-18).

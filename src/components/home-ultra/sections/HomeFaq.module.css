@@ -1,0 +1,193 @@
+/*
+ * «Perguntas frequentes» (HomeFaq). Native <details>, zero JS.
+ * Opening: ::details-content block-size 0 → auto (interpolate-size on the section) where supported,
+ * instant elsewhere. Plus rotates 45deg. Everything else is transform/opacity. Reduced motion: instant.
+ */
+
+.section {
+  interpolate-size: allow-keywords;
+  scroll-margin-top: 4.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.heading {
+  margin-bottom: 1.25rem;
+}
+
+.list {
+  border-bottom: 1px solid var(--line);
+}
+
+.item {
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- Question row ---------- */
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding-block: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 0.5rem;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+/* Separate rules: a browser that does not know one pseudo-element would drop a combined rule. */
+.summary::-webkit-details-marker {
+  display: none;
+}
+.summary::marker {
+  content: "";
+}
+
+.question {
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--text);
+  text-wrap: pretty;
+  transition: color 300ms var(--hu-ease-out);
+}
+
+/* 44px round plus. The plum fill is a pseudo-element faded in on open (opacity/transform only). */
+.plus {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--hu-plum);
+  transition: border-color 300ms var(--hu-ease-out), color 300ms var(--hu-ease-out);
+}
+.plus::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--hu-plum);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 300ms var(--hu-ease-out), transform 300ms var(--hu-ease-out);
+}
+.plusIcon {
+  position: relative;
+  transition: transform 300ms var(--hu-ease-out);
+}
+
+.item[open] .plus {
+  border-color: var(--hu-plum);
+  color: var(--hu-cream);
+}
+.item[open] .plus::before {
+  opacity: 1;
+  transform: none;
+}
+.item[open] .plusIcon {
+  transform: rotate(45deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .summary:hover .question {
+    color: var(--hu-plum);
+  }
+  .summary:hover .plus {
+    border-color: var(--hu-plum);
+  }
+}
+.summary:active .plus {
+  transform: scale(0.94);
+}
+
+/* ---------- Answer ---------- */
+.answer {
+  padding-bottom: 1.25rem;
+}
+.answerText {
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateY(-0.375rem);
+  transition: opacity 400ms var(--hu-ease-out), transform 400ms var(--hu-ease-out);
+}
+.item[open] .answerText {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 640px) {
+  .answer {
+    padding-right: 3.75rem;
+  }
+}
+
+/* Height transition (Chromium 131+, Safari 18.4+, Firefox 143+); other browsers open instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .item::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 400ms var(--hu-ease-out),
+      content-visibility 400ms allow-discrete;
+  }
+  .item[open]::details-content {
+    block-size: auto;
+  }
+  .plus {
+    transition:
+      border-color 300ms var(--hu-ease-out),
+      color 300ms var(--hu-ease-out),
+      transform 160ms var(--hu-ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plus,
+  .plus::before,
+  .plusIcon,
+  .question,
+  .answerText {
+    transition: none;
+  }
+}
+
+/* ---------- Desktop: sticky heading 4/12, list 7/12 ---------- */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: start;
+  }
+  .aside {
+    grid-column: 1 / span 4;
+    position: sticky;
+    top: 18vh;
+  }
+  .heading {
+    margin-bottom: 0;
+  }
+  .list {
+    grid-column: 6 / span 7;
+  }
+  .summary {
+    min-height: 4.5rem;
+    padding-block: 0.875rem;
+  }
+  .question {
+    font-size: 1.1875rem;
+  }
+  .answer {
+    padding-bottom: 1.75rem;
+  }
+  .answerText {
+    font-size: 1.0625rem;
+  }
+}

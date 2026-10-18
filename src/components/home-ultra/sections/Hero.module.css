@@ -1,0 +1,398 @@
+/*
+ * Hero (#inicio). Mobile first: 320/360/390, then the 12-column desktop at 1024px.
+ * Motion: transform/opacity only. Entrance is pure CSS (before hydration) under no-preference; the
+ * scroll-linked satellite drift lives inside @supports (animation-timeline) + no-preference. The frame's
+ * straighten-on-scroll, idle float and pointer tilt come from PhoneStage (shared).
+ */
+
+/* ---------- Shell ---------- */
+section.hero {
+  padding-top: calc(4rem + 1.25rem);
+  padding-bottom: 2rem;
+  isolation: isolate;
+  background: var(--bg);
+}
+/* Two static radial washes (no blur). On a layer whose bottom fades out, so the gold wash (which reaches
+   past the section) doesn't end in a hard seam against the next section. */
+section.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle 38rem at 75% 35%, rgb(122 45 96 / 0.1), transparent),
+    radial-gradient(circle 26rem at 85% 80%, rgb(207 165 99 / 0.14), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* ---------- Copy ---------- */
+.title {
+  font-family: var(--hu-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 0.9rem + 5.6vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--hu-ink);
+  text-wrap: balance;
+  margin: 0;
+}
+/* 345–1023px: capped at 9.1vw so «Tecnologia do futuro.» stays on one line and the H1 is 3 lines
+   (at the plain clamp it wrapped to 4 lines at 360). */
+@media (max-width: 1023.98px) {
+  .title {
+    font-size: min(clamp(2rem, 0.9rem + 5.6vw, 5.5rem), 9.1vw);
+  }
+}
+/* Below 345px «Com os bons modos» fits on one line in Fraunces italic but not in its (roman-metric)
+   fallback, so a late font swap re-wrapped the H1 (CLS 0.16 at 320). At 1.8rem both fonts give the same
+   3 lines («Tecnologia do futuro.» / «Com os bons modos» / «de antigamente.»), with a margin. */
+@media (max-width: 344.98px) {
+  .title {
+    font-size: 1.8rem;
+  }
+}
+
+.copy {
+  margin-top: 1.125rem;
+}
+
+.lead {
+  /* s.lead sets size, colour and measure. */
+  max-width: 36rem;
+}
+
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.cta {
+  width: 100%;
+}
+
+.note {
+  margin: 0.375rem 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-subtle);
+  text-wrap: pretty;
+}
+
+@media (min-width: 480px) {
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 1.5rem;
+    row-gap: 0.25rem;
+  }
+  .cta {
+    width: auto;
+  }
+}
+
+/* ---------- Film frame ---------- */
+.media {
+  --frame-w: min(64vw, 16rem);
+  position: relative;
+  container-type: inline-size;
+  margin-top: 2rem;
+}
+
+/* Phones: a gentler pose so the tall 9:16 frame doesn't clip. */
+.stage {
+  --hero-rx: 8deg;
+  --hero-ry: -12deg;
+  --hero-rz: -2deg;
+  width: 100%;
+}
+
+/* Entrance wrapper INSIDE the stage (.tilt holds the scroll animation). Sized by the frame. */
+.enter {
+  position: relative;
+  width: var(--frame-w);
+  transform-style: preserve-3d;
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: 1.75rem;
+  overflow: clip;
+  isolation: isolate;
+  background: var(--hu-ink);
+  container-type: inline-size;
+  box-shadow:
+    0 2px 4px rgb(29 18 32 / 0.08),
+    0 32px 56px -28px rgb(29 18 32 / 0.5);
+}
+
+/* Hairline ring above the film: the film is cream on cream, so the frame edge needs a line. */
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(29 18 32 / 0.08);
+  pointer-events: none;
+}
+
+/* Soft floor shadow (a separate radial ellipse, not a box-shadow). */
+.floor {
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: calc(var(--frame-w) * 0.7);
+  height: 28px;
+  translate: -50% 0;
+  background: radial-gradient(closest-side, rgb(29 18 32 / 0.28), transparent);
+  pointer-events: none;
+}
+
+/* ---------- Satellites (decorative, aria-hidden, in the stage's 3D space) ---------- */
+.plate {
+  left: -5%;
+  bottom: -6%;
+  width: 30%;
+}
+.plateSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chip {
+  top: 9%;
+  right: -5%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--hu-ink);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow:
+    0 1px 2px rgb(29 18 32 / 0.08),
+    0 14px 28px -14px rgb(29 18 32 / 0.4);
+}
+.chipIcon {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: #f4e4ee;
+  color: var(--hu-plum);
+  flex: none;
+}
+@media (max-width: 359.98px) {
+  .chip {
+    display: none;
+  }
+}
+
+.stamp {
+  top: 50%;
+  right: -22px;
+  margin-top: -22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--hu-gold);
+  color: var(--hu-cream);
+  box-shadow: 0 10px 20px -10px rgb(127 90 28 / 0.7);
+}
+
+/* ---------- Fallback (only when the poster file is missing) ---------- */
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8cqi;
+  background: radial-gradient(120% 90% at 50% 32%, var(--hu-cream) 0%, #f4e4ee 42%, #b06a95 74%, var(--hu-plum) 100%);
+}
+.fallbackMark {
+  font-size: 17cqi;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--hu-ink);
+}
+.fallbackPlate {
+  display: block;
+  width: 34cqi;
+  height: auto;
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1024px) {
+  section.hero {
+    padding-top: calc(4rem + 1.75rem);
+    padding-bottom: 3rem;
+    min-height: min(100svh, 56rem);
+    display: flex;
+    align-items: center;
+  }
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+    align-items: center;
+  }
+  .title {
+    grid-column: 1 / -1;
+  }
+  /* Copy in columns 1–6 and the film in 7–12, so title + film fit one 1280×800 screen. */
+  .copy {
+    grid-column: 1 / 7;
+    grid-row: 2;
+    margin-top: 2rem;
+    /* Right under the title: centred against the taller film it left a hole between H1 and lead. */
+    align-self: start;
+  }
+  .media {
+    /* cqi of .media: the stage centres (shrink-wraps) its children, so a % width would collapse. */
+    --frame-w: 100cqi;
+    grid-column: 7 / -1;
+    grid-row: 2;
+    margin-top: 2rem;
+  }
+  .stage {
+    --hero-rx: 10deg;
+    --hero-ry: -18deg;
+    --hero-rz: -3deg;
+  }
+  .frame {
+    aspect-ratio: 16 / 9;
+    border-radius: 2rem;
+  }
+  .plate {
+    left: -7%;
+    bottom: -9%;
+    width: 18%;
+  }
+  .chip {
+    top: 7%;
+    right: 3%;
+  }
+  .fallback {
+    flex-direction: row;
+    gap: 7cqi;
+    background: radial-gradient(90% 120% at 38% 40%, var(--hu-cream) 0%, #f4e4ee 42%, #b06a95 76%, var(--hu-plum) 100%);
+  }
+  .fallbackMark {
+    font-size: 11cqi;
+  }
+  .fallbackPlate {
+    width: 15cqi;
+  }
+}
+
+/* ---------- Entrance (pure CSS, before hydration) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .lead,
+  .actions,
+  .note {
+    animation: hero-fade-up 700ms var(--hu-ease-out) both;
+  }
+  .lead {
+    animation-delay: 300ms;
+  }
+  .actions {
+    animation-delay: 380ms;
+  }
+  .note {
+    animation-delay: 440ms;
+  }
+
+  /* Transform only: the poster inside is the LCP. */
+  .enter {
+    animation: hero-frame-in 1200ms var(--hu-ease-out) 150ms both;
+  }
+
+  .sat {
+    animation: hero-sat-in 900ms var(--hu-ease-out) var(--hero-d, 500ms) both;
+  }
+}
+
+/* Satellites drift up over the same range the frame straightens (individual `translate`, so it
+   composes with the entrance `transform`). */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sat {
+      animation:
+        hero-sat-in 900ms var(--hu-ease-out) var(--hero-d, 500ms) both,
+        hero-sat-drift linear both;
+      animation-timeline: auto, scroll(root block);
+      animation-range: normal, 0 75svh;
+    }
+    .plate {
+      --hero-drift: -24px;
+    }
+    .chip {
+      --hero-drift: -40px;
+    }
+    .stamp {
+      --hero-drift: -16px;
+    }
+  }
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-frame-in {
+  from {
+    transform: translate3d(0, 48px, 0) rotateX(10deg) rotateY(-10deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes hero-sat-in {
+  from {
+    opacity: 0;
+    transform: translateZ(0) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(var(--z, 40px)) scale(1);
+  }
+}
+
+@keyframes hero-sat-drift {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 var(--hero-drift, -24px);
+  }
+}

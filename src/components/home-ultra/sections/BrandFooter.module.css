@@ -1,0 +1,86 @@
+/*
+ * BrandFooter: giant cropped «Steevanz.» + the two-line brand line, directly above the site footer.
+ * Motion is the shared reveal only (transform). Tuned to Fraunces 500 metrics (per em):
+ * cap 0.77, x-height 0.53, dot 0.12 tall, ascent 0.98, descent 0.26, so with line-height 0.85 the
+ * baseline sits 0.785em below the line-box top and 0.065em above its bottom; the word is 4.05em wide.
+ */
+
+/* Flush with the site footer: same --bg-soft (tone="soft"), nothing below the word. */
+.section.section {
+  padding-top: calc(var(--hu-section-y) + 1rem);
+  padding-bottom: 0;
+}
+
+.inner {
+  /* The word spans the container width (1 / 4.05em ≈ 0.245), capped at the spec's 15rem. */
+  --bf-size: min(15rem, calc((100vw - 2.5rem) * 0.245));
+  overflow: clip;
+}
+@media (min-width: 640px) {
+  .inner {
+    --bf-size: min(15rem, calc((100vw - 4rem) * 0.245));
+  }
+}
+
+.line {
+  margin: 0;
+  font-family: var(--hu-display);
+  font-weight: 500;
+  /* 1.25rem, eased down below ~360px so the longer second line (15.9em) never wraps. */
+  font-size: min(1.25rem, calc((100vw - 2.5rem) / 16.2));
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--hu-ink);
+}
+
+.markWrap {
+  margin-top: 2.5rem;
+  font-size: var(--bf-size);
+  /*
+   * The page edge crops the bottom of the letters: the baseline lands under the edge (0.035em on
+   * phones, 0.05em from 1024px), so the serifs and lower curves go and the gold dot sets on the
+   * footer's hairline like a sun, while staying big enough to read as the brand's dot.
+   */
+  transform: translateY(0.1em);
+}
+
+.markP {
+  margin: 0;
+}
+
+.markWrap .mark {
+  font-size: 1em;
+  color: var(--hu-ink);
+  white-space: nowrap;
+}
+
+/* The dots pop from their own centre, not the middle of the line box (shared SplitText structure). */
+.mark > span[aria-hidden="true"] > span:last-child {
+  transform-origin: 50% 85%;
+}
+.line span[aria-hidden="true"] > span:last-child {
+  transform-origin: 50% 78%;
+}
+
+/*
+ * Desktop lockup: the brand line nests into the shoulder above «evanz», its right edge (and its gold
+ * dot) aligned over the wordmark's gold dot, its last line resting just above the x-height.
+ */
+@media (min-width: 1024px) {
+  .inner {
+    display: grid;
+    grid-template-columns: max-content;
+  }
+  .line {
+    justify-self: end;
+    font-size: 1.75rem;
+    line-height: 1.1;
+    position: relative;
+    z-index: 1;
+  }
+  .markWrap {
+    /* x-height top is 0.255em below the line-box top; keep 0.035em of air above it. */
+    margin-top: -0.22em;
+    transform: translateY(0.115em);
+  }
+}

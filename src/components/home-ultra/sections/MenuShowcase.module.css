@@ -1,0 +1,473 @@
+/*
+ * Menu digital band (#menu-digital): warm deep-plum block, three-phone fan that opens on scroll (CSS
+ * view timeline, final fanned state where unsupported or under reduced motion), tabs with a progress
+ * underline, tab text, CTA. Transform/opacity only. Keyframes are local to this file.
+ */
+
+/* ---------- Band ---------- */
+/* [id] lifts this over the shared tone class (same specificity otherwise, order not guaranteed). */
+.band[id] {
+  padding-block: 2.5rem;
+  background:
+    radial-gradient(30rem circle at 15% 0%, rgb(207 165 99 / 0.2), transparent 70%),
+    radial-gradient(36rem circle at 90% 100%, rgb(122 45 96 / 0.95), transparent 70%),
+    var(--hu-plum-deep);
+}
+@media (min-width: 1024px) {
+  .band[id] {
+    padding-block: clamp(4.5rem, 7vw, 6.5rem);
+  }
+}
+
+.price {
+  margin: 1rem 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--hu-gold);
+  max-width: 34rem;
+  text-wrap: pretty;
+}
+
+/* ---------- Layout ---------- */
+.grid {
+  /* Centre phone width; side phones are 82% of it. */
+  --hu-centre-w: min(42vw, 15rem);
+  --hu-side-w: calc(var(--hu-centre-w) * 0.82);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "intro"
+    "stage"
+    "controls"
+    "panels"
+    "cta";
+}
+.intro {
+  grid-area: intro;
+}
+.intro > :first-child {
+  margin-bottom: 0;
+}
+.stage {
+  grid-area: stage;
+}
+.controls {
+  grid-area: controls;
+}
+.panels {
+  grid-area: panels;
+}
+.cta {
+  grid-area: cta;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    --hu-centre-w: 15rem;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: clamp(2rem, 4vw, 4rem);
+    grid-template-rows: 1fr auto auto auto auto 1fr;
+    grid-template-areas:
+      ".        stage"
+      "intro    stage"
+      "controls stage"
+      "panels   stage"
+      "cta      stage"
+      ".        stage";
+  }
+  .cta {
+    margin-top: 1.25rem;
+  }
+}
+
+/* ---------- Fan ---------- */
+.stage {
+  position: relative;
+  /* Phone height = (w - 20px) × 844/390 + 20px ≈ w × 2.164 - 23px; plus room for the fan. */
+  height: calc(var(--hu-centre-w) * 2.164 + 1.5rem);
+  margin-top: 1.25rem;
+  perspective: 1000px;
+  perspective-origin: 50% 40%;
+  view-timeline: --hu-menu-fan block;
+}
+@media (min-width: 1024px) {
+  .stage {
+    height: 34rem;
+    margin-top: 0;
+  }
+}
+.floor {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 3.5rem;
+  background: radial-gradient(closest-side, rgb(29 18 32 / 0.42), transparent);
+  pointer-events: none;
+}
+.fan {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(6deg);
+}
+.slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  transform-style: preserve-3d;
+}
+.left {
+  transform: translateX(-58%) rotateZ(-12deg) translateZ(-60px);
+}
+.right {
+  transform: translateX(58%) rotateZ(12deg) translateZ(-60px);
+}
+.centre {
+  transform: translateZ(40px);
+}
+.phone {
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 28px 48px -22px rgb(20 6 18 / 0.7);
+}
+.left .phone,
+.right .phone {
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 20px 36px -20px rgb(20 6 18 / 0.6);
+}
+.fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Shown only if a poster file is missing: a warm cream screen, never an empty black. */
+.fallback {
+  background:
+    radial-gradient(70% 45% at 50% 30%, rgb(207 165 99 / 0.35), transparent 70%),
+    #f4ece1;
+}
+
+/* Screen layers crossfade (300ms). */
+.layer {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 300ms var(--hu-ease-out),
+    visibility 0s linear 300ms;
+}
+.layer[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 300ms var(--hu-ease-out),
+    visibility 0s;
+}
+
+/* «+1» flying from the sender's «Adicionar» to the receiver's order bar (same 5s clock as the demo). */
+.chip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: var(--hu-cream);
+  color: var(--hu-plum);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 10px 20px -10px rgb(20 6 18 / 0.6);
+  pointer-events: none;
+  opacity: 0;
+  /* From the sender's «Adicionar» (left phone) to the receiver's order bar (centre phone). */
+  --x0: calc(var(--hu-centre-w) * -0.66);
+  --y0: calc(var(--hu-centre-w) * 0.2);
+  --x1: calc(var(--hu-centre-w) * -0.06);
+  --y1: calc(var(--hu-centre-w) * 0.78);
+  transform: translate3d(var(--x1), var(--y1), 60px);
+}
+.chip[data-on] {
+  animation: chip-fly 5s infinite both;
+  animation-play-state: paused;
+}
+.fan[data-demo-run] .chip[data-on] {
+  animation-play-state: running;
+}
+@keyframes chip-fly {
+  0%,
+  20% {
+    opacity: 0;
+    transform: translate3d(var(--x0), var(--y0), 40px) scale(0.6);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  21% {
+    opacity: 1;
+    transform: translate3d(var(--x0), var(--y0), 50px) scale(1);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  27% {
+    opacity: 1;
+    transform: translate3d(
+        calc((var(--x0) + var(--x1)) / 2),
+        calc((var(--y0) + var(--y1)) / 2 - var(--hu-centre-w) * 0.22),
+        110px
+      )
+      scale(1.1);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  31% {
+    opacity: 0.9;
+    transform: translate3d(var(--x1), var(--y1), 70px) scale(0.85);
+    animation-timing-function: ease-out;
+  }
+  33%,
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--x1), var(--y1), 60px) scale(0.6);
+  }
+}
+
+/* Scroll-linked fan (entry 10% → cover 50%). Base styles above are the final state. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .fan,
+    .left,
+    .right,
+    .centre {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-duration: auto;
+      animation-timeline: --hu-menu-fan;
+      animation-range: entry 10% cover 50%;
+    }
+    .fan {
+      animation-name: fan-tilt;
+    }
+    .left {
+      animation-name: fan-left;
+    }
+    .right {
+      animation-name: fan-right;
+    }
+    .centre {
+      animation-name: fan-centre;
+    }
+  }
+}
+@keyframes fan-tilt {
+  from {
+    transform: rotateX(26deg);
+  }
+  to {
+    transform: rotateX(6deg);
+  }
+}
+@keyframes fan-left {
+  from {
+    transform: translateX(0) rotateZ(0deg) translateZ(-60px);
+  }
+  to {
+    transform: translateX(-58%) rotateZ(-12deg) translateZ(-60px);
+  }
+}
+@keyframes fan-right {
+  from {
+    transform: translateX(0) rotateZ(0deg) translateZ(-60px);
+  }
+  to {
+    transform: translateX(58%) rotateZ(12deg) translateZ(-60px);
+  }
+}
+@keyframes fan-centre {
+  from {
+    transform: translateZ(0);
+  }
+  to {
+    transform: translateZ(40px);
+  }
+}
+
+/* ---------- Tabs ---------- */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .controls {
+    margin-top: 2rem;
+  }
+}
+.tabRow {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  /* Room for the focus ring inside the scroller; the end padding keeps the fade off the last pill. */
+  padding: 4px 1.5rem 4px 4px;
+  margin: -4px 0 -4px -4px;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 1.5rem), transparent);
+}
+.tabRow::-webkit-scrollbar {
+  display: none;
+}
+/* Desktop column: the pills wrap instead of scrolling, so all three stay visible. */
+@media (min-width: 1024px) {
+  .controls {
+    align-items: flex-start;
+  }
+  .tabRow {
+    flex-wrap: wrap;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+.tab {
+  position: relative;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.3);
+  color: rgb(251 247 241 / 0.8);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 300ms var(--hu-ease-out),
+    color 300ms var(--hu-ease-out),
+    transform 180ms var(--hu-ease-out);
+}
+@media (hover: hover) {
+  .tab:hover {
+    color: var(--hu-cream);
+    box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.55);
+  }
+}
+.tab:active {
+  transform: scale(0.97);
+}
+.tab[aria-selected="true"] {
+  background: rgb(251 247 241 / 0.12);
+  color: var(--hu-cream);
+  box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.5);
+}
+/* The progress underline: 2px cream under the label, scaleX over the step's duration (--d). */
+.track {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 7px;
+  height: 2px;
+  border-radius: 2px;
+  overflow: clip;
+}
+.progress {
+  position: absolute;
+  inset: 0;
+  background: var(--hu-cream);
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: underline var(--d, 8s) linear both;
+  animation-play-state: paused;
+}
+.tabRow[data-running] .progress {
+  animation-play-state: running;
+}
+/* No auto-advance (reduced motion / Save-Data): a full static underline marks the tab. */
+.tabRow[data-still] .progress {
+  animation: none;
+  transform: none;
+}
+@keyframes underline {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.pause {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.3);
+  color: var(--hu-cream);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 180ms var(--hu-ease-out);
+}
+@media (hover: hover) {
+  .pause:hover {
+    box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.55);
+  }
+}
+.pause:active {
+  transform: scale(0.94);
+}
+
+/* ---------- Tab text: all panels share one grid cell, so the height never jumps. ---------- */
+.panels {
+  display: grid;
+  margin-top: 0.875rem;
+  min-height: 6rem;
+}
+.panel {
+  grid-area: 1 / 1;
+  margin: 0;
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: rgb(251 247 241 / 0.86);
+  text-wrap: pretty;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition:
+    opacity 300ms var(--hu-ease-out),
+    transform 300ms var(--hu-ease-out),
+    visibility 0s linear 300ms;
+}
+.panel[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 400ms var(--hu-ease-out) 80ms,
+    transform 400ms var(--hu-ease-out) 80ms,
+    visibility 0s;
+}
+.panel:focus-visible {
+  border-radius: 0.5rem;
+}

@@ -1,0 +1,238 @@
+/*
+ * «Como trabalhamos» (#como). Mobile first: a vertical gold line at the left with a node per step.
+ * Desktop (≥1024px): four columns under one SVG S-curve. Motion is transform/opacity only (plus
+ * stroke-dashoffset on the one desktop path), scroll-linked only inside @supports + no-preference.
+ * The static state (no JS, no scroll timelines, reduced motion) is the finished one: line drawn, nodes on.
+ */
+
+.wrap {
+  position: relative;
+  margin-top: 2rem;
+  /* One timeline for the line, the bar and the desktop nodes. */
+  view-timeline: --hu-process block;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.step {
+  position: relative;
+  padding-left: 3.25rem;
+}
+
+/* ---------- Mobile line: 2px track + 2px gold bar, centred on x = 20px ---------- */
+.rail {
+  position: absolute;
+  left: 19px;
+  top: 12px; /* first node centre */
+  bottom: -1.5rem;
+  width: 2px;
+  /* The line carries on past the last step and fades out. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 7rem), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 7rem), transparent);
+  pointer-events: none;
+}
+.track,
+.bar {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+}
+.track {
+  background: var(--line);
+}
+.bar {
+  background: var(--hu-gold);
+  transform-origin: top center;
+}
+
+/* ---------- Desktop curve (hidden on phones) ---------- */
+.curve {
+  display: none;
+}
+.curveTrack,
+.curveGold {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.curveTrack {
+  stroke: var(--line);
+}
+.curveGold {
+  stroke: var(--hu-gold);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* ---------- Node: a 24px gold bead with a cream centre and a soft halo ---------- */
+.node {
+  position: absolute;
+  left: 8px; /* centred on the 20px line */
+  top: 0;
+  width: 24px;
+  height: 24px;
+  z-index: 1;
+}
+.node::before,
+.node::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.node::before {
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+}
+.node::after {
+  background: radial-gradient(circle, var(--hu-cream) 0 3px, var(--hu-gold) 3.5px);
+  box-shadow: 0 0 0 6px var(--hu-gold-soft);
+}
+
+/* ---------- Text ---------- */
+.number {
+  display: block;
+  font-size: 1rem;
+  line-height: 1.5rem; /* = node height, so the node sits on the number's line */
+  letter-spacing: 0.04em;
+}
+.title {
+  margin-top: 0.25rem;
+}
+.text {
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+}
+.nowrap {
+  white-space: nowrap;
+}
+
+/* ---------- Desktop layout ---------- */
+@media (min-width: 1024px) {
+  .wrap {
+    margin-top: 3.5rem;
+  }
+  .rail {
+    display: none;
+  }
+  .list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
+    gap: 0;
+  }
+  /* Subgrid rows (number / title / text): a title that wraps to two lines keeps every text on one baseline. */
+  .step {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    align-content: start;
+    padding: 3rem 2rem 0 0;
+  }
+  .node {
+    left: 0;
+  }
+  /* Column k starts at k/4 of the width, its node centre 12px in: the SVG starts at the first node centre,
+     so viewBox x = 250·k hits every node. Fixed 48px height = viewBox height, so the stroke stays 2px. */
+  .curve {
+    display: block;
+    position: absolute;
+    left: 12px;
+    top: -12px;
+    width: 100%;
+    height: 48px;
+    overflow: visible;
+    -webkit-mask-image: linear-gradient(to right, #000 80%, transparent 99%);
+    mask-image: linear-gradient(to right, #000 80%, transparent 99%);
+    pointer-events: none;
+  }
+}
+
+/* ---------- Motion ---------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Phones: the range is exactly the block's height, offset by 35svh, so the bar's tip stays on a line at
+       65% of the viewport while the list scrolls past, the same line the nodes light on (rootMargin -35%). */
+    .bar {
+      animation: pl-grow-y linear both;
+      animation-timeline: --hu-process;
+      animation-range: entry-crossing 35svh entry-crossing calc(100% + 35svh);
+    }
+
+    :global([data-hu-js]) .node {
+      transition: transform 400ms var(--hu-ease-out);
+    }
+    :global([data-hu-js]) .node::after {
+      transition: opacity 400ms var(--hu-ease-out);
+    }
+    :global([data-hu-js]) .step:not([data-on]) .node {
+      transform: scale(0.6);
+    }
+    :global([data-hu-js]) .step:not([data-on]) .node::after {
+      opacity: 0;
+    }
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+    .bar {
+      animation: none;
+    }
+    .curveGold {
+      animation: pl-draw linear both;
+      animation-timeline: --hu-process;
+      animation-range: cover 25% cover 50%;
+    }
+    /* Node k lights as the stroke reaches it (k/4 of the path → k/4 of the draw range). Animations win over
+       the data-on states above, so the four columns light in order instead of all at once. */
+    .node {
+      animation: pl-node linear both;
+      animation-timeline: --hu-process;
+      animation-range: cover calc(25% + var(--k, 0) * 6.25%) cover calc(28% + var(--k, 0) * 6.25%);
+    }
+    .node::after {
+      animation: pl-fill linear both;
+      animation-timeline: --hu-process;
+      animation-range: cover calc(25% + var(--k, 0) * 6.25%) cover calc(28% + var(--k, 0) * 6.25%);
+    }
+  }
+}
+
+@keyframes pl-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes pl-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes pl-node {
+  from {
+    transform: scale(0.6);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes pl-fill {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

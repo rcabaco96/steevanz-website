@@ -1,0 +1,174 @@
+/*
+ * /novo-ultra floating actions (replaces the site WhatsApp bubble).
+ * Below 1024px: a solid cream pill (no backdrop blur) holding the plum «Agendar demonstração» button
+ * and a round WhatsApp button, 16px side gutters, max 22rem, clear of the iOS home indicator.
+ * From 1024px: only the round WhatsApp button, 56px, bottom right.
+ * Motion: transform + opacity only. Show 500ms ease-out, hide 300ms; reduced motion fades only.
+ * `visibility` flips after the hide finishes, so hidden links leave the tab order even without `inert`.
+ */
+
+.bar {
+  position: fixed;
+  z-index: 45;
+  left: 16px;
+  right: 16px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  margin-inline: auto;
+  max-width: 22rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 9999px;
+  background: rgb(251 247 241 / 0.97);
+  box-shadow:
+    0 0 0 1px rgb(122 45 96 / 0.1),
+    0 14px 34px -14px rgb(29 18 32 / 0.42),
+    0 2px 6px -2px rgb(29 18 32 / 0.12);
+
+  /* Hidden state: the reverse of the show, 300ms. */
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 300ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 300ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    visibility 0s linear 300ms;
+}
+
+.bar[data-show] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 500ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 500ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    visibility 0s linear 0s;
+}
+
+/* ---------- «Agendar demonstração» ---------- */
+.demo {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-inline: 1.125rem;
+  border-radius: 9999px;
+  background: var(--hu-plum, #7a2d60);
+  color: var(--hu-cream, #fbf7f1);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 200ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    background-color 200ms ease;
+}
+.demo:active {
+  transform: scale(0.97);
+}
+.arrow {
+  flex: none;
+  color: var(--hu-gold, #cfa563);
+  transition: transform 300ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+@media (hover: hover) {
+  .demo:hover {
+    background: var(--hu-plum-deep, #5e1f49);
+  }
+  .demo:hover .arrow {
+    transform: translateX(3px);
+  }
+}
+/* At 320px the label needs the room: the arrow is dropped. */
+@media (max-width: 339px) {
+  .arrow {
+    display: none;
+  }
+}
+
+/* ---------- WhatsApp ---------- */
+.whatsapp {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  background: #25d366;
+  color: #0b2e17;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 200ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.whatsapp:active {
+  transform: scale(0.94);
+}
+@media (hover: hover) {
+  .whatsapp:hover {
+    transform: scale(1.05);
+  }
+}
+
+.demo:focus-visible,
+.whatsapp:focus-visible {
+  outline: 2px solid var(--hu-plum, #7a2d60);
+  outline-offset: 3px;
+}
+
+/* ---------- Desktop: only the round WhatsApp button ---------- */
+@media (min-width: 1024px) {
+  .bar {
+    left: auto;
+    right: 24px;
+    bottom: 24px;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .demo {
+    display: none;
+  }
+  .whatsapp {
+    width: 56px;
+    height: 56px;
+    box-shadow:
+      0 12px 32px -10px rgb(37 211 102 / 0.65),
+      0 2px 6px -2px rgb(29 18 32 / 0.18);
+  }
+  .whatsapp svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* ---------- Reduced motion: fade only ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .bar[data-show] {
+    transform: none;
+  }
+  .demo:active,
+  .whatsapp:active,
+  .whatsapp:hover,
+  .demo:hover .arrow {
+    transform: none;
+  }
+}
+
+@media print {
+  .bar {
+    display: none;
+  }
+}

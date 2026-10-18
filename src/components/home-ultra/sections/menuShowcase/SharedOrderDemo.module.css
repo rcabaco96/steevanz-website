@@ -1,0 +1,167 @@
+/*
+ * Shared-order code screen (Menu digital band, tab 2). Layout px of a 390×844 phone screen, scaled by
+ * ScaledScreen. One 5s clock, paused unless an ancestor has data-demo-run:
+ *   0.80–1.10s  «Adicionar» pressed (sender)
+ *   1.60–2.00s  badge 1→2 and bar 2→3 flip on both phones, the bar bumps
+ *   4.60–5.00s  quiet reset (fades out and back), so a repeat never runs backwards
+ * Transform/opacity only. The last keyframe is the resting state, which is what reduced motion shows.
+ */
+.screen {
+  font-family: var(--font-sans);
+  color: #fff;
+  background: #f4ece1;
+}
+.base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 390px;
+  height: 844px;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.add,
+.badge,
+.bar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+}
+
+.add {
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: #c33d7a;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  transform-origin: 50% 50%;
+}
+
+.badge {
+  justify-content: center;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: inset 0 0 0 2.5px #c33d7a;
+  color: #4b1838;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  z-index: 1;
+}
+
+.bar {
+  justify-content: space-between;
+  padding-inline: 20px 26px;
+  border-radius: 999px;
+  background: #c33d7a;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform-origin: 50% 50%;
+  box-shadow: 0 10px 22px -10px rgb(94 31 73 / 0.55);
+}
+.barLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Two stacked digits in a one-line window; the stack moves up by one digit. */
+.flip {
+  display: inline-block;
+  height: 1.2em;
+  line-height: 1.2em;
+  overflow: clip;
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+.flipStack {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- The 5s loop ---------- */
+.add,
+.bar,
+.flipStack {
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+.add {
+  animation-name: press;
+}
+.bar {
+  animation-name: bump;
+}
+.flipStack {
+  animation-name: flip;
+}
+:global([data-demo-run]) .add,
+:global([data-demo-run]) .bar,
+:global([data-demo-run]) .flipStack {
+  animation-play-state: running;
+}
+
+@keyframes press {
+  0%,
+  16% {
+    transform: scale(1);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  19% {
+    transform: scale(0.96);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  24%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes flip {
+  0%,
+  32% {
+    transform: translateY(0);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  40%,
+  92% {
+    transform: translateY(-50%);
+    opacity: 1;
+  }
+  95% {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+  96% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bump {
+  0%,
+  32% {
+    transform: scale(1);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  36% {
+    transform: scale(1.035);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  44%,
+  100% {
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,162 @@
+/*
+ * /novo-ultra final call to action (#contacto). Plum inset band from Section (tone plum + band);
+ * this module sets its own padding, the static gold glow, the layout and the demo button's sweep.
+ * Motion: transform only. Keyframes are local to this module.
+ */
+
+/* `section.` / doubled classes win over the shared .section / .container padding regardless of CSS order. */
+section.block {
+  padding-block: 2.5rem;
+  background-image: radial-gradient(120% 90% at 100% 0%, rgb(207 165 99 / 0.22), rgb(207 165 99 / 0) 62%);
+}
+.inner.inner {
+  padding-inline: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.heading.heading {
+  margin-bottom: 0;
+}
+.title {
+  max-width: 18ch;
+}
+.text {
+  margin: 0.875rem 0 0;
+  max-width: 44ch;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: rgb(251 247 241 / 0.86);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Demo button: label + arrow in a small gold dial. CtaButton wraps children in one <span>. */
+.primary.primary {
+  padding-inline: 1.5rem 0.625rem;
+}
+.primary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.dial {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: 999px;
+  background: var(--hu-gold);
+  color: var(--hu-ink);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .dial {
+    transition: transform 500ms var(--hu-ease-out);
+  }
+  .primary:hover .dial {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sweep: a 110deg light band crossing the button, behind the label (z-index -1 inside the button's
+   isolated stacking context, above its cream background). Parked off to the left until it runs. */
+.primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    rgb(207 165 99 / 0) 30%,
+    rgb(207 165 99 / 0.28) 46%,
+    rgb(255 255 255 / 0.28) 50%,
+    rgb(207 165 99 / 0.28) 54%,
+    rgb(207 165 99 / 0) 70%
+  );
+  transform: translateX(-120%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* 3.6s cycle: 1.2s sweep (first third), then idle; 3 runs, then it stops off-button. */
+  .grid[data-play] .primary::after {
+    animation: finalCtaShine 3.6s var(--hu-ease-io) 1.6s 3 both;
+  }
+}
+@keyframes finalCtaShine {
+  0% {
+    transform: translateX(-120%);
+  }
+  33.333%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* "Ou ligue 961 292 679": 44px tap target. */
+.call {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding-inline: 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgb(251 247 241 / 0.86);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.callIcon {
+  flex: none;
+  color: var(--hu-gold);
+}
+.number {
+  color: var(--hu-cream);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgb(207 165 99 / 0.7);
+  text-underline-offset: 6px;
+}
+@media (hover: hover) {
+  .call:hover .number {
+    text-decoration-color: var(--hu-gold);
+  }
+}
+
+@media (min-width: 640px) {
+  .actions {
+    max-width: 24rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  section.block {
+    padding-block: 4.5rem;
+  }
+  .inner.inner {
+    padding-inline: 4.5rem;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(19rem, 22rem);
+    align-items: end;
+    column-gap: 4rem;
+  }
+  .text {
+    margin-top: 1.25rem;
+  }
+  .actions {
+    max-width: none;
+  }
+}

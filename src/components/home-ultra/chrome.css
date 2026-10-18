@@ -1,0 +1,71 @@
+/*
+ * /novo-ultra chrome adjustments. Plain global file (CSS modules are "pure" and reject bare global
+ * selectors). Everything is scoped to pages that contain [data-home-ultra]. Unlayered, so it beats the
+ * Tailwind utility layer.
+ */
+
+/* 1. Force the light theme (0,2,1 beats :root[data-theme=dark] and :root:not([data-theme]) at 0,2,0). */
+html:root:has([data-home-ultra]) {
+  color-scheme: light;
+  --bg: #fbf7f1;
+  --bg-soft: #f4ece1;
+  --surface: #ffffff;
+  --surface-2: #f7f0e7;
+  --surface-inverse: #1d1220;
+  --line: #e7ddd0;
+  --line-strong: #d3c4b2;
+  --text: #1d1220;
+  --text-muted: #574659;
+  --text-subtle: #6f5d71;
+  --text-inverse: #f7f1e8;
+  --accent: #7a2d60;
+  --accent-hover: #5e1f49;
+  --accent-soft: #f4e4ee;
+  --accent-contrast: #ffffff;
+  --accent-text: #7a2d60;
+  --gold: #cfa563;
+  --gold-soft: #f6ead3;
+  --gold-text: #7f5a1c;
+  --star: #e3a21a;
+  --viz-1: #9c3d7d;
+  --viz-2: #b97a0f;
+  --success: #1e7a4c;
+  --success-soft: #e3f3ea;
+  --danger: #b3261e;
+  --danger-soft: #fbe5e3;
+  --ring: #7a2d60;
+  --shadow-color: 60 30 50;
+  --glow: 122 45 96;
+}
+
+/* 2. The theme toggle can't work here. Coupled to ui.ts theme.toggle («Mudar tema») and the
+   ThemeToggle title attribute; the :has(svg) fallback catches a renamed label. */
+html:root:has([data-home-ultra]) header button[title="Mudar tema"],
+html:root:has([data-home-ultra]) header button[title="Tema claro"],
+html:root:has([data-home-ultra]) header button[title="Tema escuro"] {
+  display: none;
+}
+
+/* 3. No full-width backdrop blur on the header; a solid cream once it has its scrolled border. */
+html:root:has([data-home-ultra]) body > header,
+html:root:has([data-home-ultra]) header.fixed {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html:root:has([data-home-ultra]) header.fixed[class*="border-b"] {
+  background: rgb(251 247 241 / 0.96);
+}
+
+/* 4. The site WhatsApp bubble is replaced by the page's FloatingBar. */
+body:has([data-home-ultra]) .whatsapp-fab {
+  display: none;
+}
+
+/* 5. Selection, caret and focus. */
+body:has([data-home-ultra]) ::selection {
+  background: #f4e4ee;
+  color: #5e1f49;
+}
+body:has([data-home-ultra]) {
+  caret-color: #7a2d60;
+}
