@@ -277,10 +277,8 @@ function label(s, t, x, y, w) {
     const s = base(12);
     kicker(s, "Investimento");
     title(s, 'Preços claros, <span class="scrib">zero letras miudinhas</span>.');
-    const none = [{ type: "none" }, { type: "none" }, { type: "none" }, { type: "none" }];
     const cell = (t, o = {}) => ({ text: t, options: Object.assign({ fontFace: SANS, fontSize: 13, color: C.text, border: [{ type: "none" }, { type: "none" }, { pt: 0.75, color: C.line }, { type: "none" }], valign: "middle" }, o) });
     const rich = (t1, t2, o = {}) => ({ text: [{ text: t1, options: { breakLine: true } }, { text: t2, options: { fontSize: 10, color: C.subtle } }], options: cell("", o).options });
-    const sub = { color: C.muted, border: none };
     const richSave = (t1, t2, save) => ({ text: [{ text: t1, options: { breakLine: true } }, { text: t2, options: { fontSize: 10, color: C.subtle } }, { text: save, options: { fontSize: 10, bold: true, color: "1E7A4C", highlight: "E3F3EA" } }], options: cell("").options });
     const struck = (old, val, o = {}) => ({ text: [{ text: old + "  ", options: { strike: "sngStrike", color: C.subtle, fontSize: 11 } }, { text: val }], options: cell("", { ...o, align: "right" }).options });
     const tot = { bold: true, fontSize: 15, color: C.accent, border: [{ pt: 1.5, color: C.text }, { type: "none" }, { type: "none" }, { type: "none" }] };
@@ -290,29 +288,25 @@ function label(s, t, x, y, w) {
       [rich("Landing page", "Até 8 secções, 2 rondas de alterações"), cell(v.lpPrecoEur, { align: "right" })],
       [rich(`Placas de mesa · ${v.placasUnit} € por placa`, `${v.placasVol} € por placa a partir de ${v.placasDe} placas`), cell(`${v.placasQtd} × ${v.placasUsado} € = ${v.placasEur}`, { align: "right" })],
       ...(v.googleStyle ? [] : [[rich(`Placas Google Reviews · ${v.googleNormal} € por placa`, `Pack de ${v.googlePackDe}: ${v.googlePack} € por placa`), cell(`${v.googleQtd} × ${v.googleUsado} € = ${v.googleEur}`, { align: "right" })]]),
-      [cell("Subtotal (+ IVA)", sub), cell(v.unicoSubEur, { ...sub, align: "right" })],
-      [cell(`IVA ${v.ivaPct}%`, sub), cell(v.unicoIvaEur, { ...sub, align: "right" })],
-      [cell("Total com IVA", tot), cell(v.unicoTotEur, { ...tot, align: "right" })],
-    ], { x: 0.9, y: 2.5, w: 5.45, colW: [3.25, 2.2], rowH: v.googleStyle ? [0.7, 0.7, 0.4, 0.4, 0.5] : [0.62, 0.62, 0.62, 0.36, 0.36, 0.46] });
+      [cell("Total", tot), cell(`${v.unicoSubEur} + IVA`, { ...tot, align: "right" })],
+    ], { x: 0.9, y: 2.5, w: 5.45, colW: [3.25, 2.2], rowH: v.googleStyle ? [0.7, 0.7, 0.5] : [0.62, 0.62, 0.62, 0.46] });
     card(s, 6.75, 1.95, 5.85, 4.3, C.surface, C.gold);
     sticker(s, `Recomendado · ${v.mesesOferta} meses grátis`, 9.65, 1.72, 2.8, "gold", -3, 11);
     tag(s, `Plano anual · 12 meses pelo preço de ${v.mesesPagos}`, 7.0, 2.15, 4.5);
     s.addTable([
       [richSave("Alojamento e manutenção da landing page", `${v.lpMensal} €/mês × ${v.mesesPagos}  `, `poupa ${v.lpPoupa} €`), struck(`${v.lpAnualCheio} €`, `${v.lpAnualEur}/ano`)],
       [richSave("Menu digital em vídeo", `Montagem e alojamento incluídos · ${v.menuMensal} €/mês × ${v.mesesPagos}  `, `poupa ${v.menuPoupa} €`), struck(`${v.menuAnualCheio} €`, `${v.menuAnualEur}/ano`)],
-      [cell("Subtotal (+ IVA)", sub), struck(`${v.anualCheio} €`, `${v.anualSubEur}/ano`, sub)],
-      [cell(`IVA ${v.ivaPct}%`, sub), cell(`${v.anualIvaEur}/ano`, { ...sub, align: "right" })],
-      [cell("Total com IVA", tot), cell(`${v.anualTotEur}/ano`, { ...tot, align: "right" })],
-    ], { x: 6.95, y: 2.5, w: 5.45, colW: [3.6, 1.85], rowH: [0.7, 0.7, 0.4, 0.4, 0.5] });
-    s.addText([{ text: ` Poupa ${v.poupanca} € por ano `, options: { bold: true, color: "1E7A4C", highlight: "E3F3EA" } }, { text: ` + IVA · ${v.poupancaComIvaEur} com IVA`, options: { bold: true, color: C.goldText } }], { x: 7.0, y: 5.3, w: 5.4, h: 0.3, fontFace: SANS, fontSize: 12.5, margin: 0, valign: "top" });
-    text(s, `Ou ${v.mensalSub} €/mês + IVA (${v.mensalTotEur} com IVA), sem período mínimo.`, 7.0, 5.65, 5.4, 0.3, { fontSize: 12 });
+      [cell("Total", tot), struck(`${v.anualCheio} €`, `${v.anualSubEur}/ano + IVA`, tot)],
+    ], { x: 6.95, y: 2.5, w: 5.45, colW: [3.6, 1.85], rowH: [0.7, 0.7, 0.5] });
+    s.addText([{ text: ` Poupa ${v.poupanca} € por ano `, options: { bold: true, color: "1E7A4C", highlight: "E3F3EA" } }, { text: " + IVA", options: { bold: true, color: C.goldText } }], { x: 7.0, y: 5.3, w: 5.4, h: 0.3, fontFace: SANS, fontSize: 12.5, margin: 0, valign: "top" });
+    text(s, `Ou ${v.mensalSub} €/mês + IVA, sem período mínimo.`, 7.0, 5.65, 5.4, 0.3, { fontSize: 12 });
     s.addText([
       { text: "Na adjudicação: ", options: { bold: true, color: C.text } },
-      { text: `itens únicos + 1.º ano = ${v.adjAnualSubEur} + IVA ${v.adjAnualIvaEur} = `, options: { color: C.text } },
-      { text: v.adjAnualTotEur, options: { bold: true, color: C.text } },
+      { text: "itens únicos + 1.º ano = ", options: { color: C.text } },
+      { text: `${v.adjAnualSubEur} + IVA`, options: { bold: true, color: C.text } },
       { text: ` · com pagamento mensal: ${v.adjMensalSubEur} + IVA`, options: { color: C.muted } },
     ], { x: 0.7, y: 5.7, w: 5.85, h: 0.6, fontFace: SANS, fontSize: 12, margin: 0, valign: "top" });
-    text(s, `Preços + IVA (${v.ivaPct}%). O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.`, 0.7, 6.45, 11.9, 0.3, { fontSize: 11, color: C.subtle });
+    text(s, `Valores sem IVA. Acresce IVA à taxa legal. O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.`, 0.7, 6.45, 11.9, 0.3, { fontSize: 11, color: C.subtle });
   }
 
   // 13 · Próximos passos

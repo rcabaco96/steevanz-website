@@ -32,9 +32,6 @@ export interface CartCopy {
   /** Signed-in clients: products already active on the account. */
   owned: { notice: string; removeAll: string };
   summaryTitle: string;
-  subtotal: string;
-  vat: string;
-  total: string;
   oneTimeTotal: string;
   monthlyTotal: string;
   pricesNote: string;
@@ -51,7 +48,8 @@ export interface CartCopy {
   clearConfirm: string;
   clearYes: string;
   cancel: string;
-  vatIncluded: string;
+  /** Next to every amount: prices are shown without VAT, never with VAT added. */
+  plusVat: string;
   barOneTime: string;
   barMonthly: string;
   customize: {
@@ -111,12 +109,9 @@ export const cartCopy: Localized<CartCopy> = {
       removeAll: "Tirar do carrinho",
     },
     summaryTitle: "Resumo",
-    subtotal: "Subtotal",
-    vat: "IVA ({rate}%)",
-    total: "Total",
     oneTimeTotal: "A pagar uma vez",
     monthlyTotal: "A pagar por mês",
-    pricesNote: "Preços indicativos (valores \"desde\"), confirmados na proposta.",
+    pricesNote: "Preços indicativos (valores \"desde\"), sem IVA, confirmados na proposta. Acresce IVA à taxa legal.",
     checkout: "Avançar para checkout",
     checkoutShort: "Avançar",
     backToCart: "Voltar ao carrinho",
@@ -136,7 +131,7 @@ export const cartCopy: Localized<CartCopy> = {
     clearConfirm: "Remover todos os produtos?",
     clearYes: "Sim, limpar",
     cancel: "Cancelar",
-    vatIncluded: "c/ IVA",
+    plusVat: "+ IVA",
     barOneTime: "Único",
     barMonthly: "Mensal",
     customize: {
@@ -194,12 +189,9 @@ export const cartCopy: Localized<CartCopy> = {
       removeAll: "Remove from cart",
     },
     summaryTitle: "Summary",
-    subtotal: "Subtotal",
-    vat: "VAT ({rate}%)",
-    total: "Total",
     oneTimeTotal: "Paid once",
     monthlyTotal: "Paid monthly",
-    pricesNote: "Indicative prices (\"from\" values), confirmed in your proposal.",
+    pricesNote: "Indicative prices (\"from\" values), excluding VAT, confirmed in your proposal. VAT is added at the legal rate.",
     checkout: "Proceed to checkout",
     checkoutShort: "Checkout",
     backToCart: "Back to cart",
@@ -219,7 +211,7 @@ export const cartCopy: Localized<CartCopy> = {
     clearConfirm: "Remove all products?",
     clearYes: "Yes, clear",
     cancel: "Cancel",
-    vatIncluded: "incl. VAT",
+    plusVat: "+ VAT",
     barOneTime: "One-off",
     barMonthly: "Monthly",
     customize: {

@@ -17,7 +17,7 @@ import type { Locale } from "@/lib/i18n";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { briefDetails, briefRows, cartNeedsBrief, parseBrief, type WebBrief } from "./brief";
 import { alreadyActive, type OwnedProduct } from "./ownership";
-import { formatCents, priceCart, sanitizeLines, vatRate, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
+import { formatCents, priceCart, sanitizeLines, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
 
 export type OrderActionState =
   | { status: "idle" }
@@ -28,9 +28,8 @@ const emailText = {
   pt: {
     groups: { oneTime: "Pagamento único", monthly: "Mensalidades" } as Record<CartGroupId, string>,
     head: ["Produto", "Preço unit.", "Qtd.", "Subtotal"],
-    subtotal: "Subtotal (s/ IVA)",
-    vat: "IVA",
-    total: "Total (c/ IVA)",
+    total: "Total",
+    plusVat: "+ IVA",
     perMonth: "/mês",
     format: "Formato",
     logo: "Logótipo",
@@ -44,9 +43,8 @@ const emailText = {
   en: {
     groups: { oneTime: "One-off payment", monthly: "Monthly plans" } as Record<CartGroupId, string>,
     head: ["Product", "Unit price", "Qty", "Subtotal"],
-    subtotal: "Subtotal (excl. VAT)",
-    vat: "VAT",
-    total: "Total (incl. VAT)",
+    total: "Total",
+    plusVat: "+ VAT",
     perMonth: "/month",
     format: "Format",
     logo: "Logo",
@@ -72,7 +70,6 @@ const confirmationText = {
     reference: "Referência",
     oneTime: "Total único",
     monthly: "Total mensal",
-    vatIncluded: "c/ IVA",
     note: "Preços «desde», indicativos: o valor final é o da proposta. Se quiser acrescentar alguma coisa, basta responder a este email.",
   },
   en: {
@@ -84,7 +81,6 @@ const confirmationText = {
     reference: "Reference",
     oneTime: "One-off total",
     monthly: "Monthly total",
-    vatIncluded: "incl. VAT",
     note: "“From” prices are indicative: the final price is the one in the proposal. To add anything, just reply to this email.",
   },
 } satisfies Record<Locale, unknown>;
@@ -146,11 +142,8 @@ function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "p
       const name = `${productLabel(line.productId, locale)} (${ui[locale].billing[product.priceBilling]})`;
       return [[name, ...customizationLines(line, locale)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
     }),
-    foot: [
-      [t.subtotal, money(totals.subtotalCents)],
-      [`${t.vat} (${vatRate}%)`, money(totals.vatCents)],
-      [t.total, money(totals.totalCents)],
-    ],
+    // Without VAT, «+ IVA»: VAT-inclusive amounts are never shown (owner, 2026-10-18).
+    foot: [[t.total, `${money(totals.subtotalCents)} ${t.plusVat}`]],
   };
 }
 
@@ -202,16 +195,17 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   const totals = priceCart(lines);
   const groups = (["oneTime", "monthly"] as const).filter((group) => totals[group].lines.length);
   const summary = [
-    totals.oneTime.lines.length ? `${formatCents(totals.oneTime.totalCents, "pt")} único` : null,
-    totals.monthly.lines.length ? `${formatCents(totals.monthly.totalCents, "pt")}/mês` : null,
+    totals.oneTime.lines.length ? `${formatCents(totals.oneTime.subtotalCents, "pt")} único + IVA` : null,
+    totals.monthly.lines.length ? `${formatCents(totals.monthly.subtotalCents, "pt")}/mês + IVA` : null,
   ]
     .filter(Boolean)
-    .join(" + ");
+    .join(" · ");
   const reference = orderReference();
 
   // Orders are stored so they show up in the client area (when signed in) and in
   // the admin panel. A storage failure must not lose the order: the email still goes out.
   const userId = session.state === "client" || session.state === "admin" ? session.user.id : null;
+  // Stored as before (with VAT); the admin and the client area show the items' amounts without VAT instead.
   const orderTotals: OrderTotals = { oneTimeCents: totals.oneTime.totalCents, monthlyCents: totals.monthly.totalCents };
   let saved = false;
   if (client) {
@@ -245,8 +239,8 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       { label: "Negócio", value: data.businessName },
       { label: "Setor", value: sectorLabel(data.sector) },
       { label: "Mensagem", value: data.message },
-      { label: "Total único", value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.totalCents, "pt")} c/ IVA` : null },
-      { label: "Total mensal", value: totals.monthly.lines.length ? `${formatCents(totals.monthly.totalCents, "pt")}/mês c/ IVA` : null },
+      { label: "Total único", value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.subtotalCents, "pt")} + IVA` : null },
+      { label: "Total mensal", value: totals.monthly.lines.length ? `${formatCents(totals.monthly.subtotalCents, "pt")}/mês + IVA` : null },
       { label: "Idioma", value: data.locale.toUpperCase() },
       { label: "Origem", value: [data.utm_source, data.utm_medium, data.utm_campaign].filter(Boolean).join(" / ") },
       { label: "Referrer", value: data.referrer },
@@ -272,10 +266,10 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       intro: [text.hello(data.name.split(/\s+/)[0]), text.next, ...(brief ? [text.web] : [])],
       rows: [
         { label: text.reference, value: reference },
-        { label: text.oneTime, value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.totalCents, locale)} ${text.vatIncluded}` : null },
+        { label: text.oneTime, value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.subtotalCents, locale)} ${emailText[locale].plusVat}` : null },
         {
           label: text.monthly,
-          value: totals.monthly.lines.length ? `${formatCents(totals.monthly.totalCents, locale)}${emailText[locale].perMonth} ${text.vatIncluded}` : null,
+          value: totals.monthly.lines.length ? `${formatCents(totals.monthly.subtotalCents, locale)}${emailText[locale].perMonth} ${emailText[locale].plusVat}` : null,
         },
       ],
       tables: groups.map((group) => groupTable(group, totals[group], locale)),

@@ -17,7 +17,7 @@ export interface PlanOption {
   savings?: string;
   note: string;
   /** The «Na adjudicação» box for this plan. */
-  due: { label: string; subtotal: string; vat: string; total: string; after: string };
+  due: { label: string; /** «1 025 € + IVA» (never with VAT added). */ amount: string; after: string };
 }
 
 interface PlanContextValue {
@@ -47,7 +47,7 @@ export function DueBox() {
     <section aria-live="polite" className="rounded-[var(--radius-card)] border border-line bg-surface-2 px-5 py-5 sm:px-7">
       <p className="text-sm font-semibold text-text">Na adjudicação: {option.due.label}</p>
       <p className="mt-1 text-muted tabular-nums">
-        {option.due.subtotal} + IVA {option.due.vat} = <strong className="text-text">{option.due.total}</strong>
+        <strong className="text-text">{option.due.amount}</strong>
       </p>
       <p className="mt-1 text-sm text-subtle">{option.due.after}</p>
       {options.length > 1 ? <p className="mt-2 text-xs text-subtle">Escolha o plano no formulário de adjudicação, mais abaixo.</p> : null}
@@ -101,7 +101,7 @@ export function PlanField({ error }: { error?: string }) {
       ))}
       {current ? (
         <p aria-live="polite" className="text-sm text-muted tabular-nums">
-          Na adjudicação: <strong className="text-text">{current.due.total}</strong> com IVA ({current.due.label}).
+          Na adjudicação: <strong className="text-text">{current.due.amount}</strong> ({current.due.label}).
         </p>
       ) : null}
       {error ? (

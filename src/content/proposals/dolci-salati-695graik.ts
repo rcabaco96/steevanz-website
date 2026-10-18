@@ -2,7 +2,7 @@ import type { Proposal } from "./types.ts";
 
 // Dolci e Salati, quote sent on 15/10/2026, with the 3 Google Reviews plates the client also wanted
 // (owner, 2026-10-16). Lines, details and numbers match the updated PDF:
-// one-off 665 € + IVA 152,95 € = 817,95 €; monthly 45 € + IVA 10,35 € = 55,35 €/mês.
+// one-off 665 € + IVA; monthly 45 € + IVA (amounts are always shown without VAT, owner 2026-10-18).
 export const proposal: Proposal = {
   id: "dolci-salati-695graik",
   number: "ORC-2026-001",
@@ -51,7 +51,7 @@ export const proposal: Proposal = {
     },
   ],
   // Owner, 2026-10-15: the monthly fees preferably paid a year upfront, «2 meses grátis»
-  // (45 €/mês → 450 €/ano + IVA 103,50 € = 553,50 €; hosting 150 €/ano, menu 300 €/ano).
+  // (45 €/mês → 450 €/ano + IVA; hosting 150 €/ano, menu 300 €/ano).
   annual: { freeMonths: 2 },
   included: [
     "A landing page da Dolci e Salati, feita à medida e pensada primeiro para o telemóvel.",

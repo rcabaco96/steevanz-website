@@ -1,4 +1,5 @@
-// Lê o ficheiro de dados da proposta, calcula os valores (subtotais, IVA, totais) e a pasta de saída.
+// Lê o ficheiro de dados da proposta, calcula os valores (subtotais e totais, sempre sem IVA) e a pasta de saída.
+// Nunca se mostram valores com IVA calculado (dono, 2026-10-18): só o valor sem IVA, com «+ IVA».
 // Uso nos outros scripts: const d = require("./dados")();
 // Argumentos aceites: [ficheiro.json] [--saida pasta]
 const fs = require("fs");
@@ -18,7 +19,6 @@ const eur = (v) => {
   return (v < 0 ? "−" : "") + grupos(i) + "," + d + " €";
 };
 const num = (v) => (Number.isInteger(v) ? grupos(v) : v.toFixed(2).replace(".", ","));
-const round = (v) => Math.round(v * 100) / 100;
 const fmtDate = (d) => `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 
 module.exports = function carregar(argv = process.argv.slice(2)) {
@@ -47,22 +47,18 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
   const gDesconto = g ? gBruto - g.quantidade * gUsado : 0;
   const google = gBruto - gDesconto;
   const unicoSub = d.landingPage.preco + placas + google;
-  const unicoIva = round(unicoSub * d.iva);
   const mensalSub = d.landingPage.mensal + d.menu.mensal;
-  const mensalIva = round(mensalSub * d.iva);
   // Plano anual pago adiantado: 12 meses pelo preço de (12 − mesesOferta).
   const mesesOferta = (d.planoAnual && d.planoAnual.mesesOferta) || 0;
   const mesesPagos = 12 - mesesOferta;
   const lpAnual = d.landingPage.mensal * mesesPagos;
   const menuAnual = d.menu.mensal * mesesPagos;
   const anualSub = lpAnual + menuAnual;
-  const anualIva = round(anualSub * d.iva);
   const anualSemDesconto = mensalSub * 12;
   const poupanca = anualSemDesconto - anualSub;
   const data = new Date(`${d.data}T12:00:00`);
   const validade = new Date(data);
   validade.setDate(validade.getDate() + (d.validadeDias || 30));
-  const ivaPct = Math.round(d.iva * 100);
 
   const v = {
     cliente: d.cliente,
@@ -76,7 +72,6 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
     validadeDias: String(d.validadeDias || 30),
     aceitacaoUrl: d.aceitacaoUrl,
     aceitacaoCurta: d.aceitacaoUrl.replace(/^https?:\/\/(www\.)?/, ""),
-    ivaPct: String(ivaPct),
     lpPreco: num(d.landingPage.preco),
     lpPrecoEur: eur(d.landingPage.preco),
     lpMensal: num(d.landingPage.mensal),
@@ -107,11 +102,7 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
     googlePackDe: g ? String(g.packDe) : "",
     googleComLogo: gLogo > 0 ? ", com o vosso logótipo" : "",
     unicoSubEur: eur(unicoSub),
-    unicoIvaEur: eur(unicoIva),
-    unicoTotEur: eur(unicoSub + unicoIva),
     mensalSubEur: eur(mensalSub),
-    mensalIvaEur: eur(mensalIva),
-    mensalTotEur: eur(mensalSub + mensalIva),
     mesesOferta: String(mesesOferta),
     mesesPagos: String(mesesPagos),
     descontoAnualPct: String(Math.round((mesesOferta / 12) * 100)),
@@ -121,12 +112,9 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
     menuAnualEur: eur(menuAnual),
     mensalSub: num(mensalSub),
     anualSubEur: eur(anualSub),
-    anualIvaEur: eur(anualIva),
-    anualTotEur: eur(anualSub + anualIva),
     anualSemDescontoEur: eur(anualSemDesconto),
     poupancaEur: eur(poupanca),
     poupanca: num(poupanca),
-    poupancaComIvaEur: eur(round(poupanca * (1 + d.iva))),
     lpAnualCheio: num(d.landingPage.mensal * 12),
     lpAnualCheioEur: eur(d.landingPage.mensal * 12),
     menuAnualCheioEur: eur(d.menu.mensal * 12),
@@ -135,11 +123,7 @@ module.exports = function carregar(argv = process.argv.slice(2)) {
     lpPoupa: num(d.landingPage.mensal * mesesOferta),
     menuPoupa: num(d.menu.mensal * mesesOferta),
     adjAnualSubEur: eur(unicoSub + anualSub),
-    adjAnualIvaEur: eur(unicoIva + anualIva),
-    adjAnualTotEur: eur(unicoSub + anualSub + unicoIva + anualIva),
     adjMensalSubEur: eur(unicoSub + mensalSub),
-    adjMensalIvaEur: eur(unicoIva + mensalIva),
-    adjMensalTotEur: eur(unicoSub + mensalSub + unicoIva + mensalIva),
   };
   const exemplos = Object.assign({}, DEFAULT_EXEMPLOS, d.exemplos || {});
   Object.assign(v, {

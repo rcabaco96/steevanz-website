@@ -415,34 +415,28 @@ body.only-quote .slide { display: none; }
   <div class="q-totals">
     <div class="q-box">
       <h4>Pagamento único</h4>
-      <div class="q-row"><span>Subtotal</span><span>{{unicoSubEur}}</span></div>
-      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{unicoIvaEur}}</span></div>
-      <div class="q-row t"><span>Total com IVA</span><span>{{unicoTotEur}}</span></div>
+      <div class="q-row t"><span>Total</span><span>{{unicoSubEur}} + IVA</span></div>
     </div>
     <div class="q-box rec-box">
       <h4>Plano anual · recomendado</h4>
-      <div class="q-row"><span>Subtotal</span><span><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano</span></div>
-      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{anualIvaEur}}/ano</span></div>
-      <div class="q-row t"><span>Total com IVA</span><span>{{anualTotEur}}/ano</span></div>
-      <div class="q-save"><span class="poupa">Poupa {{poupanca}} € por ano</span> + IVA ({{poupancaComIvaEur}} com IVA)</div>
+      <div class="q-row t"><span>Total</span><span><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano + IVA</span></div>
+      <div class="q-save"><span class="poupa">Poupa {{poupanca}} € por ano</span> + IVA</div>
     </div>
     <div class="q-box">
       <h4>Ou plano mensal</h4>
-      <div class="q-row"><span>Subtotal</span><span>{{mensalSubEur}}/mês</span></div>
-      <div class="q-row"><span>IVA {{ivaPct}}%</span><span>{{mensalIvaEur}}/mês</span></div>
-      <div class="q-row t"><span>Total com IVA</span><span>{{mensalTotEur}}/mês</span></div>
+      <div class="q-row t"><span>Total</span><span>{{mensalSubEur}}/mês + IVA</span></div>
     </div>
   </div>
 
   <div class="q-adj">
-    <div class="q-row t"><span>Na adjudicação (plano anual): itens únicos + 1.º ano</span><span>{{adjAnualSubEur}} + IVA {{adjAnualIvaEur}} = {{adjAnualTotEur}}</span></div>
+    <div class="q-row t"><span>Na adjudicação (plano anual): itens únicos + 1.º ano</span><span>{{adjAnualSubEur}} + IVA</span></div>
     <div class="q-row"><span>Com pagamento mensal: itens únicos + 1.ª mensalidade</span><span>{{adjMensalSubEur}} + IVA</span></div>
   </div>
 
   <div>
     <div class="q-sec" style="margin-bottom: 5px;">Condições</div>
     <ul class="q-cond">
-      <li>Preços em euros, sem IVA. Acresce IVA à taxa legal em vigor ({{ivaPct}}%).</li>
+      <li>Valores em euros, sem IVA. Acresce IVA à taxa legal em vigor.</li>
       <li>Na adjudicação: itens únicos + 1.º ano (plano anual) ou + 1.ª mensalidade (plano mensal).</li>
       <li>Plano anual pago adiantado: 12 meses pelo preço de {{mesesPagos}}. Renova por mais 12 meses, salvo aviso com 30 dias de antecedência.</li>
       <li>Plano mensal: pago no início de cada mês, sem período mínimo; cancela com 30 dias de aviso. Ao cancelar o alojamento, entregamos-lhe os ficheiros da página.</li>

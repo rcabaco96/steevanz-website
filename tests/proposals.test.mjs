@@ -1,4 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 import { getProposal, proposals } from "../src/content/proposals/index.ts";
 import { clientEmail, ownerEmail, processAcceptance, proposalTables } from "../src/lib/proposals/accept.ts";
@@ -23,6 +28,13 @@ import { checkNif, isValidEmail, isValidPortugueseNif, normalizePostalCode, vali
 
 const dolci = getProposal("dolci-salati-695graik");
 const plain = (text) => text.replace(/ | /g, " ");
+
+// Owner, 2026-10-18: amounts are shown without VAT and labelled «+ IVA»; never «com IVA», an «IVA (23%)» line or «= total».
+const vatTotals = /com IVA|c\/ IVA|IVA \(\d|Total com|incl\. VAT|\+ IVA [\d.,  ]+ €|\+ IVA[^·]{0,25}=/;
+function assertNoVatTotals(value) {
+  const text = plain(JSON.stringify(value));
+  assert.doesNotMatch(text, vatTotals);
+}
 
 function form(overrides = {}) {
   const data = new FormData();
@@ -94,7 +106,7 @@ describe("proposal totals", () => {
         [36000, 30000, 6000],
       ],
     );
-    assert.equal(plain(annualSavingsLabel(dolci)), "poupa 90 € + IVA por ano (110,70 € com IVA)");
+    assert.equal(plain(annualSavingsLabel(dolci)), "poupa 90 € + IVA por ano");
     assert.equal(annualSavingsLabel({ ...dolci, annual: undefined }), null);
     assert.equal(annualLineSavingsCents({ ...dolci, annual: undefined }, dolci.monthly[0]), 0);
   });
@@ -269,18 +281,18 @@ describe("accepting a proposal (emails mocked)", () => {
     assert.equal(rows["Data e hora"], "16/10/2026, 10:05");
     assert.equal(rows.Observações, "Faturar em nome da sociedade.");
     assert.equal(plain(rows.Mensalidades), "Anual, pago adiantado (2 meses grátis): 450 € + IVA/ano");
-    assert.equal(plain(rows["Na adjudicação"]), "1 371,45 € com IVA (itens únicos + 1.º ano)");
-    assert.ok(owner.intro.some((line) => plain(line).includes("1 115 € + IVA 256,45 € = 1 371,45 €")));
-    assert.equal(plain(rows.Poupança), "poupa 90 € + IVA por ano (110,70 € com IVA)");
+    assert.equal(plain(rows["Na adjudicação"]), "1 115 € + IVA (itens únicos + 1.º ano)");
+    assert.ok(owner.intro.some((line) => plain(line).includes("(itens únicos + 1.º ano): 1 115 € + IVA.")));
+    assert.equal(plain(rows.Poupança), "poupa 90 € + IVA por ano");
     assert.deepEqual(
       owner.tables[2].rows.map((row) => plain(row[0]).split("\n")[1]),
       ["em vez de 180 €: poupa 30 €", "em vez de 360 €: poupa 60 €"],
     );
     assert.equal(owner.adminUrl, "https://www.steevanz.com/proposta/dolci-salati-695graik");
     const tables = owner.tables.map((table) => ({ title: table.title, foot: table.foot.map(([label, value]) => [label, plain(value)]) }));
-    assert.deepEqual(tables[0].foot.at(-1), ["Total com IVA", "817,95 €"]);
-    assert.deepEqual(tables[1].foot.at(-1), ["Total com IVA", "55,35 €/mês"]);
-    assert.deepEqual(tables[2].foot.at(-1), ["Total com IVA", "553,50 €/ano"]);
+    assert.deepEqual(tables[0].foot, [["Total", "665 € + IVA"]]);
+    assert.deepEqual(tables[1].foot, [["Total", "45 €/mês + IVA"]]);
+    assert.deepEqual(tables[2].foot, [["Total", "450 €/ano + IVA"]]);
 
     assert.equal(later.length, 1);
     const client = later[0];
@@ -289,10 +301,12 @@ describe("accepting a proposal (emails mocked)", () => {
     assert.equal(client.replyTo, "rcabaco@steevanz.com");
     assert.match(client.heading, /Obrigado, Dolci e Salati! Está feito\./);
     assert.ok(client.intro.some((line) => /entra em contacto em breve/.test(line)));
-    assert.ok(client.intro.some((line) => plain(line).includes("1.º ano (plano anual, 2 meses grátis): 1 115 € + IVA 256,45 € = 1 371,45 €")));
+    assert.ok(client.intro.some((line) => plain(line).includes("1.º ano (plano anual, 2 meses grátis): 1 115 € + IVA, para faturas@exemplo.pt.")));
     assert.match(plain(client.rows.find((row) => row.label === "Mensalidades").value), /Anual/);
     assert.match(client.note, /bons modos de antigamente/);
-    assert.ok(client.intro.some((line) => plain(line).includes("poupa 90 € + IVA por ano (110,70 € com IVA)")));
+    assert.ok(client.intro.some((line) => plain(line).includes("poupa 90 € + IVA por ano")));
+    // Owner, 2026-10-18: never an amount with VAT added, anywhere.
+    for (const email of [owner, client]) assertNoVatTotals(email);
   });
 
   it("bills the first month when the client picks the monthly plan", async () => {
@@ -300,10 +314,10 @@ describe("accepting a proposal (emails mocked)", () => {
     await processAcceptance(dolci, form({ plan: "monthly" }), { status: "idle" }, d);
     const rows = Object.fromEntries(sent[0].rows.map((row) => [row.label, row.value]));
     assert.equal(plain(rows.Mensalidades), "Mensal: 45 € + IVA/mês");
-    assert.equal(plain(rows["Na adjudicação"]), "873,30 € com IVA (itens únicos + 1.ª mensalidade)");
+    assert.equal(plain(rows["Na adjudicação"]), "710 € + IVA (itens únicos + 1.ª mensalidade)");
     assert.equal(sent[0].tables.length, 2);
     assert.equal(rows.Poupança, null);
-    assert.ok(later[0].intro.some((line) => plain(line).includes("1.ª mensalidade: 710 € + IVA 163,30 € = 873,30 €")));
+    assert.ok(later[0].intro.some((line) => plain(line).includes("1.ª mensalidade: 710 € + IVA, para faturas@exemplo.pt.")));
   });
 
   it("ignores amounts sent with the form", async () => {
@@ -312,7 +326,7 @@ describe("accepting a proposal (emails mocked)", () => {
     data.set("total", "1");
     data.set("unitCents", "1");
     await processAcceptance(dolci, data, { status: "idle" }, d);
-    assert.equal(plain(Object.fromEntries(sent[0].rows.map((row) => [row.label, row.value]))["Na adjudicação"]), "1 371,45 € com IVA (itens únicos + 1.º ano)");
+    assert.equal(plain(Object.fromEntries(sent[0].rows.map((row) => [row.label, row.value]))["Na adjudicação"]), "1 115 € + IVA (itens únicos + 1.º ano)");
   });
 
   it("does not thank the client when the owner email fails", async () => {
@@ -367,5 +381,44 @@ describe("accepting a proposal (emails mocked)", () => {
     const email = clientEmail(dolci, billing, { origin: "https://www.steevanz.com" }, "rcabaco@steevanz.com");
     assert.equal(email.subject, "Proposta adjudicada · Dolci e Salati · ORC-2026-001");
     assert.ok(ownerEmail(dolci, billing, { now, origin: "https://www.steevanz.com" }).rows.length > email.rows.length);
+  });
+});
+
+describe("no amounts with VAT added (owner, 2026-10-18)", () => {
+  const root = new URL("../", import.meta.url);
+  const read = (file) => readFileSync(new URL(file, root), "utf8");
+  const sources = [
+    "src/components/proposals/ProposalView.tsx",
+    "src/components/proposals/PlanChoice.tsx",
+    "src/lib/proposals/accept.ts",
+    "src/lib/proposals/totals.ts",
+    "src/lib/cart/actions.ts",
+    "src/content/cart.ts",
+    "src/components/cart/CartView.tsx",
+    "src/components/account/OrderList.tsx",
+    "src/app/admin/(panel)/encomendas/[id]/page.tsx",
+    "templates/propostas/build-pptx.js",
+  ];
+
+  it("keeps «com IVA», VAT lines and VAT-inclusive totals out of the proposal page, emails, cart and admin", () => {
+    for (const file of sources) {
+      const text = read(file).replace(/^\s*(\/\/|\*|\/\*\*).*$/gm, "");
+      assert.doesNotMatch(text, /com IVA|c\/ IVA|incl\. VAT|Total com|\(\$?\{vatRate\}%\)|\{rate\}|(formatEuros|formatCents|money)\([^)]*\b(vat|total)Cents|ivaPct|IvaEur|TotEur|poupancaComIva/, file);
+    }
+  });
+
+  it("renders the quote and the deck templates without VAT totals", () => {
+    const require = createRequire(import.meta.url);
+    const carregar = require("../templates/propostas/dados.js");
+    const { v } = carregar([fileURLToPath(new URL("templates/propostas/proposta.json", root)), "--saida", mkdtempSync(join(tmpdir(), "proposta-"))]);
+    for (const template of ["templates/propostas/quote.html", "templates/propostas/deck.html"]) {
+      const html = read(template).replace(/\{\{\{?(\w+)\}?\}\}/g, (match, key) => {
+        assert.ok(key in v, `${template}: falta «${key}»`);
+        return String(v[key]);
+      });
+      const text = plain(html.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " "));
+      assert.doesNotMatch(text, vatTotals, template);
+      assert.match(text, /665,00 € \+ IVA/, template);
+    }
   });
 });

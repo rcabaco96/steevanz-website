@@ -180,8 +180,8 @@ export function planLabel(proposal: Proposal, plan: PaymentPlan): string {
   return `Mensal: ${formatEuros(totals.monthly.subtotalCents)} + IVA/mês`;
 }
 
-/** «poupa 90 € + IVA por ano (110,70 € com IVA)», or null without an annual plan. */
+/** «poupa 90 € + IVA por ano», or null without an annual plan (amounts are never shown with VAT added). */
 export function annualSavingsLabel(proposal: Proposal): string | null {
   const savings = proposalTotals(proposal).annualSavings;
-  return savings ? `poupa ${formatEuros(savings.subtotalCents)} + IVA por ano (${formatEuros(savings.totalCents)} com IVA)` : null;
+  return savings ? `poupa ${formatEuros(savings.subtotalCents)} + IVA por ano` : null;
 }

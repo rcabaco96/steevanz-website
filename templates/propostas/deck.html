@@ -786,9 +786,7 @@ body.only-quote .slide { display: none; }
             <tr><td>Landing page<small>Até 8 secções, 2 rondas de alterações</small></td><td class="r">{{lpPrecoEur}}</td></tr>
             <tr><td>Placas de mesa · {{placasUnit}} € por placa<small>{{placasVol}} € por placa a partir de {{placasDe}} placas</small></td><td class="r">{{placasQtd}} × {{placasUsado}} € = {{placasEur}}</td></tr>
             <tr style="{{googleStyle}}"><td>Placas Google Reviews · {{googleNormal}} € por placa<small>Pack de {{googlePackDe}}: {{googlePack}} € por placa</small></td><td class="r">{{googleQtd}} × {{googleUsado}} € = {{googleEur}}</td></tr>
-            <tr class="sub"><td>Subtotal (+ IVA)</td><td class="r">{{unicoSubEur}}</td></tr>
-            <tr class="sub"><td>IVA {{ivaPct}}%</td><td class="r">{{unicoIvaEur}}</td></tr>
-            <tr class="tot"><td>Total com IVA</td><td class="r">{{unicoTotEur}}</td></tr>
+            <tr class="tot"><td>Total</td><td class="r">{{unicoSubEur}} + IVA</td></tr>
           </tbody>
         </table>
       </div>
@@ -799,17 +797,15 @@ body.only-quote .slide { display: none; }
           <tbody>
             <tr><td>Alojamento e manutenção da landing page<small>{{lpMensal}} €/mês × {{mesesPagos}} <span class="poupa">poupa {{lpPoupa}} €</span></small></td><td class="r"><s class="cheio">{{lpAnualCheio}} €</s> {{lpAnualEur}}/ano</td></tr>
             <tr><td>Menu digital em vídeo<small>Montagem e alojamento incluídos · {{menuMensal}} €/mês × {{mesesPagos}} <span class="poupa">poupa {{menuPoupa}} €</span></small></td><td class="r"><s class="cheio">{{menuAnualCheio}} €</s> {{menuAnualEur}}/ano</td></tr>
-            <tr class="sub"><td>Subtotal (+ IVA)</td><td class="r"><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano</td></tr>
-            <tr class="sub"><td>IVA {{ivaPct}}%</td><td class="r">{{anualIvaEur}}/ano</td></tr>
-            <tr class="tot"><td>Total com IVA</td><td class="r">{{anualTotEur}}/ano</td></tr>
+            <tr class="tot"><td>Total</td><td class="r"><s class="cheio">{{anualCheio}} €</s> {{anualSubEur}}/ano + IVA</td></tr>
           </tbody>
         </table>
-        <p class="save"><span class="poupa big">Poupa {{poupanca}} € por ano</span> + IVA · {{poupancaComIvaEur}} com IVA</p>
-        <p class="alt">Ou {{mensalSub}} €/mês + IVA ({{mensalTotEur}} com IVA), sem período mínimo.</p>
+        <p class="save"><span class="poupa big">Poupa {{poupanca}} € por ano</span> + IVA</p>
+        <p class="alt">Ou {{mensalSub}} €/mês + IVA, sem período mínimo.</p>
       </div>
     </div>
-    <p class="adj-line"><b>Na adjudicação:</b> itens únicos + 1.º ano = {{adjAnualSubEur}} + IVA {{adjAnualIvaEur}} = <b>{{adjAnualTotEur}}</b> <span>· com pagamento mensal: {{adjMensalSubEur}} + IVA</span></p>
-    <p class="small">Preços + IVA ({{ivaPct}}%). O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.</p>
+    <p class="adj-line"><b>Na adjudicação:</b> itens únicos + 1.º ano = <b>{{adjAnualSubEur}} + IVA</b> <span>· com pagamento mensal: {{adjMensalSubEur}} + IVA</span></p>
+    <p class="small">Valores sem IVA. Acresce IVA à taxa legal. O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor, e o domínio fica sempre em seu nome.</p>
     <div class="foot"><span><b>Steevanz</b> · Proposta</span><span>12 / 14</span></div>
   </div>
 </section>

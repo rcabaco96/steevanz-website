@@ -54,7 +54,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 </li>
               ))}
             </ul>
-            <p className="mt-4 border-t border-line pt-3 text-xs text-subtle">Valores s/ IVA por linha. Totais com IVA: {orderSummary(order) || "—"}.</p>
+            <p className="mt-4 border-t border-line pt-3 text-xs text-subtle">Valores sem IVA. Acresce IVA à taxa legal. Total: {orderSummary(order) || "—"}.</p>
           </Panel>
           <Panel title="Contacto">
             <dl>

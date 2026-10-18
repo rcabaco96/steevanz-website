@@ -71,12 +71,9 @@ function tableRows(lines: readonly ProposalLine[], suffix = ""): string[][] {
   });
 }
 
-function totalsFoot(totals: GroupTotals, vatRate: number, suffix = ""): [string, string][] {
-  return [
-    ["Subtotal (sem IVA)", `${formatEuros(totals.subtotalCents)}${suffix}`],
-    [`IVA (${vatRate}%)`, `${formatEuros(totals.vatCents)}${suffix}`],
-    ["Total com IVA", `${formatEuros(totals.totalCents)}${suffix}`],
-  ];
+/** The table's total without VAT, «+ IVA» (VAT-inclusive amounts are never shown). */
+function totalsFoot(totals: GroupTotals, suffix = ""): [string, string][] {
+  return [["Total", `${formatEuros(totals.subtotalCents)}${suffix} + IVA`]];
 }
 
 /** The quote as email tables: one-off items and monthly items, each with its totals, and the annual plan when chosen. */
@@ -84,10 +81,10 @@ export function proposalTables(proposal: Proposal, plan: PaymentPlan = "monthly"
   const totals = proposalTotals(proposal);
   const tables: EmailTable[] = [];
   if (proposal.oneOff.length) {
-    tables.push({ title: "Pagamento único", head: ["Item", "Qtd.", "Valor"], rows: tableRows(proposal.oneOff), foot: totalsFoot(totals.oneOff, proposal.vatRate) });
+    tables.push({ title: "Pagamento único", head: ["Item", "Qtd.", "Valor"], rows: tableRows(proposal.oneOff), foot: totalsFoot(totals.oneOff) });
   }
   if (proposal.monthly.length) {
-    tables.push({ title: "Mensalidade", head: ["Item", "Qtd.", "Valor"], rows: tableRows(proposal.monthly, "/mês"), foot: totalsFoot(totals.monthly, proposal.vatRate, "/mês") });
+    tables.push({ title: "Mensalidade", head: ["Item", "Qtd.", "Valor"], rows: tableRows(proposal.monthly, "/mês"), foot: totalsFoot(totals.monthly, "/mês") });
   }
   if (plan === "annual" && totals.annual) {
     const months = annualPaidMonths(proposal);
@@ -99,7 +96,7 @@ export function proposalTables(proposal: Proposal, plan: PaymentPlan = "monthly"
         `${months} × ${formatEuros(lineTotal(line).netCents)}`,
         `${formatEuros(annualLineCents(proposal, line))}/ano`,
       ]),
-      foot: totalsFoot(totals.annual, proposal.vatRate, "/ano"),
+      foot: totalsFoot(totals.annual, "/ano"),
     });
   }
   return tables;
@@ -115,13 +112,13 @@ export function ownerEmail(proposal: Proposal, billing: BillingDetails, deps: Pi
     heading: `Nova adjudicação: ${proposal.clientName}`,
     intro: [
       `${billing.company} adjudicou a proposta ${proposal.number} (de ${formatDate(proposal.date)}, válida até ${formatDate(validUntil(proposal))}) a ${when}.`,
-      `A faturar na adjudicação (${dueLabel(proposal, billing.plan)}): ${formatEuros(due.subtotalCents)} + IVA ${formatEuros(due.vatCents)} = ${formatEuros(due.totalCents)}.`,
+      `A faturar na adjudicação (${dueLabel(proposal, billing.plan)}): ${formatEuros(due.subtotalCents)} + IVA.`,
     ],
     rows: [
       { label: "Data e hora", value: when },
       { label: "Proposta", value: `${proposal.number} · ${proposal.clientName}` },
       { label: "Mensalidades", value: offersPlans ? planLabel(proposal, billing.plan) : null },
-      { label: "Na adjudicação", value: `${formatEuros(due.totalCents)} com IVA (${dueLabel(proposal, billing.plan)})` },
+      { label: "Na adjudicação", value: `${formatEuros(due.subtotalCents)} + IVA (${dueLabel(proposal, billing.plan)})` },
       { label: "Poupança", value: billing.plan === "annual" ? annualSavingsLabel(proposal) : null },
       { label: "Empresa", value: billing.company },
       { label: billing.nifIsPortuguese ? "NIF" : "N.º de IVA", value: billing.nif },
@@ -154,7 +151,7 @@ export function clientEmail(proposal: Proposal, billing: BillingDetails, deps: P
       "A equipa Steevanz entra em contacto em breve para começarmos. O que se segue:",
       ...proposal.nextSteps.map((step, index) => `${index + 1}. ${step}`),
       ...(annual ? [`Com o plano anual, ${annualSavingsLabel(proposal)}: 12 meses pelo preço de ${annualPaidMonths(proposal)}.`] : []),
-      `Na adjudicação faturamos ${dueLabel(proposal, billing.plan)}${annual ? ` (plano anual, ${freeMonthsLabel(proposal)})` : ""}: ${formatEuros(due.subtotalCents)} + IVA ${formatEuros(due.vatCents)} = ${formatEuros(due.totalCents)}, para ${billing.email}.`,
+      `Na adjudicação faturamos ${dueLabel(proposal, billing.plan)}${annual ? ` (plano anual, ${freeMonthsLabel(proposal)})` : ""}: ${formatEuros(due.subtotalCents)} + IVA, para ${billing.email}.`,
     ],
     rows: [
       { label: "Empresa", value: billing.company },

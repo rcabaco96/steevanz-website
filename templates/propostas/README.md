@@ -42,7 +42,7 @@ npm install
    | `placa` | Logótipo do cliente, endereço do menu (QR das placas) e cores das placas: `cor` (placa plana), `corImpressao` (impressão na placa creme), `corRelevoSombra`, `corSecundaria` (ícone «toque»), `creme`, `base` |
    | `exemplos` | Títulos e legendas dos diapositivos de exemplo (opcional; sem este campo usam-se textos genéricos) |
 
-   Subtotais, IVA, totais, o desconto de quantidade, o plano anual (recomendado) e os valores na adjudicação são calculados automaticamente. Todos os preços são sem IVA.
+   Subtotais, totais, o desconto de quantidade, o plano anual (recomendado) e os valores na adjudicação são calculados automaticamente. Todos os preços são sem IVA e os documentos nunca mostram valores com IVA calculado (nada de «Total com IVA»): cada valor leva «+ IVA» e as condições dizem «Acresce IVA à taxa legal em vigor».
 
 3. Gere tudo:
 

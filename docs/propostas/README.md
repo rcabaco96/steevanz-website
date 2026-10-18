@@ -3,7 +3,11 @@
 O processo de venda: **apresentação (deck) → orçamento → o cliente adjudica online**.
 
 Cada proposta tem uma página privada em `https://www.steevanz.com/proposta/<id>` com o orçamento
-(linhas, totais com e sem IVA, condições e um resumo do que inclui) e o formulário de adjudicação.
+(linhas, totais sem IVA com «+ IVA», condições e um resumo do que inclui) e o formulário de adjudicação.
+
+**Nunca mostramos valores com IVA calculado** (dono, 2026-10-18): nem «Total com IVA», nem uma linha
+«IVA (23 %)» com valor, nem «X € + IVA = Y €». Só o valor sem IVA com «+ IVA», na página, nos emails, no
+orçamento e no deck. Os negócios têm contabilidade organizada e sabem que acresce IVA.
 
 ## Plano anual («2 meses grátis»)
 
@@ -18,7 +22,7 @@ Com isto, a página:
 
 - mostra no cartão «Mensalidade», em cada linha, o preço de 12 meses riscado, o preço anual e quanto
   poupa (15 €/mês: ~~180 €~~ 150 €/ano, poupa 30 €), e o plano anual como «Recomendado · 2 meses
-  grátis», com a poupança total sem e com IVA; o plano mensal fica como alternativa;
+  grátis», com a poupança total («poupa 90 € + IVA por ano»); o plano mensal fica como alternativa;
 - pergunta no formulário «Como prefere pagar as mensalidades?» (anual, já escolhido, ou mensal);
 - atualiza a caixa «Na adjudicação» com a escolha: itens únicos + 1.º ano, ou itens únicos +
   1.ª mensalidade.
@@ -93,7 +97,7 @@ página têm de ser iguais aos do orçamento enviado ao cliente.
    discount: { description: "Desconto de quantidade (a partir de 10 placas: 15 €/un.)", amountCents: 7500 },
    ```
 
-   Os subtotais, o IVA e os totais são calculados sozinhos (`src/lib/proposals/totals.ts`).
+   Os subtotais e os totais (sem IVA) são calculados sozinhos (`src/lib/proposals/totals.ts`).
 
 3. **Registar a proposta** em `src/content/proposals/index.ts`:
 

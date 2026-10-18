@@ -79,28 +79,17 @@ function Lines({ lines, suffix = "", annual }: { lines: readonly ProposalLine[];
   );
 }
 
-function Totals({ totals, vatRate, suffix = "", compact = false }: { totals: GroupTotals; vatRate: number; suffix?: string; compact?: boolean }) {
+/** The group's total without VAT, labelled «+ IVA» (VAT-inclusive amounts are never shown). */
+function Totals({ totals, suffix = "", compact = false }: { totals: GroupTotals; suffix?: string; compact?: boolean }) {
   return (
     <dl className="mt-4 flex flex-col gap-1.5 text-sm tabular-nums">
-      <div className="flex justify-between gap-4 text-muted">
-        <dt>Subtotal (sem IVA)</dt>
-        <dd className="whitespace-nowrap">
-          {formatEuros(totals.subtotalCents)}
-          {suffix}
-        </dd>
-      </div>
-      <div className="flex justify-between gap-4 text-muted">
-        <dt>IVA ({vatRate}%)</dt>
-        <dd className="whitespace-nowrap">
-          {formatEuros(totals.vatCents)}
-          {suffix}
-        </dd>
-      </div>
-      <div className="mt-1.5 flex items-baseline justify-between gap-4 border-t border-line pt-3 text-text">
-        <dt className="font-semibold whitespace-nowrap">Total com IVA</dt>
+      <div className="flex items-baseline justify-between gap-4 border-t border-line pt-3 text-text">
+        <dt className="font-semibold whitespace-nowrap">Total</dt>
         <dd className={`display whitespace-nowrap ${compact ? "text-[1.35rem]" : "text-[1.6rem]"}`}>
-          {formatEuros(totals.totalCents)}
-          {suffix ? <span className="font-sans text-sm text-subtle">{suffix}</span> : null}
+          {formatEuros(totals.subtotalCents)}
+          <span className="font-sans text-sm text-subtle">
+            {suffix} + IVA
+          </span>
         </dd>
       </div>
     </dl>
@@ -143,10 +132,9 @@ function AnnualOption({ proposal, totals, monthly }: { proposal: Proposal; total
           <span className="rounded-full bg-success-soft px-3 py-1 text-sm font-semibold text-success ring-1 ring-success/25">
             Poupa {formatEuros(savings.subtotalCents)} + IVA por ano
           </span>
-          <span className="text-sm text-muted">({formatEuros(savings.totalCents)} com IVA)</span>
         </p>
       ) : null}
-      <Totals totals={totals} vatRate={proposal.vatRate} suffix="/ano" compact />
+      <Totals totals={totals} suffix="/ano" compact />
     </div>
   );
 }
@@ -155,7 +143,7 @@ function planOptionsFor(proposal: Proposal): PlanOption[] {
   const totals = proposalTotals(proposal);
   return planOptions(proposal).map((id: PaymentPlan) => {
     const due = dueOnAcceptance(proposal, id);
-    const dueText = { label: dueLabel(proposal, id), subtotal: formatEuros(due.subtotalCents), vat: formatEuros(due.vatCents), total: formatEuros(due.totalCents) };
+    const dueText = { label: dueLabel(proposal, id), amount: `${formatEuros(due.subtotalCents)} + IVA` };
     if (id === "annual" && totals.annual) {
       return {
         id,
@@ -165,7 +153,7 @@ function planOptionsFor(proposal: Proposal): PlanOption[] {
         was: formatEuros(totals.monthly.subtotalCents * 12),
         savings: totals.annualSavings ? `poupa ${formatEuros(totals.annualSavings.subtotalCents)} + IVA por ano` : undefined,
         note: `12 meses pelo preço de ${annualPaidMonths(proposal)}, pago adiantado.`,
-        due: { ...dueText, after: `Depois, ${formatEuros(totals.annual.totalCents)}/ano com IVA, a cada 12 meses.` },
+        due: { ...dueText, after: `Depois, ${formatEuros(totals.annual.subtotalCents)}/ano + IVA, a cada 12 meses.` },
       };
     }
     return {
@@ -173,7 +161,7 @@ function planOptionsFor(proposal: Proposal): PlanOption[] {
       title: "Mensal",
       price: `${formatEuros(totals.monthly.subtotalCents)} + IVA/mês`,
       note: "Sem período mínimo; cancela com 30 dias de aviso.",
-      due: { ...dueText, after: `Depois, ${formatEuros(totals.monthly.totalCents)}/mês com IVA, no início de cada mês.` },
+      due: { ...dueText, after: `Depois, ${formatEuros(totals.monthly.subtotalCents)}/mês + IVA, no início de cada mês.` },
     };
   });
 }
@@ -237,7 +225,7 @@ export function ProposalView({ proposal, expired }: { proposal: Proposal; expire
         {proposal.oneOff.length ? (
           <Card title="Pagamento único" eyebrow="Pago na adjudicação">
             <Lines lines={proposal.oneOff} />
-            <Totals totals={totals.oneOff} vatRate={proposal.vatRate} />
+            <Totals totals={totals.oneOff} />
           </Card>
         ) : null}
 
@@ -262,11 +250,11 @@ export function ProposalView({ proposal, expired }: { proposal: Proposal; expire
                 <div className="mt-5 px-1">
                   <p className="font-semibold text-text">Ou mensal</p>
                   <p className="text-sm text-muted">Sem período mínimo; cancela com 30 dias de aviso.</p>
-                  <Totals totals={totals.monthly} vatRate={proposal.vatRate} suffix="/mês" />
+                  <Totals totals={totals.monthly} suffix="/mês" />
                 </div>
               </>
             ) : (
-              <Totals totals={totals.monthly} vatRate={proposal.vatRate} suffix="/mês" />
+              <Totals totals={totals.monthly} suffix="/mês" />
             )}
           </Card>
         ) : null}

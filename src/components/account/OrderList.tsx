@@ -8,12 +8,16 @@ import { formatCents } from "@/lib/cart/pricing";
 
 type ListedOrder = Omit<OrderRow, "admin_notes">;
 
-export function orderSummary(order: ListedOrder): string {
-  const parts = [
-    order.totals?.oneTimeCents ? `${formatCents(order.totals.oneTimeCents, "pt")} único` : null,
-    order.totals?.monthlyCents ? `${formatCents(order.totals.monthlyCents, "pt")}/mês` : null,
-  ];
-  return parts.filter(Boolean).join(" + ");
+/**
+ * «350 € único + IVA · 15 €/mês + IVA»: the items' amounts without VAT. The stored `totals` include VAT and are never
+ * shown (owner, 2026-10-18: no VAT-inclusive amounts anywhere).
+ */
+export function orderSummary(order: Pick<ListedOrder, "items">): string {
+  const sum = (billing: "oneTime" | "monthly") => (order.items ?? []).filter((item) => item.billing === billing).reduce((total, item) => total + item.subtotalCents, 0);
+  const oneTime = sum("oneTime");
+  const monthly = sum("monthly");
+  const parts = [oneTime ? `${formatCents(oneTime, "pt")} único + IVA` : null, monthly ? `${formatCents(monthly, "pt")}/mês + IVA` : null];
+  return parts.filter(Boolean).join(" · ");
 }
 
 export function orderProducts(order: ListedOrder): string {

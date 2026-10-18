@@ -18,7 +18,6 @@
     "creme": "#f3ede2",
     "base": "#ece5d8"
   },
-  "iva": 0.23,
   "landingPage": { "preco": 350, "mensal": 15 },
   "menu": { "mensal": 30 },
   "planoAnual": { "mesesOferta": 2, "recomendado": true },

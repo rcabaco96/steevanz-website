@@ -13,7 +13,7 @@ import type { ProductId } from "@/content/types";
 import { cartOwnership, submitOrder, type OrderActionState } from "@/lib/cart/actions";
 import { cartNeedsBrief } from "@/lib/cart/brief";
 import { alreadyActive, type OwnedProduct } from "@/lib/cart/ownership";
-import { cartGroups, formatCents, maxQuantity, maxQuantityFor, priceCart, vatRate, type CartGroupId, type GroupTotals, type PricedLine } from "@/lib/cart/pricing";
+import { cartGroups, formatCents, maxQuantity, maxQuantityFor, priceCart, type CartGroupId, type GroupTotals, type PricedLine } from "@/lib/cart/pricing";
 import { cart, useCart } from "@/lib/cart/store";
 import type { Locale } from "@/lib/i18n";
 
@@ -309,28 +309,15 @@ export function CartView({ locale, copy, formCopy, briefCopy, catalog, sectors, 
           <h2 id="cart-summary-title" className="eyebrow">
             {copy.summaryTitle}
           </h2>
-          {activeGroups.map((group) => (
-            <dl key={group} className="flex flex-col gap-1.5 border-b border-line pb-4 text-sm">
-              <dt className="mb-1 font-semibold text-text">{copy.groups[group].title}</dt>
-              <dd className="flex justify-between gap-3 text-muted">
-                <span>{copy.subtotal}</span>
-                <span className="tabular">{money(totals[group].subtotalCents, group)}</span>
-              </dd>
-              <dd className="flex justify-between gap-3 text-muted">
-                <span>{copy.vat.replace("{rate}", String(vatRate))}</span>
-                <span className="tabular">{money(totals[group].vatCents, group)}</span>
-              </dd>
-              <dd className="flex justify-between gap-3 font-semibold text-text">
-                <span>{copy.total}</span>
-                <span className="tabular">{money(totals[group].totalCents, group)}</span>
-              </dd>
-            </dl>
-          ))}
-          <div className="flex flex-col gap-3">
+          {/* Amounts without VAT, always labelled «+ IVA»: no VAT-inclusive totals (owner, 2026-10-18). */}
+          <div className="flex flex-col gap-3 border-b border-line pb-4">
             {activeGroups.map((group) => (
               <p key={group} className="flex flex-wrap items-baseline justify-between gap-x-3">
                 <span className="text-sm text-muted">{group === "monthly" ? copy.monthlyTotal : copy.oneTimeTotal}</span>
-                <span className="display tabular text-2xl">{money(totals[group].totalCents, group)}</span>
+                <span className="tabular">
+                  <span className="display text-2xl">{money(totals[group].subtotalCents, group)}</span>
+                  <span className="text-sm text-subtle"> {copy.plusVat}</span>
+                </span>
               </p>
             ))}
           </div>
@@ -394,10 +381,10 @@ function MobileCheckoutBar({
           {groups.map((group) => (
             <p key={group} className="flex items-baseline gap-1.5 leading-snug">
               <span className="text-xs text-subtle">{group === "monthly" ? copy.barMonthly : copy.barOneTime}</span>
-              <span className="tabular truncate text-base font-semibold text-text">{money(totals[group].totalCents, group)}</span>
+              <span className="tabular truncate text-base font-semibold text-text">{money(totals[group].subtotalCents, group)}</span>
             </p>
           ))}
-          <p className="text-xs text-subtle">{copy.vatIncluded}</p>
+          <p className="text-xs text-subtle">{copy.plusVat}</p>
         </div>
         <button type="button" onClick={onCheckout} className={buttonClasses("primary", "md", "shrink-0")}>
           {copy.checkoutShort}
