@@ -5,9 +5,9 @@ import { toVideoMenuData, type VideoMenuCollectionRow, type VideoMenuData, type 
 // Reads of the video menus (service role: RLS lets nothing else in). The admin reads fresh rows;
 // the public pages read through the cache below, refreshed by every save in the admin.
 
-export const menuColumns = "id, slug, business_name, logo_url, instagram, review_business_id, active, ordering_enabled, created_at, updated_at";
-const dishColumns = "id, menu_id, name, description, price_cents, position, bunny_video_id, bunny_thumbnail, pending_video_id, pending_video_status";
-const collectionColumns = "id, menu_id, name, position, is_default";
+export const menuColumns = "id, slug, business_name, logo_url, instagram, review_business_id, active, ordering_enabled, translations, created_at, updated_at";
+const dishColumns = "id, menu_id, name, description, price_cents, position, bunny_video_id, bunny_thumbnail, pending_video_id, pending_video_status, translations";
+const collectionColumns = "id, menu_id, name, position, is_default, translations";
 
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -120,8 +120,9 @@ export function getPublicMenu(slug: string): Promise<VideoMenuData | null> {
       const parts = await loadMenuParts(data as VideoMenuRow);
       return toVideoMenuData(parts.menu, parts.dishes, parts.collections, parts.links);
     },
-    // The shape's version: a new one (sections, 2026-10-19) never reads a menu cached in an older shape.
-    ["video-menu", "sections", slug],
+    // The shape's version: a new one never reads a menu cached in an older shape (sections, then
+    // translations: 2026-10-19).
+    ["video-menu", "sections-i18n", slug],
     { tags: [menusCacheTag, menuCacheTag(slug)], revalidate: 3600 },
   )();
 }

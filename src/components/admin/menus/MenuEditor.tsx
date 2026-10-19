@@ -5,6 +5,7 @@ import { DishVideoUpload } from "@/components/admin/menus/DishVideoUpload";
 import { MenuDetailsForm } from "@/components/admin/menus/MenuDetailsForm";
 import { MenuStateBadge, MoveButtons } from "@/components/admin/menus/MenuBits";
 import { MenuTables } from "@/components/admin/menus/MenuTables";
+import { TranslationsEditor } from "@/components/admin/menus/TranslationsEditor";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { AdminPageHeader, EmptyState, Panel, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { ArrowUpRight, PlusIcon } from "@/components/icons";
@@ -129,6 +130,7 @@ export function MenuEditor({
                         </ActionForm>
                       </div>
                     </details>
+                    <TranslationsEditor kind="dish" id={dish.id} original={{ name: dish.name, description: dish.description }} translations={dish.translations} />
                   </li>
                 );
               })}
@@ -212,6 +214,7 @@ export function MenuEditor({
                         </div>
                       </div>
                     </details>
+                    <TranslationsEditor kind="collection" id={collection.id} original={{ name: collection.name }} translations={collection.translations} />
                   </li>
                 );
               })}

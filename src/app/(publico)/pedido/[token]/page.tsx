@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { LanguageFlag } from "@/components/menu/LanguageFlag";
 import { confirmOrderAction } from "@/lib/video-menus/order-actions";
-import { cartItemCount, itemsLabel, orderTime } from "@/lib/video-menus/ordering-rules";
+import { cartItemCount, customerLanguageNote, itemsLabel, orderTime } from "@/lib/video-menus/ordering-rules";
 import { getOrderByToken, type StaffOrder } from "@/lib/video-menus/ordering-store";
 import { formatPriceCents } from "@/lib/video-menus/rules";
 
 // An order, for the staff (owner, 2026-10-16): they scan the QR code on the table's phone with their
 // own phone's camera (no app, no login) and land here: the table, the order's number and time, the
-// lines with their notes, the total and «Confirmar pedido».
+// lines with their notes, the total and «Confirmar pedido». Always in Portuguese, the dishes' Portuguese
+// names whatever the customer's menu language (owner, 2026-10-19), with a small note of that language;
+// the notes as the customer typed them.
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Pedido", referrer: "no-referrer" };
@@ -27,6 +30,7 @@ export default async function StaffOrderPage({ params }: PageProps<"/pedido/[tok
   if (!order) notFound();
   const confirmed = order.status === "confirmed";
   const count = cartItemCount(order.lines);
+  const languageNote = customerLanguageNote(order.language);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-4 px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
@@ -44,6 +48,12 @@ export default async function StaffOrderPage({ params }: PageProps<"/pedido/[tok
         <p className="text-sm text-muted">
           Feito às {orderTime(order.createdAt)} · {itemsLabel(count)}
         </p>
+        {languageNote ? (
+          <p className="mt-1 inline-flex items-center gap-2 self-start rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-muted">
+            {order.language ? <LanguageFlag language={order.language} size={14} /> : null}
+            {languageNote}
+          </p>
+        ) : null}
       </section>
 
       {confirmed ? (

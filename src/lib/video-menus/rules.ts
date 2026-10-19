@@ -2,6 +2,7 @@
 // (no server or browser APIs), so the admin's forms use it in the browser too.
 
 import { initialsOf } from "../establishments/logo-rules.ts";
+import { cleanTranslations, translationLimits, type CollectionTranslations, type DishTranslations } from "./i18n.ts";
 
 // The public menu's shape ------------------------------------------------------------------------------
 
@@ -15,6 +16,8 @@ export interface MenuDish {
   description: string;
   /** Euros. */
   price: number;
+  /** Its name and description in the other languages (only what differs from the Portuguese). */
+  translations?: DishTranslations;
 }
 
 /** A section of the menu's page: a collection, or (with no name) the dishes in no collection. */
@@ -23,6 +26,8 @@ export interface MenuCollection {
   /** Empty for the section without a heading (dishes in no collection, or a menu without collections). */
   name: string;
   dishes: string[];
+  /** Its name in the other languages. */
+  translations?: CollectionTranslations;
 }
 
 export interface VideoMenuData {
@@ -205,6 +210,8 @@ export interface VideoMenuRow {
   active: boolean;
   /** Ordering from the table links (/m/<token>); off by default. */
   ordering_enabled?: boolean;
+  /** The menu's own public texts in other languages (none yet: its dishes and collections have theirs). */
+  translations?: unknown;
   created_at: string;
   updated_at: string;
 }
@@ -222,6 +229,8 @@ export interface VideoMenuDishRow {
   bunny_thumbnail?: string | null;
   pending_video_id?: string | null;
   pending_video_status?: "uploading" | "processing" | "failed" | null;
+  /** {"en": {"name", "description"}, …} as the database keeps it (cleanTranslations reads it). */
+  translations?: unknown;
 }
 
 export interface VideoMenuCollectionRow {
@@ -230,6 +239,8 @@ export interface VideoMenuCollectionRow {
   name: string;
   position: number;
   is_default: boolean;
+  /** {"en": {"name"}, …} as the database keeps it. */
+  translations?: unknown;
 }
 
 export interface VideoMenuLinkRow {
@@ -239,6 +250,11 @@ export interface VideoMenuLinkRow {
 }
 
 const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - b.position;
+
+/** `{ translations }` when there's any (the page's payload carries no empty ones). */
+function withTranslations<T extends object>(translations: T): { translations?: T } {
+  return Object.keys(translations).length ? { translations } : {};
+}
 
 /** A collection named as the whole menu («Todos», «Tutti»…): never a section of the page. */
 const everythingName = /^\s*(todos(\s+os\s+pratos)?|tudo|tutti|all|tout|todo)\s*$/i;
@@ -261,12 +277,14 @@ export function toVideoMenuData(
   if (!ordered.length) return null;
   const dishes: Record<string, MenuDish> = {};
   for (const dish of ordered) {
+    const translations = cleanTranslations(dish.translations, { name: translationLimits.dishName, description: translationLimits.dishDescription }, dish);
     dishes[dish.id] = {
       bunny: dish.bunny_video_id,
       ...(dish.bunny_thumbnail ? { bunnyThumbnail: dish.bunny_thumbnail } : {}),
       name: dish.name,
       description: dish.description,
       price: dish.price_cents / 100,
+      ...withTranslations(translations),
     };
   }
   const collections: MenuCollection[] = [...collectionRows]
@@ -274,6 +292,7 @@ export function toVideoMenuData(
     .map((collection) => ({
       id: collection.id,
       name: collection.name,
+      ...withTranslations(cleanTranslations(collection.translations, { name: translationLimits.collectionName }, collection)),
       dishes: [...new Set(linkRows.filter((link) => link.collection_id === collection.id && dishes[link.dish_id]).sort(byPosition).map((link) => link.dish_id))],
     }))
     .filter((collection) => collection.dishes.length > 0 && collection.dishes.length < ordered.length && !everythingName.test(collection.name));

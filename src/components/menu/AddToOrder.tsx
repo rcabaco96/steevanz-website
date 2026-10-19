@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import { menuText, type MenuLanguage } from "@/lib/video-menus/i18n";
 
 // The only piece of ordering in the menu's own bundle: the «Adicionar» buttons and the little store
 // that links them to the ordering code (loaded only on a table's page, ordering/TableOrdering). Each
@@ -68,7 +69,8 @@ function PlusIcon({ size = 18 }: { size?: number }) {
  * «Adicionar»: one more of this dish in the table's order, at once (the count on the button and a
  * little bounce), without leaving the page. `dark`: over the full-screen video.
  */
-export function AddToOrder({ dish, name, tone = "light" }: { dish: string; name: string; tone?: "light" | "dark" }) {
+export function AddToOrder({ dish, name, tone = "light", language = "pt" }: { dish: string; name: string; tone?: "light" | "dark"; language?: MenuLanguage }) {
+  const text = menuText[language];
   const count = useDishCount(dish);
   const [taps, setTaps] = useState(0);
   const dark = tone === "dark";
@@ -84,15 +86,15 @@ export function AddToOrder({ dish, name, tone = "light" }: { dish: string; name:
           // not on this phone
         }
       }}
-      aria-label={count ? `Adicionar mais um: ${name} (${count} no pedido)` : `Adicionar ao pedido: ${name}`}
+      aria-label={count ? text.addMoreAria(name, count) : text.addAria(name)}
       className={`relative inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full font-semibold text-white transition-transform active:scale-95 ${
-        dark ? "h-12 px-5 text-base shadow-[0_8px_24px_rgba(0,0,0,0.35)]" : "h-11 w-full px-4 text-sm"
+        dark ? "h-12 px-5 text-base shadow-[0_8px_24px_rgba(0,0,0,0.35)]" : "h-11 w-full px-3 text-sm"
       }`}
       style={{ background: "var(--menu-accent)" }}
     >
-      <span key={taps} className={taps ? "menu-add-pop inline-flex items-center gap-1.5" : "inline-flex items-center gap-1.5"}>
+      <span key={taps} className={taps ? "menu-add-pop inline-flex min-w-0 items-center gap-1.5" : "inline-flex min-w-0 items-center gap-1.5"}>
         <PlusIcon size={dark ? 20 : 18} />
-        Adicionar
+        <span className="truncate">{text.add}</span>
       </span>
       {count ? (
         <span

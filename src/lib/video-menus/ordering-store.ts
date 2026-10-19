@@ -2,7 +2,8 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/service";
 import { serviceSupabaseConfig } from "@/lib/supabase/env";
-import { isOrderingToken, sessionHours, tableChannel, type OrderStatus, type OrderingError, type TableOrderLine, type TableState } from "./ordering-rules";
+import { isMenuLanguage, type MenuLanguage } from "./i18n";
+import { isOrderingToken, sessionHours, staffOrderLines, tableChannel, type OrderStatus, type OrderingError, type TableOrderLine, type TableState } from "./ordering-rules";
 
 export type { TableOrder, TableOrderLine, TableState } from "./ordering-rules";
 
@@ -81,7 +82,7 @@ export async function getTableState(tableId: string): Promise<TableState> {
       .order("id"),
     client
       .from("video_menu_orders")
-      .select("id, number, token, status, total_cents, created_at, video_menu_order_lines(dish_name, unit_price_cents, quantity, note, position)")
+      .select("id, number, token, status, total_cents, created_at, video_menu_order_lines(dish_id, dish_name, unit_price_cents, quantity, note, position)")
       .eq("table_id", tableId)
       .gte("created_at", since)
       .order("created_at", { ascending: false })
@@ -97,7 +98,7 @@ export async function getTableState(tableId: string): Promise<TableState> {
     status: OrderStatus;
     total_cents: number;
     created_at: string;
-    video_menu_order_lines: { dish_name: string; unit_price_cents: number; quantity: number; note: string; position: number }[];
+    video_menu_order_lines: { dish_id: string | null; dish_name: string; unit_price_cents: number; quantity: number; note: string; position: number }[];
   };
   return {
     version: Number((table.data as { cart_version: number | string }).cart_version),
@@ -116,9 +117,10 @@ export async function getTableState(tableId: string): Promise<TableState> {
       status: order.status,
       totalCents: order.total_cents,
       createdAt: order.created_at,
+      // The dish too: the table's phones show its name in their own language.
       lines: [...order.video_menu_order_lines]
         .sort((a, b) => a.position - b.position)
-        .map((line) => ({ name: line.dish_name, priceCents: line.unit_price_cents, quantity: line.quantity, note: line.note })),
+        .map((line) => ({ dish: line.dish_id, name: line.dish_name, priceCents: line.unit_price_cents, quantity: line.quantity, note: line.note })),
     })),
   };
 }
@@ -137,12 +139,22 @@ export async function cartSet(tableId: string, lineId: string, quantity: number 
   return Number(data);
 }
 
-export async function placeOrder(tableId: string): Promise<{ id: string; number: number; token: string; version: number }> {
+/**
+ * The table's cart becomes an order (the dishes' Portuguese names: the staff read those), noted with
+ * the language the customer's menu was in.
+ */
+export async function placeOrder(tableId: string, language: MenuLanguage | null = null): Promise<{ id: string; number: number; token: string; version: number }> {
   const token = newOrderingToken();
-  const { data, error } = await createServiceClient().rpc("video_menu_place_order", { p_table: tableId, p_token: token });
+  const client = createServiceClient();
+  const { data, error } = await client.rpc("video_menu_place_order", { p_table: tableId, p_token: token });
   if (error) failure(error, "placeOrder");
   const row = ((data ?? []) as { order_id: string; order_number: number; version: number | string }[])[0];
   if (!row) throw new Error("placeOrder: no order returned");
+  if (language && isMenuLanguage(language)) {
+    // Only a note for the staff: the order stands without it.
+    const noted = await client.from("video_menu_orders").update({ customer_language: language }).eq("id", row.order_id);
+    if (noted.error) console.warn("[ordering] order language not noted:", noted.error.message);
+  }
   return { id: row.order_id, number: row.order_number, token, version: Number(row.version) };
 }
 
@@ -179,6 +191,9 @@ export interface StaffOrder {
   confirmedAt: string | null;
   business: string;
   logo: string | null;
+  /** The language the customer ordered in (null: before 2026-10-19, or not known). */
+  language: MenuLanguage | null;
+  /** Always the Portuguese names (as the order was placed), the notes as typed. */
   lines: TableOrderLine[];
 }
 
@@ -186,7 +201,7 @@ export async function getOrderByToken(token: string): Promise<StaffOrder | null>
   if (!isOrderingToken(token)) return null;
   const { data, error } = await createServiceClient()
     .from("video_menu_orders")
-    .select("id, number, token, status, table_name, total_cents, created_at, confirmed_at, video_menus(business_name, logo_url), video_menu_order_lines(dish_name, unit_price_cents, quantity, note, position)")
+    .select("id, number, token, status, table_name, total_cents, created_at, confirmed_at, customer_language, video_menus(business_name, logo_url), video_menu_order_lines(dish_name, unit_price_cents, quantity, note, position)")
     .eq("token", token)
     .maybeSingle();
   if (error) failure(error, "getOrderByToken");
@@ -200,6 +215,7 @@ export async function getOrderByToken(token: string): Promise<StaffOrder | null>
     total_cents: number;
     created_at: string;
     confirmed_at: string | null;
+    customer_language: string | null;
     video_menus: { business_name: string; logo_url: string | null } | null;
     video_menu_order_lines: { dish_name: string; unit_price_cents: number; quantity: number; note: string; position: number }[];
   };
@@ -214,9 +230,8 @@ export async function getOrderByToken(token: string): Promise<StaffOrder | null>
     confirmedAt: row.confirmed_at,
     business: row.video_menus?.business_name ?? "",
     logo: row.video_menus?.logo_url ?? null,
-    lines: [...row.video_menu_order_lines]
-      .sort((a, b) => a.position - b.position)
-      .map((line) => ({ name: line.dish_name, priceCents: line.unit_price_cents, quantity: line.quantity, note: line.note })),
+    language: isMenuLanguage(row.customer_language) ? row.customer_language : null,
+    lines: staffOrderLines(row.video_menu_order_lines),
   };
 }
 

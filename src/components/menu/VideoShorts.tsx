@@ -60,11 +60,16 @@ export function ShortsViewer({
   items,
   start,
   label,
+  closeLabel = "Fechar",
+  slideLabel = (index: number, total: number, title: string) => `${index} de ${total}: ${title}`,
   onClose,
 }: {
   items: ShortItem[];
   start: number;
   label: string;
+  /** The words in the menu's language (Portuguese by default). */
+  closeLabel?: string;
+  slideLabel?: (index: number, total: number, title: string) => string;
   onClose: () => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
@@ -291,7 +296,7 @@ export function ShortsViewer({
             </section>
           ) : null}
           {items.map((entry, index) => (
-            <section key={entry.key} aria-label={`${index + 1} de ${items.length}: ${entry.title}`} className="grid h-full place-items-center overflow-hidden">
+            <section key={entry.key} aria-label={slideLabel(index + 1, items.length, entry.title)} className="grid h-full place-items-center overflow-hidden">
               {slide(entry, index)}
             </section>
           ))}
@@ -313,7 +318,7 @@ export function ShortsViewer({
         className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
       >
         <div className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
-          <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/55">
+          <button type="button" onClick={() => window.history.back()} aria-label={closeLabel} className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/55">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>

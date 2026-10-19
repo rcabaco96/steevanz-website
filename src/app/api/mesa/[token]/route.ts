@@ -1,5 +1,6 @@
 import { after, NextResponse } from "next/server";
 import { z } from "zod";
+import { menuLanguages } from "@/lib/video-menus/i18n";
 import { maxLineQuantity, normaliseNote, type OrderingError } from "@/lib/video-menus/ordering-rules";
 import { broadcastTableChange, cartAdd, cartSet, getTableByToken, getTableState, OrderingFailure, placeOrder, type OrderingTable } from "@/lib/video-menus/ordering-store";
 
@@ -19,7 +20,8 @@ const changeSchema = z.discriminatedUnion("op", [
     quantity: z.number().int().min(0).max(maxLineQuantity).optional(),
     note: z.string().max(1000).optional(),
   }),
-  z.object({ op: z.literal("order") }),
+  // lang: the language of the customer's menu, a note for the staff (who read the Portuguese names).
+  z.object({ op: z.literal("order"), lang: z.enum(menuLanguages).optional() }),
 ]);
 
 function problem(error: OrderingError, status: number, extra: Record<string, unknown> = {}) {
@@ -84,7 +86,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/mesa/[token
       }
       version = await cartSet(tableId, change.line, change.quantity ?? null, note);
     } else {
-      const order = await placeOrder(tableId);
+      const order = await placeOrder(tableId, change.lang ?? null);
       placed = { number: order.number, token: order.token };
       version = order.version;
     }

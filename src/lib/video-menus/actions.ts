@@ -8,6 +8,7 @@ import { AdminAccessError, requireAdmin } from "@/lib/admin/auth";
 import { bunnyConfig, scheduleBunnyVideoDeletion } from "@/lib/bunny";
 import { imageTypeOf } from "@/lib/establishments/logo-rules";
 import { createServiceClient } from "@/lib/supabase/service";
+import { translatedLanguages, translationLimits, languageNamesPt } from "./i18n";
 import { isLogoUrl, menuPaths, moveItem, parseInstagram, parsePriceCents, slugProblem, type VideoMenuRow } from "./rules";
 import { menuCacheTag, menuColumns, uuidPattern } from "./store";
 
@@ -420,5 +421,49 @@ export async function saveCollectionDishes(_previous: ActionState, formData: For
     if (error) fail(error, "saveCollectionDishes removal");
     refresh(menu.slug);
     return { ok: true, message: ids.length ? `${ids.length} ${ids.length === 1 ? "prato" : "pratos"} nesta coleção.` : "A coleção ficou vazia (não aparece no menu)." };
+  });
+}
+
+// Translations ------------------------------------------------------------------------------------
+
+/**
+ * The translations typed in the admin («Traduções»): fields "<language>.<field>" (e.g. "en.name"). An
+ * empty field means that language shows the Portuguese text. Refused when one is too long.
+ */
+function translationFields<Field extends string>(formData: FormData, limits: Record<Field, number>, labels: Record<Field, string>) {
+  const result: Record<string, Record<string, string>> = {};
+  for (const language of translatedLanguages) {
+    const fields: Record<string, string> = {};
+    for (const field of Object.keys(limits) as Field[]) {
+      const text = value(formData, `${language}.${field}`).replace(/\s+/g, " ");
+      if (text.length > limits[field]) throw new MenuMessage(`${labels[field]} em ${languageNamesPt[language]} pode ter até ${limits[field]} caracteres.`);
+      if (text) fields[field] = text;
+    }
+    if (Object.keys(fields).length) result[language] = fields;
+  }
+  return result;
+}
+
+export async function saveDishTranslations(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const client = createServiceClient();
+    const { row, menu } = await findChild(client, "video_menu_dishes", value(formData, "id"));
+    const translations = translationFields(formData, { name: translationLimits.dishName, description: translationLimits.dishDescription }, { name: "O nome", description: "A descrição" });
+    const { error } = await client.from("video_menu_dishes").update({ translations }).eq("id", row.id);
+    if (error) fail(error, "saveDishTranslations");
+    refresh(menu.slug);
+    return { ok: true, message: "Traduções guardadas." };
+  });
+}
+
+export async function saveCollectionTranslations(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const client = createServiceClient();
+    const { row, menu } = await findChild(client, "video_menu_collections", value(formData, "id"));
+    const translations = translationFields(formData, { name: translationLimits.collectionName }, { name: "O nome" });
+    const { error } = await client.from("video_menu_collections").update({ translations }).eq("id", row.id);
+    if (error) fail(error, "saveCollectionTranslations");
+    refresh(menu.slug);
+    return { ok: true, message: "Traduções guardadas." };
   });
 }

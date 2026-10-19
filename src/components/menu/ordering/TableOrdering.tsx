@@ -7,21 +7,19 @@ import {
   cartTotalCents,
   changeLine,
   dishCounts,
-  itemsLabel,
   maxLineQuantity,
   maxNoteLength,
-  orderBarLabel,
-  orderingErrorMessage,
   orderPath,
-  orderStatusLabel,
-  orderTime,
   tableChannel,
   type CartLine,
   type OrderingError,
   type TableOrder,
   type TableState,
 } from "@/lib/video-menus/ordering-rules";
+import { formatMenuPrice, tableLabel, type MenuLanguage } from "@/lib/video-menus/i18n";
+import { orderBar, orderClock, orderingError, orderingText, type OrderingText } from "@/lib/video-menus/ordering-i18n";
 import { bunnyThumbnail, type MenuDish } from "@/lib/video-menus/rules";
+import { useMenuLanguage } from "../menu-language";
 import { hideIfBroken, pictureGuard } from "../safe-picture";
 
 import { orderBridge, type TableOrderingConfig } from "../AddToOrder";
@@ -30,10 +28,10 @@ import { listenToBroadcast } from "./realtime";
 // Ordering at the table (owner, 2026-10-16): loaded only on a table's page (/m/<token>). Everyone at
 // the table shares one cart: each change goes to the server, which answers the new state and tells
 // the other phones (Realtime Broadcast) to fetch it. Taps show at once (the change is drawn before
-// the server's answer, with the same rules), and the newest state from the server always wins.
+// the server's answer, with the same rules), and the newest state from the server always wins. In the
+// menu's language (owner, 2026-10-19); the order itself keeps the Portuguese names for the staff.
 
-const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
-const money = (cents: number) => euro.format(cents / 100);
+const money = (cents: number, language: MenuLanguage) => formatMenuPrice(cents / 100, language);
 /** Without Realtime (or while it reconnects), the state is fetched this often. */
 const pollMs = 15_000;
 const notePauseMs = 600;
@@ -49,10 +47,11 @@ interface Answer {
 }
 
 /** The table's cart and orders, its changes drawn at once, and its phones kept in step. */
-function useTableCart({ token, channel, realtime, dishes }: TableOrderingConfig & { dishes: Record<string, MenuDish> }) {
+function useTableCart({ token, channel, realtime, dishes, language }: TableOrderingConfig & { dishes: Record<string, MenuDish>; language: MenuLanguage }) {
   const [server, setServer] = useState<TableState | null>(null);
   const [changes, setChanges] = useState<Change[]>([]);
-  const [problem, setProblem] = useState<string | null>(null);
+  // The last problem's code (its words follow the menu's language).
+  const [problem, setProblem] = useState<OrderingError | string | null>(null);
   const [off, setOff] = useState<OrderingError | null>(null);
   const version = useRef(-1);
   const nextId = useRef(1);
@@ -70,7 +69,7 @@ function useTableCart({ token, channel, realtime, dishes }: TableOrderingConfig 
   // The last problem, for a few seconds.
   const problemTimer = useRef<number | undefined>(undefined);
   const say = useCallback((error: OrderingError | string) => {
-    setProblem(orderingErrorMessage(error));
+    setProblem(error);
     window.clearTimeout(problemTimer.current);
     problemTimer.current = window.setTimeout(() => setProblem(null), 3500);
   }, []);
@@ -210,11 +209,12 @@ function useTableCart({ token, channel, realtime, dishes }: TableOrderingConfig 
   );
 
   const placeOrder = useCallback(async () => {
-    const answer = await send({ op: "order" });
+    // The language too: a note on the staff's page (who read the dishes' Portuguese names).
+    const answer = await send({ op: "order", lang: language });
     return answer?.placed ?? null;
-  }, [send]);
+  }, [send, language]);
 
-  return { ready: server !== null, lines, orders: server?.orders ?? [], add, change, placeOrder, problem, off, busy: changes.length > 0 };
+  return { ready: server !== null, lines, orders: server?.orders ?? [], add, change, placeOrder, problem: problem === null ? null : orderingError(language, problem), off, busy: changes.length > 0 };
 }
 
 function CloseIcon() {
@@ -234,19 +234,19 @@ function BagIcon() {
   );
 }
 
-function StatusChip({ order }: { order: TableOrder }) {
+function StatusChip({ order, text }: { order: TableOrder; text: OrderingText }) {
   const confirmed = order.status === "confirmed";
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${confirmed ? "bg-success-soft text-success" : "bg-gold-soft text-gold-text"}`}
     >
-      {confirmed ? "Confirmado ✓" : "À espera"}
+      {confirmed ? text.confirmedChip : text.waitingChip}
     </span>
   );
 }
 
 /** The order's QR code (drawn here: the library comes only when it's needed). */
-function OrderQr({ token }: { token: string }) {
+function OrderQr({ token, label }: { token: string; label: string }) {
   const [svg, setSvg] = useState<string | null>(null);
   useEffect(() => {
     let live = true;
@@ -262,7 +262,7 @@ function OrderQr({ token }: { token: string }) {
   return (
     <div className="mx-auto aspect-square w-[min(68vw,16rem)] rounded-2xl bg-white p-3 shadow-sm ring-1 ring-line">
       {svg ? (
-        <div role="img" aria-label="Código QR do pedido" className="h-full w-full [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: svg }} />
+        <div role="img" aria-label={label} className="h-full w-full [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: svg }} />
       ) : (
         <div className="h-full w-full animate-pulse rounded-xl bg-surface-2" />
       )}
@@ -271,7 +271,21 @@ function OrderQr({ token }: { token: string }) {
 }
 
 /** A line of the cart: − quantity +, remove, and its note (the field always shown; owner, 2026-10-16). */
-function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | undefined; onChange: (line: string, update: { quantity?: number; note?: string }) => void }) {
+function LineRow({
+  line,
+  dish,
+  language,
+  onChange,
+}: {
+  line: CartLine;
+  /** In the menu's language. */
+  dish: MenuDish | undefined;
+  language: MenuLanguage;
+  onChange: (line: string, update: { quantity?: number; note?: string }) => void;
+}) {
+  const text = orderingText[language];
+  // The dish's name in the menu's language (the server keeps the Portuguese one).
+  const name = dish?.name || line.name;
   const [draft, setDraft] = useState<string | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const pending = line.id.startsWith("pending-");
@@ -291,10 +305,10 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
           <img ref={hideIfBroken} src={picture} alt="" width={44} height={60} {...pictureGuard} className="h-15 w-11 shrink-0 rounded-lg bg-surface-2 object-cover" />
         ) : null}
         <div className="min-w-0 flex-1">
-          <p className="text-sm leading-snug font-semibold text-text">{line.name || dish?.name}</p>
-          <p className="text-xs text-muted">{money(line.priceCents)} cada</p>
+          <p className="text-sm leading-snug font-semibold break-words hyphens-auto text-text">{name}</p>
+          <p className="text-xs text-muted">{text.each(money(line.priceCents, language))}</p>
         </div>
-        <span className="shrink-0 text-sm font-semibold text-text tabular-nums">{money(line.priceCents * line.quantity)}</span>
+        <span className="shrink-0 text-sm font-semibold text-text tabular-nums">{money(line.priceCents * line.quantity, language)}</span>
       </div>
       <div className="flex items-center gap-2">
         <div className="flex items-center rounded-full border border-line">
@@ -302,7 +316,7 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
             type="button"
             disabled={pending}
             onClick={() => onChange(line.id, { quantity: line.quantity - 1 })}
-            aria-label={line.quantity > 1 ? `Menos um: ${line.name}` : `Tirar do pedido: ${line.name}`}
+            aria-label={line.quantity > 1 ? text.lessAria(name) : text.removeAria(name)}
             className="grid h-10 w-10 place-items-center rounded-full text-lg font-semibold text-text disabled:opacity-40"
           >
             −
@@ -314,7 +328,7 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
             type="button"
             disabled={pending || line.quantity >= maxLineQuantity}
             onClick={() => onChange(line.id, { quantity: line.quantity + 1 })}
-            aria-label={`Mais um: ${line.name}`}
+            aria-label={text.moreAria(name)}
             className="grid h-10 w-10 place-items-center rounded-full text-lg font-semibold text-text disabled:opacity-40"
           >
             +
@@ -326,16 +340,16 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
           onClick={() => onChange(line.id, { quantity: 0 })}
           className="ml-auto h-10 rounded-full px-3 text-sm font-semibold text-muted hover:text-danger disabled:opacity-40"
         >
-          Remover
+          {text.remove}
         </button>
       </div>
       <label className="flex flex-col gap-1">
-        <span className="sr-only">Nota para {line.name}</span>
+        <span className="sr-only">{text.noteFor(name)}</span>
         <input
             value={note}
             disabled={pending}
             maxLength={maxNoteLength}
-            placeholder="Nota (ex.: sem cebola)"
+            placeholder={text.notePlaceholder}
             enterKeyHint="done"
             onFocus={() => setDraft(line.note)}
             onChange={(event) => {
@@ -369,8 +383,11 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
  * order view it opens: the lines, the total, «Fazer pedido», the QR code of an order and «Já pedido».
  */
 export default function TableOrdering(props: TableOrderingConfig & { dishes: Record<string, MenuDish> }) {
-  const { tableName, dishes } = props;
-  const cart = useTableCart(props);
+  const { dishes } = props;
+  const language = useMenuLanguage();
+  const text = orderingText[language];
+  const tableName = tableLabel(props.tableName, language);
+  const cart = useTableCart({ ...props, language });
   const [view, setView] = useState<View | null>(null);
   const [closing, setClosing] = useState(false);
   const [placing, setPlacing] = useState(false);
@@ -460,10 +477,10 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
               >
                 <BagIcon />
                 <span key={count} className="menu-add-pop min-w-0 flex-1 truncate">
-                  {orderBarLabel(count, total)}
+                  {orderBar(language, count, total)}
                 </span>
                 <span aria-hidden="true" className="text-sm opacity-90">
-                  Ver
+                  {text.view}
                 </span>
               </button>
             ) : latest ? (
@@ -472,8 +489,8 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                 onClick={() => open({ kind: "order", token: latest.token })}
                 className="menu-order-bar pointer-events-auto flex h-14 w-full items-center gap-3 rounded-full border border-line bg-bg px-5 text-left font-semibold text-text shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
               >
-                <span className="min-w-0 flex-1 truncate">Pedido #{latest.number}</span>
-                <StatusChip order={latest} />
+                <span className="min-w-0 flex-1 truncate">{text.order(latest.number)}</span>
+                <StatusChip order={latest} text={text} />
               </button>
             ) : null}
           </div>
@@ -481,10 +498,10 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
       ) : null}
 
       {view ? (
-        <div className="fixed inset-0 z-[85]" role="dialog" aria-modal="true" aria-label={`Pedido da ${tableName}`}>
+        <div className="fixed inset-0 z-[85]" role="dialog" aria-modal="true" aria-label={text.tableOrderAria(tableName)}>
           <button
             type="button"
-            aria-label="Fechar o pedido"
+            aria-label={text.closeOrder}
             onClick={close}
             className="menu-sheet-backdrop absolute inset-0 bg-black/45"
             style={{ opacity: closing ? 0 : 1, transition: `opacity ${sheetMs}ms ease` }}
@@ -498,9 +515,9 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                 <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent)" }}>
                   {tableName}
                 </p>
-                <h2 className="display text-xl text-text">{view.kind === "order" ? "O seu pedido" : "Pedido da mesa"}</h2>
+                <h2 className="display text-xl text-text">{view.kind === "order" ? text.yourOrder : text.tableOrder}</h2>
               </div>
-              <button type="button" onClick={close} aria-label="Fechar" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface-2 text-text">
+              <button type="button" onClick={close} aria-label={text.close} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface-2 text-text">
                 <CloseIcon />
               </button>
             </div>
@@ -509,29 +526,33 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
               <div className="flex-1 overflow-y-auto px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
                 {shownOrder ? (
                   <div className="flex flex-col items-center gap-3 text-center">
-                    <p className="display text-4xl text-text">Pedido #{shownOrder.number}</p>
+                    <p className="display text-4xl break-words text-text">{text.order(shownOrder.number)}</p>
                     {shownOrder.status === "confirmed" ? (
-                      <p className="menu-add-pop w-full rounded-2xl bg-success-soft px-4 py-3 text-base font-semibold text-success">{orderStatusLabel("confirmed")}</p>
+                      <p className="menu-add-pop w-full rounded-2xl bg-success-soft px-4 py-3 text-base font-semibold text-success">{text.status.confirmed}</p>
                     ) : (
-                      <p className="text-base font-semibold text-text">Mostre este código ao funcionário</p>
+                      <p className="text-base font-semibold text-text">{text.showCode}</p>
                     )}
-                    <OrderQr token={shownOrder.token} />
+                    <OrderQr token={shownOrder.token} label={text.qrAria} />
                     <p className="text-xs text-muted">
-                      {orderTime(shownOrder.createdAt)} · {itemsLabel(cartItemCount(shownOrder.lines))} · {money(shownOrder.totalCents)}
+                      {orderClock(language, shownOrder.createdAt)} · {text.items(cartItemCount(shownOrder.lines))} · {money(shownOrder.totalCents, language)}
                     </p>
                     <ul className="w-full divide-y divide-line rounded-2xl border border-line text-left">
                       {shownOrder.lines.map((line, index) => (
                         <li key={index} className="flex gap-3 px-4 py-2.5 text-sm">
                           <span className="font-bold text-text tabular-nums">{line.quantity}×</span>
                           <span className="min-w-0 flex-1">
-                            <span className="text-text">{line.name}</span>
-                            {line.note ? <span className="block text-xs break-words text-muted">Nota: {line.note}</span> : null}
+                            <span className="text-text">{(line.dish && dishes[line.dish]?.name) || line.name}</span>
+                            {line.note ? (
+                              <span className="block text-xs break-words text-muted">
+                                {text.note} {line.note}
+                              </span>
+                            ) : null}
                           </span>
                         </li>
                       ))}
                     </ul>
                     <button type="button" onClick={() => setView({ kind: "cart" })} className="h-12 w-full rounded-full border border-line font-semibold text-text">
-                      {count ? `Voltar ao pedido (${itemsLabel(count)})` : "Pedir mais"}
+                      {count ? text.backToOrder(text.items(count)) : text.orderMore}
                     </button>
                   </div>
                 ) : (
@@ -541,7 +562,7 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
             ) : (
               <>
                 <div className="flex-1 overflow-y-auto px-5">
-                  <p className="-mt-1 mb-1 text-xs text-muted">Todos nesta mesa veem e alteram este pedido.</p>
+                  <p className="-mt-1 mb-1 text-xs text-muted">{text.shared}</p>
                   {!cart.ready ? (
                     <div className="my-3 flex flex-col gap-3">
                       <div className="h-16 animate-pulse rounded-2xl bg-surface-2" />
@@ -550,16 +571,16 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                   ) : cart.lines.length ? (
                     <ul className="divide-y divide-line">
                       {cart.lines.map((line) => (
-                        <LineRow key={line.id} line={line} dish={dishes[line.dish]} onChange={cart.change} />
+                        <LineRow key={line.id} line={line} dish={dishes[line.dish]} language={language} onChange={cart.change} />
                       ))}
                     </ul>
                   ) : (
-                    <p className="my-6 rounded-2xl bg-surface-2/60 px-4 py-5 text-center text-sm text-muted">Ainda não há pratos no pedido. Toque em «Adicionar» nos pratos do menu.</p>
+                    <p className="my-6 rounded-2xl bg-surface-2/60 px-4 py-5 text-center text-sm text-muted">{text.empty}</p>
                   )}
 
                   {orders.length ? (
                     <section className="mt-4 mb-4 border-t border-line pt-4">
-                      <h3 className="mb-2 text-sm font-semibold text-text">Já pedido</h3>
+                      <h3 className="mb-2 text-sm font-semibold text-text">{text.ordered}</h3>
                       <ul className="flex flex-col gap-2">
                         {orders.map((order) => (
                           <li key={order.id}>
@@ -569,12 +590,12 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                               className="flex min-h-12 w-full items-center gap-3 rounded-2xl border border-line px-4 py-2.5 text-left"
                             >
                               <span className="min-w-0 flex-1">
-                                <span className="block text-sm font-semibold text-text">Pedido #{order.number}</span>
+                                <span className="block text-sm font-semibold text-text">{text.order(order.number)}</span>
                                 <span className="block text-xs text-muted">
-                                  {orderTime(order.createdAt)} · {itemsLabel(cartItemCount(order.lines))} · {money(order.totalCents)}
+                                  {orderClock(language, order.createdAt)} · {text.items(cartItemCount(order.lines))} · {money(order.totalCents, language)}
                                 </span>
                               </span>
-                              <StatusChip order={order} />
+                              <StatusChip order={order} text={text} />
                             </button>
                           </li>
                         ))}
@@ -590,17 +611,19 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                     </p>
                   ) : null}
                   <div className="mb-3 flex items-baseline justify-between">
-                    <span className="text-sm text-muted">Total · {itemsLabel(count)}</span>
-                    <span className="text-xl font-bold text-text tabular-nums">{money(total)}</span>
+                    <span className="text-sm text-muted">
+                      {text.total} · {text.items(count)}
+                    </span>
+                    <span className="text-xl font-bold text-text tabular-nums">{money(total, language)}</span>
                   </div>
                   {view.kind === "confirm" ? (
                     <div className="flex flex-col gap-2">
                       <p className="text-center text-sm text-text">
-                        Enviar o pedido de {itemsLabel(count)} ({money(total)})?
+                        {text.sendQuestion(text.items(count), money(total, language))}
                       </p>
                       <div className="flex gap-2">
                         <button type="button" disabled={placing} onClick={() => setView({ kind: "cart" })} className="h-13 flex-1 rounded-full border border-line font-semibold text-text disabled:opacity-50">
-                          Voltar
+                          {text.back}
                         </button>
                         <button
                           type="button"
@@ -609,7 +632,7 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                           className="h-13 flex-[1.4] rounded-full font-semibold text-white disabled:opacity-60"
                           style={{ background: "var(--menu-accent)" }}
                         >
-                          {placing ? "A enviar…" : "Confirmar pedido"}
+                          {placing ? text.sending : text.confirm}
                         </button>
                       </div>
                     </div>
@@ -621,7 +644,7 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                       className="h-13 w-full rounded-full text-base font-semibold text-white disabled:opacity-50"
                       style={{ background: "var(--menu-accent)" }}
                     >
-                      Fazer pedido
+                      {text.placeOrder}
                     </button>
                   )}
                 </div>

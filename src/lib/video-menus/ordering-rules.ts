@@ -2,6 +2,8 @@
 // tests. Pure module (no server or browser APIs). The database applies the same limits
 // (supabase/migrations/20261017120000_menu_ordering.sql).
 
+import { languageNamesPt, type MenuLanguage } from "./i18n.ts";
+
 /** Items (the sum of the quantities) in one table's cart. */
 export const maxCartItems = 50;
 /** Of one line. */
@@ -161,6 +163,9 @@ export function orderStatusLabel(status: OrderStatus): string {
 // The state every phone at the table shows ----------------------------------------------------------
 
 export interface TableOrderLine {
+  /** The dish (the table's phones show its name in their language); null once it left the menu. */
+  dish?: string | null;
+  /** Its Portuguese name when the order was placed. */
   name: string;
   priceCents: number;
   quantity: number;
@@ -199,6 +204,22 @@ export function nextOrderNumber(numbersToday: number[]): number {
 /** "14:32", Lisbon time. */
 export function orderTime(iso: string, timeZone = orderTimeZone): string {
   return new Intl.DateTimeFormat("pt-PT", { timeZone, hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+}
+
+// The staff's page (/pedido/<token>) ------------------------------------------------------------------
+
+/**
+ * The lines the staff read: always the dishes' Portuguese names as the order was placed (whatever the
+ * customer's menu language), and the notes exactly as the customer typed them.
+ */
+export function staffOrderLines(rows: { dish_name: string; unit_price_cents: number; quantity: number; note: string; position: number }[]): TableOrderLine[] {
+  return [...rows].sort((a, b) => a.position - b.position).map((line) => ({ name: line.dish_name, priceCents: line.unit_price_cents, quantity: line.quantity, note: line.note }));
+}
+
+/** The small note on the staff's page: «Cliente pediu em inglês»; nothing for Portuguese or unknown. */
+export function customerLanguageNote(language: MenuLanguage | null | undefined): string | null {
+  if (!language || language === "pt") return null;
+  return `Cliente pediu em ${languageNamesPt[language]}`;
 }
 
 // Tables (admin) -----------------------------------------------------------------------------------

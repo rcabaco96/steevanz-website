@@ -3,16 +3,17 @@
 import dynamic from "next/dynamic";
 import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import { preload } from "react-dom";
+import { formatMenuPrice, languageLocales, localizeMenu, menuText, type MenuLanguage } from "@/lib/video-menus/i18n";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
 import { AddToOrder, type TableOrderingConfig } from "./AddToOrder";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
+import { LanguagePicker } from "./LanguagePicker";
+import { chooseMenuLanguage, useMenuLanguage } from "./menu-language";
 import { hideIfBroken, pictureGuard } from "./safe-picture";
 import { ShortsViewer, type ShortItem } from "./VideoShorts";
 
 /** Ordering at the table: its code comes only on a table's page (/m/<token>), after the menu. */
 const TableOrdering = dynamic(() => import("./ordering/TableOrdering"), { ssr: false });
-
-const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 
 /** The business's colours (Dolci e Salati's logo), for accents only: the page keeps the theme's text and background. */
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
@@ -44,12 +45,15 @@ const DishCard = memo(function DishCard({
   dishKey,
   dish,
   orderable,
+  language,
   onStarted,
   onOpen,
 }: {
   order: number;
   dishKey: string;
   dish: MenuDish;
+  /** The menu's language (the dish comes already in it): the price's format and the labels. */
+  language: MenuLanguage;
   /** A table's menu: «Adicionar» under the dish (its count is its own, the card isn't redrawn). */
   orderable: boolean;
   /** One of the first cards shows its video playing (the opening ends once they do). */
@@ -59,23 +63,24 @@ const DishCard = memo(function DishCard({
   const early = order < earlyCards;
   return (
     <li className="flex flex-col gap-2">
-      <button type="button" onClick={() => onOpen(order)} aria-label={`Ver em ecrã inteiro: ${dish.name}`} className="block w-full text-left">
+      <button type="button" onClick={() => onOpen(order)} aria-label={menuText[language].fullScreen(dish.name)} className="block w-full text-left">
         <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-surface-2" style={{ clipPath: "inset(0 round 0.75rem)" }}>
           {hasBunnyVideo(dish.bunny) ? <BunnyVideo id={dish.bunny} thumbnail={dish.bunnyThumbnail} early={early} onShown={early ? () => onStarted(order) : undefined} /> : null}
         </div>
       </button>
       <div className="flex flex-col gap-0.5 px-0.5">
-        <div className="flex items-start justify-between gap-2">
-          <span className="min-w-0 text-sm leading-snug font-semibold text-text">{dish.name}</span>
-          <span className="shrink-0 text-sm font-semibold" style={{ color: "var(--menu-accent)" }}>
-            {euro.format(dish.price)}
+        {/* A word too long to sit beside the price (German, 320 px) sends the price to the next line instead of being cut. */}
+        <div className="flex flex-wrap items-start justify-between gap-x-2">
+          <span className="flex-[1_1_0%] text-sm leading-snug font-semibold break-words hyphens-auto text-text">{dish.name}</span>
+          <span className="ml-auto shrink-0 text-sm font-semibold" style={{ color: "var(--menu-accent)" }}>
+            {formatMenuPrice(dish.price, language)}
           </span>
         </div>
-        <p className="line-clamp-2 text-xs leading-snug text-muted">{dish.description}</p>
+        <p className="line-clamp-2 text-xs leading-snug break-words hyphens-auto text-muted">{dish.description}</p>
       </div>
       {orderable ? (
         <div className="mt-auto">
-          <AddToOrder dish={dishKey} name={dish.name} />
+          <AddToOrder dish={dishKey} name={dish.name} language={language} />
         </div>
       ) : null}
     </li>
@@ -174,7 +179,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
  * its card and in its slide; YouTube's players are gone (owner, 2026-10-16).
  */
 export function VideoMenu({
-  menu,
+  menu: source,
   demo = false,
   ordering,
 }: {
@@ -185,6 +190,14 @@ export function VideoMenu({
   ordering?: TableOrderingConfig;
 }) {
   const orderable = Boolean(ordering);
+  // The menu in the customer's language (owner, 2026-10-19): drawn in Portuguese on the server, then in
+  // the language picked on the phone; only the words change (the cards keep their keys and videos).
+  const language = useMenuLanguage();
+  const menu = useMemo(() => localizeMenu(source, language), [source, language]);
+  const text = menuText[language];
+  useEffect(() => {
+    document.documentElement.lang = languageLocales[language];
+  }, [language]);
   const sections = menu.collections;
   const labelled = useMemo(() => sections.filter((section) => section.name), [sections]);
   // Every card of the page in its order (a dish in several collections is in each section), and where
@@ -276,12 +289,12 @@ export function VideoMenu({
         title: dish.name,
         details: (
           <>
-            <span className="font-semibold text-white">{euro.format(dish.price)}</span> · {dish.description}
+            <span className="font-semibold text-white">{formatMenuPrice(dish.price, language)}</span> · {dish.description}
           </>
         ),
-        action: orderable ? <AddToOrder dish={key} name={dish.name} tone="dark" /> : undefined,
+        action: orderable ? <AddToOrder dish={key} name={dish.name} tone="dark" language={language} /> : undefined,
       })),
-    [sequence, menu.dishes, orderable],
+    [sequence, menu.dishes, orderable, language],
   );
 
   // The section on screen: the last one whose start is above sectionLine of the screen, watched by an
@@ -397,7 +410,7 @@ export function VideoMenu({
   };
 
   return (
-    <div style={brand} className="relative min-h-dvh">
+    <div style={brand} lang={languageLocales[language]} className="relative min-h-dvh">
       {/* First in the page: the phone paints it before the menu under it (owner, 2026-10-16: at the end
           of the HTML, the grid showed for an instant before the opening). */}
       <MosaicSplash
@@ -410,16 +423,17 @@ export function VideoMenu({
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img ref={hideIfBroken} src={menu.logo} alt={menu.business} width={44} height={44} {...pictureGuard} className="h-11 w-11 shrink-0 rounded-full" />
-          <button type="button" onClick={openSheet} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={labelled.length ? `Secção: ${current.name || "outros pratos"}. Ver as secções do menu` : "Abrir o menu"}>
+          <button type="button" onClick={openSheet} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={labelled.length ? text.sectionAria(current.name || text.otherDishes) : text.openMenu}>
             <span className="text-xs text-muted">{menu.business}</span>
             <span className="flex max-w-full items-center gap-1 font-semibold text-text">
-              <span className="truncate">{current.name || "Menu"}</span>
+              <span className="truncate">{current.name || text.menu}</span>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" className="shrink-0">
                 <path d="m6 9 6 6 6-6" />
               </svg>
             </span>
           </button>
-          <button type="button" onClick={openSheet} aria-label="Abrir o menu" aria-expanded={sheet} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-text hover:bg-surface-2">
+          <LanguagePicker language={language} onChoose={chooseMenuLanguage} />
+          <button type="button" onClick={openSheet} aria-label={text.openMenu} aria-expanded={sheet} className="-ml-2 grid h-11 w-11 shrink-0 place-items-center rounded-full text-text hover:bg-surface-2">
             <MenuIcon />
           </button>
         </div>
@@ -434,10 +448,8 @@ export function VideoMenu({
               <div data-section-start={section.id} aria-hidden="true" />
               {section.name ? (
                 <div className="mb-4 flex items-baseline justify-between gap-3">
-                  <h2 className="display text-2xl">{section.name}</h2>
-                  <span className="shrink-0 text-sm text-muted">
-                    {cards.length} {cards.length === 1 ? "prato" : "pratos"}
-                  </span>
+                  <h2 className="display min-w-0 text-2xl break-words hyphens-auto">{section.name}</h2>
+                  <span className="shrink-0 text-sm text-muted">{text.dishes(cards.length)}</span>
                 </div>
               ) : null}
               <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
@@ -448,6 +460,7 @@ export function VideoMenu({
                     dishKey={key}
                     dish={menu.dishes[key]}
                     orderable={orderable}
+                    language={language}
                     onStarted={onStarted}
                     onOpen={setViewer}
                   />
@@ -458,20 +471,20 @@ export function VideoMenu({
         })}
         {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
         <script dangerouslySetInnerHTML={{ __html: bunnyEarlyScript }} />
-        {demo ? <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de banco de imagens e preços de exemplo.</p> : null}
+        {demo ? <p className="mt-10 text-center text-xs text-subtle">{text.demo}</p> : null}
       </main>
 
       {sheet ? (
         <div className="fixed inset-0 z-[80]">
           <button
             type="button"
-            aria-label="Fechar o menu"
+            aria-label={text.closeMenu}
             onClick={closeSheet}
             className="menu-sheet-backdrop absolute inset-0 bg-black/40"
             style={{ opacity: sheetClosing ? 0 : Math.max(0, 1 - drag / 320), transition: dragging ? "none" : `opacity ${sheetSlideMs}ms ease` }}
           />
           <nav
-            aria-label="Secções do menu"
+            aria-label={text.sections}
             onTouchStart={onSheetTouchStart}
             onTouchMove={onSheetTouchMove}
             onTouchEnd={onSheetTouchEnd}
@@ -485,7 +498,7 @@ export function VideoMenu({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img ref={hideIfBroken} src={menu.logo} alt="" width={40} height={40} {...pictureGuard} className="h-10 w-10 rounded-full" />
               <span className="flex-1 font-semibold text-text">{menu.business}</span>
-              <button type="button" onClick={closeSheet} aria-label="Fechar o menu" className="grid h-10 w-10 place-items-center rounded-full hover:bg-surface-2">
+              <button type="button" onClick={closeSheet} aria-label={text.closeMenu} className="grid h-10 w-10 place-items-center rounded-full hover:bg-surface-2">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M6 6l12 12M18 6 6 18" />
                 </svg>
@@ -518,7 +531,7 @@ export function VideoMenu({
                 className="border-t border-line px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-sm font-semibold"
                 style={{ color: "var(--menu-accent)" }}
               >
-                @{menu.instagram} no Instagram
+                {text.instagram(menu.instagram)}
               </a>
             ) : null}
           </nav>
@@ -528,7 +541,7 @@ export function VideoMenu({
       {ordering ? <TableOrdering {...ordering} dishes={menu.dishes} /> : null}
 
       {viewer !== null ? (
-        <ShortsViewer items={items} start={sequence.at[viewer] ?? 0} label={menu.business} onClose={closeViewer} />
+        <ShortsViewer items={items} start={sequence.at[viewer] ?? 0} label={menu.business} closeLabel={text.close} slideLabel={text.slideAria} onClose={closeViewer} />
       ) : null}
     </div>
   );
