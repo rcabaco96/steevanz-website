@@ -22,6 +22,7 @@ import {
   type TableState,
 } from "@/lib/video-menus/ordering-rules";
 import { bunnyThumbnail, type MenuDish } from "@/lib/video-menus/rules";
+import { hideIfBroken, pictureGuard } from "../safe-picture";
 
 import { orderBridge, type TableOrderingConfig } from "../AddToOrder";
 import { listenToBroadcast } from "./realtime";
@@ -287,7 +288,7 @@ function LineRow({ line, dish, onChange }: { line: CartLine; dish: MenuDish | un
       <div className="flex items-start gap-3">
         {picture ? (
           // eslint-disable-next-line @next/next/no-img-element -- the dish's video picture (Bunny)
-          <img src={picture} alt="" width={44} height={60} className="h-15 w-11 shrink-0 rounded-lg bg-surface-2 object-cover" />
+          <img ref={hideIfBroken} src={picture} alt="" width={44} height={60} {...pictureGuard} className="h-15 w-11 shrink-0 rounded-lg bg-surface-2 object-cover" />
         ) : null}
         <div className="min-w-0 flex-1">
           <p className="text-sm leading-snug font-semibold text-text">{line.name || dish?.name}</p>

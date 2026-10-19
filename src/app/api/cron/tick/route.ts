@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { runModuleRoutines } from "@/lib/modules/routines";
+import { cleanupBunnyVideos } from "@/lib/video-menus/bunny-dishes";
 import { loadPlanInputs } from "@/lib/reviews/reader-queue";
 import { decideTick, schedulerKeys, tickSchedule } from "@/lib/reviews/tick";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
@@ -27,7 +28,8 @@ const planningBudgetMs = 150_000;
  * - 10:00 and 19:00: competitor reads of the slot for the reader (one per distinct place);
  * - 22:00: customers' daily jobs for the reader, verified customers through the official Google API,
  *   reader-offline alert;
- * - every tick: jobs left for a provider that no longer exists are handed to the reader.
+ * - every tick: jobs left for a provider that no longer exists are handed to the reader; old dish
+ *   videos are deleted from Bunny once their day has passed.
  *
  * `?dry=1` (or READER_QUEUE_DRY_RUN=1) returns the decisions and plans without side effects;
  * with `?dry=1&at=<ISO>` the tick is evaluated at that moment.
@@ -105,6 +107,13 @@ export async function GET(request: NextRequest) {
     response.modules = await runModuleRoutines(client, { now, dryRun });
   } catch (error) {
     errors.push(`modules: ${errorText(error)}`);
+  }
+
+  // Video menus: old dish videos deleted from Bunny a day after they were replaced or deleted.
+  try {
+    response.bunny = await cleanupBunnyVideos({ now, dryRun });
+  } catch (error) {
+    errors.push(`bunny: ${errorText(error)}`);
   }
 
   response.seconds = Math.round((Date.now() - started) / 1000);

@@ -6,6 +6,7 @@ import { preload } from "react-dom";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
 import { AddToOrder, type TableOrderingConfig } from "./AddToOrder";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
+import { hideIfBroken, pictureGuard } from "./safe-picture";
 import { ShortsViewer, type ShortItem } from "./VideoShorts";
 
 /** Ordering at the table: its code comes only on a table's page (/m/<token>), after the menu. */
@@ -146,7 +147,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
               <div key={index} className="menu-mosaic-tile relative aspect-[9/16] overflow-hidden rounded-2xl bg-white/60 shadow-lg" style={{ animationDelay: `${Math.round(distance * 110)}ms` }}>
                 {pictures.length ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={pictures[index % pictures.length]} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+                  <img ref={hideIfBroken} src={pictures[index % pictures.length]} alt="" fetchPriority="high" decoding="async" {...pictureGuard} className="absolute inset-0 h-full w-full object-cover" />
                 ) : null}
               </div>
             );
@@ -159,7 +160,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
         {/* Only the logo: it already is the name (owner, 2026-10-19). */}
         <div className="menu-mosaic-mark flex flex-col items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo} alt="" width={168} height={168} fetchPriority="high" className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
+          <img ref={hideIfBroken} src={logo} alt="" width={168} height={168} fetchPriority="high" {...pictureGuard} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
         </div>
       </div>
     </div>
@@ -356,7 +357,7 @@ export function VideoMenu({
       <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={menu.logo} alt={menu.business} width={44} height={44} className="h-11 w-11 shrink-0 rounded-full" />
+          <img ref={hideIfBroken} src={menu.logo} alt={menu.business} width={44} height={44} {...pictureGuard} className="h-11 w-11 shrink-0 rounded-full" />
           <button type="button" onClick={openSheet} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={`Coleção: ${collection.name}. Mudar de coleção`}>
             <span className="text-xs text-muted">{menu.business}</span>
             <span className="flex max-w-full items-center gap-1 font-semibold text-text">
@@ -409,7 +410,7 @@ export function VideoMenu({
           >
             <div className="flex items-center gap-3 border-b border-line px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={menu.logo} alt="" width={40} height={40} className="h-10 w-10 rounded-full" />
+              <img ref={hideIfBroken} src={menu.logo} alt="" width={40} height={40} {...pictureGuard} className="h-10 w-10 rounded-full" />
               <span className="flex-1 font-semibold text-text">{menu.business}</span>
               <button type="button" onClick={closeSheet} aria-label="Fechar o menu" className="grid h-10 w-10 place-items-center rounded-full hover:bg-surface-2">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

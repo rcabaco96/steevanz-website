@@ -5,7 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionState } from "@/lib/action-state";
 import { AdminAccessError, requireAdmin } from "@/lib/admin/auth";
-import { bunnyConfig, deleteBunnyVideo } from "@/lib/bunny";
+import { bunnyConfig, scheduleBunnyVideoDeletion } from "@/lib/bunny";
 import { imageTypeOf } from "@/lib/establishments/logo-rules";
 import { createServiceClient } from "@/lib/supabase/service";
 import { isLogoUrl, menuPaths, moveItem, parseInstagram, parsePriceCents, slugProblem, type VideoMenuRow } from "./rules";
@@ -83,9 +83,12 @@ async function bunnyVideosOf(client: ServiceClient, column: "id" | "menu_id", id
   return ((data ?? []) as { bunny_video_id: string | null; pending_video_id: string | null }[]).flatMap((row) => [row.bunny_video_id, row.pending_video_id]).filter((video): video is string => Boolean(video));
 }
 
-/** Best effort: a video Bunny didn't delete only takes space (it no longer shows anywhere). */
+/**
+ * Deleted from Bunny a day later (bunny-cleanup-rules: pages already open still show them). Best effort:
+ * a video left on Bunny only takes space (it no longer shows anywhere).
+ */
 async function deleteBunnyVideos(videos: string[]) {
-  await Promise.all(videos.map((video) => deleteBunnyVideo(video).catch((reason) => console.warn("[menus] bunny video not deleted:", video, reason instanceof Error ? reason.message : reason))));
+  await Promise.all(videos.map((video) => scheduleBunnyVideoDeletion(video).catch((reason) => console.warn("[menus] bunny video not marked for deletion:", video, reason instanceof Error ? reason.message : reason))));
 }
 
 async function nextPosition(client: ServiceClient, table: "video_menu_dishes" | "video_menu_collections", menuId: string): Promise<number> {

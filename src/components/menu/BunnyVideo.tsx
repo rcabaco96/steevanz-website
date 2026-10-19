@@ -2,6 +2,7 @@
 
 import { startTransition, useEffect, useRef, useState } from "react";
 import type Hls from "hls.js";
+import { hideIfBroken, pictureGuard } from "./safe-picture";
 
 /** The pull zone that serves the dishes' own videos (Bunny Stream). */
 const pullZone = process.env.NEXT_PUBLIC_BUNNY_PULL_ZONE;
@@ -147,7 +148,12 @@ export const bunnyEarlyScript = `(function(){var v=document.querySelectorAll("vi
  */
 const starting = new Set<HTMLVideoElement>();
 const whenStarted = new Set<() => void>();
-const aheadWaitMs = 2500;
+/**
+ * At most this long (ms): with 2.5 s, on a slow network the cards near the screen started loading while
+ * those on it still waited for theirs, and shared the network with them (mid-menu, 2 of 6 cards on
+ * screen playing after 15 s, 2026-10-19).
+ */
+const aheadWaitMs = 6000;
 /** In full screen, its neighbours wait longer for it: its own first pieces come first. */
 const fullAheadWaitMs = 8000;
 function markStarting(element: HTMLVideoElement, on: boolean) {
@@ -340,6 +346,7 @@ export function BunnyVideo({
   useEffect(() => {
     const element = picture.current;
     if (!element) return;
+    hideIfBroken(element);
     const stops = [
       watch(element, { rootMargin: nearMargin }, (entry) => setNear(entry.isIntersecting)),
       watch(element, { rootMargin: keepMargin() }, (entry) => setKept(entry.isIntersecting)),
@@ -504,27 +511,43 @@ export function BunnyVideo({
         }
         return;
       }
-      if (player && stopped.current) {
-        stopped.current = false;
-        player.startLoad(-1);
-      }
-      // Plays again, and loads if it was waiting.
+      // Plays again, and loads again if it should (below).
       setTurn((count) => count + 1);
     };
     update();
     return subscribeQuiet(update);
   }, [id, full]);
 
-  // A card near the screen loads ahead once the cards on screen have their first frames.
+  // A grid card loads only while on screen, or near it once those on it have started: one that scrolled
+  // away stops loading at once (it keeps what it has), so those on screen have the network.
+  useEffect(() => {
+    const player = hls.current;
+    if (full || !player) return;
+    const wanted = !quiet.current && (active || (near && ahead));
+    if (!wanted && !stopped.current) {
+      player.stopLoad();
+      stopped.current = true;
+    } else if (wanted && stopped.current) {
+      stopped.current = false;
+      player.startLoad(-1);
+    }
+  }, [full, active, near, ahead, turn]);
+
+  // A card near the screen loads ahead once the cards on screen have their first frames. Asked a moment
+  // later: the cards above the screen, drawn first, found no card on screen waiting yet (a jump down
+  // the menu started those near it with those on it, mid-menu, 2026-10-19).
   useEffect(() => {
     if (!near || ahead) return;
     const go = () => setAhead(true);
-    if (!starting.size) return go();
-    whenStarted.add(go);
     const timer = window.setTimeout(go, full ? fullAheadWaitMs : aheadWaitMs);
+    const check = window.setTimeout(() => {
+      if (!starting.size) go();
+      else whenStarted.add(go);
+    }, 50);
     return () => {
       whenStarted.delete(go);
       window.clearTimeout(timer);
+      window.clearTimeout(check);
     };
   }, [near, ahead, full]);
 
@@ -625,6 +648,7 @@ export function BunnyVideo({
       });
       player.on(HlsPlayer.Events.ERROR, (_event, data) => {
         if (!data.fatal) return;
+        setShown(false);
         player.destroy();
         hls.current = null;
         element.src = mp4;
@@ -673,7 +697,7 @@ export function BunnyVideo({
     <>
       {/* Beyond the first cards, the picture loads as it nears the screen: the opening's come first. */}
       {/* eslint-disable-next-line @next/next/no-img-element -- Bunny's own picture of the video */}
-      <img ref={picture} src={`${base}/${thumbnail || "thumbnail.jpg"}`} alt="" decoding="async" loading={full || early ? undefined : "lazy"} className="absolute inset-0 h-full w-full object-cover" />
+      <img ref={picture} src={`${base}/${thumbnail || "thumbnail.jpg"}`} alt="" decoding="async" loading={full || early ? undefined : "lazy"} {...pictureGuard} className="absolute inset-0 h-full w-full object-cover" />
       {full ? <canvas ref={frame} aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" /> : null}
       {mounted ? (
         <video
@@ -698,6 +722,9 @@ export function BunnyVideo({
                 }
           }
           onError={(event) => {
+            // Never the browser's broken video (a video deleted on Bunny while the page showed it): it
+            // hides, the picture (or its card's frame) under it shows, until it plays again.
+            setShown(false);
             // The browser's own HLS failed: the MP4 instead (that one failing too leaves the picture).
             const element = event.currentTarget;
             if (!element.getAttribute("src")?.endsWith(".m3u8")) return;

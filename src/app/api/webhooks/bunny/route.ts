@@ -1,9 +1,10 @@
-import { bunnyConfig, bunnyStatus, deleteBunnyVideo, setSmallBunnyThumbnail, verifyBunnyWebhook } from "@/lib/bunny";
+import { bunnyConfig, bunnyStatus, scheduleBunnyVideoDeletion, setSmallBunnyThumbnail, verifyBunnyWebhook } from "@/lib/bunny";
 import { bunnyDishColumns, dishesTable, refreshDishMenu, type BunnyDishRow } from "@/lib/video-menus/bunny-dishes";
 
 /**
  * Bunny Stream's webhook (library-wide): a dish's pending video moves on as Bunny encodes it.
- * Finished (3): it gets its small picture, becomes the dish's video and the previous Bunny video is deleted. Failed (5, 8):
+ * Finished (3): it gets its small picture and becomes the dish's video, its menu's pages are refreshed, and
+ * the previous Bunny video is deleted a day later (pages already open still show it). Failed (5, 8):
  * marked failed. Created, uploaded, processing, upload finished (0, 1, 2, 7): processing. Anything
  * else, an unknown video or a bad signature is ignored. Always answers 200 (Bunny would retry).
  */
@@ -40,8 +41,8 @@ export async function POST(request: Request) {
         .eq("id", dish.id)
         .eq("pending_video_id", event.VideoGuid);
       if (saved.error) throw new Error(saved.error.message);
-      if (previous && previous !== event.VideoGuid) await deleteBunnyVideo(previous).catch((reason) => console.warn("[bunny] old video not deleted:", reason instanceof Error ? reason.message : reason));
       refreshDishMenu(dish);
+      if (previous && previous !== event.VideoGuid) await scheduleBunnyVideoDeletion(previous).catch((reason) => console.warn("[bunny] old video not marked for deletion:", reason instanceof Error ? reason.message : reason));
       return ok();
     }
     const failed: number[] = [bunnyStatus.failed, bunnyStatus.presignedUploadFailed];

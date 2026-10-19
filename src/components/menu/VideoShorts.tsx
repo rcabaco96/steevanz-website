@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type TouchEvent, type WheelEvent } from "react";
 import { bunnyThumbnail } from "@/lib/video-menus/rules";
 import { BunnyVideo, hasBunnyVideo, quietGrid } from "./BunnyVideo";
+import { hideIfBroken, pictureGuard } from "./safe-picture";
 
 /** A dish's vertical video with what is shown over it. */
 export interface ShortItem {
@@ -148,6 +149,9 @@ export function ShortsViewer({
     const position = index === "before" ? 0 : index === "after" ? items.length + 1 : index + 1;
     const near = Math.abs(position - (current + 1)) <= playerReach;
     const picture = near ? null : bunnyThumbnail(item.bunny, item.bunnyThumbnail);
+    // A 9:16 box as tall as the screen, and on a phone held upright never narrower than it: a screen
+    // wider than 9:16 (an iPhone's Safari with its bars) showed black bands at the sides (owner,
+    // 2026-10-19). Its picture, video and card's frame cover it, cropped at the centre.
     return (
     <div
       ref={(box) => {
@@ -155,11 +159,11 @@ export function ShortsViewer({
         else if (index === "after") copyAfter.current = box;
         else boxes.current[index] = box;
       }}
-      className="relative aspect-[9/16] h-full w-auto max-w-none overflow-hidden"
+      className="relative aspect-[9/16] h-full w-auto max-w-none overflow-hidden portrait:min-w-full"
     >
       {!hasBunnyVideo(item.bunny) ? null : picture ? (
         // eslint-disable-next-line @next/next/no-img-element -- Bunny's own picture of the video
-        <img src={picture} alt="" decoding="async" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+        <img ref={hideIfBroken} src={picture} alt="" decoding="async" loading="lazy" {...pictureGuard} className="absolute inset-0 h-full w-full object-cover" />
       ) : (
         <BunnyVideo id={item.bunny} thumbnail={item.bunnyThumbnail} playing={index === current} />
       )}

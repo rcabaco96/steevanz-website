@@ -157,3 +157,19 @@ describe("moveItem", () => {
     assert.deepEqual(moveItem(["a", "b", "c"], 2, 1), ["a", "b", "c"]);
   });
 });
+
+describe("video menus: old Bunny videos are deleted a day later", async () => {
+  const { bunnyDeletionDue, bunnyDeletionGraceHours, bunnyDeletionSearch, bunnyDeletionTitle } = await import("../src/lib/video-menus/bunny-cleanup-rules.ts");
+  it("marks a video with the moment it may go, and finds it only after that", () => {
+    const now = new Date("2026-10-19T12:00:00Z");
+    const title = bunnyDeletionTitle(new Date(now.getTime() + bunnyDeletionGraceHours * 3_600_000));
+    assert.ok(title.includes(bunnyDeletionSearch));
+    assert.equal(bunnyDeletionDue(title, now), false);
+    assert.equal(bunnyDeletionDue(title, new Date("2026-10-20T11:59:59Z")), false);
+    assert.equal(bunnyDeletionDue(title, new Date("2026-10-20T12:00:00Z")), true);
+  });
+  it("never deletes a video with any other title", () => {
+    const later = new Date("2030-01-01T00:00:00Z");
+    for (const title of [undefined, null, "", "Trattoria da Nonna · Pizza", "steevanz: apagar depois de amanhã"]) assert.equal(bunnyDeletionDue(title, later), false);
+  });
+});

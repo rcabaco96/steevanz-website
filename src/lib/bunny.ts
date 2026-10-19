@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { siteUrl } from "@/lib/site";
+import { bunnyDeletionDue, bunnyDeletionGraceHours, bunnyDeletionSearch, bunnyDeletionTitle } from "@/lib/video-menus/bunny-cleanup-rules";
 
 /**
  * Bunny Stream (owner, 2026-10-15): the menu's dishes can carry their own video, uploaded from the
@@ -60,6 +61,32 @@ export async function deleteBunnyVideo(videoId: string): Promise<void> {
     cache: "no-store",
   });
   if (!response.ok && response.status !== 404) throw new BunnyError(`Bunny delete video: HTTP ${response.status}`);
+}
+
+/**
+ * Marks a video to be deleted after the grace period (bunny-cleanup-rules): its title says when, and the
+ * scheduler tick deletes it then. A video that is already gone counts as done.
+ */
+export async function scheduleBunnyVideoDeletion(videoId: string, now = new Date()): Promise<void> {
+  const { libraryId, apiKey } = config();
+  const dueAt = new Date(now.getTime() + bunnyDeletionGraceHours * 3_600_000);
+  const response = await fetch(`${apiBase}/library/${libraryId}/videos/${encodeURIComponent(videoId)}`, {
+    method: "POST",
+    headers: { AccessKey: apiKey, "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ title: bunnyDeletionTitle(dueAt) }),
+    cache: "no-store",
+  });
+  if (!response.ok && response.status !== 404) throw new BunnyError(`Bunny mark video for deletion: HTTP ${response.status}`);
+}
+
+/** The library's videos marked for deletion whose moment has come (at most 100 a call). */
+export async function dueBunnyDeletions(now = new Date()): Promise<string[]> {
+  const { libraryId, apiKey } = config();
+  const query = new URLSearchParams({ page: "1", itemsPerPage: "100", search: bunnyDeletionSearch, orderBy: "date" });
+  const response = await fetch(`${apiBase}/library/${libraryId}/videos?${query}`, { headers: { AccessKey: apiKey, Accept: "application/json" }, cache: "no-store" });
+  if (!response.ok) throw new BunnyError(`Bunny list videos: HTTP ${response.status}`);
+  const data = (await response.json()) as { items?: { guid?: string; title?: string }[] };
+  return (data.items ?? []).filter((video) => video.guid && bunnyDeletionDue(video.title, now)).map((video) => video.guid as string);
 }
 
 /**
