@@ -143,8 +143,8 @@ export function menuPublicPath(slug: string): string {
   return `/menu/${slug}`;
 }
 
-/** Demo menus (stock videos, example prices; «Trattoria da Nonna» is fictitious): they say so under the grid. */
-const demoMenuSlugs = new Set(["dolci-salati", "trattoria-da-nonna"]);
+/** Demo menus (stock videos, example prices; «Trattoria da Nonna» and «Sakura Sushi» are fictitious): they say so under the grid. */
+const demoMenuSlugs = new Set(["dolci-salati", "trattoria-da-nonna", "sakura-sushi"]);
 export function isDemoMenu(slug: string): boolean {
   return demoMenuSlugs.has(slug);
 }
