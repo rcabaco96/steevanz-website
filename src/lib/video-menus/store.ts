@@ -120,7 +120,8 @@ export function getPublicMenu(slug: string): Promise<VideoMenuData | null> {
       const parts = await loadMenuParts(data as VideoMenuRow);
       return toVideoMenuData(parts.menu, parts.dishes, parts.collections, parts.links);
     },
-    ["video-menu", slug],
+    // The shape's version: a new one (sections, 2026-10-19) never reads a menu cached in an older shape.
+    ["video-menu", "sections", slug],
     { tags: [menusCacheTag, menuCacheTag(slug)], revalidate: 3600 },
   )();
 }
