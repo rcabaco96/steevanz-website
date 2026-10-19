@@ -143,6 +143,12 @@ export function menuPublicPath(slug: string): string {
   return slug === "raza17raza" ? "/raza17raza" : `/menu/${slug}`;
 }
 
+/** Demo menus (stock videos, example prices; «Trattoria da Nonna» is fictitious): they say so under the grid. */
+const demoMenuSlugs = new Set(["raza17raza", "trattoria-da-nonna"]);
+export function isDemoMenu(slug: string): boolean {
+  return demoMenuSlugs.has(slug);
+}
+
 /** Every path that shows this menu (both answer for the demo), to refresh after a change. */
 export function menuPaths(slug: string): string[] {
   return slug === "raza17raza" ? ["/raza17raza", `/menu/${slug}`] : [`/menu/${slug}`];

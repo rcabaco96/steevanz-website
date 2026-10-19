@@ -4,7 +4,7 @@ import { preconnect } from "react-dom";
 import { VideoMenu } from "@/components/menu/VideoMenu";
 import { publicSupabaseConfig } from "@/lib/supabase/env";
 import { getTableByToken, type OrderingTable } from "@/lib/video-menus/ordering-store";
-import { bunnyHost, menuReferrer } from "@/lib/video-menus/rules";
+import { bunnyHost, isDemoMenu, menuReferrer } from "@/lib/video-menus/rules";
 import { getPublicMenu, MenusNotReadyError } from "@/lib/video-menus/store";
 
 // A table's menu (owner, 2026-10-16): the link on the table's plate. The same menu as /menu/<slug>
@@ -47,7 +47,7 @@ export default async function TableMenuPage({ params }: PageProps<"/m/[token]">)
   return (
     <VideoMenu
       menu={menu}
-      demo={table.slug === "raza17raza"}
+      demo={isDemoMenu(table.slug)}
       ordering={table.ordering ? { token, tableName: table.name, channel: table.id, realtime: supabase ? { url: supabase.url, key: supabase.anonKey } : null } : undefined}
     />
   );
