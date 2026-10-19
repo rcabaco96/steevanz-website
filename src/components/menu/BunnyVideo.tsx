@@ -511,8 +511,9 @@ export function BunnyVideo({
         }
         return;
       }
-      // Plays again, and loads again if it should (below).
-      setTurn((count) => count + 1);
+      // Plays again, and loads again if it should (below); dozens of cards at once, without holding up
+      // the page (the full screen has just closed).
+      startTransition(() => setTurn((count) => count + 1));
     };
     update();
     return subscribeQuiet(update);

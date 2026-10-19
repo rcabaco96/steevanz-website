@@ -45,19 +45,8 @@ const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
  * (2026-10-19), before anything moved.
  */
 const playerReach = 1;
-
-/**
- * How far the full screen is dragged to the right to close it, like the collections panel (owner,
- * 2026-10-14: the shrink back into the card was dropped).
- */
-interface ViewerMotion {
-  x: number;
-  /** Glides there (release) instead of following the finger. */
-  glide: boolean;
-}
-
-const restingMotion: ViewerMotion = { x: 0, glide: false };
-
+/** The slides get their players around the one on screen once it has stayed this long (ms). */
+const settleMs = 200;
 
 /**
  * Full screen, one video per screen: swipe (or scroll, or the arrow keys) to the next or previous
@@ -84,10 +73,39 @@ export function ShortsViewer({
   const copyBefore = useRef<HTMLDivElement | null>(null);
   const copyAfter = useRef<HTMLDivElement | null>(null);
   const gesture = useRef<{ x: number; y: number; dx: number; dy: number; top: number; at: number; axis: "vertical" | "close" | null } | null>(null);
-  const [motion, moveTo] = useState<ViewerMotion>(restingMotion);
+  // Dragged to the right to close (like the collections panel): its two layers move with the finger
+  // straight on the page, once a frame, never through React (owner's iPhone, 2026-10-19: «está a travar
+  // bastante»: every move drew the whole full screen again).
+  const stage = useRef<HTMLDivElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
+  const drag = useRef({ x: 0, frame: 0, timer: 0 });
   const lastWheel = useRef(0);
   const [current, setCurrent] = useState(start);
+  // The slide the viewer has stopped on: the players are made around it, not mid-swipe.
+  const [settled, setSettled] = useState(start);
   const loop = items.length > 1;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSettled(current), settleMs);
+    return () => window.clearTimeout(timer);
+  }, [current]);
+
+  /** Both layers to `x` px (gliding there on a release), on the compositor only. */
+  const place = useCallback((x: number, glide: boolean) => {
+    for (const layer of [stage.current, overlay.current]) {
+      if (!layer) continue;
+      layer.style.transition = glide ? `transform ${closeMs}ms ${glideEase}` : "none";
+      layer.style.transform = x ? `translate3d(${x}px, 0, 0)` : "";
+      layer.style.willChange = glide && !x ? "" : "transform";
+    }
+  }, []);
+  useEffect(() => {
+    const state = drag.current;
+    return () => {
+      window.cancelAnimationFrame(state.frame);
+      window.clearTimeout(state.timer);
+    };
+  }, []);
 
   const goTo = useCallback(
     (index: number) => {
@@ -147,7 +165,7 @@ export function ShortsViewer({
   const slide = (item: ShortItem, index: number | "before" | "after") => {
     // Its place in the scroller: the copy of the last video is first, the copy of the first is last.
     const position = index === "before" ? 0 : index === "after" ? items.length + 1 : index + 1;
-    const near = Math.abs(position - (current + 1)) <= playerReach;
+    const near = Math.abs(position - (settled + 1)) <= playerReach || index === current;
     const picture = near ? null : bunnyThumbnail(item.bunny, item.bunnyThumbnail);
     // A 9:16 box as tall as the screen, and on a phone held upright never narrower than it: a screen
     // wider than 9:16 (an iPhone's Safari with its bars) showed black bands at the sides (owner,
@@ -195,8 +213,15 @@ export function ShortsViewer({
     start.dy = dy;
     if (!start.axis && Math.max(Math.abs(dx), Math.abs(dy)) > axisAfter) start.axis = Math.abs(dx) > Math.abs(dy) && dx > 0 ? "close" : "vertical";
     if (start.axis === "vertical") element.scrollTop = start.top - dy;
-    // The whole full screen follows the finger to the right; the menu (still playing) shows behind.
-    if (start.axis === "close") moveTo({ x: Math.max(0, dx), glide: false });
+    // The whole full screen follows the finger to the right, once a frame; the menu shows behind.
+    if (start.axis === "close") {
+      const state = drag.current;
+      state.x = Math.max(0, dx);
+      state.frame ||= window.requestAnimationFrame(() => {
+        state.frame = 0;
+        place(state.x, false);
+      });
+    }
   };
   const onGestureEnd = () => {
     const start = gesture.current;
@@ -204,12 +229,16 @@ export function ShortsViewer({
     gesture.current = null;
     if (!start || !element || !start.axis) return;
     if (start.axis === "close") {
+      const state = drag.current;
+      window.cancelAnimationFrame(state.frame);
+      state.frame = 0;
       const width = Math.max(1, window.innerWidth);
       if (start.dx > width * closeShare || start.dx / Math.max(1, performance.now() - start.at) > closeSpeed) {
-        moveTo({ x: width, glide: true });
-        window.setTimeout(() => window.history.back(), closeMs);
+        place(width, true);
+        // Closed once it has slid out: only then does the menu behind play again.
+        state.timer = window.setTimeout(() => window.history.back(), closeMs);
       } else {
-        moveTo({ x: 0, glide: true });
+        place(0, true);
       }
       return;
     }
@@ -228,21 +257,18 @@ export function ShortsViewer({
     goTo(current + (event.deltaY > 0 ? 1 : -1));
   };
   const item = items[current];
-  const slid = { transform: `translateX(${motion.x}px)`, transition: motion.glide ? `transform ${closeMs}ms ${glideEase}` : "none" };
 
   return (
     <div role="dialog" aria-modal="true" aria-label={label}>
-      <div className="fixed inset-0 z-[90] bg-black" style={slid}>
+      <div ref={stage} className="fixed inset-0 z-[90] bg-black">
         <div
           ref={scroller}
           onScroll={(event) => {
             const element = event.currentTarget;
+            // Under the finger: nothing changes until it lets go (a new slide on screen mid-drag drew
+            // the full screen again and made players).
+            if (gesture.current) return;
             const height = slideHeight(element);
-            if (gesture.current) {
-              const index = Math.max(0, Math.min(items.length - 1, Math.round(element.scrollTop / height) - 1));
-              if (index !== current) setCurrent(index);
-              return;
-            }
             // Settled on a copy: on to the real video it shows, without a visible jump.
             if (loop && Math.abs(element.scrollTop - (items.length + 1) * height) < 2) {
               element.scrollTop = height;
@@ -283,11 +309,11 @@ export function ShortsViewer({
         onTouchEnd={onGestureEnd}
         onTouchCancel={onGestureEnd}
         onWheel={onGestureWheel}
+        ref={overlay}
         className="fixed inset-0 z-[96] flex touch-none flex-col justify-between text-white select-none"
-        style={slid}
       >
         <div className="pointer-events-none flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
-          <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/50 backdrop-blur-sm">
+          <button type="button" onClick={() => window.history.back()} aria-label="Fechar" className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full bg-black/55">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M6 6l12 12M18 6 6 18" />
             </svg>
