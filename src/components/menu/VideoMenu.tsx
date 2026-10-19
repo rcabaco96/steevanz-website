@@ -151,7 +151,8 @@ function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: strin
         <div className="menu-mosaic-mark flex flex-col items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
-          <span className="display text-2xl" style={{ color: "#5f2a44" }}>
+          {/* On a solid label: over the moving pictures plain text got lost (owner, 2026-10-19). */}
+          <span className="display rounded-full px-5 py-1.5 text-2xl shadow-[0_10px_30px_rgba(95,42,68,0.25)]" style={{ color: "#5f2a44", background: "rgba(255,250,252,0.96)" }}>
             {business}
           </span>
         </div>
