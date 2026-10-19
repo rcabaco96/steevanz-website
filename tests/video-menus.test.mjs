@@ -103,7 +103,7 @@ describe("toVideoMenuData", () => {
   const dish = (id, position) => ({ id, menu_id: "m", video_id: null, bunny_video_id: `bunny-${id}`, name: `Prato ${id}`, description: "", price_cents: 450 + position, position });
   const dishes = [dish("b", 1), dish("a", 0), dish("c", 2)];
 
-  it("puts the default collection first, drops empty ones and keeps each one's order", () => {
+  it("keeps the collections in their order (the default one no longer first), drops empty ones and keeps each one's order", () => {
     const collections = [
       { id: "c1", menu_id: "m", name: "Bebidas", position: 0, is_default: false },
       { id: "c2", menu_id: "m", name: "Brunch", position: 1, is_default: true },
@@ -121,18 +121,44 @@ describe("toVideoMenuData", () => {
     assert.deepEqual(
       data.collections.map((collection) => [collection.name, collection.dishes]),
       [
-        ["Brunch", ["b"]],
         ["Bebidas", ["a", "c"]],
+        ["Brunch", ["b"]],
       ],
     );
     assert.match(data.logo, /^data:image\/svg\+xml,/);
     assert.equal(data.instagram, "cafecentral");
   });
 
-  it("shows every dish in «Todos» when no collection has any, and nothing without dishes", () => {
+  it("shows every dish in one section without a heading when no collection has any, and nothing without dishes", () => {
     const data = toVideoMenuData(menu, dishes, [], []);
-    assert.deepEqual(data.collections, [{ id: "todos", name: "Todos", dishes: ["a", "b", "c"] }]);
+    assert.deepEqual(data.collections, [{ id: "pratos", name: "", dishes: ["a", "b", "c"] }]);
     assert.equal(toVideoMenuData(menu, [], [], []), null);
+  });
+
+  it("never shows a «Todos» (a collection with every dish, or named as the whole menu) and puts dishes in no collection last", () => {
+    const collections = [
+      { id: "all", menu_id: "m", name: "Tutti", position: 0, is_default: true },
+      { id: "c1", menu_id: "m", name: "Bebidas", position: 1, is_default: false },
+      { id: "c2", menu_id: "m", name: "Todos", position: 2, is_default: false },
+      { id: "c3", menu_id: "m", name: "Doces", position: 3, is_default: false },
+    ];
+    const links = [
+      ...["a", "b", "c"].map((dish_id, position) => ({ collection_id: "all", dish_id, position })),
+      { collection_id: "c1", dish_id: "c", position: 0 },
+      { collection_id: "c2", dish_id: "a", position: 0 },
+      { collection_id: "c3", dish_id: "c", position: 0 },
+    ];
+    const data = toVideoMenuData(menu, dishes, collections, links);
+    assert.deepEqual(
+      data.collections.map((collection) => [collection.name, collection.dishes]),
+      [
+        ["Bebidas", ["c"]],
+        ["Doces", ["c"]],
+        ["", ["a", "b"]],
+      ],
+    );
+    const only = toVideoMenuData(menu, dishes, [collections[0]], links);
+    assert.deepEqual(only.collections, [{ id: "pratos", name: "", dishes: ["a", "b", "c"] }]);
   });
 
   it("shows only dishes with their own (Bunny) video: none with a YouTube video only, none without a video yet", () => {

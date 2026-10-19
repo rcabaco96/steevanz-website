@@ -45,7 +45,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "ol",
         items: [
           "O cliente senta-se e toca com o telemóvel na placa (ou lê o QR code).",
-          "O menu abre com uma animação com o logótipo do negócio, na primeira coleção.",
+          "O menu abre com uma animação com o logótipo do negócio, no início da página.",
           "Os pratos tocam numa grelha. Um toque abre o ecrã inteiro, como nos Reels, e desliza-se para cima e para baixo para ver os outros.",
           "Com os pedidos à mesa ligados, o cliente toca em «Adicionar» nos pratos e faz o pedido dali mesmo.",
         ],
@@ -113,7 +113,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "colecoes", text: "Coleções" },
       {
         type: "p",
-        text: "Os pratos arrumam-se em coleções, por exemplo Brunch, Bebidas ou Todos. O menu abre na primeira coleção e o cliente muda de coleção no botão ☰.",
+        text: "Os pratos arrumam-se em coleções, por exemplo Brunch e Bebidas. Todas aparecem na mesma página, uma secção a seguir à outra, e o botão ☰ leva o cliente diretamente a cada uma.",
       },
       { type: "h2", id: "pedidos-mesa", text: "Pedidos à mesa" },
       {

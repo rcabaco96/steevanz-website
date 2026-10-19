@@ -17,8 +17,10 @@ export interface MenuDish {
   price: number;
 }
 
+/** A section of the menu's page: a collection, or (with no name) the dishes in no collection. */
 export interface MenuCollection {
   id: string;
+  /** Empty for the section without a heading (dishes in no collection, or a menu without collections). */
   name: string;
   dishes: string[];
 }
@@ -29,7 +31,11 @@ export interface VideoMenuData {
   logo: string;
   instagram: string | null;
   dishes: Record<string, MenuDish>;
-  /** The first one opens by default; «Todos» holds every dish when no collection has any. */
+  /**
+   * The page's sections in their order (owner, 2026-10-19: every collection on one page, one after the
+   * other; ☰ jumps to one): never a collection with every dish («Todos»), and the dishes in no
+   * collection last, without a heading. Never empty.
+   */
   collections: MenuCollection[];
 }
 
@@ -234,11 +240,16 @@ export interface VideoMenuLinkRow {
 
 const byPosition = <T extends { position: number }>(a: T, b: T) => a.position - b.position;
 
+/** A collection named as the whole menu («Todos», «Tutti»…): never a section of the page. */
+const everythingName = /^\s*(todos(\s+os\s+pratos)?|tudo|tutti|all|tout|todo)\s*$/i;
+
 /**
- * The menu in the shape the player takes: dishes keyed by their id in their order, the default
- * collection first (the player opens the first one), empty collections left out, and «Todos» with
- * every dish when no collection has any. Only dishes with their own (Bunny) video ready are on the
- * menu (the menu plays no YouTube since 2026-10-16). Null when there's no dish to show.
+ * The menu in the shape the player takes: dishes keyed by their id in their order, and its sections:
+ * the collections in their order, without the empty ones and without one holding every dish (a
+ * «Todos»: the page already shows them all, owner 2026-10-19), then the dishes in no collection in a
+ * section without a heading (all of them when there's no collection). Only dishes with their own
+ * (Bunny) video ready are on the menu (the menu plays no YouTube since 2026-10-16). Null when there's
+ * no dish to show.
  */
 export function toVideoMenuData(
   menu: Pick<VideoMenuRow, "business_name" | "logo_url" | "instagram">,
@@ -259,17 +270,16 @@ export function toVideoMenuData(
     };
   }
   const collections: MenuCollection[] = [...collectionRows]
-    .sort((a, b) => Number(b.is_default) - Number(a.is_default) || byPosition(a, b))
+    .sort(byPosition)
     .map((collection) => ({
       id: collection.id,
       name: collection.name,
-      dishes: linkRows
-        .filter((link) => link.collection_id === collection.id && dishes[link.dish_id])
-        .sort(byPosition)
-        .map((link) => link.dish_id),
+      dishes: [...new Set(linkRows.filter((link) => link.collection_id === collection.id && dishes[link.dish_id]).sort(byPosition).map((link) => link.dish_id))],
     }))
-    .filter((collection) => collection.dishes.length > 0);
-  if (!collections.length) collections.push({ id: "todos", name: "Todos", dishes: ordered.map((dish) => dish.id) });
+    .filter((collection) => collection.dishes.length > 0 && collection.dishes.length < ordered.length && !everythingName.test(collection.name));
+  const placed = new Set(collections.flatMap((collection) => collection.dishes));
+  const rest = ordered.filter((dish) => !placed.has(dish.id)).map((dish) => dish.id);
+  if (rest.length) collections.push({ id: "pratos", name: "", dishes: rest });
   return {
     business: menu.business_name,
     logo: menu.logo_url || initialsLogo(menu.business_name),

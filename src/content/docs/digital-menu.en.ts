@@ -45,7 +45,7 @@ export const en: Record<DocPageId, DocPageContent> = {
         type: "ol",
         items: [
           "The guest sits down and taps the plate with their phone (or scans the QR code).",
-          "The menu opens with an animation of your logo, on the first collection.",
+          "The menu opens with an animation of your logo, at the top of the page.",
           "Dishes play in a grid. One tap opens full screen, just like Reels, and guests swipe up and down to see the others.",
           "With table ordering on, the guest taps «Adicionar» (add) on the dishes and orders right there.",
         ],
@@ -113,7 +113,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "collections", text: "Collections" },
       {
         type: "p",
-        text: "Dishes are grouped into collections, such as Brunch, Drinks or All. The menu opens on the first collection and guests switch collections with the ☰ button.",
+        text: "Dishes are grouped into collections, such as Brunch and Drinks. They are all on the same page, one section after another, and the ☰ button takes guests straight to each one.",
       },
       { type: "h2", id: "table-ordering", text: "Table ordering" },
       {

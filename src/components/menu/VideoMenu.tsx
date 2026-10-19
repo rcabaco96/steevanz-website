@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import { preload } from "react-dom";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
 import { AddToOrder, type TableOrderingConfig } from "./AddToOrder";
@@ -17,11 +17,10 @@ const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR"
 /** The business's colours (Dolci e Salati's logo), for accents only: the page keeps the theme's text and background. */
 const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
 
-/**
- * A new collection starts at its top (owner, 2026-10-14). At once: the page scrolls smoothly by
- * default, and a smooth scroll is dropped while the panel holds the page still (iPhone).
- */
-const toTop = () => window.scrollTo({ top: 0, behavior: "instant" });
+/** A section's place in the page (☰ scrolls to it). */
+const sectionId = (id: string) => `seccao-${id}`;
+/** A section counts as the one on screen once its start is above this share of the screen. */
+const sectionLine = 0.35;
 /** The collections panel closes when dragged this share of its width to the right (or flicked). */
 const sheetCloseShare = 0.3;
 const sheetCloseSpeed = 0.5; // px per ms
@@ -36,7 +35,7 @@ function MenuIcon() {
 }
 
 /**
- * A dish of the grid: its own video over its picture; a tap opens the collection full screen. Drawn
+ * A dish of the grid: its own video over its picture; a tap opens it full screen. Drawn
  * again only when its own props change (redrawing every card as the page scrolled made the scroll
  * stutter on an iPhone, 2026-10-16).
  */
@@ -168,10 +167,11 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
 }
 
 /**
- * A digital menu in videos (owner, 2026-10-14): the business's logo and the collection on screen in
- * the bar, ☰ opens the list of collections (the first opens by default); a tap on a dish opens the
- * collection full screen, one dish per screen. Every dish plays its own video (BunnyVideo) in its
- * card and in its slide; YouTube's players are gone (owner, 2026-10-16).
+ * A digital menu in videos (owner, 2026-10-14): the business's logo and the section on screen in the
+ * bar. Every collection is on the page, one section after the other (owner, 2026-10-19; no «Todos»):
+ * ☰ lists them and scrolls to one. A tap on a dish opens it full screen, one dish per screen, and a
+ * swipe goes on through the dishes in the page's order. Every dish plays its own video (BunnyVideo) in
+ * its card and in its slide; YouTube's players are gone (owner, 2026-10-16).
  */
 export function VideoMenu({
   menu,
@@ -185,16 +185,44 @@ export function VideoMenu({
   ordering?: TableOrderingConfig;
 }) {
   const orderable = Boolean(ordering);
-  const [active, setActive] = useState(menu.collections[0].id);
-  // What the page opens on: the first collection's dishes (their pictures in the opening).
+  const sections = menu.collections;
+  const labelled = useMemo(() => sections.filter((section) => section.name), [sections]);
+  // Every card of the page in its order (a dish in several collections is in each section), and where
+  // each section's cards start in it.
+  const page = useMemo(() => {
+    const cards: { section: string; key: string }[] = [];
+    const starts: number[] = [];
+    for (const section of sections) {
+      starts.push(cards.length);
+      for (const key of section.dishes) if (menu.dishes[key]) cards.push({ section: section.id, key });
+    }
+    return { cards, starts };
+  }, [sections, menu.dishes]);
+  // Full screen: the dishes in the page's order from the one tapped on, never the same dish twice in a
+  // row (the end of a section and the start of the next); `at` maps a card to its slide.
+  const sequence = useMemo(() => {
+    const slides: { section: string; key: string }[] = [];
+    const at: number[] = [];
+    for (const card of page.cards) {
+      if (slides.length && slides[slides.length - 1].key === card.key) {
+        at.push(slides.length - 1);
+        continue;
+      }
+      at.push(slides.length);
+      slides.push(card);
+    }
+    return { slides, at };
+  }, [page]);
+  // The section on screen (in the bar and highlighted in ☰).
+  const [onScreen, setOnScreen] = useState(sections[0].id);
+  // What the page opens on: its first dishes (their pictures in the opening).
   const [opening] = useState(() => {
     const pictureOf = (dish: MenuDish) => (hasBunnyVideo(dish.bunny) ? bunnyThumbnail(dish.bunny, dish.bunnyThumbnail) : null);
-    const firstDishes = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]).filter((dish) => Boolean(dish));
-    const pictures = firstDishes.map(pictureOf).filter((picture): picture is string => Boolean(picture));
+    const pictures = [...new Set(page.cards.map((card) => pictureOf(menu.dishes[card.key])).filter((picture): picture is string => Boolean(picture)))];
     return {
-      pictures: (pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture))).slice(0, mosaicPictures),
+      pictures: pictures.slice(0, mosaicPictures),
       // The cards whose videos the opening waits for (it leaves at the latest at mosaicWaitMax).
-      awaited: Math.min(earlyCards, firstDishes.length),
+      awaited: Math.min(earlyCards, page.cards.length),
     };
   });
   const [sheet, setSheet] = useState(false);
@@ -202,9 +230,11 @@ export function VideoMenu({
   const [drag, setDrag] = useState(0);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef<{ x: number; y: number; at: number; mode: "drag" | "scroll" | null } | null>(null);
+  // The card opened full screen (its place in the page).
   const [viewer, setViewer] = useState<number | null>(null);
-  // A collection was just chosen: the panel closes once its grid is there.
-  const switched = useRef(false);
+  // A section chosen in ☰: the page scrolls to it once the panel has gone (an iPhone drops a smooth
+  // scroll while the panel holds the page still).
+  const jump = useRef<string | null>(null);
   // The first cards showing their videos playing: the opening ends once they all do (owner,
   // 2026-10-14: «quando acabar a animação os vídeos estejam a dar»).
   const started = useRef(new Set<number>());
@@ -224,7 +254,7 @@ export function VideoMenu({
     root.style.overscrollBehaviorY = "none";
     document.body.style.overscrollBehaviorY = "none";
     // The panel and the full screen close through «back»: the browser would put back the scroll of
-    // that moment (a new collection, scrolled to its top, jumped down again).
+    // that moment (a section chosen in ☰, scrolled to, jumped back).
     const restoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
     return () => {
@@ -235,13 +265,12 @@ export function VideoMenu({
 
   const closeViewer = useCallback(() => setViewer(null), []);
 
-  const collection = menu.collections.find((candidate) => candidate.id === active) ?? menu.collections[0];
-  const dishes = useMemo(() => collection.dishes.map((key) => ({ key, dish: menu.dishes[key] })), [collection, menu.dishes]);
-  // Made once per collection: the full screen reacts to a new list (a new one each render looped).
+  const current = sections.find((section) => section.id === onScreen) ?? sections[0];
+  // Made once: the full screen reacts to a new list (a new one each render looped).
   const items: ShortItem[] = useMemo(
     () =>
-      dishes.map(({ key, dish }) => ({
-        key,
+      sequence.slides.map(({ section, key }) => ({ section, key, dish: menu.dishes[key] })).map(({ section, key, dish }) => ({
+        key: `${section}-${key}`,
         bunny: dish.bunny,
         bunnyThumbnail: dish.bunnyThumbnail,
         title: dish.name,
@@ -252,8 +281,30 @@ export function VideoMenu({
         ),
         action: orderable ? <AddToOrder dish={key} name={dish.name} tone="dark" /> : undefined,
       })),
-    [dishes, orderable],
+    [sequence, menu.dishes, orderable],
   );
+
+  // The section on screen: the last one whose start is above sectionLine of the screen, watched by an
+  // observer on each section's first line (no work on every scroll event).
+  useEffect(() => {
+    const starts = [...document.querySelectorAll<HTMLElement>("[data-section-start]")];
+    if (starts.length < 2) return;
+    const above = new Map<string, boolean>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const line = entry.rootBounds ? entry.rootBounds.bottom : window.innerHeight * sectionLine;
+          above.set(entry.target.getAttribute("data-section-start") ?? "", entry.isIntersecting || entry.boundingClientRect.top < line);
+        }
+        let last = sections[0].id;
+        for (const section of sections) if (above.get(section.id)) last = section.id;
+        startTransition(() => setOnScreen(last));
+      },
+      { rootMargin: `0px 0px -${Math.round((1 - sectionLine) * 100)}% 0px` },
+    );
+    for (const start of starts) observer.observe(start);
+    return () => observer.disconnect();
+  }, [sections]);
 
   // The panel takes a step in the history (owner's iPhone: «back» with it open left the page and
   // reloaded the players): «back» closes it, and closing it otherwise takes that step back.
@@ -299,22 +350,23 @@ export function VideoMenu({
     };
   }, [sheet, closeSheet]);
 
-  // Another collection: its grid is built behind the panel, at its top, and the panel closes.
+  // A section chosen in ☰: the panel closes and the page scrolls to the section's start, under the bar
+  // (at once with reduced motion).
   const choose = (id: string) => {
-    if (id === collection.id) {
-      closeSheet();
-      return;
-    }
-    switched.current = true;
-    setActive(id);
-    toTop();
+    jump.current = id;
+    setOnScreen(id);
+    closeSheet();
   };
   useEffect(() => {
-    if (!switched.current) return;
-    switched.current = false;
-    toTop();
-    closeSheet();
-  }, [active, closeSheet]);
+    const id = jump.current;
+    if (sheet || !id) return;
+    jump.current = null;
+    const target = document.getElementById(sectionId(id));
+    if (!target) return;
+    const bar = document.querySelector("header")?.getBoundingClientRect().height ?? 64;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - bar - 12), behavior: reduced ? "instant" : "smooth" });
+  }, [sheet]);
 
   // Dragging the panel to the right closes it, following the finger (vertical moves scroll its list).
   const onSheetTouchStart = (event: TouchEvent) => {
@@ -358,10 +410,10 @@ export function VideoMenu({
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center gap-3 px-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img ref={hideIfBroken} src={menu.logo} alt={menu.business} width={44} height={44} {...pictureGuard} className="h-11 w-11 shrink-0 rounded-full" />
-          <button type="button" onClick={openSheet} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={`Coleção: ${collection.name}. Mudar de coleção`}>
+          <button type="button" onClick={openSheet} className="flex min-w-0 flex-1 flex-col items-start text-left" aria-label={labelled.length ? `Secção: ${current.name || "outros pratos"}. Ver as secções do menu` : "Abrir o menu"}>
             <span className="text-xs text-muted">{menu.business}</span>
             <span className="flex max-w-full items-center gap-1 font-semibold text-text">
-              <span className="truncate">{collection.name}</span>
+              <span className="truncate">{current.name || "Menu"}</span>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" className="shrink-0">
                 <path d="m6 9 6 6 6-6" />
               </svg>
@@ -374,15 +426,36 @@ export function VideoMenu({
       </header>
 
       <main className={`mx-auto w-full max-w-5xl px-4 pt-5 ${orderable ? "pb-28" : "pb-12"}`}>
-        <div className="mb-4 flex items-baseline justify-between gap-3">
-          <h1 className="display text-2xl">{collection.name}</h1>
-          <span className="text-sm text-muted">{dishes.length} pratos</span>
-        </div>
-        <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
-          {dishes.map(({ key, dish }, index) => (
-            <DishCard key={`${collection.id}-${key}`} order={index} dishKey={key} dish={dish} orderable={orderable} onStarted={onStarted} onOpen={setViewer} />
-          ))}
-        </ul>
+        <h1 className="sr-only">{menu.business}</h1>
+        {sections.map((section, index) => {
+          const cards = page.cards.slice(page.starts[index], page.starts[index + 1] ?? page.cards.length);
+          return (
+            <section key={section.id} id={sectionId(section.id)} aria-label={section.name || undefined} className={index ? "mt-10" : undefined}>
+              <div data-section-start={section.id} aria-hidden="true" />
+              {section.name ? (
+                <div className="mb-4 flex items-baseline justify-between gap-3">
+                  <h2 className="display text-2xl">{section.name}</h2>
+                  <span className="shrink-0 text-sm text-muted">
+                    {cards.length} {cards.length === 1 ? "prato" : "pratos"}
+                  </span>
+                </div>
+              ) : null}
+              <ul className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
+                {cards.map(({ key }, position) => (
+                  <DishCard
+                    key={`${section.id}-${key}`}
+                    order={page.starts[index] + position}
+                    dishKey={key}
+                    dish={menu.dishes[key]}
+                    orderable={orderable}
+                    onStarted={onStarted}
+                    onOpen={setViewer}
+                  />
+                ))}
+              </ul>
+            </section>
+          );
+        })}
         {/* In the page's HTML only (React doesn't run it again): iPhone, the first cards' videos start with the page. */}
         <script dangerouslySetInnerHTML={{ __html: bunnyEarlyScript }} />
         {demo ? <p className="mt-10 text-center text-xs text-subtle">Menu de demonstração: vídeos de banco de imagens e preços de exemplo.</p> : null}
@@ -398,7 +471,7 @@ export function VideoMenu({
             style={{ opacity: sheetClosing ? 0 : Math.max(0, 1 - drag / 320), transition: dragging ? "none" : `opacity ${sheetSlideMs}ms ease` }}
           />
           <nav
-            aria-label="Coleções do menu"
+            aria-label="Secções do menu"
             onTouchStart={onSheetTouchStart}
             onTouchMove={onSheetTouchMove}
             onTouchEnd={onSheetTouchEnd}
@@ -419,16 +492,16 @@ export function VideoMenu({
               </button>
             </div>
             <ul className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-              {menu.collections.map((option) => {
-                const current = option.id === collection.id;
+              {labelled.map((option) => {
+                const selected = option.id === current.id;
                 return (
                   <li key={option.id}>
                     <button
                       type="button"
                       onClick={() => choose(option.id)}
-                      aria-current={current ? "page" : undefined}
+                      aria-current={selected ? "location" : undefined}
                       className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl px-4 text-left font-semibold text-text"
-                      style={current ? { background: "var(--menu-accent-soft)", color: "var(--menu-accent)" } : undefined}
+                      style={selected ? { background: "var(--menu-accent-soft)", color: "var(--menu-accent)" } : undefined}
                     >
                       <span>{option.name}</span>
                       <span className="text-sm font-normal text-muted">{option.dishes.length}</span>
@@ -455,12 +528,7 @@ export function VideoMenu({
       {ordering ? <TableOrdering {...ordering} dishes={menu.dishes} /> : null}
 
       {viewer !== null ? (
-        <ShortsViewer
-          items={items}
-          start={viewer}
-          label={`${menu.business}: ${collection.name}`}
-          onClose={closeViewer}
-        />
+        <ShortsViewer items={items} start={sequence.at[viewer] ?? 0} label={menu.business} onClose={closeViewer} />
       ) : null}
     </div>
   );

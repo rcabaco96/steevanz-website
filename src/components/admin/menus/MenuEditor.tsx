@@ -16,7 +16,6 @@ import {
   moveCollection,
   moveDish,
   renameCollection,
-  setDefaultCollection,
 } from "@/lib/video-menus/actions";
 import { dishPicture, formatPriceCents, menuPublicPath } from "@/lib/video-menus/rules";
 import type { AdminMenu, AdminMenuTable } from "@/lib/video-menus/store";
@@ -142,16 +141,16 @@ export function MenuEditor({
 
       <Panel title={`Coleções (${collections.length})`}>
         <div className="flex flex-col gap-4">
-          <p className="text-sm text-muted">As listas do botão ☰ do menu. A coleção marcada «Abre primeiro» é a que aparece ao abrir; as coleções sem pratos não aparecem.</p>
+          <p className="text-sm text-muted">
+            As secções do menu, todas na mesma página e pela ordem desta lista (mude-a com as setas): cada coleção aparece com o seu nome e o botão ☰ salta
+            para ela. Um prato pode estar em várias coleções. Os pratos que não estão em nenhuma ficam no fim, sem título. Não aparecem as coleções sem pratos
+            nem uma coleção com todos os pratos (como «Todos»): o menu já os mostra todos.
+          </p>
           <ActionForm action={addCollection} className="flex flex-col gap-3 rounded-2xl border border-line p-3 sm:flex-row sm:flex-wrap sm:items-end sm:p-4">
             <input type="hidden" name="menu_id" value={menu.id} />
             <label className={`${adminLabelClasses} min-w-0 sm:flex-1`}>
               Nova coleção
               <input name="name" required maxLength={60} autoComplete="off" placeholder="Bebidas" className={`${adminInputClasses} h-11`} />
-            </label>
-            <label className="flex min-h-11 items-center gap-2 text-sm text-text">
-              <input type="checkbox" name="all_dishes" className="h-4.5 w-4.5 accent-accent" />
-              Com todos os pratos
             </label>
             <SubmitButton pendingLabel="A criar…">Criar coleção</SubmitButton>
           </ActionForm>
@@ -166,13 +165,10 @@ export function MenuEditor({
                       <div className="min-w-0 flex-1">
                         <p className="flex flex-wrap items-center gap-2 font-semibold text-text">
                           {collection.name}
-                          {collection.is_default ? (
-                            <span className="inline-flex items-center rounded-full border border-accent/30 bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-text">Abre primeiro</span>
-                          ) : null}
                         </p>
                         <p className="text-sm text-muted">
                           {selected.length} {selected.length === 1 ? "prato" : "pratos"}
-                          {selected.length ? "" : " · não aparece no menu"}
+                          {!selected.length ? " · não aparece no menu" : dishes.length > 1 && selected.length >= dishes.length ? " · tem todos os pratos: não aparece como secção" : ""}
                         </p>
                       </div>
                       <MoveButtons action={moveCollection} id={collection.id} name={collection.name} first={index === 0} last={index === collections.length - 1} />
@@ -192,7 +188,7 @@ export function MenuEditor({
                     </details>
                     <details className="group">
                       <summary className={summaryClasses}>
-                        Nome, abrir primeiro ou apagar
+                        Nome ou apagar
                         <span aria-hidden="true" className="transition-transform group-open:rotate-180">⌄</span>
                       </summary>
                       <div className="mt-3 flex flex-col gap-3 rounded-2xl bg-surface-2/50 p-3 sm:p-4">
@@ -207,14 +203,6 @@ export function MenuEditor({
                           </SubmitButton>
                         </ActionForm>
                         <div className="flex flex-wrap gap-2 border-t border-line pt-3">
-                          {collection.is_default ? null : (
-                            <ActionForm action={setDefaultCollection}>
-                              <input type="hidden" name="id" value={collection.id} />
-                              <SubmitButton variant="secondary" size="sm" pendingLabel="A guardar…">
-                                Abrir primeiro
-                              </SubmitButton>
-                            </ActionForm>
-                          )}
                           <ActionForm action={deleteCollection} confirmMessage={`Apagar a coleção «${collection.name}»? Os pratos ficam no menu.`}>
                             <input type="hidden" name="id" value={collection.id} />
                             <SubmitButton variant="ghost" size="sm" className="text-danger" pendingLabel="A apagar…">
@@ -229,7 +217,7 @@ export function MenuEditor({
               })}
             </ol>
           ) : (
-            <EmptyState>Sem coleções, o menu mostra todos os pratos numa lista «Todos».</EmptyState>
+            <EmptyState>Sem coleções, o menu mostra todos os pratos numa só grelha, sem títulos.</EmptyState>
           )}
         </div>
       </Panel>
