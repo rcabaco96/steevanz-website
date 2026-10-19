@@ -1,5 +1,5 @@
 // Real case on /novo-ultra: Dolci e Salati (gelataria e brunch, Armação de Pêra).
-// Only what Steevanz really did: the house page (/dolci-salati) and the video menu (/raza17raza).
+// Only what Steevanz really did: the house page (/dolci-salati) and the video menu (/menu/dolci-salati).
 // No results, quotes, reviews or numbers. The Google quotes on Dolci's own page are not ours to show,
 // and the dish videos in the menu are stock footage, so they never appear here as Dolci's dishes.
 
@@ -9,7 +9,7 @@ export const dolciCase = {
   body: "Fizemos a página da casa, a partir do site e dos reels do Instagram, e o menu em vídeo com o logótipo da casa e as suas coleções.",
   links: [
     { label: "A página da casa", action: "Ver a página", href: "/dolci-salati" },
-    { label: "O menu em vídeo", action: "Ver o menu", href: "/raza17raza" },
+    { label: "O menu em vídeo", action: "Ver o menu", href: "/menu/dolci-salati" },
   ],
   photo: {
     src: "/media/clients/dolci-salati/esplanada.jpg",

@@ -15,7 +15,7 @@ export const dolci = {
   interior: `${media}/interior.jpg`,
   instagram: "https://www.instagram.com/dolciesalati.ap/",
   instagramHandle: "@dolciesalati.ap",
-  menu: "/raza17raza",
+  menu: "/menu/dolci-salati",
   address: ["Av. do Rio 3", "8365-102 Armação de Pêra"],
   directions:
     "https://www.google.com/maps/dir/?api=1&destination=Dolci%20e%20Salati%2C%20Av.%20do%20Rio%203%2C%20Arma%C3%A7%C3%A3o%20de%20P%C3%AAra%2C%20Portugal",

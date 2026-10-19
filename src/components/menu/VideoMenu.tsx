@@ -179,7 +179,7 @@ export function VideoMenu({
   ordering,
 }: {
   menu: VideoMenuData;
-  /** The demo page (/raza17raza): says its videos and prices are examples. */
+  /** Demo menus (isDemoMenu): say their videos and prices are examples. */
   demo?: boolean;
   /** A table's page with ordering on: «Adicionar» on each dish and the table's order. */
   ordering?: TableOrderingConfig;

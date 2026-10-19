@@ -138,20 +138,20 @@ export function slugProblem(slug: string): string | null {
   return null;
 }
 
-/** The public page of a menu. The demo keeps its old address. */
+/** The public page of a menu (every menu, the Dolci's too since 2026-10-19: /raza17raza only redirects). */
 export function menuPublicPath(slug: string): string {
-  return slug === "raza17raza" ? "/raza17raza" : `/menu/${slug}`;
+  return `/menu/${slug}`;
 }
 
 /** Demo menus (stock videos, example prices; «Trattoria da Nonna» is fictitious): they say so under the grid. */
-const demoMenuSlugs = new Set(["raza17raza", "trattoria-da-nonna"]);
+const demoMenuSlugs = new Set(["dolci-salati", "trattoria-da-nonna"]);
 export function isDemoMenu(slug: string): boolean {
   return demoMenuSlugs.has(slug);
 }
 
-/** Every path that shows this menu (both answer for the demo), to refresh after a change. */
+/** Every path that shows this menu, to refresh after a change. */
 export function menuPaths(slug: string): string[] {
-  return slug === "raza17raza" ? ["/raza17raza", `/menu/${slug}`] : [`/menu/${slug}`];
+  return [`/menu/${slug}`];
 }
 
 // Instagram and logo -------------------------------------------------------------------------------

@@ -68,10 +68,10 @@ describe("slugs", () => {
     for (const slug of ["Café", "-cafe", "cafe-", "ca--fe", "ca fe", "ca_fe"]) assert.ok(slugProblem(slug), slug);
   });
 
-  it("keeps the demo at its old address", () => {
-    assert.equal(menuPublicPath("raza17raza"), "/raza17raza");
+  it("puts every menu under /menu/", () => {
+    assert.equal(menuPublicPath("dolci-salati"), "/menu/dolci-salati");
     assert.equal(menuPublicPath("cafe-central"), "/menu/cafe-central");
-    assert.deepEqual(menuPaths("raza17raza"), ["/raza17raza", "/menu/raza17raza"]);
+    assert.deepEqual(menuPaths("dolci-salati"), ["/menu/dolci-salati"]);
     assert.deepEqual(menuPaths("cafe-central"), ["/menu/cafe-central"]);
   });
 });
