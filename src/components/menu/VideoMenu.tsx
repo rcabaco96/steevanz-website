@@ -101,7 +101,7 @@ const mosaicExitMs = 700;
  * tilted mosaic from the centre outwards, the logo comes into focus over them, then everything zooms
  * in and fades into the menu. Opacity and transforms only. The videos load and play behind it.
  */
-function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: string; business: string; pictures: string[]; ready: boolean; onDone: () => void }) {
+function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; pictures: string[]; ready: boolean; onDone: () => void }) {
   const [phase, setPhase] = useState<"in" | "out" | "done">("in");
   const [waited, setWaited] = useState<"no" | "enough" | "max">("no");
   const rows = Math.ceil(mosaicTiles / mosaicColumns);
@@ -148,13 +148,10 @@ function MosaicSplash({ logo, business, pictures, ready, onDone }: { logo: strin
         <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 46%, rgba(255,250,252,0.92) 0%, rgba(255,250,252,0.55) 26%, rgba(255,250,252,0) 52%)" }} />
       </div>
       <div className="pointer-events-none absolute inset-0 grid place-items-center">
-        <div className="menu-mosaic-mark flex flex-col items-center gap-3">
+        {/* Only the logo: it already is the name (owner, 2026-10-19). */}
+        <div className="menu-mosaic-mark flex flex-col items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
-          {/* On a solid label: over the moving pictures plain text got lost (owner, 2026-10-19). */}
-          <span className="display rounded-full px-5 py-1.5 text-2xl shadow-[0_10px_30px_rgba(95,42,68,0.25)]" style={{ color: "#5f2a44", background: "rgba(255,250,252,0.96)" }}>
-            {business}
-          </span>
         </div>
       </div>
     </div>
@@ -344,7 +341,6 @@ export function VideoMenu({
           of the HTML, the grid showed for an instant before the opening). */}
       <MosaicSplash
         logo={menu.logo}
-        business={menu.business}
         pictures={opening.pictures}
         ready={startedCount >= opening.awaited}
         onDone={opened}
