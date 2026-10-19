@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type TouchEvent, type WheelEvent } from "react";
-import { BunnyVideo, hasBunnyVideo } from "./BunnyVideo";
+import { bunnyThumbnail } from "@/lib/video-menus/rules";
+import { BunnyVideo, hasBunnyVideo, quietGrid } from "./BunnyVideo";
 
 /** A dish's vertical video with what is shown over it. */
 export interface ShortItem {
@@ -37,6 +38,12 @@ const closeSpeed = 0.5;
 /** The full screen sliding out, or back (ms; the collections panel's). */
 const closeMs = 260;
 const glideEase = "cubic-bezier(0.32, 0.72, 0, 1)";
+/**
+ * Slides this far from the one on screen have their video (a player); the others only their picture.
+ * Every slide with its own player made the full screen's opening a 0.3–1 s task on a mid-range Android
+ * (2026-10-19), before anything moved.
+ */
+const playerReach = 1;
 
 /**
  * How far the full screen is dragged to the right to close it, like the collections panel (owner,
@@ -102,7 +109,10 @@ export function ShortsViewer({
     window.history.pushState({ shortsViewer: true }, "");
     const onPop = () => onClose();
     window.addEventListener("popstate", onPop);
+    // The grid behind stops playing and loading: the full screen's stream comes first.
+    const loud = quietGrid();
     return () => {
+      loud();
       root.style.overflow = overflow;
       window.removeEventListener("popstate", onPop);
     };
@@ -133,7 +143,12 @@ export function ShortsViewer({
     return () => window.removeEventListener("keydown", onKey);
   }, [current, goTo]);
 
-  const slide = (item: ShortItem, index: number | "before" | "after") => (
+  const slide = (item: ShortItem, index: number | "before" | "after") => {
+    // Its place in the scroller: the copy of the last video is first, the copy of the first is last.
+    const position = index === "before" ? 0 : index === "after" ? items.length + 1 : index + 1;
+    const near = Math.abs(position - (current + 1)) <= playerReach;
+    const picture = near ? null : bunnyThumbnail(item.bunny, item.bunnyThumbnail);
+    return (
     <div
       ref={(box) => {
         if (index === "before") copyBefore.current = box;
@@ -142,9 +157,15 @@ export function ShortsViewer({
       }}
       className="relative aspect-[9/16] h-full w-auto max-w-none overflow-hidden"
     >
-      {hasBunnyVideo(item.bunny) ? <BunnyVideo id={item.bunny} thumbnail={item.bunnyThumbnail} playing={index === current} /> : null}
+      {!hasBunnyVideo(item.bunny) ? null : picture ? (
+        // eslint-disable-next-line @next/next/no-img-element -- Bunny's own picture of the video
+        <img src={picture} alt="" decoding="async" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <BunnyVideo id={item.bunny} thumbnail={item.bunnyThumbnail} playing={index === current} />
+      )}
     </div>
-  );
+    );
+  };
 
   /*
    * The gestures are ours, on a layer above everything (owner, 2026-10-14: swiping stopped working on

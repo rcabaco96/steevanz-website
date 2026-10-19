@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
+import { preload } from "react-dom";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
 import { AddToOrder, type TableOrderingConfig } from "./AddToOrder";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
@@ -88,6 +89,12 @@ const earlyCards = 4;
 const mosaicColumns = 4;
 const mosaicTiles = 28;
 /**
+ * The mosaic repeats this many dishes' pictures, asked for first and before everything else (the page's
+ * head preloads them): with one picture per dish (26) asked at a low priority with the page's code and
+ * the cards', its tiles were still empty at 1.8 s and mostly at 3.2 s (2026-10-19).
+ */
+const mosaicPictures = 12;
+/**
  * The mosaic's ending starts once it has shown this long and the videos on screen are playing (owner, 2026-10-14: «quando acabar a animação os vídeos estejam a dar»), or at the
  * latest at mosaicWaitMax; it takes mosaicExitMs (ms).
  */
@@ -126,6 +133,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
   }, [phase, onDone]);
 
   if (phase === "done") return null;
+  for (const picture of [logo, ...pictures]) preload(picture, { as: "image", fetchPriority: "high" });
   const out = phase === "out";
   return (
     <div aria-hidden="true" className={`fixed inset-0 z-[100] overflow-hidden ${out ? "menu-mosaic-out" : ""}`} style={{ background: "#fbe3ee" }}>
@@ -138,7 +146,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
               <div key={index} className="menu-mosaic-tile relative aspect-[9/16] overflow-hidden rounded-2xl bg-white/60 shadow-lg" style={{ animationDelay: `${Math.round(distance * 110)}ms` }}>
                 {pictures.length ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={pictures[index % pictures.length]} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                  <img src={pictures[index % pictures.length]} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
                 ) : null}
               </div>
             );
@@ -151,7 +159,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
         {/* Only the logo: it already is the name (owner, 2026-10-19). */}
         <div className="menu-mosaic-mark flex flex-col items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo} alt="" width={168} height={168} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
+          <img src={logo} alt="" width={168} height={168} fetchPriority="high" className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
         </div>
       </div>
     </div>
@@ -183,7 +191,7 @@ export function VideoMenu({
     const firstDishes = (menu.collections[0]?.dishes ?? []).map((key) => menu.dishes[key]).filter((dish) => Boolean(dish));
     const pictures = firstDishes.map(pictureOf).filter((picture): picture is string => Boolean(picture));
     return {
-      pictures: pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture)),
+      pictures: (pictures.length >= 4 ? pictures : Object.values(menu.dishes).map(pictureOf).filter((picture): picture is string => Boolean(picture))).slice(0, mosaicPictures),
       // The cards whose videos the opening waits for (it leaves at the latest at mosaicWaitMax).
       awaited: Math.min(earlyCards, firstDishes.length),
     };
