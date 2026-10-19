@@ -20,7 +20,7 @@ const nearMargin = "100% 0px";
  * clean»). Elsewhere (hls.js), a screen and a half, and only once the page rests: three screens kept
  * up to 24 players at once, and an Android slowed down («agora está mais lento no android»).
  */
-const keepMargin = () => (playsHlsItself() ? "300% 0px" : "150% 0px");
+const keepMargin = () => (playsHlsItself() ? "200% 0px" : "150% 0px");
 
 let nativeHls: boolean | undefined;
 /**
@@ -92,6 +92,41 @@ function subscribePace(listener: () => void) {
  * and unpacked every card's video on it (Android, 2026-10-16). Missing, hls.js unpacks it on the page.
  */
 const hlsWorker = (version: string) => `/hls/${version}/hls.worker.js`;
+
+/**
+ * An iPhone's own player picks the stream's quality itself, up to 4K, and full screen held up to three
+ * of them while the grid behind held its own: Safari's page ran out of memory and reloaded after a
+ * swipe or two (owner's iPhone, 2026-10-19). Its full screen plays one fixed rendition instead, the
+ * best one up to 1080p (a phone's screen), read from the stream's list of renditions.
+ */
+const nativeMaxSide = 1080;
+const nativeRenditions = new Map<string, Promise<string>>();
+function nativeRendition(base: string): Promise<string> {
+  let pick = nativeRenditions.get(base);
+  if (!pick) {
+    pick = fetch(`${base}/playlist.m3u8`)
+      .then((response) => (response.ok ? response.text() : Promise.reject(new Error(String(response.status)))))
+      .then((list) => {
+        let best: { side: number; path: string } | null = null;
+        const lines = list.split(/\r?\n/);
+        lines.forEach((line, index) => {
+          const size = /RESOLUTION=(\d+)x(\d+)/.exec(line);
+          const path = lines[index + 1]?.trim();
+          if (!size || !path || path.startsWith("#")) return;
+          const side = Math.min(Number(size[1]), Number(size[2]));
+          if (side <= nativeMaxSide && (!best || side > best.side)) best = { side, path };
+        });
+        const chosen = best as { side: number; path: string } | null;
+        return chosen ? `${base}/${chosen.path}` : `${base}/playlist.m3u8`;
+      })
+      .catch(() => {
+        nativeRenditions.delete(base);
+        return `${base}/playlist.m3u8`;
+      });
+    nativeRenditions.set(base, pick);
+  }
+  return pick;
+}
 
 /**
  * With hls.js, its code and its worker load as soon as the menu's code runs, not when the first card
@@ -330,9 +365,12 @@ export function BunnyVideo({
   // its neighbours loading at once slowed its own first pieces).
   // While the grid scrolls, only cards on screen start (those passing by near it loaded 18 MB in a
   // fling down a 100-dish menu and held up the ones where it stopped, 2026-10-19).
-  const load = !flying && (active || (near && ahead && (full || scroll === "still")));
+  // On an iPhone, full screen loads only the video on screen, and lets it go as soon as it leaves the
+  // screen (its neighbours show their picture, or their card's moving frame): memory, see nativeRendition.
+  const onlyOnScreen = full && playsHlsItself();
+  const load = !flying && (active || (near && ahead && !onlyOnScreen && (full || scroll === "still")));
   // A loaded video stays loaded while within keepMargin (in the grid with hls.js, until the page rests).
-  const keep = active || near || kept || (!full && scroll !== "still");
+  const keep = active || (!onlyOnScreen && (near || kept || (!full && scroll !== "still")));
   // A grid card has its <video> only once it loads and while it holds a source: the browser tracks every
   // video element on each frame of a scroll, and making one is costly (a fling down a 100-dish menu made
   // dozens as cards passed by: 270 ms of the scroll's frames, 2026-10-19). On an iPhone too (it kept
@@ -445,6 +483,9 @@ export function BunnyVideo({
       if (show) {
         setShown(true);
         onShown?.();
+        // Its frames no longer needed (the video covers it): their memory goes.
+        canvas.width = 0;
+        canvas.height = 0;
       }
       bridge(id, false);
     };
@@ -497,6 +538,8 @@ export function BunnyVideo({
       window.clearInterval(timer);
       bridging.current = false;
       held.current = false;
+      canvas.width = 0;
+      canvas.height = 0;
       bridge(id, false);
     };
     // Once per opening: not again when this video starts showing.
@@ -520,6 +563,15 @@ export function BunnyVideo({
       if (next) {
         element?.pause();
         markStarting(token, false);
+        // On an iPhone its video is let go (its picture stays): the full screen needs the memory. It
+        // loads again when the full screen closes.
+        if (element && playsHlsItself() && element.getAttribute("src")) {
+          element.removeAttribute("src");
+          element.style.removeProperty("opacity");
+          element.load();
+          setShown(false);
+          setLive(false);
+        }
         if (player) {
           player.stopLoad();
           stopped.current = true;
@@ -618,7 +670,12 @@ export function BunnyVideo({
       // they answer «maybe» too, but refused their own HLS (ERR_BLOCKED_BY_ORB, 2026-10-15).
       const canNative = element.canPlayType("application/vnd.apple.mpegurl") !== "";
       if (/Apple/.test(navigator.vendor) && canNative) {
-        element.src = stream;
+        if (!full) {
+          element.src = stream;
+          return;
+        }
+        const rendition = await nativeRendition(base);
+        if (!cancelled) element.src = rendition;
         return;
       }
       // The light build: no subtitles, other audio tracks or DRM (Bunny's streams here are video only).
