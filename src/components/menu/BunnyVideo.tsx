@@ -146,7 +146,7 @@ export const bunnyEarlyScript = `(function(){var v=document.querySelectorAll("vi
  * Videos on screen still waiting for their first frames: the ones near but off screen wait for them
  * before loading (2026-10-16: those off screen were ready before the ones on it), at most this long (ms).
  */
-const starting = new Set<HTMLVideoElement>();
+const starting = new Set<object>();
 const whenStarted = new Set<() => void>();
 /**
  * At most this long (ms): with 2.5 s, on a slow network the cards near the screen started loading while
@@ -154,11 +154,17 @@ const whenStarted = new Set<() => void>();
  * screen playing after 15 s, 2026-10-19).
  */
 const aheadWaitMs = 6000;
+/**
+ * A card's buffer (s): on screen one piece ahead; waiting near the screen only its first piece (with 4 s
+ * each held two, 1–1.4 MB, as a jump down a long menu started them, 2026-10-19).
+ */
+const cardBuffer = 4;
+const cardWaitingBuffer = 2;
 /** In full screen, its neighbours wait longer for it: its own first pieces come first. */
 const fullAheadWaitMs = 8000;
-function markStarting(element: HTMLVideoElement, on: boolean) {
-  if (on) starting.add(element);
-  else if (starting.delete(element) && !starting.size) for (const go of whenStarted) go();
+function markStarting(card: object, on: boolean) {
+  if (on) starting.add(card);
+  else if (starting.delete(card) && !starting.size) for (const go of whenStarted) go();
 }
 
 /**
@@ -288,6 +294,8 @@ export function BunnyVideo({
   onShown?: () => void;
 }) {
   const video = useRef<HTMLVideoElement>(null);
+  // This card in the list of those starting.
+  const [token] = useState(() => ({}));
   const picture = useRef<HTMLImageElement>(null);
   const hls = useRef<Hls | null>(null);
   // The first cards start on screen (one started early must not be let go before the observers report).
@@ -320,19 +328,24 @@ export function BunnyVideo({
   const flying = !full && scroll === "fast";
   // On screen (or full screen): at once. Near: once those on screen have started (in full screen too:
   // its neighbours loading at once slowed its own first pieces).
-  const load = !flying && (active || (near && ahead));
+  // While the grid scrolls, only cards on screen start (those passing by near it loaded 18 MB in a
+  // fling down a 100-dish menu and held up the ones where it stopped, 2026-10-19).
+  const load = !flying && (active || (near && ahead && (full || scroll === "still")));
   // A loaded video stays loaded while within keepMargin (in the grid with hls.js, until the page rests).
   const keep = active || near || kept || (!full && scroll !== "still");
-  // With hls.js, a grid card has its <video> only around the screen (or while it holds a source): the
-  // browser tracks every video element on each frame of a scroll, and a menu has dozens. An iPhone keeps
-  // them all, as before (all of them are in the page's HTML: the first cards start there).
-  const mounted = full || active || near || kept || live || playsHlsItself();
+  // A grid card has its <video> only once it loads and while it holds a source: the browser tracks every
+  // video element on each frame of a scroll, and making one is costly (a fling down a 100-dish menu made
+  // dozens as cards passed by: 270 ms of the scroll's frames, 2026-10-19). On an iPhone too (it kept
+  // all of them: 100 elements); its first cards are still in the page's HTML (they start there).
+  const mounted = full || live || load;
+  // Cards around the screen follow the scroll's pace (to start once it allows).
+  const watching = !full && (mounted || near || active);
   const base = `https://${pullZone}.b-cdn.net/${id}`;
 
-  // The scroll's pace, for a grid card with its video element (the others start nothing). A transition:
+  // The scroll's pace, for a grid card around the screen (the others start nothing). A transition:
   // dozens of cards drawn again at once in one go stalled a slow Android's scroll (50–70 ms).
   useEffect(() => {
-    if (full || !mounted) return;
+    if (!watching) return;
     const update = () => startTransition(() => setScroll(pace));
     const stop = subscribePace(update);
     update();
@@ -340,17 +353,19 @@ export function BunnyVideo({
       stop();
       startTransition(() => setScroll("still"));
     };
-  }, [full, mounted]);
+  }, [watching]);
 
   // Near the screen (loads), and half on it (a grid card plays): its picture, always there.
   useEffect(() => {
     const element = picture.current;
     if (!element) return;
     hideIfBroken(element);
+    // As transitions: a fast scroll down a long menu (100 dishes) brought dozens of cards in and out
+    // at once, each drawn again in the scroll's frames (50–150 ms tasks, 2026-10-19).
     const stops = [
-      watch(element, { rootMargin: nearMargin }, (entry) => setNear(entry.isIntersecting)),
-      watch(element, { rootMargin: keepMargin() }, (entry) => setKept(entry.isIntersecting)),
-      watch(element, { threshold: [0, playAtRatio, 1] }, (entry) => setSeen(entry.intersectionRatio >= playAtRatio)),
+      watch(element, { rootMargin: nearMargin }, (entry) => startTransition(() => setNear(entry.isIntersecting))),
+      watch(element, { rootMargin: keepMargin() }, (entry) => startTransition(() => setKept(entry.isIntersecting))),
+      watch(element, { threshold: [0, playAtRatio, 1] }, (entry) => startTransition(() => setSeen(entry.intersectionRatio >= playAtRatio))),
     ];
     return () => stops.forEach((stop) => stop());
   }, []);
@@ -504,7 +519,7 @@ export function BunnyVideo({
       const player = hls.current;
       if (next) {
         element?.pause();
-        if (element) markStarting(element, false);
+        markStarting(token, false);
         if (player) {
           player.stopLoad();
           stopped.current = true;
@@ -517,7 +532,7 @@ export function BunnyVideo({
     };
     update();
     return subscribeQuiet(update);
-  }, [id, full]);
+  }, [id, full, token]);
 
   // A grid card loads only while on screen, or near it once those on it have started: one that scrolled
   // away stops loading at once (it keeps what it has), so those on screen have the network.
@@ -525,6 +540,8 @@ export function BunnyVideo({
     const player = hls.current;
     if (full || !player) return;
     const wanted = !quiet.current && (active || (near && ahead));
+    // Waiting near the screen, it holds only its first piece; on screen, one piece ahead.
+    player.config.maxBufferLength = active ? cardBuffer : cardWaitingBuffer;
     if (!wanted && !stopped.current) {
       player.stopLoad();
       stopped.current = true;
@@ -544,7 +561,7 @@ export function BunnyVideo({
     const check = window.setTimeout(() => {
       if (!starting.size) go();
       else whenStarted.add(go);
-    }, 50);
+    }, 250);
     return () => {
       whenStarted.delete(go);
       window.clearTimeout(timer);
@@ -552,13 +569,13 @@ export function BunnyVideo({
     };
   }, [near, ahead, full]);
 
-  // On screen and not playing yet: the cards off screen wait for it.
+  // On screen and not playing yet: the cards off screen wait for it (even before it has its element:
+  // a card makes it only once it loads).
   useEffect(() => {
-    const element = video.current;
-    if (!element || !active || shown || quiet.current) return;
-    markStarting(element, true);
-    return () => markStarting(element, false);
-  }, [active, shown, turn]);
+    if (!active || shown || quiet.current) return;
+    markStarting(token, true);
+    return () => markStarting(token, false);
+  }, [active, shown, turn, token]);
 
   // Loads the source when near, lets it go when far.
   useEffect(() => {
@@ -595,6 +612,8 @@ export function BunnyVideo({
     // Full screen: the adaptive stream (every rendition); a card: its one rendition.
     const stream = full ? `${base}/playlist.m3u8` : `${base}/${cardRendition(element)}/video.m3u8`;
     const attach = async () => {
+      // It holds its element from now (it would go if the scroll moved before its source reports).
+      setLive(true);
       // An iPhone (Safari, and every iOS browser: all WebKit) plays HLS itself. Not Chrome or Edge:
       // they answer «maybe» too, but refused their own HLS (ERR_BLOCKED_BY_ORB, 2026-10-15).
       const canNative = element.canPlayType("application/vnd.apple.mpegurl") !== "";
@@ -633,7 +652,7 @@ export function BunnyVideo({
               maxBufferLength: playing ? fullBuffer : neighbourBuffer,
               startPosition: at ? (at.at + (performance.now() - at.since) / 1000) % at.duration : by,
             }
-          : { workerPath, maxBufferLength: 4, maxMaxBufferLength: 8 },
+          : { workerPath, maxBufferLength: active ? cardBuffer : cardWaitingBuffer, maxMaxBufferLength: 8 },
       );
       hls.current = player;
       stopped.current = false;
@@ -663,7 +682,7 @@ export function BunnyVideo({
     };
     // `scroll` and `turn`: a video waiting its turn starts once the scroll allows. `playing`: a full
     // screen slide starting as a neighbour or as the one on screen.
-  }, [load, keep, full, base, scroll, turn, mounted, id, playing]);
+  }, [load, keep, full, base, scroll, turn, mounted, id, playing, active]);
 
   // Plays while active (once the source is there), pauses otherwise (and in a quiet grid); a fling
   // starts none (those already playing go on); full screen waiting for its card to catch up stays paused.
@@ -710,7 +729,7 @@ export function BunnyVideo({
           preload={active ? "auto" : "metadata"}
           disablePictureInPicture
           // It has a source now: it stays until let go.
-          onLoadStart={live || playsHlsItself() ? undefined : () => setLive(true)}
+          onLoadStart={live ? undefined : () => setLive(true)}
           onTimeUpdate={
             shown
               ? undefined
