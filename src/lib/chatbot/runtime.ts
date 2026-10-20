@@ -124,6 +124,8 @@ export function createRuntime(deps: RuntimeDeps) {
       { bot, conversation: conversation.state, history: conversation.history, message: { body: message.body, at: message.at, kind: message.kind === "text" ? "text" : "media" }, now: new Date(now), index },
       provider,
     );
+    // The test AI was skipped (Ollama not running, too slow, busy…): the free answers replied instead.
+    if (result.providerNote) log(`[chatbot ${bot.id}] ${result.providerNote}`);
 
     let status: HandleStatus = result.replies.length ? "replied" : "silent";
     for (const reply of result.replies) {

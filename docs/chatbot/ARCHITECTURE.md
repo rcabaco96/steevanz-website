@@ -1,7 +1,8 @@
 # Assistente de IA no WhatsApp: arquitetura (fase 1)
 
-Estado em 2026-10-20. Ramo `chatbot`. Nada disto gasta dinheiro: não há chamadas a modelos de IA
-pagos, nem à API paga do WhatsApp, e a migração da base de dados está por aprovar.
+Estado em 2026-10-21. Ramo `chatbot`. Nada disto gasta dinheiro: não há chamadas a modelos de IA
+pagos, nem à API paga do WhatsApp (a IA de teste corre grátis no próprio computador, com o Ollama). As
+três migrações do assistente foram aplicadas a 2026-10-21, com autorização do dono.
 
 ## 1. O que o site promete (e o sistema tem de cumprir, nem mais nem menos)
 
@@ -40,7 +41,7 @@ src/lib/chatbot/runtime.ts  ── fila por conversa, duplicados, eco das própr
 src/lib/chatbot/engine.ts   ── língua → intenções → regras fixas de segurança → resposta → filtro final
    │        ├─ knowledge.ts  pesquisa grátis (palavras + «conceitos» nas 6 línguas)
    │        ├─ hours.ts      aberto agora / próxima abertura / semana por extenso
-   │        └─ llm/          AnswerProvider: mock (hoje) | real (marcador desligado)
+   │        └─ llm/          AnswerProvider: mock (hoje) | ollama (teste local) | real (desligado)
    ▼
 src/lib/chatbot/supabase-store.ts ── conversas, mensagens, estado da sessão (QR) no Supabase
    ▲
@@ -127,50 +128,61 @@ Admin › assistente › Conhecimento › **Documentos**: enviar PDF, Word (.doc
 - O mock cita as 1–3 frases mais relevantes da melhor secção. Em «Experimentar» aparece a fonte
   (documento › secção); ao cliente nunca.
 - Preparado para embeddings mais tarde (uma coluna nova nas secções) sem mudar o resto.
-- Migração `20261021120000_chatbot_documents.sql` (por aprovar). Sem ela, o resto funciona e o
-  painel de documentos mostra o aviso.
+- Migração `20261021120000_chatbot_documents.sql` (aplicada a 2026-10-21). Sem ela, o resto
+  funciona e o painel de documentos mostra o aviso.
 
-### IA de teste: Gemini, plano grátis (`llm/gemini.ts`)
+### IA de teste local: Ollama, grátis (`llm/ollama.ts`)
 
-Pedido do dono (2026-10-20): IA grátis para testes, sem API paga por agora.
+Pedido do dono (2026-10-21): IA grátis para testes, sem API paga e sem contas novas. O plano grátis do
+Gemini ficou de fora (os termos da Google não o permitem a quem está no Espaço Económico Europeu),
+por isso a IA de teste corre **no próprio computador**, com o Ollama (grátis, sem conta, nada sai do
+computador).
 
-- **Desligada por omissão.** Liga-se por assistente no admin (Definições › «IA de teste (Gemini,
-  grátis)») e precisa de `GEMINI_API_KEY` (Google AI Studio, conta Google do dono) no `.env.local`
-  (programa local) e, para «Experimentar» no site, nas variáveis da Vercel. Nunca no git.
-- Modelo por omissão `gemini-3.5-flash-lite` (o mais rápido e barato da linha atual; `GEMINI_MODEL`
-  muda). Limites nossos, abaixo dos da Google: **10 pedidos/min e 200/dia** no total, por processo
-  (`GEMINI_MAX_PER_MINUTE`, `GEMINI_MAX_PER_DAY`, só para baixo).
-- Ancorada: o modelo só vê a informação do assistente e as entradas/secções encontradas, numeradas
-  [E1]/[S1]; tem de responder `NO_ANSWER` quando não estiver lá (→ «não tenho essa informação»); as
-  referências viram a fonte mostrada em «Experimentar».
+- **Desligada por omissão.** Liga-se por assistente no admin (Definições › «IA de teste local
+  (Ollama, grátis) — só funciona no computador onde corre o assistente»).
+- **Só onde o Ollama corre:** no programa do assistente (`scripts/chatbot/runner.mjs`) e no site local
+  (`npm run dev`, para «Experimentar»). Na Vercel (`VERCEL` definido) fica desligada sem pedir nada e
+  responde o mock; o admin avisa disso. Só usa outro servidor se `OLLAMA_URL` for posto de propósito.
+- Pedido: `POST {OLLAMA_URL}/api/chat` (por omissão `http://127.0.0.1:11434`), modelo
+  `CHATBOT_OLLAMA_MODEL` (por omissão `qwen2.5:7b`), `stream: false`, temperatura 0,2, no máximo 160
+  tokens por resposta (`num_predict`), contexto de 4096, `keep_alive` 30 min (o modelo fica carregado
+  entre mensagens).
+- **Tempo:** num portátil sem placa gráfica (i7-1260P, 32 GB) conta com ~5–10 tokens/s, por isso as
+  respostas são curtas e o limite é **60 s** (`CHATBOT_OLLAMA_TIMEOUT_MS`, máx. 120 s). Uma resposta
+  de cada vez por processo: se já estiver a escrever outra, essa mensagem leva a resposta gratuita.
+  Tetos para não prender o computador: 10 pedidos/min e 500/dia (`CHATBOT_OLLAMA_MAX_PER_MINUTE`,
+  `CHATBOT_OLLAMA_MAX_PER_DAY`). Uma resposta cortada pelo limite de tokens perde a frase incompleta.
+- **Ancorada** (`llm/grounding.ts`): o modelo só vê a informação do assistente e as entradas/secções
+  encontradas pela pesquisa BM25 (até 5 entradas de ≤ 800 caracteres e 3 secções de ≤ 1200),
+  numeradas [E1]/[S1]; tem de responder `NO_ANSWER` quando não estiver lá (→ «não tenho essa
+  informação» e oferta de passar à equipa); nunca adivinha preços, horários nem factos; cita os
+  preços como estão escritos, sem calcular IVA. As referências viram a fonte mostrada em
+  «Experimentar». Responde na língua do cliente (pt, en, es, fr, de, it).
 - As regras fixas correm antes (emergência → 112, códigos, médico, passagem para pessoa: o modelo nem
-  é chamado) e depois (`sanitizeReply`). Qualquer erro, limite atingido ou falta de chave → respostas
-  gratuitas, com a razão visível em «Experimentar».
-- Migração `20261021130000_chatbot_test_ai.sql` (por aprovar): só alarga os valores de
-  `answer_provider` para incluir `gemini`.
-- **Termos da Google (verificados em 2026-10-20, termos de 28/04/2026):** o plano grátis indica «Used to
-  improve our products: Yes» e pode haver revisão humana; os termos pedem para não enviar dados
-  pessoais ou sensíveis; e **«You may use only Paid Services when making API Clients available to
-  users in the European Economic Area»** (também Suíça e Reino Unido; para quem está nessas regiões
-  aplicam-se os termos de dados dos serviços pagos mesmo na quota grátis). Ou seja: só testes do dono
-  com as suas próprias mensagens; clientes reais exigem o plano pago ou outro fornecedor. Os limites
-  exatos do plano grátis por modelo veem-se em aistudio.google.com/rate-limit (a página pública não
-  os lista); idade mínima 18 anos.
+  é chamado) e depois (`sanitizeReply`). Ollama desligado, modelo em falta, mais de 60 s, ocupado ou
+  teto atingido → respostas gratuitas, com a razão visível em «Experimentar» e no registo do programa.
+- Migração `20261021130000_chatbot_test_ai.sql` (aplicada a 2026-10-21): só alarga os valores de
+  `answer_provider` para incluir `ollama`.
+- Como pôr a correr (uma vez por computador): instalar o Ollama (ollama.com), depois
+  `ollama pull qwen2.5:7b` (≈ 4,7 GB) e deixar o Ollama ligado (a app do Windows já o deixa a correr;
+  senão `ollama serve`). Confirmar com `curl http://127.0.0.1:11434/api/tags`.
 - O fornecedor pago para clientes (Anthropic ou outro) continua um marcador desligado.
 
 ### Camada de IA (LLM)
 
-- Interface `AnswerProvider` (`llm/types.ts`). Hoje: `mockProvider` (determinístico, grátis).
+- Interface `AnswerProvider` (`llm/types.ts`). Hoje: `mockProvider` (determinístico, grátis) e, para
+  testes, `ollama` (modelo local, grátis, ver acima).
 - `realProviderPlaceholder`: tem a interface mas **não tem implementação** — lança
   `ProviderDisabledError`, o motor regista e responde com o mock. Não lê chaves, não faz pedidos.
 - `chooseProvider` só devolve o marcador se `answer_provider = 'real'` **e**
   `paid_answers_allowed = true` (interruptor do dono no site, a criar na fase 2).
-- `llm/prompt.ts`: o prompt de sistema e o contexto que um modelo real receberia (regras, tom,
-  informação do negócio, entradas encontradas). Testado, nunca enviado. As regras de segurança
+- `llm/prompt.ts`: o prompt de sistema (regras, tom, informação do negócio, entradas encontradas).
+  Hoje só é enviado ao modelo local de teste (`llm/ollama.ts`, no próprio computador); a nenhum
+  serviço externo. As regras de segurança
   continuam no código antes e depois do modelo, por isso um modelo que ignore o prompt continua sem
   conseguir enviar um código da porta nem saltar a passagem para pessoa.
 
-### Dados (Supabase) — migração por aprovar
+### Dados (Supabase) — migração aplicada a 2026-10-21
 
 `supabase/migrations/20261020200000_chatbot.sql` (rollback em `supabase/rollbacks/`). Só acrescenta.
 RLS ligado e sem acesso para anon/authenticated (só service role, como os menus em vídeo).
@@ -237,7 +249,7 @@ MIT, sem Chrome, mesmo risco que o open-wa) não toca no motor, no conhecimento 
 
 ## 5. O que fica para a fase 2 (cada passo com o dono)
 
-1. Aprovar e aplicar a migração (Management API, transação, rollback pronto).
+1. ~~Aprovar e aplicar a migração~~ (feito a 2026-10-21, com rollback pronto em `supabase/rollbacks/`).
 2. Escolher o canal por cliente (open-wa para piloto / API oficial) e emparelhar o primeiro número com
    `--listen-only` primeiro.
 3. Se for a API oficial: app na Meta, verificação, webhook `/api/chatbot/whatsapp`, adaptador

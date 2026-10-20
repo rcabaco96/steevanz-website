@@ -132,12 +132,12 @@ export async function updateBot(_state: ActionState, formData: FormData): Promis
       auto_resume_minutes: autoResume,
       alert_number: optional(formData, "alert_number", 40),
       retention_days: retention,
-      // «IA de teste (Gemini, grátis)»: off unless ticked. Never touches the paid switch.
-      answer_provider: value(formData, "test_ai") === "1" ? "gemini" : "mock",
+      // «IA de teste local (Ollama, grátis)»: off unless ticked. Never touches the paid switch.
+      answer_provider: value(formData, "test_ai") === "1" ? "ollama" : "mock",
     };
     const { error } = await createServiceClient().from("chatbot_bots").update(update).eq("id", botId);
     if (error?.code === "23505") throw new ChatbotMessage("Esse número de WhatsApp já está noutro assistente.");
-    if (error?.code === "23514" && update.answer_provider === "gemini") throw new ChatbotMessage("Para ligar a IA de teste falta aprovar e aplicar a migração 20261021130000_chatbot_test_ai.sql.");
+    if (error?.code === "23514" && update.answer_provider === "ollama") throw new ChatbotMessage("Para ligar a IA de teste falta aprovar e aplicar a migração 20261021130000_chatbot_test_ai.sql.");
     failOn(error, "updateBot");
     refresh(botId);
     return { ok: true, message: "Definições guardadas." };
@@ -280,11 +280,12 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
   const conversation = previous ? conversationStateFrom({ state: previous, mode: previous.mode === "human" ? "human" : "bot" }) : newConversationState();
   const now = Date.now();
   const history: ChatMessage[] = state.turns.slice(-20).map((turn, index) => ({ author: turn.author === "system" ? "system" : turn.author, body: turn.body, at: now - (state.turns.length - index) * 1000 }));
-  // The test AI (Gemini free tier) only when turned on for this bot; the paid provider never runs here.
+  // The local test AI (Ollama) only when turned on for this bot and Ollama runs on this computer (not
+  // on Vercel: there it falls back to the free answers); the paid provider never runs here.
   const provider = chooseProvider({ choice: answerProvider, paidAllowed: false, env: process.env });
   const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now) }, provider);
   const sources = result.sources.map((source) => ({ title: source.documentTitle, heading: source.heading }));
-  const by = result.provider?.startsWith("gemini") ? "IA de teste (Gemini)" : result.provider ? "Respostas gratuitas" : null;
+  const by = result.provider?.startsWith("ollama") ? "IA de teste local (Ollama)" : result.provider ? "Respostas gratuitas" : null;
   const replies: TestTurn[] = result.replies.map((body, index) =>
     index === result.replies.length - 1 ? { author: "bot" as const, body, ...(sources.length ? { sources } : {}), ...(by ? { by } : {}), ...(result.providerNote ? { note: result.providerNote } : {}) } : { author: "bot" as const, body },
   );

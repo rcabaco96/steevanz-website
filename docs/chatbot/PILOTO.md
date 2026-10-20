@@ -63,6 +63,29 @@ O número de teste está só no `.env.local` (`CHATBOT_TEST_NUMBER`), nunca no g
    número recebe respostas, no máximo 10 por hora.
 7. **Para parar:** «Desligar respostas» no admin (para em segundos) ou `Ctrl+C` no terminal.
 
+## IA de teste local (opcional, grátis)
+
+Sem IA, o assistente responde só com o que está escrito no conhecimento e nos documentos. Para testar
+respostas escritas por IA, sem custos e sem enviar nada para fora do computador, usa-se o **Ollama**
+no mesmo computador onde corre o programa do assistente:
+
+1. Instalar o Ollama (ollama.com, versão Windows) e descarregar o modelo uma vez (≈ 4,7 GB):
+   ```
+   ollama pull qwen2.5:7b
+   ```
+2. Deixar o Ollama ligado: a app do Windows já o deixa a correr; senão, num terminal à parte,
+   `ollama serve`. Confirmar com `curl http://127.0.0.1:11434/api/tags` (deve aparecer `qwen2.5:7b`).
+3. No admin › assistente › Definições, ligar «IA de teste local (Ollama, grátis)» e guardar.
+   Experimentar primeiro em «Experimentar»
+   no site local (`npm run dev`); no site online (Vercel) não há Ollama e responde sem IA.
+4. Arrancar o programa como no passo a passo. O terminal diz «Respostas: IA de teste local (Ollama…)».
+
+Num portátil sem placa gráfica cada resposta pode demorar 10 a 60 segundos (o primeiro pedido carrega
+o modelo e demora mais). Se o Ollama não estiver ligado, demorar mais de 60 s ou já estiver a escrever
+outra resposta, o assistente responde sem IA e o terminal diz porquê. A IA só usa a informação do
+assistente; quando não sabe, diz que não tem essa informação e oferece passar à equipa. As regras de
+segurança (112, códigos, passagem para pessoa, limites de 10/hora e 50/dia) continuam iguais.
+
 ## O que não fazer
 
 - Não ligar o número principal nem números de clientes.

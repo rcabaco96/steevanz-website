@@ -39,10 +39,10 @@ export function BotSettingsForm({
   establishments,
   menus,
   bookingSuggestion,
-  geminiConfigured,
+  ollamaAvailableHere,
 }: {
   bot: BotRow;
-  geminiConfigured: boolean;
+  ollamaAvailableHere: boolean;
   establishments: { id: string; name: string }[];
   menus: { id: string; name: string }[];
   bookingSuggestion: string | null;
@@ -192,18 +192,21 @@ export function BotSettingsForm({
         </label>
         <div className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted sm:col-span-2">
           <label className="inline-flex items-center gap-2 font-semibold text-text">
-            <input type="checkbox" name="test_ai" value="1" defaultChecked={bot.answer_provider === "gemini"} className="h-4 w-4 accent-[var(--color-accent)]" />
-            IA de teste (Gemini, grátis)
+            <input type="checkbox" name="test_ai" value="1" defaultChecked={bot.answer_provider === "ollama"} className="h-4 w-4 accent-[var(--color-accent)]" />
+            IA de teste local (Ollama, grátis) — só funciona no computador onde corre o assistente
           </label>
           <p>
-            Desligada: o assistente responde só com a informação do negócio, sem IA. Ligada: usa o plano grátis da Google, só com o conhecimento e os documentos deste
-            assistente, até 10 pedidos por minuto e 200 por dia; se falhar ou chegar ao limite, volta às respostas gratuitas.
-            {geminiConfigured ? null : <strong className="text-text"> Falta a chave GEMINI_API_KEY neste servidor: até lá responde sem IA.</strong>}
+            Desligada: o assistente responde só com a informação do negócio, sem IA. Ligada: usa um modelo de IA instalado no próprio computador (Ollama), só com o
+            conhecimento e os documentos deste assistente; nada sai do computador e não tem custos. Se o Ollama não estiver ligado, demorar mais de um minuto ou falhar,
+            volta às respostas gratuitas.
           </p>
-          <p className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
-            Só para testes com as suas próprias mensagens, nunca com clientes reais: a Google indica que o plano grátis pode usar os dados para melhorar os seus produtos, e os
-            termos só permitem servir utilizadores na União Europeia com o plano pago.
-          </p>
+          {ollamaAvailableHere ? null : (
+            <p className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+              Este servidor (o site online) não tem o Ollama: aqui, também em «Experimentar», responde sem IA. Para experimentar a IA, use o site no computador (npm run dev)
+              ou o programa do assistente nesse computador.
+            </p>
+          )}
+          <p>Num portátil sem placa gráfica cada resposta pode demorar até um minuto: serve para testes com as suas próprias mensagens, ainda não para clientes.</p>
         </div>
       </fieldset>
 

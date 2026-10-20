@@ -1,13 +1,14 @@
-// The instructions a real language model would get (phase 2). Written and tested here, but NOT sent
-// anywhere: no model is called until the owner chooses and pays for one from the site. The safety
-// rules are also enforced in code before and after the model (engine.ts, guardrails.ts), so a model
-// that ignores the prompt still can't leak a door code or skip the hand-off.
+// The instructions a language model gets: today only the free local test model (llm/ollama.ts, on
+// the owner's own computer, off by default); a paid model only when the owner chooses and pays for
+// one from the site (phase 2). The safety rules are also enforced in code before and after the model
+// (engine.ts, guardrails.ts), so a model that ignores the prompt still can't leak a door code or skip
+// the hand-off.
 import { formatWeek } from "../hours.ts";
 import type { SearchHit } from "../knowledge.ts";
 import { formatPrice } from "../text.ts";
 import type { BotSettings, BusinessKnowledge, ChatbotLanguage } from "../types.ts";
 
-const languageNames: Record<ChatbotLanguage, string> = {
+export const languageNames: Record<ChatbotLanguage, string> = {
   pt: "European Portuguese (pt-PT)",
   en: "English",
   es: "Spanish (usted)",
