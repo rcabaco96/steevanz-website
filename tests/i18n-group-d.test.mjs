@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
+import { cartCopy } from "../src/content/cart.ts";
 import { docPages } from "../src/content/doc-pages.ts";
 import { mockupCopy } from "../src/content/mockups.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
@@ -57,5 +58,19 @@ describe("product-page illustrations in every language", () => {
   it("has every mockup text in es, fr, de, it, prices without VAT and no «NFC»", () => {
     assertFull("mockupCopy", mockupCopy);
     for (const text of strings(mockupCopy)) assertHouseWords(text);
+  });
+});
+
+describe("cart, checkout and success pages in every language", () => {
+  it("has the whole cart copy in es, fr, de, it, with VAT always added on top", () => {
+    assertFull("cartCopy", cartCopy);
+    const vat = { es: "+ IVA", fr: "+ TVA", de: "zzgl. MwSt.", it: "+ IVA" };
+    for (const locale of extraLocales) {
+      assert.equal(cartCopy[locale].plusVat, vat[locale], locale);
+      assert.ok(cartCopy[locale].projectFrom.includes("{price}") && cartCopy[locale].projectFrom.includes(vat[locale]), locale);
+      for (const key of ["decrease", "increase", "remove"]) assert.match(cartCopy[locale][key], /\{name\}/, `${locale}.${key}`);
+      assert.match(cartCopy[locale].headerLabelCount, /\{count\}/);
+    }
+    for (const text of strings(cartCopy)) assertHouseWords(text);
   });
 });
