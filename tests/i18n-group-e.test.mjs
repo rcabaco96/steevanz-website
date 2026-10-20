@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { docs as bookings } from "../src/content/docs/bookings.ts";
 import { docs as loyalty } from "../src/content/docs/loyalty.ts";
 
 // Help docs translated into es, fr, de and it (group E): same shape as pt, links in the page's own language,
 // and the house words (no «NFC», no VAT-inclusive prices).
 
 const extra = ["es", "fr", "de", "it"];
-const translated = { loyalty };
+const translated = { loyalty, bookings };
 
 function shape(value) {
   if (Array.isArray(value)) return value.map(shape);
