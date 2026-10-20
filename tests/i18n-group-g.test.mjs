@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { docs as automation } from "../src/content/docs/automation.ts";
 import { docs as digitalMenu } from "../src/content/docs/digital-menu.ts";
 import { docs as guestGuide } from "../src/content/docs/guest-guide.ts";
 import { docs as waitlist } from "../src/content/docs/waitlist.ts";
@@ -8,7 +9,7 @@ import { docs as waitlist } from "../src/content/docs/waitlist.ts";
 // and the house words (no «NFC», no VAT-inclusive prices).
 
 const extra = ["es", "fr", "de", "it"];
-const translated = { digitalMenu, guestGuide, waitlist };
+const translated = { automation, digitalMenu, guestGuide, waitlist };
 
 function shape(value) {
   if (Array.isArray(value)) return value.map(shape);
