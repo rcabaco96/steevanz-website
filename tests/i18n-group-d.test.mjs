@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { cartCopy } from "../src/content/cart.ts";
 import { docPages } from "../src/content/doc-pages.ts";
 import { mockupCopy } from "../src/content/mockups.ts";
+import { sectors } from "../src/content/sectors.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
 
 // Group D of the site translation (es, fr, de, it): docs labels, sectors, mockups, cart and legal pages.
@@ -72,5 +73,23 @@ describe("cart, checkout and success pages in every language", () => {
       assert.match(cartCopy[locale].headerLabelCount, /\{count\}/);
     }
     for (const text of strings(cartCopy)) assertHouseWords(text);
+  });
+});
+
+describe("sector pages in every language", () => {
+  it("translates every sector page, the bundle notes and the holiday-rental pack in full", () => {
+    for (const sector of sectors) {
+      assertFull(`${sector.id}.copy`, sector.copy);
+      if (sector.bundleNote) assertFull(`${sector.id}.bundleNote`, sector.bundleNote);
+      if (sector.pack) {
+        assertFull(`${sector.id}.pack.copy`, sector.pack.copy);
+        for (const locale of extraLocales) {
+          const pack = sector.pack.copy[locale];
+          assert.match(pack.extraProperty, /\{setup\}.*\{monthly\}/, locale);
+          assert.match(pack.separately, /\{setup\}.*\{monthly\}/, locale);
+        }
+      }
+      for (const text of strings([sector.copy, sector.bundleNote, sector.pack?.copy])) assertHouseWords(text);
+    }
   });
 });
