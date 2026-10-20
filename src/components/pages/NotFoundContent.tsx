@@ -58,7 +58,7 @@ const copy: Localized<{ title404: string; eyebrow: string; title: string; body: 
     eyebrow: "Errore 404",
     title: "Questa targa non porta da nessuna parte.",
     body: "La pagina che cerca non esiste o è stata spostata. Provi uno di questi percorsi:",
-    home: "Torna alla home",
+    home: "Torni alla home",
     plateLine1: "Ops!",
     plateLine2: "Pagina non trovata",
   },

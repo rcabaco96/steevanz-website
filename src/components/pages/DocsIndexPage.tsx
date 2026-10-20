@@ -62,10 +62,10 @@ const copy = {
     metaTitle: "Documentazione e guide all'uso | Steevanz Docs",
     metaDescription: "Guide pratiche per installare, configurare e usare le targhe, le prenotazioni, la lista d'attesa, il chatbot, la reception vocale e le automazioni Steevanz.",
     eyebrow: "Documentazione",
-    title: "Tutto ciò che vi serve sapere, passo dopo passo.",
+    title: "Tutto ciò che Le serve sapere, passo dopo passo.",
     lead: "Guide scritte per chi gestisce un'attività, non per ingegneri. Dal posizionamento di una targa alla configurazione di un chatbot.",
-    helpTitle: "Non avete trovato ciò che cercavate?",
-    helpBody: "Scriveteci. Rispondiamo via WhatsApp o e-mail nei giorni feriali.",
+    helpTitle: "Non ha trovato ciò che cercava?",
+    helpBody: "Ci scriva. Rispondiamo via WhatsApp o e-mail nei giorni feriali.",
   },
 } satisfies Localized<{ metaTitle: string; metaDescription: string; eyebrow: string; title: string; lead: string; helpTitle: string; helpBody: string }>;
 

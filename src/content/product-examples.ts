@@ -53,9 +53,9 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
       },
       it: {
         eyebrow: "Esempio",
-        title: "Guardate un Menù digitale in funzione",
-        lead: "Un menù dimostrativo, con i piatti in video. Apritelo sullo smartphone, come un cliente seduto al tavolo.",
-        open: "Vedi un esempio",
+        title: "Guardi un Menù digitale in funzione",
+        lead: "Un menù dimostrativo, con i piatti in video. Lo apra sullo smartphone, come un cliente seduto al tavolo.",
+        open: "Veda un esempio",
         note: "Menù dimostrativo: il ristorante, i piatti e i prezzi sono di fantasia.",
       },
     },
@@ -107,8 +107,8 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
       it: {
         eyebrow: "Esempi",
         title: "Siti con prenotazione diretta, pronti da vedere",
-        lead: "Tre modelli di sito per case vacanza, con ricerca per date e prenotazione diretta. Apriteli sullo smartphone o sul computer: adattiamo quello che scegliete alla vostra attività, alle vostre foto e ai vostri colori.",
-        open: "Vedi un esempio",
+        lead: "Tre modelli di sito per case vacanza, con ricerca per date e prenotazione diretta. Li apra sullo smartphone o sul computer: adattiamo quello che sceglie alla Sua attività, alle Sue foto e ai Suoi colori.",
+        open: "Veda un esempio",
         note: "Siti dimostrativi: il marchio «Maré Alta», le case e i contatti sono di fantasia.",
       },
     },

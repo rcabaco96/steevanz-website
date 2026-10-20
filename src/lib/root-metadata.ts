@@ -30,7 +30,7 @@ const defaults: Localized<{ title: string; description: string }> = {
       "Websites, Digitale Speisekarte mit Videos, Reservierungen, Google-Bewertungen und digitale Kundenkarte für Restaurants, Cafés, Friseursalons, Praxen, Ferienunterkünfte und Geschäfte. Technologie der Zukunft. Mit den guten Manieren von früher.",
   },
   it: {
-    title: "Steevanz | I vostri clienti vi trovano, comprano da voi e tornano",
+    title: "Steevanz | I Suoi clienti La trovano, comprano da Lei e tornano",
     description:
       "Siti web, Menù digitale in video, prenotazioni, recensioni Google e carta fedeltà digitale per ristoranti, bar, parrucchieri, cliniche, case vacanza e negozi. Tecnologia del futuro. Con le buone maniere di una volta.",
   },

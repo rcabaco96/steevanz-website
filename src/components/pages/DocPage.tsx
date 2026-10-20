@@ -64,10 +64,10 @@ const docsLabels = {
   it: {
     navLabel: "Navigazione della documentazione",
     browse: "Sfoglia la documentazione",
-    needHelp: "Vi serve aiuto?",
+    needHelp: "Le serve aiuto?",
     needHelpBody: "Il nostro team risponde via WhatsApp ed e-mail nei giorni feriali.",
-    contact: "Contattateci",
-    productPage: "Vedi il prodotto",
+    contact: "Ci contatti",
+    productPage: "Veda il prodotto",
   },
 } satisfies Localized<{ navLabel: string; browse: string; needHelp: string; needHelpBody: string; contact: string; productPage: string }>;
 

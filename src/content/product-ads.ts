@@ -45,5 +45,5 @@ export const adVideoLabels: Localized<{ soundOn: string; soundOff: string; play:
   es: { soundOn: "Ver con sonido", soundOff: "Quitar el sonido", play: "Ver el vídeo" },
   fr: { soundOn: "Regarder avec le son", soundOff: "Couper le son", play: "Lire la vidéo" },
   de: { soundOn: "Mit Ton ansehen", soundOff: "Ton aus", play: "Video abspielen" },
-  it: { soundOn: "Guarda con l'audio", soundOff: "Disattiva l'audio", play: "Guarda il video" },
+  it: { soundOn: "Guardi con l'audio", soundOff: "Disattivi l'audio", play: "Guardi il video" },
 };
