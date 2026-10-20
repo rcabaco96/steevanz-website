@@ -145,8 +145,8 @@ describe("translated content", () => {
         const copy = getProductCopy(product.id, locale);
         for (const field of ["name", "shortName", "tagline", "summary"]) assert.ok(copy[field], `${product.id}.${locale}.${field}`);
         assert.notEqual(copy.tagline, en.tagline, `${product.id}.${locale} tagline is still English`);
-        // Not translated yet: the rest of the page shows English.
-        assert.equal(copy.heroSubtitle, en.heroSubtitle);
+        // The rest of each product page is being translated file by file; a missing field falls back to English.
+        assert.ok(copy.heroSubtitle, `${product.id}.${locale}.heroSubtitle`);
         assert.ok(product.priceQualifier[locale], `${product.id} price qualifier in ${locale}`);
       }
     }
