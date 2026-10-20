@@ -94,7 +94,7 @@ describe("home page («/» and «/en»)", () => {
     for (const page of ["src/app/(pt)/page.tsx", "src/app/(intl)/[lang]/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
     // Section order: clients, plates, Menu digital, loyalty card, goals (right below the loyalty card: owner rule),
     // guest guide, business card, sectors, how we work, final call.
-    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'id="novo-goals"', 'productId="guest-guide"', 'productId="business-card"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
+    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'productId="guest-guide"', 'productId="business-card"', 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
     const positions = order.map((needle) => home.indexOf(needle));
     assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
     assert.deepEqual([...positions].sort((a, b) => a - b), positions);

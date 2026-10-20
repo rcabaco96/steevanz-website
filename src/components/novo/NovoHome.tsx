@@ -141,7 +141,12 @@ export function NovoHome({ locale }: { locale: Locale }) {
       {/* 5. Cartão de cliente digital: after the menu, to make them come back */}
       <LoyaltyBanner locale={locale} />
 
-      {/* 6. O que quer melhorar? (the goals with live demos, after the three product bands) */}
+      {/* 6. Guia digital do alojamento and 7. Cartão de visita digital, each with its ad (owner, 2026-10-20): all the
+          bands with a video come first; the video sides alternate. */}
+      <AdBand locale={locale} productId="guest-guide" copy={guideBandCopy} headingId="novo-guide" tone="gold" media="left" />
+      <AdBand locale={locale} productId="business-card" copy={businessCardBandCopy} headingId="novo-business-card" tone="rose" media="right" />
+
+      {/* 8. O que quer melhorar? Always below every band with a video (owner, 2026-10-20). */}
       <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
         <div className={styles.wrap}>
           <h2 id="novo-goals" className={styles.h2} data-reveal>
@@ -153,11 +158,6 @@ export function NovoHome({ locale }: { locale: Locale }) {
           <Goals label={copy.goals.title} goals={goalViews} />
         </div>
       </section>
-
-      {/* 7. Guia digital do alojamento and 8. Cartão de visita digital, each with its ad (owner, 2026-10-20): after the
-          goals, so «O que quer melhorar?» stays right below the loyalty card band; the video sides alternate. */}
-      <AdBand locale={locale} productId="guest-guide" copy={guideBandCopy} headingId="novo-guide" tone="gold" media="left" />
-      <AdBand locale={locale} productId="business-card" copy={businessCardBandCopy} headingId="novo-business-card" tone="rose" media="right" />
 
       {/* 9. Soluções por setor */}
       <SectorSolutions locale={locale} />
