@@ -21,7 +21,7 @@ export const es: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Redacción de la guía", "Convertimos sus notas, fotos o su guía actual en una página clara, organizada por temas"],
           ["Cuatro idiomas", "Portugués, inglés y dos más a su elección (francés, español, alemán o italiano), revisados por nosotros"],
-          ["Placa de un toque", "Placa de pared, soporte o adhesivo, con código QR, para colocar dentro del alojamiento"],
+          ["Placa de un toque", "Placa de pared, expositor o pegatina, con código QR, para colocar dentro del alojamiento"],
           ["Versión imprimible", "Un PDF con el mismo contenido, para dejar una copia en papel en el alojamiento"],
           ["12 meses en línea", "Alojamiento de la página y cambios hechos por nosotros en un plazo de dos días laborables"],
         ],
@@ -112,8 +112,8 @@ export const es: Record<DocPageId, DocPageContent> = {
         head: ["Formato", "Dónde funciona mejor"],
         rows: [
           ["Placa de pared", "Junto a la puerta de entrada, por dentro"],
-          ["Soporte", "En la mesa del salón, en la encimera de la cocina o en la recepción"],
-          ["Adhesivo", "En la nevera o en el espejo de la entrada"],
+          ["Expositor", "En la mesa del salón, en la encimera de la cocina o en la recepción"],
+          ["Pegatina", "En la nevera o en el espejo de la entrada"],
         ],
       },
       {
@@ -153,7 +153,7 @@ export const es: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "En conjunto, estas secciones incluyen el contenido que la ley portuguesa exige en el libro de información de un alojamiento local: funcionamiento del alojamiento, normas, residuos, electrodomésticos, ruido, normas del edificio y el contacto del responsable, en portugués, inglés y dos idiomas más.",
+        text: "En conjunto, estas secciones incluyen el contenido que la ley portuguesa exige en el libro de información de un alojamiento turístico (alojamento local): funcionamiento del alojamiento, normas, residuos, electrodomésticos, ruido, normas del edificio y el contacto del responsable, en portugués, inglés y dos idiomas más.",
       },
       { type: "h2", id: "review-your-stay", text: "La sección «Valore su estancia»" },
       {
@@ -239,21 +239,21 @@ export const es: Record<DocPageId, DocPageContent> = {
   },
   faq: {
     title: "Preguntas frecuentes sobre la guía digital del alojamiento",
-    description: "Respuestas rápidas sobre precios, idiomas, seguridad, valoraciones y la placa obligatoria del alojamiento local.",
+    description: "Respuestas rápidas sobre precios, idiomas, seguridad, valoraciones y la placa obligatoria de los alojamientos turísticos.",
     blocks: [
       {
         type: "faq",
         items: [
           {
             q: "¿Cuánto cuesta después del primer año?",
-            a: "3 € al mes por alojamiento, para mantener la guía en línea con los cambios incluidos. Con el pack Alojamiento local, la guía está incluida mientras el pack esté activo.",
+            a: "3 € al mes por alojamiento, para mantener la guía en línea con los cambios incluidos. Con el pack para alojamientos turísticos, la guía está incluida mientras el pack esté activo.",
           },
           {
             q: "¿La guía cuenta como el libro de información que exige la ley?",
             a: "La guía incluye el contenido que la ley pide en el libro de información, en portugués, inglés y dos idiomas más, y le entregamos una versión imprimible que recomendamos tener en el alojamiento.",
           },
           {
-            q: "¿La guía sustituye a la placa obligatoria del alojamiento local?",
+            q: "¿La guía sustituye a la placa obligatoria de los alojamientos turísticos?",
             a: "No. La placa identificativa con su número de registro sigue un modelo oficial fijado por ley. La guía muestra su número de registro, pero no sustituye esa placa.",
           },
           {

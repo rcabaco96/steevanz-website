@@ -198,7 +198,7 @@ export const aboutCopy: Localized<AboutCopy> = {
     story: [
       "Dal 2021 sviluppiamo software su misura per aziende di ogni dimensione. Lungo la strada ci siamo accorti di una cosa: le attività locali (il ristorante di quartiere, il parrucchiere di fiducia, la clinica che conosce i suoi pazienti) erano quelle che avevano più da guadagnare dalla tecnologia e meno accesso a essa.",
       "Gli strumenti pensati per le grandi aziende sono costosi, complicati e arrivano con contratti che nessuno legge. Abbiamo deciso di fare il contrario: prodotti semplici, prezzi chiari, installazione fatta da noi e una persona vera dall'altra parte di WhatsApp.",
-      "Abbiamo iniziato con le targhe per le recensioni Google, perché risolvono un problema che hanno tutte le attività, con un piccolo investimento e risultati visibili. Poi abbiamo aggiunto prenotazioni, code, carte fedeltà e intelligenza artificiale, sempre con la stessa regola: se non fa risparmiare tempo o non porta clienti, non ne vale la pena.",
+      "Abbiamo iniziato con le targhe per recensioni Google, perché risolvono un problema che hanno tutte le attività, con un piccolo investimento e risultati visibili. Poi abbiamo aggiunto prenotazioni, code, carte fedeltà e intelligenza artificiale, sempre con la stessa regola: se non fa risparmiare tempo o non porta clienti, non ne vale la pena.",
     ],
     valuesEyebrow: "Cosa ci guida",
     valuesTitle: "Essere Steevanz vuol dire essere",

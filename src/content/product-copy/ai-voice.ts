@@ -275,7 +275,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Ninguna llamada se queda sin respuesta, aunque tenga las manos ocupadas.",
     summary:
       "Una recepcionista con IA que atiende el teléfono las 24 horas, responde a las preguntas frecuentes, gestiona reservas y pasa las llamadas urgentes a su equipo.",
-    metaTitle: "Recepcionista de Voz con IA para Llamadas | Steevanz",
+    metaTitle: "Recepcionista de voz con IA para llamadas | Steevanz",
     metaDescription:
       "Recepcionista de voz con IA que atiende las llamadas las 24 horas, resuelve dudas, gestiona reservas y le envía un resumen por WhatsApp o email. Configurada por Steevanz.",
     heroTitle: "Atienda todas las llamadas, incluso en pleno servicio",
@@ -409,7 +409,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Aucun appel sans réponse, même quand vous avez les mains prises.",
     summary:
       "Une réceptionniste IA qui répond au téléphone 24 h/24, traite les questions fréquentes, prend les réservations et transfère les appels urgents à votre équipe.",
-    metaTitle: "Réceptionniste Vocale IA pour vos Appels | Steevanz",
+    metaTitle: "Réceptionniste vocale IA pour vos appels | Steevanz",
     metaDescription:
       "Réceptionniste vocale IA qui répond aux appels 24 h/24, renseigne vos clients, prend les réservations et vous envoie un résumé par WhatsApp ou par e-mail. Mise en place par Steevanz.",
     heroTitle: "Répondez à chaque appel, même en plein service",
@@ -632,7 +632,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         sector: "lodging",
-        title: "Pensionen und Vermieter von Ferienwohnungen",
+        title: "Pensionen und Vermieter von Ferienunterkünften",
         body: "Nimmt Anrufe von Gästen in mehreren Sprachen an, informiert über Check-in-Zeiten, Anfahrt und Parken und schickt Ihnen die Anliegen, die Sie brauchen, per WhatsApp.",
       },
     ],
@@ -677,7 +677,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Nessuna chiamata senza risposta, anche quando avete le mani occupate.",
     summary:
       "Una receptionist con IA che risponde al telefono 24 ore su 24, gestisce le domande frequenti, prende le prenotazioni e passa le chiamate urgenti al vostro staff.",
-    metaTitle: "Receptionist Vocale con IA per le Chiamate | Steevanz",
+    metaTitle: "Receptionist vocale con IA per le chiamate | Steevanz",
     metaDescription:
       "Receptionist vocale con IA che risponde alle chiamate 24 ore su 24, gestisce le domande, prende le prenotazioni e vi invia un riassunto via WhatsApp o email. Configurata da Steevanz.",
     heroTitle: "Rispondete a ogni chiamata, anche in pieno servizio",

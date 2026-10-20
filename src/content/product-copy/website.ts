@@ -520,7 +520,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Idioma adicional (toda la web, traducida por nosotros y validada por usted)", price: "190 €" },
         { name: "Blog o noticias con editor, para publicar usted mismo", price: "190 €" },
         { name: "Formulario avanzado (presupuestos, inscripciones, envío de archivos)", price: "60 €" },
-        { name: "Perfil de Empresa en Google: crearlo u optimizarlo", price: "79 €" },
+        { name: "Perfil de Empresa de Google: crearlo u optimizarlo", price: "79 €" },
         { name: "Correo profesional (hasta 5 buzones)", price: "40 €" },
         { name: "Dominio gestionado por nosotros, registrado a su nombre", price: "20 €/año" },
         { name: "Migración de una web antigua, con redirecciones para no perder tráfico de Google", price: "desde 120 €" },

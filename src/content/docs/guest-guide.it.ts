@@ -153,7 +153,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Insieme, queste sezioni includono i contenuti che la legge portoghese richiede nel libro informativo di un alloggio per affitti brevi (alojamento local): funzionamento dell'alloggio, regole, rifiuti, elettrodomestici, rumore, regole del condominio e contatto del responsabile, in portoghese, inglese e altre due lingue.",
+        text: "Insieme, queste sezioni includono i contenuti che la legge portoghese richiede nel libro informativo di una casa vacanza (alojamento local): funzionamento dell'alloggio, regole, rifiuti, elettrodomestici, rumore, regole del condominio e contatto del responsabile, in portoghese, inglese e altre due lingue.",
       },
       { type: "h2", id: "review-your-stay", text: "La sezione «Valuta il tuo soggiorno»" },
       {
@@ -239,21 +239,21 @@ export const it: Record<DocPageId, DocPageContent> = {
   },
   faq: {
     title: "Domande frequenti sulla guida digitale dell'alloggio",
-    description: "Risposte rapide su prezzi, lingue, sicurezza, recensioni e la targa obbligatoria degli affitti brevi.",
+    description: "Risposte rapide su prezzi, lingue, sicurezza, recensioni e la targa obbligatoria delle case vacanza.",
     blocks: [
       {
         type: "faq",
         items: [
           {
             q: "Quanto costa dopo il primo anno?",
-            a: "3 € al mese per alloggio, per mantenere la guida online con le modifiche incluse. Con il pacchetto Affitti brevi, la guida è inclusa finché il pacchetto è attivo.",
+            a: "3 € al mese per alloggio, per mantenere la guida online con le modifiche incluse. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
           },
           {
             q: "La guida vale come libro informativo richiesto dalla legge?",
             a: "La guida include i contenuti che la legge chiede nel libro informativo, in portoghese, inglese e altre due lingue, e vi consegniamo una versione stampabile che consigliamo di tenere nell'alloggio.",
           },
           {
-            q: "La guida sostituisce la targa obbligatoria degli affitti brevi?",
+            q: "La guida sostituisce la targa obbligatoria delle case vacanza?",
             a: "No. La targa identificativa con il vostro numero di registrazione segue un modello ufficiale stabilito dalla legge. La guida mostra il vostro numero di registrazione, ma non sostituisce quella targa.",
           },
           {

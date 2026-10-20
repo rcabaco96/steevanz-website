@@ -16,6 +16,10 @@ import { faqJsonLd, howToJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 
+/** Long German headings carry soft hyphens so they break at 360 px; titles and structured data drop them. */
+const softHyphens = new RegExp(String.fromCharCode(0xad), "g");
+const plain = (text: string) => text.replace(softHyphens, "");
+
 const docsLabels = {
   pt: {
     navLabel: "Navegação da documentação",
@@ -73,7 +77,7 @@ export function docMetadata(locale: Locale, productId: ProductId, pageId: DocPag
   return pageMetadata({
     locale,
     route: { key: "doc", productId, pageId },
-    title: `${page.title} · ${productName} | Steevanz Docs`,
+    title: `${plain(page.title)} · ${productName} | Steevanz Docs`,
     description: page.description,
     type: "article",
   });
@@ -141,7 +145,7 @@ export function DocPage({ locale, productId, pageId }: { locale: Locale; product
     {
       "@context": "https://schema.org",
       "@type": "TechArticle",
-      headline: page.title,
+      headline: plain(page.title),
       description: page.description,
       inLanguage: htmlLang[locale],
       about: productCopy.name,
@@ -150,7 +154,7 @@ export function DocPage({ locale, productId, pageId }: { locale: Locale; product
   ];
   const firstSteps = page.blocks.find((block) => block.type === "steps");
   if (firstSteps && firstSteps.type === "steps") {
-    structuredData.push(howToJsonLd({ name: page.title, description: page.description, path, steps: firstSteps.items }));
+    structuredData.push(howToJsonLd({ name: plain(page.title), description: page.description, path, steps: firstSteps.items }));
   }
   const faqItems = page.blocks.flatMap((block) => (block.type === "faq" ? block.items : []));
   if (faqItems.length > 0) structuredData.push(faqJsonLd(faqItems));

@@ -684,7 +684,7 @@ function docsEs({ f, c, link }: DocContext): DocSet {
           items: [
             "Título y descripción en cada página, y datos estructurados del negocio.",
             "Mapa del sitio enviado a Google y Google Search Console configurada.",
-            "Nombre, dirección y teléfono iguales a los de su Perfil de Empresa en Google.",
+            "Nombre, dirección y teléfono iguales a los de su Perfil de Empresa de Google.",
             "Imagen para compartir en redes sociales y WhatsApp.",
             "Estadísticas de visitas sin cookies, respetuosas con la privacidad.",
           ],

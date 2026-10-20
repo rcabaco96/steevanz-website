@@ -21,7 +21,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Rédaction du livret", "Nous transformons vos notes, vos photos ou votre livret actuel en une page claire, organisée par thème"],
           ["Quatre langues", "Portugais, anglais et deux autres au choix (français, espagnol, allemand ou italien), relues par nous"],
-          ["Plaque à toucher", "Plaque murale, présentoir ou autocollant, avec QR code, à placer à l'intérieur du logement"],
+          ["Plaque à toucher", "Plaque murale, chevalet ou autocollant, avec QR code, à placer à l'intérieur du logement"],
           ["Version imprimable", "Un PDF au même contenu, pour laisser un exemplaire papier dans le logement"],
           ["12 mois en ligne", "Hébergement de la page et modifications faites par nous sous deux jours ouvrés"],
         ],
@@ -112,7 +112,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
         head: ["Format", "Où il fonctionne le mieux"],
         rows: [
           ["Plaque murale", "Près de la porte d'entrée, côté intérieur"],
-          ["Présentoir", "Sur la table du salon, le plan de travail de la cuisine ou à la réception"],
+          ["Chevalet", "Sur la table du salon, le plan de travail de la cuisine ou à la réception"],
           ["Autocollant", "Sur le réfrigérateur ou le miroir de l'entrée"],
         ],
       },
@@ -153,7 +153,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Ensemble, ces rubriques reprennent le contenu que la loi portugaise exige dans le livret d'information d'une location saisonnière (alojamento local) : fonctionnement du logement, règles, déchets, électroménager, bruit, règles de l'immeuble et contact du responsable, en portugais, en anglais et dans deux autres langues.",
+        text: "Ensemble, ces rubriques reprennent le contenu que la loi portugaise exige dans le livret d'information d'une location de vacances (alojamento local) : fonctionnement du logement, règles, déchets, électroménager, bruit, règles de l'immeuble et contact du responsable, en portugais, en anglais et dans deux autres langues.",
       },
       { type: "h2", id: "review-your-stay", text: "La rubrique «Évaluez votre séjour»" },
       {
@@ -246,7 +246,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Combien ça coûte après la première année ?",
-            a: "3 € par mois et par logement, pour garder le livret en ligne, modifications comprises. Avec le pack Location saisonnière, le livret est inclus tant que le pack est actif.",
+            a: "3 € par mois et par logement, pour garder le livret en ligne, modifications comprises. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
           },
           {
             q: "Le livret vaut-il comme livret d'information exigé par la loi ?",

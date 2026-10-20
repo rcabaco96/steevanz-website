@@ -293,7 +293,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Respuestas acertadas a cualquier hora, en su web y en WhatsApp.",
     summary:
       "Un asistente con IA entrenado con la información de su negocio: carta, precios, horarios y servicios. Responde las 24 horas en varios idiomas y deriva a reservas o a su equipo.",
-    metaTitle: "Chatbot con IA para Web y WhatsApp | Steevanz",
+    metaTitle: "Chatbot con IA para web y WhatsApp | Steevanz",
     metaDescription:
       "Chatbot con IA para la web y el WhatsApp de su negocio: responde las 24 horas sobre horarios, precios y servicios, en español, inglés y otros idiomas.",
     heroTitle: "Un asistente que responde mientras usted trabaja",
@@ -436,7 +436,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Les bonnes réponses à toute heure, sur votre site et sur WhatsApp.",
     summary:
       "Un assistant IA formé avec les informations de votre établissement : carte, prix, horaires et services. Il répond 24 h/24 en plusieurs langues et passe le relais aux réservations ou à votre équipe.",
-    metaTitle: "Chatbot IA pour Site Web et WhatsApp | Steevanz",
+    metaTitle: "Chatbot IA pour site web et WhatsApp | Steevanz",
     metaDescription:
       "Chatbot IA pour le site et le WhatsApp de votre établissement : il répond 24 h/24 sur vos horaires, vos prix et vos services, en français, en anglais et dans d'autres langues.",
     heroTitle: "Un assistant qui répond pendant que vous travaillez",
@@ -722,7 +722,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Le risposte giuste a qualsiasi ora, sul sito e su WhatsApp.",
     summary:
       "Un assistente con IA addestrato con le informazioni della vostra attività: menù, prezzi, orari e servizi. Risponde 24 ore su 24 in più lingue e passa la parola alle prenotazioni o al vostro staff.",
-    metaTitle: "Chatbot con IA per Sito e WhatsApp | Steevanz",
+    metaTitle: "Chatbot con IA per sito e WhatsApp | Steevanz",
     metaDescription:
       "Chatbot con IA per il sito e il WhatsApp della vostra attività: risponde 24 ore su 24 su orari, prezzi e servizi, in italiano, inglese e altre lingue.",
     heroTitle: "Un assistente che risponde mentre voi lavorate",

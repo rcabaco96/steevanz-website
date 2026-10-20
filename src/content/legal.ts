@@ -337,7 +337,7 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           id: "google",
           title: "10. Datos de su cuenta de Google (Perfil de Empresa)",
           paragraphs: [
-            "Si conecta el panel a Google con «Ligar Google», le pedimos autorización, en la propia pantalla de Google, para gestionar el Perfil de Empresa en Google de su negocio (permiso business.manage) y para conocer el correo electrónico de la cuenta con la que ha iniciado sesión.",
+            "Si conecta el panel a Google con «Ligar Google», le pedimos autorización, en la propia pantalla de Google, para gestionar el Perfil de Empresa de Google de su negocio (permiso business.manage) y para conocer el correo electrónico de la cuenta con la que ha iniciado sesión.",
             "Usamos ese acceso únicamente para mostrar en su panel las reseñas de su negocio y las respuestas que ya ha dado, para identificar el perfil correcto y, cuando usted lo pida, publicar las respuestas a las reseñas que apruebe. No usamos estos datos para publicidad, no los vendemos ni los compartimos con terceros, y no los usamos para entrenar modelos de inteligencia artificial de terceros.",
             "Las claves de acceso que nos facilita Google se guardan cifradas y solo las usan nuestros servidores. Puede desconectar la conexión en cualquier momento desde su panel o en myaccount.google.com/permissions; al desconectar, borramos las claves.",
             "El uso por parte de Steevanz de la información recibida de las API de Google, y su transferencia a cualquier otra aplicación, cumplen la Política de Datos de Usuario de los Servicios de API de Google, incluidos los requisitos de Uso Limitado.",
@@ -463,7 +463,8 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
     de: {
       metaTitle: "Datenschutzerklärung | Steevanz",
       metaDescription: "Wie Steevanz Ihre personenbezogenen Daten nach der DSGVO und dem portugiesischen Gesetz Nr. 58/2019 erhebt, nutzt und schützt. Ihre Rechte und wie Sie sie ausüben.",
-      title: "Datenschutzerklärung",
+      // Soft hyphen (\u00AD): the one-word German title is wider than a 360 px screen.
+      title: "Datenschutz\u00ADerklärung",
       intro:
         "Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Diese Erklärung erläutert, welche Daten wir über diese Website erheben, wofür wir sie verwenden, an wen wir sie weitergeben und welche Rechte Sie nach der Datenschutz-Grundverordnung (DSGVO) und dem portugiesischen Gesetz Nr. 58/2019 haben.",
       updated: updatedDe,
@@ -1097,7 +1098,7 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           id: "trademarks",
           title: "4. Marcas de terceros",
           paragraphs: [
-            "Google, Google Maps y Perfil de Empresa en Google son marcas de Google LLC. WhatsApp, Instagram y Facebook son marcas de Meta Platforms, Inc. Apple Wallet es una marca de Apple Inc. Estas marcas se mencionan únicamente para describir la compatibilidad de nuestros productos. Steevanz es una empresa independiente y no tiene ninguna afiliación, patrocinio ni aprobación de estas entidades.",
+            "Google, Google Maps y Perfil de Empresa de Google son marcas de Google LLC. WhatsApp, Instagram y Facebook son marcas de Meta Platforms, Inc. Apple Wallet es una marca de Apple Inc. Estas marcas se mencionan únicamente para describir la compatibilidad de nuestros productos. Steevanz es una empresa independiente y no tiene ninguna afiliación, patrocinio ni aprobación de estas entidades.",
           ],
         },
         {
@@ -1201,7 +1202,8 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
     de: {
       metaTitle: "Allgemeine Geschäftsbedingungen | Steevanz",
       metaDescription: "Nutzungsbedingungen der Steevanz-Website: Richtpreise, Angebote, geistiges Eigentum, Marken Dritter und Streitbeilegung.",
-      title: "Allgemeine Geschäftsbedingungen",
+      // Soft hyphen (\u00AD): «Geschäftsbedingungen» alone is wider than a 360 px screen.
+      title: "Allgemeine Geschäfts\u00ADbedingungen",
       intro:
         "Diese Bedingungen regeln die Nutzung der Website steevanz.com. Mit dem Besuch der Website akzeptieren Sie diese Bedingungen. Die Erbringung von Leistungen richtet sich stets nach einem eigenen Angebot und Vertrag.",
       updated: updatedDe,
@@ -1233,7 +1235,7 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           id: "trademarks",
           title: "4. Marken Dritter",
           paragraphs: [
-            "Google, Google Maps und Google Unternehmensprofil sind Marken der Google LLC. WhatsApp, Instagram und Facebook sind Marken der Meta Platforms, Inc. Apple Wallet ist eine Marke der Apple Inc. Diese Marken werden nur genannt, um die Kompatibilität unserer Produkte zu beschreiben. Steevanz ist ein unabhängiges Unternehmen und steht in keiner Verbindung zu diesen Unternehmen, wird von ihnen weder gesponsert noch empfohlen.",
+            "Google, Google Maps und Google-Unternehmensprofil sind Marken der Google LLC. WhatsApp, Instagram und Facebook sind Marken der Meta Platforms, Inc. Apple Wallet ist eine Marke der Apple Inc. Diese Marken werden nur genannt, um die Kompatibilität unserer Produkte zu beschreiben. Steevanz ist ein unabhängiges Unternehmen und steht in keiner Verbindung zu diesen Unternehmen, wird von ihnen weder gesponsert noch empfohlen.",
           ],
         },
         {

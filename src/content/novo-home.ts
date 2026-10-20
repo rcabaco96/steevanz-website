@@ -676,7 +676,7 @@ export const goalCtas: Record<ProductId, Localized<string>> = {
   "landing-page": { pt: "Conhecer a landing page", en: "Discover the landing page", es: "Conocer la landing page", fr: "Découvrir la landing page", de: "Die Landingpage entdecken", it: "Scopri la landing page" },
   "online-shop": { pt: "Conhecer a loja online", en: "Discover the online shop", es: "Conocer la tienda online", fr: "Découvrir la boutique en ligne", de: "Den Onlineshop entdecken", it: "Scopri il negozio online" },
   "google-review-plates": { pt: "Conhecer as placas", en: "Discover the plates", es: "Conocer las placas", fr: "Découvrir les plaques", de: "Die Schilder entdecken", it: "Scopri le targhe" },
-  "ai-reviews": { pt: "Conhecer a gestão de reviews", en: "Discover review management", es: "Conocer la gestión de reseñas", fr: "Découvrir la gestion des avis", de: "Das Bewertungsmanagement entdecken", it: "Scopri la gestione recensioni" },
+  "ai-reviews": { pt: "Conhecer a gestão de reviews", en: "Discover review management", es: "Conocer la gestión de reseñas", fr: "Découvrir la gestion des avis", de: "Das Bewertungsmanagement entdecken", it: "Scopri la gestione delle recensioni" },
   bookings: { pt: "Conhecer as reservas", en: "Discover online bookings", es: "Conocer las reservas", fr: "Découvrir les réservations", de: "Die Online-Reservierung entdecken", it: "Scopri le prenotazioni" },
   waitlist: { pt: "Conhecer a lista de espera", en: "Discover the waitlist", es: "Conocer la lista de espera", fr: "Découvrir la liste d'attente", de: "Die Warteliste entdecken", it: "Scopri la lista d'attesa" },
   "ai-chatbot": { pt: "Conhecer o chatbot", en: "Discover the chatbot", es: "Conocer el chatbot", fr: "Découvrir le chatbot", de: "Den Chatbot entdecken", it: "Scopri il chatbot" },
@@ -877,7 +877,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     cta: "Discover the plates",
   },
   es: {
-    eyebrow: "Placas de reseñas de Google",
+    eyebrow: "Placas para reseñas en Google",
     titleStart: "Más reseñas en Google,",
     titleAccent: "con un toque.",
     body: "El cliente acerca el móvil a la placa, o lee el QR, y se abre al momento el formulario de reseña de su negocio en Google. Sin instalar nada, sin buscar.",
@@ -889,7 +889,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     cta: "Conocer las placas",
   },
   fr: {
-    eyebrow: "Plaques d'avis Google",
+    eyebrow: "Plaques pour avis Google",
     titleStart: "Plus d'avis Google,",
     titleAccent: "d'un simple toucher.",
     body: "Le client approche son téléphone de la plaque, ou scanne le QR code, et le formulaire d'avis Google de votre établissement s'ouvre aussitôt. Rien à installer, rien à chercher.",

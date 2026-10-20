@@ -335,7 +335,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Incluye el libro de información",
-        body: "Funcionamiento del alojamiento, normas de la casa, residuos, electrodomésticos, ruido, normas del edificio y el contacto del responsable, como exige la ley portuguesa para el alojamiento local.",
+        body: "Funcionamiento del alojamiento, normas de la casa, residuos, electrodomésticos, ruido, normas del edificio y el contacto del responsable, como exige la ley portuguesa para los alojamientos turísticos.",
       },
       {
         title: "Sus recomendaciones",
@@ -406,7 +406,7 @@ export const copy: ProductCopyByLocale = {
         a: "Tiene una sección neutral, «Valore su estancia», igual para todos: explica que Booking.com envía su solicitud de valoración por email y Airbnb en la app, después del check-out. Sin regalos, descuentos ni peticiones de cinco estrellas, como exigen las propias plataformas.",
       },
       {
-        q: "¿La guía sustituye a la placa obligatoria del alojamiento local?",
+        q: "¿La guía sustituye a la placa obligatoria de los alojamientos turísticos?",
         a: "No. La placa identificativa con su número de registro sigue un modelo oficial fijado por ley. Nuestra guía muestra su número de registro, pero no sustituye a esa placa.",
       },
       {
@@ -749,7 +749,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Include il libretto informativo",
-        body: "Funzionamento dell'alloggio, regole della casa, rifiuti, elettrodomestici, rumore, regolamento condominiale e contatto del responsabile, come richiede la legge portoghese per gli affitti brevi.",
+        body: "Funzionamento dell'alloggio, regole della casa, rifiuti, elettrodomestici, rumore, regolamento condominiale e contatto del responsabile, come richiede la legge portoghese per le case vacanza.",
       },
       {
         title: "I vostri consigli",
@@ -820,7 +820,7 @@ export const copy: ProductCopyByLocale = {
         a: "Ha una sezione neutra, «Valuta il tuo soggiorno», uguale per tutti: spiega che Booking.com invia la richiesta di recensione via email e Airbnb nell'app, dopo il check-out. Niente regali, sconti o richieste di cinque stelle, come richiedono le piattaforme stesse.",
       },
       {
-        q: "La guida sostituisce la targa obbligatoria per gli affitti brevi?",
+        q: "La guida sostituisce la targa obbligatoria per le case vacanza?",
         a: "No. La targa identificativa con il vostro numero di registrazione segue un modello ufficiale stabilito per legge. La nostra guida mostra il vostro numero di registrazione, ma non sostituisce quella targa.",
       },
       {

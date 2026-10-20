@@ -125,7 +125,7 @@ export const de: Record<DocPageId, DocPageContent> = {
   },
   configuration: {
     title: "Die digitale Gästemappe konfigurieren",
-    description: "Sprachen, Rubriken der Gästemappe, die Rubrik «Bewerten Sie Ihren Aufenthalt», der Link zu Ihrer Website und wie Sie Änderungen anfragen.",
+    description: "Sprachen, Rubriken der Gästemappe, die Rubrik „Bewerten Sie Ihren Aufenthalt“, der Link zu Ihrer Website und wie Sie Änderungen anfragen.",
     blocks: [
       { type: "h2", id: "languages", text: "Sprachen" },
       {
@@ -155,7 +155,7 @@ export const de: Record<DocPageId, DocPageContent> = {
         type: "p",
         text: "Zusammen enthalten diese Rubriken die Inhalte, die das portugiesische Gesetz im Informationsbuch einer Ferienunterkunft (Alojamento Local) verlangt: Funktionsweise der Unterkunft, Regeln, Abfall, Geräte, Lärm, Gebäuderegeln und der Kontakt der verantwortlichen Person, auf Portugiesisch, Englisch und in zwei weiteren Sprachen.",
       },
-      { type: "h2", id: "review-your-stay", text: "Die Rubrik «Bewerten Sie Ihren Aufenthalt»" },
+      { type: "h2", id: "review-your-stay", text: "Die Rubrik „Bewerten Sie Ihren Aufenthalt“" },
       {
         type: "p",
         text: "Sie ist für alle Gäste gleich: Sie erklärt, dass Booking.com die Bitte um eine Bewertung per E-Mail und Airbnb in der App (unter Reisen) nach dem Check-out schickt und dass ihre Meinung anderen Reisenden hilft. Sie bietet keine Rabatte oder Geschenke und bittet um keine bestimmte Bewertung, weil die Plattformen das verbieten. Wenn Ihre Unterkunft ein Google-Profil hat, können wir den Google-Link hinzufügen.",
@@ -163,7 +163,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "website", text: "Link zu Ihrer Website" },
       {
         type: "p",
-        text: "Wenn Sie eine eigene Website haben, können wir einen dezenten Link «Offizielle Website» anzeigen. Er ist standardmäßig ausgeschaltet: Airbnb verbietet, Gäste zum Buchen außerhalb der Plattform zu bewegen, deshalb verwenden wir nie Sätze wie «direkt buchen und sparen».",
+        text: "Wenn Sie eine eigene Website haben, können wir einen dezenten Link „Offizielle Website“ anzeigen. Er ist standardmäßig ausgeschaltet: Airbnb verbietet, Gäste zum Buchen außerhalb der Plattform zu bewegen, deshalb verwenden wir nie Sätze wie „direkt buchen und sparen“.",
       },
       { type: "h2", id: "changes", text: "Änderungen anfragen" },
       {
@@ -180,7 +180,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       {
         type: "ul",
         items: [
-          "Erwähnen Sie sie in Ihrer Check-in-Nachricht: «Tippen Sie bei Ihrer Ankunft auf das Schild an der Tür, dort finden Sie das WLAN und alles über das Haus.»",
+          "Erwähnen Sie sie in Ihrer Check-in-Nachricht: „Tippen Sie bei Ihrer Ankunft auf das Schild an der Tür, dort finden Sie das WLAN und alles über das Haus.“",
           "Bringen Sie das Schild dort an, wo man es sofort sieht.",
           "Legen Sie die Druckversion in eine Schublade oder auf den Wohnzimmertisch, für Gäste, die Papier bevorzugen.",
         ],
@@ -246,7 +246,7 @@ export const de: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Was kostet es nach dem ersten Jahr?",
-            a: "3 € pro Monat und Unterkunft, um die Gästemappe online zu halten, Änderungen inklusive. Mit dem Ferienunterkunft-Paket ist die Gästemappe enthalten, solange das Paket aktiv ist.",
+            a: "3 € pro Monat und Unterkunft, um die Gästemappe online zu halten, Änderungen inklusive. Mit dem Paket für Ferienunterkünfte ist die Gästemappe enthalten, solange das Paket aktiv ist.",
           },
           {
             q: "Gilt die Gästemappe als das gesetzlich vorgeschriebene Informationsbuch?",
@@ -266,7 +266,7 @@ export const de: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Übernehmen Sie die Gästemeldungen an SIBA?",
-            a: "Nein. Wenn Sie Erinnerungen an die Fristen möchten, erledigt das die Automatisierung «Reinigungen und Fristen». Für die automatische Meldung empfehlen wir spezialisierte Tools wie Chekin oder Hostkit.",
+            a: "Nein. Wenn Sie Erinnerungen an die Fristen möchten, erledigt das die Automatisierung „Reinigungen und Fristen“. Für die automatische Meldung empfehlen wir spezialisierte Tools wie Chekin oder Hostkit.",
           },
         ],
       },

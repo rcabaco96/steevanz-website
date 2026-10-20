@@ -209,7 +209,8 @@ export function LegalPage({ locale, documentId }: { locale: Locale; documentId: 
         label={t.common.breadcrumbHome}
         items={[
           { name: t.common.breadcrumbHome, path: href(locale, { key: "home" }) },
-          { name: document.title, path: href(locale, { key: legalRouteKeys[documentId] }) },
+          // The German titles carry a soft hyphen for 360 px screens; the breadcrumb's structured data drops it.
+          { name: document.title.replace(new RegExp(String.fromCharCode(0xad), "g"), ""), path: href(locale, { key: legalRouteKeys[documentId] }) },
         ]}
       />
       <div className="mt-8 grid gap-12 lg:grid-cols-[15rem_minmax(0,1fr)]">

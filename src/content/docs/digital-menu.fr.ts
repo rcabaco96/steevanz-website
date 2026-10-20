@@ -175,7 +175,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "pair-with-reviews", text: "Associez-le aux avis Google" },
       {
         type: "p",
-        text: "Sur la même table, la plaque d'avis Google demande un avis à la fin du repas. Le menu aide à choisir au début ; les avis aident de nouveaux clients à vous trouver.",
+        text: "Sur la même table, la plaque pour avis Google demande un avis à la fin du repas. Le menu aide à choisir au début ; les avis aident de nouveaux clients à vous trouver.",
       },
     ],
   },

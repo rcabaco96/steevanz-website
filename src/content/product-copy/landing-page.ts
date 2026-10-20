@@ -401,7 +401,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Visible en Google",
-        body: "Títulos, descripción y datos estructurados del negocio configurados, y enlace a su Perfil de Empresa en Google.",
+        body: "Títulos, descripción y datos estructurados del negocio configurados, y enlace a su Perfil de Empresa de Google.",
       },
       {
         title: "Cumple las normas",
@@ -485,7 +485,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Copywriting: escribimos los textos a partir de una llamada de 20 minutos", price: "90 €" },
         { name: "Idioma adicional, traducido por nosotros y validado por usted", price: "90 €" },
         { name: "Sección adicional (más allá de las 8)", price: "40 €" },
-        { name: "Perfil de Empresa en Google: crearlo u optimizarlo (categorías, horario, fotos, servicios)", price: "79 €" },
+        { name: "Perfil de Empresa de Google: crearlo u optimizarlo (categorías, horario, fotos, servicios)", price: "79 €" },
         { name: "Correo profesional: hasta 5 buzones, DNS y firma", price: "40 €" },
         { name: "Dominio gestionado por nosotros, registrado a su nombre", price: "20 €/año" },
         { name: "Medición de conversiones para anuncios, con consentimiento", price: "60 €" },

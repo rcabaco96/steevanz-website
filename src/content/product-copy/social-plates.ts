@@ -259,7 +259,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Nuevos seguidores y contactos con un toque, sin deletrear nada.",
     summary:
       "Placas y tarjetas que llevan al cliente a su Instagram, Facebook, TikTok, web o página de enlaces. Incluye tarjetas de visita digitales que comparten su contacto.",
-    metaTitle: "Placas para Redes Sociales y Tarjetas Digitales | Steevanz",
+    metaTitle: "Placas para redes sociales y tarjetas digitales | Steevanz",
     metaDescription:
       "Placas y tarjetas para redes sociales: con un toque, el cliente llega a su Instagram, su TikTok, su web o su tarjeta de visita digital. Sin apps y configurado por nosotros.",
     heroTitle: "Del mostrador a su Instagram con un toque",
@@ -385,7 +385,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "De nouveaux abonnés et contacts d'un toucher, sans rien épeler.",
     summary:
       "Plaques et cartes qui mènent vos clients vers votre Instagram, Facebook, TikTok, site web ou page de liens. Avec des cartes de visite digitales qui partagent vos coordonnées.",
-    metaTitle: "Plaques Réseaux Sociaux et Cartes Digitales | Steevanz",
+    metaTitle: "Plaques pour réseaux sociaux et cartes digitales | Steevanz",
     metaDescription:
       "Plaques et cartes pour les réseaux sociaux : d'un toucher, vos clients arrivent sur votre Instagram, votre TikTok, votre site ou votre carte de visite digitale. Sans application, configuré par nos soins.",
     heroTitle: "De votre comptoir à votre Instagram, d'un toucher",
@@ -637,7 +637,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Nuovi follower e contatti con un tocco, senza dover dettare nulla.",
     summary:
       "Targhe e card che portano il cliente al vostro Instagram, Facebook, TikTok, sito o pagina di link. Include biglietti da visita digitali che condividono i vostri contatti.",
-    metaTitle: "Targhe per i Social e Biglietti da Visita Digitali | Steevanz",
+    metaTitle: "Targhe per social e biglietti da visita digitali | Steevanz",
     metaDescription:
       "Targhe e card per i social: con un tocco il cliente arriva al vostro Instagram, al vostro TikTok, al sito o al vostro biglietto da visita digitale. Senza app, configurato da noi.",
     heroTitle: "Dal bancone al vostro Instagram con un tocco",

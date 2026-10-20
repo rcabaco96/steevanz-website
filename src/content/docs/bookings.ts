@@ -169,7 +169,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Erste Schritte mit dem Online-Reservierungssystem",
+        title: "Erste Schritte mit dem Online-Reservierungs\u00ADsystem",
         description: "So funktionieren die Online-Reservierungen von Steevanz: Kunden reservieren über Ihren Link, rund um die Uhr, und Ihr Team sieht alles in einem Kalender.",
         blocks: [
           {
@@ -325,7 +325,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Einrichtung des Online-Reservierungssystems",
+        title: "Einrichtung des Online-Reservierungs\u00ADsystems",
         description: "Wie Steevanz die Reservierungen startklar macht: Geschäftsart, Leistungen oder Kapazität, Öffnungszeiten, Regeln und der Link auf Ihren Kanälen.",
         blocks: [
           { type: "p", text: "Wir übernehmen die Einrichtung gemeinsam mit Ihnen. Meist ist sie in wenigen Werktagen fertig." },
@@ -354,7 +354,7 @@ export const docs: ProductDocs = {
               { title: "Servizi o capienza", body: "Ristoranti: capienza per turno e numero massimo di persone per prenotazione. Altre attività: regoliamo i servizi, le durate e i prezzi, e chi svolge ciascuno." },
               { title: "Orari", body: "Gli orari del locale, i giorni di chiusura e, se serve, gli orari propri di ogni persona o spazio." },
               { title: "Regole", body: "Preavviso minimo, con quanti giorni di anticipo si può prenotare, tolleranza sul ritardo e fino a quando il cliente può annullare." },
-              { title: "Il link sui vostri canali", body: "Inseriamo il link di prenotazione nel vostro Instagram, nel sito e nel profilo dell'attività su Google, e consegniamo un cartello con QR code." },
+              { title: "Il link sui vostri canali", body: "Inseriamo il link di prenotazione nel vostro Instagram, nel sito e nel vostro Profilo dell'attività su Google, e consegniamo un cartello con QR code." },
             ],
           },
           { type: "callout", tone: "info", text: "In seguito potete cambiare tutto quando volete: vedete la [configurazione](/it/docs/online-booking-system/configuration)." },
@@ -535,7 +535,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Konfiguration des Online-Reservierungssystems",
+        title: "Konfiguration des Online-Reservierungs\u00ADsystems",
         description: "Kapazität pro Schicht, Leistungen, Personen und Räume, Öffnungszeiten, Regeln für Kunden, Benachrichtigungen und geschlossene Tage oder Zeiten.",
         blocks: [
           { type: "h2", id: "capacity", text: "Restaurants: Kapazität" },
@@ -955,7 +955,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Häufige Fragen zum Online-Reservierungssystem",
+        title: "Häufige Fragen zum Online-Reservierungs\u00ADsystem",
         description: "Antworten auf die häufigsten Fragen: Konten und Apps, Erinnerungen, telefonische Reservierungen, Kapazität, Zahlungen und Daten.",
         blocks: [
           { type: "h2", id: "questions", text: "Fragen und Antworten" },

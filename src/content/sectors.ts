@@ -672,7 +672,7 @@ export const sectors: Sector[] = [
         cardBody: "Plus d'abonnés, plus d'avis et des clients qui reviennent, avec une technologie simple au comptoir et en vitrine.",
         bundleTitle: "La formule commerces",
         bundleBody: "Une plaque au comptoir pour les avis Google, une plaque ou un autocollant en vitrine pour vous suivre sur les réseaux sociaux, une carte de fidélité digitale sans application et un chatbot qui répond sur le stock, les horaires et les commandes.",
-        metaTitle: "Plaques et carte client pour les commerces de proximité | Steevanz",
+        metaTitle: "Plaques et carte de fidélité pour les commerces de proximité | Steevanz",
         metaDescription: "Plaques pour avis Google et réseaux sociaux, carte de fidélité digitale et chatbot IA pour boutiques, boulangeries, fleuristes et commerces de quartier.",
         heroTitle: "Le commerce de quartier, avec la force des grandes marques.",
         heroSubtitle: "Les clients aiment acheter près de chez eux. Nous les aidons à vous trouver sur Google, à vous suivre sur les réseaux sociaux et à revenir, avec des outils simples qui fonctionnent depuis votre comptoir.",
@@ -726,7 +726,7 @@ export const sectors: Sector[] = [
         cardBody: "Più follower, più recensioni e clienti che ritornano, con una tecnologia semplice al banco e in vetrina.",
         bundleTitle: "Il pacchetto per negozi",
         bundleBody: "Targa al banco per le recensioni Google, targa o adesivo in vetrina per seguirvi sui social, carta fedeltà digitale senza app e un chatbot che risponde su disponibilità, orari e ordini.",
-        metaTitle: "Targhe e carta cliente per i negozi di quartiere | Steevanz",
+        metaTitle: "Targhe e carta fedeltà per i negozi di quartiere | Steevanz",
         metaDescription: "Targhe per recensioni Google e social, carta fedeltà digitale e chatbot con IA per negozi, panetterie, fioristi e commercio di quartiere.",
         heroTitle: "Il negozio di quartiere, con la forza dei grandi marchi.",
         heroSubtitle: "Ai clienti piace comprare vicino a casa. Li aiutiamo a trovarvi su Google, a seguirvi sui social e a tornare, con strumenti semplici che funzionano dal banco.",
@@ -763,7 +763,7 @@ export const sectors: Sector[] = [
       es: "Las placas para reseñas en Google son solo para alojamientos que pueden tener perfil en Google: hostales, casas de huéspedes, habitaciones con el anfitrión presente y casas donde recibe a los huéspedes en persona. Los apartamentos y las casas con entrada autónoma no pueden tener perfil, por norma del propio Google. En esos casos, la guía explica al huésped dónde valorar en Booking o en Airbnb, igual para todos y sin ofrecer nada a cambio.",
       fr: "Les plaques pour avis Google sont réservées aux hébergements qui peuvent avoir une fiche Google : auberges de jeunesse, maisons d'hôtes, chambres chez l'habitant avec l'hôte sur place et maisons où vous accueillez les voyageurs en personne. Les appartements et les villas en arrivée autonome ne peuvent pas avoir de fiche, selon les règles de Google. Dans ce cas, le livret indique au voyageur où laisser un avis sur Booking.com ou Airbnb, de la même façon pour tous et sans rien offrir en échange.",
       de: "Die Schilder für Google-Bewertungen eignen sich nur für Unterkünfte, die ein Google-Profil haben dürfen: Hostels, Gästehäuser, Zimmer mit anwesendem Gastgeber und Häuser, in denen Sie die Gäste persönlich empfangen. Ferienwohnungen und Ferienhäuser mit Self-Check-in dürfen nach Googles eigenen Regeln kein Profil haben. Dort erklärt die Gästemappe, wo man auf Booking.com oder Airbnb bewerten kann, für alle gleich und ohne Gegenleistung.",
-      it: "Le targhe per le recensioni Google sono solo per gli alloggi che possono avere un profilo Google: ostelli, guest house, camere con l'host presente e case in cui accogliete gli ospiti di persona. Appartamenti e ville con ingresso autonomo non possono avere un profilo, per regola di Google stesso. In questi casi la guida spiega all'ospite dove lasciare una recensione su Booking.com o Airbnb, allo stesso modo per tutti e senza offrire nulla in cambio.",
+      it: "Le targhe per recensioni Google sono solo per gli alloggi che possono avere un profilo Google: ostelli, guest house, camere con l'host presente e case in cui accogliete gli ospiti di persona. Appartamenti e ville con ingresso autonomo non possono avere un profilo, per regola di Google stesso. In questi casi la guida spiega all'ospite dove lasciare una recensione su Booking.com o Airbnb, allo stesso modo per tutti e senza offrire nulla in cambio.",
     },
     pack: {
       setup: 149,
@@ -818,7 +818,7 @@ export const sectors: Sector[] = [
         },
         es: {
           badge: "Precio de propuesta",
-          eyebrow: "Pack Alojamiento Turístico",
+          eyebrow: "Pack para alojamientos turísticos",
           title: "Guía, asistente y automatización en un solo pack",
           body: "Por menos de lo que cuesta la comisión de una reserva al mes, los huéspedes están bien informados, la limpieza se organiza sola y su móvil descansa.",
           items: [
@@ -838,27 +838,27 @@ export const sectors: Sector[] = [
         },
         fr: {
           badge: "Prix sur proposition",
-          eyebrow: "Pack location de vacances",
-          title: "Livret, assistant et automatisation en un seul pack",
+          eyebrow: "Formule locations de vacances",
+          title: "Livret, assistant et automatisation en une seule formule",
           body: "Pour moins que la commission d'une réservation par mois, vos voyageurs sont bien informés, le ménage s'organise tout seul et votre téléphone se repose.",
           items: [
             "Livret d'accueil digital en quatre langues, avec plaque et version imprimable",
             "Assistant IA sur WhatsApp, formé avec le livret, qui répond aux voyageurs 24 h/24 et vous transmet les urgences",
             "Automatisation « Ménages et échéances » : avis à l'équipe de ménage la veille de chaque départ, rappel des déclarations des voyageurs et résumé hebdomadaire",
-            "Livret en ligne et modifications inclus tant que le pack est actif",
+            "Livret en ligne et modifications inclus tant que la formule est active",
             "Pour les auberges et maisons d'hôtes avec une fiche Google, une plaque pour avis incluse",
           ],
           setupLabel: "de mise en place",
           monthlyLabel: "/mois",
           extraProperty: "Chaque logement supplémentaire : +{setup} de mise en place et +{monthly}/mois. Un numéro WhatsApp couvre jusqu'à cinq logements ; au-delà, nous faisons un devis.",
           separately: "Séparément : {setup} de mise en place et {monthly}/mois.",
-          website: "Vous voulez aussi un site web avec réservation directe, pour les voyageurs qui reviennent et ceux qui vous trouvent sur Google ou Instagram ? Nous l'ajoutons au pack, avec un prix à part.",
-          note: "Montants hors TVA, confirmés lors de la démonstration. Sans engagement long : nous suggérons un minimum de trois mois, en raison du travail de mise en place. Le pack se souscrit lors de la démonstration, pas dans le panier.",
+          website: "Vous voulez aussi un site web avec réservation directe, pour les voyageurs qui reviennent et ceux qui vous trouvent sur Google ou Instagram ? Nous l'ajoutons à la formule, avec un prix à part.",
+          note: "Montants hors TVA, confirmés lors de la démonstration. Sans engagement long : nous suggérons un minimum de trois mois, en raison du travail de mise en place. La formule se souscrit lors de la démonstration, pas dans le panier.",
           requestInfo: "Vous préférez recevoir la proposition par e-mail ?",
         },
         de: {
           badge: "Angebotspreis",
-          eyebrow: "Paket Ferienunterkunft",
+          eyebrow: "Paket für Ferienunterkünfte",
           title: "Gästemappe, Assistent und Automatisierung in einem Paket",
           body: "Für weniger als die Provision einer Buchung im Monat sind Ihre Gäste gut informiert, die Reinigung organisiert sich selbst und Ihr Handy hat Ruhe.",
           items: [
@@ -878,7 +878,7 @@ export const sectors: Sector[] = [
         },
         it: {
           badge: "Prezzo su proposta",
-          eyebrow: "Pacchetto Casa vacanza",
+          eyebrow: "Pacchetto per case vacanza",
           title: "Guida, assistente e automazione in un unico pacchetto",
           body: "Per meno della commissione di una prenotazione al mese, gli ospiti sono ben informati, le pulizie si organizzano da sole e il vostro telefono riposa.",
           items: [
@@ -1016,7 +1016,7 @@ export const sectors: Sector[] = [
         ],
         faq: [
           { q: "Est-ce que cela remplace Airbnb, Booking.com ou mon logiciel de gestion ?", a: "Non. Nous travaillons avec ce que vous utilisez déjà. Les plateformes continuent de gérer les réservations, et le livret, l'assistant et les automatisations se branchent sur le calendrier que vous avez déjà." },
-          { q: "Le livret digital tient-il lieu du livret d'information exigé par la loi ?", a: "Le livret reprend le contenu que la loi portugaise demande pour le livret d'information : fonctionnement du logement, règlement, déchets, appareils, bruit, règles de copropriété et vos coordonnées, en portugais, en anglais et dans deux autres langues. Nous vous remettons aussi une version imprimable, que nous recommandons de laisser dans le logement." },
+          { q: "Le livret d'accueil digital tient-il lieu du livret d'information exigé par la loi ?", a: "Le livret reprend le contenu que la loi portugaise demande pour le livret d'information : fonctionnement du logement, règlement, déchets, appareils, bruit, règles de copropriété et vos coordonnées, en portugais, en anglais et dans deux autres langues. Nous vous remettons aussi une version imprimable, que nous recommandons de laisser dans le logement." },
           { q: "Vous occupez-vous des déclarations au SIBA ?", a: "Nous n'envoyons pas de déclarations en votre nom. Nous vous rappelons les échéances à partir du calendrier et, si vous voulez automatiser l'envoi, nous recommandons des outils spécialisés comme Chekin ou Hostkit, qui fonctionnent très bien avec Steevanz." },
           { q: "Puis-je demander des avis aux voyageurs ?", a: "Vous le pouvez et vous le devez, de la même façon pour tous, sans cadeau ni remise en échange. Booking.com et Airbnb envoient leur propre invitation après le départ, et le livret indique au voyageur où la trouver. Les plaques Google sont prévues pour les auberges, les maisons d'hôtes et les maisons où vous accueillez les voyageurs en personne." },
           { q: "L'assistant donne-t-il le code de la porte à qui le demande ?", a: "Non. L'assistant ne partage jamais les codes d'accès et ils ne figurent pas dans le livret. Vous continuez à les envoyer dans votre message d'arrivée. Les urgences et les réclamations vous sont transmises immédiatement." },

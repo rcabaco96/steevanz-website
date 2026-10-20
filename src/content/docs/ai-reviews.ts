@@ -281,7 +281,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Erste Schritte mit dem KI-Bewertungsmanagement",
+        title: "Erste Schritte mit dem KI-Bewertungs\u00ADmanagement",
         description:
           "So überwacht das KI-Bewertungsmanagement von Steevanz die Bewertungen in Ihrem Google-Unternehmensprofil, entwirft Antworten in Ihrem Ton und meldet negative Bewertungen schnell.",
         blocks: [
@@ -773,7 +773,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Einrichtung des KI-Bewertungsmanagements",
+        title: "Einrichtung des KI-Bewertungs\u00ADmanagements",
         description:
           "So geben Sie Steevanz Verwalterzugriff auf Ihr Google-Unternehmensprofil, vereinbaren den Ton der Antworten und schalten die Benachrichtigungen des KI-Bewertungsmanagements ein.",
         blocks: [
@@ -1307,7 +1307,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Konfiguration des KI-Bewertungsmanagements",
+        title: "Konfiguration des KI-Bewertungs\u00ADmanagements",
         description:
           "Legen Sie Ton der Antworten, Regeln für negative Bewertungen, Benachrichtigungen und Freigabemodus des KI-Bewertungsmanagements für Ihr Google-Unternehmensprofil fest.",
         blocks: [
@@ -1803,7 +1803,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Das KI-Bewertungsmanagement im Alltag",
+        title: "Das KI-Bewertungs\u00ADmanagement im Alltag",
         description:
           "So geben Sie Antworten frei, reagieren auf Benachrichtigungen zu negativen Bewertungen, melden Bewertungen, die gegen Googles Richtlinien verstoßen, und lesen Ihren Monatsbericht.",
         blocks: [
@@ -1868,7 +1868,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Enthält eine Bewertung Beleidigungen, anstößige Inhalte, persönliche Daten oder Spam, oder stammt sie offensichtlich von jemandem, der nie Kunde war, können Sie sie direkt im Profil bei Google melden. Wir helfen bei der Meldung, die Entscheidung liegt aber immer bei Google: **Eine Meldung garantiert keine Entfernung**. Berechtigte Kritik wird in der Regel nicht entfernt, auch wenn Sie sie ungerecht finden; dann ist eine gute Antwort Ihre beste Verteidigung.",
+            text: "Enthält eine Bewertung Beleidigungen, anstößige Inhalte, persönliche Daten oder Spam, oder stammt sie offensichtlich von jemandem, der nie Kunde war, können Sie sie direkt im Google-Unternehmensprofil melden. Wir helfen bei der Meldung, die Entscheidung liegt aber immer bei Google: **Eine Meldung garantiert keine Entfernung**. Berechtigte Kritik wird in der Regel nicht entfernt, auch wenn Sie sie ungerecht finden; dann ist eine gute Antwort Ihre beste Verteidigung.",
           },
           {
             type: "h2",
@@ -2283,7 +2283,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Fehlerbehebung beim KI-Bewertungsmanagement",
+        title: "Fehlerbehebung beim KI-Bewertungs\u00ADmanagement",
         description:
           "Lösungen für häufige Probleme beim KI-Bewertungsmanagement: Verwalter-Einladung kommt nicht an, Antworten erscheinen nicht bei Google, Benachrichtigungen fehlen oder Bewertungen verschwinden.",
         blocks: [
@@ -2709,7 +2709,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Häufige Fragen zum KI-Bewertungsmanagement",
+        title: "Häufige Fragen zum KI-Bewertungs\u00ADmanagement",
         description:
           "Antworten auf häufige Fragen zum KI-Bewertungsmanagement: Zugriff auf das Google-Profil, Freigabe von Antworten, negative Bewertungen, Googles Richtlinien und Monatsberichte.",
         blocks: [

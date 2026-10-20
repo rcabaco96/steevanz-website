@@ -299,7 +299,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Comparta el enlace",
-        body: "Añadimos el enlace de reservas a su Instagram, a su web y a su Perfil de Empresa en Google.",
+        body: "Añadimos el enlace de reservas a su Instagram, a su web y a su Perfil de Empresa de Google.",
       },
       {
         title: "Sus clientes reservan",
@@ -325,7 +325,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Un enlace para todos los canales",
-        body: "Un único enlace de reservas para la biografía de Instagram, la web, WhatsApp y el botón de reservar de su Perfil de Empresa en Google.",
+        body: "Un único enlace de reservas para la biografía de Instagram, la web, WhatsApp y el botón de reservar de su Perfil de Empresa de Google.",
       },
       {
         title: "Fácil de gestionar",

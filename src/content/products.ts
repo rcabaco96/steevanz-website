@@ -142,7 +142,7 @@ export const products: Product[] = [
     // 2026-10-18: the video menu (building and hosting the menu and its videos) is 30 €/month, shown on the site.
     priceFrom: 20,
     priceBilling: "one-time",
-    priceQualifier: { pt: "por placa + 30 €/mês pelo menu em vídeo", en: "per plate + €30/month for the video menu", es: "por placa + 30 €/mes por el menú en vídeo", fr: "par plaque + 30 €/mois pour le menu vidéo", de: "pro Schild + 30 €/Monat für die Video-Speisekarte", it: "per targa + 30 €/mese per il menù video" },
+    priceQualifier: { pt: "por placa + 30 €/mês pelo menu em vídeo", en: "per plate + €30/month for the video menu", es: "por placa + 30 €/mes por el menú en vídeo", fr: "par plaque + 30 €/mois pour le menu en vidéo", de: "pro Schild + 30 €/Monat für die Video-Speisekarte", it: "per targa + 30 €/mese per il menù in video" },
     priceIsProvisional: true,
     sectors: ["restaurants", "retail"],
     related: ["google-review-plates", "social-plates", "bookings"],

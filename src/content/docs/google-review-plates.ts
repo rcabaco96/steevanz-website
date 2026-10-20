@@ -191,7 +191,7 @@ export const docs: ProductDocs = {
             head: ["Formato", "Dónde usarlo", "Notas"],
             rows: [
               ["Placa de mostrador en acrílico", "Junto a la caja o la recepción", "El formato más popular, con base estable"],
-              ["Soporte de mesa", "Uno por mesa en restaurantes y cafeterías", "Visible durante toda la comida"],
+              ["Expositor de mesa", "Uno por mesa en restaurantes y cafeterías", "Visible durante toda la comida"],
               ["Pegatina", "Cartas, escaparates, espejos, cajas registradoras", "Discreta y económica"],
               ["Placa de pared", "Entrada, sala de espera, pasillo", "Instalar a la altura de los ojos"],
             ],
@@ -265,7 +265,7 @@ export const docs: ProductDocs = {
             head: ["Format", "Où l'utiliser", "Remarques"],
             rows: [
               ["Plaque de comptoir en acrylique", "Près de la caisse ou de l'accueil", "Le format le plus populaire, avec un socle stable"],
-              ["Support de table", "Un par table dans les restaurants et cafés", "Visible pendant tout le repas"],
+              ["Chevalet de table", "Un par table dans les restaurants et cafés", "Visible pendant tout le repas"],
               ["Autocollant", "Menus, vitrines, miroirs, caisses", "Discret et économique"],
               ["Plaque murale", "Entrée, salle d'attente, couloir", "À fixer à hauteur des yeux"],
             ],

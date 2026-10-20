@@ -285,7 +285,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Responda a todas sus reseñas de Google sin perder horas en ello.",
     summary:
       "Vigilamos las reseñas de su negocio en Google, la IA prepara respuestas con el tono de su marca para que usted las apruebe y le avisamos al momento cuando llega una valoración negativa.",
-    metaTitle: "Gestión de Reseñas de Google con IA | Steevanz",
+    metaTitle: "Gestión de reseñas de Google con IA | Steevanz",
     metaDescription:
       "Gestión de reseñas de Google con IA: respuestas redactadas con el tono de su marca para que usted las apruebe, avisos inmediatos de reseñas negativas y un informe mensual claro de tendencias.",
     heroTitle: "Cada reseña respondida, con su propia voz",
@@ -315,7 +315,7 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Conectamos su perfil",
-        body: "Con su permiso, conectamos el sistema a su Perfil de Empresa en Google.",
+        body: "Con su permiso, conectamos el sistema a su Perfil de Empresa de Google.",
       },
       {
         title: "Definimos su tono",
@@ -333,7 +333,7 @@ export const copy: ProductCopyByLocale = {
     features: [
       {
         title: "Seguimiento continuo",
-        body: "Cada nueva reseña de su Perfil de Empresa en Google se detecta automáticamente, sin tener que revisarlo a mano.",
+        body: "Cada nueva reseña de su Perfil de Empresa de Google se detecta automáticamente, sin tener que revisarlo a mano.",
       },
       {
         title: "Respuestas con su voz",
@@ -384,7 +384,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Conexión a su Perfil de Empresa en Google",
+      "Conexión a su Perfil de Empresa de Google",
       "Tono de voz y reglas de respuesta",
       "Respuestas redactadas por IA para su aprobación",
       "Avisos inmediatos de reseñas negativas por WhatsApp o email",
@@ -402,11 +402,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Steevanz forma parte de Google?",
-        a: "No. Steevanz es una empresa independiente sin ninguna vinculación con Google. Trabajamos en su Perfil de Empresa en Google con los permisos que usted nos concede.",
+        a: "No. Steevanz es una empresa independiente sin ninguna vinculación con Google. Trabajamos en su Perfil de Empresa de Google con los permisos que usted nos concede.",
       },
       {
         q: "¿Qué acceso necesitan?",
-        a: "Acceso de administrador a su Perfil de Empresa en Google, que puede retirar en cualquier momento. Nunca necesitamos su contraseña.",
+        a: "Acceso de administrador a su Perfil de Empresa de Google, que puede retirar en cualquier momento. Nunca necesitamos su contraseña.",
       },
       {
         q: "¿Cómo se tratan los datos?",
@@ -424,7 +424,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Répondez à tous vos avis Google sans y passer des heures.",
     summary:
       "Nous suivons les avis Google de votre établissement, l'IA prépare des réponses dans le ton de votre marque, que vous validez, et vous êtes prévenu tout de suite lorsqu'un avis négatif arrive.",
-    metaTitle: "Gestion des Avis Google avec l'IA | Steevanz",
+    metaTitle: "Gestion des avis Google avec l'IA | Steevanz",
     metaDescription:
       "Gestion des avis Google avec l'IA : des réponses rédigées dans le ton de votre marque, que vous validez, des alertes immédiates pour les avis négatifs et un rapport mensuel clair sur les tendances.",
     heroTitle: "Chaque avis a sa réponse, avec votre voix",
@@ -702,7 +702,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Rispondete a ogni recensione su Google senza perderci ore.",
     summary:
       "Monitoriamo le recensioni Google della vostra attività, l'IA prepara le risposte nel tono del vostro marchio da approvare e vi avvisiamo subito quando arriva una recensione negativa.",
-    metaTitle: "Gestione delle Recensioni Google con IA | Steevanz",
+    metaTitle: "Gestione delle recensioni Google con IA | Steevanz",
     metaDescription:
       "Gestione delle recensioni Google con IA: risposte scritte nel tono del vostro marchio da approvare, avvisi immediati per le recensioni negative e un report mensile chiaro sulle tendenze.",
     heroTitle: "Ogni recensione con la sua risposta, con la vostra voce",

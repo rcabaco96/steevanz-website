@@ -327,7 +327,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "La configuramos",
-        body: "Vinculamos cada placa al formulario de reseña de su Perfil de Empresa en Google y la probamos en iPhone y Android.",
+        body: "Vinculamos cada placa al formulario de reseña de su Perfil de Empresa de Google y la probamos en iPhone y Android.",
       },
       {
         title: "Colóquela e invite",
@@ -393,7 +393,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Placa con código QR impreso, en el formato que elija",
-      "Configuración del enlace de reseñas de su Perfil de Empresa en Google",
+      "Configuración del enlace de reseñas de su Perfil de Empresa de Google",
       "Pruebas en iPhone y Android antes de la entrega",
       "Consejos sobre dónde colocar la placa y cómo invitar a los clientes",
       "Reconfiguración del enlace siempre que la necesite",
@@ -414,14 +414,14 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Cuánto tarda en estar lista?",
-        a: "En cuanto nos envíe el enlace o el nombre de su Perfil de Empresa en Google, configuramos y probamos las placas en pocos días laborables. El plazo exacto depende de la cantidad y del formato, y se lo confirmamos en la demostración.",
+        a: "En cuanto nos envíe el enlace o el nombre de su Perfil de Empresa de Google, configuramos y probamos las placas en pocos días laborables. El plazo exacto depende de la cantidad y del formato, y se lo confirmamos en la demostración.",
       },
       {
         q: "¿Pueden garantizar más estrellas?",
         a: "No, y nadie honesto debería hacerlo. La placa facilita que más clientes den su opinión, lo que suele dar una imagen más fiel de su servicio. Su valoración depende siempre de la experiencia que viven sus clientes.",
       },
       {
-        q: "¿Y si no tengo Perfil de Empresa en Google?",
+        q: "¿Y si no tengo Perfil de Empresa de Google?",
         a: "Le ayudamos a encontrar el perfil correcto o a entender los pasos para crearlo y verificarlo. La placa solo se configura cuando el perfil está activo y listo para recibir reseñas.",
       },
       {

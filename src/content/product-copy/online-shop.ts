@@ -502,7 +502,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Idioma adicional (tienda y textos de hasta 50 productos)", price: "290 €" },
         { name: "Tarjetas y vales regalo", price: "90 €" },
         { name: "Migración de una tienda existente (productos, clientes, redirecciones)", price: "desde 250 €" },
-        { name: "Perfil de Empresa en Google y Google Merchant Center (productos en Google)", price: "149 €" },
+        { name: "Perfil de Empresa de Google y Google Merchant Center (productos en Google)", price: "149 €" },
         { name: "Correo profesional", price: "40 €" },
       ],
       monthlyPlan: {

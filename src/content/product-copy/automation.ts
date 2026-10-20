@@ -285,7 +285,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Menos tareas repetitivas, más tiempo para su negocio.",
     summary:
       "Automatizamos facturas, seguimiento de contactos, recordatorios y conexiones entre las herramientas que ya utiliza. Proyectos a medida, con precio cerrado antes de empezar.",
-    metaTitle: "Automatización de Procesos para Pequeños Negocios | Steevanz",
+    metaTitle: "Automatización de procesos para pequeños negocios | Steevanz",
     metaDescription:
       "Automatización de procesos a medida para pequeños negocios: facturas, recordatorios, seguimiento de contactos e integraciones entre sus herramientas, con un precio cerrado acordado de antemano.",
     heroTitle: "Deje que las tareas repetitivas se hagan solas",
@@ -424,7 +424,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Moins de tâches répétitives, plus de temps pour votre activité.",
     summary:
       "Nous automatisons factures, suivi des contacts, rappels et liaisons entre les outils que vous utilisez déjà. Des projets sur mesure, avec un prix fixé avant de commencer.",
-    metaTitle: "Automatisation des Processus pour Petites Entreprises | Steevanz",
+    metaTitle: "Automatisation des processus pour petites entreprises | Steevanz",
     metaDescription:
       "Automatisation sur mesure pour les petites entreprises : factures, rappels, suivi des contacts et liaisons entre vos outils, à un prix fixe convenu à l'avance.",
     heroTitle: "Laissez les tâches répétitives se faire toutes seules",
@@ -702,7 +702,7 @@ export const copy: ProductCopyByLocale = {
     tagline: "Meno attività ripetitive, più tempo per il vostro lavoro.",
     summary:
       "Automatizziamo fatture, follow-up dei contatti, promemoria e collegamenti tra gli strumenti che già usate. Progetti su misura, con prezzo fisso concordato prima di iniziare.",
-    metaTitle: "Automazione dei Processi per Piccole Attività | Steevanz",
+    metaTitle: "Automazione dei processi per piccole attività | Steevanz",
     metaDescription:
       "Automazione dei processi su misura per piccole attività: fatture, promemoria, follow-up dei contatti e collegamenti tra i vostri strumenti, a un prezzo fisso concordato in anticipo.",
     heroTitle: "Lasciate che le attività ripetitive vadano da sole",

@@ -602,7 +602,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combine-products", text: "Combinar con otros productos" },
           {
             type: "p",
-            text: "Muchos negocios combinan una placa de redes sociales con una [placa para reseñas en Google](/es/products/google-review-plates). Identifique bien las dos («Síganos» y «Valórenos») para que el cliente sepa qué hace cada una.",
+            text: "Muchos negocios combinan una placa para redes sociales con una [placa para reseñas en Google](/es/products/google-review-plates). Identifique bien las dos («Síganos» y «Valórenos») para que el cliente sepa qué hace cada una.",
           },
         ],
       },
@@ -1462,7 +1462,7 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Cafetería**: pegatina en la barra de recogida, donde se espera el café.",
-              "**Restaurante**: soporte de mesa con «Síganos y vea los platos del día».",
+              "**Restaurante**: expositor de mesa con «Síganos y vea los platos del día».",
               "**Peluquería**: pegatina en el espejo, en el momento de la foto final.",
               "**Tienda**: pegatina en el probador o en los envases.",
               "**Eventos y ferias**: tarjetas de visita para el equipo comercial.",
@@ -1540,7 +1540,7 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Café** : un autocollant sur le comptoir de retrait, là où l'on attend son café.",
-              "**Restaurant** : un support de table avec «Suivez-nous et découvrez les plats du jour».",
+              "**Restaurant** : un chevalet de table avec «Suivez-nous et découvrez les plats du jour».",
               "**Salon de coiffure** : un autocollant sur le miroir, au moment de la photo finale.",
               "**Boutique** : un autocollant dans la cabine d'essayage ou sur les emballages.",
               "**Événements et salons** : des cartes de visite pour l'équipe commerciale.",

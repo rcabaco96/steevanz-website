@@ -201,11 +201,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Table ordering",
-        body: "Optional, menu by menu. Each table has its own plate and every phone at the table shares the same order in real time, with «Adicionar» (add) on each dish and a note per dish, such as «no onion».",
+        body: "Optional, menu by menu. Each table has its own plate and every phone at the table shares the same order in real time, with «Add» on each dish and a note per dish, such as «no onion».",
       },
       {
         title: "Confirmed by your team",
-        body: "«Fazer pedido» (place order) shows a QR code and the order number. Staff scan it with their phone camera, no app or login, tap «Confirmar pedido» (confirm order) and the table sees «Pedido confirmado ✓» (order confirmed) straight away.",
+        body: "«Place order» shows a QR code and the order number. Staff scan it with their phone camera, no app or login, confirm with one tap and the table sees «Order confirmed ✓» straight away.",
       },
       {
         title: "Small and round",
@@ -257,7 +257,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "How does table ordering work?",
-        a: "Each table has its own plate. Everyone at the table taps «Adicionar» (add) on the dishes, adds a note if they like and they all see the same order in real time. «Fazer pedido» (place order) shows a QR code and the order number: staff scan it with their phone camera, no app or login, and tap «Confirmar pedido» (confirm order). The table sees «Pedido confirmado ✓» (order confirmed). Table ordering is switched on or off menu by menu.",
+        a: "Each table has its own plate. Everyone at the table taps «Add» on the dishes, adds a note if they like and they all see the same order in real time. «Place order» shows a QR code and the order number: staff scan it with their phone camera, no app or login, and confirm with one tap. The table sees «Order confirmed ✓». Table ordering is switched on or off menu by menu.",
       },
       {
         q: "How much does it cost?",
@@ -285,7 +285,7 @@ export const copy: ProductCopyByLocale = {
       "La carta de su negocio en vídeo: cada plato tiene su vídeo vertical, con nombre, precio y descripción. El cliente la abre con un toque o con el QR de la placa de la mesa y, si usted quiere, pide desde ahí mismo.",
     metaTitle: "Menú digital para restaurantes | Steevanz",
     metaDescription:
-      "Carta en vídeo para restaurantes y cafeterías: un vídeo por plato, con precio, que se abre con un toque o con un QR en la mesa, y pedidos desde la mesa si lo desea. Placas a 20 €, 15 € a partir de 10.",
+      "Menú en vídeo para restaurantes y cafeterías: un vídeo por plato, con precio, que se abre con un toque o con un QR en la mesa, y pedidos desde la mesa si lo desea. Placas a 20 €, 15 € a partir de 10.",
     heroTitle: "La carta cobra vida con un toque en la mesa",
     heroSubtitle:
       "Cada plato tiene su vídeo vertical, con nombre, precio y descripción, en una página propia de su negocio. El cliente toca la placa de la mesa o escanea el QR, desliza los platos como en los Reels y ve lo que va a comer antes de pedir. Sin app. Nosotros lo montamos todo.",
@@ -302,7 +302,7 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "La carta a la vista en cada mesa",
       body:
-        "Cada placa abre la carta en vídeo de su negocio, en una página pensada para el móvil. Los platos se ordenan en colecciones, como Brunch o Bebidas, y cada uno reproduce su vídeo, con su precio. Un toque abre el plato a pantalla completa.",
+        "Cada placa abre el menú en vídeo de su negocio, en una página pensada para el móvil. Los platos se ordenan en colecciones, como Brunch o Bebidas, y cada uno reproduce su vídeo, con su precio. Un toque abre el plato a pantalla completa.",
       points: [
         "Un vídeo vertical por plato, con nombre, precio y descripción",
         "Colecciones a su medida, como Brunch, Bebidas o Todos",
@@ -373,11 +373,11 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "retail",
         title: "Panaderías y comida para llevar",
-        body: "Una pegatina en el mostrador abre la carta en vídeo con los pasteles, los salados y los menús del día, con precios, mientras el cliente espera su turno.",
+        body: "Una pegatina en el mostrador abre el menú en vídeo con los pasteles, los salados y los menús del día, con precios, mientras el cliente espera su turno.",
       },
     ],
     includes: [
-      "Carta en vídeo con página propia, colecciones y su logotipo",
+      "Menú en vídeo con página propia, colecciones y su logotipo",
       "Montaje de la carta y alojamiento de la carta y de los vídeos",
       "Guía para grabar los vídeos de los platos",
       "Pedidos desde la mesa, si lo desea, con una placa por mesa",
@@ -597,7 +597,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Wir programmieren die Schilder",
-        body: "Runder Aufkleber oder runder Aufsteller, einer pro Tisch, mit Ihrem Text und auf Wunsch mit Ihrem Logo. Jedes Schild wird programmiert, gesperrt und auf iPhone und Android getestet, mit einem QR-Code, der dieselbe Speisekarte öffnet.",
+        body: "Runder Aufkleber oder runder Tischständer, einer pro Tisch, mit Ihrem Text und auf Wunsch mit Ihrem Logo. Jedes Schild wird programmiert, gesperrt und auf iPhone und Android getestet, mit einem QR-Code, der dieselbe Speisekarte öffnet.",
       },
       {
         title: "Antippen und auswählen",

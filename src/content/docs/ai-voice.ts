@@ -1919,7 +1919,7 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "summaries",
-            text: "Anrufzusammenfassungen lesen",
+            text: "Anruf\u00ADzusammenfassungen lesen",
           },
           {
             type: "p",
