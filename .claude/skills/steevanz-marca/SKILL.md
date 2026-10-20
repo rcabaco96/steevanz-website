@@ -57,3 +57,5 @@ the big brands are still to be supplied; what Steevanz did for each is to be con
 ## Ecrãs
 
 - Mobile first: check 320/360/390 px before desktop; smooth on mid-range Android (animate transform/opacity only).
+- **On mobile, images and videos always come BEFORE the text and buttons** of their section (owner, 2026-10-20,
+  universal rule for the whole site). Desktop may alternate sides; when stacking, media first.
