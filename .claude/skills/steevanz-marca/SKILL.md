@@ -25,6 +25,8 @@ them needs the owner's confirmation.
 
 ## Palavras
 
+- **Site languages** (owner, 2026-10-20): pt, en, es, fr, de, it. Register: es «usted», fr «vous», de «Sie», it formal
+  «Lei» (also buttons: «Prenoti una demo», «Scopra…»). Prices «+ IVA / + VAT / + TVA / zzgl. MwSt.», never VAT-inclusive.
 - Never write «NFC». Say «um toque», «tecnologia Steevanz» or «toque ou QR».
 - The product is «Menu digital». The loyalty product is «Cartão de cliente digital».
 - No «fidelização» in labels or buttons.
