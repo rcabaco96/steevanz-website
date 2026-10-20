@@ -69,10 +69,10 @@ export const aboutCopy: Localized<AboutCopy> = {
     ctaBody: "Marque uma conversa de 20 minutos. Sem pressões, sem jargão, com café virtual incluído.",
   },
   en: {
-    metaTitle: "About Steevanz — technology with good old-fashioned manners",
+    metaTitle: "About Steevanz — Technology of the future. With good old-fashioned manners.",
     metaDescription: "We're a Portuguese team making technology simple and accessible for local businesses: plates with Steevanz technology, bookings and AI, with hands-on support.",
     eyebrow: "About us",
-    title: "Tomorrow's technology, with good old-fashioned manners.",
+    title: "Technology of the future. With good old-fashioned manners.",
     lead: "Steevanz was born from an Alentejo family of nerds and geeks with a simple idea: technology should adapt to people, not the other way round.",
     storyTitle: "Our story",
     story: [

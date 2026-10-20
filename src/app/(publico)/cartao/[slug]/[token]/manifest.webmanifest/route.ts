@@ -20,7 +20,8 @@ export async function GET(_request: Request, ctx: RouteContext<"/cartao/[slug]/[
       theme_color: steevanzColors.accent,
       lang: "pt-PT",
       icons: [
-        { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
+        { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
         { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },
       ],
       description: `Cartão de cliente ${establishment.name}`,

@@ -257,7 +257,7 @@ export const homeCopy: Localized<HomeCopy> = {
     },
     proof: {
       eyebrow: "Why Steevanz",
-      title: "Simple technology, with good old-fashioned manners.",
+      title: "Technology of the future. With good old-fashioned manners.",
       lead: "We're a small, hands-on Portuguese team with high standards. We'd rather explain things properly than sell quickly.",
       disclaimer: "Figures describe how the product works, not guaranteed results.",
       stats: [

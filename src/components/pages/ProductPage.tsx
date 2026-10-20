@@ -52,7 +52,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   const t = ui[locale];
   const productHref = href(locale, { key: "product", productId });
   const bookHref = bookingHref(locale, productId);
-  const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icon.svg";
+  const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icons/icon-512.png";
   const cartHref = href(locale, { key: "cart" });
   const webId = isWebProductId(productId) ? productId : null;
   // The product's ad video, when there is one, takes the hero picture's place (content/product-ads.ts).

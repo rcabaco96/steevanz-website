@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // The home-screen icon is the establishment's: on iPhone it is also the notifications' icon.
     icons: establishment
       ? {
-          icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+          icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
           apple: [{ url: iconUrl(slug, 180, establishment.logo_path), sizes: "180x180", type: "image/png" }],
         }
       : undefined,

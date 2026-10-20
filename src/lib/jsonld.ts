@@ -16,16 +16,16 @@ export function organizationJsonLd(locale: Locale): JsonLdNode {
     "@id": organizationId,
     name: site.name,
     url: siteUrl,
-    logo: absoluteUrl("/icon.svg"),
+    logo: absoluteUrl("/icons/icon-512.png"),
     email: site.email,
     telephone: site.phoneDisplay.replace(/\s/g, ""),
-    sameAs: [site.instagramUrl],
+    sameAs: [site.instagramUrl, "https://www.linkedin.com/company/steevanz", "https://www.facebook.com/steevanzsteevanz"],
     address: { "@type": "PostalAddress", addressLocality: site.city, addressCountry: site.country },
     areaServed: { "@type": "Country", name: "Portugal" },
     description:
       locale === "pt"
-        ? "Placas para reviews no Google e soluções de inteligência artificial para restaurantes, salões, clínicas, comércio local e alojamento local."
-        : "Plates for Google reviews and AI solutions for restaurants, salons, clinics, local shops and holiday rentals.",
+        ? "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas. Tecnologia do futuro. Com os bons modos de antigamente."
+        : "Websites, video digital menus, bookings, Google reviews and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops.",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",

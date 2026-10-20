@@ -84,7 +84,7 @@ const en: UiStrings = {
     legalTitle: "Legal",
     contactTitle: "Talk to us",
     rights: "All rights reserved.",
-    madeIn: "Made in Portugal, with good old-fashioned manners.",
+    madeIn: "Technology of the future. With good old-fashioned manners. Made in Portugal.",
     pricesNote: "Prices exclude VAT. Indicative values, confirmed in your proposal.",
   },
   common: {
