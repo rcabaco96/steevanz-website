@@ -578,38 +578,38 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
     },
     it: {
       metaTitle: "Informativa sulla privacy | Steevanz",
-      metaDescription: "Come Steevanz raccoglie, usa e protegge i vostri dati personali ai sensi del GDPR e della legge portoghese n. 58/2019. I vostri diritti e come esercitarli.",
+      metaDescription: "Come Steevanz raccoglie, usa e protegge i Suoi dati personali ai sensi del GDPR e della legge portoghese n. 58/2019. I Suoi diritti e come esercitarli.",
       title: "Informativa sulla privacy",
       intro:
-        "Prendiamo sul serio la protezione dei vostri dati personali. Questa informativa spiega quali dati raccogliamo tramite questo sito, per cosa li usiamo, con chi li condividiamo e quali diritti avete ai sensi del Regolamento generale sulla protezione dei dati (GDPR) e della legge portoghese n. 58/2019.",
+        "Prendiamo sul serio la protezione dei Suoi dati personali. Questa informativa spiega quali dati raccogliamo tramite questo sito, per cosa li usiamo, con chi li condividiamo e quali diritti Lei ha ai sensi del Regolamento generale sulla protezione dei dati (GDPR) e della legge portoghese n. 58/2019.",
       updated: updatedIt,
       sections: [
         {
           id: "controller",
           title: "1. Titolare del trattamento",
           paragraphs: [
-            "Il titolare del trattamento dei dati personali raccolti su questo sito è Steevanz. Per qualsiasi domanda sulla privacy potete scriverci all'indirizzo [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com).",
+            "Il titolare del trattamento dei dati personali raccolti su questo sito è Steevanz. Per qualsiasi domanda sulla privacy può scriverci all'indirizzo [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com).",
           ],
         },
         {
           id: "data",
           title: "2. Quali dati raccogliamo",
-          paragraphs: ["Raccogliamo solo i dati necessari per rispondere alla vostra richiesta:"],
+          paragraphs: ["Raccogliamo solo i dati necessari per rispondere alla Sua richiesta:"],
           list: [
             "**Richieste di demo e di informazioni:** nome, e-mail, telefono, nome dell'attività, settore, prodotto di interesse, messaggio, data e ora scelte e la lingua del sito.",
-            "**Contatto diretto:** i dati che ci inviate via e-mail, telefono o WhatsApp.",
+            "**Contatto diretto:** i dati che ci invia via e-mail, telefono o WhatsApp.",
             "**Dati tecnici:** indirizzo IP (usato in modo temporaneo per sicurezza e prevenzione degli abusi) e statistiche aggregate e anonime sull'uso del sito, senza cookie di tracciamento.",
           ],
         },
         {
           id: "purposes",
           title: "3. Finalità e basi giuridiche",
-          paragraphs: ["Trattiamo i vostri dati per le seguenti finalità:"],
+          paragraphs: ["Trattiamo i Suoi dati per le seguenti finalità:"],
           list: [
-            "Programmare e svolgere la demo richiesta e inviarvi una proposta: misure precontrattuali adottate su vostra richiesta (articolo 6, paragrafo 1, lettera b) del GDPR).",
-            "Rispondere alle richieste di informazioni: consenso prestato nel modulo (articolo 6, paragrafo 1, lettera a)), che potete revocare in qualsiasi momento.",
+            "Programmare e svolgere la demo richiesta e inviarLe una proposta: misure precontrattuali adottate su Sua richiesta (articolo 6, paragrafo 1, lettera b) del GDPR).",
+            "Rispondere alle richieste di informazioni: consenso prestato nel modulo (articolo 6, paragrafo 1, lettera a)), che può revocare in qualsiasi momento.",
             "Garantire la sicurezza del sito e prevenire invii abusivi: legittimo interesse (articolo 6, paragrafo 1, lettera f)).",
-            "Adempiere agli obblighi di legge, in particolare fiscali, se diventate nostri clienti: obbligo legale (articolo 6, paragrafo 1, lettera c)).",
+            "Adempiere agli obblighi di legge, in particolare fiscali, se diventa nostro cliente: obbligo legale (articolo 6, paragrafo 1, lettera c)).",
           ],
         },
         {
@@ -623,7 +623,7 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           id: "processors",
           title: "5. Con chi condividiamo i dati",
           paragraphs: [
-            "Non vendiamo né cediamo i vostri dati per finalità di marketing. Ci avvaliamo di fornitori di servizi che trattano i dati per nostro conto, sulla base di accordi sul trattamento dei dati:",
+            "Non vendiamo né cediamo i Suoi dati per finalità di marketing. Ci avvaliamo di fornitori di servizi che trattano i dati per nostro conto, sulla base di accordi sul trattamento dei dati:",
           ],
           list: [
             "**Vercel Inc.**: hosting del sito e statistiche anonime di utilizzo.",
@@ -640,38 +640,38 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
         },
         {
           id: "rights",
-          title: "7. I vostri diritti",
-          paragraphs: ["Ai sensi del GDPR avete il diritto di:"],
+          title: "7. I Suoi diritti",
+          paragraphs: ["Ai sensi del GDPR Lei ha il diritto di:"],
           list: [
-            "accedere ai vostri dati e ottenerne una copia;",
+            "accedere ai Suoi dati e ottenerne una copia;",
             "rettificare dati inesatti o incompleti;",
             "chiedere la cancellazione dei dati;",
-            "limitare il trattamento od opporvi a esso;",
-            "ottenere la portabilità dei dati che ci avete fornito;",
+            "limitare il trattamento od opporsi a esso;",
+            "ottenere la portabilità dei dati che ci ha fornito;",
             "revocare il consenso in qualsiasi momento, senza pregiudicare la liceità del trattamento precedente.",
           ],
         },
         {
           id: "exercise",
-          title: "8. Come esercitare i vostri diritti",
+          title: "8. Come esercitare i Suoi diritti",
           paragraphs: [
-            "Inviate un'e-mail a [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com) indicando il diritto che intendete esercitare. Rispondiamo entro un mese al massimo. Avete inoltre il diritto di presentare reclamo all'autorità portoghese per la protezione dei dati, la Comissão Nacional de Proteção de Dados (CNPD), su [www.cnpd.pt](https://www.cnpd.pt).",
+            "Invii un'e-mail a [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com) indicando il diritto che intende esercitare. Rispondiamo entro un mese al massimo. Ha inoltre il diritto di presentare reclamo all'autorità portoghese per la protezione dei dati, la Comissão Nacional de Proteção de Dados (CNPD), su [www.cnpd.pt](https://www.cnpd.pt).",
           ],
         },
         {
           id: "security",
           title: "9. Sicurezza",
           paragraphs: [
-            "Applichiamo misure tecniche e organizzative adeguate per proteggere i vostri dati, tra cui comunicazioni cifrate (HTTPS), accesso riservato al personale autorizzato e registrazione degli accessi all'area di gestione.",
+            "Applichiamo misure tecniche e organizzative adeguate per proteggere i Suoi dati, tra cui comunicazioni cifrate (HTTPS), accesso riservato al personale autorizzato e registrazione degli accessi all'area di gestione.",
           ],
         },
         {
           id: "google",
-          title: "10. Dati del vostro account Google (Profilo dell'attività)",
+          title: "10. Dati del Suo account Google (Profilo dell'attività)",
           paragraphs: [
-            "Se collegate il pannello a Google con «Ligar Google», vi chiediamo l'autorizzazione, nella schermata di Google stessa, a gestire il Profilo dell'attività su Google della vostra attività (autorizzazione business.manage) e a conoscere l'e-mail dell'account con cui avete effettuato l'accesso.",
-            "Usiamo questo accesso solo per mostrare nel vostro pannello le recensioni della vostra attività e le risposte che avete già dato, per individuare il profilo giusto e, quando lo chiedete, per pubblicare le risposte alle recensioni che approvate. Non usiamo questi dati per la pubblicità, non li vendiamo né li condividiamo con terzi e non li usiamo per addestrare modelli di intelligenza artificiale di terzi.",
-            "Le chiavi di accesso che Google ci fornisce sono conservate cifrate e usate solo dai nostri server. Potete scollegare l'account in qualsiasi momento dal vostro pannello o su myaccount.google.com/permissions; quando lo scollegate, cancelliamo le chiavi.",
+            "Se collega il pannello a Google con «Ligar Google», Le chiediamo l'autorizzazione, nella schermata di Google stessa, a gestire il Profilo dell'attività su Google della Sua attività (autorizzazione business.manage) e a conoscere l'e-mail dell'account con cui ha effettuato l'accesso.",
+            "Usiamo questo accesso solo per mostrare nel Suo pannello le recensioni della Sua attività e le risposte che ha già dato, per individuare il profilo giusto e, quando lo chiede, per pubblicare le risposte alle recensioni che approva. Non usiamo questi dati per la pubblicità, non li vendiamo né li condividiamo con terzi e non li usiamo per addestrare modelli di intelligenza artificiale di terzi.",
+            "Le chiavi di accesso che Google ci fornisce sono conservate cifrate e usate solo dai nostri server. Può scollegare l'account in qualsiasi momento dal Suo pannello o su myaccount.google.com/permissions; quando lo scollega, cancelliamo le chiavi.",
             "L'uso da parte di Steevanz delle informazioni ricevute dalle API di Google, e il loro trasferimento a qualsiasi altra app, rispettano le Norme sui dati utente dei servizi API di Google, compresi i requisiti di Utilizzo limitato.",
           ],
         },
@@ -893,10 +893,10 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
     },
     it: {
       metaTitle: "Cookie policy | Steevanz",
-      metaDescription: "Il sito Steevanz non usa cookie pubblicitari né di tracciamento. Scoprite quali tecnologie di archiviazione usiamo e come gestirle nel browser.",
+      metaDescription: "Il sito Steevanz non usa cookie pubblicitari né di tracciamento. Scopra quali tecnologie di archiviazione usiamo e come gestirle nel browser.",
       title: "Cookie policy",
       intro:
-        "I cookie sono piccoli file salvati sul vostro dispositivo quando visitate un sito. Questo sito è pensato per funzionare con il minimo indispensabile: non usiamo cookie pubblicitari, dei social network né di tracciamento tra siti.",
+        "I cookie sono piccoli file salvati sul Suo dispositivo quando visita un sito. Questo sito è pensato per funzionare con il minimo indispensabile: non usiamo cookie pubblicitari, dei social network né di tracciamento tra siti.",
       updated: updatedIt,
       sections: [
         {
@@ -904,7 +904,7 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           title: "1. Cosa usiamo",
           paragraphs: ["Usiamo solo tecnologie strettamente necessarie o che non identificano il visitatore:"],
           list: [
-            "**Preferenza del tema (chiaro o scuro):** salvata nella memoria locale del browser (`localStorage`), solo sul vostro dispositivo, senza alcun invio ai nostri server.",
+            "**Preferenza del tema (chiaro o scuro):** salvata nella memoria locale del browser (`localStorage`), solo sul Suo dispositivo, senza alcun invio ai nostri server.",
             "**Sessione dell'area di gestione:** cookie di autenticazione usati esclusivamente dal team Steevanz nell'area riservata. Non vengono impostati per i visitatori del sito pubblico.",
             "**Statistiche di utilizzo:** Vercel Web Analytics e Speed Insights raccolgono dati aggregati e anonimi sulle pagine visitate e sulle prestazioni, senza cookie e senza identificare il visitatore.",
           ],
@@ -913,21 +913,21 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           id: "consent",
           title: "2. Perché non mostriamo un banner dei cookie",
           paragraphs: [
-            "Ai sensi della legge portoghese n. 41/2004 e delle linee guida dell'autorità portoghese per la protezione dei dati (CNPD), il consenso è richiesto solo per i cookie non strettamente necessari. Poiché non usiamo cookie pubblicitari né di tracciamento, non dobbiamo chiedervi il consenso. Se questo dovesse cambiare, aggiorneremo questa informativa e vi chiederemo l'autorizzazione prima di impostare tali cookie.",
+            "Ai sensi della legge portoghese n. 41/2004 e delle linee guida dell'autorità portoghese per la protezione dei dati (CNPD), il consenso è richiesto solo per i cookie non strettamente necessari. Poiché non usiamo cookie pubblicitari né di tracciamento, non dobbiamo chiederLe il consenso. Se questo dovesse cambiare, aggiorneremo questa informativa e Le chiederemo l'autorizzazione prima di impostare tali cookie.",
           ],
         },
         {
           id: "third-parties",
           title: "3. Servizi di terzi",
           paragraphs: [
-            "Cliccando sui link a WhatsApp, Instagram o Google uscite dal nostro sito e si applicano le informative sulla privacy e sui cookie di quei servizi.",
+            "Cliccando sui link a WhatsApp, Instagram o Google Lei esce dal nostro sito e si applicano le informative sulla privacy e sui cookie di quei servizi.",
           ],
         },
         {
           id: "manage",
           title: "4. Come gestirli o cancellarli",
           paragraphs: [
-            "Potete cancellare in qualsiasi momento i dati salvati dal sito nelle impostazioni del browser, nella sezione privacy o dati dei siti. In caso di dubbi, scriveteci a [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com).",
+            "Può cancellare in qualsiasi momento i dati salvati dal sito nelle impostazioni del browser, nella sezione privacy o dati dei siti. In caso di dubbi, ci scriva a [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com).",
           ],
         },
       ],
@@ -1280,7 +1280,7 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       metaDescription: "Termini e condizioni d'uso del sito Steevanz: prezzi indicativi, proposte, proprietà intellettuale, marchi di terzi e risoluzione delle controversie.",
       title: "Termini e condizioni",
       intro:
-        "Questi termini regolano l'uso del sito steevanz.com. Navigando sul sito accettate queste condizioni. La prestazione dei servizi è sempre regolata da una proposta e da un contratto specifici.",
+        "Questi termini regolano l'uso del sito steevanz.com. Navigando sul sito Lei accetta queste condizioni. La prestazione dei servizi è sempre regolata da una proposta e da un contratto specifici.",
       updated: termsUpdatedIt,
       sections: [
         {
@@ -1301,9 +1301,9 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
           id: "returns",
           title: "3. Resi delle targhe",
           paragraphs: [
-            "Potete restituire targhe e adesivi non personalizzati entro 14 giorni dalla consegna, senza indicarne il motivo, in buono stato e nella confezione originale; rimborsiamo l'importo pagato con lo stesso mezzo di pagamento entro 14 giorni dal ricevimento del reso.",
-            "Le targhe realizzate su misura per la vostra attività (con il vostro logo o un testo personalizzato) non possono essere restituite per ripensamento, come previsto dalla legge (decreto-legge portoghese n. 24/2014, articolo 17); le sostituiamo gratuitamente se arrivano difettose o non funzionano.",
-            "Per un reso o per segnalare un difetto, scrivete a [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com) indicando il riferimento dell'ordine.",
+            "Può restituire targhe e adesivi non personalizzati entro 14 giorni dalla consegna, senza indicarne il motivo, in buono stato e nella confezione originale; rimborsiamo l'importo pagato con lo stesso mezzo di pagamento entro 14 giorni dal ricevimento del reso.",
+            "Le targhe realizzate su misura per la Sua attività (con il Suo logo o un testo personalizzato) non possono essere restituite per ripensamento, come previsto dalla legge (decreto-legge portoghese n. 24/2014, articolo 17); le sostituiamo gratuitamente se arrivano difettose o non funzionano.",
+            "Per un reso o per segnalare un difetto, scriva a [rcabaco@steevanz.com](mailto:rcabaco@steevanz.com) indicando il riferimento dell'ordine.",
           ],
         },
         {
