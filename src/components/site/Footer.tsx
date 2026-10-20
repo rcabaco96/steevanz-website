@@ -41,9 +41,10 @@ export function Footer({ locale }: { locale: Locale }) {
 
   return (
     <footer className="border-t border-line bg-bg-soft pb-20 sm:pb-0">
-      <div className="container-page grid gap-12 py-16 md:grid-cols-12 md:py-20">
-        <div className="flex flex-col gap-5 md:col-span-4">
-          <Logo href={href(locale, { key: "home" })} label="Steevanz" />
+      <div className="container-page grid gap-7 py-8 md:grid-cols-12 md:gap-12 md:py-20">
+        <div className="flex flex-col gap-4 md:col-span-4 md:gap-5">
+          {/* On the phone the big «Steevanz.» sits right above the footer, so the small one goes (owner, 2026-10-20). */}
+          <Logo href={href(locale, { key: "home" })} label="Steevanz" className="max-md:hidden" />
           <p className="max-w-sm text-[0.95rem] leading-relaxed text-muted">{t.footer.blurb}</p>
           <ul className="flex flex-col gap-2.5 text-sm text-muted">
             <li>
@@ -85,7 +86,7 @@ export function Footer({ locale }: { locale: Locale }) {
         <FooterColumn title={t.footer.resourcesTitle} className="md:col-span-2">
           <FooterLinks links={resourceLinks} />
         </FooterColumn>
-        <div className="flex flex-col gap-10 md:col-span-3">
+        <div className="flex flex-col gap-7 md:col-span-3 md:gap-10">
           <FooterColumn title={t.footer.companyTitle}>
             <FooterLinks links={companyLinks} />
           </FooterColumn>
@@ -95,7 +96,7 @@ export function Footer({ locale }: { locale: Locale }) {
         </div>
       </div>
       <div className="border-t border-line">
-        <div className="container-page flex flex-col gap-2 py-6 text-xs text-subtle sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-1 py-4 text-xs text-subtle sm:flex-row sm:gap-2 md:py-6 sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {site.legalName}. {t.footer.rights} {t.footer.pricesNote}
           </p>
@@ -129,8 +130,8 @@ function FooterLinks({ links }: { links: FooterLink[] }) {
 function FooterColumn({ title, children, className = "" }: { title: string; children: ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <h2 className="eyebrow mb-4">{title}</h2>
-      <ul className="flex flex-col gap-2 text-sm text-muted">{children}</ul>
+      <h2 className="eyebrow mb-2.5 md:mb-4">{title}</h2>
+      <ul className="flex flex-col gap-1 text-sm text-muted md:gap-2">{children}</ul>
     </div>
   );
 }
