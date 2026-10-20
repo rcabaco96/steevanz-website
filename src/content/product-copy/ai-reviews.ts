@@ -279,13 +279,144 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
-  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
   es: {
     name: "Gestión de reseñas con IA",
     shortName: "Reseñas IA",
     tagline: "Responda a todas sus reseñas de Google sin perder horas en ello.",
     summary:
       "Vigilamos las reseñas de su negocio en Google, la IA prepara respuestas con el tono de su marca para que usted las apruebe y le avisamos al momento cuando llega una valoración negativa.",
+    metaTitle: "Gestión de Reseñas de Google con IA | Steevanz",
+    metaDescription:
+      "Gestión de reseñas de Google con IA: respuestas redactadas con el tono de su marca para que usted las apruebe, avisos inmediatos de reseñas negativas y un informe mensual claro de tendencias.",
+    heroTitle: "Cada reseña respondida, con su propia voz",
+    heroSubtitle:
+      "Vigilamos las reseñas de su negocio en Google, la IA prepara una respuesta para cada una y usted la aprueba con un toque. Las reseñas negativas le llegan al momento, para que pueda responder a tiempo.",
+    problem: {
+      title: "Responder a las reseñas es importante, pero siempre se deja para después",
+      body:
+        "Sabe que responder a las reseñas demuestra que le importan sus clientes, pero en el día a día no hay tiempo. Las respuestas se acumulan, las reseñas negativas pasan semanas sin contestar y, cuando por fin responde, lo hace con prisas. Y todo eso lo ve cualquiera que busque su negocio.",
+      points: [
+        "Reseñas sin responder que dan sensación de dejadez",
+        "Reseñas negativas que se descubren demasiado tarde",
+        "Ninguna visión clara de lo que los clientes elogian o critican",
+      ],
+    },
+    solution: {
+      title: "La IA redacta, usted decide",
+      body:
+        "La IA prepara respuestas personalizadas con el tono de su marca y se las envía para su aprobación. No se publica nada sin su sí. Las reseñas negativas generan un aviso inmediato.",
+      points: [
+        "Seguimiento continuo de sus reseñas de Google",
+        "Respuestas redactadas por IA para aprobar o editar",
+        "Avisos inmediatos de reseñas negativas",
+        "Informe mensual con temas y tendencias",
+      ],
+    },
+    steps: [
+      {
+        title: "Conectamos su perfil",
+        body: "Con su permiso, conectamos el sistema a su Perfil de Empresa en Google.",
+      },
+      {
+        title: "Definimos su tono",
+        body: "Formal o cercano, con firma o sin ella. Ajustamos con usted el estilo de las respuestas.",
+      },
+      {
+        title: "Apruebe con un toque",
+        body: "Las respuestas sugeridas le llegan por WhatsApp o email y usted las aprueba, las edita o las descarta.",
+      },
+      {
+        title: "Siga la evolución",
+        body: "Cada mes recibe un informe de lo que los clientes más elogian y más critican.",
+      },
+    ],
+    features: [
+      {
+        title: "Seguimiento continuo",
+        body: "Cada nueva reseña de su Perfil de Empresa en Google se detecta automáticamente, sin tener que revisarlo a mano.",
+      },
+      {
+        title: "Respuestas con su voz",
+        body: "La IA redacta respuestas personalizadas que recogen lo que dijo el cliente, con el estilo de su negocio y sin repetir siempre las mismas frases hechas.",
+      },
+      {
+        title: "Aprobación antes de publicar",
+        body: "Ninguna respuesta se publica sin su aprobación. Puede aceptarla, editarla o reescribirla, porque la IA puede equivocarse y la última palabra es suya.",
+      },
+      {
+        title: "Avisos de reseñas negativas",
+        body: "Cuando llega una reseña de una o dos estrellas, se le avisa al momento para que pueda responder con calma y arreglar lo que haga falta.",
+      },
+      {
+        title: "Informe mensual",
+        body: "Un resumen sencillo con el número de reseñas, las tendencias y los temas más mencionados, como la atención, el precio o los tiempos de espera.",
+      },
+      {
+        title: "Varios idiomas",
+        body: "Responde en el idioma en el que se escribió la reseña, algo muy útil para negocios con muchos turistas y clientes internacionales.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurantes y cafeterías",
+        body: "Muchas reseñas en varios idiomas, respondidas con cuidado sin quitar tiempo a la cocina ni a la sala.",
+      },
+      {
+        sector: "beauty",
+        title: "Peluquerías y estética",
+        body: "Respuestas cálidas que agradecen el servicio concreto y demuestran que cada cliente cuenta.",
+      },
+      {
+        sector: "clinics",
+        title: "Clínicas",
+        body: "Respuestas prudentes que nunca revelan información de salud y llevan los temas delicados a una conversación privada.",
+      },
+      {
+        sector: "retail",
+        title: "Tiendas",
+        body: "Avisos rápidos de quejas sobre productos o atención, para corregirlo antes de que vuelva a pasar.",
+      },
+      {
+        sector: "lodging",
+        title: "Hostales y casas de huéspedes",
+        body: "Hostales y casas de huéspedes reciben un borrador de respuesta para cada reseña de Google, en el idioma en que se escribió. Funciona con los perfiles de Google; las respuestas en Booking.com y Airbnb se siguen haciendo en esas plataformas.",
+      },
+    ],
+    includes: [
+      "Conexión a su Perfil de Empresa en Google",
+      "Tono de voz y reglas de respuesta",
+      "Respuestas redactadas por IA para su aprobación",
+      "Avisos inmediatos de reseñas negativas por WhatsApp o email",
+      "Informe mensual",
+      "Soporte por WhatsApp y email",
+    ],
+    faq: [
+      {
+        q: "¿Las respuestas se publican automáticamente?",
+        a: "No. Por defecto, cada respuesta necesita su aprobación. La IA puede equivocarse o interpretar mal una reseña, así que la decisión final siempre es suya.",
+      },
+      {
+        q: "¿Pueden eliminar las reseñas negativas?",
+        a: "No. Solo Google puede retirar reseñas, y únicamente cuando incumplen sus políticas. Podemos ayudarle a detectar y denunciar esos casos, pero la mejor respuesta a una crítica justa es una contestación honesta y bien pensada.",
+      },
+      {
+        q: "¿Steevanz forma parte de Google?",
+        a: "No. Steevanz es una empresa independiente sin ninguna vinculación con Google. Trabajamos en su Perfil de Empresa en Google con los permisos que usted nos concede.",
+      },
+      {
+        q: "¿Qué acceso necesitan?",
+        a: "Acceso de administrador a su Perfil de Empresa en Google, que puede retirar en cualquier momento. Nunca necesitamos su contraseña.",
+      },
+      {
+        q: "¿Cómo se tratan los datos?",
+        a: "Las reseñas son públicas, pero tratamos todos los datos conforme al RGPD y solo los usamos para prestar el servicio. En las clínicas, las respuestas nunca confirman ni mencionan información de salud.",
+      },
+      {
+        q: "¿Puedo cancelar el plan mensual?",
+        a: "Sí, el plan es mensual y sin permanencia. Cuando cancela, retiramos nuestro acceso a su perfil.",
+      },
+    ],
   },
   fr: {
     name: "Gestion des avis avec l'IA",
@@ -293,6 +424,138 @@ export const copy: ProductCopyByLocale = {
     tagline: "Répondez à tous vos avis Google sans y passer des heures.",
     summary:
       "Nous suivons les avis Google de votre établissement, l'IA prépare des réponses dans le ton de votre marque, que vous validez, et vous êtes prévenu tout de suite lorsqu'un avis négatif arrive.",
+    metaTitle: "Gestion des Avis Google avec l'IA | Steevanz",
+    metaDescription:
+      "Gestion des avis Google avec l'IA : des réponses rédigées dans le ton de votre marque, que vous validez, des alertes immédiates pour les avis négatifs et un rapport mensuel clair sur les tendances.",
+    heroTitle: "Chaque avis a sa réponse, avec votre voix",
+    heroSubtitle:
+      "Nous surveillons les avis Google de votre établissement, l'IA rédige une réponse pour chacun et vous la validez d'un geste. Les avis négatifs vous parviennent tout de suite, pour que vous puissiez réagir à temps.",
+    problem: {
+      title: "Répondre aux avis compte, mais c'est toujours remis à plus tard",
+      body:
+        "Vous savez que répondre aux avis montre que vos clients vous importent, mais au quotidien, le temps manque. Les réponses s'accumulent, les avis négatifs restent des semaines sans réponse et, quand vous répondez enfin, c'est dans la précipitation. Et tous ceux qui recherchent votre établissement le voient.",
+      points: [
+        "Des avis sans réponse qui donnent une impression de négligence",
+        "Des avis négatifs repérés trop tard",
+        "Aucune vision claire de ce que les clients apprécient ou critiquent",
+      ],
+    },
+    solution: {
+      title: "L'IA rédige, vous décidez",
+      body:
+        "L'IA prépare des réponses personnalisées dans le ton de votre marque et vous les soumet pour validation. Rien n'est publié sans votre accord. Les avis négatifs déclenchent une alerte immédiate.",
+      points: [
+        "Suivi continu de vos avis Google",
+        "Réponses rédigées par l'IA, à valider ou à modifier",
+        "Alertes immédiates pour les avis négatifs",
+        "Rapport mensuel avec les thèmes et les tendances",
+      ],
+    },
+    steps: [
+      {
+        title: "Nous connectons votre fiche",
+        body: "Avec votre autorisation, nous connectons le système à votre fiche d'établissement Google.",
+      },
+      {
+        title: "Nous définissons votre ton",
+        body: "Formel ou décontracté, signé ou non. Nous ajustons avec vous le style des réponses.",
+      },
+      {
+        title: "Validez d'un geste",
+        body: "Les réponses proposées arrivent par WhatsApp ou par e-mail, et vous les validez, les modifiez ou les refusez.",
+      },
+      {
+        title: "Suivez l'évolution",
+        body: "Chaque mois, vous recevez un rapport sur ce que les clients apprécient et critiquent le plus.",
+      },
+    ],
+    features: [
+      {
+        title: "Suivi continu",
+        body: "Chaque nouvel avis sur votre fiche d'établissement Google est repéré automatiquement, sans avoir à vérifier vous-même.",
+      },
+      {
+        title: "Des réponses à votre image",
+        body: "L'IA rédige des réponses personnalisées qui reprennent ce que le client a dit, dans le style de votre établissement, sans les mêmes formules toutes faites à chaque fois.",
+      },
+      {
+        title: "Validation avant publication",
+        body: "Aucune réponse n'est publiée sans votre accord. Vous pouvez l'accepter, la modifier ou la réécrire, car l'IA peut se tromper et le dernier mot vous revient.",
+      },
+      {
+        title: "Alertes avis négatifs",
+        body: "Quand un avis à une ou deux étoiles arrive, vous êtes prévenu aussitôt pour répondre sereinement et arranger les choses.",
+      },
+      {
+        title: "Rapport mensuel",
+        body: "Un résumé simple avec le nombre d'avis, les tendances et les sujets les plus cités, comme l'accueil, les prix ou l'attente.",
+      },
+      {
+        title: "Plusieurs langues",
+        body: "Il répond dans la langue de l'avis, un vrai plus pour les établissements qui accueillent beaucoup de touristes et de clients étrangers.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants et cafés",
+        body: "Beaucoup d'avis en plusieurs langues, traités avec soin sans prendre de temps à la cuisine ou à la salle.",
+      },
+      {
+        sector: "beauty",
+        title: "Coiffure et esthétique",
+        body: "Des réponses chaleureuses qui remercient pour la prestation précise et montrent que chaque client compte.",
+      },
+      {
+        sector: "clinics",
+        title: "Cliniques",
+        body: "Des réponses prudentes qui ne révèlent jamais d'information de santé et orientent les sujets sensibles vers un échange privé.",
+      },
+      {
+        sector: "retail",
+        title: "Boutiques",
+        body: "Des alertes rapides sur les réclamations concernant un produit ou le service, pour corriger avant que cela se reproduise.",
+      },
+      {
+        sector: "lodging",
+        title: "Auberges et maisons d'hôtes",
+        body: "Les auberges et maisons d'hôtes reçoivent un projet de réponse pour chaque avis Google, dans la langue de l'avis. Cela fonctionne avec les fiches Google ; les réponses sur Booking.com et Airbnb se font toujours sur ces plateformes.",
+      },
+    ],
+    includes: [
+      "Connexion à votre fiche d'établissement Google",
+      "Ton de voix et règles de réponse",
+      "Réponses rédigées par l'IA, soumises à votre validation",
+      "Alertes immédiates pour les avis négatifs par WhatsApp ou par e-mail",
+      "Rapport mensuel",
+      "Assistance par WhatsApp et par e-mail",
+    ],
+    faq: [
+      {
+        q: "Les réponses sont-elles publiées automatiquement ?",
+        a: "Non, par défaut chaque réponse doit être validée par vous. L'IA peut se tromper ou mal interpréter un avis : la décision finale vous appartient toujours.",
+      },
+      {
+        q: "Pouvez-vous supprimer les avis négatifs ?",
+        a: "Non. Seul Google peut retirer des avis, et uniquement s'ils enfreignent ses règles. Nous pouvons vous aider à repérer et signaler ces cas, mais la meilleure réponse à une critique juste reste une réponse honnête et réfléchie.",
+      },
+      {
+        q: "Steevanz fait-il partie de Google ?",
+        a: "Non. Steevanz est une entreprise indépendante, sans aucun lien avec Google. Nous intervenons sur votre fiche d'établissement Google avec les autorisations que vous nous accordez.",
+      },
+      {
+        q: "De quel accès avez-vous besoin ?",
+        a: "Un accès gestionnaire à votre fiche d'établissement Google, que vous pouvez retirer à tout moment. Nous n'avons jamais besoin de votre mot de passe.",
+      },
+      {
+        q: "Comment les données sont-elles traitées ?",
+        a: "Les avis sont publics, mais nous traitons toutes les données conformément au RGPD et uniquement pour fournir le service. Pour les cliniques, les réponses ne confirment ni ne mentionnent jamais d'information de santé.",
+      },
+      {
+        q: "Puis-je résilier l'abonnement mensuel ?",
+        a: "Oui, l'abonnement est mensuel et sans engagement. Quand vous résiliez, nous retirons notre accès à votre fiche.",
+      },
+    ],
   },
   de: {
     name: "KI-Bewertungsmanagement",
@@ -300,6 +563,138 @@ export const copy: ProductCopyByLocale = {
     tagline: "Auf jede Google-Bewertung antworten, ohne Stunden damit zu verbringen.",
     summary:
       "Wir behalten die Google-Bewertungen Ihres Betriebs im Blick, die KI formuliert Antworten im Ton Ihrer Marke zur Freigabe, und Sie werden sofort benachrichtigt, wenn eine negative Bewertung eingeht.",
+    metaTitle: "Google-Bewertungen mit KI managen | Steevanz",
+    metaDescription:
+      "Google-Bewertungen mit KI managen: Antworten im Ton Ihrer Marke zur Freigabe, sofortige Hinweise bei negativen Bewertungen und ein übersichtlicher Monatsbericht zu den Trends.",
+    heroTitle: "Jede Bewertung beantwortet, mit Ihrer Stimme",
+    heroSubtitle:
+      "Wir behalten die Google-Bewertungen Ihres Betriebs im Blick, die KI entwirft zu jeder eine Antwort und Sie geben sie mit einem Antippen frei. Negative Bewertungen erreichen Sie sofort, damit Sie rechtzeitig reagieren können.",
+    problem: {
+      title: "Auf Bewertungen zu antworten ist wichtig, wird aber immer verschoben",
+      body:
+        "Sie wissen, dass Antworten auf Bewertungen zeigen, wie wichtig Ihnen Ihre Kunden sind, aber im Alltag fehlt die Zeit. Die Antworten stapeln sich, negative Bewertungen bleiben wochenlang unbeantwortet, und wenn Sie dann antworten, geschieht es in Eile. Und das sieht jeder, der nach Ihrem Betrieb sucht.",
+      points: [
+        "Unbeantwortete Bewertungen, die gleichgültig wirken",
+        "Negative Bewertungen, die zu spät auffallen",
+        "Kein klarer Überblick, was Kunden loben oder kritisieren",
+      ],
+    },
+    solution: {
+      title: "Die KI schreibt, Sie entscheiden",
+      body:
+        "Die KI entwirft persönliche Antworten im Ton Ihrer Marke und legt sie Ihnen zur Freigabe vor. Ohne Ihr Ja wird nichts veröffentlicht. Negative Bewertungen lösen sofort einen Hinweis aus.",
+      points: [
+        "Laufende Überwachung Ihrer Google-Bewertungen",
+        "Von der KI entworfene Antworten zum Freigeben oder Bearbeiten",
+        "Sofortige Hinweise bei negativen Bewertungen",
+        "Monatsbericht mit Themen und Trends",
+      ],
+    },
+    steps: [
+      {
+        title: "Wir verbinden Ihr Profil",
+        body: "Mit Ihrer Erlaubnis verbinden wir das System mit Ihrem Google-Unternehmensprofil.",
+      },
+      {
+        title: "Wir legen Ihren Ton fest",
+        body: "Förmlich oder locker, mit oder ohne Unterschrift. Den Stil der Antworten stimmen wir mit Ihnen ab.",
+      },
+      {
+        title: "Mit einem Antippen freigeben",
+        body: "Die Antwortvorschläge kommen per WhatsApp oder E-Mail, und Sie geben sie frei, bearbeiten oder verwerfen sie.",
+      },
+      {
+        title: "Entwicklung verfolgen",
+        body: "Jeden Monat erhalten Sie einen Bericht darüber, was Kunden am meisten loben und kritisieren.",
+      },
+    ],
+    features: [
+      {
+        title: "Laufende Überwachung",
+        body: "Jede neue Bewertung in Ihrem Google-Unternehmensprofil wird automatisch erfasst, ohne dass Sie selbst nachsehen müssen.",
+      },
+      {
+        title: "Antworten in Ihrem Ton",
+        body: "Die KI schreibt persönliche Antworten, die auf das eingehen, was der Kunde gesagt hat, im Stil Ihres Betriebs und ohne jedes Mal dieselben Floskeln.",
+      },
+      {
+        title: "Freigabe vor dem Veröffentlichen",
+        body: "Keine Antwort geht ohne Ihre Freigabe online. Sie können sie übernehmen, bearbeiten oder neu schreiben, denn KI kann sich irren und das letzte Wort haben Sie.",
+      },
+      {
+        title: "Hinweise bei negativen Bewertungen",
+        body: "Kommt eine Bewertung mit einem oder zwei Sternen, werden Sie sofort benachrichtigt, damit Sie in Ruhe antworten und die Sache in Ordnung bringen können.",
+      },
+      {
+        title: "Monatsbericht",
+        body: "Eine einfache Übersicht mit Anzahl der Bewertungen, Trends und den meistgenannten Themen wie Service, Preis oder Wartezeit.",
+      },
+      {
+        title: "Mehrsprachig",
+        body: "Antwortet in der Sprache, in der die Bewertung geschrieben wurde, hilfreich für Betriebe mit vielen Touristen und internationalen Kunden.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants und Cafés",
+        body: "Viele Bewertungen in mehreren Sprachen, sorgfältig beantwortet, ohne Küche oder Service Zeit zu kosten.",
+      },
+      {
+        sector: "beauty",
+        title: "Friseur und Kosmetik",
+        body: "Herzliche Antworten, die sich für die konkrete Leistung bedanken und zeigen, dass jeder Kunde zählt.",
+      },
+      {
+        sector: "clinics",
+        title: "Kliniken",
+        body: "Umsichtige Antworten, die nie Gesundheitsdaten preisgeben und heikle Themen in ein persönliches Gespräch verlagern.",
+      },
+      {
+        sector: "retail",
+        title: "Geschäfte",
+        body: "Schnelle Hinweise auf Beschwerden über Produkte oder Service, damit Sie gegensteuern können, bevor es wieder passiert.",
+      },
+      {
+        sector: "lodging",
+        title: "Hostels und Pensionen",
+        body: "Hostels und Pensionen erhalten zu jeder Google-Bewertung einen Antwortentwurf in der Sprache, in der sie geschrieben wurde. Das funktioniert mit Google-Profilen; auf Booking.com und Airbnb wird weiterhin direkt auf diesen Plattformen geantwortet.",
+      },
+    ],
+    includes: [
+      "Anbindung an Ihr Google-Unternehmensprofil",
+      "Tonalität und Regeln für die Antworten",
+      "Von der KI entworfene Antworten zu Ihrer Freigabe",
+      "Sofortige Hinweise bei negativen Bewertungen per WhatsApp oder E-Mail",
+      "Monatsbericht",
+      "Support per WhatsApp und E-Mail",
+    ],
+    faq: [
+      {
+        q: "Werden die Antworten automatisch veröffentlicht?",
+        a: "Nein, standardmäßig braucht jede Antwort Ihre Freigabe. KI kann sich irren oder eine Bewertung falsch verstehen, daher liegt die letzte Entscheidung immer bei Ihnen.",
+      },
+      {
+        q: "Können Sie negative Bewertungen löschen?",
+        a: "Nein. Nur Google kann Bewertungen entfernen, und nur, wenn sie gegen die Richtlinien verstoßen. Wir helfen Ihnen, solche Fälle zu erkennen und zu melden, aber die beste Antwort auf berechtigte Kritik ist eine ehrliche, durchdachte Antwort.",
+      },
+      {
+        q: "Gehört Steevanz zu Google?",
+        a: "Nein. Steevanz ist ein unabhängiges Unternehmen ohne Verbindung zu Google. Wir arbeiten in Ihrem Google-Unternehmensprofil mit den Berechtigungen, die Sie uns erteilen.",
+      },
+      {
+        q: "Welchen Zugriff brauchen Sie?",
+        a: "Verwalterzugriff auf Ihr Google-Unternehmensprofil, den Sie jederzeit widerrufen können. Ihr Passwort brauchen wir nie.",
+      },
+      {
+        q: "Wie werden die Daten behandelt?",
+        a: "Bewertungen sind öffentlich, aber wir verarbeiten alle Daten gemäß DSGVO und nutzen sie nur zur Erbringung des Dienstes. Bei Kliniken bestätigen oder erwähnen die Antworten nie Gesundheitsdaten.",
+      },
+      {
+        q: "Kann ich den Monatsplan kündigen?",
+        a: "Ja, der Plan läuft monatlich und ohne Mindestlaufzeit. Wenn Sie kündigen, entfernen wir unseren Zugriff auf Ihr Profil.",
+      },
+    ],
   },
   it: {
     name: "Gestione delle recensioni con IA",
@@ -307,5 +702,137 @@ export const copy: ProductCopyByLocale = {
     tagline: "Rispondete a ogni recensione su Google senza perderci ore.",
     summary:
       "Monitoriamo le recensioni Google della vostra attività, l'IA prepara le risposte nel tono del vostro marchio da approvare e vi avvisiamo subito quando arriva una recensione negativa.",
+    metaTitle: "Gestione delle Recensioni Google con IA | Steevanz",
+    metaDescription:
+      "Gestione delle recensioni Google con IA: risposte scritte nel tono del vostro marchio da approvare, avvisi immediati per le recensioni negative e un report mensile chiaro sulle tendenze.",
+    heroTitle: "Ogni recensione con la sua risposta, con la vostra voce",
+    heroSubtitle:
+      "Teniamo d'occhio le recensioni Google della vostra attività, l'IA prepara una risposta per ognuna e voi la approvate con un tocco. Le recensioni negative vi arrivano subito, così potete rispondere in tempo.",
+    problem: {
+      title: "Rispondere alle recensioni è importante, ma finisce sempre in fondo alla lista",
+      body:
+        "Sapete che rispondere alle recensioni dimostra attenzione verso i clienti, ma nella quotidianità il tempo non c'è. Le risposte si accumulano, le recensioni negative restano senza risposta per settimane e, quando finalmente rispondete, lo fate di corsa. E tutto questo lo vede chiunque cerchi la vostra attività.",
+      points: [
+        "Recensioni senza risposta che danno un'impressione di trascuratezza",
+        "Recensioni negative scoperte troppo tardi",
+        "Nessuna visione chiara di cosa i clienti apprezzano o criticano",
+      ],
+    },
+    solution: {
+      title: "L'IA scrive, voi decidete",
+      body:
+        "L'IA prepara risposte personalizzate nel tono del vostro marchio e ve le invia per l'approvazione. Niente viene pubblicato senza il vostro sì. Le recensioni negative fanno scattare un avviso immediato.",
+      points: [
+        "Monitoraggio continuo delle vostre recensioni Google",
+        "Risposte scritte dall'IA da approvare o modificare",
+        "Avvisi immediati per le recensioni negative",
+        "Report mensile con temi e tendenze",
+      ],
+    },
+    steps: [
+      {
+        title: "Colleghiamo il vostro profilo",
+        body: "Con il vostro permesso, colleghiamo il sistema al vostro Profilo dell'attività su Google.",
+      },
+      {
+        title: "Definiamo il vostro tono",
+        body: "Formale o informale, con firma o senza. Mettiamo a punto con voi lo stile delle risposte.",
+      },
+      {
+        title: "Approvate con un tocco",
+        body: "Le risposte suggerite arrivano via WhatsApp o email e voi le approvate, le modificate o le scartate.",
+      },
+      {
+        title: "Seguite l'andamento",
+        body: "Ogni mese ricevete un report su cosa i clienti apprezzano e criticano di più.",
+      },
+    ],
+    features: [
+      {
+        title: "Monitoraggio continuo",
+        body: "Ogni nuova recensione sul vostro Profilo dell'attività su Google viene rilevata in automatico, senza doverlo controllare a mano.",
+      },
+      {
+        title: "Risposte con la vostra voce",
+        body: "L'IA scrive risposte personalizzate che riprendono quanto detto dal cliente, nello stile della vostra attività, senza le solite frasi fatte ogni volta.",
+      },
+      {
+        title: "Approvazione prima della pubblicazione",
+        body: "Nessuna risposta va online senza la vostra approvazione. Potete accettarla, modificarla o riscriverla, perché l'IA può sbagliare e l'ultima parola spetta a voi.",
+      },
+      {
+        title: "Avvisi per le recensioni negative",
+        body: "Quando arriva una recensione da una o due stelle, venite avvisati subito per rispondere con calma e sistemare le cose.",
+      },
+      {
+        title: "Report mensile",
+        body: "Un riepilogo semplice con il numero di recensioni, le tendenze e gli argomenti più citati, come servizio, prezzo o tempi di attesa.",
+      },
+      {
+        title: "Più lingue",
+        body: "Risponde nella lingua in cui è stata scritta la recensione, utile per le attività con molti turisti e clienti internazionali.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Ristoranti e bar",
+        body: "Tante recensioni in più lingue, gestite con cura senza togliere tempo alla cucina o alla sala.",
+      },
+      {
+        sector: "beauty",
+        title: "Parrucchieri ed estetica",
+        body: "Risposte calorose che ringraziano per il servizio specifico e dimostrano che ogni cliente conta.",
+      },
+      {
+        sector: "clinics",
+        title: "Cliniche",
+        body: "Risposte prudenti che non rivelano mai informazioni sanitarie e spostano le questioni delicate in una conversazione privata.",
+      },
+      {
+        sector: "retail",
+        title: "Negozi",
+        body: "Avvisi rapidi sui reclami per prodotti o servizio, per rimediare prima che il problema si ripeta.",
+      },
+      {
+        sector: "lodging",
+        title: "Ostelli e B&B",
+        body: "Ostelli e B&B ricevono una bozza di risposta per ogni recensione Google, nella lingua in cui è stata scritta. Funziona con i profili Google; le risposte su Booking.com e Airbnb si danno ancora su quelle piattaforme.",
+      },
+    ],
+    includes: [
+      "Collegamento al vostro Profilo dell'attività su Google",
+      "Tono di voce e regole di risposta",
+      "Risposte scritte dall'IA per la vostra approvazione",
+      "Avvisi immediati per le recensioni negative via WhatsApp o email",
+      "Report mensile",
+      "Assistenza via WhatsApp ed email",
+    ],
+    faq: [
+      {
+        q: "Le risposte vengono pubblicate in automatico?",
+        a: "No, di default ogni risposta richiede la vostra approvazione. L'IA può sbagliare o fraintendere una recensione, quindi la decisione finale è sempre vostra.",
+      },
+      {
+        q: "Potete cancellare le recensioni negative?",
+        a: "No. Solo Google può rimuovere le recensioni, e solo quando violano le sue norme. Possiamo aiutarvi a individuare e segnalare questi casi, ma la risposta migliore a una critica giusta è una replica onesta e ponderata.",
+      },
+      {
+        q: "Steevanz fa parte di Google?",
+        a: "No. Steevanz è un'azienda indipendente, senza alcun legame con Google. Lavoriamo sul vostro Profilo dell'attività su Google con i permessi che ci concedete.",
+      },
+      {
+        q: "Di quale accesso avete bisogno?",
+        a: "Accesso come gestore al vostro Profilo dell'attività su Google, che potete revocare in qualsiasi momento. Non ci serve mai la vostra password.",
+      },
+      {
+        q: "Come vengono trattati i dati?",
+        a: "Le recensioni sono pubbliche, ma trattiamo tutti i dati nel rispetto del GDPR e solo per fornire il servizio. Per le cliniche, le risposte non confermano né menzionano mai informazioni sanitarie.",
+      },
+      {
+        q: "Posso disdire il piano mensile?",
+        a: "Sì, il piano è mensile e senza vincoli. Quando disdite, rimuoviamo il nostro accesso al vostro profilo.",
+      },
+    ],
   },
 };
