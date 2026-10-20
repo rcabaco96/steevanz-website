@@ -11,9 +11,9 @@ import styles from "./plates.module.css";
 
 const locale = "pt";
 
-// The «Cartão de cliente digital» band, after the Menu digital showcase: the plates band's layout on
-// the other side (the video first on a computer), on soft rose, with the card's ad video. The price
-// comes from products.ts, «/mês + IVA».
+// The «Cartão de cliente digital» band, after the Menu digital showcase: the plates band's layout (text
+// on the left, the video on the right on a computer, owner 2026-10-20), on soft rose, with the card's ad
+// video. The price comes from products.ts, «/mês + IVA».
 
 export function LoyaltyBanner() {
   const copy = loyaltyCopy;
@@ -25,8 +25,8 @@ export function LoyaltyBanner() {
 
   return (
     <section aria-labelledby="novo-loyalty" className={`${styles.band} ${styles.bandRose}`}>
-      <div className={`${base.wrap} ${styles.grid} ${styles.gridReverse}`}>
-        <div className={styles.text}>
+      <div className={`${base.wrap} ${styles.grid}`}>
+        <div className={styles.head}>
           <p className={styles.eyebrow} data-reveal>
             {copy.eyebrow}
           </p>
@@ -36,6 +36,12 @@ export function LoyaltyBanner() {
           <p className={styles.body} data-reveal style={{ ["--reveal-delay" as string]: "120ms" }}>
             {copy.body}
           </p>
+        </div>
+        <div className={styles.adStage}>
+          <div className={styles.adDisc} aria-hidden="true" />
+          <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
+        </div>
+        <div className={styles.rest}>
           <ul className={styles.points} data-reveal style={{ ["--reveal-delay" as string]: "180ms" }}>
             {copy.points.map((point) => (
               <li key={point}>{point}</li>
@@ -51,10 +57,6 @@ export function LoyaltyBanner() {
               <ArrowRight size={18} />
             </Link>
           </div>
-        </div>
-        <div className={styles.adStage}>
-          <div className={styles.adDisc} aria-hidden="true" />
-          <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
         </div>
       </div>
     </section>

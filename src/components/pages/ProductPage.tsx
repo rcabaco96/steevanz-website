@@ -79,8 +79,11 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               { name: copy.shortName, path: productHref },
             ]}
           />
-          <div className="mt-8 grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-            <div className="flex flex-col items-start gap-6">
+          {/* Stacked: name, title and subtitle, then the video or picture, then the price and the buttons (owner,
+              2026-10-20, the order for every section with media). On a computer the text is one centred column
+              on the left and the media on the right. */}
+          <div className="mt-8 grid items-center gap-x-12 gap-y-10 lg:grid-cols-[1.1fr_1fr] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-6">
+            <div className="flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-2">
               <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1.5 text-sm font-medium text-muted">
                 <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text">
                   <ProductGlyph icon={product.icon} size={14} />
@@ -91,6 +94,15 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
                 {copy.heroTitle}
               </h1>
               <p className="max-w-xl text-lg leading-relaxed text-muted">{copy.heroSubtitle}</p>
+            </div>
+            <div className="flex justify-center lg:col-start-2 lg:row-span-4 lg:row-start-1">
+              {ad ? (
+                <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
+              ) : (
+                <ProductVisual product={product} locale={locale} />
+              )}
+            </div>
+            <div className="flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-3">
               <Price product={product} locale={locale} showQualifier />
               <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
                 <ButtonLink href={bookHref} size="lg">
@@ -104,13 +116,6 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               </div>
               {product.customization ? <p className="-mt-2 text-sm text-subtle">{cartCopy[locale].customize.productHint}</p> : null}
             </div>
-            {ad ? (
-              <div className="flex justify-center">
-                <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
-              </div>
-            ) : (
-              <ProductVisual product={product} locale={locale} />
-            )}
           </div>
         </div>
       </section>

@@ -32,11 +32,15 @@ export function NotFoundContent({ locale }: { locale: Locale }) {
   return (
     <section className="relative isolate overflow-hidden pt-28 pb-24 sm:pt-36">
       <div aria-hidden="true" className="glow-backdrop absolute inset-0 -z-10" />
-      <div className="container-page grid items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
-        <div className="flex flex-col items-start gap-6">
+      {/* Stacked: title and text, then the plate, then the links (the order for every section with media). */}
+      <div className="container-page grid items-center gap-x-12 gap-y-10 lg:grid-cols-[1.2fr_1fr] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-6">
+        <div className="flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-2">
           <p className="eyebrow">{text.eyebrow}</p>
           <h1 className="display text-5xl sm:text-6xl">{text.title}</h1>
           <p className="max-w-lg text-lg text-muted">{text.body}</p>
+        </div>
+        <TapPlate variant="stand" finish="black" line1={text.plateLine1} line2={text.plateLine2} className="mx-auto h-auto w-56 -rotate-6 sm:w-64 lg:col-start-2 lg:row-span-4 lg:row-start-1" />
+        <div className="flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-3">
           <ul className="flex flex-wrap gap-2">
             {products.slice(0, 4).map((product) => (
               <li key={product.id}>
@@ -61,7 +65,6 @@ export function NotFoundContent({ locale }: { locale: Locale }) {
             </ButtonLink>
           </div>
         </div>
-        <TapPlate variant="stand" finish="black" line1={text.plateLine1} line2={text.plateLine2} className="mx-auto h-auto w-56 -rotate-6 sm:w-64" />
       </div>
     </section>
   );

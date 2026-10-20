@@ -35,26 +35,10 @@ export function SweetSavoury({ copy, sweet, savory }: SweetSavouryProps) {
         <span className={`display-italic absolute inset-x-0 text-[var(--dz-pista-deep)] opacity-20 transition-all duration-700 ${isSweet ? "translate-y-full" : "translate-y-0"}`}>{copy.savory.word}</span>
       </div>
 
-      <div className="relative grid items-center gap-10 lg:grid-cols-2">
-        <div className="order-2 mx-auto w-full max-w-[290px] [perspective:1100px] sm:max-w-[330px] lg:order-1">
-          <div
-            className="relative aspect-[4/5] w-full transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d]"
-            style={{ transform: `rotateY(${isSweet ? 0 : 180}deg) rotateZ(${isSweet ? -2 : 2}deg)` }}
-          >
-            {[{ face: sweet, back: false }, { face: savory, back: true }].map(({ face, back }) => (
-              <div
-                key={face.image}
-                className="absolute inset-0 overflow-hidden rounded-[1.6rem] bg-[var(--dz-surface)] shadow-[0_30px_60px_-30px_rgb(var(--dz-shadow)/0.55)] ring-4 ring-[var(--dz-surface)] [backface-visibility:hidden] [-webkit-backface-visibility:hidden]"
-                style={back ? { transform: "rotateY(180deg)" } : undefined}
-                aria-hidden={back === isSweet}
-              >
-                <Image src={face.image} alt={face.alt} fill sizes="(min-width: 640px) 330px, 290px" className="object-cover" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative order-1 lg:order-2">
+      {/* Stacked: the question, the switch and the side's title and text, then the card, then the tags (Steevanz
+          rule, 2026-10-20: heading and intro, then the media, then the rest). On a computer the card on the left. */}
+      <div className="relative grid items-center gap-x-10 gap-y-8 lg:grid-cols-2 lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-0">
+        <div className="relative lg:col-start-2 lg:row-start-2">
           <p className="text-center text-sm font-medium text-[var(--dz-ink-2)] lg:text-left">{copy.question}</p>
           <div role="group" aria-label={copy.question} className="relative mx-auto mt-3 grid w-full max-w-sm grid-cols-2 rounded-full bg-[var(--dz-surface)] p-1 shadow-[inset_0_0_0_1px_var(--dz-line)] lg:mx-0">
             <span
@@ -79,15 +63,36 @@ export function SweetSavoury({ copy, sweet, savory }: SweetSavouryProps) {
             <div key={side} className={`mt-8 text-center lg:text-left ${styles.sideIn}`}>
               <h3 className="display text-4xl text-[var(--dz-ink)] sm:text-5xl">{current.title}</h3>
               <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--dz-ink-2)] lg:mx-0">{current.text}</p>
-              <ul className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
-                {current.tags.map((tag) => (
-                  <li key={tag} className="rounded-full border border-[var(--dz-line)] bg-[var(--dz-surface)] px-4 py-1.5 text-sm font-medium text-[var(--dz-ink)]">
-                    {tag}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-[290px] [perspective:1100px] sm:max-w-[330px] lg:col-start-1 lg:row-span-4 lg:row-start-1">
+          <div
+            className="relative aspect-[4/5] w-full transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d]"
+            style={{ transform: `rotateY(${isSweet ? 0 : 180}deg) rotateZ(${isSweet ? -2 : 2}deg)` }}
+          >
+            {[{ face: sweet, back: false }, { face: savory, back: true }].map(({ face, back }) => (
+              <div
+                key={face.image}
+                className="absolute inset-0 overflow-hidden rounded-[1.6rem] bg-[var(--dz-surface)] shadow-[0_30px_60px_-30px_rgb(var(--dz-shadow)/0.55)] ring-4 ring-[var(--dz-surface)] [backface-visibility:hidden] [-webkit-backface-visibility:hidden]"
+                style={back ? { transform: "rotateY(180deg)" } : undefined}
+                aria-hidden={back === isSweet}
+              >
+                <Image src={face.image} alt={face.alt} fill sizes="(min-width: 640px) 330px, 290px" className="object-cover" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center lg:col-start-2 lg:row-start-3 lg:text-left">
+          <ul key={side} className={`flex flex-wrap justify-center gap-2 lg:mt-5 lg:justify-start ${styles.sideIn}`}>
+            {current.tags.map((tag) => (
+              <li key={tag} className="rounded-full border border-[var(--dz-line)] bg-[var(--dz-surface)] px-4 py-1.5 text-sm font-medium text-[var(--dz-ink)]">
+                {tag}
+              </li>
+            ))}
+          </ul>
           <p className="mt-6 text-center text-xs text-[var(--dz-ink-2)] lg:text-left">{copy.note}</p>
         </div>
       </div>

@@ -737,12 +737,38 @@
   background: var(--bg-soft);
 }
 
+/* Stacked: the goal's lead, then its demo, then the products. Side by side: the demo on the left, the
+   lead and the products centred on the right. */
+.panel > .goalLead {
+  grid-area: lead;
+}
+
+.panel > .demo {
+  grid-area: demo;
+}
+
+.goalRest {
+  grid-area: rest;
+}
+
+.panel {
+  grid-template-areas: "lead" "demo" "rest";
+}
+
+.goalRest .productList {
+  margin-top: 0;
+}
+
 @media (min-width: 768px) {
   .panel {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas: "demo ." "demo lead" "demo rest" "demo .";
     padding: 2.5rem;
-    gap: 3rem;
+    gap: 0 3rem;
+  }
+  .goalRest .productList {
+    margin-top: 1.25rem;
   }
 }
 
@@ -1138,6 +1164,9 @@
   }
 }
 
+/* On a phone: the title and lead, then the video, then the steps and the price (owner, 2026-10-20:
+   this band is the model for every section with media). On a computer the phone sits on the left and
+   everything else on the right. */
 .showcaseGrid {
   display: grid;
   grid-template-areas: "head" "phone" "steps" "foot";
@@ -1157,7 +1186,7 @@
 @media (min-width: 1024px) {
   .showcaseGrid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas: "head phone" "steps phone" "foot phone";
+    grid-template-areas: "phone head" "phone steps" "phone foot";
     align-items: start;
   }
   .showcaseStage {

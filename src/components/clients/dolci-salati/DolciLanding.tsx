@@ -149,8 +149,10 @@ export function DolciLanding({ locale }: { locale: DolciLocale }) {
           <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.25rem] bg-[#1d382f] px-5 pt-14 pb-12 text-[#f7f2e8] sm:px-12 sm:py-20">
             <div aria-hidden="true" className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#ef6f94]/35 blur-3xl" />
             <div aria-hidden="true" className="absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-[#b5ca91]/30 blur-3xl" />
-            <div className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-              <div className="text-center lg:text-left">
+            {/* Stacked: label, title and text, then the phones, then the button (Steevanz rule, 2026-10-20: on
+                mobile the heading and intro, then the media, then the rest). On a computer text left, phones right. */}
+            <div className="relative grid items-center gap-x-12 gap-y-10 lg:grid-cols-[1.1fr_1fr] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-0">
+              <div className="text-center lg:col-start-1 lg:row-start-2 lg:text-left">
                 <p data-reveal className="text-[0.7rem] font-semibold tracking-[0.2em] text-[#f7c6d3] uppercase">
                   {copy.menuBand.label}
                 </p>
@@ -160,7 +162,12 @@ export function DolciLanding({ locale }: { locale: DolciLocale }) {
                 <p data-reveal style={delay(160)} className="mx-auto mt-4 max-w-md text-base text-[#f7f2e8]/80 lg:mx-0">
                   {copy.menuBand.text}
                 </p>
-                <div data-reveal style={delay(240)} className="mt-8">
+              </div>
+              <div className="lg:col-start-2 lg:row-span-4 lg:row-start-1">
+                <PhoneFan images={[reelImage("DMdyAaOILFK"), reelImage("DNF6fL8uN2r"), reelImage("DM-lbCEOei_")]} />
+              </div>
+              <div className="text-center lg:col-start-1 lg:row-start-3 lg:text-left">
+                <div data-reveal style={delay(240)} className="lg:mt-8">
                   <Link
                     href={dolci.menu}
                     data-menu-cta
@@ -173,7 +180,6 @@ export function DolciLanding({ locale }: { locale: DolciLocale }) {
                   </Link>
                 </div>
               </div>
-              <PhoneFan images={[reelImage("DMdyAaOILFK"), reelImage("DNF6fL8uN2r"), reelImage("DM-lbCEOei_")]} />
             </div>
           </div>
         </section>

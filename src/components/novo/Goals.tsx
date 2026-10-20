@@ -175,11 +175,11 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
         ))}
       </div>
       <div key={goal.id} role="tabpanel" id={`${baseId}-panel`} aria-labelledby={`${baseId}-tab-${goal.id}`} className={styles.panel}>
+        <p className={styles.goalLead}>{goal.lead}</p>
         <div className={styles.demo}>
           <Demo demo={goal.demo} />
         </div>
-        <div>
-          <p className={styles.goalLead}>{goal.lead}</p>
+        <div className={styles.goalRest}>
           <ul className={styles.productList}>
             {goal.products.map((product) => (
               <li key={product.id}>

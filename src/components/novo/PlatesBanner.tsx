@@ -25,7 +25,7 @@ export function PlatesBanner() {
   return (
     <section aria-labelledby="novo-plates" className={styles.band}>
       <div className={`${base.wrap} ${styles.grid}`}>
-        <div className={styles.text}>
+        <div className={styles.head}>
           <p className={styles.eyebrow} data-reveal>
             {copy.eyebrow}
           </p>
@@ -35,6 +35,13 @@ export function PlatesBanner() {
           <p className={styles.body} data-reveal style={{ ["--reveal-delay" as string]: "120ms" }}>
             {copy.body}
           </p>
+        </div>
+
+        <PauseOffscreen className={styles.panel}>
+          <HeroTapScene copy={homeCopy[locale].scene} />
+        </PauseOffscreen>
+
+        <div className={styles.rest}>
           <ul className={styles.points} data-reveal style={{ ["--reveal-delay" as string]: "180ms" }}>
             {copy.points.map((point) => (
               <li key={point}>{point}</li>
@@ -56,10 +63,6 @@ export function PlatesBanner() {
             </Link>
           </div>
         </div>
-
-        <PauseOffscreen className={styles.panel}>
-          <HeroTapScene copy={homeCopy[locale].scene} />
-        </PauseOffscreen>
       </div>
     </section>
   );

@@ -56,25 +56,31 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
               { name: copy.name, path: sectorHref },
             ]}
           />
-          <div className="mt-8 grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-            <div className="flex flex-col items-start gap-6">
+          {/* Stacked: title and subtitle, then the photo, then the button (owner, 2026-10-20, the order for every
+              section with media). On a computer the text is one centred column on the left, the photo on the right. */}
+          <div className="mt-8 grid items-center gap-x-12 gap-y-10 lg:grid-cols-[1.1fr_1fr] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-6">
+            <div className="flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-2">
               <p className="eyebrow">{copy.name}</p>
               <h1 id="sector-title" className="display text-[2.6rem] sm:text-6xl">
                 {copy.heroTitle}
               </h1>
               <p className="max-w-xl text-lg leading-relaxed text-muted">{copy.heroSubtitle}</p>
+            </div>
+            <div className="lg:col-start-2 lg:row-span-4 lg:row-start-1">
+              <Photo
+                id={sector.photo}
+                locale={locale}
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                priority
+                className="aspect-[4/3] rounded-[2rem] shadow-[0_40px_80px_-40px_rgb(var(--shadow-color)/0.5)]"
+              />
+            </div>
+            <div className="lg:col-start-1 lg:row-start-3">
               <ButtonLink href={href(locale, { key: "book" })} size="lg">
                 {t.common.bookDemo}
                 <ArrowRight size={18} />
               </ButtonLink>
             </div>
-            <Photo
-              id={sector.photo}
-              locale={locale}
-              sizes="(min-width: 1024px) 45vw, 100vw"
-              priority
-              className="aspect-[4/3] rounded-[2rem] shadow-[0_40px_80px_-40px_rgb(var(--shadow-color)/0.5)]"
-            />
           </div>
         </div>
       </section>
@@ -111,20 +117,13 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
       {sector.examples ? <SectorExamplesSection examples={sector.examples} locale={locale} /> : null}
 
       <Section tone="soft" labelledBy="day-title">
-        <div className="grid items-start gap-12 lg:grid-cols-2">
-          <div className="flex flex-col gap-10">
+        {/* Stacked: the heading, then the video or picture, then the moments of the day. On a computer the
+            heading and the moments on the left, the media on the right (sticky). */}
+        <div className="grid items-start gap-x-12 gap-y-10 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+          <div className="lg:col-start-1 lg:row-start-1">
             <SectionHeader id="day-title" eyebrow={labels.sectors.dayEyebrow} title={labels.sectors.dayTitle} />
-            <ol className="relative flex flex-col gap-8 border-l border-line-strong pl-8">
-              {copy.dayInTheLife.map((moment, index) => (
-                <li key={moment.title} data-reveal style={{ ["--reveal-delay" as string]: `${index * 90}ms` }} className="relative">
-                  <span aria-hidden="true" className="absolute top-1.5 -left-[2.4rem] h-3 w-3 rounded-full border-2 border-bg-soft bg-gold" />
-                  <h3 className="font-semibold text-text">{moment.title}</h3>
-                  <p className="mt-1 text-[0.95rem] leading-relaxed text-muted">{moment.body}</p>
-                </li>
-              ))}
-            </ol>
           </div>
-          <div data-reveal className="overflow-hidden rounded-[2rem] border border-line lg:sticky lg:top-28">
+          <div data-reveal className="overflow-hidden rounded-[2rem] border border-line lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1">
             {videoId ? (
               <LazyVideo video={videos[videoId]} label={videos[videoId].alt[locale]} className="aspect-[4/5] h-auto w-full object-cover sm:aspect-video lg:aspect-[4/5]" />
             ) : sector.side.kind === "product" ? (
@@ -139,6 +138,17 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
                 className="aspect-[4/5] sm:aspect-video lg:aspect-[4/5]"
               />
             )}
+          </div>
+          <div className="lg:col-start-1 lg:row-start-2">
+            <ol className="relative flex flex-col gap-8 border-l border-line-strong pl-8">
+              {copy.dayInTheLife.map((moment, index) => (
+                <li key={moment.title} data-reveal style={{ ["--reveal-delay" as string]: `${index * 90}ms` }} className="relative">
+                  <span aria-hidden="true" className="absolute top-1.5 -left-[2.4rem] h-3 w-3 rounded-full border-2 border-bg-soft bg-gold" />
+                  <h3 className="font-semibold text-text">{moment.title}</h3>
+                  <p className="mt-1 text-[0.95rem] leading-relaxed text-muted">{moment.body}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </Section>

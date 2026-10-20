@@ -18,16 +18,42 @@
   }
 }
 
+/* Stacked (phone, tablet): the title and lead, then the scene or the video, then the points, the
+   price and the button (owner, 2026-10-20, the order for every section with media). On a computer the
+   text sits on the left, centred as one block, and the media on the right. */
 .grid {
   display: grid;
-  gap: 2.75rem;
+  grid-template-areas: "head" "media" "rest";
+  gap: 2.25rem;
   align-items: center;
+}
+
+.head {
+  grid-area: head;
+}
+
+.grid > .panel,
+.grid > .adStage {
+  grid-area: media;
+}
+
+.rest {
+  grid-area: rest;
+}
+
+.rest > .points:first-child {
+  margin-top: 0;
 }
 
 @media (min-width: 1024px) {
   .grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    gap: 4rem;
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas: ". media" "head media" "rest media" ". media";
+    gap: 0 4rem;
+  }
+  .rest > .points:first-child {
+    margin-top: 1.25rem;
   }
 }
 
@@ -183,19 +209,10 @@
   animation-play-state: paused !important;
 }
 
-/* ---------- The loyalty card band: same layout, other side, soft rose ---------- */
+/* ---------- The loyalty card band: same layout (text left, video right on a computer), soft rose ---------- */
 
 .bandRose {
   background: #f4e4ee;
-}
-
-@media (min-width: 1024px) {
-  .gridReverse {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  }
-  .gridReverse .adStage {
-    order: -1;
-  }
 }
 
 .adStage {

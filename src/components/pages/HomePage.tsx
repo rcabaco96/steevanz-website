@@ -50,8 +50,10 @@ export function HomePage({ locale }: { locale: Locale }) {
       <section aria-labelledby="hero-title" className="relative isolate overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
         <div aria-hidden="true" className="glow-backdrop absolute inset-0 -z-10" />
         <div aria-hidden="true" className="dot-grid absolute inset-x-0 top-0 -z-10 h-[70%] [mask-image:radial-gradient(70%_60%_at_50%_0%,#000,transparent)]" />
-        <div className="container-page grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
-          <div className="flex flex-col items-start gap-7">
+        {/* Stacked: title and subtitle, then the plate scene, then the buttons (owner, 2026-10-20, the order for
+            every section with media). On a computer the text is one centred column on the left. */}
+        <div className="container-page grid items-center gap-x-10 gap-y-12 lg:grid-cols-[1.05fr_1fr] lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-7">
+          <div className="flex flex-col items-start gap-7 lg:col-start-1 lg:row-start-2">
             <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1.5 text-sm font-medium text-muted backdrop-blur">
               <span className="grid h-5 w-5 place-items-center rounded-full bg-accent text-accent-contrast">
                 <ProductGlyph icon="star-tap" size={12} />
@@ -63,6 +65,11 @@ export function HomePage({ locale }: { locale: Locale }) {
               <em className="display-italic text-accent-text">{copy.hero.titleEmphasis}</em>
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-muted sm:text-xl">{copy.hero.subtitle}</p>
+          </div>
+          <div className="lg:col-start-2 lg:row-span-4 lg:row-start-1">
+            <HeroTapScene copy={copy.scene} />
+          </div>
+          <div className="flex flex-col items-start gap-7 lg:col-start-1 lg:row-start-3">
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <ButtonLink href={bookingHref(locale, flagshipProduct.id)} size="lg">
                 {copy.hero.primaryCta}
@@ -84,7 +91,6 @@ export function HomePage({ locale }: { locale: Locale }) {
               </li>
             </ul>
           </div>
-          <HeroTapScene copy={copy.scene} />
         </div>
       </section>
 
@@ -100,30 +106,13 @@ export function HomePage({ locale }: { locale: Locale }) {
       </Section>
 
       <Section tone="soft" labelledBy="flagship-title" className="overflow-hidden">
-        <div className="grid items-center gap-14 lg:grid-cols-2">
-          <div className="flex flex-col gap-8">
+        {/* Stacked: the heading, then the scene and the formats, then the points and the button. On a computer
+            the heading, points and button on the left, the scene and the formats on the right. */}
+        <div className="grid items-center gap-x-14 gap-y-10 lg:grid-cols-2 lg:grid-rows-[1fr_auto_auto_1fr] lg:gap-y-8">
+          <div className="lg:col-start-1 lg:row-start-2">
             <SectionHeader id="flagship-title" eyebrow={copy.flagship.eyebrow} title={copy.flagship.title} lead={copy.flagship.lead} />
-            <ul className="grid gap-5 sm:grid-cols-2">
-              {copy.flagship.points.map((point, index) => (
-                <li key={point.title} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }} className="flex flex-col gap-1.5">
-                  <span className="flex items-center gap-2 font-semibold text-text">
-                    <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text">
-                      <Check size={14} />
-                    </span>
-                    {point.title}
-                  </span>
-                  <span className="text-[0.95rem] leading-relaxed text-muted">{point.body}</span>
-                </li>
-              ))}
-            </ul>
-            <div data-reveal>
-              <ButtonLink href={flagshipHref} variant="secondary">
-                {copy.flagship.cta}
-                <ArrowRight size={16} />
-              </ButtonLink>
-            </div>
           </div>
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 lg:col-start-2 lg:row-span-4 lg:row-start-1">
             <div data-reveal className="relative overflow-hidden rounded-[1.75rem] border border-line bg-surface-inverse">
               {/* A phone tapping the plate and leaving a review (the stock video showed a card payment). */}
               <ReviewTapScene copy={copy.scene} />
@@ -154,6 +143,27 @@ export function HomePage({ locale }: { locale: Locale }) {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+          <div className="flex flex-col gap-8 lg:col-start-1 lg:row-start-3">
+            <ul className="grid gap-5 sm:grid-cols-2">
+              {copy.flagship.points.map((point, index) => (
+                <li key={point.title} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }} className="flex flex-col gap-1.5">
+                  <span className="flex items-center gap-2 font-semibold text-text">
+                    <span className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-accent-text">
+                      <Check size={14} />
+                    </span>
+                    {point.title}
+                  </span>
+                  <span className="text-[0.95rem] leading-relaxed text-muted">{point.body}</span>
+                </li>
+              ))}
+            </ul>
+            <div data-reveal>
+              <ButtonLink href={flagshipHref} variant="secondary">
+                {copy.flagship.cta}
+                <ArrowRight size={16} />
+              </ButtonLink>
             </div>
           </div>
         </div>
