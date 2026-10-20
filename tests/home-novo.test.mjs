@@ -111,6 +111,9 @@ describe("home page («/» and «/en»)", () => {
       const ids = (list) => list.map((goal) => goal.products.map((product) => product.id));
       assert.deepEqual(ids(goals[locale]), ids(goals.pt), locale);
     }
+    // Owner, 2026-10-20: the online shop belongs only to «Vender mais».
+    const withShop = goals.pt.filter((goal) => goal.products.some((product) => product.id === "online-shop")).map((goal) => goal.id);
+    assert.deepEqual(withShop, ["sell"]);
   });
 
   it("has the slogan «encontram, compram e voltam» in the title and the hero", () => {

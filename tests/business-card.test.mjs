@@ -83,6 +83,25 @@ describe("business card and keychain copy in six languages", () => {
     });
   }
 
+  it("says changing the card's details later is included at no extra cost (owner, 2026-10-20)", () => {
+    const included = { pt: /incluíd[oa], sem custo extra/, en: /included at no extra cost/, es: /incluid[oa], sin coste adicional/, fr: /inclus[e]?, sans frais supplémentaires/, de: /inklusive, ohne Aufpreis/, it: /inclus[oa], senza costi aggiuntivi/ };
+    const docsFaq = (locale) => strings(businessCardDocs.pages.faq[locale]).join(" ");
+    for (const locale of locales) {
+      const answer = productCopy["business-card"][locale].faq.find((item) => /\?/.test(item.q) && included[locale].test(item.a));
+      assert.ok(answer, `business-card.${locale} FAQ says changes are included`);
+      assert.match(docsFaq(locale), included[locale], `business-card docs FAQ ${locale}`);
+    }
+  });
+
+  it("states the keychain packs as confirmed prices, not as a proposal (owner, 2026-10-20)", () => {
+    const flag = /indicativ|orientativ|Richtwert|confirm|bestätig/i;
+    for (const locale of locales) {
+      const priceAnswer = productCopy.keychain[locale].faq.find((item) => /45/.test(item.a));
+      assert.doesNotMatch(priceAnswer.a, flag, `keychain.${locale} FAQ price`);
+      assert.doesNotMatch(strings(keychainDocs.pages["getting-started"][locale]).join(" "), flag, `keychain docs ${locale}`);
+    }
+  });
+
   it("says honestly that the keychain has no QR code", () => {
     const answers = { pt: /QR/, en: /QR/, es: /QR/, fr: /QR/, de: /QR/, it: /QR/ };
     for (const locale of locales) assert.match(productCopy.keychain[locale].faq.map((item) => item.q + item.a).join(" "), answers[locale], locale);

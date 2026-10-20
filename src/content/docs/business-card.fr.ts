@@ -23,7 +23,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
           ["Personnalisation", "Votre nom, votre fonction, vos coordonnées et le logo de l'entreprise, inclus dans le prix"],
           ["Page de contact digitale", "Rapide, pensée pour le téléphone, avec le bouton «Enregistrer le contact»"],
           ["Toucher ou QR", "S'ouvre d'un toucher du téléphone ou avec le QR code imprimé sur la carte, sur iPhone et Android, sans application"],
-          ["Modifications faites par nous", "Si vos coordonnées changent, nous mettons la page à jour et la carte continue de fonctionner"],
+          ["Modifications incluses", "Si vos coordonnées changent, nous mettons la page à jour sans frais supplémentaires et la carte continue de fonctionner"],
         ],
       },
       { type: "h2", id: "tarifs", text: "Tarifs" },
@@ -144,7 +144,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "modifications", text: "Demander des modifications" },
       {
         type: "p",
-        text: "Vous n'avez pas besoin de modifier la page vous-même : c'est nous qui la configurons et la mettons à jour. Si votre numéro, votre fonction ou votre e-mail change, envoyez-nous la modification par WhatsApp ou par e-mail. Nous mettons la page à jour et la carte continue de fonctionner : la même carte, rien à réimprimer.",
+        text: "Vous n'avez pas besoin de modifier la page vous-même : c'est nous qui la configurons et la mettons à jour. Si votre numéro, votre fonction ou votre e-mail change, envoyez-nous la modification par WhatsApp ou par e-mail. C'est inclus, sans frais supplémentaires : nous mettons la page à jour et la carte continue de fonctionner, la même carte, rien à réimprimer.",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "informations-obsoletes", text: "Les informations ne sont plus à jour" },
       {
         type: "p",
-        text: "Envoyez-nous la modification par WhatsApp ou par e-mail. Nous mettons la page à jour et la carte continue de fonctionner, sans rien réimprimer.",
+        text: "Envoyez-nous la modification par WhatsApp ou par e-mail. Nous mettons la page à jour sans frais supplémentaires et la carte continue de fonctionner, sans rien réimprimer.",
       },
       { type: "h2", id: "carte-abimee", text: "La carte est abîmée ou perdue" },
       {
@@ -231,7 +231,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Puis-je modifier mes informations plus tard ?",
-            a: "Oui. Envoyez-nous la modification par WhatsApp ou par e-mail et nous mettons la page à jour. La carte continue de fonctionner : la même carte, rien à réimprimer.",
+            a: "Oui, et c'est inclus, sans frais supplémentaires. Envoyez-nous la modification par WhatsApp ou par e-mail et nous mettons la page à jour. La carte continue de fonctionner : la même carte, rien à réimprimer.",
           },
           {
             q: "Puis-je modifier la page moi-même ?",

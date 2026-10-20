@@ -23,7 +23,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           ["Personalisation", "Your name, role, contact details and company logo, included in the price"],
           ["Digital contact page", "Fast, made for the phone, with the «Save contact» button"],
           ["Tap or QR", "Opens with one tap of a phone or with the QR code printed on the card, on iPhone and Android, with no app"],
-          ["Changes made by us", "If your details change, we update the page and the card keeps working"],
+          ["Changes included", "If your details change, we update the page at no extra cost and the card keeps working"],
         ],
       },
       { type: "h2", id: "pricing", text: "Pricing" },
@@ -144,7 +144,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "changes", text: "Asking for changes" },
       {
         type: "p",
-        text: "You don't need to edit the page: we set it up and update it. If your number, role or email changes, send us the change by WhatsApp or email. We update the page and the card keeps working: same card, nothing to reprint.",
+        text: "You don't need to edit the page: we set it up and update it. If your number, role or email changes, send us the change by WhatsApp or email. It's included at no extra cost: we update the page and the card keeps working, same card, nothing to reprint.",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "out-of-date", text: "The details are out of date" },
       {
         type: "p",
-        text: "Send us the change by WhatsApp or email. We update the page and the card keeps working, with nothing to reprint.",
+        text: "Send us the change by WhatsApp or email. We update the page at no extra cost and the card keeps working, with nothing to reprint.",
       },
       { type: "h2", id: "card-damaged", text: "The card is damaged or lost" },
       {
@@ -231,7 +231,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Can I change my details later?",
-            a: "Yes. Send us the change by WhatsApp or email and we update the page. The card keeps working: same card, nothing to reprint.",
+            a: "Yes, and it's included at no extra cost. Send us the change by WhatsApp or email and we update the page. The card keeps working: same card, nothing to reprint.",
           },
           {
             q: "Can I edit the page myself?",

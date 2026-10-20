@@ -33,7 +33,7 @@ export const de: Record<DocPageId, DocPageContent> = {
           ["Paket mit 25", "4 €", "100 €"],
         ],
       },
-      { type: "p", text: "Alle Preise zzgl. MwSt. Es sind Richtwerte, die in der Vorführung bestätigt werden." },
+      { type: "p", text: "Alle Preise zzgl. MwSt." },
       { type: "h2", id: "so-funktioniert-es", text: "So funktioniert es für Kunden" },
       {
         type: "ol",
@@ -205,7 +205,7 @@ export const de: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Was kostet er?",
-            a: "5 € zzgl. MwSt. pro Anhänger. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt. Die Preise sind Richtwerte und werden in der Vorführung bestätigt.",
+            a: "5 € zzgl. MwSt. pro Anhänger. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
           },
           {
             q: "Wie lange dauert es?",

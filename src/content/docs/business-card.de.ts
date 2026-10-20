@@ -23,7 +23,7 @@ export const de: Record<DocPageId, DocPageContent> = {
           ["Personalisierung", "Ihr Name, Ihre Position, Ihre Kontaktdaten und das Firmenlogo, im Preis enthalten"],
           ["Digitale Kontaktseite", "Schnell, für das Handy gemacht, mit der Schaltfläche „Kontakt speichern“"],
           ["Antippen oder QR", "Öffnet sich mit einem Antippen des Handys oder über den aufgedruckten QR-Code, auf iPhone und Android, ohne App"],
-          ["Änderungen durch uns", "Wenn sich Ihre Daten ändern, aktualisieren wir die Seite und die Karte funktioniert weiter"],
+          ["Änderungen inklusive", "Wenn sich Ihre Daten ändern, aktualisieren wir die Seite ohne Aufpreis und die Karte funktioniert weiter"],
         ],
       },
       { type: "h2", id: "preise", text: "Preise" },
@@ -144,7 +144,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "aenderungen", text: "Änderungen anfragen" },
       {
         type: "p",
-        text: "Sie müssen die Seite nicht selbst bearbeiten: Wir richten sie ein und halten sie aktuell. Wenn sich Ihre Nummer, Position oder E-Mail ändert, senden Sie uns die Änderung per WhatsApp oder E-Mail. Wir aktualisieren die Seite, und die Karte funktioniert weiter: dieselbe Karte, nichts neu zu drucken.",
+        text: "Sie müssen die Seite nicht selbst bearbeiten: Wir richten sie ein und halten sie aktuell. Wenn sich Ihre Nummer, Position oder E-Mail ändert, senden Sie uns die Änderung per WhatsApp oder E-Mail. Das ist inklusive, ohne Aufpreis: Wir aktualisieren die Seite, und die Karte funktioniert weiter, dieselbe Karte, nichts neu zu drucken.",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "veraltete-daten", text: "Die Daten sind nicht mehr aktuell" },
       {
         type: "p",
-        text: "Senden Sie uns die Änderung per WhatsApp oder E-Mail. Wir aktualisieren die Seite, und die Karte funktioniert weiter, ohne Neudruck.",
+        text: "Senden Sie uns die Änderung per WhatsApp oder E-Mail. Wir aktualisieren die Seite ohne Aufpreis, und die Karte funktioniert weiter, ohne Neudruck.",
       },
       { type: "h2", id: "karte-beschaedigt", text: "Die Karte ist beschädigt oder verloren" },
       {
@@ -231,7 +231,7 @@ export const de: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Kann ich meine Daten später ändern?",
-            a: "Ja. Senden Sie uns die Änderung per WhatsApp oder E-Mail, und wir aktualisieren die Seite. Die Karte funktioniert weiter: dieselbe Karte, nichts neu zu drucken.",
+            a: "Ja, und das ist inklusive, ohne Aufpreis. Senden Sie uns die Änderung per WhatsApp oder E-Mail, und wir aktualisieren die Seite. Die Karte funktioniert weiter: dieselbe Karte, nichts neu zu drucken.",
           },
           {
             q: "Kann ich die Seite selbst bearbeiten?",

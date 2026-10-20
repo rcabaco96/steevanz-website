@@ -33,7 +33,7 @@ export const es: Record<DocPageId, DocPageContent> = {
           ["Pack de 25", "4 €", "100 €"],
         ],
       },
-      { type: "p", text: "Todos los precios + IVA. Son orientativos y se confirman en la demostración." },
+      { type: "p", text: "Todos los precios + IVA." },
       { type: "h2", id: "como-funciona", text: "Cómo funciona para el cliente" },
       {
         type: "ol",
@@ -205,7 +205,7 @@ export const es: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "¿Cuánto cuesta?",
-            a: "5 € + IVA por llavero. En packs, 10 por 45 € y 25 por 100 €, + IVA. Son precios orientativos, que se confirman en la demostración.",
+            a: "5 € + IVA por llavero. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
           },
           {
             q: "¿Cuánto tarda?",

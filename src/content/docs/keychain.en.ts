@@ -33,7 +33,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           ["Pack of 25", "€4", "€100"],
         ],
       },
-      { type: "p", text: "All prices + VAT. They are indicative and confirmed at the demo." },
+      { type: "p", text: "All prices + VAT." },
       { type: "h2", id: "how-it-works", text: "How it works for customers" },
       {
         type: "ol",
@@ -205,7 +205,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "How much does it cost?",
-            a: "€5 + VAT per keychain. In packs, 10 for €45 and 25 for €100, + VAT. These prices are indicative and confirmed at the demo.",
+            a: "€5 + VAT per keychain. In packs, 10 for €45 and 25 for €100, + VAT.",
           },
           {
             q: "How long does it take?",

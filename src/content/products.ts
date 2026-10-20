@@ -222,7 +222,7 @@ export const products: Product[] = [
     ],
   },
   {
-    // Owner, 2026-10-20: 5 € + IVA each, tap only (no QR code). Packs are a proposal to confirm.
+    // Owner, 2026-10-20: 5 € + IVA each, tap only (no QR code). Packs of 10 for 45 € and 25 for 100 € confirmed.
     id: "keychain",
     slug: { pt: "chaveiro-digital", en: "digital-keychain" },
     family: "plates",

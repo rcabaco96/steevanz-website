@@ -33,7 +33,7 @@ export const it: Record<DocPageId, DocPageContent> = {
           ["Confezione da 25", "4 €", "100 €"],
         ],
       },
-      { type: "p", text: "Tutti i prezzi + IVA. Sono indicativi e vengono confermati durante la demo." },
+      { type: "p", text: "Tutti i prezzi + IVA." },
       { type: "h2", id: "come-funziona", text: "Come funziona per il cliente" },
       {
         type: "ol",
@@ -205,7 +205,7 @@ export const it: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Quanto costa?",
-            a: "5 € + IVA al pezzo. In confezione, 10 per 45 € e 25 per 100 €, + IVA. Sono prezzi indicativi, confermati durante la demo.",
+            a: "5 € + IVA al pezzo. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
           },
           {
             q: "Quanto tempo serve?",

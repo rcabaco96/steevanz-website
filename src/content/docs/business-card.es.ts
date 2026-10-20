@@ -23,7 +23,7 @@ export const es: Record<DocPageId, DocPageContent> = {
           ["Personalización", "Su nombre, cargo, datos de contacto y el logotipo de la empresa, incluidos en el precio"],
           ["Página de contacto digital", "Rápida, pensada para el móvil, con el botón «Guardar contacto»"],
           ["Toque o QR", "Se abre con un toque del móvil o con el código QR impreso en la tarjeta, en iPhone y Android, sin app"],
-          ["Cambios hechos por nosotros", "Si sus datos cambian, actualizamos la página y la tarjeta sigue funcionando"],
+          ["Cambios incluidos", "Si sus datos cambian, actualizamos la página sin coste adicional y la tarjeta sigue funcionando"],
         ],
       },
       { type: "h2", id: "precios", text: "Precios" },
@@ -144,7 +144,7 @@ export const es: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "cambios", text: "Pedir cambios" },
       {
         type: "p",
-        text: "No necesita editar la página: nosotros la configuramos y la actualizamos. Si cambia de número, de cargo o de email, envíenos el cambio por WhatsApp o por email. Actualizamos la página y la tarjeta sigue funcionando: la misma tarjeta, nada que reimprimir.",
+        text: "No necesita editar la página: nosotros la configuramos y la actualizamos. Si cambia de número, de cargo o de email, envíenos el cambio por WhatsApp o por email. Está incluido, sin coste adicional: actualizamos la página y la tarjeta sigue funcionando, la misma tarjeta, nada que reimprimir.",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const es: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "datos-desactualizados", text: "Los datos están desactualizados" },
       {
         type: "p",
-        text: "Envíenos el cambio por WhatsApp o por email. Actualizamos la página y la tarjeta sigue funcionando, sin reimprimir nada.",
+        text: "Envíenos el cambio por WhatsApp o por email. Actualizamos la página sin coste adicional y la tarjeta sigue funcionando, sin reimprimir nada.",
       },
       { type: "h2", id: "tarjeta-danada", text: "La tarjeta se ha estropeado o perdido" },
       {
@@ -231,7 +231,7 @@ export const es: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "¿Puedo cambiar mis datos más adelante?",
-            a: "Sí. Envíenos el cambio por WhatsApp o por email y actualizamos la página. La tarjeta sigue funcionando: la misma tarjeta, nada que reimprimir.",
+            a: "Sí, y está incluido, sin coste adicional. Envíenos el cambio por WhatsApp o por email y actualizamos la página. La tarjeta sigue funcionando: la misma tarjeta, nada que reimprimir.",
           },
           {
             q: "¿Puedo editar la página yo mismo?",

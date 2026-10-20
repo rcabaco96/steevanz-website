@@ -410,14 +410,13 @@ const goal = (id: GoalId, products: ProductId[], text: Localized<GoalText>) =>
   ) as Localized<Goal>;
 
 const goalList = [
-  goal("found", ["website", "landing-page", "online-shop", "google-review-plates"], {
+  goal("found", ["website", "landing-page", "google-review-plates"], {
     pt: {
       title: "Ser encontrado",
       lead: "Quem procura no Google ou no Instagram chega até si, e gosta do que vê.",
       products: {
         website: { benefit: "Um site rápido que aparece no Google e convence quem chega." },
         "landing-page": { benefit: "Uma página com um só objetivo: que liguem, reservem ou encomendem." },
-        "online-shop": { benefit: "Venda a quem o encontra online, com MB WAY, Multibanco e cartão." },
         "google-review-plates": { benefit: "Mais avaliações no Google, no Tripadvisor ou na Booking, para subir quando o procuram." },
       },
     },
@@ -427,7 +426,6 @@ const goalList = [
       products: {
         website: { benefit: "A fast site that shows up on Google and wins visitors over." },
         "landing-page": { benefit: "One page, one goal: getting people to call, book or order." },
-        "online-shop": { benefit: "Sell to people who find you online, with MB WAY, Multibanco and cards." },
         "google-review-plates": { benefit: "More reviews on Google, Tripadvisor or Booking, so you rank higher when people search." },
       },
     },
@@ -437,7 +435,6 @@ const goalList = [
       products: {
         website: { benefit: "Una web rápida que aparece en Google y convence a quien llega." },
         "landing-page": { benefit: "Una página con un solo objetivo: que llamen, reserven o pidan." },
-        "online-shop": { benefit: "Venda a quien le encuentra online, con MB WAY, Multibanco y tarjeta." },
         "google-review-plates": { benefit: "Más reseñas en Google, Tripadvisor o Booking, para subir cuando le buscan." },
       },
     },
@@ -447,7 +444,6 @@ const goalList = [
       products: {
         website: { benefit: "Un site rapide, visible sur Google, qui convainc les visiteurs." },
         "landing-page": { benefit: "Une page, un seul objectif : qu'on vous appelle, réserve ou commande." },
-        "online-shop": { benefit: "Vendez à ceux qui vous trouvent en ligne, par MB WAY, Multibanco et carte." },
         "google-review-plates": { benefit: "Plus d'avis sur Google, Tripadvisor ou Booking, pour remonter quand on vous cherche." },
       },
     },
@@ -457,7 +453,6 @@ const goalList = [
       products: {
         website: { benefit: "Eine schnelle Website, die bei Google auftaucht und Besucher überzeugt." },
         "landing-page": { benefit: "Eine Seite mit einem Ziel: dass man anruft, reserviert oder bestellt." },
-        "online-shop": { benefit: "Verkaufen Sie an alle, die Sie online finden, mit MB WAY, Multibanco und Karte." },
         "google-review-plates": { benefit: "Mehr Bewertungen auf Google, Tripadvisor oder Booking, damit Sie in der Suche weiter oben stehen." },
       },
     },
@@ -467,7 +462,6 @@ const goalList = [
       products: {
         website: { benefit: "Un sito veloce che compare su Google e convince chi arriva." },
         "landing-page": { benefit: "Una pagina con un solo obiettivo: che La chiamino, prenotino o ordinino." },
-        "online-shop": { benefit: "Venda a chi La trova online, con MB WAY, Multibanco e carta." },
         "google-review-plates": { benefit: "Più recensioni su Google, Tripadvisor o Booking, per salire quando La cercano." },
       },
     },

@@ -41,7 +41,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Diga-nos quantos",
-        body: "Um chaveiro custa 5 € + IVA. Em packs, 10 por 45 € e 25 por 100 €, + IVA. Confirmamos tudo na demonstração.",
+        body: "Um chaveiro custa 5 € + IVA. Em packs, 10 por 45 € e 25 por 100 €, + IVA.",
       },
       {
         title: "Nós configuramos e testamos",
@@ -122,7 +122,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quanto custa?",
-        a: "5 € + IVA por chaveiro. Em packs, 10 chaveiros por 45 € e 25 chaveiros por 100 €, + IVA. São preços indicativos, que confirmamos na demonstração.",
+        a: "5 € + IVA por chaveiro. Em packs, 10 chaveiros por 45 € e 25 chaveiros por 100 €, + IVA.",
       },
       {
         q: "Quanto tempo demora?",
@@ -178,7 +178,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Tell us how many",
-        body: "One keychain costs €5 + VAT. In packs, 10 for €45 and 25 for €100, + VAT. We confirm everything at the demo.",
+        body: "One keychain costs €5 + VAT. In packs, 10 for €45 and 25 for €100, + VAT.",
       },
       {
         title: "We set up and test",
@@ -259,7 +259,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "How much does it cost?",
-        a: "€5 + VAT per keychain. In packs, 10 keychains for €45 and 25 keychains for €100, + VAT. These prices are indicative and we confirm them at the demo.",
+        a: "€5 + VAT per keychain. In packs, 10 keychains for €45 and 25 keychains for €100, + VAT.",
       },
       {
         q: "How long does it take?",
@@ -315,7 +315,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Díganos cuántos",
-        body: "Un llavero cuesta 5 € + IVA. En packs, 10 por 45 € y 25 por 100 €, + IVA. Lo confirmamos todo en la demostración.",
+        body: "Un llavero cuesta 5 € + IVA. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
       },
       {
         title: "Los configuramos y probamos",
@@ -396,7 +396,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Cuánto cuesta?",
-        a: "5 € + IVA por llavero. En packs, 10 llaveros por 45 € y 25 llaveros por 100 €, + IVA. Son precios orientativos, que le confirmamos en la demostración.",
+        a: "5 € + IVA por llavero. En packs, 10 llaveros por 45 € y 25 llaveros por 100 €, + IVA.",
       },
       {
         q: "¿Cuánto tarda?",
@@ -452,7 +452,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Dites-nous combien",
-        body: "Un porte-clés coûte 5 € + TVA. En lots, 10 pour 45 € et 25 pour 100 €, + TVA. Nous confirmons tout lors de la démonstration.",
+        body: "Un porte-clés coûte 5 € + TVA. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
       },
       {
         title: "Nous configurons et testons",
@@ -533,7 +533,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Combien ça coûte ?",
-        a: "5 € + TVA par porte-clés. En lots, 10 porte-clés pour 45 € et 25 porte-clés pour 100 €, + TVA. Ces prix sont indicatifs et nous vous les confirmons lors de la démonstration.",
+        a: "5 € + TVA par porte-clés. En lots, 10 porte-clés pour 45 € et 25 porte-clés pour 100 €, + TVA.",
       },
       {
         q: "Combien de temps faut-il ?",
@@ -589,7 +589,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Menge nennen",
-        body: "Ein Anhänger kostet 5 € zzgl. MwSt. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt. Wir bestätigen alles in der Vorführung.",
+        body: "Ein Anhänger kostet 5 € zzgl. MwSt. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
       },
       {
         title: "Wir richten ein und testen",
@@ -670,7 +670,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Was kostet er?",
-        a: "5 € zzgl. MwSt. pro Anhänger. Im Paket 10 Anhänger für 45 € und 25 Anhänger für 100 €, zzgl. MwSt. Die Preise sind Richtwerte, die wir Ihnen in der Vorführung bestätigen.",
+        a: "5 € zzgl. MwSt. pro Anhänger. Im Paket 10 Anhänger für 45 € und 25 Anhänger für 100 €, zzgl. MwSt.",
       },
       {
         q: "Wie lange dauert es?",
@@ -726,7 +726,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Ci dica quanti",
-        body: "Un portachiavi costa 5 € + IVA. In confezione, 10 per 45 € e 25 per 100 €, + IVA. Confermiamo tutto durante la demo.",
+        body: "Un portachiavi costa 5 € + IVA. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
       },
       {
         title: "Configuriamo e testiamo",
@@ -807,7 +807,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quanto costa?",
-        a: "5 € + IVA al pezzo. In confezione, 10 portachiavi per 45 € e 25 portachiavi per 100 €, + IVA. Sono prezzi indicativi, che confermiamo con Lei durante la demo.",
+        a: "5 € + IVA al pezzo. In confezione, 10 portachiavi per 45 € e 25 portachiavi per 100 €, + IVA.",
       },
       {
         q: "Quanto tempo serve?",

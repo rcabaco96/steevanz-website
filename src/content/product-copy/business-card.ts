@@ -67,7 +67,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Sempre atualizado",
-        body: "Mudou de número, de cargo ou de email? Basta pedir-nos por WhatsApp ou email e atualizamos a página. O mesmo cartão continua a funcionar.",
+        body: "Mudou de número, de cargo ou de email? Basta pedir-nos por WhatsApp ou email e atualizamos a página, sem custo extra. O mesmo cartão continua a funcionar.",
       },
       {
         title: "Com o logótipo da empresa",
@@ -106,7 +106,7 @@ export const copy: ProductCopyByLocale = {
       "Botão «Guardar contacto», que guarda os seus dados no telemóvel do cliente",
       "QR code impresso no cartão",
       "Testes em iPhone e Android antes da entrega",
-      "Atualização da página sempre que nos pedir, feita pela Steevanz",
+      "Atualização da página sempre que nos pedir, feita pela Steevanz e incluída, sem custo extra",
       "Suporte por WhatsApp e email",
     ],
     faq: [
@@ -120,7 +120,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso mudar os meus dados mais tarde?",
-        a: "Sim. Basta pedir-nos por WhatsApp ou email e a Steevanz atualiza a sua página. O cartão continua a ser o mesmo e a funcionar como antes, por isso não há nada para reimprimir.",
+        a: "Sim, e está incluído, sem custo extra. Basta pedir-nos por WhatsApp ou email e a Steevanz atualiza a sua página. O cartão continua a ser o mesmo e a funcionar como antes, por isso não há nada para reimprimir.",
       },
       {
         q: "O logótipo da empresa está incluído?",
@@ -210,7 +210,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Always up to date",
-        body: "New number, new role or new email? Just ask us by WhatsApp or email and we update the page. The same card keeps working.",
+        body: "New number, new role or new email? Just ask us by WhatsApp or email and we update the page at no extra cost. The same card keeps working.",
       },
       {
         title: "With your company logo",
@@ -249,7 +249,7 @@ export const copy: ProductCopyByLocale = {
       "«Save contact» button that saves your details on your client's phone",
       "QR code printed on the card",
       "Testing on iPhone and Android before delivery",
-      "Page updates whenever you ask, done by Steevanz",
+      "Page updates whenever you ask, done by Steevanz and included at no extra cost",
       "Support by WhatsApp and email",
     ],
     faq: [
@@ -263,7 +263,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Can I change my details later?",
-        a: "Yes. Just ask us by WhatsApp or email and Steevanz updates your page. The card stays the same and keeps working as before, so there's nothing to reprint.",
+        a: "Yes, and it's included at no extra cost. Just ask us by WhatsApp or email and Steevanz updates your page. The card stays the same and keeps working as before, so there's nothing to reprint.",
       },
       {
         q: "Is the company logo included?",
@@ -353,7 +353,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Siempre al día",
-        body: "¿Nuevo número, nuevo cargo o nuevo email? Solo tiene que pedírnoslo por WhatsApp o email y actualizamos la página. La misma tarjeta sigue funcionando.",
+        body: "¿Nuevo número, nuevo cargo o nuevo email? Solo tiene que pedírnoslo por WhatsApp o email y actualizamos la página, sin coste adicional. La misma tarjeta sigue funcionando.",
       },
       {
         title: "Con el logotipo de su empresa",
@@ -392,7 +392,7 @@ export const copy: ProductCopyByLocale = {
       "Botón «Guardar contacto», que guarda sus datos en el móvil del cliente",
       "Código QR impreso en la tarjeta",
       "Pruebas en iPhone y Android antes de la entrega",
-      "Actualización de la página siempre que nos la pida, hecha por Steevanz",
+      "Actualización de la página siempre que nos la pida, hecha por Steevanz e incluida, sin coste adicional",
       "Soporte por WhatsApp y email",
     ],
     faq: [
@@ -406,7 +406,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Puedo cambiar mis datos más adelante?",
-        a: "Sí. Solo tiene que pedírnoslo por WhatsApp o email y Steevanz actualiza su página. La tarjeta sigue siendo la misma y funciona igual que antes, así que no hay nada que reimprimir.",
+        a: "Sí, y está incluido, sin coste adicional. Solo tiene que pedírnoslo por WhatsApp o email y Steevanz actualiza su página. La tarjeta sigue siendo la misma y funciona igual que antes, así que no hay nada que reimprimir.",
       },
       {
         q: "¿El logotipo de la empresa está incluido?",
@@ -496,7 +496,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Toujours à jour",
-        body: "Nouveau numéro, nouvelle fonction ou nouvel e-mail ? Il suffit de nous le demander par WhatsApp ou e-mail et nous mettons la page à jour. La même carte continue de fonctionner.",
+        body: "Nouveau numéro, nouvelle fonction ou nouvel e-mail ? Il suffit de nous le demander par WhatsApp ou e-mail et nous mettons la page à jour, sans frais supplémentaires. La même carte continue de fonctionner.",
       },
       {
         title: "Avec le logo de votre entreprise",
@@ -535,7 +535,7 @@ export const copy: ProductCopyByLocale = {
       "Bouton «Enregistrer le contact», qui enregistre vos coordonnées dans le téléphone du client",
       "QR code imprimé sur la carte",
       "Tests sur iPhone et Android avant la livraison",
-      "Mise à jour de la page dès que vous le demandez, réalisée par Steevanz",
+      "Mise à jour de la page dès que vous le demandez, réalisée par Steevanz et incluse, sans frais supplémentaires",
       "Assistance par WhatsApp et e-mail",
     ],
     faq: [
@@ -549,7 +549,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Puis-je modifier mes coordonnées plus tard ?",
-        a: "Oui. Il suffit de nous le demander par WhatsApp ou e-mail et Steevanz met votre page à jour. La carte reste la même et fonctionne comme avant : rien à réimprimer.",
+        a: "Oui, et c'est inclus, sans frais supplémentaires. Il suffit de nous le demander par WhatsApp ou e-mail et Steevanz met votre page à jour. La carte reste la même et fonctionne comme avant : rien à réimprimer.",
       },
       {
         q: "Le logo de l'entreprise est-il inclus ?",
@@ -639,7 +639,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Immer aktuell",
-        body: "Neue Nummer, neue Position oder neue E-Mail? Sagen Sie uns einfach per WhatsApp oder E-Mail Bescheid, und wir aktualisieren die Seite. Dieselbe Karte funktioniert weiter.",
+        body: "Neue Nummer, neue Position oder neue E-Mail? Sagen Sie uns einfach per WhatsApp oder E-Mail Bescheid, und wir aktualisieren die Seite ohne Aufpreis. Dieselbe Karte funktioniert weiter.",
       },
       {
         title: "Mit Ihrem Firmenlogo",
@@ -678,7 +678,7 @@ export const copy: ProductCopyByLocale = {
       "Schaltfläche „Kontakt speichern“, die Ihre Daten im Handy Ihres Kunden speichert",
       "Auf die Karte gedruckter QR-Code",
       "Tests auf iPhone und Android vor der Lieferung",
-      "Aktualisierung der Seite, wann immer Sie es wünschen, durch Steevanz",
+      "Aktualisierung der Seite, wann immer Sie es wünschen, durch Steevanz und inklusive, ohne Aufpreis",
       "Support per WhatsApp und E-Mail",
     ],
     faq: [
@@ -692,7 +692,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Kann ich meine Daten später ändern?",
-        a: "Ja. Sagen Sie uns einfach per WhatsApp oder E-Mail Bescheid, und Steevanz aktualisiert Ihre Seite. Die Karte bleibt dieselbe und funktioniert wie zuvor, es muss also nichts neu gedruckt werden.",
+        a: "Ja, und das ist inklusive, ohne Aufpreis. Sagen Sie uns einfach per WhatsApp oder E-Mail Bescheid, und Steevanz aktualisiert Ihre Seite. Die Karte bleibt dieselbe und funktioniert wie zuvor, es muss also nichts neu gedruckt werden.",
       },
       {
         q: "Ist das Firmenlogo inklusive?",
@@ -782,7 +782,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Sempre aggiornato",
-        body: "Nuovo numero, nuovo ruolo o nuova email? Basta chiedercelo via WhatsApp o email e aggiorniamo la pagina. Lo stesso biglietto continua a funzionare.",
+        body: "Nuovo numero, nuovo ruolo o nuova email? Basta chiedercelo via WhatsApp o email e aggiorniamo la pagina, senza costi aggiuntivi. Lo stesso biglietto continua a funzionare.",
       },
       {
         title: "Con il logo della Sua azienda",
@@ -821,7 +821,7 @@ export const copy: ProductCopyByLocale = {
       "Pulsante «Salvi il contatto», che salva i Suoi dati nel telefono del cliente",
       "QR code stampato sul biglietto",
       "Test su iPhone e Android prima della consegna",
-      "Aggiornamento della pagina ogni volta che ce lo chiede, a cura di Steevanz",
+      "Aggiornamento della pagina ogni volta che ce lo chiede, a cura di Steevanz e incluso, senza costi aggiuntivi",
       "Assistenza via WhatsApp ed email",
     ],
     faq: [
@@ -835,7 +835,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso cambiare i miei dati più avanti?",
-        a: "Sì. Basta chiedercelo via WhatsApp o email e Steevanz aggiorna la Sua pagina. Il biglietto resta lo stesso e funziona come prima, quindi non c'è nulla da ristampare.",
+        a: "Sì, ed è incluso, senza costi aggiuntivi. Basta chiedercelo via WhatsApp o email e Steevanz aggiorna la Sua pagina. Il biglietto resta lo stesso e funziona come prima, quindi non c'è nulla da ristampare.",
       },
       {
         q: "Il logo dell'azienda è incluso?",

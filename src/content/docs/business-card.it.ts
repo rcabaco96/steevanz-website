@@ -23,7 +23,7 @@ export const it: Record<DocPageId, DocPageContent> = {
           ["Personalizzazione", "Il Suo nome, ruolo, contatti e il logo dell'azienda, inclusi nel prezzo"],
           ["Pagina di contatto digitale", "Veloce, pensata per il telefono, con il pulsante «Salvi il contatto»"],
           ["Tocco o QR", "Si apre con un tocco del telefono o con il codice QR stampato sul biglietto, su iPhone e Android, senza app"],
-          ["Modifiche fatte da noi", "Se i Suoi dati cambiano, aggiorniamo la pagina e il biglietto continua a funzionare"],
+          ["Modifiche incluse", "Se i Suoi dati cambiano, aggiorniamo la pagina senza costi aggiuntivi e il biglietto continua a funzionare"],
         ],
       },
       { type: "h2", id: "prezzi", text: "Prezzi" },
@@ -144,7 +144,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "modifiche", text: "Chiedere modifiche" },
       {
         type: "p",
-        text: "Non deve modificare la pagina da solo: siamo noi a configurarla e aggiornarla. Se cambiano il Suo numero, il Suo ruolo o la Sua email, ci invii la modifica via WhatsApp o email. Aggiorniamo la pagina e il biglietto continua a funzionare: lo stesso biglietto, niente da ristampare.",
+        text: "Non deve modificare la pagina da solo: siamo noi a configurarla e aggiornarla. Se cambiano il Suo numero, il Suo ruolo o la Sua email, ci invii la modifica via WhatsApp o email. È incluso, senza costi aggiuntivi: aggiorniamo la pagina e il biglietto continua a funzionare, lo stesso biglietto, niente da ristampare.",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "dati-non-aggiornati", text: "I dati non sono aggiornati" },
       {
         type: "p",
-        text: "Ci invii la modifica via WhatsApp o email. Aggiorniamo la pagina e il biglietto continua a funzionare, senza ristampare nulla.",
+        text: "Ci invii la modifica via WhatsApp o email. Aggiorniamo la pagina senza costi aggiuntivi e il biglietto continua a funzionare, senza ristampare nulla.",
       },
       { type: "h2", id: "biglietto-rovinato", text: "Il biglietto si è rovinato o è andato perso" },
       {
@@ -231,7 +231,7 @@ export const it: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Posso cambiare i miei dati in seguito?",
-            a: "Sì. Ci invii la modifica via WhatsApp o email e aggiorniamo la pagina. Il biglietto continua a funzionare: lo stesso biglietto, niente da ristampare.",
+            a: "Sì, ed è incluso, senza costi aggiuntivi. Ci invii la modifica via WhatsApp o email e aggiorniamo la pagina. Il biglietto continua a funzionare: lo stesso biglietto, niente da ristampare.",
           },
           {
             q: "Posso modificare la pagina da solo?",

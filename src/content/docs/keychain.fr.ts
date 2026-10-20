@@ -33,7 +33,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
           ["Lot de 25", "4 €", "100 €"],
         ],
       },
-      { type: "p", text: "Tous les prix + TVA. Ils sont indicatifs et confirmés lors de la démonstration." },
+      { type: "p", text: "Tous les prix + TVA." },
       { type: "h2", id: "comment-ca-marche", text: "Comment ça marche pour le client" },
       {
         type: "ol",
@@ -205,7 +205,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Combien ça coûte ?",
-            a: "5 € + TVA par porte-clés. En lots, 10 pour 45 € et 25 pour 100 €, + TVA. Ces prix sont indicatifs et confirmés lors de la démonstration.",
+            a: "5 € + TVA par porte-clés. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
           },
           {
             q: "Combien de temps faut-il ?",

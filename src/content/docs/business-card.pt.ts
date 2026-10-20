@@ -23,7 +23,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
           ["Personalização", "O seu nome, cargo, contactos e o logótipo da empresa, incluídos no preço"],
           ["Página de contacto digital", "Rápida, feita para o telemóvel, com o botão «Guardar contacto»"],
           ["Toque ou QR", "Abre com um toque do telemóvel ou pelo QR code impresso no cartão, em iPhone e Android, sem app"],
-          ["Alterações feitas por nós", "Se os seus dados mudarem, atualizamos a página e o cartão continua a funcionar"],
+          ["Alterações incluídas", "Se os seus dados mudarem, atualizamos a página sem custo extra e o cartão continua a funcionar"],
         ],
       },
       { type: "h2", id: "precos", text: "Preços" },
@@ -144,7 +144,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "alteracoes", text: "Pedir alterações" },
       {
         type: "p",
-        text: "Não precisa de editar a página: somos nós que a configuramos e atualizamos. Se mudar de número, de cargo ou de email, envie-nos a alteração por WhatsApp ou email. Atualizamos a página e o cartão continua a funcionar: o mesmo cartão, nada para reimprimir.",
+        text: "Não precisa de editar a página: somos nós que a configuramos e atualizamos. Se mudar de número, de cargo ou de email, envie-nos a alteração por WhatsApp ou email. Está incluído, sem custo extra: atualizamos a página e o cartão continua a funcionar, o mesmo cartão, nada para reimprimir.",
       },
     ],
   },
@@ -209,7 +209,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "dados-desatualizados", text: "Os dados estão desatualizados" },
       {
         type: "p",
-        text: "Envie-nos a alteração por WhatsApp ou email. Atualizamos a página e o cartão continua a funcionar, sem reimprimir nada.",
+        text: "Envie-nos a alteração por WhatsApp ou email. Atualizamos a página sem custo extra e o cartão continua a funcionar, sem reimprimir nada.",
       },
       { type: "h2", id: "cartao-danificado", text: "O cartão estragou-se ou perdeu-se" },
       {
@@ -231,7 +231,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Posso mudar os meus dados depois?",
-            a: "Sim. Envie-nos a alteração por WhatsApp ou email e atualizamos a página. O cartão continua a funcionar: o mesmo cartão, nada para reimprimir.",
+            a: "Sim, e está incluído, sem custo extra. Envie-nos a alteração por WhatsApp ou email e atualizamos a página. O cartão continua a funcionar: o mesmo cartão, nada para reimprimir.",
           },
           {
             q: "Posso editar a página sozinho?",
