@@ -21,6 +21,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Menu em vídeo", "Página do negócio com o logótipo, coleções e um vídeo vertical por prato, com nome, preço e descrição"],
           ["Pedidos à mesa (opcional)", "A mesa faz o pedido no telemóvel e a equipa confirma-o lendo um QR code"],
+          ["Seis idiomas", "Português, inglês, espanhol, francês, alemão e italiano: cada cliente escolhe o seu no botão da bandeira"],
           ["Placa circular", "Autocolante circular de mesa ou base circular de mesa, uma por mesa"],
           ["QR code impresso", "Para telemóveis sem leitura por aproximação ou com essa opção desligada"],
           ["Montagem e alojamento", "Montamos o menu e alojamos o menu e os vídeos"],
@@ -115,6 +116,11 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "p",
         text: "Os pratos arrumam-se em coleções, por exemplo Brunch e Bebidas. Todas aparecem na mesma página, uma secção a seguir à outra, e o botão ☰ leva o cliente diretamente a cada uma.",
       },
+      { type: "h2", id: "idiomas", text: "Idiomas" },
+      {
+        type: "p",
+        text: "O menu lê-se em seis idiomas: português, inglês, espanhol, francês, alemão e italiano. Abre no idioma do telemóvel do cliente (ou no que escolheu da última vez) e o botão da bandeira, ao lado do ☰, muda de idioma sem recarregar a página, com os vídeos a tocar. Os botões do menu e os pedidos à mesa já estão traduzidos; os nomes e as descrições dos pratos e os nomes das secções traduzem-se prato a prato, e o que não tiver tradução aparece em português. Os preços aparecem no formato de cada idioma.",
+      },
       { type: "h2", id: "pedidos-mesa", text: "Pedidos à mesa" },
       {
         type: "p",
@@ -152,7 +158,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         items: [
           "Todos os telemóveis da mesa veem o mesmo pedido em tempo real. Cada pessoa toca em «Adicionar» nos pratos e pode juntar uma nota, como «sem cebola».",
           "Em «Fazer pedido», o telemóvel mostra um QR code e o número do pedido.",
-          "O funcionário lê o QR code com a câmara do telemóvel, sem app nem login, e vê a mesa, a hora, os pratos com as notas e o total.",
+          "O funcionário lê o QR code com a câmara do telemóvel, sem app nem login, e vê a mesa, a hora, os pratos com as notas e o total. Esta página está sempre em português e indica o idioma em que o cliente pediu.",
           "Toca em «Confirmar pedido» e a mesa vê logo «Pedido confirmado ✓».",
         ],
       },
@@ -209,6 +215,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
           { q: "Substitui o menu em papel?", a: "Complementa-o. Mostra os pratos em vídeo, o que ajuda a escolher, mas o menu em papel continua útil para quem prefere." },
           { q: "Quanto custa?", a: "20 € por placa, ou 15 € por placa a partir de 10 placas. O logótipo paga-se uma vez por encomenda. A montagem e o alojamento do menu custam 30 € por mês (sem IVA)." },
           { q: "Quem grava os vídeos?", a: "Normalmente o próprio negócio, com o telemóvel: damos-lhe um guia para gravar os vídeos. Nós montamos o menu e alojamos os vídeos." },
+          { q: "Em que idiomas está o menu?", a: "Em seis: português, inglês, espanhol, francês, alemão e italiano. O menu abre no idioma do telemóvel e o cliente muda-o no botão da bandeira. O que ainda não tiver tradução aparece em português." },
           { q: "Os pedidos à mesa são obrigatórios?", a: "Não. Ligam-se e desligam-se menu a menu. Sem eles, a placa abre o menu só para ver." },
           { q: "Posso mudar o menu mais tarde?", a: "Sim, sem trocar as placas. Envie-nos os pratos, os preços ou os vídeos novos e atualizamos o menu." },
         ],

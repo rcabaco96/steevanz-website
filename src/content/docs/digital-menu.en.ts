@@ -21,6 +21,7 @@ export const en: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Video menu", "Your business's page with your logo, collections and one vertical video per dish, with name, price and description"],
           ["Table ordering (optional)", "The table orders from their phones and your team confirms by scanning a QR code"],
+          ["Six languages", "Portuguese, English, Spanish, French, German and Italian: each guest picks theirs with the flag button"],
           ["Round plate", "Round table sticker or round table base, one per table"],
           ["Printed QR code", "For phones that can't read a tap or have that option switched off"],
           ["Setup and hosting", "We build the menu and host the menu and videos"],
@@ -47,7 +48,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           "The guest sits down and taps the plate with their phone (or scans the QR code).",
           "The menu opens with an animation of your logo, at the top of the page.",
           "Dishes play in a grid. One tap opens full screen, just like Reels, and guests swipe up and down to see the others.",
-          "With table ordering on, the guest taps «Adicionar» (add) on the dishes and orders right there.",
+          "With table ordering on, the guest taps «Add» on the dishes and orders right there.",
         ],
       },
       { type: "h2", id: "next-steps", text: "Next steps" },
@@ -115,6 +116,11 @@ export const en: Record<DocPageId, DocPageContent> = {
         type: "p",
         text: "Dishes are grouped into collections, such as Brunch and Drinks. They are all on the same page, one section after another, and the ☰ button takes guests straight to each one.",
       },
+      { type: "h2", id: "languages", text: "Languages" },
+      {
+        type: "p",
+        text: "The menu can be read in six languages: Portuguese, English, Spanish, French, German and Italian. It opens in the language of the guest's phone (or the one they chose last time), and the flag button next to ☰ switches language without reloading the page, with the videos still playing. The menu's buttons and table ordering are already translated; dish names, descriptions and section names are translated dish by dish, and anything without a translation shows in Portuguese. Prices appear in each language's format.",
+      },
       { type: "h2", id: "table-ordering", text: "Table ordering" },
       {
         type: "p",
@@ -150,10 +156,10 @@ export const en: Record<DocPageId, DocPageContent> = {
       {
         type: "ol",
         items: [
-          "Every phone at the table sees the same order in real time. Each person taps «Adicionar» (add) on the dishes and can add a note, such as «sem cebola» (no onion).",
-          "«Fazer pedido» (place order) shows a QR code and the order number on the phone.",
-          "Your staff scan the QR code with their phone camera, no app or login, and see the table, the time, the dishes with their notes and the total.",
-          "They tap «Confirmar pedido» (confirm order) and the table sees «Pedido confirmado ✓» (order confirmed) straight away.",
+          "Every phone at the table sees the same order in real time. Each person taps «Add» on the dishes and can add a note, such as «no onion».",
+          "«Place order» shows a QR code and the order number on the phone.",
+          "Your staff scan the QR code with their phone camera, no app or login, and see the table, the time, the dishes with their notes and the total. This page is always in Portuguese and shows the language the guest ordered in.",
+          "They tap «Confirmar pedido» (confirm order) and the table sees «Order confirmed ✓» straight away.",
         ],
       },
       {
@@ -209,6 +215,7 @@ export const en: Record<DocPageId, DocPageContent> = {
           { q: "Does it replace the printed menu?", a: "It complements it. Seeing dishes on video helps guests choose, but the printed menu is still useful for those who prefer it." },
           { q: "How much does it cost?", a: "€20 per plate, or €15 per plate from 10 plates. The logo is charged once per order. Building and hosting the menu cost €30 a month (excluding VAT)." },
           { q: "Who films the videos?", a: "Usually the business itself, with a phone: we give you a guide to filming the videos. We build the menu and host the videos." },
+          { q: "Which languages is the menu in?", a: "Six: Portuguese, English, Spanish, French, German and Italian. The menu opens in the phone's language and guests switch it with the flag button. Anything not yet translated shows in Portuguese." },
           { q: "Is table ordering required?", a: "No. It's switched on or off menu by menu. Without it, the plate opens the menu just for browsing." },
           { q: "Can I change the menu later?", a: "Yes, without changing the plates. Send us the new dishes, prices or videos and we update the menu." },
         ],
