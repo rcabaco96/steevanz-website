@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { cartCopy } from "../src/content/cart.ts";
 import { docPages } from "../src/content/doc-pages.ts";
+import { legalDocuments } from "../src/content/legal.ts";
 import { mockupCopy } from "../src/content/mockups.ts";
 import { sectors } from "../src/content/sectors.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
@@ -90,6 +91,22 @@ describe("sector pages in every language", () => {
         }
       }
       for (const text of strings([sector.copy, sector.bundleNote, sector.pack?.copy])) assertHouseWords(text);
+    }
+  });
+});
+
+describe("legal pages in every language", () => {
+  it("translates privacy, cookies and terms in full, says the Portuguese text prevails and keeps the Portuguese law references", () => {
+    const prevails = { es: /prevalece la versión en portugués/, fr: /la version portugaise prévaut/, de: /gilt die portugiesische Fassung/, it: /prevale la versione in portoghese/ };
+    for (const [id, document] of Object.entries(legalDocuments)) {
+      assertFull(`legal.${id}`, document);
+      for (const locale of extraLocales) {
+        assert.match(document[locale].updated, prevails[locale], `${id}.${locale}`);
+        const text = strings(document[locale]).join(" ");
+        for (const law of strings(document.pt).join(" ").match(/\d+\/\d{4}/g) ?? []) assert.ok(text.includes(law), `${id}.${locale} keeps ${law}`);
+        assert.equal(new Set(document[locale].sections.map((section) => section.id)).size, document[locale].sections.length);
+      }
+      for (const text of strings(document)) assertHouseWords(text);
     }
   });
 });
