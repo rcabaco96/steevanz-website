@@ -41,10 +41,16 @@ function assertTranslated(record, en, pt, label) {
 }
 
 describe("website products translated in es, fr, de, it", () => {
-  for (const id of ["website", "landing-page"]) {
+  for (const id of ["website", "landing-page", "online-shop"]) {
     it(`translates the whole ${id} page`, () => {
       const { pt, en } = productCopy[id];
       for (const locale of extraLocales) assertTranslated(productCopy[id][locale], en, pt, `${id}.${locale}`);
     });
   }
+});
+
+describe("online shop price (owner, 2026-10-20: from 900 €)", () => {
+  it("says 900 in the FAQ in every language", () => {
+    for (const locale of ["pt", "en", ...extraLocales]) assert.match(productCopy["online-shop"][locale].faq[0].a, /900/, locale);
+  });
 });
