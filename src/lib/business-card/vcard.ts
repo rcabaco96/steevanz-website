@@ -43,6 +43,7 @@ export function buildVCard(card: BusinessCard, photo?: VCardPhoto): string {
   if (card.company) lines.push(`ORG:${escapeText(card.company)}`);
   if (card.role) lines.push(`TITLE:${escapeText(card.role)}`);
   if (card.phone) lines.push(`TEL;TYPE=CELL,VOICE:${phoneForLink(card.phone)}`);
+  if (card.phone2) lines.push(`TEL;TYPE=WORK,VOICE:${phoneForLink(card.phone2)}`);
   if (card.email) lines.push(`EMAIL;TYPE=INTERNET,WORK:${card.email}`);
   if (card.website) lines.push(`URL;TYPE=WORK:${card.website}`);
   // Labelled links (Apple's item grouping): iPhone shows «Instagram», «LinkedIn», «WhatsApp»; Android keeps the links.

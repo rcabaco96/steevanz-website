@@ -1,6 +1,7 @@
 // The people behind each «Cartão de visita digital»: the page /c/<slug> and its contact file /c/<slug>/vcard.
-// A content file for now (owner, 2026-10-20); a database and an admin editor can replace it later, with the
-// owner's approval. Only real people who asked for a card, with the details they gave us.
+// Since 2026-10-20 the cards live in the database (table business_cards, edited in /admin/cartoes); this file is
+// the fallback while that table doesn't exist yet (migration 20261020200000_business_cards_keychains.sql), so the
+// example card never breaks. Only real people who asked for a card, with the details they gave us.
 // Relative imports with extensions keep this module runnable by `node --test` (tests/business-card.test.mjs).
 import type { Locale, Localized } from "../lib/i18n.ts";
 
@@ -20,6 +21,8 @@ export interface BusinessCard {
   photo?: { src: string; width: number; height: number };
   /** International format with spaces for display, e.g. «+351 961 292 679». */
   phone?: string;
+  /** A second number (office, landline), same format. */
+  phone2?: string;
   /** WhatsApp number (any format; only the digits are used). */
   whatsapp?: string;
   email?: string;
