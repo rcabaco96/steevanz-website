@@ -277,13 +277,143 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
-  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
   es: {
     name: "Menú digital",
     shortName: "Menú digital",
     tagline: "Cada plato en su vídeo, con su precio, con un toque en la mesa.",
     summary:
       "La carta de su negocio en vídeo: cada plato tiene su vídeo vertical, con nombre, precio y descripción. El cliente la abre con un toque o con el QR de la placa de la mesa y, si usted quiere, pide desde ahí mismo.",
+    metaTitle: "Menú digital para restaurantes | Steevanz",
+    metaDescription:
+      "Carta en vídeo para restaurantes y cafeterías: un vídeo por plato, con precio, que se abre con un toque o con un QR en la mesa, y pedidos desde la mesa si lo desea. Placas a 20 €, 15 € a partir de 10.",
+    heroTitle: "La carta cobra vida con un toque en la mesa",
+    heroSubtitle:
+      "Cada plato tiene su vídeo vertical, con nombre, precio y descripción, en una página propia de su negocio. El cliente toca la placa de la mesa o escanea el QR, desliza los platos como en los Reels y ve lo que va a comer antes de pedir. Sin app. Nosotros lo montamos todo.",
+    problem: {
+      title: "Una carta de papel no abre el apetito",
+      body:
+        "El nombre de un plato en una hoja plastificada dice poco. El cliente no sabe cómo es la ración ni cómo llega el plato a la mesa: pregunta al camarero, duda y acaba pidiendo lo que ya conoce. Los vídeos que usted publica en redes sociales existen, pero quien está sentado a la mesa no los encuentra.",
+      points: [
+        "Platos que nadie pide porque nadie sabe cómo son",
+        "Camareros explicando el mismo plato en cada mesa",
+        "Vídeos y fotos de los platos perdidos entre el resto de su perfil",
+      ],
+    },
+    solution: {
+      title: "La carta a la vista en cada mesa",
+      body:
+        "Cada placa abre la carta en vídeo de su negocio, en una página pensada para el móvil. Los platos se ordenan en colecciones, como Brunch o Bebidas, y cada uno reproduce su vídeo, con su precio. Un toque abre el plato a pantalla completa.",
+      points: [
+        "Un vídeo vertical por plato, con nombre, precio y descripción",
+        "Colecciones a su medida, como Brunch, Bebidas o Todos",
+        "Pedidos desde la mesa, si lo desea: la mesa pide desde el móvil",
+        "Se abre con un toque o con el código QR impreso, sin app",
+      ],
+    },
+    steps: [
+      {
+        title: "Grabe sus platos",
+        body: "Grabe con el móvil un vídeo corto y vertical de cada plato. Le damos una guía para grabar los vídeos.",
+      },
+      {
+        title: "Montamos la carta",
+        body: "Envíenos los vídeos, los nombres, los precios y las descripciones. Montamos la carta con su logotipo y sus colecciones, y alojamos los vídeos.",
+      },
+      {
+        title: "Programamos las placas",
+        body: "Pegatina redonda o base redonda, una por mesa, con su texto y, si lo desea, su logotipo. Cada placa sale programada, bloqueada y probada en iPhone y Android, con un código QR que abre la misma carta.",
+      },
+      {
+        title: "Toque y elija",
+        body: "El cliente toca la placa o escanea el QR, ve los platos en vídeo, con sus precios, y elige. Con los pedidos desde la mesa activados, pide al momento.",
+      },
+    ],
+    features: [
+      {
+        title: "Un vídeo por plato",
+        body: "Cada plato tiene su vídeo vertical, hasta 4K a pantalla completa, con el nombre, el precio y la descripción encima. Steevanz aloja los vídeos.",
+      },
+      {
+        title: "Como en los Reels",
+        body: "Los platos se reproducen en una cuadrícula. Un toque abre la pantalla completa, siguiendo desde donde iba el vídeo, y basta deslizar hacia arriba o hacia abajo para ver los demás. La carta se abre con una animación de su logotipo.",
+      },
+      {
+        title: "Pedidos desde la mesa",
+        body: "Opcionales, carta por carta. Cada mesa tiene su placa y todos los móviles de la mesa comparten el mismo pedido en tiempo real, con «Añadir» en cada plato y una nota por plato, como «sin cebolla».",
+      },
+      {
+        title: "Confirmado por su equipo",
+        body: "«Hacer pedido» muestra un código QR y el número del pedido. El camarero lo escanea con la cámara del móvil, sin app ni inicio de sesión, lo confirma con un toque y la mesa ve al instante «Pedido confirmado ✓».",
+      },
+      {
+        title: "Pequeña y redonda",
+        body: "Más pequeña que las demás placas Steevanz, cabe en cualquier mesa junto a las vinagreras, sin quitar sitio a los platos.",
+      },
+      {
+        title: "Precios siempre al día",
+        body: "¿Ha cambiado un precio o hay un plato nuevo? Díganoslo y actualizamos la carta. Las placas siguen igual.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurantes",
+        body: "Una placa en cada mesa muestra en vídeo los platos del día y las especialidades de la casa, con su precio. El cliente elige mientras espera y, con los pedidos desde la mesa, envía el pedido desde el móvil: el camarero solo tiene que confirmarlo.",
+      },
+      {
+        sector: "restaurants",
+        title: "Cafeterías y terrazas",
+        body: "En las mesas de la terraza, el cliente ve los desayunos, los pasteles y las bebidas de la casa sin tener que ir a la barra a preguntar qué hay.",
+      },
+      {
+        sector: "restaurants",
+        title: "Locales con muchos turistas",
+        body: "Un vídeo enseña el plato sin necesidad de traducción. Quien no conoce la cocina portuguesa entiende qué es un bacalhau à Brás antes de pedirlo.",
+      },
+      {
+        sector: "retail",
+        title: "Panaderías y comida para llevar",
+        body: "Una pegatina en el mostrador abre la carta en vídeo con los pasteles, los salados y los menús del día, con precios, mientras el cliente espera su turno.",
+      },
+    ],
+    includes: [
+      "Carta en vídeo con página propia, colecciones y su logotipo",
+      "Montaje de la carta y alojamiento de la carta y de los vídeos",
+      "Guía para grabar los vídeos de los platos",
+      "Pedidos desde la mesa, si lo desea, con una placa por mesa",
+      "Placas redondas con código QR impreso, programadas y probadas en iPhone y Android",
+      "Soporte por WhatsApp y email",
+    ],
+    faq: [
+      {
+        q: "¿Necesito Instagram o YouTube?",
+        a: "No. La carta tiene su propia página en Steevanz y nosotros alojamos los vídeos. El cliente no necesita cuenta ni app: la carta se abre en el navegador del móvil.",
+      },
+      {
+        q: "Todavía no tengo vídeos de los platos. ¿Y ahora?",
+        a: "Grábelos con el móvil: un vídeo corto y vertical por plato. Le damos una guía para grabarlos y montamos la carta en cuanto los tenga.",
+      },
+      {
+        q: "¿Cómo funcionan los pedidos desde la mesa?",
+        a: "Cada mesa tiene su placa. Quien está en la mesa toca «Añadir» en los platos, añade una nota si quiere y todos ven el mismo pedido en tiempo real. En «Hacer pedido» aparece un código QR y el número del pedido: el camarero lo escanea con la cámara del móvil, sin app ni inicio de sesión, y lo confirma con un toque. La mesa ve «Pedido confirmado ✓». Los pedidos desde la mesa se activan o desactivan carta por carta.",
+      },
+      {
+        q: "¿Cuánto cuesta?",
+        a: "Las placas cuestan 20 € cada una, con la configuración incluida, y 15 € cada una a partir de 10 placas. El logotipo y los colores cuestan 10 € más, una sola vez por encargo. El montaje de la carta y el alojamiento de la carta y de los vídeos cuestan 30 € al mes. Precios sin IVA.",
+      },
+      {
+        q: "¿Cómo mantengo los precios al día?",
+        a: "Díganos qué ha cambiado y actualizamos la carta: precios, platos, colecciones y vídeos. Las placas no cambian.",
+      },
+      {
+        q: "¿Sustituye a la carta de papel?",
+        a: "La complementa. El Menú digital muestra los platos, pero no sustituye la información que el restaurante debe tener disponible, como la lista de precios y los alérgenos.",
+      },
+      {
+        q: "¿Qué móviles leen las placas?",
+        a: "Los iPhone XS y posteriores leen las placas sin app: basta con acercar la parte superior del móvil. En los iPhone 7 a X, use el lector de etiquetas del Centro de control. La mayoría de los Android las leen siempre que la lectura por proximidad esté activada. Para los demás, hay un código QR impreso.",
+      },
+    ],
   },
   fr: {
     name: "Menu digital",
@@ -291,6 +421,137 @@ export const copy: ProductCopyByLocale = {
     tagline: "Chaque plat dans sa vidéo, avec son prix, d'un toucher sur la table.",
     summary:
       "La carte de votre établissement en vidéo : chaque plat a sa vidéo verticale, avec son nom, son prix et sa description. Le client l'ouvre d'un toucher ou avec le QR code de la plaque de table et, si vous le souhaitez, commande directement.",
+    metaTitle: "Menu digital pour restaurants | Steevanz",
+    metaDescription:
+      "Une carte en vidéo pour restaurants et cafés : une vidéo par plat, avec son prix, ouverte d'un toucher ou par QR code sur la table, avec commande à table si vous le souhaitez. Plaques à 20 €, 15 € dès 10.",
+    heroTitle: "Votre carte prend vie d'un toucher sur la table",
+    heroSubtitle:
+      "Chaque plat a sa vidéo verticale, avec son nom, son prix et sa description, sur une page dédiée à votre établissement. Le client touche la plaque de la table ou scanne le QR code, fait défiler les plats comme des Reels et voit ce qu'il va manger avant de commander. Sans application. Nous nous occupons de tout.",
+    problem: {
+      title: "Une carte papier ne met pas en appétit",
+      body:
+        "Le nom d'un plat sur une feuille plastifiée ne dit pas grand-chose. Le client ne connaît ni la taille de la portion ni la présentation du plat : il interroge le serveur, hésite et finit par commander ce qu'il connaît déjà. Les vidéos que vous publiez sur les réseaux sociaux existent, mais personne à table ne les trouve.",
+      points: [
+        "Des plats que personne ne commande, faute de savoir à quoi ils ressemblent",
+        "Des serveurs qui expliquent le même plat à chaque table",
+        "Des vidéos et des photos de vos plats noyées dans votre profil",
+      ],
+    },
+    solution: {
+      title: "La carte sous les yeux, à chaque table",
+      body:
+        "Chaque plaque ouvre la carte en vidéo de votre établissement, sur une page conçue pour le téléphone. Les plats sont rangés en collections, comme Brunch ou Boissons, et chacun lance sa vidéo, avec son prix. Un toucher ouvre le plat en plein écran.",
+      points: [
+        "Une vidéo verticale par plat, avec nom, prix et description",
+        "Des collections sur mesure, comme Brunch, Boissons ou Tout",
+        "La commande à table, si vous le souhaitez : la table commande depuis le téléphone",
+        "S'ouvre d'un toucher ou avec le QR code imprimé, sans application",
+      ],
+    },
+    steps: [
+      {
+        title: "Filmez vos plats",
+        body: "Filmez une courte vidéo verticale de chaque plat avec votre téléphone. Nous vous donnons un guide pour tourner les vidéos.",
+      },
+      {
+        title: "Nous créons la carte",
+        body: "Envoyez-nous les vidéos, les noms, les prix et les descriptions. Nous créons la carte avec votre logo et vos collections, et nous hébergeons les vidéos.",
+      },
+      {
+        title: "Nous programmons les plaques",
+        body: "Autocollant rond ou socle rond, un par table, avec votre texte et, si vous le souhaitez, votre logo. Chaque plaque est programmée, verrouillée et testée sur iPhone et Android, avec un QR code qui ouvre la même carte.",
+      },
+      {
+        title: "Touchez et choisissez",
+        body: "Le client touche la plaque ou scanne le QR code, voit vos plats en vidéo, avec les prix, et fait son choix. Avec la commande à table activée, il commande aussitôt.",
+      },
+    ],
+    features: [
+      {
+        title: "Une vidéo par plat",
+        body: "Chaque plat a sa vidéo verticale, jusqu'en 4K en plein écran, avec le nom, le prix et la description par-dessus. Steevanz héberge les vidéos.",
+      },
+      {
+        title: "Comme les Reels",
+        body: "Les plats tournent en vidéo dans une grille. Un toucher ouvre le plein écran, en reprenant là où en était la vidéo, et on fait glisser vers le haut ou vers le bas pour voir les autres. La carte s'ouvre sur une animation de votre logo.",
+      },
+      {
+        title: "Commande à table",
+        body: "En option, carte par carte. Chaque table a sa plaque et tous les téléphones de la table partagent la même commande en temps réel, avec «Ajouter» sur chaque plat et une note par plat, comme «sans oignon».",
+      },
+      {
+        title: "Confirmée par votre équipe",
+        body: "«Commander» affiche un QR code et le numéro de commande. Le serveur le scanne avec l'appareil photo de son téléphone, sans application ni identifiant, confirme d'un toucher et la table voit aussitôt «Commande confirmée ✓».",
+      },
+      {
+        title: "Petite et ronde",
+        body: "Plus petite que les autres plaques Steevanz, elle trouve sa place sur n'importe quelle table, à côté du sel et du poivre, sans prendre la place des assiettes.",
+      },
+      {
+        title: "Des prix toujours justes",
+        body: "Un prix a changé ou un nouveau plat arrive ? Dites-le-nous et nous mettons la carte à jour. Les plaques ne changent pas.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants",
+        body: "Une plaque sur chaque table présente en vidéo les plats du jour et les spécialités de la maison, avec leur prix. Le client choisit en attendant et, avec la commande à table, envoie sa commande depuis son téléphone : le serveur n'a plus qu'à la confirmer.",
+      },
+      {
+        sector: "restaurants",
+        title: "Cafés et terrasses",
+        body: "En terrasse, le client découvre vos petits-déjeuners, vos gâteaux et vos boissons maison sans aller au comptoir demander ce qu'il y a.",
+      },
+      {
+        sector: "restaurants",
+        title: "Adresses très touristiques",
+        body: "Une vidéo montre le plat sans besoin de traduction. Ceux qui ne connaissent pas la cuisine portugaise comprennent ce qu'est un bacalhau à Brás avant de le commander.",
+      },
+      {
+        sector: "retail",
+        title: "Boulangeries et vente à emporter",
+        body: "Un autocollant sur le comptoir ouvre la carte en vidéo avec les gâteaux, les salés et les menus du jour, avec les prix, pendant que le client attend son tour.",
+      },
+    ],
+    includes: [
+      "Carte en vidéo sur sa propre page, avec collections et votre logo",
+      "Création de la carte et hébergement de la carte et des vidéos",
+      "Un guide pour filmer les vidéos de vos plats",
+      "La commande à table, si vous le souhaitez, avec une plaque par table",
+      "Plaques rondes avec QR code imprimé, programmées et testées sur iPhone et Android",
+      "Assistance par WhatsApp et e-mail",
+    ],
+    faq: [
+      {
+        q: "Ai-je besoin d'Instagram ou de YouTube ?",
+        a: "Non. La carte a sa propre page chez Steevanz et nous hébergeons les vidéos. Le client n'a besoin ni de compte ni d'application : la carte s'ouvre dans le navigateur de son téléphone.",
+      },
+      {
+        q: "Je n'ai pas encore de vidéos de mes plats. Que faire ?",
+        a: "Filmez-les avec votre téléphone : une courte vidéo verticale par plat. Nous vous donnons un guide pour les tourner et nous créons la carte dès que vous les avez.",
+      },
+      {
+        q: "Comment fonctionne la commande à table ?",
+        a: "Chaque table a sa plaque. À table, chacun touche «Ajouter» sur les plats, ajoute une note s'il le souhaite, et tout le monde voit la même commande en temps réel. «Commander» affiche un QR code et le numéro de commande : le serveur le scanne avec l'appareil photo de son téléphone, sans application ni identifiant, et confirme d'un toucher. La table voit «Commande confirmée ✓». La commande à table s'active ou se désactive carte par carte.",
+      },
+      {
+        q: "Combien ça coûte ?",
+        a: "Les plaques coûtent 20 € pièce, configuration comprise, et 15 € pièce à partir de 10 plaques. Le logo et les couleurs coûtent 10 € de plus, une seule fois par commande de plaques. La création de la carte et l'hébergement de la carte et des vidéos coûtent 30 € par mois. Prix hors TVA.",
+      },
+      {
+        q: "Comment garder les prix à jour ?",
+        a: "Dites-nous ce qui a changé et nous mettons la carte à jour : prix, plats, collections et vidéos. Les plaques ne changent pas.",
+      },
+      {
+        q: "Remplace-t-il la carte papier ?",
+        a: "Il la complète. Le Menu digital montre vos plats, mais ne remplace pas les informations que le restaurant doit tenir à disposition, comme les prix affichés et les allergènes.",
+      },
+      {
+        q: "Quels téléphones lisent les plaques ?",
+        a: "Les iPhone XS et plus récents lisent les plaques sans application : il suffit d'en approcher le haut du téléphone. Sur les iPhone 7 à X, utilisez le lecteur de tags du Centre de contrôle. La plupart des Android les lisent si la lecture sans contact est activée. Pour les autres, il y a un QR code imprimé.",
+      },
+    ],
   },
   de: {
     name: "Digitale Speisekarte",
@@ -298,6 +559,137 @@ export const copy: ProductCopyByLocale = {
     tagline: "Jedes Gericht im eigenen Video, mit Preis, mit einem Antippen am Tisch.",
     summary:
       "Ihre Speisekarte als Video: Jedes Gericht hat sein eigenes Hochformat-Video mit Name, Preis und Beschreibung. Gäste öffnen sie mit einem Antippen oder über den QR-Code am Tischschild und bestellen, wenn Sie möchten, direkt von dort.",
+    metaTitle: "Digitale Speisekarte für Restaurants | Steevanz",
+    metaDescription:
+      "Eine Video-Speisekarte für Restaurants und Cafés: ein Video pro Gericht, mit Preis, geöffnet mit einem Antippen oder per QR-Code am Tisch, auf Wunsch mit Bestellung am Tisch. Schilder 20 €, ab 10 Stück je 15 €.",
+    heroTitle: "Ihre Speisekarte wird mit einem Antippen am Tisch lebendig",
+    heroSubtitle:
+      "Jedes Gericht hat sein eigenes Hochformat-Video mit Name, Preis und Beschreibung, auf einer eigenen Seite Ihres Betriebs. Gäste tippen auf das Tischschild oder scannen den QR-Code, wischen durch die Gerichte wie durch Reels und sehen, was sie essen werden, bevor sie bestellen. Ohne App. Wir richten alles für Sie ein.",
+    problem: {
+      title: "Eine Papierkarte macht keinen Appetit",
+      body:
+        "Der Name eines Gerichts auf einem laminierten Blatt sagt wenig. Gäste wissen nicht, wie groß die Portion ist oder wie das Gericht auf den Tisch kommt. Sie fragen nach, zögern und bestellen am Ende doch das, was sie schon kennen. Die Videos, die Sie in den sozialen Medien posten, gibt es zwar, aber wer am Tisch sitzt, findet sie nicht.",
+      points: [
+        "Gerichte, die niemand bestellt, weil niemand weiß, wie sie aussehen",
+        "Servicekräfte, die an jedem Tisch dasselbe Gericht erklären",
+        "Videos und Fotos Ihrer Gerichte, die in Ihrem Profil untergehen",
+      ],
+    },
+    solution: {
+      title: "Die Speisekarte an jedem Tisch im Blick",
+      body:
+        "Jedes Schild öffnet die Video-Speisekarte Ihres Betriebs, auf einer Seite, die fürs Handy gemacht ist. Die Gerichte sind in Kategorien sortiert, etwa Brunch oder Getränke, und jedes zeigt sein eigenes Video mit Preis. Ein Antippen öffnet das Gericht im Vollbild.",
+      points: [
+        "Ein Hochformat-Video pro Gericht, mit Name, Preis und Beschreibung",
+        "Kategorien nach Ihren Wünschen, etwa Brunch, Getränke oder Alle",
+        "Bestellung am Tisch, wenn Sie möchten: Der Tisch bestellt per Handy",
+        "Öffnet sich mit einem Antippen oder über den gedruckten QR-Code, ohne App",
+      ],
+    },
+    steps: [
+      {
+        title: "Filmen Sie Ihre Gerichte",
+        body: "Filmen Sie mit dem Handy ein kurzes Hochformat-Video von jedem Gericht. Wir geben Ihnen eine Anleitung zum Filmen.",
+      },
+      {
+        title: "Wir erstellen die Speisekarte",
+        body: "Schicken Sie uns die Videos, Namen, Preise und Beschreibungen. Wir erstellen die Speisekarte mit Ihrem Logo und Ihren Kategorien und hosten die Videos.",
+      },
+      {
+        title: "Wir programmieren die Schilder",
+        body: "Runder Aufkleber oder runder Aufsteller, einer pro Tisch, mit Ihrem Text und auf Wunsch mit Ihrem Logo. Jedes Schild wird programmiert, gesperrt und auf iPhone und Android getestet, mit einem QR-Code, der dieselbe Speisekarte öffnet.",
+      },
+      {
+        title: "Antippen und auswählen",
+        body: "Gäste tippen auf das Schild oder scannen den QR-Code, sehen Ihre Gerichte im Video, mit Preisen, und wählen aus. Ist die Bestellung am Tisch aktiviert, bestellen sie sofort.",
+      },
+    ],
+    features: [
+      {
+        title: "Ein Video pro Gericht",
+        body: "Jedes Gericht hat sein eigenes Hochformat-Video, bis 4K im Vollbild, mit Name, Preis und Beschreibung darüber. Steevanz hostet die Videos.",
+      },
+      {
+        title: "Wie bei Reels",
+        body: "Die Gerichte laufen in einem Raster. Ein Antippen öffnet das Vollbild, genau dort, wo das Video gerade war, und mit einem Wischen nach oben oder unten sieht man die anderen. Die Speisekarte öffnet sich mit einer Animation Ihres Logos.",
+      },
+      {
+        title: "Bestellung am Tisch",
+        body: "Optional, für jede Speisekarte einzeln. Jeder Tisch hat sein eigenes Schild, und alle Handys am Tisch teilen dieselbe Bestellung in Echtzeit, mit „Hinzufügen“ bei jedem Gericht und einer Notiz pro Gericht, etwa „ohne Zwiebeln“.",
+      },
+      {
+        title: "Vom Team bestätigt",
+        body: "„Bestellen“ zeigt einen QR-Code und die Bestellnummer. Ihre Servicekraft scannt ihn mit der Handykamera, ohne App und ohne Login, bestätigt mit einem Antippen, und der Tisch sieht sofort „Bestellung bestätigt ✓“.",
+      },
+      {
+        title: "Klein und rund",
+        body: "Kleiner als die anderen Steevanz-Schilder, passt es auf jeden Tisch neben Salz und Pfeffer, ohne den Tellern Platz wegzunehmen.",
+      },
+      {
+        title: "Preise immer aktuell",
+        body: "Ein Preis hat sich geändert oder es gibt ein neues Gericht? Sagen Sie es uns, und wir aktualisieren die Speisekarte. Die Schilder bleiben, wie sie sind.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants",
+        body: "Ein Schild auf jedem Tisch zeigt die Tagesgerichte und die Spezialitäten des Hauses im Video, mit Preis. Gäste wählen, während sie warten, und schicken mit der Bestellung am Tisch ihre Bestellung vom Handy: Die Servicekraft muss sie nur noch bestätigen.",
+      },
+      {
+        sector: "restaurants",
+        title: "Cafés und Terrassen",
+        body: "Auf der Terrasse sehen Gäste Ihr Frühstück, Ihre Kuchen und Ihre Hausgetränke, ohne zur Theke gehen und fragen zu müssen, was es gibt.",
+      },
+      {
+        sector: "restaurants",
+        title: "Lokale mit vielen Touristen",
+        body: "Ein Video zeigt das Gericht, ganz ohne Übersetzung. Wer die portugiesische Küche nicht kennt, versteht schon vor der Bestellung, was ein Bacalhau à Brás ist.",
+      },
+      {
+        sector: "retail",
+        title: "Bäckereien und Take-away",
+        body: "Ein Aufkleber an der Theke öffnet die Video-Speisekarte mit Kuchen, herzhaften Snacks und Tagesmenüs, mit Preisen, während die Kundschaft wartet, bis sie an der Reihe ist.",
+      },
+    ],
+    includes: [
+      "Video-Speisekarte auf eigener Seite, mit Kategorien und Ihrem Logo",
+      "Einrichtung der Speisekarte und Hosting von Speisekarte und Videos",
+      "Eine Anleitung zum Filmen Ihrer Gerichte",
+      "Bestellung am Tisch, wenn Sie möchten, mit einem Schild pro Tisch",
+      "Runde Schilder mit gedrucktem QR-Code, programmiert und auf iPhone und Android getestet",
+      "Support per WhatsApp und E-Mail",
+    ],
+    faq: [
+      {
+        q: "Brauche ich Instagram oder YouTube?",
+        a: "Nein. Die Speisekarte hat ihre eigene Seite bei Steevanz, und wir hosten die Videos. Gäste brauchen weder Konto noch App: Die Speisekarte öffnet sich im Browser ihres Handys.",
+      },
+      {
+        q: "Ich habe noch keine Videos meiner Gerichte. Was nun?",
+        a: "Filmen Sie sie mit dem Handy: ein kurzes Hochformat-Video pro Gericht. Wir geben Ihnen eine Anleitung zum Filmen und erstellen die Speisekarte, sobald Sie die Videos haben.",
+      },
+      {
+        q: "Wie funktioniert die Bestellung am Tisch?",
+        a: "Jeder Tisch hat sein eigenes Schild. Wer am Tisch sitzt, tippt bei den Gerichten auf „Hinzufügen“, schreibt bei Bedarf eine Notiz dazu, und alle sehen dieselbe Bestellung in Echtzeit. „Bestellen“ zeigt einen QR-Code und die Bestellnummer: Ihre Servicekraft scannt ihn mit der Handykamera, ohne App und ohne Login, und bestätigt mit einem Antippen. Der Tisch sieht „Bestellung bestätigt ✓“. Die Bestellung am Tisch lässt sich für jede Speisekarte einzeln ein- oder ausschalten.",
+      },
+      {
+        q: "Was kostet das?",
+        a: "Die Schilder kosten je 20 €, Einrichtung inbegriffen, ab 10 Schildern je 15 €. Logo und Farben kosten einmalig 10 € extra pro Auftrag. Einrichtung und Hosting von Speisekarte und Videos kosten 30 € im Monat. Alle Preise zzgl. MwSt.",
+      },
+      {
+        q: "Wie halte ich die Preise aktuell?",
+        a: "Sagen Sie uns, was sich geändert hat, und wir aktualisieren die Speisekarte: Preise, Gerichte, Kategorien und Videos. Die Schilder ändern sich nicht.",
+      },
+      {
+        q: "Ersetzt sie die Papierkarte?",
+        a: "Sie ergänzt sie. Die Digitale Speisekarte zeigt Ihre Gerichte, ersetzt aber nicht die Angaben, die ein Restaurant bereithalten muss, etwa die Preisliste und die Allergene.",
+      },
+      {
+        q: "Welche Handys lesen die Schilder?",
+        a: "iPhone XS und neuer lesen die Schilder ohne App: einfach die Oberkante des Handys daranhalten. Beim iPhone 7 bis X nutzen Sie den Tag-Reader im Kontrollzentrum. Die meisten Android-Handys lesen sie, sofern das kontaktlose Lesen eingeschaltet ist. Für alle anderen gibt es einen gedruckten QR-Code.",
+      },
+    ],
   },
   it: {
     name: "Menù digitale",
@@ -305,5 +697,136 @@ export const copy: ProductCopyByLocale = {
     tagline: "Ogni piatto nel suo video, con il prezzo, con un tocco al tavolo.",
     summary:
       "Il menù della vostra attività in video: ogni piatto ha il suo video verticale, con nome, prezzo e descrizione. Il cliente lo apre con un tocco o con il QR della targa sul tavolo e, se volete, ordina direttamente da lì.",
+    metaTitle: "Menù digitale per ristoranti | Steevanz",
+    metaDescription:
+      "Un menù in video per ristoranti e bar: un video per piatto, con il prezzo, che si apre con un tocco o con un QR sul tavolo, con ordini al tavolo se volete. Targhe a 20 €, 15 € da 10 in su.",
+    heroTitle: "Il menù prende vita con un tocco al tavolo",
+    heroSubtitle:
+      "Ogni piatto ha il suo video verticale, con nome, prezzo e descrizione, su una pagina tutta vostra. Il cliente tocca la targa sul tavolo o inquadra il QR, scorre i piatti come nei Reels e vede cosa mangerà prima di ordinare. Senza app. Pensiamo a tutto noi.",
+    problem: {
+      title: "Un menù di carta non mette appetito",
+      body:
+        "Il nome di un piatto su un foglio plastificato dice poco. Il cliente non sa quanto è grande la porzione né come arriva il piatto in tavola: chiede al cameriere, esita e finisce per ordinare quello che conosce già. I video che pubblicate sui social esistono, ma chi è seduto al tavolo non li trova.",
+      points: [
+        "Piatti che nessuno ordina perché nessuno sa come sono",
+        "Camerieri che spiegano lo stesso piatto a ogni tavolo",
+        "Video e foto dei piatti persi in mezzo al resto del profilo",
+      ],
+    },
+    solution: {
+      title: "Il menù sotto gli occhi, a ogni tavolo",
+      body:
+        "Ogni targa apre il menù in video della vostra attività, su una pagina pensata per lo smartphone. I piatti sono ordinati in categorie, come Brunch o Bevande, e ognuno mostra il suo video, con il prezzo. Un tocco apre il piatto a schermo intero.",
+      points: [
+        "Un video verticale per piatto, con nome, prezzo e descrizione",
+        "Categorie su misura, come Brunch, Bevande o Tutti",
+        "Ordini al tavolo, se volete: il tavolo ordina dallo smartphone",
+        "Si apre con un tocco o con il QR code stampato, senza app",
+      ],
+    },
+    steps: [
+      {
+        title: "Filmate i piatti",
+        body: "Girate con lo smartphone un breve video verticale di ogni piatto. Vi diamo una guida per girare i video.",
+      },
+      {
+        title: "Prepariamo il menù",
+        body: "Inviateci i video, i nomi, i prezzi e le descrizioni. Prepariamo il menù con il vostro logo e le vostre categorie, e ospitiamo i video.",
+      },
+      {
+        title: "Programmiamo le targhe",
+        body: "Adesivo rotondo o base rotonda, uno per tavolo, con il vostro testo e, se volete, il vostro logo. Ogni targa esce programmata, bloccata e testata su iPhone e Android, con un QR code che apre lo stesso menù.",
+      },
+      {
+        title: "Tocca e scegli",
+        body: "Il cliente tocca la targa o inquadra il QR, vede i piatti in video, con i prezzi, e sceglie. Con gli ordini al tavolo attivi, ordina subito.",
+      },
+    ],
+    features: [
+      {
+        title: "Un video per piatto",
+        body: "Ogni piatto ha il suo video verticale, fino al 4K a schermo intero, con nome, prezzo e descrizione in sovrimpressione. I video sono ospitati da Steevanz.",
+      },
+      {
+        title: "Come nei Reels",
+        body: "I piatti scorrono in una griglia. Un tocco apre lo schermo intero, riprendendo da dove era arrivato il video, e si scorre in su e in giù per vedere gli altri. Il menù si apre con un'animazione del vostro logo.",
+      },
+      {
+        title: "Ordini al tavolo",
+        body: "Facoltativi, menù per menù. Ogni tavolo ha la sua targa e tutti gli smartphone del tavolo condividono lo stesso ordine in tempo reale, con «Aggiungi» su ogni piatto e una nota per piatto, come «senza cipolla».",
+      },
+      {
+        title: "Confermato dal vostro staff",
+        body: "«Ordina» mostra un QR code e il numero dell'ordine. Il cameriere lo inquadra con la fotocamera dello smartphone, senza app né login, conferma con un tocco e il tavolo vede subito «Ordine confermato ✓».",
+      },
+      {
+        title: "Piccola e rotonda",
+        body: "Più piccola delle altre targhe Steevanz, sta su qualsiasi tavolo accanto a sale e pepe, senza rubare spazio ai piatti.",
+      },
+      {
+        title: "Prezzi sempre giusti",
+        body: "È cambiato un prezzo o c'è un piatto nuovo? Ditecelo e aggiorniamo il menù. Le targhe restano le stesse.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Ristoranti",
+        body: "Una targa su ogni tavolo mostra in video i piatti del giorno e le specialità della casa, con il prezzo. Il cliente sceglie mentre aspetta e, con gli ordini al tavolo, invia l'ordine dallo smartphone: al cameriere basta confermarlo.",
+      },
+      {
+        sector: "restaurants",
+        title: "Bar e dehors",
+        body: "Ai tavoli all'aperto, il cliente vede colazioni, dolci e bevande della casa senza dover andare al bancone a chiedere cosa c'è.",
+      },
+      {
+        sector: "restaurants",
+        title: "Locali con molti turisti",
+        body: "Un video mostra il piatto senza bisogno di traduzione. Chi non conosce la cucina portoghese capisce cos'è un bacalhau à Brás prima di ordinarlo.",
+      },
+      {
+        sector: "retail",
+        title: "Panetterie e take-away",
+        body: "Un adesivo sul bancone apre il menù in video con dolci, salati e menù del giorno, con i prezzi, mentre il cliente aspetta il suo turno.",
+      },
+    ],
+    includes: [
+      "Menù in video con pagina propria, categorie e il vostro logo",
+      "Preparazione del menù e hosting del menù e dei video",
+      "Guida per girare i video dei piatti",
+      "Ordini al tavolo, se volete, con una targa per tavolo",
+      "Targhe rotonde con QR code stampato, programmate e testate su iPhone e Android",
+      "Assistenza via WhatsApp ed email",
+    ],
+    faq: [
+      {
+        q: "Mi servono Instagram o YouTube?",
+        a: "No. Il menù ha la sua pagina su Steevanz e i video li ospitiamo noi. Il cliente non ha bisogno di account né di app: il menù si apre nel browser dello smartphone.",
+      },
+      {
+        q: "Non ho ancora video dei piatti. E adesso?",
+        a: "Girateli con lo smartphone: un breve video verticale per piatto. Vi diamo una guida per girarli e prepariamo il menù appena li avete.",
+      },
+      {
+        q: "Come funzionano gli ordini al tavolo?",
+        a: "Ogni tavolo ha la sua targa. Chi è al tavolo tocca «Aggiungi» sui piatti, aggiunge una nota se vuole e tutti vedono lo stesso ordine in tempo reale. «Ordina» mostra un QR code e il numero dell'ordine: il cameriere lo inquadra con la fotocamera dello smartphone, senza app né login, e conferma con un tocco. Il tavolo vede «Ordine confermato ✓». Gli ordini al tavolo si attivano o si disattivano menù per menù.",
+      },
+      {
+        q: "Quanto costa?",
+        a: "Le targhe costano 20 € l'una, configurazione compresa, e 15 € l'una da 10 targhe in su. Logo e colori costano 10 € in più, una sola volta per acquisto. La preparazione del menù e l'hosting del menù e dei video costano 30 € al mese. Prezzi IVA esclusa.",
+      },
+      {
+        q: "Come tengo aggiornati i prezzi?",
+        a: "Diteci cosa è cambiato e aggiorniamo il menù: prezzi, piatti, categorie e video. Le targhe non cambiano.",
+      },
+      {
+        q: "Sostituisce il menù cartaceo?",
+        a: "Lo completa. Il Menù digitale mostra i piatti, ma non sostituisce le informazioni che il ristorante deve tenere a disposizione, come il listino prezzi e gli allergeni.",
+      },
+      {
+        q: "Quali smartphone leggono le targhe?",
+        a: "Gli iPhone XS e successivi leggono le targhe senza app: basta avvicinare la parte alta del telefono. Sugli iPhone dal 7 all'X, usate il lettore di tag nel Centro di Controllo. La maggior parte degli Android le legge se la lettura contactless è attiva. Per tutti gli altri c'è un QR code stampato.",
+      },
+    ],
   },
 };
