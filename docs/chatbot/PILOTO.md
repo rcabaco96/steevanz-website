@@ -1,0 +1,83 @@
+# Piloto do assistente no WhatsApp (open-wa): guia interno de testes
+
+**Só para testes da Steevanz.** Decisão do dono (2026-10-20): o open-wa serve apenas para
+experimentar, no **número de teste**. Os clientes pagos vão usar a **API oficial do WhatsApp**
+(Cloud API da Meta). Nunca ligar aqui o número principal da Steevanz nem o de um cliente.
+
+O número de teste está só no `.env.local` (`CHATBOT_TEST_NUMBER`), nunca no git nem em páginas do site.
+
+## Regras de segurança (já estão no programa, ligadas por omissão)
+
+| Regra | Como está garantida |
+| --- | --- |
+| Ninguém da Steevanz nem nenhum agente liga ou emparelha o número | Só o dono lê o QR, quando decidir |
+| Primeira vez: **só ouvir** | Sem `--reply` o programa nunca envia nada |
+| Só responde a números autorizados | `CHATBOT_ALLOWLIST` no `.env.local` (começa só com o número pessoal do dono). Quem não estiver na lista é ignorado: nem resposta nem registo |
+| Não arranca a responder sem lista nem número de teste | Com `--reply`, sem `CHATBOT_TEST_NUMBER` e `CHATBOT_ALLOWLIST` o programa recusa-se a arrancar |
+| Só no número de teste | Se o número emparelhado não for o número de teste, o programa desliga-se sozinho |
+| Nunca escreve primeiro | Só responde a quem lhe escreveu; não envia avisos a ninguém no WhatsApp (as passagens para a equipa aparecem no admin) |
+| Sem mensagens em massa, grupos ou estados | Grupos, listas de difusão e estados são ignorados |
+| Ritmo humano | 3 a 8 segundos «a escrever» antes de cada resposta; 5 s entre mensagens na mesma conversa |
+| Limites do piloto | No máximo **10 respostas por hora** e **50 por dia** (depois pára e deixa as mensagens para a equipa) |
+| Botão de paragem | Admin › Chatbot IA › assistente › «Desligar respostas» (o programa lê-o a cada 15 s e também antes de cada envio); no computador: `Ctrl+C`, ou criar um ficheiro `PAUSE` na pasta da sessão |
+| Sem testes automáticos no WhatsApp | Os testes do projeto usam só o WhatsApp falso e o simulador |
+
+## Antes de começar
+
+1. A migração do assistente (`supabase/migrations/20261020200000_chatbot.sql`) tem de estar aplicada.
+2. Em `/admin/chatbot`, criar o assistente de teste (cliente: a própria Steevanz, ou uma conta de
+   teste) e escrever algumas respostas em «Conhecimento». Experimentar em «Experimentar»: não custa
+   nada e não toca no WhatsApp.
+3. Deixar as **respostas desligadas** no admin por agora.
+4. No `.env.local` do projeto confirmar:
+   ```
+   CHATBOT_TEST_NUMBER=<número de teste, com 351>
+   CHATBOT_ALLOWLIST=<o seu número pessoal, com 351>
+   ```
+
+## Passo a passo
+
+1. **Instalar o open-wa** (só nesta pasta; não vai para o site):
+   ```
+   cd scripts/chatbot
+   npm install
+   cd ../..
+   ```
+2. **Arrancar só a ouvir** (copie o comando do separador «Ligação» do assistente):
+   ```
+   node scripts/chatbot/runner.mjs --bot <id do assistente>
+   ```
+   O terminal deve dizer «Modo: SÓ A OUVIR».
+3. **Ler o QR** com o telemóvel do número de teste: WhatsApp › **Dispositivos ligados** ›
+   **Ligar um dispositivo**. O QR aparece no terminal.
+4. **Confirmar que o QR também aparece no admin** (separador «Ligação», atualiza sozinho). Depois de
+   ler, o admin passa a «Ligado».
+5. **Testar só a ouvir:** do seu telemóvel pessoal, envie «Olá» para o número de teste. No terminal
+   aparece a mensagem e em «Conversas» fica registada (se o seu número estiver na lista). Ninguém
+   recebe resposta. Uma mensagem de outra pessoa aparece como «fora da lista, ignorada».
+6. **Ligar as respostas:** parar com `Ctrl+C`, ligar «Ligar respostas» no admin e arrancar com:
+   ```
+   node scripts/chatbot/runner.mjs --bot <id do assistente> --reply
+   ```
+   Envie perguntas do seu telemóvel pessoal (horário, morada, «quero falar com alguém»). Só o seu
+   número recebe respostas, no máximo 10 por hora.
+7. **Para parar:** «Desligar respostas» no admin (para em segundos) ou `Ctrl+C` no terminal.
+
+## O que não fazer
+
+- Não ligar o número principal nem números de clientes.
+- Não acrescentar à lista números de pessoas que não sabem que é um teste.
+- Não aumentar os limites, não enviar muitas mensagens seguidas «para ver se aguenta», não usar
+  grupos.
+- Não deixar o programa a correr sem vigilância nos primeiros dias.
+
+## Se algo correr mal
+
+- **O WhatsApp avisa ou restringe o número:** parar logo (`Ctrl+C`), desligar as respostas no admin e
+  não voltar a ligar nesse dia. Em WhatsApp › Dispositivos ligados pode remover o dispositivo.
+- **O programa diz que o número ligado não é o número de teste:** leu o QR com o telemóvel errado.
+  Remova o dispositivo nesse telemóvel.
+- **Não aparece QR no admin:** use o do terminal (a v5 do open-wa é recente; confirmar no primeiro uso).
+- **Uma mensagem do seu número aparece como «fora da lista»:** o WhatsApp pode identificar alguns
+  contactos por um código sem número (`@lid`); nesse caso a regra protege e não responde. Avise para
+  ajustarmos.

@@ -180,12 +180,12 @@ export function BotSettingsForm({
         <label className={adminLabelClasses}>
           Ligação
           <select name="channel_provider" defaultValue={bot.channel_provider} className={input}>
-            <option value="open-wa">WhatsApp Web (open-wa, não oficial)</option>
+            <option value="open-wa">WhatsApp Web (open-wa): só testes</option>
             <option value="cloud-api">API oficial da Meta (ainda não ativa)</option>
           </select>
         </label>
         <label className={adminLabelClasses}>
-          Avisar o dono neste WhatsApp quando uma conversa passa para a equipa
+          Avisar o dono neste WhatsApp quando uma conversa passa para a equipa <span className="font-normal text-subtle">(não usado nos testes com open-wa)</span>
           <input name="alert_number" maxLength={40} inputMode="tel" placeholder="Opcional" defaultValue={bot.alert_number ?? ""} className={input} />
         </label>
         <div className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted">

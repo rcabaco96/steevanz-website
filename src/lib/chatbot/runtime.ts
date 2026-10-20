@@ -27,12 +27,33 @@ export interface RuntimeDeps {
   clock?: () => number;
   sleep?: (ms: number) => Promise<void>;
   random?: () => number;
+  /**
+   * Pilot safety: only these phone numbers (digits with country code, e.g. "3519…") are answered or
+   * even stored; every other chat is ignored. null = everyone (not for the open-wa pilot).
+   */
+  allowlist?: readonly string[] | null;
+  /** Checked right before each send: false = the kill switch is on (bot switched off), send nothing. */
+  canSend?: () => boolean;
   /** Tell the team (a notice in the admin, an email, a WhatsApp to the owner's own number…). */
   onHandoff?: (event: HandoffEvent) => Promise<void> | void;
   log?: (line: string) => void;
 }
 
-export type HandleStatus = "replied" | "silent" | "ignored" | "duplicate" | "owner" | "stale" | "own_echo" | "paused";
+export type HandleStatus = "replied" | "silent" | "ignored" | "not_allowed" | "duplicate" | "owner" | "stale" | "own_echo" | "paused";
+
+/** "351912345678@c.us" → "351912345678"; ids without a phone number ("…@lid") → null. */
+export function phoneOfChat(chatId: string): string | null {
+  const [user, server] = chatId.split("@");
+  if (server && server !== "c.us" && server !== "s.whatsapp.net") return null;
+  const digits = user.replace(/\D/g, "");
+  return digits.length >= 8 ? digits : null;
+}
+
+export function isAllowed(chatId: string, allowlist: readonly string[] | null | undefined): boolean {
+  if (!allowlist) return true;
+  const phone = phoneOfChat(chatId);
+  return phone !== null && allowlist.some((allowed) => allowed.replace(/\D/g, "") === phone);
+}
 
 export interface HandleOutcome {
   status: HandleStatus;
@@ -70,6 +91,8 @@ export function createRuntime(deps: RuntimeDeps) {
 
   async function handleNow(message: InboundMessage): Promise<HandleOutcome> {
     if (message.isGroup) return { status: "ignored" };
+    // Pilot: anyone outside the owner's list is neither answered nor stored.
+    if (!isAllowed(message.chatId, deps.allowlist)) return { status: "not_allowed" };
     if (message.fromOwner && isOwnEcho(message)) return { status: "own_echo" };
     if (await deps.store.hasMessage(bot.id, message.messageId)) return { status: "duplicate" };
     const conversation = await deps.store.openConversation(bot.id, message.chatId, message.contactName ?? null);
@@ -104,8 +127,8 @@ export function createRuntime(deps: RuntimeDeps) {
     let status: HandleStatus = result.replies.length ? "replied" : "silent";
     for (const reply of result.replies) {
       const wait = pacer.waitBeforeSend(message.chatId, clock());
-      if (wait === Infinity) {
-        log(`[chatbot ${bot.id}] daily limit reached: not replying to ${message.chatId}`);
+      if (wait === Infinity || (deps.canSend && !deps.canSend())) {
+        log(`[chatbot ${bot.id}] ${wait === Infinity ? "hourly/daily limit reached" : "replies switched off"}: not replying`);
         status = "paused";
         break;
       }
@@ -113,6 +136,11 @@ export function createRuntime(deps: RuntimeDeps) {
       if (wait) await sleep(wait);
       if (deps.adapter.simulateTyping) await deps.adapter.simulateTyping(message.chatId, typing);
       else await sleep(typing);
+      // The kill switch may have been turned on while «typing».
+      if (deps.canSend && !deps.canSend()) {
+        status = "paused";
+        break;
+      }
       const sent = await deps.adapter.sendText(message.chatId, reply);
       rememberSent(message.chatId, sent.messageId, reply);
       pacer.record(message.chatId, clock());

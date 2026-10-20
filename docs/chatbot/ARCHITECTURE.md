@@ -22,10 +22,8 @@ Fontes: `src/content/product-copy/ai-chatbot.ts` e `src/content/docs/ai-chatbot.
 | Histórico das conversas para rever; guardado só o prazo acordado (RGPD) | `chatbot_conversations` / `chatbot_messages`, `retention_days` + `chatbot_prune()` |
 | Site (widget) e WhatsApp | **Fase 1 só WhatsApp.** O motor não depende do canal; o widget do site é um adaptador `web` futuro |
 
-**Contradição a decidir pelo dono:** as páginas de documentação publicadas dizem que o WhatsApp
-liga pela **WhatsApp Business Platform da Meta** (verificação da empresa, janela de 24 h, mensagens
-modelo). O open-wa **não** é essa plataforma. Se a escolha for open-wa, essas páginas têm de ser
-revistas antes de vender; se for a API oficial, ficam certas.
+**Canal:** as páginas publicadas prometem a **WhatsApp Business Platform da Meta**; o dono decidiu que
+os clientes usam a API oficial (as páginas ficam certas) e que o open-wa é só para testes internos.
 
 ## 2. Peças
 
@@ -146,6 +144,7 @@ RLS ligado e sem acesso para anon/authenticated (só service role, como os menus
 - Atraso de «a escrever…» proporcional ao texto (1,5–8 s, ±25 %); 1,5 s mínimo entre mensagens para a
   mesma conversa; teto de 20 mensagens/min e 600/dia por número (depois pára e deixa na caixa).
 - Não responde a mensagens com mais de 15 min (depois de uma reconexão) nem fora de 24 h.
+- Piloto open-wa (`pilotPacing`, ver `PILOTO.md`): 3–8 s a escrever, máx. 10 respostas/hora e 50/dia, só números autorizados.
 - Sessão persistente fora do repositório (`~/.steevanz-chatbot/<bot>`), um processo por assistente
   (ficheiro de bloqueio), modo `--listen-only` para testar a ligação sem responder.
 - Com open-wa recomenda-se ainda: número com histórico (não acabado de criar), começar com poucas
@@ -179,7 +178,11 @@ Verificado em 2026-10-20 (fontes no fim). Valores da Meta mudam por trimestre e 
 | Onde corre | Processo longo + Chrome (computador / Oracle) | Webhook na Vercel |
 | Coincide com o que o site promete | **Não** (docs falam da plataforma da Meta) | **Sim** |
 
-**Recomendação honesta:** open-wa serve para **pilotos e demonstrações** a custo zero, com o risco
+**Decisão do dono (2026-10-20):** open-wa **só para testes** no número de teste (regras em
+`PILOTO.md`); os clientes pagos vão usar a **API oficial**. As páginas do produto mantêm a promessa da
+plataforma oficial.
+
+**Recomendação inicial (mantida para registo):** open-wa serve para **pilotos e demonstrações** a custo zero, com o risco
 explicado ao cliente e num número que ele aceite arriscar. Para clientes pagos e o que o site
 promete, a **API oficial** é o caminho seguro; com as 1000 respostas grátis por mês e por número, um
 restaurante ou um alojamento pequeno pode ficar perto de 0 € de Meta (estimar com o volume real).

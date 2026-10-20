@@ -1,18 +1,22 @@
-// Steevanz WhatsApp assistant runner: keeps one business's WhatsApp session open on this computer
-// (later on the free Oracle server), answers its customers with the engine in src/lib/chatbot and
-// writes everything to Supabase. Started ONLY by hand (never by the site, never automatically):
+// Steevanz WhatsApp assistant runner. open-wa is ONLY for the owner's tests (owner, 2026-10-20);
+// paying clients will use the official WhatsApp Cloud API. Keeps one WhatsApp session open on this
+// computer, answers with the engine in src/lib/chatbot and writes to Supabase. Started ONLY by hand:
 //
-//   node scripts/chatbot/runner.mjs --bot <bot id>                 (open-wa, replies on)
-//   node scripts/chatbot/runner.mjs --bot <bot id> --listen-only   (pairs and logs, never sends)
+//   node scripts/chatbot/runner.mjs --bot <bot id>           (default: listens only, never sends)
+//   node scripts/chatbot/runner.mjs --bot <bot id> --reply   (replies, only to CHATBOT_ALLOWLIST)
 //
-// Read README.md in this folder and docs/chatbot/ARCHITECTURE.md first. Costs nothing: answers come
-// from the free mock (no language model is called), and open-wa uses the business's own WhatsApp.
+// Pilot safety, all on by default (docs/chatbot/PILOTO.md): listen-only unless --reply; with --reply
+// it refuses to start without CHATBOT_TEST_NUMBER and CHATBOT_ALLOWLIST in .env.local; it stops if
+// the paired number is not the test number; it answers and stores only allowlisted numbers; never
+// writes first, never to groups; 3-8 s typing, at most 10 replies/hour and 50/day; the admin's
+// «Desligar respostas» (or a PAUSE file in the session folder) stops every send within seconds.
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { homedir, hostname } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { createClient } from "@supabase/supabase-js";
 import { chooseProvider } from "../../src/lib/chatbot/llm/providers.ts";
+import { pilotPacing } from "../../src/lib/chatbot/pacing.ts";
 import { createRuntime } from "../../src/lib/chatbot/runtime.ts";
 import { ChatbotNotReadyError, loadBotProfile, SupabaseChatbotStore, writeSession } from "../../src/lib/chatbot/supabase-store.ts";
 import { createCloudApiAdapter } from "./adapters/cloud-api.mjs";
@@ -31,6 +35,8 @@ loadEnv();
 const { values: args } = parseArgs({
   options: {
     bot: { type: "string" },
+    reply: { type: "boolean", default: false },
+    // Kept for clarity in commands: listening only is already the default.
     "listen-only": { type: "boolean", default: false },
     visible: { type: "boolean", default: false },
   },
@@ -50,7 +56,15 @@ if (!supabaseUrl || !serviceKey) {
 }
 
 const botId = args.bot;
-const listenOnly = args["listen-only"];
+const listenOnly = !args.reply || args["listen-only"];
+const digitsOf = (value) => (value ?? "").replace(/\D/g, "");
+// Numbers live only in .env.local (never in git): the test number and who may get replies.
+const testNumber = digitsOf(process.env.CHATBOT_TEST_NUMBER);
+const allowlist = (process.env.CHATBOT_ALLOWLIST ?? "").split(",").map(digitsOf).filter((digits) => digits.length >= 8);
+if (!listenOnly && (!testNumber || !allowlist.length)) {
+  console.error("Para responder (--reply) defina no .env.local CHATBOT_TEST_NUMBER (o número de teste) e CHATBOT_ALLOWLIST (os números que podem receber respostas, separados por vírgulas). Ver docs/chatbot/PILOTO.md.");
+  process.exit(1);
+}
 const siteUrl = (process.env.CHATBOT_SITE_URL ?? "https://www.steevanz.com").replace(/\/+$/, "");
 const baseDir = process.env.CHATBOT_DATA_DIR ?? join(homedir(), ".steevanz-chatbot");
 const sessionDir = join(baseDir, botId);
@@ -94,7 +108,8 @@ if (!loaded) {
 }
 
 const { row } = loaded;
-log(`Assistente «${row.name}» (${row.kind}) · canal ${row.channel_provider} · ${row.enabled ? "ligado" : "DESLIGADO no admin (não responde)"}${listenOnly ? " · só a ouvir" : ""}`);
+log(`Assistente «${row.name}» (${row.kind}) · canal ${row.channel_provider} · ${row.enabled ? "respostas ligadas no admin" : "respostas DESLIGADAS no admin"}`);
+log(listenOnly ? "Modo: SÓ A OUVIR (não envia nada a ninguém)." : `Modo: responde só a ${allowlist.length} número(s) da lista; máx. 10 respostas/hora e 50/dia.`);
 
 const adapter =
   row.channel_provider === "cloud-api"
@@ -108,7 +123,7 @@ const adapter =
         log,
       });
 
-// --listen-only: the adapter never sends (pairing tests on a real number without answering anyone).
+// Listening only (the default): the adapter never sends (pairing tests without answering anyone).
 const channel = listenOnly
   ? {
       ...adapter,
@@ -123,27 +138,25 @@ const channel = listenOnly
     }
   : adapter;
 
+const pauseFile = join(sessionDir, "PAUSE");
+/** Kill switch: replies off in the admin, a PAUSE file in the session folder, or listening only. */
+const canSend = () => !listenOnly && loaded.row.enabled && !existsSync(pauseFile);
+
 const store = new SupabaseChatbotStore(supabase);
 const runtime = createRuntime({
   bot: loaded.profile,
   adapter: channel,
   store,
+  pacing: pilotPacing,
+  // Only the owner's list is answered or stored, also while listening.
+  allowlist,
+  canSend,
   // The free mock unless the owner chose a real model AND allowed paid answers on the site; even
   // then the real provider is a placeholder that refuses (phase 2) and the mock answers.
   provider: chooseProvider({ choice: row.answer_provider, paidAllowed: row.paid_answers_allowed }),
   log,
-  onHandoff: async ({ chatId, contactName, handoff }) => {
-    log(`Passagem para a equipa (${handoff.reason}${handoff.urgent ? ", URGENTE" : ""}) · ${contactName ?? chatId}`);
-    // Optional alert on the owner's own WhatsApp (a contact of the business, never a customer).
-    const digits = (loaded.row.alert_number ?? "").replace(/\D/g, "");
-    if (!digits || listenOnly) return;
-    const alert = `${handoff.urgent ? "URGENTE · " : ""}Assistente Steevanz: conversa passada para si (${contactName ?? chatId}).\n${handoff.summary}`;
-    try {
-      await adapter.sendText(`${digits}@c.us`, alert);
-    } catch (error) {
-      log(`Não consegui avisar o dono: ${error instanceof Error ? error.message : error}`);
-    }
-  },
+  // Pilot: no WhatsApp alerts (that would be the bot writing first); the hand-off shows in the admin.
+  onHandoff: ({ handoff }) => log(`Passagem para a equipa (${handoff.reason}${handoff.urgent ? ", URGENTE" : ""}): ver /admin/chatbot › Conversas.`),
 });
 
 const session = (patch) => writeSession(supabase, botId, { runnerId, ...patch }).catch((error) => log(`Estado da sessão não gravado: ${error.message}`));
@@ -166,7 +179,7 @@ async function stop(code = 0) {
   process.exit(code);
 }
 
-// New knowledge or settings from the admin, every minute.
+// New knowledge or settings from the admin (and the replies on/off switch), every 15 seconds.
 const refresh = setInterval(async () => {
   try {
     const next = await loadBotProfile(supabase, botId, siteUrl);
@@ -177,7 +190,7 @@ const refresh = setInterval(async () => {
   } catch (error) {
     log(`Não consegui atualizar o conhecimento: ${error instanceof Error ? error.message : error}`);
   }
-}, 60_000);
+}, 15_000);
 
 let lastState = "starting";
 const heartbeat = setInterval(() => void session({ state: lastState }), 30_000);
@@ -202,8 +215,14 @@ try {
         log("À espera do QR: abra o WhatsApp do negócio > Dispositivos ligados > Ligar um dispositivo (o QR também aparece no /admin/chatbot).");
         void session({ state: "qr", qr: status.qr, message: null });
       } else if (status.state === "connected") {
-        log(`Ligado${status.number ? ` ao número ${status.number}` : ""}.`);
-        void session({ state: "connected", qr: null, number: status.number, message: null });
+        // Never run on a number other than the test number.
+        if (testNumber && (!status.number || digitsOf(status.number) !== testNumber)) {
+          log("O número ligado NÃO é o número de teste (CHATBOT_TEST_NUMBER). A desligar sem responder a ninguém.");
+          void session({ state: "error", qr: null, message: "Número ligado diferente do número de teste: desligado." }).then(() => stop(1));
+          return;
+        }
+        log("Ligado.");
+        void session({ state: "connected", qr: null, number: status.number ? `…${digitsOf(status.number).slice(-3)}` : null, message: null });
       } else if (status.state === "disconnected") {
         log(`Desligado: ${status.reason}`);
         void session({ state: "disconnected", qr: null, message: status.reason });
@@ -213,7 +232,9 @@ try {
     },
     onMessage: async (message) => {
       const outcome = await runtime.handle(message);
-      if (outcome.status !== "own_echo") log(`${message.fromOwner ? "dono" : "cliente"} ${message.chatId.replace(/\d(?=\d{3})/g, "•")}: ${outcome.status}`);
+      const who = message.chatId.replace(/\d(?=\d{3})/g, "•");
+      if (outcome.status === "not_allowed") log(`mensagem de ${who}: fora da lista, ignorada (nem guardada nem respondida)`);
+      else if (outcome.status !== "own_echo") log(`${message.fromOwner ? "dono" : "contacto"} ${who}: ${outcome.status}`);
     },
   });
 } catch (error) {

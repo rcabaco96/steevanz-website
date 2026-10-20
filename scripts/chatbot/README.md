@@ -19,38 +19,30 @@ node scripts/chatbot/simulate.mjs --bot <id>           # conhecimento real (só 
 No modo interativo: `/dono <texto>` (o dono responde pelo telemóvel), `/devolver`, `/novo`,
 `/estado`, `/sair`. O mesmo existe no admin, em `/admin/chatbot` › «Experimentar».
 
-## Ligar um número real (open-wa)
+## Ligar o número de teste (open-wa, só testes)
 
-Precisa de: a migração `20261020200000_chatbot.sql` aplicada, o assistente criado em `/admin/chatbot`,
-o `.env.local` com `NEXT_PUBLIC_SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, e o Chrome ou o Edge.
+O open-wa é **só para testes** no número de teste da Steevanz; os clientes vão usar a API oficial.
+Siga o passo a passo e as regras de segurança em `docs/chatbot/PILOTO.md`. Em resumo:
 
-1. Instalar o open-wa **só nesta pasta** (não vai para o site nem para a Vercel):
-   ```
-   cd scripts/chatbot
-   npm install
-   ```
-2. Testar a ligação sem responder a ninguém:
-   ```
-   node scripts/chatbot/runner.mjs --bot <id> --listen-only
-   ```
-   O QR aparece no terminal e em `/admin/chatbot/<id>`. No telemóvel do negócio: WhatsApp ›
-   Dispositivos ligados › Ligar um dispositivo.
-3. Com o conhecimento testado e as respostas ligadas no admin:
-   ```
-   node scripts/chatbot/runner.mjs --bot <id>
-   ```
-   `Ctrl+C` desliga (o admin passa a mostrar «Desligado»).
+```
+cd scripts/chatbot && npm install && cd ../..
+node scripts/chatbot/runner.mjs --bot <id>           # só ouve (por omissão): não envia nada
+node scripts/chatbot/runner.mjs --bot <id> --reply   # responde só aos números de CHATBOT_ALLOWLIST
+```
+
+Com `--reply` exige `CHATBOT_TEST_NUMBER` e `CHATBOT_ALLOWLIST` no `.env.local`, desliga-se se o
+número emparelhado não for o de teste, e tem no máximo 10 respostas por hora e 50 por dia. Para
+parar: «Desligar respostas» no admin, `Ctrl+C`, ou um ficheiro `PAUSE` na pasta da sessão.
 
 Opções: `--visible` (mostra a janela do Chrome, para diagnosticar). Variáveis: `CHROME_PATH`,
-`CHATBOT_DATA_DIR` (pasta das sessões; por omissão `~/.steevanz-chatbot`), `CHATBOT_SITE_URL`,
-`OPENWA_LICENSE_KEY` (só se um dia for comprada uma chave do open-wa).
+`CHATBOT_DATA_DIR` (pasta das sessões; por omissão `~/.steevanz-chatbot`), `CHATBOT_SITE_URL`.
 
 ## O que faz
 
-- Lê o assistente e o conhecimento (respostas do negócio + horário/serviços do espaço + pratos do menu
-  em vídeo) e volta a ler a cada minuto (alterações no admin entram sem reiniciar).
-- Responde só a quem escreve; nunca a grupos; nunca a mensagens com mais de 15 min (depois de
-  reconectar); ritmo humano e tetos por minuto/dia (`src/lib/chatbot/pacing.ts`).
+- Lê o assistente e o conhecimento (respostas do negócio, documentos, horário/serviços do espaço,
+  pratos do menu em vídeo) e volta a ler a cada 15 s (alterações no admin entram sem reiniciar).
+- Responde só a quem escreve e está na lista; nunca a grupos; nunca a mensagens com mais de 15 min
+  (depois de reconectar); ritmo do piloto (`pilotPacing` em `src/lib/chatbot/pacing.ts`).
 - O dono responder pelo telemóvel pausa o assistente nessa conversa; a conversa aparece em
   «Conversas» no admin, com o resumo, para «Devolver ao assistente».
 - Escreve o estado da sessão (QR, ligado, erro) em `chatbot_sessions` a cada 30 s.

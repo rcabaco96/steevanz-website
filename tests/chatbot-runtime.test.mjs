@@ -2,13 +2,14 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { FakeAdapter } from "../src/lib/chatbot/adapters.ts";
 import { demoLodging, demoRestaurant } from "../src/lib/chatbot/demo.ts";
-import { createRuntime } from "../src/lib/chatbot/runtime.ts";
+import { pilotPacing, Pacer, typingDelay } from "../src/lib/chatbot/pacing.ts";
+import { createRuntime, isAllowed, phoneOfChat } from "../src/lib/chatbot/runtime.ts";
 import { MemoryStore } from "../src/lib/chatbot/store.ts";
 
 // Tuesday 2026-10-20 13:30 in Lisbon.
 const start = new Date("2026-10-20T12:30:00Z").getTime();
 
-function setup(bot = demoRestaurant) {
+function setup(bot = demoRestaurant, extra = {}) {
   let now = start;
   const adapter = new FakeAdapter();
   const store = new MemoryStore();
@@ -23,6 +24,7 @@ function setup(bot = demoRestaurant) {
     },
     random: () => 0.5,
     onHandoff: (event) => handoffs.push(event),
+    ...extra,
   });
   const message = (chatId, body, extra = {}) => ({
     chatId,
@@ -118,5 +120,49 @@ describe("chatbot runtime", () => {
     advance(20_000);
     await runtime.handle(message(chat, "Moinho Velho"));
     assert.match(adapter.sent.at(-1).text, /moinho-verde/);
+  });
+});
+
+describe("chatbot pilot safety (open-wa test number)", () => {
+  it("reads phone numbers from chat ids, never from ids without a number", () => {
+    assert.equal(phoneOfChat("351910000001@c.us"), "351910000001");
+    assert.equal(phoneOfChat("123456789012345@lid"), null);
+    assert.equal(isAllowed("351910000001@c.us", ["+351 910 000 001"]), true);
+    assert.equal(isAllowed("351910000002@c.us", ["351910000001"]), false);
+    assert.equal(isAllowed("123456789012345@lid", ["123456789012345"]), false);
+    assert.equal(isAllowed("351910000002@c.us", null), true);
+  });
+
+  it("ignores everyone outside the allowlist: no reply, nothing stored", async () => {
+    const { adapter, store, runtime, message } = setup(demoRestaurant, { allowlist: ["351910000001"] });
+    assert.equal((await runtime.handle(message("351910000099@c.us", "Olá"))).status, "not_allowed");
+    assert.equal(adapter.sent.length, 0);
+    assert.equal(store.conversations.size, 0);
+    assert.equal((await runtime.handle(message("351910000001@c.us", "Olá"))).status, "replied");
+  });
+
+  it("an empty allowlist answers no one", async () => {
+    const { adapter, runtime, message } = setup(demoRestaurant, { allowlist: [] });
+    assert.equal((await runtime.handle(message("351910000001@c.us", "Olá"))).status, "not_allowed");
+    assert.equal(adapter.sent.length, 0);
+  });
+
+  it("the kill switch stops every send", async () => {
+    const { adapter, runtime, message } = setup(demoRestaurant, { canSend: () => false });
+    assert.equal((await runtime.handle(message("351910000001@c.us", "Olá"))).status, "paused");
+    assert.equal(adapter.sent.length, 0);
+  });
+
+  it("pilot pace: 3 to 8 s typing, at most 10 replies an hour and 50 a day", () => {
+    assert.equal(typingDelay("ok", pilotPacing, () => 1), 3000);
+    assert.equal(typingDelay("x".repeat(500), pilotPacing, () => 0), 8000);
+    const pacer = new Pacer(pilotPacing);
+    let now = 0;
+    for (let i = 0; i < 10; i++) {
+      now += pacer.waitBeforeSend(`chat${i}`, now);
+      pacer.record(`chat${i}`, now);
+    }
+    assert.equal(pacer.waitBeforeSend("chat-new", now + 1000), Infinity);
+    assert.notEqual(pacer.waitBeforeSend("chat-new", now + 61 * 60_000), Infinity);
   });
 });

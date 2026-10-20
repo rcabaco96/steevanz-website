@@ -121,13 +121,14 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
                     WhatsApp do negócio.
                   </p>
                   <div className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 p-3">
-                    <code className="font-mono text-xs break-all text-text">node scripts/chatbot/runner.mjs --bot {row.id} --listen-only</code>
+                    <code className="font-mono text-xs break-all text-text">node scripts/chatbot/runner.mjs --bot {row.id}</code>
                     <div>
-                      <CopyButton value={`node scripts/chatbot/runner.mjs --bot ${row.id} --listen-only`} label="Copiar comando" />
+                      <CopyButton value={`node scripts/chatbot/runner.mjs --bot ${row.id}`} label="Copiar comando" />
                     </div>
                   </div>
                   <p className="text-xs text-subtle">
-                    «--listen-only» liga e regista as mensagens sem responder a ninguém (para testar a ligação). Sem essa opção, responde. Instruções em scripts/chatbot/README.md.
+                    Por omissão só ouve: liga ao número e não responde a ninguém. Só com «--reply» responde, e apenas aos números da lista do .env.local. Passo a passo em
+                    docs/chatbot/PILOTO.md.
                   </p>
                 </div>
               )}
@@ -143,8 +144,8 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
               </p>
               <EnableForm bot={row} />
               <p className="rounded-xl border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
-                A ligação por WhatsApp Web (open-wa) não é oficial: o WhatsApp pode bloquear o número. O assistente só responde a quem escreve primeiro, a ritmo humano, e
-                nunca envia mensagens em massa. Riscos e alternativa oficial em docs/chatbot/ARCHITECTURE.md.
+                A ligação por WhatsApp Web (open-wa) é só para testes, num número de teste: não é oficial e o WhatsApp pode bloquear o número. Responde só aos números
+                da lista, a quem escreve primeiro, no máximo 10 vezes por hora. Os clientes usarão a API oficial. Ver docs/chatbot/PILOTO.md.
               </p>
             </div>
           </Panel>
