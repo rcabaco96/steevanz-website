@@ -19,6 +19,8 @@ them needs the owner's confirmation.
 - **Brand line (owner, 2026-10-18):** «Tecnologia do futuro.» / «Com os bons modos de antigamente.» — the two sentences together
   in taglines, heroes, footers, end cards and proposal signatures. In a warm sign-off («Até já, com os bons modos de
   antigamente.») the second half may stand alone. Never «de sempre», never «do amanhã»/«simples» in place of «do futuro».
+- **Home slogan (owner, 2026-10-20):** «Os seus clientes encontram, compram e voltam.» (en: «Your customers find you, buy
+  from you and come back.») — not «escolhem».
 - **Look:** warm and light, crafted. Not a dark «tech» look.
 
 ## Palavras
