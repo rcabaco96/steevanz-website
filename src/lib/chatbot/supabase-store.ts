@@ -7,10 +7,14 @@ import type { Handoff } from "./engine.ts";
 import {
   botColumns,
   botProfileFrom,
+  chunksFrom,
+  documentColumns,
   conversationColumns,
   conversationStateFrom,
   knowledgeColumns,
   type BotRow,
+  type ChunkRow,
+  type DocumentRow,
   type ConversationRow,
   type KnowledgeRow,
   type KnowledgeSources,
@@ -49,8 +53,37 @@ export async function loadBotProfile(client: SupabaseClient, botId: string, site
   return { row, profile: botProfileFrom(row, (entries.data ?? []) as KnowledgeRow[], sources) };
 }
 
+/**
+ * The bot's documents and their sections. Before the documents migration is applied the tables don't
+ * exist: the bot then simply has no documents (everything else keeps working).
+ */
+export async function loadDocuments(client: SupabaseClient, botId: string): Promise<{ documents: DocumentRow[]; chunks: ChunkRow[] }> {
+  const documents = await client.from("chatbot_documents").select(documentColumns).eq("bot_id", botId).order("created_at");
+  if (documents.error && (documents.error.code === "PGRST205" || documents.error.code === "42P01")) return { documents: [], chunks: [] };
+  failOn(documents.error, "loadDocuments");
+  const rows = (documents.data ?? []) as DocumentRow[];
+  if (!rows.length) return { documents: [], chunks: [] };
+  const chunks: ChunkRow[] = [];
+  // Pages of 1000 rows (the API's default ceiling).
+  for (let from = 0; ; from += 1000) {
+    const page = await client
+      .from("chatbot_document_chunks")
+      .select("id, document_id, position, heading, body")
+      .eq("bot_id", botId)
+      .order("document_id")
+      .order("position")
+      .range(from, from + 999);
+    failOn(page.error, "loadDocuments chunks");
+    chunks.push(...((page.data ?? []) as ChunkRow[]));
+    if (!page.data || page.data.length < 1000) break;
+  }
+  return { documents: rows, chunks };
+}
+
 async function loadSources(client: SupabaseClient, row: BotRow, siteUrl: string): Promise<KnowledgeSources> {
   const sources: KnowledgeSources = { siteUrl };
+  const documents = await loadDocuments(client, row.id);
+  sources.chunks = chunksFrom(documents.documents, documents.chunks);
   if (row.establishment_id) {
     const id = row.establishment_id;
     const [establishment, hours, closures, services] = await Promise.all([

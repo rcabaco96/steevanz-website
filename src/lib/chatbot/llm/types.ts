@@ -11,6 +11,8 @@ export interface AnswerRequest {
   intents: readonly Intent[];
   /** The business's own answers that match the message, best first (already filtered by property). */
   hits: readonly SearchHit[];
+  /** The best sections of the business's documents (searchChunks), best first. */
+  chunkHits?: readonly SearchHit[];
   knowledge: BusinessKnowledge;
   settings: BotSettings;
   opening: OpeningState;
@@ -25,6 +27,15 @@ export interface AnswerResult {
   provider: string;
   /** Knowledge entries the answer came from (for the conversation log). */
   usedEntryIds: string[];
+  /** Document sections the answer quotes (shown in the admin's «Experimentar», never to customers). */
+  sources?: AnswerSource[];
+}
+
+export interface AnswerSource {
+  documentId: string;
+  documentTitle: string;
+  heading: string;
+  chunkId: string;
 }
 
 export interface AnswerProvider {

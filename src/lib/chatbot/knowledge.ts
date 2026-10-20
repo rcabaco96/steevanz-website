@@ -1,8 +1,8 @@
 // Finding the business's own answer to a message, without embeddings or paid calls: shared words
 // (with light stemming) plus «concepts» that join the same idea across the six languages (a guest
 // who writes «parking» finds the entry «Há estacionamento?»). Pure module (tests/chatbot.test.mjs).
-import { hasKeyword, normalize, sameWord, searchWords } from "./text.ts";
-import type { BusinessKnowledge, CatalogItem, ChatbotLanguage, KnowledgeEntry } from "./types.ts";
+import { hasKeyword, normalize, sameWord, searchWords, stem } from "./text.ts";
+import type { BusinessKnowledge, CatalogItem, ChatbotLanguage, KnowledgeChunk, KnowledgeEntry } from "./types.ts";
 
 /** One idea, the words for it in the six languages (normalized; "*" = word beginning). */
 const concepts: Record<string, readonly string[]> = {
@@ -36,12 +36,16 @@ function conceptsOf(normalizedText: string): Set<string> {
   return found;
 }
 
-export type KnowledgeDocKind = "entry" | "item";
+export type KnowledgeDocKind = "entry" | "item" | "chunk";
 
 export interface KnowledgeDoc {
   kind: KnowledgeDocKind;
   entry?: KnowledgeEntry;
   item?: CatalogItem;
+  chunk?: KnowledgeChunk;
+  /** Chunks: how often each word key appears in the body, and the body's length in words (BM25). */
+  termCounts?: Map<string, number>;
+  length?: number;
   /** Words of the question/title and keywords (they count more). */
   titleWords: string[];
   bodyWords: string[];
@@ -52,9 +56,19 @@ export interface KnowledgeDoc {
 
 export interface KnowledgeIndex {
   docs: KnowledgeDoc[];
+  /** Document sections, searched with BM25 (searchChunks). */
+  chunks: KnowledgeDoc[];
+  /** In how many chunks each word key appears, and the average chunk length (BM25). */
+  documentFrequency: Map<string, number>;
+  averageLength: number;
 }
 
-export function buildIndex(knowledge: Pick<BusinessKnowledge, "entries" | "items">): KnowledgeIndex {
+/** The key a word is counted under in chunks: its stem, cut to 6 letters (estacionar = estacionamento). */
+export function termKey(word: string): string {
+  return stem(word).slice(0, 6);
+}
+
+export function buildIndex(knowledge: Pick<BusinessKnowledge, "entries" | "items"> & { chunks?: KnowledgeChunk[] }): KnowledgeIndex {
   const docs: KnowledgeDoc[] = [];
   for (const entry of knowledge.entries) {
     if (!entry.active || !entry.answer.trim()) continue;
@@ -80,7 +94,29 @@ export function buildIndex(knowledge: Pick<BusinessKnowledge, "entries" | "items
       language: null,
     });
   }
-  return { docs };
+  const chunks: KnowledgeDoc[] = [];
+  const documentFrequency = new Map<string, number>();
+  let totalLength = 0;
+  for (const chunk of knowledge.chunks ?? []) {
+    const bodyWords = searchWords(chunk.body);
+    if (!bodyWords.length) continue;
+    const termCounts = new Map<string, number>();
+    for (const word of bodyWords) termCounts.set(termKey(word), (termCounts.get(termKey(word)) ?? 0) + 1);
+    for (const key of termCounts.keys()) documentFrequency.set(key, (documentFrequency.get(key) ?? 0) + 1);
+    totalLength += bodyWords.length;
+    chunks.push({
+      kind: "chunk",
+      chunk,
+      termCounts,
+      length: bodyWords.length,
+      titleWords: searchWords(chunk.heading),
+      bodyWords,
+      concepts: conceptsOf(normalize(`${chunk.heading} ${chunk.body}`)),
+      property: chunk.property?.trim() || null,
+      language: chunk.language ?? null,
+    });
+  }
+  return { docs, chunks, documentFrequency, averageLength: chunks.length ? totalLength / chunks.length : 0 };
 }
 
 export interface SearchHit {
@@ -164,6 +200,52 @@ export function search(index: KnowledgeIndex, query: string, options: SearchOpti
 }
 
 export const minimumScore = 2.5;
+
+/** A document section counts from this BM25 score (with the same coverage rule as entries). */
+export const minimumChunkScore = 2;
+
+/**
+ * The best document sections for a message (BM25 over the bodies, plus the section titles and the
+ * six-language concepts), best first. Zero cost; embeddings can replace or join this later.
+ */
+export function searchChunks(index: KnowledgeIndex, query: string, options: SearchOptions = {}): SearchHit[] {
+  if (!index.chunks.length) return [];
+  const queryWords = searchWords(query);
+  const normalizedQuery = normalize(query);
+  const queryConcepts = conceptsOf(normalizedQuery);
+  if (!queryWords.length && !queryConcepts.size) return [];
+  const total = index.chunks.length;
+  const k1 = 1.2;
+  const b = 0.75;
+  const meaningful = queryWords.filter((word) => !questionWords.has(word));
+  const hits: SearchHit[] = [];
+  for (const doc of index.chunks) {
+    if (options.property && doc.property && doc.property !== options.property) continue;
+    let score = 0;
+    const matched = new Set<string>();
+    for (const word of new Set(meaningful.length ? meaningful : queryWords)) {
+      const key = termKey(word);
+      const count = doc.termCounts?.get(key) ?? 0;
+      if (count) {
+        const frequency = index.documentFrequency.get(key) ?? 0;
+        const idf = Math.log(1 + (total - frequency + 0.5) / (frequency + 0.5));
+        score += (idf * (count * (k1 + 1))) / (count + k1 * (1 - b + (b * (doc.length ?? 0)) / (index.averageLength || 1)));
+        matched.add(word);
+      }
+      if (doc.titleWords.some((candidate) => sameWord(word, candidate))) {
+        score += 1.5;
+        matched.add(word);
+      }
+    }
+    const shared = [...queryConcepts].filter((concept) => doc.concepts.has(concept));
+    score += shared.length * 2;
+    if (!score) continue;
+    for (const concept of shared) for (const word of wordsExplainedBy(concept, normalizedQuery, queryWords)) matched.add(word);
+    const coverage = meaningful.length ? meaningful.filter((word) => matched.has(word)).length / meaningful.length : 1;
+    hits.push({ doc, score: score + (options.language && doc.language === options.language ? 0.25 : 0), coverage });
+  }
+  return hits.sort((a, b) => b.score - a.score || b.coverage - a.coverage).slice(0, options.limit ?? 3);
+}
 
 /** An entry answers a message when it scores enough AND covers at least half of what was asked. */
 export const minimumCoverage = 0.5;

@@ -10,6 +10,7 @@ import {
   type ChatbotLanguage,
   type Closure,
   type ConversationState,
+  type KnowledgeChunk,
   type KnowledgeEntry,
   type KnowledgeKind,
   type WeeklyHours,
@@ -40,7 +41,7 @@ export interface BotRow {
   time_zone: string;
   properties: string[];
   auto_resume_minutes: number | null;
-  answer_provider: "mock" | "real";
+  answer_provider: "mock" | "gemini" | "real";
   paid_answers_allowed: boolean;
   alert_number: string | null;
   retention_days: number;
@@ -119,6 +120,52 @@ export interface MessageRow {
   created_at: string;
 }
 
+export const documentColumns = "id, bot_id, title, source, kind, file_name, source_url, property, language, char_count, chunk_count, active, created_at, updated_at";
+
+export interface DocumentRow {
+  id: string;
+  bot_id: string;
+  title: string;
+  source: "upload" | "text" | "url";
+  kind: "pdf" | "docx" | "text" | "markdown" | "html";
+  file_name: string | null;
+  source_url: string | null;
+  property: string | null;
+  language: string | null;
+  char_count: number;
+  chunk_count: number;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChunkRow {
+  id: string;
+  document_id: string;
+  position: number;
+  heading: string;
+  body: string;
+}
+
+/** Document sections as the engine reads them (only active documents). */
+export function chunksFrom(documents: readonly DocumentRow[], chunks: readonly ChunkRow[]): KnowledgeChunk[] {
+  const byId = new Map(documents.filter((document) => document.active).map((document) => [document.id, document]));
+  return chunks
+    .filter((chunk) => byId.has(chunk.document_id))
+    .map((chunk) => {
+      const document = byId.get(chunk.document_id)!;
+      return {
+        id: chunk.id,
+        documentId: document.id,
+        documentTitle: document.title,
+        heading: chunk.heading,
+        body: chunk.body,
+        property: document.property,
+        language: isChatbotLanguage(document.language) ? document.language : null,
+      };
+    });
+}
+
 /** The parts of other features the assistant reads (establishment, its hours, services, video menu). */
 export interface KnowledgeSources {
   establishment?: { name: string; address: string | null; phone: string | null; maps_url: string | null; time_zone: string } | null;
@@ -126,6 +173,8 @@ export interface KnowledgeSources {
   closures?: { day: string; reason: string | null }[];
   services?: { name: string; price_cents: number | null; duration_minutes: number; active: boolean }[];
   menu?: { slug: string; active: boolean; dishes: { name: string; description: string; price_cents: number }[] } | null;
+  /** Sections of the bot's documents (chunksFrom). */
+  chunks?: KnowledgeChunk[];
   /** The site's address, for the video menu link ("https://www.steevanz.com"). */
   siteUrl: string;
 }
@@ -180,6 +229,7 @@ export function botProfileFrom(row: BotRow, entries: readonly KnowledgeRow[], so
       closures,
       items,
       entries: knowledgeEntries,
+      chunks: sources.chunks ?? [],
       properties: row.properties.slice(0, 5),
     },
   };

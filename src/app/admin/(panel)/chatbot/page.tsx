@@ -68,7 +68,7 @@ export default async function AdminChatbotPage() {
           <TestChat demo="restaurante" hint="Experimente «A que horas abrem?», «Quanto custa o polvo?», «Is there parking?» ou «Quero falar com alguém»." />
         </Panel>
         <Panel title="Experimentar: alojamento de exemplo">
-          <TestChat demo="alojamento" hint="Dois alojamentos no mesmo número. Experimente «What's the wifi password?», «Qual é o código da porta?» ou «Can we check in early?»." />
+          <TestChat demo="alojamento" hint="Dois alojamentos e um guia da casa em documento. Experimente «What's the wifi password?», «Onde fica o supermercado?», «Qual é o código da porta?» ou «Can we check in early?»." />
         </Panel>
       </div>
     </>

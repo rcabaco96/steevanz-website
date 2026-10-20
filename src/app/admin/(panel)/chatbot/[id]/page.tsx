@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BackLink } from "@/components/admin/RecordDetail";
 import { BotSettingsForm, EnableForm } from "@/components/admin/chatbot/BotSettingsForm";
 import { ChatbotNotReady, EnabledBadge, effectiveSessionState, kindLabels, SessionBadge } from "@/components/admin/chatbot/ChatbotBits";
+import { DocumentsEditor } from "@/components/admin/chatbot/DocumentsEditor";
 import { Inbox } from "@/components/admin/chatbot/Inbox";
 import { KnowledgeEditor } from "@/components/admin/chatbot/KnowledgeEditor";
 import { TestChat } from "@/components/admin/chatbot/TestChat";
@@ -184,6 +185,15 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
           <Panel title="Respostas do negócio">
             <KnowledgeEditor botId={row.id} entries={data.entries} properties={row.properties} />
           </Panel>
+          <Panel title="Documentos">
+            {data.documents ? (
+              <DocumentsEditor botId={row.id} documents={data.documents} properties={row.properties} />
+            ) : (
+              <EmptyState>
+                Para enviar documentos falta aprovar e aplicar a migração <code className="font-mono text-xs">20261021120000_chatbot_documents.sql</code>.
+              </EmptyState>
+            )}
+          </Panel>
         </div>
       ) : null}
 
@@ -194,6 +204,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
             establishments={data.establishments}
             menus={data.menus}
             bookingSuggestion={establishment ? `${siteUrl}/reservar/${establishment.slug}` : null}
+            geminiConfigured={Boolean(process.env.GEMINI_API_KEY)}
           />
         </Panel>
       ) : null}
@@ -202,7 +213,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
 
       {tab === "experimentar" ? (
         <Panel title="Experimentar como cliente">
-          <TestChat botId={row.id} hint="Escreva como um cliente. Responde com a informação deste negócio, mesmo com as respostas desligadas." />
+          <TestChat botId={row.id} hint="Escreva como um cliente. Responde com a informação deste negócio (respostas, documentos, horário, menu), mesmo com as respostas desligadas. Quando a resposta vem de um documento, mostra a fonte." />
         </Panel>
       ) : null}
     </>

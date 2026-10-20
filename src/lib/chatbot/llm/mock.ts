@@ -2,11 +2,12 @@
 // business's own information (frequent questions, hours, address, menu or services, booking link).
 // It never invents: when nothing matches it returns null and the engine says «I don't know».
 import { formatNextOpening, formatWeek, type OpeningState } from "../hours.ts";
-import { minimumCoverage, minimumScore, type SearchHit } from "../knowledge.ts";
+import { bestSentences } from "../documents.ts";
+import { minimumChunkScore, minimumCoverage, minimumScore, type SearchHit } from "../knowledge.ts";
 import { fixedMessages } from "../messages.ts";
-import { formatPrice } from "../text.ts";
+import { formatPrice, sameWord, searchWords } from "../text.ts";
 import type { BusinessKnowledge, CatalogItem, ChatbotLanguage } from "../types.ts";
-import type { AnswerProvider, AnswerRequest, AnswerResult } from "./types.ts";
+import type { AnswerProvider, AnswerRequest, AnswerResult, AnswerSource } from "./types.ts";
 
 /** An entry this strong answers the question better than the generic hours/address answers. */
 const strongScore = 4.5;
@@ -48,6 +49,25 @@ export function itemsAnswer(items: readonly CatalogItem[], knowledge: BusinessKn
   return [text.menuIntro, ...items.map((item) => itemLine(item, language)), knowledge.menuUrl ? text.menuLink(knowledge.menuUrl) : null].filter(Boolean).join("\n");
 }
 
+/** Quotes the most relevant sentences of the best document section(s) for the question. */
+export function chunkAnswer(request: AnswerRequest): { text: string; sources: AnswerSource[] } | null {
+  const hits = (request.chunkHits ?? []).filter((hit) => hit.doc.kind === "chunk" && hit.score >= minimumChunkScore && hit.coverage >= minimumCoverage);
+  if (!hits.length) return null;
+  const queryWords = searchWords(request.message);
+  const relevance = (sentence: string) => {
+    const words = searchWords(sentence);
+    return queryWords.filter((word) => words.some((candidate) => sameWord(word, candidate))).length;
+  };
+  // The best section, and a second one when it is almost as good (an answer split across sections).
+  const chosen = [hits[0], ...hits.slice(1, 2).filter((hit) => hit.score >= hits[0].score * 0.85 && hit.doc.chunk?.id !== hits[0].doc.chunk?.id)];
+  const quotes = chosen.map((hit) => bestSentences(hit.doc.chunk!.body, relevance, chosen.length > 1 ? 2 : 3, chosen.length > 1 ? 350 : 600)).filter(Boolean);
+  if (!quotes.length) return null;
+  const sources = chosen.map((hit) => ({ documentId: hit.doc.chunk!.documentId, documentTitle: hit.doc.chunk!.documentTitle, heading: hit.doc.chunk!.heading, chunkId: hit.doc.chunk!.id }));
+  const written = chosen[0].doc.chunk!.language ?? request.settings.defaultLanguage;
+  const text = quotes.join("\n\n");
+  return { text: written === request.language ? text : `${text}\n${fixedMessages[request.language].answerInOtherLanguage}`, sources };
+}
+
 export function mockAnswer(request: AnswerRequest): AnswerResult {
   const { intents, hits, knowledge, language, opening } = request;
   const has = (intent: string) => intents.includes(intent as never);
@@ -78,11 +98,19 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
     parts.push(fixedMessages[language].menuLink(knowledge.menuUrl));
   }
   if (!parts.length && topEntry) parts.push(entryText(topEntry));
+  let sources: AnswerSource[] = [];
+  if (!parts.length) {
+    const fromDocuments = chunkAnswer(request);
+    if (fromDocuments) {
+      parts.push(fromDocuments.text);
+      sources = fromDocuments.sources;
+    }
+  }
   if (has("booking")) {
     const booking = bookingAnswer(knowledge, language);
     if (booking) parts.push(booking);
   }
-  return { text: parts.length ? parts.join("\n\n") : null, provider: "mock", usedEntryIds: used };
+  return { text: parts.length ? parts.join("\n\n") : null, provider: "mock", usedEntryIds: used, sources };
 }
 
 export const mockProvider: AnswerProvider = {

@@ -39,8 +39,10 @@ export function BotSettingsForm({
   establishments,
   menus,
   bookingSuggestion,
+  geminiConfigured,
 }: {
   bot: BotRow;
+  geminiConfigured: boolean;
   establishments: { id: string; name: string }[];
   menus: { id: string; name: string }[];
   bookingSuggestion: string | null;
@@ -188,9 +190,20 @@ export function BotSettingsForm({
           Avisar o dono neste WhatsApp quando uma conversa passa para a equipa <span className="font-normal text-subtle">(não usado nos testes com open-wa)</span>
           <input name="alert_number" maxLength={40} inputMode="tel" placeholder="Opcional" defaultValue={bot.alert_number ?? ""} className={input} />
         </label>
-        <div className="rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted">
-          <p className="font-semibold text-text">Respostas: gratuitas</p>
-          <p>Hoje o assistente responde só com a informação do negócio, sem IA paga. Ligar um modelo de IA pago fica para uma fase seguinte, com o seu acordo.</p>
+        <div className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted sm:col-span-2">
+          <label className="inline-flex items-center gap-2 font-semibold text-text">
+            <input type="checkbox" name="test_ai" value="1" defaultChecked={bot.answer_provider === "gemini"} className="h-4 w-4 accent-[var(--color-accent)]" />
+            IA de teste (Gemini, grátis)
+          </label>
+          <p>
+            Desligada: o assistente responde só com a informação do negócio, sem IA. Ligada: usa o plano grátis da Google, só com o conhecimento e os documentos deste
+            assistente, até 10 pedidos por minuto e 200 por dia; se falhar ou chegar ao limite, volta às respostas gratuitas.
+            {geminiConfigured ? null : <strong className="text-text"> Falta a chave GEMINI_API_KEY neste servidor: até lá responde sem IA.</strong>}
+          </p>
+          <p className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+            Só para testes com as suas próprias mensagens, nunca com clientes reais: a Google indica que o plano grátis pode usar os dados para melhorar os seus produtos, e os
+            termos só permitem servir utilizadores na União Europeia com o plano pago.
+          </p>
         </div>
       </fieldset>
 

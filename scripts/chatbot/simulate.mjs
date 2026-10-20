@@ -69,6 +69,8 @@ await adapter.start({ onMessage: (message) => runtime.handle(message).then((outc
 function show(outcome) {
   for (const sent of adapter.sent.slice(printed)) console.log(`\n  🤖 ${sent.text.replace(/\n/g, "\n     ")}`);
   printed = adapter.sent.length;
+  const sources = outcome.result?.sources ?? [];
+  if (sources.length) console.log(`     (fonte: ${sources.map((source) => source.heading).join(" · ")})`);
   if (outcome.status === "silent") console.log("  (o assistente fica calado: a equipa tem esta conversa)");
 }
 

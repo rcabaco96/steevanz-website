@@ -62,6 +62,18 @@ export interface CatalogItem {
   durationMinutes?: number | null;
 }
 
+/** A section of a document the business gave the assistant (PDF, Word, text, web page). */
+export interface KnowledgeChunk {
+  id: string;
+  documentId: string;
+  documentTitle: string;
+  /** «Título › Secção». */
+  heading: string;
+  body: string;
+  property?: string | null;
+  language?: ChatbotLanguage | null;
+}
+
 /** Everything the assistant may use to answer, put together from the business's data. */
 export interface BusinessKnowledge {
   businessName: string;
@@ -80,6 +92,8 @@ export interface BusinessKnowledge {
   closures: Closure[];
   items: CatalogItem[];
   entries: KnowledgeEntry[];
+  /** Sections of the business's documents (searched after its own answers). */
+  chunks?: KnowledgeChunk[];
   /** Lodging: up to five properties served by the same number. */
   properties: string[];
 }

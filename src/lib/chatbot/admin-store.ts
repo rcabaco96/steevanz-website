@@ -12,6 +12,8 @@ import {
   sessionColumns,
   type BotRow,
   type ConversationRow,
+  documentColumns,
+  type DocumentRow,
   type KnowledgeRow,
   type MessageRow,
   type SessionRow,
@@ -73,6 +75,8 @@ export interface AdminBot {
   entries: KnowledgeRow[];
   session: SessionRow | null;
   establishments: { id: string; name: string; slug: string }[];
+  /** null: the documents migration (20261021120000) isn't applied yet. */
+  documents: DocumentRow[] | null;
   menus: { id: string; name: string; slug: string }[];
 }
 
@@ -81,13 +85,16 @@ export async function getAdminBot(id: string): Promise<AdminBot | null> {
   const client = createServiceClient();
   const loaded = await loadBotProfile(client, id, siteUrl);
   if (!loaded) return null;
-  const [entries, session, owner, establishments, menus] = await Promise.all([
+  const [entries, session, owner, establishments, menus, documents] = await Promise.all([
     client.from("chatbot_knowledge").select(knowledgeColumns).eq("bot_id", id).order("position").order("created_at"),
     client.from("chatbot_sessions").select(sessionColumns).eq("bot_id", id).maybeSingle(),
     client.from("profiles").select("email, full_name, business_name").eq("id", loaded.row.owner_id).maybeSingle(),
     client.from("establishments").select("id, name, slug").eq("owner_id", loaded.row.owner_id).order("name"),
     client.from("video_menus").select("id, business_name, slug").order("business_name"),
+    client.from("chatbot_documents").select(documentColumns).eq("bot_id", id).order("created_at", { ascending: false }),
   ]);
+  const documentsMissing = documents.error?.code === "PGRST205" || documents.error?.code === "42P01";
+  if (!documentsMissing) failOn(documents.error, "getAdminBot documents");
   failOn(entries.error, "getAdminBot entries");
   failOn(session.error, "getAdminBot session");
   failOn(owner.error, "getAdminBot owner");
@@ -101,6 +108,7 @@ export async function getAdminBot(id: string): Promise<AdminBot | null> {
     entries: (entries.data ?? []) as KnowledgeRow[],
     session: (session.data ?? null) as SessionRow | null,
     establishments: (establishments.data ?? []) as { id: string; name: string; slug: string }[],
+    documents: documentsMissing ? null : ((documents.data ?? []) as DocumentRow[]),
     menus: ((menus.data ?? []) as { id: string; business_name: string; slug: string }[]).map((menu) => ({ id: menu.id, name: menu.business_name, slug: menu.slug })),
   };
 }

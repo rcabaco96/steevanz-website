@@ -70,6 +70,7 @@ export function createRuntime(deps: RuntimeDeps) {
   const pacer = new Pacer(pacing);
   const log = deps.log ?? (() => {});
   let bot = deps.bot;
+  let provider = deps.provider ?? mockProvider;
   let index: KnowledgeIndex = buildIndex(bot.knowledge);
   const queues = new Map<string, Promise<unknown>>();
   const sentIds = new Set<string>();
@@ -121,7 +122,7 @@ export function createRuntime(deps: RuntimeDeps) {
 
     const result = await respond(
       { bot, conversation: conversation.state, history: conversation.history, message: { body: message.body, at: message.at, kind: message.kind === "text" ? "text" : "media" }, now: new Date(now), index },
-      deps.provider ?? mockProvider,
+      provider,
     );
 
     let status: HandleStatus = result.replies.length ? "replied" : "silent";
@@ -177,10 +178,11 @@ export function createRuntime(deps: RuntimeDeps) {
       });
       return next;
     },
-    /** New settings or knowledge from the admin. */
-    updateBot(next: BotProfile) {
+    /** New settings or knowledge from the admin (and the answer writer, when it changed). */
+    updateBot(next: BotProfile, nextProvider?: AnswerProvider) {
       bot = next;
       index = buildIndex(next.knowledge);
+      if (nextProvider) provider = nextProvider;
     },
     get bot() {
       return bot;

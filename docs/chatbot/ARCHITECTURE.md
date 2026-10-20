@@ -112,6 +112,52 @@ automaticamente é trabalho do modelo real (fase 2).
   ideia nas 6 línguas (parking = estacionamento = aparcamiento…), e uma regra de cobertura (a resposta
   tem de cobrir pelo menos metade do que foi perguntado) para não responder ao lado.
 
+### Documentos do negócio
+
+Admin › assistente › Conhecimento › **Documentos**: enviar PDF, Word (.docx), texto ou Markdown (até
+2,5 MB), colar texto, ou indicar o endereço de uma página pública.
+
+- Extração no servidor, grátis: Word lido com o zlib do Node (`extract.ts`, sem bibliotecas), PDF com
+  `unpdf` (pdf.js, licença MIT; única dependência nova), HTML limpo (`documents.ts → htmlToText`).
+  PDFs digitalizados (imagens) não têm texto e são recusados com uma mensagem clara (OCR seria extra).
+- O texto é cortado em secções de ~800 caracteres com título («Documento › Secção»), guardadas em
+  `chatbot_document_chunks`; o ficheiro original não é guardado.
+- Pesquisa: BM25 sobre as secções + títulos + conceitos nas 6 línguas + regra de cobertura
+  (`knowledge.ts → searchChunks`). As respostas do negócio ganham sempre aos documentos.
+- O mock cita as 1–3 frases mais relevantes da melhor secção. Em «Experimentar» aparece a fonte
+  (documento › secção); ao cliente nunca.
+- Preparado para embeddings mais tarde (uma coluna nova nas secções) sem mudar o resto.
+- Migração `20261021120000_chatbot_documents.sql` (por aprovar). Sem ela, o resto funciona e o
+  painel de documentos mostra o aviso.
+
+### IA de teste: Gemini, plano grátis (`llm/gemini.ts`)
+
+Pedido do dono (2026-10-20): IA grátis para testes, sem API paga por agora.
+
+- **Desligada por omissão.** Liga-se por assistente no admin (Definições › «IA de teste (Gemini,
+  grátis)») e precisa de `GEMINI_API_KEY` (Google AI Studio, conta Google do dono) no `.env.local`
+  (programa local) e, para «Experimentar» no site, nas variáveis da Vercel. Nunca no git.
+- Modelo por omissão `gemini-3.5-flash-lite` (o mais rápido e barato da linha atual; `GEMINI_MODEL`
+  muda). Limites nossos, abaixo dos da Google: **10 pedidos/min e 200/dia** no total, por processo
+  (`GEMINI_MAX_PER_MINUTE`, `GEMINI_MAX_PER_DAY`, só para baixo).
+- Ancorada: o modelo só vê a informação do assistente e as entradas/secções encontradas, numeradas
+  [E1]/[S1]; tem de responder `NO_ANSWER` quando não estiver lá (→ «não tenho essa informação»); as
+  referências viram a fonte mostrada em «Experimentar».
+- As regras fixas correm antes (emergência → 112, códigos, médico, passagem para pessoa: o modelo nem
+  é chamado) e depois (`sanitizeReply`). Qualquer erro, limite atingido ou falta de chave → respostas
+  gratuitas, com a razão visível em «Experimentar».
+- Migração `20261021130000_chatbot_test_ai.sql` (por aprovar): só alarga os valores de
+  `answer_provider` para incluir `gemini`.
+- **Termos da Google (verificados em 2026-10-20, termos de 28/04/2026):** o plano grátis indica «Used to
+  improve our products: Yes» e pode haver revisão humana; os termos pedem para não enviar dados
+  pessoais ou sensíveis; e **«You may use only Paid Services when making API Clients available to
+  users in the European Economic Area»** (também Suíça e Reino Unido; para quem está nessas regiões
+  aplicam-se os termos de dados dos serviços pagos mesmo na quota grátis). Ou seja: só testes do dono
+  com as suas próprias mensagens; clientes reais exigem o plano pago ou outro fornecedor. Os limites
+  exatos do plano grátis por modelo veem-se em aistudio.google.com/rate-limit (a página pública não
+  os lista); idade mínima 18 anos.
+- O fornecedor pago para clientes (Anthropic ou outro) continua um marcador desligado.
+
 ### Camada de IA (LLM)
 
 - Interface `AnswerProvider` (`llm/types.ts`). Hoje: `mockProvider` (determinístico, grátis).

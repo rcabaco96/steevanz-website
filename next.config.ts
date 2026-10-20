@@ -9,6 +9,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // pdf.js (through unpdf) reads PDFs for the WhatsApp assistant's documents: loaded from node_modules
+  // at run time instead of being bundled (it uses import.meta in ways the bundler can't follow).
+  serverExternalPackages: ["unpdf"],
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1600],

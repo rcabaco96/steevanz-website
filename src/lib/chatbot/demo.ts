@@ -1,6 +1,31 @@
 // Example businesses for the offline simulator, the admin's «Experimentar» box and the tests.
 // Clearly fictitious («exemplo»): no real business, no reviews, prices only to show the format.
-import type { BotProfile, BotSettings } from "./types.ts";
+import { splitIntoChunks } from "./documents.ts";
+import type { BotProfile, BotSettings, KnowledgeChunk } from "./types.ts";
+
+/** An example house guide, as if the host had uploaded it (a Word file or a PDF). */
+const houseGuide = `# Viver na casa
+
+## Lixo e reciclagem
+O caixote do lixo fica debaixo do lava-loiça. Os ecopontos estão no fim da rua, junto à paragem do autocarro: azul para papel, amarelo para plástico e metal, verde para vidro.
+
+## Aquecimento
+Os radiadores ligam-se no botão branco ao lado da porta da sala. Ao sair, desligue-os por favor.
+
+## Regras da casa
+Silêncio a partir das 22:00. Não é permitido fumar dentro de casa. Animais só com aviso prévio.
+
+# Arredores
+
+## Supermercado e farmácia
+O supermercado mais perto fica a 400 metros, na Avenida Principal, aberto todos os dias das 8:00 às 21:00. A farmácia é ao lado do supermercado.
+
+## Praias
+A praia fluvial fica a 10 minutos a pé, seguindo o caminho junto ao rio. Tem nadador-salvador de junho a setembro.`;
+
+function exampleChunks(documentId: string, title: string, text: string, property: string | null): KnowledgeChunk[] {
+  return splitIntoChunks(text, title).map((chunk, index) => ({ id: `${documentId}-${index}`, documentId, documentTitle: title, heading: chunk.heading, body: chunk.body, property }));
+}
 
 const settings: BotSettings = {
   enabled: true,
@@ -74,6 +99,7 @@ export const demoLodging: BotProfile = {
       { id: "l8", kind: "info", question: "Como entro em casa?", answer: "Enviamos as instruções no dia da chegada.\nCódigo da porta: 4821", keywords: "entrar, porta, chegada", property: "Casa do Rio", active: true },
     ],
     properties: ["Casa do Rio", "Moinho Velho"],
+    chunks: exampleChunks("demo-guia", "Guia da casa (exemplo)", houseGuide, null),
   },
 };
 

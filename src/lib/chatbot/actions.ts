@@ -7,7 +7,10 @@ import { AdminAccessError, requireAdmin } from "@/lib/admin/auth";
 import { siteUrl } from "@/lib/site";
 import { createServiceClient } from "@/lib/supabase/service";
 import { demoBots, type DemoBotKey } from "./demo";
+import { documentLimits, htmlToText, splitIntoChunks, type DocumentKind } from "./documents";
+import { extractDocument, ExtractError, isPrivateHost } from "./extract";
 import { respond } from "./engine";
+import { chooseProvider } from "./llm/providers";
 import { conversationStateFrom } from "./rows";
 import { ChatbotNotReadyError, failOn, loadBotProfile } from "./supabase-store";
 import { chatbotLanguages, isChatbotBusinessKind, isChatbotLanguage, newConversationState, type BotProfile, type ChatMessage, type ConversationState } from "./types";
@@ -17,6 +20,7 @@ import { chatbotLanguages, isChatbotBusinessKind, isChatbotLanguage, newConversa
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const notReadyMessage = "A base de dados ainda não tem as tabelas do assistente (falta aprovar e aplicar a migração 20261020200000_chatbot.sql).";
+const documentsNotReadyMessage = "A base de dados ainda não tem as tabelas dos documentos (falta aprovar e aplicar a migração 20261021120000_chatbot_documents.sql).";
 
 class ChatbotMessage extends Error {}
 
@@ -128,9 +132,12 @@ export async function updateBot(_state: ActionState, formData: FormData): Promis
       auto_resume_minutes: autoResume,
       alert_number: optional(formData, "alert_number", 40),
       retention_days: retention,
+      // «IA de teste (Gemini, grátis)»: off unless ticked. Never touches the paid switch.
+      answer_provider: value(formData, "test_ai") === "1" ? "gemini" : "mock",
     };
     const { error } = await createServiceClient().from("chatbot_bots").update(update).eq("id", botId);
     if (error?.code === "23505") throw new ChatbotMessage("Esse número de WhatsApp já está noutro assistente.");
+    if (error?.code === "23514" && update.answer_provider === "gemini") throw new ChatbotMessage("Para ligar a IA de teste falta aprovar e aplicar a migração 20261021130000_chatbot_test_ai.sql.");
     failOn(error, "updateBot");
     refresh(botId);
     return { ok: true, message: "Definições guardadas." };
@@ -225,6 +232,11 @@ export async function resolveConversation(_state: ActionState, formData: FormDat
 export interface TestTurn {
   author: "customer" | "bot" | "system";
   body: string;
+  /** Where a bot answer came from (documents), shown only here in the admin. */
+  sources?: { title: string; heading: string }[];
+  /** Who wrote it (free answers or the test AI) and why the test AI was not used, if so. */
+  by?: string;
+  note?: string;
 }
 
 export interface TestChatState {
@@ -243,6 +255,7 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
     return { ...state, error: "Sessão expirada ou sem permissão. Entre novamente." };
   }
   let bot: BotProfile | null = null;
+  let answerProvider = "mock";
   const demo = value(formData, "demo");
   if (demo && demo in demoBots) {
     bot = demoBots[demo as DemoBotKey];
@@ -252,6 +265,7 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
     try {
       const loaded = await loadBotProfile(createServiceClient(), botId, siteUrl);
       bot = loaded?.profile ?? null;
+      answerProvider = loaded?.row.answer_provider ?? "mock";
     } catch (error) {
       if (error instanceof ChatbotNotReadyError) return { ...state, error: notReadyMessage };
       console.error("[chatbot] test load failed:", error instanceof Error ? error.message : error);
@@ -266,9 +280,145 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
   const conversation = previous ? conversationStateFrom({ state: previous, mode: previous.mode === "human" ? "human" : "bot" }) : newConversationState();
   const now = Date.now();
   const history: ChatMessage[] = state.turns.slice(-20).map((turn, index) => ({ author: turn.author === "system" ? "system" : turn.author, body: turn.body, at: now - (state.turns.length - index) * 1000 }));
-  const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now) });
-  const turns: TestTurn[] = [...state.turns, { author: "customer", body: message }, ...result.replies.map((body) => ({ author: "bot" as const, body }))];
+  // The test AI (Gemini free tier) only when turned on for this bot; the paid provider never runs here.
+  const provider = chooseProvider({ choice: answerProvider, paidAllowed: false, env: process.env });
+  const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now) }, provider);
+  const sources = result.sources.map((source) => ({ title: source.documentTitle, heading: source.heading }));
+  const by = result.provider?.startsWith("gemini") ? "IA de teste (Gemini)" : result.provider ? "Respostas gratuitas" : null;
+  const replies: TestTurn[] = result.replies.map((body, index) =>
+    index === result.replies.length - 1 ? { author: "bot" as const, body, ...(sources.length ? { sources } : {}), ...(by ? { by } : {}), ...(result.providerNote ? { note: result.providerNote } : {}) } : { author: "bot" as const, body },
+  );
+  const turns: TestTurn[] = [...state.turns, { author: "customer", body: message }, ...replies];
   if (result.handoff) turns.push({ author: "system", body: `Passagem para a equipa${result.handoff.urgent ? " (urgente)" : ""}.\n${result.handoff.summary}` });
   if (result.silent === "human") turns.push({ author: "system", body: "O assistente fica calado: a equipa tem esta conversa. Recomece para testar de novo." });
   return { turns: turns.slice(-60), conversation: result.conversation, error: null };
+}
+
+// Documents: PDF, Word, text, Markdown, pasted text or a web page. Text is extracted here (free code),
+// cut into titled sections and stored; the original file is not kept. -----------------------------
+
+const tooBig = "Demasiado grande (máximo 2,5 MB). Envie uma versão mais pequena ou cole o texto.";
+
+async function fetchPage(address: string): Promise<{ kind: DocumentKind; bytes: Uint8Array; mime: string; name: string }> {
+  let url: URL;
+  try {
+    url = new URL(address);
+  } catch {
+    throw new ChatbotMessage("Endereço inválido.");
+  }
+  if (url.protocol !== "https:" || isPrivateHost(url.hostname)) throw new ChatbotMessage("Use um endereço público que comece por https://");
+  const response = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(10_000), headers: { "User-Agent": "SteevanzAssistant/1.0 (+https://www.steevanz.com)" } }).catch(() => null);
+  if (!response || !response.ok) throw new ChatbotMessage("Não consegui abrir esse endereço. Confirme que a página é pública.");
+  if (isPrivateHost(new URL(response.url).hostname)) throw new ChatbotMessage("Esse endereço não é permitido.");
+  if (Number(response.headers.get("content-length") ?? 0) > documentLimits.maxFileBytes) throw new ChatbotMessage(tooBig);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > documentLimits.maxFileBytes) throw new ChatbotMessage(tooBig);
+  const mime = (response.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+  const name = url.pathname.split("/").pop() || url.hostname;
+  const kind: DocumentKind = mime === "application/pdf" || name.toLowerCase().endsWith(".pdf") ? "pdf" : mime === "text/plain" ? "text" : mime === "text/markdown" ? "markdown" : "html";
+  return { kind, bytes, mime, name };
+}
+
+function isMissingTable(error: { code?: string } | null): boolean {
+  return error?.code === "PGRST205" || error?.code === "42P01";
+}
+
+export async function addDocument(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData, "bot_id");
+    const source = value(formData, "source");
+    let kind: DocumentKind;
+    let text: string;
+    let suggestedTitle: string | null = null;
+    let fileName: string | null = null;
+    let sourceUrl: string | null = null;
+    try {
+      if (source === "upload") {
+        const file = formData.get("file");
+        if (!(file instanceof File) || !file.size) throw new ChatbotMessage("Escolha um ficheiro.");
+        if (file.size > documentLimits.maxFileBytes) throw new ChatbotMessage(tooBig);
+        const extracted = await extractDocument(file.name, file.type, new Uint8Array(await file.arrayBuffer()));
+        kind = extracted.kind;
+        text = extracted.text;
+        fileName = file.name.slice(0, 255);
+        suggestedTitle = extracted.title ?? file.name.replace(/\.[a-z0-9]+$/i, "");
+      } else if (source === "url") {
+        const address = value(formData, "url");
+        const page = await fetchPage(address);
+        if (page.kind === "html") {
+          const html = htmlToText(new TextDecoder("utf-8").decode(page.bytes));
+          kind = "html";
+          text = html.text;
+          suggestedTitle = html.title;
+        } else {
+          const extracted = await extractDocument(page.name, page.mime, page.bytes);
+          kind = extracted.kind;
+          text = extracted.text;
+          suggestedTitle = page.name;
+        }
+        sourceUrl = address.length <= 500 ? address : null;
+      } else if (source === "text") {
+        text = value(formData, "text").slice(0, documentLimits.maxChars);
+        if (text.replace(/\s/g, "").length < 20) throw new ChatbotMessage("Cole o texto do documento (pelo menos algumas frases).");
+        kind = /^#{1,6}\s/m.test(text) ? "markdown" : "text";
+      } else {
+        throw new ChatbotMessage("Escolha de onde vem o documento.");
+      }
+    } catch (error) {
+      if (error instanceof ExtractError) throw new ChatbotMessage(error.message);
+      throw error;
+    }
+    const title = (value(formData, "title") || suggestedTitle || "Documento").slice(0, 200);
+    const chunks = splitIntoChunks(text, title);
+    if (!chunks.length) throw new ChatbotMessage("Não encontrei texto aproveitável neste documento.");
+    const language = value(formData, "language");
+    const client = createServiceClient();
+    const { data, error } = await client
+      .from("chatbot_documents")
+      .insert({
+        bot_id: botId,
+        title,
+        source,
+        kind,
+        file_name: fileName,
+        source_url: sourceUrl,
+        property: optional(formData, "property", 120),
+        language: isChatbotLanguage(language) ? language : null,
+        char_count: chunks.reduce((sum, chunk) => sum + chunk.body.length, 0),
+        chunk_count: chunks.length,
+      })
+      .select("id")
+      .single();
+    if (isMissingTable(error)) throw new ChatbotMessage(documentsNotReadyMessage);
+    failOn(error, "addDocument");
+    const documentId = (data as { id: string }).id;
+    for (let start = 0; start < chunks.length; start += 200) {
+      const rows = chunks.slice(start, start + 200).map((chunk, offset) => ({
+        document_id: documentId,
+        bot_id: botId,
+        position: start + offset,
+        heading: chunk.heading.slice(0, 500),
+        body: chunk.body.slice(0, 4000),
+      }));
+      const { error: chunkError } = await client.from("chatbot_document_chunks").insert(rows);
+      if (chunkError) {
+        await client.from("chatbot_documents").delete().eq("id", documentId);
+        failOn(chunkError, "addDocument chunks");
+      }
+    }
+    refresh(botId);
+    return { ok: true, message: `Documento «${title}» acrescentado: ${chunks.length} ${chunks.length === 1 ? "secção" : "secções"}.` };
+  });
+}
+
+export async function deleteDocument(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData, "bot_id");
+    const documentId = id(formData);
+    const { error } = await createServiceClient().from("chatbot_documents").delete().eq("id", documentId).eq("bot_id", botId);
+    if (isMissingTable(error)) throw new ChatbotMessage(documentsNotReadyMessage);
+    failOn(error, "deleteDocument");
+    refresh(botId);
+    return { ok: true, message: "Documento apagado." };
+  });
 }

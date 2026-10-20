@@ -47,6 +47,13 @@ export function TestChat({ botId, demo, hint }: { botId?: string; demo?: string;
             }`}
           >
             {turn.body}
+            {turn.sources?.length || turn.by || turn.note ? (
+              <span className="mt-1.5 block border-t border-line pt-1 text-[0.7rem] text-subtle">
+                {turn.by ? <span className="block">{turn.by}</span> : null}
+                {turn.sources?.length ? <span className="block">Fonte: {turn.sources.map((source) => source.heading || source.title).join(" · ")}</span> : null}
+                {turn.note ? <span className="block">{turn.note}</span> : null}
+              </span>
+            ) : null}
           </li>
         ))}
       </ol>
@@ -65,7 +72,7 @@ export function TestChat({ botId, demo, hint }: { botId?: string; demo?: string;
             {state.error}
           </p>
         ) : (
-          <p className="text-xs text-subtle">Respostas gratuitas (sem IA paga). Nada é guardado nem enviado para o WhatsApp.</p>
+          <p className="text-xs text-subtle">Sem IA paga. Nada é guardado nem enviado para o WhatsApp.</p>
         )}
         {state.turns.length ? (
           <form action={action}>

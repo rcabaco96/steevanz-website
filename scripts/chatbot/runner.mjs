@@ -153,7 +153,9 @@ const runtime = createRuntime({
   canSend,
   // The free mock unless the owner chose a real model AND allowed paid answers on the site; even
   // then the real provider is a placeholder that refuses (phase 2) and the mock answers.
-  provider: chooseProvider({ choice: row.answer_provider, paidAllowed: row.paid_answers_allowed }),
+  // «IA de teste (Gemini)» only when turned on for this bot in the admin and GEMINI_API_KEY is set;
+  // the paid provider is a placeholder that refuses. Any problem → the free answers.
+  provider: chooseProvider({ choice: row.answer_provider, paidAllowed: row.paid_answers_allowed, env: process.env }),
   log,
   // Pilot: no WhatsApp alerts (that would be the bot writing first); the hand-off shows in the admin.
   onHandoff: ({ handoff }) => log(`Passagem para a equipa (${handoff.reason}${handoff.urgent ? ", URGENTE" : ""}): ver /admin/chatbot › Conversas.`),
@@ -184,8 +186,9 @@ const refresh = setInterval(async () => {
   try {
     const next = await loadBotProfile(supabase, botId, siteUrl);
     if (next) {
+      const providerChanged = next.row.answer_provider !== loaded.row.answer_provider;
       loaded = next;
-      runtime.updateBot(next.profile);
+      runtime.updateBot(next.profile, providerChanged ? chooseProvider({ choice: next.row.answer_provider, paidAllowed: next.row.paid_answers_allowed, env: process.env }) : undefined);
     }
   } catch (error) {
     log(`Não consegui atualizar o conhecimento: ${error instanceof Error ? error.message : error}`);
