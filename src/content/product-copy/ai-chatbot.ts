@@ -287,13 +287,148 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
-  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
   es: {
     name: "Chatbot con IA para web y WhatsApp",
     shortName: "Chatbot IA",
     tagline: "Respuestas acertadas a cualquier hora, en su web y en WhatsApp.",
     summary:
       "Un asistente con IA entrenado con la información de su negocio: carta, precios, horarios y servicios. Responde las 24 horas en varios idiomas y deriva a reservas o a su equipo.",
+    metaTitle: "Chatbot con IA para Web y WhatsApp | Steevanz",
+    metaDescription:
+      "Chatbot con IA para la web y el WhatsApp de su negocio: responde las 24 horas sobre horarios, precios y servicios, en español, inglés y otros idiomas.",
+    heroTitle: "Un asistente que responde mientras usted trabaja",
+    heroSubtitle:
+      "Un chatbot con IA que conoce su carta, sus precios, sus horarios y sus servicios, y atiende a sus clientes en la web y en WhatsApp, a cualquier hora y en varios idiomas. Cuando hace falta, pasa la conversación a su equipo.",
+    problem: {
+      title: "Las mismas preguntas, todos los días, a todas horas",
+      body:
+        "¿A qué hora abren? ¿Tienen opciones sin gluten? ¿Cuánto cuestan unas mechas? Contestar los mismos mensajes en WhatsApp y en la web le quita horas a su equipo. Y las preguntas que llegan por la noche o en pleno servicio se quedan sin respuesta hasta que ya es tarde.",
+      points: [
+        "Mensajes repetidos que restan tiempo a la atención en persona",
+        "Clientes que se van a otro sitio porque no reciben respuesta rápida",
+        "Turistas y extranjeros a los que les cuesta hacerse entender",
+      ],
+    },
+    solution: {
+      title: "Respuestas rápidas, con el tono de su negocio",
+      body:
+        "Entrenamos el chatbot con la información real de su negocio y lo ponemos en su web y en WhatsApp. Responde a las preguntas frecuentes, ayuda a reservar y pasa la conversación a una persona cuando hace falta.",
+      points: [
+        "Entrenado con su carta, precios, horarios y servicios",
+        "Disponible las 24 horas en español, inglés y otros idiomas",
+        "Envía a los clientes a su sistema de reservas",
+        "Pasa la conversación a su equipo cuando es necesario",
+      ],
+    },
+    steps: [
+      {
+        title: "Reunimos la información",
+        body: "Carta, precios, horarios, servicios, condiciones y las preguntas que más le hacen.",
+      },
+      {
+        title: "Entrenamos y probamos",
+        body: "Configuramos el chatbot con el tono de su negocio y revisamos las respuestas con usted antes de publicarlo.",
+      },
+      {
+        title: "Lo conectamos a la web y a WhatsApp",
+        body: "Instalamos el chat en su web y lo conectamos al número de WhatsApp Business de su negocio.",
+      },
+      {
+        title: "Lo afinamos con el tiempo",
+        body: "Repasamos las conversaciones con usted y actualizamos la información cada vez que algo cambia.",
+      },
+    ],
+    features: [
+      {
+        title: "Conoce su negocio",
+        body: "Responde a partir de la información que usted nos da (carta, precios, horarios y servicios), no con respuestas genéricas sacadas de internet.",
+      },
+      {
+        title: "Web y WhatsApp",
+        body: "El mismo asistente en el chat de su web y en WhatsApp Business, los canales por los que sus clientes ya le escriben.",
+      },
+      {
+        title: "Varios idiomas",
+        body: "Responde en español, inglés y otros idiomas, algo muy útil con turistas y clientes extranjeros que prefieren escribir en su propia lengua.",
+      },
+      {
+        title: "Deriva a reservas",
+        body: "Cuando el cliente quiere reservar, el chatbot le envía el enlace de reserva o se conecta directamente con nuestro sistema de reservas.",
+      },
+      {
+        title: "Paso a una persona",
+        body: "Las preguntas delicadas, las quejas o las peticiones fuera de lo habitual pasan a su equipo, con un resumen de la conversación.",
+      },
+      {
+        title: "Bajo su control",
+        body: "Usted decide qué puede responder el chatbot y qué no. Actualizamos la información cada vez que cambia un precio, un horario o un plato.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurantes",
+        body: "Responde sobre la carta, los alérgenos, los horarios y el aparcamiento, y lleva al cliente a reservar mesa.",
+      },
+      {
+        sector: "beauty",
+        title: "Peluquerías y estética",
+        body: "Explica servicios, duraciones y precios orientativos, y envía el enlace para reservar con el profesional adecuado.",
+      },
+      {
+        sector: "clinics",
+        title: "Clínicas",
+        body: "Resuelve dudas prácticas sobre especialidades, convenios con aseguradoras, horarios y preparación de las consultas, sin dar consejos médicos.",
+      },
+      {
+        sector: "retail",
+        title: "Tiendas",
+        body: "Informa sobre horarios, disponibilidad de productos, cambios y envíos, a cualquier hora del día.",
+      },
+      {
+        sector: "lodging",
+        title: "Alojamientos turísticos",
+        body: "Atiende a los huéspedes por WhatsApp, a cualquier hora y en su idioma: wifi, check-out, aparcamiento, dónde cenar. Aprende de la guía de la casa, nunca comparte códigos de acceso y pasa enseguida al anfitrión las urgencias y las peticiones especiales.",
+      },
+    ],
+    includes: [
+      "Recogida y organización de la información de su negocio",
+      "Configuración del chatbot con el tono de su marca",
+      "Instalación en su web y conexión con WhatsApp Business",
+      "Reglas para pasar la conversación a su equipo y a reservas",
+      "Actualización del contenido cada vez que algo cambia",
+      "Soporte por WhatsApp y email",
+    ],
+    faq: [
+      {
+        q: "¿Puede equivocarse el chatbot?",
+        a: "Sí. La IA no es perfecta y alguna vez puede dar una respuesta imprecisa. Por eso limitamos el chatbot a la información que usted nos da, lo probamos antes de publicarlo y configuramos el paso a una persona en los temas delicados.",
+      },
+      {
+        q: "¿Necesito tener una web?",
+        a: "No necesariamente. El chatbot puede funcionar solo en WhatsApp Business. Si tiene web, también lo instalamos allí.",
+      },
+      {
+        q: "¿En qué idiomas responde?",
+        a: "En portugués e inglés, y también en otros idiomas habituales como el español o el francés. Normalmente responde en el idioma en el que escribe el cliente.",
+      },
+      {
+        q: "¿Cómo se tratan los datos de las conversaciones?",
+        a: "Las conversaciones se tratan conforme al RGPD y solo se usan para prestar el servicio y mejorar las respuestas de su chatbot. Indicamos a los clientes que están hablando con un asistente automático.",
+      },
+      {
+        q: "¿Cuánto tarda en estar en marcha?",
+        a: "Depende de la cantidad de información, pero el chatbot suele estar listo en una o dos semanas, pruebas con usted incluidas.",
+      },
+      {
+        q: "¿Puedo cancelar el plan mensual?",
+        a: "Sí, el plan es mensual y sin permanencia. Si lo cancela, desconectamos el chatbot de su web y de WhatsApp.",
+      },
+      {
+        q: "¿Sirve para alojamientos turísticos?",
+        a: "Sí. El asistente aprende de la guía digital de cada alojamiento y responde por WhatsApp, en el idioma del huésped, a preguntas sobre el wifi, el check-in y el check-out, los electrodomésticos, el aparcamiento, el transporte y las recomendaciones. Sigue reglas fijas: nunca comparte los códigos de la puerta, de la caja de llaves ni de la alarma, ni confirma quién está alojado; ante una emergencia indica el 112 y le avisa a usted de inmediato; las quejas, los daños, los reembolsos y las peticiones de entrada anticipada o salida tardía le llegan a usted con un resumen. Un número de WhatsApp sirve para hasta cinco alojamientos.",
+      },
+    ],
   },
   fr: {
     name: "Chatbot IA pour site web et WhatsApp",
@@ -301,6 +436,142 @@ export const copy: ProductCopyByLocale = {
     tagline: "Les bonnes réponses à toute heure, sur votre site et sur WhatsApp.",
     summary:
       "Un assistant IA formé avec les informations de votre établissement : carte, prix, horaires et services. Il répond 24 h/24 en plusieurs langues et passe le relais aux réservations ou à votre équipe.",
+    metaTitle: "Chatbot IA pour Site Web et WhatsApp | Steevanz",
+    metaDescription:
+      "Chatbot IA pour le site et le WhatsApp de votre établissement : il répond 24 h/24 sur vos horaires, vos prix et vos services, en français, en anglais et dans d'autres langues.",
+    heroTitle: "Un assistant qui répond pendant que vous travaillez",
+    heroSubtitle:
+      "Un chatbot IA qui connaît votre carte, vos prix, vos horaires et vos services, et qui répond à vos clients sur votre site et sur WhatsApp, à toute heure et en plusieurs langues. Quand il le faut, il passe la conversation à votre équipe.",
+    problem: {
+      title: "Les mêmes questions, tous les jours, à toute heure",
+      body:
+        "Vous ouvrez à quelle heure ? Vous avez des plats sans gluten ? Combien coûtent des mèches ? Répondre aux mêmes messages sur WhatsApp et sur le site prend des heures à votre équipe. Et les questions qui arrivent le soir ou en plein service restent sans réponse jusqu'à ce qu'il soit trop tard.",
+      points: [
+        "Des messages répétitifs qui prennent du temps sur l'accueil en personne",
+        "Des clients qui renoncent faute de réponse rapide",
+        "Des touristes et des clients étrangers qui ont du mal à se faire comprendre",
+      ],
+    },
+    solution: {
+      title: "Des réponses rapides, dans le ton de votre établissement",
+      body:
+        "Nous formons le chatbot avec les vraies informations de votre établissement et l'installons sur votre site et sur WhatsApp. Il répond aux questions fréquentes, aide à réserver et passe la main à une personne quand la conversation l'exige.",
+      points: [
+        "Formé avec votre carte, vos prix, vos horaires et vos services",
+        "Disponible 24 h/24 en français, en anglais et dans d'autres langues",
+        "Oriente vers votre système de réservation",
+        "Passe la conversation à votre équipe quand il le faut",
+      ],
+    },
+    steps: [
+      {
+        title: "Nous rassemblons les informations",
+        body: "Carte, prix, horaires, services, conditions et les questions que l'on vous pose le plus souvent.",
+      },
+      {
+        title: "Nous formons et testons",
+        body: "Nous configurons le chatbot dans le ton de votre établissement et vérifions les réponses avec vous avant la mise en ligne.",
+      },
+      {
+        title: "Nous le connectons au site et à WhatsApp",
+        body: "Nous installons le chat sur votre site et le relions au numéro WhatsApp Business de votre établissement.",
+      },
+      {
+        title: "Nous l'affinons au fil du temps",
+        body: "Nous relisons les conversations avec vous et mettons à jour les informations dès que quelque chose change.",
+      },
+    ],
+    features: [
+      {
+        title: "Il connaît votre établissement",
+        body: "Il répond à partir des informations que vous nous donnez, comme la carte, les prix, les horaires et les services, et non avec des réponses génériques trouvées sur internet.",
+      },
+      {
+        title: "Site web et WhatsApp",
+        body: "Le même assistant dans le chat de votre site et sur WhatsApp Business, là où vos clients vous écrivent déjà.",
+      },
+      {
+        title: "Plusieurs langues",
+        body: "Il répond en français, en anglais et dans d'autres langues, bien pratique pour les touristes et les clients étrangers qui préfèrent écrire dans leur langue.",
+      },
+      {
+        title: "Oriente vers les réservations",
+        body: "Quand un client veut réserver, le chatbot lui envoie le lien de réservation ou se connecte directement à notre système de réservation.",
+      },
+      {
+        title: "Relais vers une personne",
+        body: "Les questions délicates, les réclamations ou les demandes inhabituelles sont transmises à votre équipe, avec le résumé de la conversation.",
+      },
+      {
+        title: "Vous gardez la main",
+        body: "Vous décidez ce que le chatbot peut répondre ou non. Nous mettons les informations à jour dès qu'un prix, un horaire ou un plat change.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants",
+        body: "Il répond sur la carte, les allergènes, les horaires et le stationnement, et guide vers la réservation d'une table.",
+      },
+      {
+        sector: "beauty",
+        title: "Coiffure et esthétique",
+        body: "Il présente les prestations, leur durée et les prix indicatifs, et envoie le lien pour réserver avec le bon professionnel.",
+      },
+      {
+        sector: "clinics",
+        title: "Cliniques",
+        body: "Il répond aux questions pratiques sur les spécialités, les conventions, les horaires et la préparation des rendez-vous, sans jamais donner de conseil médical.",
+      },
+      {
+        sector: "retail",
+        title: "Boutiques",
+        body: "Il renseigne sur les horaires, la disponibilité des produits, les échanges et les livraisons, à toute heure de la journée.",
+      },
+      {
+        sector: "lodging",
+        title: "Locations de vacances",
+        body: "Il répond aux voyageurs sur WhatsApp, à toute heure et dans leur langue : wifi, départ, stationnement, où dîner. Il s'appuie sur le guide du logement, ne partage jamais les codes d'accès et transmet aussitôt à l'hôte les urgences et les demandes particulières.",
+      },
+    ],
+    includes: [
+      "Collecte et organisation des informations de votre établissement",
+      "Configuration du chatbot dans le ton de votre marque",
+      "Installation sur votre site et connexion à WhatsApp Business",
+      "Règles de relais vers votre équipe et vers les réservations",
+      "Mises à jour du contenu dès que quelque chose change",
+      "Assistance par WhatsApp et par e-mail",
+    ],
+    faq: [
+      {
+        q: "Le chatbot peut-il se tromper ?",
+        a: "Oui. L'IA n'est pas parfaite et peut parfois donner une réponse inexacte. C'est pourquoi nous limitons le chatbot aux informations que vous nous donnez, le testons avant la mise en ligne et prévoyons le relais vers une personne pour les sujets délicats.",
+      },
+      {
+        q: "Faut-il avoir un site web ?",
+        a: "Pas forcément. Le chatbot peut fonctionner uniquement sur WhatsApp Business. Si vous avez un site, nous l'y installons aussi.",
+      },
+      {
+        q: "Dans quelles langues répond-il ?",
+        a: "En portugais et en anglais, ainsi que dans d'autres langues courantes comme l'espagnol ou le français. En général, il répond dans la langue dans laquelle le client écrit.",
+      },
+      {
+        q: "Comment les données des conversations sont-elles traitées ?",
+        a: "Les conversations sont traitées conformément au RGPD et servent uniquement à fournir le service et à améliorer les réponses de votre chatbot. Nous indiquons aux clients qu'ils échangent avec un assistant automatique.",
+      },
+      {
+        q: "Combien de temps faut-il pour le mettre en service ?",
+        a: "Cela dépend de la quantité d'informations, mais le chatbot est généralement prêt en une à deux semaines, tests avec vous compris.",
+      },
+      {
+        q: "Puis-je résilier l'abonnement mensuel ?",
+        a: "Oui, l'abonnement est mensuel et sans engagement. Si vous résiliez, nous déconnectons le chatbot de votre site et de WhatsApp.",
+      },
+      {
+        q: "Est-ce adapté aux locations de vacances ?",
+        a: "Oui. L'assistant s'appuie sur le guide digital de chaque logement et répond sur WhatsApp, dans la langue du voyageur, aux questions sur le wifi, l'arrivée et le départ, les appareils, le stationnement, les transports et les bonnes adresses. Il suit des règles fixes : il ne partage jamais les codes de la porte, de la boîte à clés ou de l'alarme, et ne confirme jamais qui séjourne dans le logement ; en cas d'urgence, il indique le 112 et vous prévient immédiatement ; les réclamations, les dégâts, les remboursements et les demandes d'arrivée anticipée ou de départ tardif vous sont transmis avec un résumé. Un numéro WhatsApp couvre jusqu'à cinq logements.",
+      },
+    ],
   },
   de: {
     name: "KI-Chatbot für Website und WhatsApp",
@@ -308,6 +579,142 @@ export const copy: ProductCopyByLocale = {
     tagline: "Die richtigen Antworten zu jeder Uhrzeit, auf Ihrer Website und in WhatsApp.",
     summary:
       "Ein KI-Assistent, trainiert mit den Informationen Ihres Betriebs: Speisekarte, Preise, Öffnungszeiten und Leistungen. Er antwortet rund um die Uhr in mehreren Sprachen und leitet an Reservierungen oder Ihr Team weiter.",
+    metaTitle: "KI-Chatbot für Website und WhatsApp | Steevanz",
+    metaDescription:
+      "KI-Chatbot für die Website und das WhatsApp Ihres Betriebs: beantwortet rund um die Uhr Fragen zu Öffnungszeiten, Preisen und Leistungen, auf Deutsch, Englisch und in weiteren Sprachen.",
+    heroTitle: "Ein Assistent, der antwortet, während Sie arbeiten",
+    heroSubtitle:
+      "Ein KI-Chatbot, der Ihre Speisekarte, Preise, Öffnungszeiten und Leistungen kennt und Ihren Kunden auf der Website und in WhatsApp antwortet, zu jeder Uhrzeit und in mehreren Sprachen. Wenn nötig, übergibt er das Gespräch an Ihr Team.",
+    problem: {
+      title: "Dieselben Fragen, jeden Tag, zu jeder Uhrzeit",
+      body:
+        "Wann öffnen Sie? Gibt es glutenfreie Gerichte? Was kosten Strähnchen? Immer wieder dieselben Nachrichten in WhatsApp und auf der Website zu beantworten, kostet Ihr Team Stunden. Und Fragen, die abends oder mitten im Betrieb kommen, bleiben liegen, bis es zu spät ist.",
+      points: [
+        "Wiederkehrende Nachrichten, die Zeit für die Kunden vor Ort kosten",
+        "Kunden, die abspringen, weil keine schnelle Antwort kommt",
+        "Touristen und internationale Gäste, die sich schwer verständigen können",
+      ],
+    },
+    solution: {
+      title: "Schnelle Antworten, im Ton Ihres Betriebs",
+      body:
+        "Wir trainieren den Chatbot mit den echten Informationen Ihres Betriebs und bringen ihn auf Ihre Website und in WhatsApp. Er beantwortet häufige Fragen, hilft beim Reservieren und übergibt an einen Menschen, wenn das Gespräch es erfordert.",
+      points: [
+        "Trainiert mit Ihrer Speisekarte, Ihren Preisen, Öffnungszeiten und Leistungen",
+        "Rund um die Uhr erreichbar, auf Deutsch, Englisch und in weiteren Sprachen",
+        "Leitet Kunden zu Ihrem Reservierungssystem",
+        "Übergibt das Gespräch bei Bedarf an Ihr Team",
+      ],
+    },
+    steps: [
+      {
+        title: "Wir sammeln die Informationen",
+        body: "Speisekarte, Preise, Öffnungszeiten, Leistungen, Regeln und die Fragen, die Ihnen am häufigsten gestellt werden.",
+      },
+      {
+        title: "Wir trainieren und testen",
+        body: "Wir richten den Chatbot im Ton Ihres Betriebs ein und prüfen die Antworten gemeinsam mit Ihnen, bevor er live geht.",
+      },
+      {
+        title: "Wir verbinden Website und WhatsApp",
+        body: "Wir bauen den Chat in Ihre Website ein und verbinden ihn mit der WhatsApp-Business-Nummer Ihres Betriebs.",
+      },
+      {
+        title: "Wir verfeinern ihn laufend",
+        body: "Wir gehen die Gespräche mit Ihnen durch und aktualisieren die Informationen, sobald sich etwas ändert.",
+      },
+    ],
+    features: [
+      {
+        title: "Kennt Ihren Betrieb",
+        body: "Er antwortet auf Basis der Informationen, die Sie uns geben, etwa Speisekarte, Preise, Öffnungszeiten und Leistungen, statt mit allgemeinen Antworten aus dem Internet.",
+      },
+      {
+        title: "Website und WhatsApp",
+        body: "Derselbe Assistent im Website-Chat und in WhatsApp Business, also dort, wo Ihre Kunden Ihnen ohnehin schreiben.",
+      },
+      {
+        title: "Mehrsprachig",
+        body: "Er antwortet auf Deutsch, Englisch und in weiteren Sprachen, praktisch bei Touristen und internationalen Kunden, die lieber in ihrer eigenen Sprache schreiben.",
+      },
+      {
+        title: "Leitet zur Reservierung",
+        body: "Möchte ein Kunde reservieren, schickt der Chatbot den Reservierungslink oder verbindet sich direkt mit unserem Reservierungssystem.",
+      },
+      {
+        title: "Übergabe an einen Menschen",
+        body: "Heikle Fragen, Beschwerden oder ungewöhnliche Anliegen gehen an Ihr Team, zusammen mit einer Zusammenfassung des Gesprächs.",
+      },
+      {
+        title: "Sie behalten die Kontrolle",
+        body: "Sie entscheiden, was der Chatbot beantworten darf und was nicht. Wir aktualisieren die Informationen, sobald sich ein Preis, eine Öffnungszeit oder ein Gericht ändert.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants",
+        body: "Beantwortet Fragen zu Speisekarte, Allergenen, Öffnungszeiten und Parkplätzen und führt Gäste zur Tischreservierung.",
+      },
+      {
+        sector: "beauty",
+        title: "Friseur und Kosmetik",
+        body: "Erklärt Leistungen, Dauer und Richtpreise und schickt den Link, um bei der passenden Fachkraft zu buchen.",
+      },
+      {
+        sector: "clinics",
+        title: "Kliniken",
+        body: "Beantwortet praktische Fragen zu Fachbereichen, Kassen und Versicherungen, Sprechzeiten und zur Vorbereitung auf Termine, ohne medizinischen Rat zu geben.",
+      },
+      {
+        sector: "retail",
+        title: "Geschäfte",
+        body: "Informiert zu jeder Tageszeit über Öffnungszeiten, Verfügbarkeit von Produkten, Umtausch und Versand.",
+      },
+      {
+        sector: "lodging",
+        title: "Ferienunterkünfte",
+        body: "Antwortet Gästen in WhatsApp, zu jeder Uhrzeit und in ihrer Sprache: WLAN, Check-out, Parken, wo man gut isst. Er lernt aus dem Gästehandbuch, gibt niemals Zugangscodes weiter und leitet Notfälle und Sonderwünsche sofort an den Gastgeber weiter.",
+      },
+    ],
+    includes: [
+      "Sammeln und Aufbereiten der Informationen Ihres Betriebs",
+      "Einrichtung des Chatbots im Ton Ihrer Marke",
+      "Einbau in Ihre Website und Anbindung an WhatsApp Business",
+      "Regeln für die Übergabe an Ihr Team und an Reservierungen",
+      "Inhaltliche Aktualisierungen, sobald sich etwas ändert",
+      "Support per WhatsApp und E-Mail",
+    ],
+    faq: [
+      {
+        q: "Kann sich der Chatbot irren?",
+        a: "Ja. KI ist nicht perfekt und kann gelegentlich eine ungenaue Antwort geben. Deshalb beschränken wir den Chatbot auf die Informationen, die Sie uns geben, testen ihn vor dem Start und richten für heikle Themen die Übergabe an einen Menschen ein.",
+      },
+      {
+        q: "Brauche ich eine Website?",
+        a: "Nicht unbedingt. Der Chatbot kann auch nur in WhatsApp Business laufen. Haben Sie eine Website, bauen wir ihn dort ebenfalls ein.",
+      },
+      {
+        q: "In welchen Sprachen antwortet er?",
+        a: "Auf Portugiesisch und Englisch sowie in anderen gängigen Sprachen wie Spanisch oder Französisch. In der Regel antwortet er in der Sprache, in der der Kunde schreibt.",
+      },
+      {
+        q: "Wie werden die Gesprächsdaten behandelt?",
+        a: "Die Gespräche werden gemäß DSGVO verarbeitet und nur genutzt, um den Dienst zu erbringen und die Antworten Ihres Chatbots zu verbessern. Wir weisen Ihre Kunden darauf hin, dass sie mit einem automatischen Assistenten schreiben.",
+      },
+      {
+        q: "Wie lange dauert es bis zum Start?",
+        a: "Das hängt von der Menge an Informationen ab, aber in der Regel ist der Chatbot in ein bis zwei Wochen startklar, einschließlich der Tests mit Ihnen.",
+      },
+      {
+        q: "Kann ich den Monatsplan kündigen?",
+        a: "Ja, der Plan läuft monatlich und ohne Mindestlaufzeit. Wenn Sie kündigen, trennen wir den Chatbot von Ihrer Website und von WhatsApp.",
+      },
+      {
+        q: "Eignet er sich für Ferienunterkünfte?",
+        a: "Ja. Der Assistent lernt aus dem digitalen Gästehandbuch jeder Unterkunft und beantwortet in WhatsApp, in der Sprache des Gastes, Fragen zu WLAN, Check-in und Check-out, Haushaltsgeräten, Parken, Verkehrsmitteln und Empfehlungen. Dabei gelten feste Regeln: Er gibt niemals Codes für Tür, Schlüsselbox oder Alarmanlage weiter und bestätigt nie, wer gerade zu Gast ist; im Notfall verweist er auf die 112 und benachrichtigt Sie sofort; Beschwerden, Schäden, Erstattungen sowie Wünsche nach frühem Check-in oder spätem Check-out gehen mit einer Zusammenfassung an Sie. Eine WhatsApp-Nummer reicht für bis zu fünf Unterkünfte.",
+      },
+    ],
   },
   it: {
     name: "Chatbot con IA per sito e WhatsApp",
@@ -315,5 +722,141 @@ export const copy: ProductCopyByLocale = {
     tagline: "Le risposte giuste a qualsiasi ora, sul sito e su WhatsApp.",
     summary:
       "Un assistente con IA addestrato con le informazioni della vostra attività: menù, prezzi, orari e servizi. Risponde 24 ore su 24 in più lingue e passa la parola alle prenotazioni o al vostro staff.",
+    metaTitle: "Chatbot con IA per Sito e WhatsApp | Steevanz",
+    metaDescription:
+      "Chatbot con IA per il sito e il WhatsApp della vostra attività: risponde 24 ore su 24 su orari, prezzi e servizi, in italiano, inglese e altre lingue.",
+    heroTitle: "Un assistente che risponde mentre voi lavorate",
+    heroSubtitle:
+      "Un chatbot con IA che conosce il vostro menù, i prezzi, gli orari e i servizi, e risponde ai clienti sul sito e su WhatsApp, a qualsiasi ora e in più lingue. Quando serve, passa la conversazione al vostro staff.",
+    problem: {
+      title: "Le stesse domande, tutti i giorni, a tutte le ore",
+      body:
+        "A che ora aprite? Avete piatti senza glutine? Quanto costano i colpi di sole? Rispondere sempre agli stessi messaggi su WhatsApp e sul sito porta via ore al vostro staff. E le domande che arrivano la sera o in pieno servizio restano senza risposta finché non è troppo tardi.",
+      points: [
+        "Messaggi ripetuti che tolgono tempo all'accoglienza di persona",
+        "Clienti che lasciano perdere perché non ricevono una risposta rapida",
+        "Turisti e stranieri che fanno fatica a farsi capire",
+      ],
+    },
+    solution: {
+      title: "Risposte rapide, con il tono della vostra attività",
+      body:
+        "Addestriamo il chatbot con le informazioni reali della vostra attività e lo mettiamo sul sito e su WhatsApp. Risponde alle domande frequenti, aiuta a prenotare e passa la conversazione a una persona quando serve.",
+      points: [
+        "Addestrato con il vostro menù, i prezzi, gli orari e i servizi",
+        "Disponibile 24 ore su 24 in italiano, inglese e altre lingue",
+        "Indirizza i clienti al vostro sistema di prenotazione",
+        "Passa la conversazione al vostro staff quando serve",
+      ],
+    },
+    steps: [
+      {
+        title: "Raccogliamo le informazioni",
+        body: "Menù, prezzi, orari, servizi, regole e le domande che vi fanno più spesso.",
+      },
+      {
+        title: "Addestriamo e testiamo",
+        body: "Configuriamo il chatbot con il tono della vostra attività e verifichiamo le risposte insieme a voi prima di pubblicarlo.",
+      },
+      {
+        title: "Lo colleghiamo al sito e a WhatsApp",
+        body: "Installiamo la chat sul vostro sito e la colleghiamo al numero WhatsApp Business della vostra attività.",
+      },
+      {
+        title: "Lo perfezioniamo nel tempo",
+        body: "Rivediamo le conversazioni con voi e aggiorniamo le informazioni ogni volta che qualcosa cambia.",
+      },
+    ],
+    features: [
+      {
+        title: "Conosce la vostra attività",
+        body: "Risponde in base alle informazioni che ci date, come menù, prezzi, orari e servizi, invece di dare risposte generiche prese da internet.",
+      },
+      {
+        title: "Sito e WhatsApp",
+        body: "Lo stesso assistente nella chat del sito e su WhatsApp Business, i canali dove i vostri clienti vi scrivono già.",
+      },
+      {
+        title: "Più lingue",
+        body: "Risponde in italiano, inglese e altre lingue, molto utile con i turisti e i clienti stranieri che preferiscono scrivere nella propria lingua.",
+      },
+      {
+        title: "Indirizza alle prenotazioni",
+        body: "Quando il cliente vuole prenotare, il chatbot invia il link di prenotazione o si collega direttamente al nostro sistema di prenotazione.",
+      },
+      {
+        title: "Passaggio a una persona",
+        body: "Domande delicate, reclami o richieste fuori dal comune passano al vostro staff, insieme a un riassunto della conversazione.",
+      },
+      {
+        title: "Sotto il vostro controllo",
+        body: "Decidete voi cosa il chatbot può rispondere e cosa no. Aggiorniamo le informazioni ogni volta che cambia un prezzo, un orario o un piatto.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Ristoranti",
+        body: "Risponde su menù, allergeni, orari e parcheggio, e porta il cliente a prenotare il tavolo.",
+      },
+      {
+        sector: "beauty",
+        title: "Parrucchieri ed estetica",
+        body: "Spiega servizi, durate e prezzi indicativi, e invia il link per prenotare con il professionista giusto.",
+      },
+      {
+        sector: "clinics",
+        title: "Cliniche",
+        body: "Risponde a domande pratiche su specialità, convenzioni, orari e preparazione alle visite, senza mai dare consigli medici.",
+      },
+      {
+        sector: "retail",
+        title: "Negozi",
+        body: "Informa su orari, disponibilità dei prodotti, cambi e spedizioni, a qualsiasi ora del giorno.",
+      },
+      {
+        sector: "lodging",
+        title: "Case vacanza",
+        body: "Risponde agli ospiti su WhatsApp, a qualsiasi ora e nella loro lingua: WiFi, check-out, parcheggio, dove mangiare. Impara dalla guida della casa, non condivide mai i codici di accesso e passa subito all'host le urgenze e le richieste particolari.",
+      },
+    ],
+    includes: [
+      "Raccolta e organizzazione delle informazioni della vostra attività",
+      "Configurazione del chatbot con il tono del vostro marchio",
+      "Installazione sul sito e collegamento a WhatsApp Business",
+      "Regole di passaggio al vostro staff e alle prenotazioni",
+      "Aggiornamento dei contenuti ogni volta che qualcosa cambia",
+      "Assistenza via WhatsApp ed email",
+    ],
+    faq: [
+      {
+        q: "Il chatbot può sbagliare?",
+        a: "Sì. L'IA non è perfetta e a volte può dare una risposta imprecisa. Per questo limitiamo il chatbot alle informazioni che ci date, lo testiamo prima di pubblicarlo e impostiamo il passaggio a una persona per gli argomenti delicati.",
+      },
+      {
+        q: "Devo avere un sito?",
+        a: "Non necessariamente. Il chatbot può funzionare solo su WhatsApp Business. Se avete un sito, lo installiamo anche lì.",
+      },
+      {
+        q: "In quali lingue risponde?",
+        a: "In portoghese e inglese, e anche in altre lingue diffuse come lo spagnolo o il francese. Di norma risponde nella lingua in cui scrive il cliente.",
+      },
+      {
+        q: "Come vengono trattati i dati delle conversazioni?",
+        a: "Le conversazioni sono trattate nel rispetto del GDPR e usate solo per fornire il servizio e migliorare le risposte del vostro chatbot. Informiamo i clienti che stanno parlando con un assistente automatico.",
+      },
+      {
+        q: "Quanto ci vuole per metterlo in funzione?",
+        a: "Dipende dalla quantità di informazioni, ma di solito il chatbot è pronto in una o due settimane, test con voi compresi.",
+      },
+      {
+        q: "Posso disdire il piano mensile?",
+        a: "Sì, il piano è mensile e senza vincoli. Se disdite, scolleghiamo il chatbot dal sito e da WhatsApp.",
+      },
+      {
+        q: "Funziona per le case vacanza?",
+        a: "Sì. L'assistente impara dalla guida digitale di ogni alloggio e risponde su WhatsApp, nella lingua dell'ospite, a domande su WiFi, check-in e check-out, elettrodomestici, parcheggio, trasporti e consigli. Segue regole fisse: non condivide mai i codici della porta, della cassetta delle chiavi o dell'allarme, né conferma chi sta soggiornando; in caso di emergenza indica il 112 e vi avvisa subito; reclami, danni, rimborsi e richieste di check-in anticipato o check-out posticipato passano a voi con un riassunto. Un numero WhatsApp vale per un massimo di cinque alloggi.",
+      },
+    ],
   },
 };
