@@ -13,7 +13,7 @@ import { fieldErrorsFrom, formDataToObject, orderFormKeys, orderSubmissionSchema
 import { honeypotField } from "@/lib/booking/types";
 import type { OrderItem, OrderTotals } from "@/lib/accounts/types";
 import { getSession } from "@/lib/auth/session";
-import { baseLocaleOf, localize, type Locale, type Localized } from "@/lib/i18n";
+import { localize, type Locale, type Localized } from "@/lib/i18n";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { briefDetails, briefRows, cartNeedsBrief, parseBrief, type WebBrief } from "./brief";
 import { alreadyActive, type OwnedProduct } from "./ownership";
@@ -219,8 +219,8 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       business_name: data.businessName ?? null,
       sector: data.sector ?? null,
       message: data.message ?? null,
-      // The table takes pt or en (check constraint); the email above keeps the real language.
-      locale: baseLocaleOf(data.locale),
+      // The visitor's own language, one of the six site languages (check constraint since 2026-10-20).
+      locale: data.locale,
       items: orderItems(totals, brief),
       totals: orderTotals,
     });
@@ -254,7 +254,8 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
 
   if (!sent && !saved) return { status: "error", code: "generic", fields: [] };
 
-  // Confirmation to the customer, in the language they ordered in. Replies go to the owner.
+  // Confirmation to the customer, in the language they ordered in (es, fr, de, it fall back to English
+  // until the text has their translation). Replies go to the owner.
   // Off for now (owner, 2026-10-11): only the owner is emailed; flip sendCustomerConfirmation to send it.
   if (!sendCustomerConfirmation) return { status: "success", reference };
   const locale: Locale = data.locale;

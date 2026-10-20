@@ -53,7 +53,7 @@ export function isTranslated(record: Partial<Record<Locale, unknown>>, locale: L
   return record[locale] !== undefined;
 }
 
-/** pt stays pt; every other language is closest to English (emails, stored rows, Portuguese-or-English data). */
+/** pt stays pt; every other language is closest to English (Portuguese-or-English data, e.g. external demo links). */
 export function baseLocaleOf(locale: Locale): BaseLocale {
   return locale === "pt" ? "pt" : "en";
 }

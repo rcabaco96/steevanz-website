@@ -128,7 +128,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Que regras legais tenho de cumprir?",
-        a: "Identificação da empresa, preços com IVA, informação pré-contratual, direito de livre resolução de 14 dias, indicação da entidade de resolução alternativa de litígios, Livro de Reclamações Eletrónico, cookies e privacidade. Preparamos a estrutura e os modelos. O conteúdo final deve ser validado por si ou pelo seu contabilista ou advogado.",
+        a: "Identificação da empresa, preços apresentados como a lei exige, informação pré-contratual, direito de livre resolução de 14 dias, indicação da entidade de resolução alternativa de litígios, Livro de Reclamações Eletrónico, cookies e privacidade. Preparamos a estrutura e os modelos. O conteúdo final deve ser validado por si ou pelo seu contabilista ou advogado.",
       },
       {
         q: "E se tiver mais de 50 produtos?",
@@ -300,7 +300,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Which legal rules apply?",
-        a: "Company details, prices with VAT, pre-contract information, the 14-day right of withdrawal, the alternative dispute resolution body, the electronic complaints book, cookies and privacy. We prepare the structure and templates. The final wording should be checked by you or your accountant or lawyer.",
+        a: "Company details, prices displayed as the law requires, pre-contract information, the 14-day right of withdrawal, the alternative dispute resolution body, the electronic complaints book, cookies and privacy. We prepare the structure and templates. The final wording should be checked by you or your accountant or lawyer.",
       },
       {
         q: "What if I have more than 50 products?",
@@ -472,7 +472,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Qué normas legales tengo que cumplir?",
-        a: "Datos de la empresa, precios con IVA, información precontractual, derecho de desistimiento de 14 días, indicación de la entidad de resolución alternativa de litigios, Libro de Reclamaciones Electrónico, cookies y privacidad. Preparamos la estructura y los modelos. El contenido final debe validarlo usted o su gestor o abogado.",
+        a: "Datos de la empresa, precios presentados como exige la ley, información precontractual, derecho de desistimiento de 14 días, indicación de la entidad de resolución alternativa de litigios, Libro de Reclamaciones Electrónico, cookies y privacidad. Preparamos la estructura y los modelos. El contenido final debe validarlo usted o su gestor o abogado.",
       },
       {
         q: "¿Y si tengo más de 50 productos?",
@@ -644,7 +644,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quelles règles légales dois-je respecter ?",
-        a: "Identification de l'entreprise, prix affichés avec la TVA, information précontractuelle, droit de rétractation de 14 jours, mention de l'organisme de règlement extrajudiciaire des litiges, livre de réclamations électronique, cookies et confidentialité. Nous préparons la structure et les modèles. Le contenu final doit être validé par vous ou par votre comptable ou votre avocat.",
+        a: "Identification de l'entreprise, prix affichés comme l'exige la loi, information précontractuelle, droit de rétractation de 14 jours, mention de l'organisme de règlement extrajudiciaire des litiges, livre de réclamations électronique, cookies et confidentialité. Nous préparons la structure et les modèles. Le contenu final doit être validé par vous ou par votre comptable ou votre avocat.",
       },
       {
         q: "Et si j'ai plus de 50 produits ?",
@@ -816,7 +816,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Welche rechtlichen Regeln muss ich einhalten?",
-        a: "Firmenangaben, Preise mit MwSt., vorvertragliche Informationen, das 14-tägige Widerrufsrecht, die Angabe der Stelle für alternative Streitbeilegung, das elektronische Beschwerdebuch, Cookies und Datenschutz. Wir bereiten die Struktur und die Vorlagen vor. Den endgültigen Inhalt prüfen Sie selbst oder Ihr Steuerberater oder Anwalt.",
+        a: "Firmenangaben, Preisangaben nach gesetzlicher Vorgabe, vorvertragliche Informationen, das 14-tägige Widerrufsrecht, die Angabe der Stelle für alternative Streitbeilegung, das elektronische Beschwerdebuch, Cookies und Datenschutz. Wir bereiten die Struktur und die Vorlagen vor. Den endgültigen Inhalt prüfen Sie selbst oder Ihr Steuerberater oder Anwalt.",
       },
       {
         q: "Und wenn ich mehr als 50 Produkte habe?",

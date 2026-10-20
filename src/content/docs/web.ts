@@ -161,7 +161,7 @@ function pages(productId: WebProductId): Record<DocPageId, Localized<DocPageCont
         "**Dados da empresa:** nome, NIF, morada, telefone, email, horário e redes sociais.",
         "**Marca:** logótipo (de preferência em vetor), cores e, se tiver, os tipos de letra.",
         f.isShop
-          ? "**Produtos:** uma foto por produto e a folha de cálculo que lhe enviamos, com nome, descrição, preço com IVA, variantes, stock, peso e categoria."
+          ? "**Produtos:** uma foto por produto e a folha de cálculo que lhe enviamos, com nome, descrição, preço, variantes, stock, peso e categoria."
           : "**Fotos:** suas ou de bancos de imagens com licença.",
         "**Textos** de cada secção ou página, ou a opção de copywriting com uma chamada de 20 minutos.",
         "**Domínio:** o acesso ao registo do domínio que já tem, ou o nome que quer registar em seu nome.",
@@ -205,7 +205,7 @@ function pages(productId: WebProductId): Record<DocPageId, Localized<DocPageCont
         "**Company details:** name, tax number (NIF), address, phone, email, opening hours and social links.",
         "**Brand:** logo (vector if possible), colours and, if you have them, fonts.",
         f.isShop
-          ? "**Products:** one photo per product and the spreadsheet we send you, with name, description, price incl. VAT, variants, stock, weight and category."
+          ? "**Products:** one photo per product and the spreadsheet we send you, with name, description, price, variants, stock, weight and category."
           : "**Photos:** your own or properly licensed stock.",
         "**Texts** for each section or page, or the copywriting option with a 20-minute call.",
         "**Domain:** access to the domain you already have, or the name you want registered in your name.",
@@ -279,7 +279,7 @@ function pages(productId: WebProductId): Record<DocPageId, Localized<DocPageCont
         "Aviso de cookies com «Rejeitar» tão fácil como «Aceitar», e nada que não seja essencial antes do consentimento.",
         "Política de privacidade e de cookies, a partir de modelos que valida.",
         "Ligação ao Livro de Reclamações Eletrónico, bem visível.",
-        "Identificação da empresa e preços com IVA incluído.",
+        "Identificação da empresa, preços e informação ao consumidor como a lei exige.",
         "Construção segundo as regras de acessibilidade WCAG 2.1 AA.",
       ],
     },
@@ -290,7 +290,7 @@ function pages(productId: WebProductId): Record<DocPageId, Localized<DocPageCont
         items: [
           "**Pagamentos:** MB WAY, referência Multibanco e cartão, com a sua conta no fornecedor (ifthenpay, Eupago, Easypay ou Stripe). O dinheiro entra na sua conta.",
           "**Envios:** tabelas por zona e peso (continente, ilhas, UE), envio grátis a partir de um valor e levantamento na loja.",
-          "**Checkout:** total com IVA e portes antes de pagar, e botão «Encomendar com obrigação de pagar».",
+          "**Checkout:** total e portes visíveis antes de pagar, e botão «Encomendar com obrigação de pagar».",
           "**Faturação:** cada venda tem de ter fatura de software certificado. Como opção, ligamos o Moloni ou o InvoiceXpress.",
           "**Venda à distância:** termos de venda, direito de livre resolução de 14 dias com formulário, e a entidade de resolução alternativa de litígios.",
         ],
@@ -343,7 +343,7 @@ function pages(productId: WebProductId): Record<DocPageId, Localized<DocPageCont
         "Cookie banner where «Reject» is as easy as «Accept», with nothing non-essential loading before consent.",
         "Privacy and cookie policies, from templates you approve.",
         "A clearly visible link to the Portuguese electronic complaints book.",
-        "Company details and prices with VAT included.",
+        "Company details, prices and consumer information as the law requires.",
         "Built to the WCAG 2.1 AA accessibility guidelines.",
       ],
     },
@@ -354,7 +354,7 @@ function pages(productId: WebProductId): Record<DocPageId, Localized<DocPageCont
         items: [
           "**Payments:** MB WAY, Multibanco reference and cards, on your own provider account (ifthenpay, Eupago, Easypay or Stripe). The money goes to your account.",
           "**Shipping:** rates by zone and weight (mainland, islands, EU), free shipping above a set amount and in-store pickup.",
-          "**Checkout:** total with VAT and shipping shown before payment, and an «Order with obligation to pay» button.",
+          "**Checkout:** total and shipping shown before payment, and an «Order with obligation to pay» button.",
           "**Invoicing:** every sale needs an invoice from certified software. As an option, we connect Moloni or InvoiceXpress.",
           "**Distance selling:** terms of sale, the 14-day right of withdrawal with a form, and the alternative dispute resolution body.",
         ],
@@ -627,7 +627,7 @@ function docsEs({ f, c, link }: DocContext): DocSet {
             "**Datos de la empresa:** nombre, NIF, dirección, teléfono, correo electrónico, horario y redes sociales.",
             "**Marca:** logotipo (a ser posible en vectorial), colores y, si las tiene, las tipografías.",
             shop
-              ? "**Productos:** una foto por producto y la hoja de cálculo que le enviamos, con nombre, descripción, precio con IVA, variantes, stock, peso y categoría."
+              ? "**Productos:** una foto por producto y la hoja de cálculo que le enviamos, con nombre, descripción, precio, variantes, stock, peso y categoría."
               : "**Fotos:** suyas o de bancos de imágenes con licencia.",
             "**Textos** de cada sección o página, o la opción de copywriting con una llamada de 20 minutos.",
             "**Dominio:** el acceso al registro del dominio que ya tiene, o el nombre que quiere registrar a su nombre.",
@@ -701,7 +701,7 @@ function docsEs({ f, c, link }: DocContext): DocSet {
             "Aviso de cookies en el que «Rechazar» es tan fácil como «Aceptar», y nada que no sea esencial antes del consentimiento.",
             "Política de privacidad y de cookies, a partir de modelos que usted valida.",
             "Enlace bien visible al Libro de Reclamaciones Electrónico portugués.",
-            "Datos de la empresa y precios con IVA, como exige la ley.",
+            "Datos de la empresa, precios e información al consumidor como exige la ley.",
             "Construcción según las pautas de accesibilidad WCAG 2.1 AA.",
           ],
         },
@@ -712,7 +712,7 @@ function docsEs({ f, c, link }: DocContext): DocSet {
             items: [
               "**Pagos:** MB WAY, referencia Multibanco y tarjeta, con su cuenta en el proveedor (ifthenpay, Eupago, Easypay o Stripe). El dinero entra en su cuenta.",
               "**Envíos:** tarifas por zona y peso (Portugal continental, islas, UE), envío gratis a partir de un importe y recogida en tienda.",
-              "**Checkout:** total con IVA y gastos de envío antes de pagar, y botón «Pedido con obligación de pago».",
+              "**Checkout:** total y gastos de envío visibles antes de pagar, y botón «Pedido con obligación de pago».",
               "**Facturación:** cada venta necesita una factura de un programa certificado. Como opción, conectamos Moloni o InvoiceXpress.",
               "**Venta a distancia:** condiciones de venta, derecho de desistimiento de 14 días con formulario y la entidad de resolución alternativa de litigios.",
             ],
@@ -861,7 +861,7 @@ function docsFr({ f, c, link }: DocContext): DocSet {
             "**Informations sur l'entreprise :** nom, numéro fiscal (NIF), adresse, téléphone, e-mail, horaires et réseaux sociaux.",
             "**Marque :** logo (en vectoriel si possible), couleurs et, si vous en avez, les polices.",
             shop
-              ? "**Produits :** une photo par produit et le tableau que nous vous envoyons, avec nom, description, prix avec TVA, variantes, stock, poids et catégorie."
+              ? "**Produits :** une photo par produit et le tableau que nous vous envoyons, avec nom, description, prix, variantes, stock, poids et catégorie."
               : "**Photos :** les vôtres ou issues de banques d'images sous licence.",
             "**Textes** de chaque section ou page, ou l'option rédaction avec un appel de 20 minutes.",
             "**Nom de domaine :** l'accès au domaine que vous avez déjà, ou le nom que vous voulez enregistrer à votre nom.",
@@ -935,7 +935,7 @@ function docsFr({ f, c, link }: DocContext): DocSet {
             "Bandeau cookies où « Refuser » est aussi simple que « Accepter », et rien de non essentiel avant le consentement.",
             "Politique de confidentialité et de cookies, à partir de modèles que vous validez.",
             "Lien bien visible vers le livre de réclamations électronique portugais.",
-            "Identification de l'entreprise et prix affichés avec la TVA, comme l'exige la loi.",
+            "Identification de l'entreprise, prix et information du consommateur comme l'exige la loi.",
             "Réalisation selon les règles d'accessibilité WCAG 2.1 AA.",
           ],
         },
@@ -946,7 +946,7 @@ function docsFr({ f, c, link }: DocContext): DocSet {
             items: [
               "**Paiements :** MB WAY, référence Multibanco et carte, sur votre propre compte chez le prestataire (ifthenpay, Eupago, Easypay ou Stripe). L'argent arrive sur votre compte.",
               "**Livraisons :** tarifs par zone et par poids (Portugal continental, îles, UE), livraison gratuite à partir d'un montant et retrait en magasin.",
-              "**Validation de commande :** total avec TVA et frais de port affiché avant le paiement, et bouton « Commande avec obligation de paiement ».",
+              "**Validation de commande :** total et frais de port affichés avant le paiement, et bouton « Commande avec obligation de paiement ».",
               "**Facturation :** chaque vente doit faire l'objet d'une facture émise par un logiciel certifié. En option, nous connectons Moloni ou InvoiceXpress.",
               "**Vente à distance :** conditions de vente, droit de rétractation de 14 jours avec formulaire, et l'organisme de règlement extrajudiciaire des litiges.",
             ],
@@ -1095,7 +1095,7 @@ function docsDe({ f, c, link }: DocContext): DocSet {
             "**Firmendaten:** Name, Steuernummer (NIF), Adresse, Telefon, E-Mail, Öffnungszeiten und Social-Media-Profile.",
             "**Marke:** Logo (möglichst als Vektordatei), Farben und, falls vorhanden, Schriften.",
             shop
-              ? "**Produkte:** ein Foto pro Produkt und die Tabelle, die wir Ihnen schicken, mit Name, Beschreibung, Preis mit MwSt., Varianten, Lagerbestand, Gewicht und Kategorie."
+              ? "**Produkte:** ein Foto pro Produkt und die Tabelle, die wir Ihnen schicken, mit Name, Beschreibung, Preis, Varianten, Lagerbestand, Gewicht und Kategorie."
               : "**Fotos:** eigene oder aus lizenzierten Bilddatenbanken.",
             "**Texte** für jeden Abschnitt oder jede Seite, oder die Option Texterstellung mit einem Telefonat von 20 Minuten.",
             "**Domain:** Zugang zu Ihrer bestehenden Domain oder der Name, den Sie auf Ihren Namen registrieren möchten.",
@@ -1169,7 +1169,7 @@ function docsDe({ f, c, link }: DocContext): DocSet {
             "Cookie-Banner, bei dem „Ablehnen“ so einfach ist wie „Akzeptieren“, und vor der Einwilligung wird nichts Unnötiges geladen.",
             "Datenschutz- und Cookie-Richtlinie auf Basis von Vorlagen, die Sie freigeben.",
             "Gut sichtbarer Link zum portugiesischen elektronischen Beschwerdebuch.",
-            "Firmenangaben und Preise mit MwSt., wie gesetzlich vorgeschrieben.",
+            "Firmenangaben, Preise und Verbraucherinformationen, wie gesetzlich vorgeschrieben.",
             "Umsetzung nach den Barrierefreiheitsrichtlinien WCAG 2.1 AA.",
           ],
         },
@@ -1180,7 +1180,7 @@ function docsDe({ f, c, link }: DocContext): DocSet {
             items: [
               "**Zahlungen:** MB WAY, Multibanco-Referenz und Karte, über Ihr eigenes Konto beim Anbieter (ifthenpay, Eupago, Easypay oder Stripe). Das Geld geht auf Ihr Konto.",
               "**Versand:** Tarife nach Zone und Gewicht (Festland, Inseln, EU), kostenloser Versand ab einem Bestellwert und Abholung im Geschäft.",
-              "**Kasse:** Gesamtbetrag mit MwSt. und Versand vor der Zahlung sichtbar, und ein Button „Zahlungspflichtig bestellen“.",
+              "**Kasse:** Gesamtbetrag und Versand vor der Zahlung sichtbar, und ein Button „Zahlungspflichtig bestellen“.",
               "**Rechnungen:** Jeder Verkauf braucht eine Rechnung aus zertifizierter Software. Optional binden wir Moloni oder InvoiceXpress an.",
               "**Fernabsatz:** Verkaufsbedingungen, 14-tägiges Widerrufsrecht mit Formular und die Stelle für alternative Streitbeilegung.",
             ],

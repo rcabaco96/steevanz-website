@@ -120,7 +120,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
     rules: [
       "Aviso de cookies com «Rejeitar» tão fácil como «Aceitar».",
       "Ligação ao Livro de Reclamações Eletrónico, bem visível.",
-      "Identificação da empresa e preços com IVA incluído.",
+      "Identificação da empresa, preços e informação ao consumidor como a lei exige.",
       "Construído segundo as regras de acessibilidade WCAG 2.1 AA.",
       "Domínio registado em seu nome: o site é seu.",
       "Pagamento em duas partes: 50% na adjudicação e 50% antes de publicar.",
@@ -213,7 +213,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
     rules: [
       "Cookie banner where «Reject» is as easy as «Accept».",
       "A clearly visible link to the Portuguese electronic complaints book.",
-      "Company details and prices shown with VAT included.",
+      "Company details, prices and consumer information as the law requires.",
       "Built to the WCAG 2.1 AA accessibility guidelines.",
       "Domain registered in your name: the site is yours.",
       "Payment in two parts: 50% when you accept and 50% before launch.",
@@ -306,7 +306,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
     rules: [
       "Aviso de cookies en el que «Rechazar» es tan fácil como «Aceptar».",
       "Enlace bien visible al Libro de Reclamaciones Electrónico portugués.",
-      "Datos de la empresa y precios con IVA, como exige la ley.",
+      "Datos de la empresa, precios e información al consumidor como exige la ley.",
       "Construida según las pautas de accesibilidad WCAG 2.1 AA.",
       "Dominio registrado a su nombre: la web es suya.",
       "Pago en dos partes: el 50 % al aceptar la propuesta y el 50 % antes de publicar.",
@@ -399,7 +399,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
     rules: [
       "Bandeau cookies où « Refuser » est aussi simple que « Accepter ».",
       "Lien bien visible vers le livre de réclamations électronique portugais.",
-      "Identification de l'entreprise et prix affichés avec la TVA, comme l'exige la loi.",
+      "Identification de l'entreprise, prix et information du consommateur comme l'exige la loi.",
       "Construit selon les règles d'accessibilité WCAG 2.1 AA.",
       "Nom de domaine enregistré à votre nom : le site vous appartient.",
       "Paiement en deux fois : 50 % à l'acceptation et 50 % avant la mise en ligne.",
@@ -492,7 +492,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
     rules: [
       "Cookie-Banner, bei dem „Ablehnen“ so einfach ist wie „Akzeptieren“.",
       "Gut sichtbarer Link zum portugiesischen elektronischen Beschwerdebuch.",
-      "Firmenangaben und Preise mit MwSt., wie gesetzlich vorgeschrieben.",
+      "Firmenangaben, Preise und Verbraucherinformationen, wie gesetzlich vorgeschrieben.",
       "Gebaut nach den Barrierefreiheitsrichtlinien WCAG 2.1 AA.",
       "Domain auf Ihren Namen registriert: Die Website gehört Ihnen.",
       "Zahlung in zwei Teilen: 50 % bei Auftragserteilung und 50 % vor der Veröffentlichung.",

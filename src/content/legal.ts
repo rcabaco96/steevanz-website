@@ -25,6 +25,12 @@ const updatedEs = "Última actualización: 11 de octubre de 2026 · Esta traducc
 const updatedFr = "Dernière mise à jour : 11 octobre 2026 · Cette traduction est fournie à titre informatif ; en cas de divergence, la version portugaise prévaut.";
 const updatedDe = "Zuletzt aktualisiert: 11. Oktober 2026 · Diese Übersetzung dient nur zur Information; bei Abweichungen gilt die portugiesische Fassung.";
 const updatedIt = "Ultimo aggiornamento: 11 ottobre 2026 · Questa traduzione ha valore informativo; in caso di divergenza prevale la versione in portoghese.";
+// Terms, point 1 rewritten on 2026-10-20 (orders on the site are requests confirmed by a written proposal).
+const termsUpdatedPt = "Última atualização: 20 de outubro de 2026";
+const termsUpdatedEn = "Last updated: 20 October 2026";
+const termsUpdatedEs = "Última actualización: 20 de octubre de 2026 · Esta traducción es informativa; en caso de divergencia prevalece la versión en portugués.";
+const termsUpdatedFr = "Dernière mise à jour : 20 octobre 2026 · Cette traduction est fournie à titre informatif ; en cas de divergence, la version portugaise prévaut.";
+const termsUpdatedDe = "Zuletzt aktualisiert: 20. Oktober 2026 · Diese Übersetzung dient nur zur Information; bei Abweichungen gilt die portugiesische Fassung.";
 
 export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> = {
   privacy: {
@@ -933,13 +939,13 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       title: "Termos e condições",
       intro:
         "Estes termos regulam a utilização do site steevanz.com. Ao navegar no site, aceita estas condições. A prestação de serviços é sempre regulada por proposta e contrato próprios.",
-      updated: updatedPt,
+      updated: termsUpdatedPt,
       sections: [
         {
           id: "objeto",
           title: "1. Objeto do site",
           paragraphs: [
-            "Este site apresenta os produtos e serviços da Steevanz e permite pedir demonstrações e informações. Não é possível comprar produtos ou contratar serviços diretamente no site.",
+            "Este site apresenta os produtos e serviços da Steevanz e permite pedir demonstrações e informações e fazer pedidos através do carrinho. Os pedidos feitos no site não são pagos online e não são uma compra: são um pedido, que a Steevanz confirma com uma proposta escrita. Os preços da proposta são indicados sem IVA, ao qual acresce o IVA à taxa legal em vigor. O contrato só começa com a aceitação da proposta.",
           ],
         },
         {
@@ -1001,13 +1007,13 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       title: "Terms and conditions",
       intro:
         "These terms govern the use of the steevanz.com website. By browsing the site you accept these conditions. The provision of services is always governed by its own proposal and contract.",
-      updated: updatedEn,
+      updated: termsUpdatedEn,
       sections: [
         {
           id: "purpose",
           title: "1. Purpose of the website",
           paragraphs: [
-            "This website presents Steevanz products and services and lets you request demos and information. Products cannot be bought and services cannot be contracted directly on the website.",
+            "This website presents Steevanz products and services and lets you request demos and information and send orders through the cart. Orders sent on the website are not paid online and are not a purchase: they are a request, which Steevanz confirms with a written proposal. Prices in the proposal are shown excluding VAT, with VAT added at the legal rate in force. The contract only starts when the proposal is accepted.",
           ],
         },
         {
@@ -1069,13 +1075,13 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       title: "Términos y condiciones",
       intro:
         "Estos términos regulan el uso del sitio web steevanz.com. Al navegar por el sitio, acepta estas condiciones. La prestación de servicios se rige siempre por una propuesta y un contrato propios.",
-      updated: updatedEs,
+      updated: termsUpdatedEs,
       sections: [
         {
           id: "purpose",
           title: "1. Objeto del sitio web",
           paragraphs: [
-            "Este sitio web presenta los productos y servicios de Steevanz y permite solicitar demostraciones e información. No es posible comprar productos ni contratar servicios directamente en el sitio web.",
+            "Este sitio web presenta los productos y servicios de Steevanz y permite solicitar demostraciones e información y hacer pedidos desde el carrito. Los pedidos hechos en el sitio web no se pagan en línea ni son una compra: son una solicitud, que Steevanz confirma con una propuesta por escrito. Los precios de la propuesta se indican sin IVA, al que se suma el IVA al tipo legal vigente. El contrato solo comienza con la aceptación de la propuesta.",
           ],
         },
         {
@@ -1137,13 +1143,13 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       title: "Conditions générales",
       intro:
         "Ces conditions régissent l'utilisation du site steevanz.com. En naviguant sur le site, vous acceptez ces conditions. La prestation de services est toujours régie par une proposition et un contrat propres.",
-      updated: updatedFr,
+      updated: termsUpdatedFr,
       sections: [
         {
           id: "purpose",
           title: "1. Objet du site",
           paragraphs: [
-            "Ce site présente les produits et services de Steevanz et permet de demander des démonstrations et des informations. Il n'est pas possible d'acheter des produits ni de souscrire des services directement sur le site.",
+            "Ce site présente les produits et services de Steevanz et permet de demander des démonstrations et des informations, et de passer commande depuis le panier. Les commandes passées sur le site ne sont pas payées en ligne et ne constituent pas un achat : il s'agit d'une demande, que Steevanz confirme par une proposition écrite. Les prix de la proposition sont indiqués hors TVA, la TVA s'y ajoutant au taux légal en vigueur. Le contrat ne commence qu'à l'acceptation de la proposition.",
           ],
         },
         {
@@ -1206,13 +1212,13 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       title: "Allgemeine Geschäfts\u00ADbedingungen",
       intro:
         "Diese Bedingungen regeln die Nutzung der Website steevanz.com. Mit dem Besuch der Website akzeptieren Sie diese Bedingungen. Die Erbringung von Leistungen richtet sich stets nach einem eigenen Angebot und Vertrag.",
-      updated: updatedDe,
+      updated: termsUpdatedDe,
       sections: [
         {
           id: "purpose",
           title: "1. Zweck der Website",
           paragraphs: [
-            "Diese Website stellt die Produkte und Leistungen von Steevanz vor und ermöglicht es, Demos und Informationen anzufragen. Produkte können auf der Website nicht direkt gekauft und Leistungen nicht direkt beauftragt werden.",
+            "Diese Website stellt die Produkte und Leistungen von Steevanz vor und ermöglicht es, Demos und Informationen anzufragen und über den Warenkorb Bestellungen zu senden. Bestellungen auf der Website werden nicht online bezahlt und sind kein Kauf: Sie sind eine Anfrage, die Steevanz mit einem schriftlichen Angebot bestätigt. Die Preise im Angebot verstehen sich ohne MwSt.; die MwSt. kommt zum geltenden gesetzlichen Satz hinzu. Der Vertrag beginnt erst mit der Annahme des Angebots.",
           ],
         },
         {
