@@ -1299,85 +1299,85 @@ function docsIt({ f, c, link }: DocContext): DocSet {
         { type: "h2", id: "timeline", text: "Tempi" },
         {
           type: "p",
-          text: `${capitalize(f.thing.it)} sarà ${f.ready.it} in **${f.days.it}** da quando riceviamo tutti i contenuti. Prima della pubblicazione vi mostriamo la prima versione su un link privato, e sono inclusi 2 giri di modifiche.`,
+          text: `${capitalize(f.thing.it)} sarà ${f.ready.it} in **${f.days.it}** da quando riceviamo tutti i contenuti. Prima della pubblicazione Le mostriamo la prima versione su un link privato, e sono inclusi 2 giri di modifiche.`,
         },
         {
           type: "callout",
           tone: "tip",
-          title: "Iniziate a raccogliere i contenuti",
-          text: `Logo, foto e dati dell'azienda sono ciò che rallenta di più un progetto. Guardate l'[elenco di ciò che ci serve](${link.setup}) e iniziate a raccogliere quello che avete già.`,
+          title: "Inizi a raccogliere i contenuti",
+          text: `Logo, foto e dati dell'azienda sono ciò che rallenta di più un progetto. Guardi l'[elenco di ciò che ci serve](${link.setup}) e inizi a raccogliere quello che ha già.`,
         },
         { type: "h2", id: "next-steps", text: "Prossimi passi" },
         {
           type: "p",
-          text: `Guardate la [pagina del prodotto](${link.product}) con prezzi e opzioni, oppure inviate la richiesta dal [carrello](${link.cart}): vi rispondiamo con una proposta a prezzo fisso.`,
+          text: `Guardi la [pagina del prodotto](${link.product}) con prezzi e opzioni, oppure invii la richiesta dal [carrello](${link.cart}): Le rispondiamo con una proposta a prezzo fisso.`,
         },
       ],
     },
     setup: {
-      title: "Avvio del progetto: cosa ci serve da voi",
+      title: "Avvio del progetto: cosa ci serve da Lei",
       description: `L'elenco dei contenuti, il dominio e l'email per avviare ${f.thing.it} con Steevanz.`,
       blocks: [
         {
           type: "p",
-          text: "Dopo che avete accettato la proposta e pagato il primo 50%, vi inviamo questo elenco. Prima arriva tutto, prima iniziamo: i tempi partono dai contenuti completi.",
+          text: "Dopo che ha accettato la proposta e pagato il primo 50%, Le inviamo questo elenco. Prima arriva tutto, prima iniziamo: i tempi partono dai contenuti completi.",
         },
-        { type: "h2", id: "checklist", text: "Cosa ci serve da voi" },
+        { type: "h2", id: "checklist", text: "Cosa ci serve da Lei" },
         {
           type: "ol",
           items: [
             "**Dati dell'azienda:** nome, numero fiscale portoghese (NIF), indirizzo, telefono, email, orari e social.",
-            "**Marchio:** logo (possibilmente vettoriale), colori e, se li avete, i caratteri tipografici.",
+            "**Marchio:** logo (possibilmente vettoriale), colori e, se li ha, i caratteri tipografici.",
             shop
-              ? "**Prodotti:** una foto per prodotto e il foglio di calcolo che vi inviamo, con nome, descrizione, prezzo, varianti, magazzino, peso e categoria."
-              : "**Foto:** vostre o da archivi di immagini con licenza.",
+              ? "**Prodotti:** una foto per prodotto e il foglio di calcolo che Le inviamo, con nome, descrizione, prezzo, varianti, magazzino, peso e categoria."
+              : "**Foto:** Sue o da archivi di immagini con licenza.",
             "**Testi** di ogni sezione o pagina, oppure l'opzione copywriting con una chiamata di 20 minuti.",
-            "**Dominio:** l'accesso al dominio che avete già, o il nome che volete registrare a vostro nome.",
-            "**Libro dei reclami elettronico:** la registrazione della vostra attività sulla piattaforma portoghese, che dovete fare voi.",
+            "**Dominio:** l'accesso al dominio che ha già, o il nome che vuole registrare a Suo nome.",
+            "**Libro dei reclami elettronico:** la registrazione della Sua attività sulla piattaforma portoghese, che deve fare Lei.",
             ...only(shop, [
-              "**Vendita online:** l'organismo di risoluzione alternativa delle controversie a cui aderite, la politica dei resi, le zone e le tariffe di spedizione.",
-              "**Account:** un account presso un fornitore di pagamenti (vi aiutiamo a sceglierlo e ad aprirlo) e, per la fatturazione automatica, un account Moloni o InvoiceXpress.",
+              "**Vendita online:** l'organismo di risoluzione alternativa delle controversie a cui aderisce, la politica dei resi, le zone e le tariffe di spedizione.",
+              "**Account:** un account presso un fornitore di pagamenti (La aiutiamo a sceglierlo e ad aprirlo) e, per la fatturazione automatica, un account Moloni o InvoiceXpress.",
             ]),
             "**Casi particolari:** il numero di registrazione RNAL per le case vacanza, o la registrazione all'ERS per le cliniche, quando serve.",
-            "**Riferimenti:** 2 o 3 siti che vi piacciono, e cosa non volete vedere nel vostro.",
+            "**Riferimenti:** 2 o 3 siti che Le piacciono, e cosa non vuole vedere nel Suo.",
           ],
         },
         { type: "h2", id: "domain", text: "Dominio" },
         {
           type: "p",
-          text: "Il dominio è sempre registrato a vostro nome. Se ne avete già uno, ci serve l'accesso (o qualcuno che modifichi i DNS per noi). Se non ce l'avete, vi aiutiamo a sceglierlo e a registrarlo: un dominio .pt costa circa 15-20 € all'anno. Come opzione, possiamo gestirlo noi per voi.",
+          text: "Il dominio è sempre registrato a Suo nome. Se ne ha già uno, ci serve l'accesso (o qualcuno che modifichi i DNS per noi). Se non ce l'ha, La aiutiamo a sceglierlo e a registrarlo: un dominio .pt costa circa 15-20 € all'anno. Come opzione, possiamo gestirlo noi per Lei.",
         },
         { type: "h2", id: "email", text: "Email professionale" },
         {
           type: "p",
-          text: "Configuriamo l'email sul vostro dominio con Google Workspace, Microsoft 365 o Zoho. La licenza si paga direttamente al fornitore (per esempio, circa 8 € per utente al mese con Google Workspace).",
+          text: "Configuriamo l'email sul Suo dominio con Google Workspace, Microsoft 365 o Zoho. La licenza si paga direttamente al fornitore (per esempio, circa 8 € per utente al mese con Google Workspace).",
         },
         {
           type: "callout",
           tone: "warning",
           title: "I tempi partono dai contenuti completi",
-          text: `I ${f.days.it} partono quando abbiamo tutto ciò che è nell'elenco${shop ? ", compreso il conto pagamenti approvato" : ""}. Se manca qualcosa, ve lo diciamo subito.`,
+          text: `I ${f.days.it} partono quando abbiamo tutto ciò che è nell'elenco${shop ? ", compreso il conto pagamenti approvato" : ""}. Se manca qualcosa, La avvisiamo subito.`,
         },
-        { type: "p", text: `Poi: scoprite come colleghiamo gli strumenti e ci occupiamo di Google nella [configurazione](${link.configuration}).` },
+        { type: "p", text: `Poi: scopra come colleghiamo gli strumenti e ci occupiamo di Google nella [configurazione](${link.configuration}).` },
       ],
     },
     configuration: {
       title: "Configurazione: strumenti, Google e regole",
       description: `Come colleghiamo gli strumenti Steevanz, Google e le basi legali ${shop ? "e i pagamenti " : ""}prima della pubblicazione.`,
       blocks: [
-        { type: "p", text: `Configuriamo tutto ciò che trovate in questa pagina prima di pubblicare ${f.thing.it}.` },
+        { type: "p", text: `Configuriamo tutto ciò che trova in questa pagina prima di pubblicare ${f.thing.it}.` },
         { type: "h2", id: "steevanz-tools", text: "Strumenti Steevanz" },
-        { type: "p", text: "Se usate già prodotti Steevanz, li colleghiamo senza costi di sviluppo aggiuntivi:" },
+        { type: "p", text: "Se usa già prodotti Steevanz, li colleghiamo senza costi di sviluppo aggiuntivi:" },
         {
           type: "table",
           head: ["Strumento", "Come appare"],
           rows: [
-            ["Prenotazioni", "Un pulsante «Prenota» che apre la vostra pagina di prenotazione"],
+            ["Prenotazioni", "Un pulsante «Prenoti» che apre la Sua pagina di prenotazione"],
             ["Lista d'attesa", "Un link per entrare in coda e seguire il proprio turno"],
-            ["Menù digitale", "Una pagina o un pulsante «Vedi il menù», sempre aggiornato"],
-            ["Carta fedeltà", "Un pulsante per aderire alla vostra carta"],
+            ["Menù digitale", "Una pagina o un pulsante «Veda il menù», sempre aggiornato"],
+            ["Carta fedeltà", "Un pulsante per aderire alla Sua carta"],
             ["Chatbot con IA", "Una finestra di chat che risponde alle domande"],
-            ["Recensioni", "Un pulsante «Lascia una recensione» che apre la vostra pagina Google"],
+            ["Recensioni", "Un pulsante «Lasci una recensione» che apre la Sua pagina Google"],
           ],
         },
         { type: "h2", id: "google", text: "Google e SEO" },
@@ -1386,7 +1386,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
           items: [
             "Titolo e descrizione in ogni pagina, e dati strutturati dell'attività.",
             "Sitemap inviata a Google e Google Search Console configurata.",
-            "Nome, indirizzo e telefono uguali a quelli del vostro Profilo dell'attività su Google.",
+            "Nome, indirizzo e telefono uguali a quelli del Suo Profilo dell'attività su Google.",
             "Immagine di condivisione per social e WhatsApp.",
             "Statistiche delle visite senza cookie, rispettose della privacy.",
           ],
@@ -1400,8 +1400,8 @@ function docsIt({ f, c, link }: DocContext): DocSet {
         {
           type: "ul",
           items: [
-            "Banner dei cookie in cui «Rifiuta» è facile quanto «Accetta», e niente di non essenziale prima del consenso.",
-            "Informativa sulla privacy e sui cookie, a partire da modelli che approvate voi.",
+            "Banner dei cookie in cui «Rifiuto» è facile quanto «Accetto», e niente di non essenziale prima del consenso.",
+            "Informativa sulla privacy e sui cookie, a partire da modelli che approva Lei.",
             "Collegamento ben visibile al Libro dei reclami elettronico portoghese.",
             "Dati dell'azienda, prezzi e informazioni al consumatore come richiesto dalla legge.",
             "Realizzazione secondo le linee guida di accessibilità WCAG 2.1 AA.",
@@ -1412,7 +1412,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
           {
             type: "ul",
             items: [
-              "**Pagamenti:** MB WAY, riferimento Multibanco e carta, con il vostro account presso il fornitore (ifthenpay, Eupago, Easypay o Stripe). I soldi arrivano sul vostro conto.",
+              "**Pagamenti:** MB WAY, riferimento Multibanco e carta, con il Suo account presso il fornitore (ifthenpay, Eupago, Easypay o Stripe). I soldi arrivano sul Suo conto.",
               "**Spedizioni:** tariffe per zona e peso (Portogallo continentale, isole, UE), spedizione gratuita sopra un certo importo e ritiro in negozio.",
               "**Checkout:** totale e spese di spedizione visibili prima del pagamento, e pulsante «Ordine con obbligo di pagamento».",
               "**Fatturazione:** ogni vendita richiede una fattura emessa con un software certificato. Come opzione, colleghiamo Moloni o InvoiceXpress.",
@@ -1423,7 +1423,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
         { type: "h2", id: "languages", text: "Lingue" },
         {
           type: "p",
-          text: "Ogni lingua in più è un'opzione nella proposta. Traduciamo noi e voi approvate prima della pubblicazione; consigliamo una revisione da parte di un madrelingua.",
+          text: "Ogni lingua in più è un'opzione nella proposta. Traduciamo noi e Lei approva prima della pubblicazione; consigliamo una revisione da parte di un madrelingua.",
         },
         { type: "p", text: `Poi: come chiedere modifiche dopo la pubblicazione, in [utilizzo](${link.usage}).` },
       ],
@@ -1434,15 +1434,15 @@ function docsIt({ f, c, link }: DocContext): DocSet {
       blocks: [
         {
           type: "p",
-          text: `Dopo la pubblicazione non dovete toccare nulla di tecnico: il piano mensile (${f.monthly.it}) copre hosting, sicurezza e piccole modifiche.`,
+          text: `Dopo la pubblicazione non deve toccare nulla di tecnico: il piano mensile (${f.monthly.it}) copre hosting, sicurezza e piccole modifiche.`,
         },
         { type: "h2", id: "request-a-change", text: "Chiedere una modifica" },
         {
           type: "ol",
           items: [
-            "Mandate un messaggio WhatsApp o un'email con cosa volete cambiare e dove.",
-            "Allegate il nuovo testo, le foto o uno screenshot, se aiuta.",
-            "Confermiamo la richiesta e vi avvisiamo quando è online.",
+            "Mandi un messaggio WhatsApp o un'email con cosa vuole cambiare e dove.",
+            "Alleghi il nuovo testo, le foto o uno screenshot, se aiuta.",
+            "Confermiamo la richiesta e La avvisiamo quando è online.",
           ],
         },
         { type: "h2", id: "small-changes", text: "Cosa conta come piccola modifica" },
@@ -1457,16 +1457,16 @@ function docsIt({ f, c, link }: DocContext): DocSet {
         },
         {
           type: "p",
-          text: `Il piano include fino a **${f.allowance.it}** di piccole modifiche al mese. Se una richiesta va oltre, vi diciamo il prezzo prima di procedere.`,
+          text: `Il piano include fino a **${f.allowance.it}** di piccole modifiche al mese. Se una richiesta va oltre, Le diciamo il prezzo prima di procedere.`,
         },
         ...only<DocBlock>(shop, [
           { type: "h2", id: "orders", text: "Gestire gli ordini" },
           {
             type: "ul",
             items: [
-              "Ogni ordine pagato vi arriva via email e compare nel pannello del negozio.",
-              "Preparate il pacco, segnate l'ordine come spedito e aggiungete il codice di tracciamento: il cliente lo riceve via email.",
-              "Resi e rimborsi si gestiscono nel pannello del negozio o del fornitore dei pagamenti. Vi spieghiamo tutto durante la formazione.",
+              "Ogni ordine pagato Le arriva via email e compare nel pannello del negozio.",
+              "Prepari il pacco, segni l'ordine come spedito e aggiunga il codice di tracciamento: il cliente lo riceve via email.",
+              "Resi e rimborsi si gestiscono nel pannello del negozio o del fornitore dei pagamenti. Le spieghiamo tutto durante la formazione.",
               "Con la fatturazione collegata, la fattura viene emessa da sola a ogni ordine pagato.",
             ],
           },
@@ -1478,7 +1478,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
             "Hosting, certificato di sicurezza, monitoraggio e backup.",
             "Aggiornamenti di sicurezza.",
             "Assistenza via WhatsApp ed email.",
-            "Senza vincoli: disdetta con 30 giorni di preavviso, e vi consegniamo i file per poter cambiare hosting.",
+            "Senza vincoli: disdetta con 30 giorni di preavviso, e Le consegniamo i file per poter cambiare hosting.",
           ],
         },
       ],
@@ -1487,16 +1487,16 @@ function docsIt({ f, c, link }: DocContext): DocSet {
       title: "Risoluzione dei problemi",
       description: "I problemi più comuni dopo la pubblicazione e cosa fare.",
       blocks: [
-        { type: "p", text: "I problemi più comuni e cosa fare. Se non si risolve, scriveteci via WhatsApp o email." },
+        { type: "p", text: "I problemi più comuni e cosa fare. Se non si risolve, ci scriva via WhatsApp o email." },
         {
           type: "table",
           head: ["Problema", "Cosa fare"],
           rows: [
-            ["Non si apre dopo il cambio di dominio", "Il cambio dei DNS può richiedere fino a 48 ore per arrivare ovunque. Se ci vuole di più, avvisateci."],
-            ["Non ricevo le email del modulo", "Controllate la cartella spam e segnate il mittente come sicuro. Se continua, avvisateci e testiamo l'invio."],
-            ["Non compare ancora su Google", "Google impiega giorni o settimane a mostrare un sito nuovo. Abbiamo già inviato la sitemap; cercate il nome della vostra attività tra qualche giorno."],
-            ["Vedo informazioni vecchie", "Aggiornate la pagina o apritela in una finestra privata. Le modifiche possono richiedere qualche minuto per comparire."],
-            ["Compare un avviso di sicurezza", "Non dovrebbe succedere: il certificato si rinnova da solo. Mandateci uno screenshot."],
+            ["Non si apre dopo il cambio di dominio", "Il cambio dei DNS può richiedere fino a 48 ore per arrivare ovunque. Se ci vuole di più, ci avvisi."],
+            ["Non ricevo le email del modulo", "Controlli la cartella spam e segni il mittente come sicuro. Se continua, ci avvisi e testiamo l'invio."],
+            ["Non compare ancora su Google", "Google impiega giorni o settimane a mostrare un sito nuovo. Abbiamo già inviato la sitemap; cerchi il nome della Sua attività tra qualche giorno."],
+            ["Vedo informazioni vecchie", "Aggiorni la pagina o la apra in una finestra privata. Le modifiche possono richiedere qualche minuto per comparire."],
+            ["Compare un avviso di sicurezza", "Non dovrebbe succedere: il certificato si rinnova da solo. Ci mandi uno screenshot."],
             ...only(shop, [
               ["Pagamento MB WAY non completato", "Il cliente deve approvare il pagamento nell'app entro il tempo previsto. Se scade, l'ordine resta da pagare e il cliente può riprovare."],
               ["Riferimento Multibanco non pagato", "Il riferimento ha una scadenza impostata presso il fornitore. Dopo quella data, l'ordine può essere annullato."],
@@ -1506,7 +1506,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
         {
           type: "callout",
           tone: "tip",
-          text: `Quando chiedete aiuto, diteci l'indirizzo della pagina, cosa stavate facendo e, se possibile, mandateci uno screenshot. I nostri contatti sono nella pagina [Contatti](${link.contact}).`,
+          text: `Quando chiede aiuto, ci dica l'indirizzo della pagina, cosa stava facendo e, se possibile, ci mandi uno screenshot. I nostri contatti sono nella pagina [Contatti](${link.contact}).`,
         },
       ],
     },

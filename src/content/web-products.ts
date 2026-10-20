@@ -506,11 +506,11 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
   },
   it: {
     modelosEyebrow: "Modelli per settore",
-    modelosTitle: "Partiamo da una base pensata per la vostra attività",
+    modelosTitle: "Partiamo da una base pensata per la Sua attività",
     modelosLead:
-      "Ogni settore ha un punto di partenza con la struttura e i collegamenti che hanno senso. Poi adattiamo tutto al vostro marchio: logo, colori, testi e foto.",
+      "Ogni settore ha un punto di partenza con la struttura e i collegamenti che hanno senso. Poi adattiamo tutto al Suo marchio: logo, colori, testi e foto.",
     modelosAll:
-      "Tutti i modelli includono: un pulsante principale ben visibile, contatti e WhatsApp, mappa, collegamento alle vostre vere recensioni Google, banner dei cookie, privacy, Libro dei reclami, impaginazione pensata per lo smartphone e accessibilità.",
+      "Tutti i modelli includono: un pulsante principale ben visibile, contatti e WhatsApp, mappa, collegamento alle Sue vere recensioni Google, banner dei cookie, privacy, Libro dei reclami, impaginazione pensata per lo smartphone e accessibilità.",
     connectionsLabel: "Si collega con",
     modelos: [
       {
@@ -528,8 +528,8 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
         name: "Barbiere, parrucchiere o estetica",
         includes: {
           "landing-page": "Servizi e prezzi, staff, foto dei lavori e un pulsante per prenotare.",
-          website: "Home, Servizi e prezzi, Staff, Galleria dei lavori, Prenota e Contatti.",
-          "online-shop": "I prodotti che usate in salone, carte regalo e pacchetti di trattamenti.",
+          website: "Home, Servizi e prezzi, Staff, Galleria dei lavori, Prenotazioni e Contatti.",
+          "online-shop": "I prodotti che usa in salone, carte regalo e pacchetti di trattamenti.",
         },
         connections: "Prenotazioni con promemoria, lista d'attesa, carta fedeltà e chatbot.",
       },
@@ -568,34 +568,34 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
         name: "Negozio",
         includes: {
           "landing-page": "Un'inaugurazione, una promozione o una nuova collezione, con indirizzo, orari e WhatsApp.",
-          website: "Home, Collezioni o Marchi, Chi siamo, Venite a trovarci e Contatti.",
+          website: "Home, Collezioni o Marchi, Chi siamo, Venga a trovarci e Contatti.",
           "online-shop": "Catalogo, scheda prodotto, carrello, checkout e una pagina su spedizioni e resi.",
         },
         connections: "Carta fedeltà, targhe per recensioni e chatbot.",
       },
     ],
     extrasEyebrow: "Prezzo e opzioni",
-    extrasTitle: "Cosa resta fuori e cosa potete aggiungere",
+    extrasTitle: "Cosa resta fuori e cosa può aggiungere",
     addOnsTitle: "Opzioni extra",
-    addOnsNote: "Importi IVA esclusa, indicativi. Entrano nella proposta solo se li scegliete.",
+    addOnsNote: "Importi IVA esclusa, indicativi. Entrano nella proposta solo se li sceglie.",
     notIncludedTitle: "Non incluso",
     monthlyTitle: "Piano mensile",
     rulesEyebrow: "Regole e buone pratiche",
     rulesTitle: "Le basi legali e pratiche, sistemate fin dall'inizio",
     rules: [
-      "Banner dei cookie in cui «Rifiuta» è facile quanto «Accetta».",
+      "Banner dei cookie in cui «Rifiuto» è facile quanto «Accetto».",
       "Collegamento ben visibile al Libro dei reclami elettronico portoghese.",
       "Dati dell'azienda, prezzi e informazioni al consumatore come richiesto dalla legge.",
       "Realizzato secondo le linee guida di accessibilità WCAG 2.1 AA.",
-      "Dominio registrato a vostro nome: il sito è vostro.",
+      "Dominio registrato a Suo nome: il sito è Suo.",
       "Pagamento in due parti: 50% all'accettazione e 50% prima della pubblicazione.",
     ],
     shopRules: [
-      "MB WAY, Multibanco e carta, con il vostro conto pagamenti.",
+      "MB WAY, Multibanco e carta, con il Suo conto pagamenti.",
       "Condizioni di vendita, diritto di recesso di 14 giorni e politica dei resi.",
     ],
     rulesNote:
-      "Prepariamo la struttura e i modelli dei testi legali. Il contenuto finale lo verificate voi, il vostro commercialista o il vostro avvocato.",
+      "Prepariamo la struttura e i modelli dei testi legali. Il contenuto finale lo verifica Lei, il Suo commercialista o il Suo avvocato.",
   },
 };
 
