@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { productCopy } from "../src/content/product-copy/index.ts";
+import { productExamples } from "../src/content/product-examples.ts";
+import { webBriefCopy } from "../src/content/web-brief.ts";
+import { webSharedCopy } from "../src/content/web-products.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
 
 // Group B of the site translation (es, fr, de, it): the three website products' pages, their shared
@@ -52,5 +55,14 @@ describe("website products translated in es, fr, de, it", () => {
 describe("online shop price (owner, 2026-10-20: from 900 €)", () => {
   it("says 900 in the FAQ in every language", () => {
     for (const locale of ["pt", "en", ...extraLocales]) assert.match(productCopy["online-shop"][locale].faq[0].a, /900/, locale);
+  });
+});
+
+describe("web shared copy, checkout brief and product examples in es, fr, de, it", () => {
+  it("translates every field", () => {
+    const records = { webSharedCopy, webBriefCopy, ...Object.fromEntries(Object.entries(productExamples).map(([id, examples]) => [`examples.${id}`, examples.copy])) };
+    for (const [name, record] of Object.entries(records)) {
+      for (const locale of extraLocales) assertTranslated(record[locale], record.en, record.pt, `${name}.${locale}`);
+    }
   });
 });
