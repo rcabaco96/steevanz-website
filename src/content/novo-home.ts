@@ -26,6 +26,14 @@ export const clips = {
   dolciLanding: clip("dolci-landing", "A landing page da Dolci e Salati, feita pela Steevanz."),
 };
 
+/** The approved Menu digital ad, web version (720×1280, H.264 + AAC, with music; licences in public/home/LICENCAS.txt). */
+export const menuAd = {
+  src: "/home/menu-digital-anuncio-720.mp4",
+  poster: "/home/menu-digital-anuncio-720.jpg",
+  label: "Anúncio do Menu digital da Steevanz: os pratos em vídeo no telemóvel e o pedido feito à mesa.",
+  copy: { soundOn: "Ver com som", soundOff: "Tirar o som", play: "Ver o vídeo" },
+};
+
 export const novoCopy = {
   metaTitle: "Steevanz | Os seus clientes encontram, escolhem e voltam",
   metaDescription:
@@ -167,7 +175,7 @@ export const howCopy = {
 /**
  * The plates banner. The price is never written here: it is read from products.ts
  * («google-review-plates»: priceFrom and the packs) and always shown without VAT, with «+ IVA».
- * The phone shows only the review form («Deixe a sua avaliação»): never a rating, a count or a review.
+ * The animation beside it is components/visuals/HeroTapScene (texts in content/home.ts → scene).
  */
 export const platesCopy = {
   eyebrow: "Placas de reviews do Google",
@@ -179,14 +187,6 @@ export const platesCopy = {
   perPlate: "por placa",
   vat: "+ IVA",
   cta: "Conhecer as placas",
-  plate: { line1: "Gostou?", line2: "Toque para avaliar" },
-  screen: {
-    business: "O seu negócio",
-    title: "Deixe a sua avaliação",
-    placeholder: "Partilhe como foi a sua experiência…",
-    publish: "Publicar",
-  },
-  stageLabel: "A placa de reviews no balcão e, no telemóvel do cliente, o formulário «Deixe a sua avaliação» do Google.",
 };
 
 /* ---------- Setores, preços e perguntas ---------- */

@@ -1215,6 +1215,11 @@
     color 0.35s var(--ease);
 }
 
+.stepStatic {
+  color: #fff;
+}
+
+.stepStatic .stepMark,
 .step[aria-current="step"] .stepMark {
   background: var(--gold);
   color: var(--ink);

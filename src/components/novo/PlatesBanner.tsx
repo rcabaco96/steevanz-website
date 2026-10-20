@@ -1,19 +1,20 @@
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
-import { TapPlate } from "@/components/visuals/TapPlate";
+import { HeroTapScene } from "@/components/visuals/HeroTapScene";
+import { homeCopy } from "@/content/home";
 import { platesCopy } from "@/content/novo-home";
 import { getProduct } from "@/content/products";
 import { href } from "@/lib/routes";
+import { PauseOffscreen } from "./PauseOffscreen";
 import base from "./novo.module.css";
 import styles from "./plates.module.css";
 
 const locale = "pt";
 
 // The Google review plates, as a promo band right after «O que quer melhorar?». Prices come from
-// products.ts, without VAT and with «+ IVA». The phone shows only the empty review form: no rating,
-// no count, no review. There is no photo of a real plate in public/ yet, so the plate is the same
-// drawing the product pages use.
+// products.ts, without VAT and with «+ IVA». The animation is the old home hero's plate scene
+// (owner, 2026-10-20), on a dark panel, paused while off screen.
 
 export function PlatesBanner() {
   const copy = platesCopy;
@@ -56,34 +57,9 @@ export function PlatesBanner() {
           </div>
         </div>
 
-        <div className={styles.stage} role="img" aria-label={copy.stageLabel}>
-          <div className={styles.disc} aria-hidden="true" />
-          <div className={styles.phone} aria-hidden="true">
-            <div className={styles.screen}>
-              <p className={styles.biz}>{copy.screen.business}</p>
-              <p className={styles.formTitle}>{copy.screen.title}</p>
-              <div className={styles.stars}>
-                {Array.from({ length: 5 }, (_, i) => (
-                  <svg key={i} viewBox="0 0 24 24" width="22" height="22">
-                    <path
-                      d="M12 3.2l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.5l6-.8z"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ))}
-              </div>
-              <div className={styles.box}>{copy.screen.placeholder}</div>
-              <span className={styles.publish}>{copy.screen.publish}</span>
-            </div>
-          </div>
-          <div className={styles.plate} aria-hidden="true">
-            <TapPlate variant="stand" finish="black" symbol="stars" line1={copy.plate.line1} line2={copy.plate.line2} className={styles.plateSvg} />
-            <span className={styles.tap} />
-          </div>
-        </div>
+        <PauseOffscreen className={styles.panel}>
+          <HeroTapScene copy={homeCopy[locale].scene} />
+        </PauseOffscreen>
       </div>
     </section>
   );

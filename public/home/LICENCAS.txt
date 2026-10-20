@@ -10,3 +10,9 @@ dolci-landing (.mp4 e .jpg)
 
 Fotografias de setor e da Dolci e Salati usadas na página: as de public/media (licença Pexels, ver
 public/media/CREDITS.md) e as da própria Dolci e Salati (public/media/clients/dolci-salati).
+
+menu-digital-anuncio-720 (.mp4 e .jpg) — secção do Menu digital da home (2026-10-20)
+  Versão web (720×1280, H.264 + AAC) do anúncio aprovado «Steevanz - Anuncio Menu Digital.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem de cada clip, dos vídeos dos pratos e da música
+  («Feel Good – It Feels So Good», Easy_Eva, Pixabay Content License, sem Content ID) em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Cada prato em vídeo.» (11 s).

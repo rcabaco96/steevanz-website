@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { howCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { howCopy, menuAd, novoCopy, platesCopy } from "../src/content/novo-home.ts";
 
 // The home page («/», pt): route, components and content.
 const dir = "src/components/novo";
@@ -53,5 +53,12 @@ describe("home page («/»)", () => {
     assert.doesNotMatch(banner, /\b(29|25|23|20)\s*€/);
     assert.equal(platesCopy.vat, "+ IVA");
     assert.doesNotMatch(JSON.stringify(platesCopy), /\d\s*€/);
+  });
+
+  it("shows the Menu digital ad (web version and poster in public/) and the old hero's plate scene", () => {
+    for (const file of [menuAd.src, menuAd.poster]) assert.ok(existsSync(join("public", file)), file);
+    assert.match(readFileSync(join(dir, "MenuShowcase.tsx"), "utf8"), /<AdVideo/);
+    assert.match(readFileSync(join(dir, "AdVideo.tsx"), "utf8"), /preload="none"/);
+    assert.match(readFileSync(join(dir, "PlatesBanner.tsx"), "utf8"), /<HeroTapScene/);
   });
 });

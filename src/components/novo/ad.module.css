@@ -1,0 +1,114 @@
+/* The Menu digital ad in a phone-shaped frame: a fixed 9:16 screen, so nothing moves when it loads. */
+
+.frame {
+  position: relative;
+  width: min(72vw, 17rem);
+  padding: 0.5rem;
+  border-radius: 2.4rem;
+  background: #17101a;
+  box-shadow:
+    0 2px 0 1px #3a2c3f inset,
+    0 40px 60px -30px rgb(20 6 16 / 0.6),
+    0 18px 30px -18px rgb(20 6 16 / 0.45);
+}
+
+@media (min-width: 1024px) {
+  .frame {
+    width: 20rem;
+    padding: 0.6rem;
+    border-radius: 2.8rem;
+  }
+}
+
+.screen {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: 1.95rem;
+  background: #f4ece1;
+  transform: translateZ(0);
+}
+
+@media (min-width: 1024px) {
+  .screen {
+    border-radius: 2.25rem;
+  }
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.video[data-playing] {
+  opacity: 1;
+}
+
+.sound,
+.play {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease;
+}
+
+.sound {
+  right: 0.7rem;
+  bottom: 0.7rem;
+  background: rgb(29 18 32 / 0.72);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.sound:hover {
+  background: rgb(29 18 32 / 0.88);
+}
+
+.sound[aria-pressed="true"] {
+  background: #cfa563;
+  color: #1d1220;
+}
+
+.play {
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  min-height: 3.25rem;
+  padding-inline: 1.25rem;
+  font-size: 1rem;
+  background: #cfa563;
+  color: #1d1220;
+  box-shadow: 0 12px 28px -12px rgb(20 6 16 / 0.6);
+}
+
+.sound:active,
+.play:active {
+  transform: scale(0.96);
+}
+
+.sound:focus-visible,
+.play:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}

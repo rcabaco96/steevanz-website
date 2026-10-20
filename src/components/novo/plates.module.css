@@ -148,190 +148,37 @@
   color: #6b5560;
 }
 
-/* ---------- The stage: plate in front, the customer's phone behind it ---------- */
+/* ---------- The plate scene (components/visuals/HeroTapScene) on a dark panel ---------- */
 
-.stage {
+.panel {
+  /* The scene reads the theme tokens: here they are the dark ones, in both themes. */
+  --text: #f6efe6;
+  --surface: #2a1d2e;
+  --line: rgb(255 255 255 / 0.12);
+  --accent-text: #e9c685;
+  --gold: #e9c685;
+  --star: #f2b93b;
+  --glow: 207 165 99;
+  --shadow-color: 0 0 0;
   position: relative;
-  min-height: 21rem;
-  display: grid;
-  place-items: center;
-}
-
-@media (min-width: 1024px) {
-  .stage {
-    min-height: 30rem;
-  }
-}
-
-.disc {
-  position: absolute;
-  width: min(80vw, 26rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--gold);
-  opacity: 0.55;
-  transform: translate3d(6%, 2%, 0);
-}
-
-.phone {
-  position: relative;
-  z-index: 1;
-  width: 11.5rem;
-  aspect-ratio: 9 / 18.5;
+  overflow: hidden;
   border-radius: 2rem;
-  padding: 0.45rem;
-  background: #17101a;
-  box-shadow:
-    0 2px 0 1px #3a2c3f inset,
-    0 40px 60px -30px rgb(60 30 50 / 0.55);
-  transform: translate3d(3rem, -0.75rem, 0) rotate(5deg);
+  padding: 1.25rem 0.75rem;
+  background:
+    radial-gradient(70% 60% at 70% 20%, rgb(122 45 96 / 0.55), transparent 70%),
+    linear-gradient(160deg, #2a1830, #120a14);
+  box-shadow: 0 40px 60px -36px rgb(60 30 50 / 0.6);
 }
 
 @media (min-width: 1024px) {
-  .phone {
-    width: 15rem;
-    transform: translate3d(5rem, -1rem, 0) rotate(5deg);
+  .panel {
+    padding: 2rem;
+    border-radius: 2.5rem;
   }
 }
 
-.phone::after {
-  content: "";
-  position: absolute;
-  top: 0.95rem;
-  left: 50%;
-  width: 30%;
-  height: 0.9rem;
-  border-radius: 999px;
-  background: #0b070c;
-  transform: translateX(-50%);
-}
-
-.screen {
-  height: 100%;
-  border-radius: 1.6rem;
-  background: #fff;
-  color: #1d1220;
-  padding: 2.4rem 0.85rem 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  font-size: 0.75rem;
-}
-
-@media (min-width: 1024px) {
-  .screen {
-    padding: 3rem 1.1rem 1.1rem;
-    gap: 0.8rem;
-    font-size: 0.875rem;
-  }
-}
-
-.biz {
-  font-weight: 700;
-  font-size: 0.95em;
-}
-
-.formTitle {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 1.35em;
-  line-height: 1.15;
-}
-
-.stars {
-  display: flex;
-  gap: 0.2rem;
-  color: #8a7d84;
-}
-
-.stars svg {
-  width: 1.55em;
-  height: 1.55em;
-}
-
-.box {
-  flex: 1;
-  max-height: 7rem;
-  border: 1px solid #d9d0d5;
-  border-radius: 0.6rem;
-  padding: 0.55rem;
-  color: #8a7d84;
-  line-height: 1.35;
-}
-
-.publish {
-  align-self: flex-end;
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  background: #1a73e8;
-  color: #fff;
-  font-weight: 600;
-}
-
-.plate {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  bottom: 0;
-  width: 9rem;
-  transform: translate3d(-104%, 0, 0) rotate(-4deg);
-  filter: drop-shadow(0 24px 22px rgb(60 30 50 / 0.3));
-}
-
-@media (min-width: 1024px) {
-  .plate {
-    width: 12.5rem;
-    bottom: 1.5rem;
-    transform: translate3d(-112%, 0, 0) rotate(-4deg);
-  }
-}
-
-.plateSvg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* The tap: a gold ripple on the plate's tap mark. */
-.tap {
-  position: absolute;
-  left: 50%;
-  top: 16.5%;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin: -1.375rem 0 0 -1.375rem;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  opacity: 0;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .tap {
-    animation: plate-ring 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  }
-  .phone {
-    animation: phone-bob 6s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes plate-ring {
-  0% {
-    transform: scale(0.5);
-    opacity: 0.9;
-  }
-  70%,
-  100% {
-    transform: scale(2.1);
-    opacity: 0;
-  }
-}
-
-@keyframes phone-bob {
-  from {
-    translate: 0 0;
-  }
-  to {
-    translate: 0 -0.6rem;
-  }
+.panel[data-paused] *,
+.panel[data-paused] *::before,
+.panel[data-paused] *::after {
+  animation-play-state: paused !important;
 }
