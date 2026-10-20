@@ -41,7 +41,7 @@ function assertTranslated(record, en, pt, label) {
 }
 
 describe("website products translated in es, fr, de, it", () => {
-  for (const id of ["website"]) {
+  for (const id of ["website", "landing-page"]) {
     it(`translates the whole ${id} page`, () => {
       const { pt, en } = productCopy[id];
       for (const locale of extraLocales) assertTranslated(productCopy[id][locale], en, pt, `${id}.${locale}`);
