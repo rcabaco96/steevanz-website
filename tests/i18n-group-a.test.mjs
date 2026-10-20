@@ -24,11 +24,6 @@ function strings(value) {
 describe("group A product pages in es, fr, de, it", () => {
   for (const id of translated) {
     const record = productCopy[id];
-    if (!fields.every((field) => extra.every((locale) => record[locale]?.[field] !== undefined))) {
-      // Not translated yet: skip until its commit lands (each file is pushed on its own).
-      it.skip(`${id} (not translated yet)`);
-      continue;
-    }
     it(`${id}: every field, the same shape as pt, and no English left`, () => {
       for (const locale of extra) {
         const copy = record[locale];
