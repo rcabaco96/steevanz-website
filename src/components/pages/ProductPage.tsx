@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { photos } from "@/content/media";
 import { getProductCopy } from "@/content/product-copy";
-import { pageLabels } from "@/content/page-labels";
+import { pageLabels, type PageLabels } from "@/content/page-labels";
 import { productExamples, type ProductExamples } from "@/content/product-examples";
 import { adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct, type Product } from "@/content/products";
@@ -40,6 +40,14 @@ export function productMetadata(locale: Locale, productId: ProductId): Metadata 
     description: copy.metaDescription,
     image: `/og/${locale}/${productId}`,
   });
+}
+
+/** The pack size labels for what one unit is (a plate, a property, a card, a keychain). */
+function packLabels(labels: PageLabels["product"], unit: Product["packUnit"]): { count: string; unit: string } {
+  if (unit === "property") return { count: labels.packsCountProperty, unit: labels.packsUnitProperty };
+  if (unit === "card") return { count: labels.packsCountCard, unit: labels.packsUnitCard };
+  if (unit === "keychain") return { count: labels.packsCountKeychain, unit: labels.packsUnitKeychain };
+  return { count: labels.packsCount, unit: labels.packsUnit };
 }
 
 export function requestInfoHref(locale: Locale, productId: ProductId): string {
@@ -187,9 +195,13 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         <div className="mt-12 grid gap-5 md:grid-cols-2">
           {copy.useCases.map((useCase, index) => (
             <article key={useCase.title} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className={`card flex flex-col gap-3 p-7 ${index === copy.useCases.length - 1 && copy.useCases.length % 2 === 1 ? "md:col-span-2" : ""}`}>
-              <Link href={href(locale, { key: "sector", sectorId: useCase.sector })} className="eyebrow w-fit hover:underline">
-                {localizePartial(getSector(useCase.sector).copy, locale).name}
-              </Link>
+              {useCase.sector ? (
+                <Link href={href(locale, { key: "sector", sectorId: useCase.sector })} className="eyebrow w-fit hover:underline">
+                  {useCase.label ?? localizePartial(getSector(useCase.sector).copy, locale).name}
+                </Link>
+              ) : useCase.label ? (
+                <p className="eyebrow">{useCase.label}</p>
+              ) : null}
               <h3 className="text-xl font-semibold text-text">{useCase.title}</h3>
               <p className="leading-relaxed text-muted">{useCase.body}</p>
             </article>
@@ -229,15 +241,15 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
             {product.packs?.length ? (
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-semibold text-text">{labels.packsTitle}</h3>
-                <ul className="grid grid-cols-3 gap-2">
+                <ul className={`grid gap-2 ${product.packs.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                   {product.packs.map((pack) => (
                     <li key={pack.quantity} className="flex flex-col items-center gap-0.5 rounded-xl border border-line bg-surface-2/50 px-2 py-3 text-center">
                       <span className="text-sm font-semibold text-text">
-                        {(product.packUnit === "property" ? labels.packsCountProperty : labels.packsCount).replace("{count}", String(pack.quantity))}
+                        {packLabels(labels, product.packUnit).count.replace("{count}", String(pack.quantity))}
                       </span>
                       <span className="display tabular text-2xl">{formatEuro(pack.quantity * pack.unitPrice, locale)}</span>
                       <span className="tabular text-xs text-subtle">
-                        {(product.packUnit === "property" ? labels.packsUnitProperty : labels.packsUnit).replace("{price}", formatEuro(pack.unitPrice, locale))}
+                        {packLabels(labels, product.packUnit).unit.replace("{price}", formatEuro(pack.unitPrice, locale))}
                       </span>
                     </li>
                   ))}

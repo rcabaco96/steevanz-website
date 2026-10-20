@@ -60,13 +60,13 @@ export const goals: readonly Goal[] = [
     id: "vender",
     title: "Vender mais",
     line: "Mostrar melhor o que vende, à mesa e online.",
-    productIds: ["digital-menu", "online-shop", "ai-chatbot"],
+    productIds: ["digital-menu", "online-shop", "ai-chatbot", "business-card"],
   },
   {
     id: "voltar",
     title: "Fazer voltar",
     line: "Que o cliente de hoje volte amanhã.",
-    productIds: ["loyalty", "social-plates", "guest-guide"],
+    productIds: ["loyalty", "social-plates", "guest-guide", "keychain"],
   },
   {
     id: "medida",

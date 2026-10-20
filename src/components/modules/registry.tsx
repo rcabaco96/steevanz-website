@@ -32,6 +32,8 @@ export const productModules: Record<ProductId, ComponentType<ModuleProps>> = {
   automation: ModulePlaceholder,
   "digital-menu": ModulePlaceholder,
   "guest-guide": ModulePlaceholder,
+  "business-card": ModulePlaceholder,
+  keychain: ModulePlaceholder,
   "landing-page": ModulePlaceholder,
   website: ModulePlaceholder,
   "online-shop": ModulePlaceholder,

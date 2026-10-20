@@ -14,6 +14,8 @@ export type ProductIcon =
   | "share-tap"
   | "menu-tap"
   | "guide-tap"
+  | "card-tap"
+  | "key-tap"
   | "stamp"
   | "calendar"
   | "queue"
@@ -69,8 +71,8 @@ export interface Product {
   contextPhoto?: PhotoId;
   customization?: ProductCustomization;
   packs?: ProductPack[];
-  /** What one unit of a pack is: a plate (default) or a property (plate and guide included). */
-  packUnit?: "plate" | "property";
+  /** What one unit of a pack is: a plate (default), a property (plate and guide included), a card or a keychain. */
+  packUnit?: "plate" | "property" | "card" | "keychain";
 }
 
 const plateLogoExtra = 10;
@@ -205,6 +207,44 @@ export const products: Product[] = [
     sectors: ["restaurants", "beauty", "retail"],
     related: ["google-review-plates", "social-plates", "bookings"],
     contextPhoto: "cafe-counter",
+  },
+  {
+    // Owner, 2026-10-20: 10 € per card + IVA, name, contacts and company logo included (no logo extra).
+    // The packs are the owner's proposal: change them here and the product page, cart and docs tables follow.
+    id: "business-card",
+    slug: { pt: "cartao-de-visita-digital", en: "digital-business-card" },
+    family: "plates",
+    icon: "card-tap",
+    priceFrom: 10,
+    priceBilling: "one-time",
+    priceQualifier: { pt: "por cartão, com nome, contactos e logótipo", en: "per card, with name, contact details and logo", es: "por tarjeta, con nombre, contactos y logotipo", fr: "par carte, avec nom, coordonnées et logo", de: "pro Karte, mit Name, Kontaktdaten und Logo", it: "per biglietto, con nome, contatti e logo" },
+    priceIsProvisional: true,
+    sectors: ["restaurants", "beauty", "clinics", "retail", "lodging"],
+    related: ["keychain", "social-plates", "website"],
+    packUnit: "card",
+    packs: [
+      { quantity: 10, unitPrice: 9 },
+      { quantity: 25, unitPrice: 8 },
+      { quantity: 50, unitPrice: 7 },
+    ],
+  },
+  {
+    // Owner, 2026-10-20: 5 € + IVA each, tap only (no QR code). Packs are a proposal to confirm.
+    id: "keychain",
+    slug: { pt: "chaveiro-digital", en: "digital-keychain" },
+    family: "plates",
+    icon: "key-tap",
+    priceFrom: 5,
+    priceBilling: "one-time",
+    priceQualifier: { pt: "por chaveiro, abre o WhatsApp, o Instagram ou o site", en: "per keychain, opens WhatsApp, Instagram or your website", es: "por llavero, abre WhatsApp, Instagram o la web", fr: "par porte-clés, ouvre WhatsApp, Instagram ou le site", de: "pro Anhänger, öffnet WhatsApp, Instagram oder die Website", it: "per portachiavi, apre WhatsApp, Instagram o il sito" },
+    priceIsProvisional: true,
+    sectors: ["restaurants", "beauty", "retail", "lodging"],
+    related: ["business-card", "social-plates", "google-review-plates"],
+    packUnit: "keychain",
+    packs: [
+      { quantity: 10, unitPrice: 4.5 },
+      { quantity: 25, unitPrice: 4 },
+    ],
   },
   {
     id: "bookings",

@@ -12,6 +12,8 @@ export type ProductId =
   | "ai-reviews"
   | "automation"
   | "guest-guide"
+  | "business-card"
+  | "keychain"
   | "landing-page"
   | "website"
   | "online-shop";
@@ -86,7 +88,8 @@ export interface ProductCopy {
   solution: { title: string; body: string; points: string[] };
   steps: TitledText[];
   features: TitledText[];
-  useCases: ({ sector: SectorId } & TitledText)[];
+  /** `sector` links the card to a sector page; `label` names a use with no sector page (sales teams, events…). */
+  useCases: ({ sector?: SectorId; label?: string } & TitledText)[];
   includes: string[];
   faq: FaqItem[];
   web?: WebProductCopy;

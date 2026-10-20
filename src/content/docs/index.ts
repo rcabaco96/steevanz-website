@@ -4,7 +4,9 @@ import { docs as aiReviews } from "./ai-reviews";
 import { docs as aiVoice } from "./ai-voice";
 import { docs as automation } from "./automation";
 import { docs as bookings } from "./bookings";
+import { docs as businessCard } from "./business-card";
 import { docs as guestGuide } from "./guest-guide";
+import { docs as keychain } from "./keychain";
 import { docs as loyalty } from "./loyalty";
 import { docs as googleReviewPlates } from "./google-review-plates";
 import { docs as digitalMenu } from "./digital-menu";
@@ -18,6 +20,8 @@ export const productDocs: Record<ProductId, ProductDocs> = {
   "digital-menu": digitalMenu,
   "guest-guide": guestGuide,
   loyalty,
+  "business-card": businessCard,
+  keychain,
   bookings,
   waitlist,
   "ai-chatbot": aiChatbot,

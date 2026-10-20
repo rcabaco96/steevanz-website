@@ -60,6 +60,54 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
       },
     },
   },
+  // The Steevanz example card (owner, 2026-10-20): a real card, the founder's own contact page.
+  "business-card": {
+    items: [{ href: "/c/rogerio-cabaco", label: { pt: "Rogério Cabaço, Steevanz", en: "Rogério Cabaço, Steevanz" } }],
+    copy: {
+      pt: {
+        eyebrow: "Exemplo",
+        title: "Veja um exemplo",
+        lead: "A página que abre com um toque no cartão de visita do fundador da Steevanz. Abra-a no telemóvel e experimente «Guardar contacto».",
+        open: "Ver o exemplo",
+        note: "Cartão real: os dados são os do fundador da Steevanz.",
+      },
+      en: {
+        eyebrow: "Example",
+        title: "See an example",
+        lead: "The page that opens with one tap on the Steevanz founder's business card. Open it on your phone and try «Save contact».",
+        open: "See the example",
+        note: "A real card: the details are those of the Steevanz founder.",
+      },
+      es: {
+        eyebrow: "Ejemplo",
+        title: "Vea un ejemplo",
+        lead: "La página que se abre con un toque en la tarjeta de visita del fundador de Steevanz. Ábrala en el móvil y pruebe «Guardar contacto».",
+        open: "Ver el ejemplo",
+        note: "Tarjeta real: los datos son los del fundador de Steevanz.",
+      },
+      fr: {
+        eyebrow: "Exemple",
+        title: "Voir un exemple",
+        lead: "La page qui s'ouvre d'un simple toucher sur la carte de visite du fondateur de Steevanz. Ouvrez-la sur votre téléphone et essayez « Enregistrer le contact ».",
+        open: "Voir l'exemple",
+        note: "Une vraie carte : les coordonnées sont celles du fondateur de Steevanz.",
+      },
+      de: {
+        eyebrow: "Beispiel",
+        title: "Ein Beispiel ansehen",
+        lead: "Die Seite, die sich mit einmal Antippen der Visitenkarte des Steevanz-Gründers öffnet. Öffnen Sie sie auf dem Handy und probieren Sie „Kontakt speichern“.",
+        open: "Beispiel ansehen",
+        note: "Eine echte Karte: Es sind die Daten des Steevanz-Gründers.",
+      },
+      it: {
+        eyebrow: "Esempio",
+        title: "Veda un esempio",
+        lead: "La pagina che si apre con un tocco sul biglietto da visita del fondatore di Steevanz. La apra sullo smartphone e provi «Salvi il contatto».",
+        open: "Veda l'esempio",
+        note: "Un biglietto vero: i dati sono quelli del fondatore di Steevanz.",
+      },
+    },
+  },
   // The owner's alojamento-template demos (2026-10-12): fictional brand, no reviews (an empty state). Until
   // 2026-10-20 they were on the holiday rentals sector page.
   website: {

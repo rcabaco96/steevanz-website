@@ -43,8 +43,8 @@ describe("/novo-ultra content", () => {
     assert.deepEqual(labels, {
       encontrado: `desde 29${nb}€`,
       casa: `desde 19${nb}€/mês`,
-      vender: `desde 20${nb}€`,
-      voltar: `desde 19${nb}€/mês`,
+      vender: `desde 10${nb}€`,
+      voltar: `desde 5${nb}€`,
       medida: `desde 149${nb}€`,
     });
   });

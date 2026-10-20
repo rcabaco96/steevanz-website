@@ -3,10 +3,13 @@ import { ui } from "@/content/ui";
 import { localize, numberLocale, type Locale } from "@/lib/i18n";
 
 export function formatEuro(amount: number, locale: Locale): string {
+  // Whole euros without decimals (10 €); cents only when there are any (4,50 € a keychain in a pack).
+  const digits = Number.isInteger(amount) ? 0 : 2;
   return new Intl.NumberFormat(numberLocale[locale], {
     style: "currency",
     currency: "EUR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   }).format(amount);
 }
 

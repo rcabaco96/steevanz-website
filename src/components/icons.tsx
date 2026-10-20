@@ -250,6 +250,22 @@ const productIconPaths: Record<ProductIcon, ReactNode> = {
       <path d="M18 9.5a4 4 0 0 1 0 5M20.5 7.5a7 7 0 0 1 0 9" />
     </>
   ),
+  "card-tap": (
+    <>
+      <rect x="2.5" y="6" width="14" height="10" rx="2" />
+      <circle cx="6.5" cy="10" r="1.6" />
+      <path d="M10 9.5h4M10 12.5h3M5 13.8h3" />
+      <path d="M18.5 9a4 4 0 0 1 0 5M21 7a7 7 0 0 1 0 9" />
+    </>
+  ),
+  "key-tap": (
+    <>
+      <circle cx="8" cy="8" r="2" />
+      <path d="M5 3.5h6a2.5 2.5 0 0 1 2.5 2.5v6.5L8 18l-5.5-5.5V6A2.5 2.5 0 0 1 5 3.5Z" />
+      <path d="M8 18v3" />
+      <path d="M17 10a4 4 0 0 1 0 5M19.5 8a7 7 0 0 1 0 9" />
+    </>
+  ),
   stamp: (
     <>
       <rect x="3" y="5" width="18" height="14" rx="3" />

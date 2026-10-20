@@ -402,7 +402,7 @@ const goal = (id: GoalId, products: ProductId[], text: Localized<GoalText>) =>
   ) as Localized<Goal>;
 
 const goalList = [
-  goal("found", ["website", "landing-page", "online-shop", "google-review-plates", "ai-reviews"], {
+  goal("found", ["website", "landing-page", "online-shop", "google-review-plates"], {
     pt: {
       title: "Ser encontrado",
       lead: "Quem procura no Google ou no Instagram chega até si, e gosta do que vê.",
@@ -411,7 +411,6 @@ const goalList = [
         "landing-page": { benefit: "Uma página com um só objetivo: que liguem, reservem ou encomendem." },
         "online-shop": { benefit: "Venda a quem o encontra online, com MB WAY, Multibanco e cartão." },
         "google-review-plates": { benefit: "Mais reviews no Google, para subir quando o procuram." },
-        "ai-reviews": { benefit: "Todas as reviews respondidas, no tom da sua marca." },
       },
     },
     en: {
@@ -422,7 +421,6 @@ const goalList = [
         "landing-page": { benefit: "One page, one goal: getting people to call, book or order." },
         "online-shop": { benefit: "Sell to people who find you online, with MB WAY, Multibanco and cards." },
         "google-review-plates": { benefit: "More Google reviews, so you rank higher when people search." },
-        "ai-reviews": { benefit: "Every review answered, in your brand's tone." },
       },
     },
     es: {
@@ -433,7 +431,6 @@ const goalList = [
         "landing-page": { benefit: "Una página con un solo objetivo: que llamen, reserven o pidan." },
         "online-shop": { benefit: "Venda a quien le encuentra online, con MB WAY, Multibanco y tarjeta." },
         "google-review-plates": { benefit: "Más reseñas en Google, para subir cuando le buscan." },
-        "ai-reviews": { benefit: "Todas las reseñas respondidas, con el tono de su marca." },
       },
     },
     fr: {
@@ -444,7 +441,6 @@ const goalList = [
         "landing-page": { benefit: "Une page, un seul objectif : qu'on vous appelle, réserve ou commande." },
         "online-shop": { benefit: "Vendez à ceux qui vous trouvent en ligne, par MB WAY, Multibanco et carte." },
         "google-review-plates": { benefit: "Plus d'avis Google, pour remonter quand on vous cherche." },
-        "ai-reviews": { benefit: "Chaque avis reçoit une réponse, dans le ton de votre marque." },
       },
     },
     de: {
@@ -455,7 +451,6 @@ const goalList = [
         "landing-page": { benefit: "Eine Seite mit einem Ziel: dass man anruft, reserviert oder bestellt." },
         "online-shop": { benefit: "Verkaufen Sie an alle, die Sie online finden, mit MB WAY, Multibanco und Karte." },
         "google-review-plates": { benefit: "Mehr Google-Bewertungen, damit Sie in der Suche weiter oben stehen." },
-        "ai-reviews": { benefit: "Jede Bewertung beantwortet, im Ton Ihrer Marke." },
       },
     },
     it: {
@@ -466,7 +461,6 @@ const goalList = [
         "landing-page": { benefit: "Una pagina con un solo obiettivo: che La chiamino, prenotino o ordinino." },
         "online-shop": { benefit: "Venda a chi La trova online, con MB WAY, Multibanco e carta." },
         "google-review-plates": { benefit: "Più recensioni su Google, per salire quando La cercano." },
-        "ai-reviews": { benefit: "Ogni recensione con una risposta, nel tono del Suo marchio." },
       },
     },
   }),
@@ -532,63 +526,76 @@ const goalList = [
       },
     },
   }),
-  goal("sell", ["digital-menu", "guest-guide"], {
+  goal("sell", ["digital-menu", "guest-guide", "online-shop", "business-card"], {
     pt: {
       title: "Vender mais",
-      lead: "Os pratos em vídeo abrem o apetite, e a mesa faz o pedido no telemóvel.",
+      lead: "Mostre bem o que vende: os pratos em vídeo à mesa, a loja aberta online e o seu contacto à mão.",
       products: {
         "digital-menu": { label: "Menu digital em vídeo + Pedidos à mesa", benefit: "Cada prato no seu vídeo, com preço, e pedidos feitos à mesa." },
         "guest-guide": { benefit: "Recomende os seus favoritos aos hóspedes, em quatro línguas." },
+        "online-shop": { benefit: "A loja aberta a toda a hora, com pagamento por MB WAY, Multibanco e cartão." },
+        "business-card": { benefit: "O seu contacto guardado no telemóvel do cliente, com um toque no cartão." },
       },
     },
     en: {
       title: "Sell more",
-      lead: "Dishes on video whet the appetite, and the table orders from their phone.",
+      lead: "Show what you sell at its best: dishes on video at the table, a shop open online and your contact close at hand.",
       products: {
         "digital-menu": { label: "Video digital menu + table ordering", benefit: "Every dish in its own video, with its price, and orders from the table." },
         "guest-guide": { benefit: "Recommend your favourite places to guests, in four languages." },
+        "online-shop": { benefit: "Your shop open around the clock, with MB WAY, Multibanco and card payments." },
+        "business-card": { benefit: "Your contact saved on the customer's phone, with one tap on the card." },
       },
     },
     es: {
       title: "Vender más",
-      lead: "Los platos en vídeo abren el apetito, y la mesa pide desde el móvil.",
+      lead: "Muestre bien lo que vende: los platos en vídeo en la mesa, la tienda abierta online y su contacto a mano.",
       products: {
         "digital-menu": { label: "Menú digital en vídeo + pedidos en la mesa", benefit: "Cada plato en su vídeo, con precio, y pedidos desde la mesa." },
         "guest-guide": { benefit: "Recomiende sus sitios favoritos a los huéspedes, en cuatro idiomas." },
+        "online-shop": { benefit: "La tienda abierta a todas horas, con pago por MB WAY, Multibanco y tarjeta." },
+        "business-card": { benefit: "Su contacto guardado en el móvil del cliente, con un toque en la tarjeta." },
       },
     },
     fr: {
       title: "Vendre plus",
-      lead: "Les plats en vidéo mettent en appétit, et la table commande depuis le téléphone.",
+      lead: "Montrez au mieux ce que vous vendez : les plats en vidéo à table, la boutique ouverte en ligne et vos coordonnées à portée de main.",
       products: {
         "digital-menu": { label: "Menu digital en vidéo + commande à table", benefit: "Chaque plat en vidéo, avec son prix, et la commande depuis la table." },
         "guest-guide": { benefit: "Recommandez vos bonnes adresses aux voyageurs, en quatre langues." },
+        "online-shop": { benefit: "Votre boutique ouverte à toute heure, avec paiement par MB WAY, Multibanco et carte." },
+        "business-card": { benefit: "Vos coordonnées enregistrées dans le téléphone du client, d'un simple toucher sur la carte." },
       },
     },
     de: {
       title: "Mehr verkaufen",
-      lead: "Gerichte als Video machen Appetit, und der Tisch bestellt per Handy.",
+      lead: "Zeigen Sie, was Sie verkaufen: Gerichte als Video am Tisch, einen Shop, der online immer geöffnet ist, und Ihre Kontaktdaten griffbereit.",
       products: {
         "digital-menu": { label: "Digitale Speisekarte mit Videos + Bestellung am Tisch", benefit: "Jedes Gericht im eigenen Video, mit Preis, und Bestellung vom Tisch." },
         "guest-guide": { benefit: "Empfehlen Sie Ihren Gästen Ihre Lieblingsorte, in vier Sprachen." },
+        "online-shop": { benefit: "Ihr Shop rund um die Uhr geöffnet, mit Zahlung per MB WAY, Multibanco und Karte." },
+        "business-card": { benefit: "Ihre Kontaktdaten im Handy des Kunden gespeichert, mit einmal Antippen der Karte." },
       },
     },
     it: {
       title: "Vendere di più",
-      lead: "I piatti in video stuzzicano l'appetito, e il tavolo ordina dal telefono.",
+      lead: "Mostri al meglio ciò che vende: i piatti in video al tavolo, il negozio aperto online e il Suo contatto a portata di mano.",
       products: {
         "digital-menu": { label: "Menù digitale in video + ordini al tavolo", benefit: "Ogni piatto nel suo video, con il prezzo, e ordini dal tavolo." },
         "guest-guide": { benefit: "Consigli i Suoi posti preferiti agli ospiti, in quattro lingue." },
+        "online-shop": { benefit: "Il negozio aperto a ogni ora, con pagamento tramite MB WAY, Multibanco e carta." },
+        "business-card": { benefit: "Il Suo contatto salvato sul telefono del cliente, con un tocco sul biglietto." },
       },
     },
   }),
-  goal("return", ["loyalty", "social-plates"], {
+  goal("return", ["loyalty", "social-plates", "keychain"], {
     pt: {
       title: "Fazer voltar",
       lead: "Um cartão de carimbos que não fica em casa e um toque para o seguirem nas redes.",
       products: {
         loyalty: { benefit: "Carimbos no telemóvel, e a recompensa chega sozinha." },
         "social-plates": { benefit: "Um toque e passam a segui-lo nas redes sociais." },
+        keychain: { benefit: "O seu WhatsApp ou Instagram no chaveiro do cliente, a um toque." },
       },
     },
     en: {
@@ -597,6 +604,7 @@ const goalList = [
       products: {
         loyalty: { benefit: "Stamps on the phone, and the reward arrives on its own." },
         "social-plates": { benefit: "One tap and they follow you on social media." },
+        keychain: { benefit: "Your WhatsApp or Instagram on the customer's keys, one tap away." },
       },
     },
     es: {
@@ -605,6 +613,7 @@ const goalList = [
       products: {
         loyalty: { benefit: "Sellos en el móvil, y la recompensa llega sola." },
         "social-plates": { benefit: "Un toque y empiezan a seguirle en redes sociales." },
+        keychain: { benefit: "Su WhatsApp o Instagram en el llavero del cliente, a un toque." },
       },
     },
     fr: {
@@ -613,6 +622,7 @@ const goalList = [
       products: {
         loyalty: { benefit: "Des tampons sur le téléphone, et la récompense arrive toute seule." },
         "social-plates": { benefit: "Un toucher, et ils vous suivent sur les réseaux sociaux." },
+        keychain: { benefit: "Votre WhatsApp ou Instagram sur le trousseau du client, à portée d'un toucher." },
       },
     },
     de: {
@@ -621,6 +631,7 @@ const goalList = [
       products: {
         loyalty: { benefit: "Stempel auf dem Handy, und die Prämie kommt von selbst." },
         "social-plates": { benefit: "Einmal antippen, und man folgt Ihnen in den sozialen Netzwerken." },
+        keychain: { benefit: "Ihr WhatsApp oder Instagram am Schlüsselbund des Kunden, einmal antippen genügt." },
       },
     },
     it: {
@@ -629,6 +640,7 @@ const goalList = [
       products: {
         loyalty: { benefit: "Timbri sul telefono, e il premio arriva da solo." },
         "social-plates": { benefit: "Un tocco e iniziano a seguirLa sui social." },
+        keychain: { benefit: "Il Suo WhatsApp o Instagram sulle chiavi del cliente, a portata di tocco." },
       },
     },
   }),
@@ -685,6 +697,8 @@ export const goalCtas: Record<ProductId, Localized<string>> = {
   "guest-guide": { pt: "Conhecer o guia digital", en: "Discover the guest guide", es: "Conocer la guía digital", fr: "Découvrir le livret d'accueil", de: "Die Gästemappe entdecken", it: "Scopra la guida digitale" },
   loyalty: { pt: "Conhecer o cartão", en: "Discover the loyalty card", es: "Conocer la tarjeta", fr: "Découvrir la carte de fidélité", de: "Die Kundenkarte entdecken", it: "Scopra la carta fedeltà" },
   "social-plates": { pt: "Conhecer as placas para redes", en: "Discover the social media plates", es: "Conocer las placas para redes", fr: "Découvrir les plaques réseaux sociaux", de: "Die Social-Media-Schilder entdecken", it: "Scopra le targhe social" },
+  "business-card": { pt: "Conhecer o cartão de visita", en: "Discover the business card", es: "Conocer la tarjeta de visita", fr: "Découvrir la carte de visite", de: "Die Visitenkarte entdecken", it: "Scopra il biglietto da visita" },
+  keychain: { pt: "Conhecer o chaveiro", en: "Discover the keychain", es: "Conocer el llavero", fr: "Découvrir le porte-clés", de: "Den Schlüsselanhänger entdecken", it: "Scopra il portachiavi" },
   automation: { pt: "Conhecer a automação", en: "Discover automation", es: "Conocer la automatización", fr: "Découvrir l'automatisation", de: "Die Automatisierung entdecken", it: "Scopra l'automazione" },
 };
 

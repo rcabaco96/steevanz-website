@@ -6,7 +6,9 @@ import { copy as aiReviews } from "./ai-reviews.ts";
 import { copy as aiVoice } from "./ai-voice.ts";
 import { copy as automation } from "./automation.ts";
 import { copy as bookings } from "./bookings.ts";
+import { copy as businessCard } from "./business-card.ts";
 import { copy as guestGuide } from "./guest-guide.ts";
+import { copy as keychain } from "./keychain.ts";
 import { copy as landingPage } from "./landing-page.ts";
 import { copy as loyalty } from "./loyalty.ts";
 import { copy as googleReviewPlates } from "./google-review-plates.ts";
@@ -22,6 +24,8 @@ export const productCopy: Record<ProductId, ProductCopyByLocale> = {
   "digital-menu": digitalMenu,
   "guest-guide": guestGuide,
   loyalty,
+  "business-card": businessCard,
+  keychain,
   bookings,
   waitlist,
   "ai-chatbot": aiChatbot,
