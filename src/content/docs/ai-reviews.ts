@@ -142,6 +142,282 @@ export const docs: ProductDocs = {
           },
         ],
       },
+      es: {
+        title: "Primeros pasos con la Gestión de reseñas con IA",
+        description:
+          "Vea cómo la Gestión de reseñas con IA de Steevanz supervisa las reseñas de su Perfil de Empresa de Google, prepara respuestas con su tono y le avisa rápido de las reseñas negativas.",
+        blocks: [
+          {
+            type: "p",
+            text: "La **Gestión de reseñas con IA** le ayuda a responder a todas las reseñas de su Perfil de Empresa de Google sin pasar horas escribiendo. Steevanz conecta el servicio a su perfil, supervisa las nuevas reseñas y prepara respuestas con el tono de su marca, que usted aprueba antes de que se publiquen.",
+          },
+          {
+            type: "h2",
+            id: "whats-included",
+            text: "Qué incluye",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Supervisión continua** de las nuevas reseñas de su Perfil de Empresa de Google.",
+              "**Borradores de respuesta** escritos con el tono de su negocio, enviados por WhatsApp o email para su aprobación.",
+              "**Avisos inmediatos** cuando recibe una reseña de 1 a 3 estrellas.",
+              "**Informe mensual** con la evolución de la valoración, el volumen de reseñas y los temas más mencionados.",
+              "**Apoyo humano** del equipo de Steevanz en los casos delicados.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "why-reply",
+            text: "Por qué merece la pena responder a todas las reseñas",
+          },
+          {
+            type: "p",
+            text: "Quien busca un restaurante, una peluquería o una clínica lee las reseñas y también las respuestas. Una respuesta cuidada a una crítica demuestra que se toma en serio la opinión de los clientes; un agradecimiento personal a una reseña positiva refuerza la relación. Lo difícil es ser constante cuando el día está lleno, y ahí es donde ayuda el servicio.",
+          },
+          {
+            type: "p",
+            text: "Las respuestas también le enseñan cosas. Leer las reseñas con regularidad, y no solo cuando algo sale mal, revela patrones: un plato que todos elogian, un tiempo de espera que se repite, un miembro del equipo al que los clientes mencionan por su nombre. El informe mensual reúne esos patrones para que pueda actuar.",
+          },
+          {
+            type: "h2",
+            id: "how-it-works",
+            text: "Cómo funciona",
+          },
+          {
+            type: "ol",
+            items: [
+              "Usted da a Steevanz acceso de administrador a su Perfil de Empresa de Google.",
+              "Acordamos el tono, las reglas y los casos que necesitan una atención especial.",
+              "Cuando llega una nueva reseña, se prepara un borrador de respuesta.",
+              "Usted recibe el borrador, lo aprueba o pide cambios, y la respuesta se publica.",
+              "Cada mes recibe un informe con los resultados.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Un servicio independiente",
+            text: "Steevanz es un proveedor independiente y no está afiliado a Google. Trabajamos con las herramientas habituales que Google ofrece a los administradores de perfiles.",
+          },
+          {
+            type: "h2",
+            id: "pair-with-plates",
+            text: "Junto con las placas para reseñas en Google",
+          },
+          {
+            type: "p",
+            text: "El servicio funciona especialmente bien junto con las [placas para reseñas en Google](/es/products/google-review-plates): las placas le ayudan a conseguir más reseñas y la gestión con IA se asegura de que todas reciban respuesta. Para empezar, consulte la [instalación](/es/docs/ai-review-management/setup) o [reserve una demostración](/es/book-a-demo).",
+          },
+        ],
+      },
+      fr: {
+        title: "Premiers pas avec la Gestion des avis avec l'IA",
+        description:
+          "Découvrez comment la Gestion des avis avec l'IA de Steevanz surveille les avis de votre fiche d'établissement Google, prépare des réponses dans votre ton et vous alerte vite en cas d'avis négatif.",
+        blocks: [
+          {
+            type: "p",
+            text: "La **Gestion des avis avec l'IA** vous aide à répondre à chaque avis de votre fiche d'établissement Google sans passer des heures à écrire. Steevanz relie le service à votre fiche, surveille les nouveaux avis et prépare des réponses dans le ton de votre marque, que vous validez avant leur publication.",
+          },
+          {
+            type: "h2",
+            id: "whats-included",
+            text: "Ce qui est inclus",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Surveillance continue** des nouveaux avis sur votre fiche d'établissement Google.",
+              "**Brouillons de réponse** rédigés dans le ton de votre établissement, envoyés par WhatsApp ou par e-mail pour validation.",
+              "**Alertes immédiates** quand vous recevez un avis de 1 à 3 étoiles.",
+              "**Rapport mensuel** avec l'évolution de votre note, le volume d'avis et les sujets les plus cités.",
+              "**Accompagnement humain** de l'équipe Steevanz pour les cas délicats.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "why-reply",
+            text: "Pourquoi répondre à chaque avis",
+          },
+          {
+            type: "p",
+            text: "Les personnes qui cherchent un restaurant, un salon ou une clinique lisent les avis, et les réponses aussi. Une réponse soignée à une critique montre que vous prenez les retours au sérieux ; un remerciement personnel à un avis positif renforce la relation. Le plus difficile est de rester régulier quand la journée est chargée, et c'est là que le service vous aide.",
+          },
+          {
+            type: "p",
+            text: "Les réponses vous apprennent aussi des choses. Lire les avis régulièrement, et pas seulement quand quelque chose ne va pas, fait apparaître des tendances : un plat que tout le monde salue, un temps d'attente qui revient souvent, un membre de l'équipe que les clients citent par son prénom. Le rapport mensuel rassemble ces tendances pour que vous puissiez agir.",
+          },
+          {
+            type: "h2",
+            id: "how-it-works",
+            text: "Comment ça marche",
+          },
+          {
+            type: "ol",
+            items: [
+              "Vous donnez à Steevanz un accès gestionnaire à votre fiche d'établissement Google.",
+              "Nous convenons du ton, des règles et des cas qui demandent une attention particulière.",
+              "Quand un nouvel avis arrive, un brouillon de réponse est préparé.",
+              "Vous recevez le brouillon, le validez ou demandez des modifications, et la réponse est publiée.",
+              "Chaque mois, vous recevez un rapport avec les résultats.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Un service indépendant",
+            text: "Steevanz est un prestataire indépendant, sans lien avec Google. Nous travaillons avec les outils standard que Google met à disposition des gestionnaires de fiches.",
+          },
+          {
+            type: "h2",
+            id: "pair-with-plates",
+            text: "Avec les plaques pour avis Google",
+          },
+          {
+            type: "p",
+            text: "Le service fonctionne particulièrement bien avec les [plaques pour avis Google](/fr/products/google-review-plates) : les plaques vous aident à recueillir plus d'avis, et la gestion avec l'IA veille à ce que chacun reçoive une réponse. Pour commencer, consultez l'[installation](/fr/docs/ai-review-management/setup) ou [réservez une démonstration](/fr/book-a-demo).",
+          },
+        ],
+      },
+      de: {
+        title: "Erste Schritte mit dem KI-Bewertungsmanagement",
+        description:
+          "So überwacht das KI-Bewertungsmanagement von Steevanz die Bewertungen in Ihrem Google-Unternehmensprofil, entwirft Antworten in Ihrem Ton und meldet negative Bewertungen schnell.",
+        blocks: [
+          {
+            type: "p",
+            text: "Das **KI-Bewertungsmanagement** hilft Ihnen, jede Bewertung in Ihrem Google-Unternehmensprofil zu beantworten, ohne stundenlang zu schreiben. Steevanz verbindet den Service mit Ihrem Profil, überwacht neue Bewertungen und entwirft Antworten im Ton Ihrer Marke, die Sie vor der Veröffentlichung freigeben.",
+          },
+          {
+            type: "h2",
+            id: "whats-included",
+            text: "Was enthalten ist",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Laufende Überwachung** neuer Bewertungen in Ihrem Google-Unternehmensprofil.",
+              "**Antwortentwürfe** im Ton Ihres Betriebs, per WhatsApp oder E-Mail zur Freigabe geschickt.",
+              "**Sofortige Benachrichtigungen**, wenn Sie eine Bewertung mit 1 bis 3 Sternen erhalten.",
+              "**Monatsbericht** mit der Entwicklung Ihrer Bewertung, der Anzahl der Bewertungen und den meistgenannten Themen.",
+              "**Persönliche Unterstützung** durch das Steevanz-Team bei heiklen Fällen.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "why-reply",
+            text: "Warum es sich lohnt, jede Bewertung zu beantworten",
+          },
+          {
+            type: "p",
+            text: "Wer ein Restaurant, einen Salon oder eine Praxis sucht, liest die Bewertungen und auch die Antworten. Eine durchdachte Antwort auf Kritik zeigt, dass Sie Rückmeldungen ernst nehmen; ein persönliches Dankeschön für eine positive Bewertung stärkt die Beziehung. Schwierig ist nur, dranzubleiben, wenn der Tag voll ist, und genau dabei hilft der Service.",
+          },
+          {
+            type: "p",
+            text: "Antworten verraten Ihnen auch etwas. Wer Bewertungen regelmäßig liest und nicht nur, wenn etwas schiefgeht, erkennt Muster: ein Gericht, das alle loben, eine Wartezeit, die immer wieder auftaucht, ein Teammitglied, das Kunden beim Namen nennen. Der Monatsbericht fasst diese Muster zusammen, damit Sie handeln können.",
+          },
+          {
+            type: "h2",
+            id: "how-it-works",
+            text: "So funktioniert es",
+          },
+          {
+            type: "ol",
+            items: [
+              "Sie geben Steevanz Verwalterzugriff auf Ihr Google-Unternehmensprofil.",
+              "Wir vereinbaren Ton, Regeln und die Fälle, die besondere Aufmerksamkeit brauchen.",
+              "Kommt eine neue Bewertung, wird ein Antwortentwurf vorbereitet.",
+              "Sie erhalten den Entwurf, geben ihn frei oder wünschen Änderungen, und die Antwort wird veröffentlicht.",
+              "Jeden Monat erhalten Sie einen Bericht mit den Ergebnissen.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Ein unabhängiger Service",
+            text: "Steevanz ist ein unabhängiger Anbieter und nicht mit Google verbunden. Wir arbeiten mit den Standardwerkzeugen, die Google den Verwaltern von Profilen zur Verfügung stellt.",
+          },
+          {
+            type: "h2",
+            id: "pair-with-plates",
+            text: "Zusammen mit den Schildern für Google-Bewertungen",
+          },
+          {
+            type: "p",
+            text: "Der Service funktioniert besonders gut zusammen mit den [Schildern für Google-Bewertungen](/de/products/google-review-plates): Die Schilder helfen Ihnen, mehr Bewertungen zu sammeln, und das KI-Management sorgt dafür, dass jede eine Antwort bekommt. Zum Start lesen Sie die [Einrichtung](/de/docs/ai-review-management/setup) oder [buchen Sie eine Vorführung](/de/book-a-demo).",
+          },
+        ],
+      },
+      it: {
+        title: "Primi passi con la Gestione delle recensioni con IA",
+        description:
+          "Scoprite come la Gestione delle recensioni con IA di Steevanz controlla le recensioni del vostro Profilo dell'attività su Google, prepara risposte con il vostro tono e vi avvisa subito delle recensioni negative.",
+        blocks: [
+          {
+            type: "p",
+            text: "La **Gestione delle recensioni con IA** vi aiuta a rispondere a ogni recensione del vostro Profilo dell'attività su Google senza passare ore a scrivere. Steevanz collega il servizio al vostro profilo, controlla le nuove recensioni e prepara risposte con il tono del vostro marchio, che approvate prima che vengano pubblicate.",
+          },
+          {
+            type: "h2",
+            id: "whats-included",
+            text: "Cosa è incluso",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Monitoraggio continuo** delle nuove recensioni sul vostro Profilo dell'attività su Google.",
+              "**Bozze di risposta** scritte con il tono della vostra attività, inviate via WhatsApp o email per l'approvazione.",
+              "**Avvisi immediati** quando ricevete una recensione da 1 a 3 stelle.",
+              "**Report mensile** con l'andamento della valutazione, il numero di recensioni e gli argomenti più citati.",
+              "**Supporto umano** del team Steevanz per i casi delicati.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "why-reply",
+            text: "Perché conviene rispondere a ogni recensione",
+          },
+          {
+            type: "p",
+            text: "Chi cerca un ristorante, un salone o una clinica legge le recensioni, e anche le risposte. Una risposta curata a una critica dimostra che prendete sul serio i commenti; un ringraziamento personale a una recensione positiva rafforza il rapporto. La parte difficile è essere costanti quando la giornata è piena, ed è qui che il servizio vi aiuta.",
+          },
+          {
+            type: "p",
+            text: "Le risposte vi insegnano anche qualcosa. Leggere le recensioni con regolarità, e non solo quando qualcosa va storto, fa emergere degli schemi: un piatto che tutti lodano, un tempo di attesa che torna spesso, un membro del team che i clienti citano per nome. Il report mensile riunisce questi schemi perché possiate intervenire.",
+          },
+          {
+            type: "h2",
+            id: "how-it-works",
+            text: "Come funziona",
+          },
+          {
+            type: "ol",
+            items: [
+              "Date a Steevanz l'accesso come gestore al vostro Profilo dell'attività su Google.",
+              "Concordiamo il tono, le regole e i casi che richiedono un'attenzione particolare.",
+              "Quando arriva una nuova recensione, viene preparata una bozza di risposta.",
+              "Ricevete la bozza, la approvate o chiedete modifiche, e la risposta viene pubblicata.",
+              "Ogni mese ricevete un report con i risultati.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Un servizio indipendente",
+            text: "Steevanz è un fornitore indipendente e non è affiliato a Google. Lavoriamo con gli strumenti standard che Google mette a disposizione dei gestori dei profili.",
+          },
+          {
+            type: "h2",
+            id: "pair-with-plates",
+            text: "Insieme alle targhe per recensioni Google",
+          },
+          {
+            type: "p",
+            text: "Il servizio funziona particolarmente bene insieme alle [targhe per recensioni Google](/it/products/google-review-plates): le targhe vi aiutano a raccogliere più recensioni e la gestione con IA fa sì che ognuna riceva una risposta. Per iniziare, consultate l'[installazione](/it/docs/ai-review-management/setup) oppure [prenotate una demo](/it/book-a-demo).",
+          },
+        ],
+      },
     },
     setup: {
       pt: {
@@ -317,6 +593,358 @@ export const docs: ProductDocs = {
           {
             type: "p",
             text: "See the [configuration](/en/docs/ai-review-management/configuration) page to fine-tune tone and alerts. If the invitation doesn't work, check [troubleshooting](/en/docs/ai-review-management/troubleshooting).",
+          },
+        ],
+      },
+      es: {
+        title: "Instalación de la Gestión de reseñas con IA",
+        description:
+          "Cómo dar a Steevanz acceso de administrador a su Perfil de Empresa de Google, acordar el tono de las respuestas y activar los avisos de la Gestión de reseñas con IA.",
+        blocks: [
+          {
+            type: "p",
+            text: "La instalación es sencilla y no requiere conocimientos técnicos. El paso clave es dar acceso a su Perfil de Empresa de Google, sin compartir nunca la contraseña de su cuenta.",
+          },
+          {
+            type: "h2",
+            id: "requirements",
+            text: "Antes de empezar",
+          },
+          {
+            type: "ul",
+            items: [
+              "Su Perfil de Empresa de Google debe estar **verificado**.",
+              "Necesita acceso de **propietario** al perfil para invitar a nuevos administradores.",
+              "Tenga a mano algunos ejemplos de respuestas que haya escrito y le gusten, si los tiene.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "No comparta nunca su contraseña",
+            text: "No necesitamos la contraseña de su cuenta de Google. El acceso se concede mediante una invitación de administrador, que puede retirar en cualquier momento.",
+          },
+          {
+            type: "h2",
+            id: "setup-steps",
+            text: "Pasos de la instalación",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Reunión inicial",
+                body: "Hablamos de su negocio, de sus clientes, del tipo de reseñas que recibe y del tono que quiere transmitir.",
+              },
+              {
+                title: "Invitar a Steevanz como administrador",
+                body: "En los ajustes de personas y accesos de su Perfil de Empresa de Google, añada la dirección de email que le indiquemos con el rol de administrador. Si tiene dudas, le guiamos en una llamada.",
+              },
+              {
+                title: "Invitación aceptada",
+                body: "Aceptamos la invitación y confirmamos con usted que el acceso está activo y que vemos las reseñas existentes.",
+              },
+              {
+                title: "Acordar el tono y las reglas",
+                body: "Preparamos una breve guía de estilo: cómo dirigirse a los clientes, la firma, las palabras que evitar, cómo tratar las críticas y cuándo avisarle.",
+              },
+              {
+                title: "Canal de aprobación",
+                body: "Usted elige si recibe los borradores por WhatsApp, por email o por ambos, y quién de su equipo los aprueba.",
+              },
+              {
+                title: "Puesta en marcha",
+                body: "Empezamos por las reseñas recientes que aún no tienen respuesta y después seguimos las nuevas.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "multiple-locations",
+            text: "Varios establecimientos",
+          },
+          {
+            type: "p",
+            text: "Si tiene más de un establecimiento, cada uno suele tener su propio perfil de Google. Repetimos la invitación para cada perfil y puede definir reglas distintas por establecimiento, por ejemplo un tono más formal en una clínica y uno más cercano en una cafetería.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Puede retirar el acceso cuando quiera",
+            text: "El acceso de administrador se ve en los ajustes de su perfil y el propietario puede retirarlo en cualquier momento. Usted sigue siendo siempre el propietario del perfil y de todas sus reseñas.",
+          },
+          {
+            type: "h2",
+            id: "next-steps",
+            text: "Próximos pasos",
+          },
+          {
+            type: "p",
+            text: "Consulte la página de [configuración](/es/docs/ai-review-management/configuration) para afinar el tono y los avisos. Si la invitación no funciona, revise la [resolución de problemas](/es/docs/ai-review-management/troubleshooting).",
+          },
+        ],
+      },
+      fr: {
+        title: "Installation de la Gestion des avis avec l'IA",
+        description:
+          "Comment donner à Steevanz un accès gestionnaire à votre fiche d'établissement Google, convenir du ton des réponses et activer les alertes de la Gestion des avis avec l'IA.",
+        blocks: [
+          {
+            type: "p",
+            text: "L'installation est simple et ne demande aucune connaissance technique. L'étape clé consiste à donner accès à votre fiche d'établissement Google, sans jamais partager le mot de passe de votre compte.",
+          },
+          {
+            type: "h2",
+            id: "requirements",
+            text: "Avant de commencer",
+          },
+          {
+            type: "ul",
+            items: [
+              "Votre fiche d'établissement Google doit être **validée**.",
+              "Il vous faut un accès **propriétaire** à la fiche pour inviter de nouveaux gestionnaires.",
+              "Gardez sous la main quelques exemples de réponses que vous avez écrites et que vous aimez, si vous en avez.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Ne partagez jamais votre mot de passe",
+            text: "Nous n'avons pas besoin du mot de passe de votre compte Google. L'accès se donne par une invitation de gestionnaire, que vous pouvez retirer à tout moment.",
+          },
+          {
+            type: "h2",
+            id: "setup-steps",
+            text: "Étapes de l'installation",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Réunion de lancement",
+                body: "Nous parlons de votre établissement, de vos clients, du type d'avis que vous recevez et du ton que vous voulez transmettre.",
+              },
+              {
+                title: "Inviter Steevanz comme gestionnaire",
+                body: "Dans les paramètres « Utilisateurs et accès » de votre fiche d'établissement Google, ajoutez l'adresse e-mail que nous vous indiquons avec le rôle de gestionnaire. En cas de doute, nous vous guidons lors d'un appel.",
+              },
+              {
+                title: "Invitation acceptée",
+                body: "Nous acceptons l'invitation et vérifions avec vous que l'accès est actif et que nous voyons vos avis existants.",
+              },
+              {
+                title: "Convenir du ton et des règles",
+                body: "Nous préparons un court guide de style : comment s'adresser aux clients, la signature, les mots à éviter, comment traiter les critiques et quand vous alerter.",
+              },
+              {
+                title: "Canal de validation",
+                body: "Vous choisissez de recevoir les brouillons par WhatsApp, par e-mail ou les deux, et qui dans votre équipe les valide.",
+              },
+              {
+                title: "Mise en route",
+                body: "Nous commençons par les avis récents encore sans réponse, puis nous suivons les nouveaux.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "multiple-locations",
+            text: "Plusieurs établissements",
+          },
+          {
+            type: "p",
+            text: "Si vous avez plusieurs adresses, chacune a en général sa propre fiche Google. Nous répétons l'invitation pour chaque fiche et vous pouvez définir des règles différentes par établissement, par exemple un ton plus formel pour une clinique et plus détendu pour un café.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Vous pouvez retirer l'accès quand vous voulez",
+            text: "L'accès gestionnaire est visible dans les paramètres de votre fiche et le propriétaire peut le retirer à tout moment. Vous restez toujours propriétaire de la fiche et de tous ses avis.",
+          },
+          {
+            type: "h2",
+            id: "next-steps",
+            text: "Prochaines étapes",
+          },
+          {
+            type: "p",
+            text: "Consultez la page de [configuration](/fr/docs/ai-review-management/configuration) pour affiner le ton et les alertes. Si l'invitation ne fonctionne pas, consultez le [dépannage](/fr/docs/ai-review-management/troubleshooting).",
+          },
+        ],
+      },
+      de: {
+        title: "Einrichtung des KI-Bewertungsmanagements",
+        description:
+          "So geben Sie Steevanz Verwalterzugriff auf Ihr Google-Unternehmensprofil, vereinbaren den Ton der Antworten und schalten die Benachrichtigungen des KI-Bewertungsmanagements ein.",
+        blocks: [
+          {
+            type: "p",
+            text: "Die Einrichtung ist einfach und erfordert keine technischen Kenntnisse. Der wichtigste Schritt ist der Zugriff auf Ihr Google-Unternehmensprofil, ohne dass Sie jemals das Passwort Ihres Kontos weitergeben.",
+          },
+          {
+            type: "h2",
+            id: "requirements",
+            text: "Bevor Sie beginnen",
+          },
+          {
+            type: "ul",
+            items: [
+              "Ihr Google-Unternehmensprofil muss **bestätigt** sein.",
+              "Sie brauchen **Inhaber**-Zugriff auf das Profil, um neue Verwalter einzuladen.",
+              "Halten Sie, falls vorhanden, einige Antworten bereit, die Sie geschrieben haben und gelungen finden.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Geben Sie nie Ihr Passwort weiter",
+            text: "Wir brauchen das Passwort Ihres Google-Kontos nicht. Der Zugriff wird über eine Verwalter-Einladung erteilt, die Sie jederzeit entfernen können.",
+          },
+          {
+            type: "h2",
+            id: "setup-steps",
+            text: "Schritte der Einrichtung",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Auftaktgespräch",
+                body: "Wir sprechen über Ihren Betrieb, Ihre Kunden, die Art von Bewertungen, die Sie erhalten, und den Ton, den Sie vermitteln möchten.",
+              },
+              {
+                title: "Steevanz als Verwalter einladen",
+                body: "Fügen Sie in den Einstellungen für Nutzer und Zugriff Ihres Google-Unternehmensprofils die E-Mail-Adresse, die wir Ihnen nennen, mit der Rolle Verwalter hinzu. Wenn Sie unsicher sind, führen wir Sie in einem Anruf durch.",
+              },
+              {
+                title: "Einladung angenommen",
+                body: "Wir nehmen die Einladung an und bestätigen mit Ihnen, dass der Zugriff aktiv ist und wir Ihre bestehenden Bewertungen sehen.",
+              },
+              {
+                title: "Ton und Regeln vereinbaren",
+                body: "Wir erstellen einen kurzen Stilleitfaden: Anrede der Kunden, Grußformel, Wörter, die vermieden werden, Umgang mit Kritik und wann wir Sie benachrichtigen.",
+              },
+              {
+                title: "Freigabekanal",
+                body: "Sie wählen, ob Sie die Entwürfe per WhatsApp, per E-Mail oder auf beiden Wegen erhalten und wer in Ihrem Team sie freigibt.",
+              },
+              {
+                title: "Start",
+                body: "Wir beginnen mit den neueren Bewertungen, die noch keine Antwort haben, und kümmern uns danach laufend um die neuen.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "multiple-locations",
+            text: "Mehrere Standorte",
+          },
+          {
+            type: "p",
+            text: "Haben Sie mehr als einen Standort, hat meist jeder sein eigenes Google-Profil. Wir wiederholen die Einladung für jedes Profil, und Sie können pro Standort eigene Regeln festlegen, zum Beispiel einen förmlicheren Ton in einer Praxis und einen lockereren in einem Café.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Sie können den Zugriff jederzeit entfernen",
+            text: "Der Verwalterzugriff ist in den Einstellungen Ihres Profils sichtbar und kann vom Inhaber jederzeit entfernt werden. Sie bleiben immer Inhaber des Profils und aller Bewertungen.",
+          },
+          {
+            type: "h2",
+            id: "next-steps",
+            text: "Nächste Schritte",
+          },
+          {
+            type: "p",
+            text: "Auf der Seite [Konfiguration](/de/docs/ai-review-management/configuration) stimmen Sie Ton und Benachrichtigungen ab. Funktioniert die Einladung nicht, lesen Sie die [Fehlerbehebung](/de/docs/ai-review-management/troubleshooting).",
+          },
+        ],
+      },
+      it: {
+        title: "Installazione della Gestione delle recensioni con IA",
+        description:
+          "Come dare a Steevanz l'accesso come gestore al vostro Profilo dell'attività su Google, concordare il tono delle risposte e attivare gli avvisi della Gestione delle recensioni con IA.",
+        blocks: [
+          {
+            type: "p",
+            text: "L'installazione è semplice e non richiede conoscenze tecniche. Il passaggio chiave è dare accesso al vostro Profilo dell'attività su Google, senza mai condividere la password del vostro account.",
+          },
+          {
+            type: "h2",
+            id: "requirements",
+            text: "Prima di iniziare",
+          },
+          {
+            type: "ul",
+            items: [
+              "Il vostro Profilo dell'attività su Google deve essere **verificato**.",
+              "Serve l'accesso come **proprietario** del profilo per invitare nuovi gestori.",
+              "Tenete a portata di mano qualche esempio di risposte che avete scritto e che vi piacciono, se ne avete.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Non condividete mai la password",
+            text: "Non ci serve la password del vostro account Google. L'accesso si concede con un invito come gestore, che potete revocare in qualsiasi momento.",
+          },
+          {
+            type: "h2",
+            id: "setup-steps",
+            text: "Fasi dell'installazione",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Riunione iniziale",
+                body: "Parliamo della vostra attività, dei vostri clienti, del tipo di recensioni che ricevete e del tono che volete trasmettere.",
+              },
+              {
+                title: "Invitare Steevanz come gestore",
+                body: "Nelle impostazioni di persone e accesso del vostro Profilo dell'attività su Google, aggiungete l'indirizzo email che vi indichiamo con il ruolo di gestore. Se avete dubbi, vi guidiamo durante una chiamata.",
+              },
+              {
+                title: "Invito accettato",
+                body: "Accettiamo l'invito e verifichiamo con voi che l'accesso sia attivo e che vediamo le recensioni esistenti.",
+              },
+              {
+                title: "Concordare tono e regole",
+                body: "Prepariamo una breve guida di stile: come rivolgersi ai clienti, la firma, le parole da evitare, come gestire le critiche e quando avvisarvi.",
+              },
+              {
+                title: "Canale di approvazione",
+                body: "Scegliete se ricevere le bozze via WhatsApp, via email o entrambi, e chi del vostro team le approva.",
+              },
+              {
+                title: "Avvio",
+                body: "Iniziamo dalle recensioni recenti che non hanno ancora una risposta e poi seguiamo quelle nuove.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "multiple-locations",
+            text: "Più sedi",
+          },
+          {
+            type: "p",
+            text: "Se avete più di una sede, di solito ognuna ha il proprio profilo Google. Ripetiamo l'invito per ogni profilo e potete stabilire regole diverse per sede, per esempio un tono più formale in una clinica e uno più disinvolto in un caffè.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Potete revocare l'accesso quando volete",
+            text: "L'accesso come gestore è visibile nelle impostazioni del vostro profilo e il proprietario può revocarlo in qualsiasi momento. Restate sempre proprietari del profilo e di tutte le sue recensioni.",
+          },
+          {
+            type: "h2",
+            id: "next-steps",
+            text: "Prossimi passi",
+          },
+          {
+            type: "p",
+            text: "Consultate la pagina di [configurazione](/it/docs/ai-review-management/configuration) per perfezionare tono e avvisi. Se l'invito non funziona, consultate la [risoluzione dei problemi](/it/docs/ai-review-management/troubleshooting).",
           },
         ],
       },
@@ -500,6 +1128,362 @@ export const docs: ProductDocs = {
           },
         ],
       },
+      es: {
+        title: "Configuración de la Gestión de reseñas con IA",
+        description:
+          "Defina el tono de las respuestas, las reglas para reseñas negativas, los avisos y el modo de aprobación de la Gestión de reseñas con IA para su Perfil de Empresa de Google.",
+        blocks: [
+          {
+            type: "p",
+            text: "La configuración decide cómo suenan las respuestas y cuándo se le pide que intervenga. Puede cambiar cualquier ajuste en cualquier momento; basta con enviarnos un mensaje.",
+          },
+          {
+            type: "h2",
+            id: "tone-of-voice",
+            text: "Tono",
+          },
+          {
+            type: "table",
+            head: ["Elemento", "Opciones habituales"],
+            rows: [
+              ["Tratamiento", "Por el nombre, neutro, más formal"],
+              ["Registro", "Cálido y cercano, profesional y sobrio, desenfadado"],
+              ["Firma", "Nombre del negocio, nombre del propietario, el equipo"],
+              ["Idioma", "Responder en el idioma en que se escribió la reseña"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Le pediremos tres o cuatro respuestas que haya escrito y le gusten. Son la mejor referencia para mantener la voz de su negocio.",
+          },
+          {
+            type: "h2",
+            id: "negative-review-rules",
+            text: "Reglas para reseñas negativas",
+          },
+          {
+            type: "p",
+            text: "Las reseñas de 1 a 3 estrellas nunca se responden sin su aprobación. Las pautas que seguimos por defecto son:",
+          },
+          {
+            type: "ul",
+            items: [
+              "Responder con calma, agradecer y reconocer la experiencia del cliente, sin discutir.",
+              "No entrar en detalles ni dar demasiadas explicaciones; ofrecer continuar la conversación en privado, con un contacto del negocio.",
+              "**No compartir nunca datos personales de clientes**, como lo que pidieron, fechas de citas o información de salud.",
+              "No ofrecer compensaciones en público.",
+            ],
+          },
+          {
+            type: "h3",
+            id: "sample-reply",
+            text: "Ejemplo de respuesta a una crítica",
+          },
+          {
+            type: "code",
+            label: "Reseña de 2 estrellas sobre el tiempo de espera",
+            code: "Hola, Ana. Gracias por dedicar su tiempo a dejar una reseña, y sentimos que la espera fuera tan larga. No es la experiencia que queremos ofrecer. Nos gustaría entender qué pasó: si puede, escríbanos al email del restaurante. El equipo del Restaurante Ejemplo",
+          },
+          {
+            type: "p",
+            text: "Fíjese en que la respuesta no discute, no revela detalles de la visita y ofrece un canal privado. En las reseñas positivas, las respuestas deben ser breves, dar las gracias y, siempre que sea posible, mencionar algo concreto que el cliente haya escrito, como un plato o el nombre de quien le atendió.",
+          },
+          {
+            type: "h2",
+            id: "alerts",
+            text: "Avisos",
+          },
+          {
+            type: "p",
+            text: "Por defecto recibe un aviso inmediato por cada reseña de 1 a 3 estrellas, con el texto de la reseña y una respuesta sugerida. Puede cambiar el umbral (por ejemplo, solo 1 y 2 estrellas), elegir quién recibe los avisos y pedir que se le avise de reseñas con palabras concretas, como el nombre de un miembro del equipo.",
+          },
+          {
+            type: "h2",
+            id: "approval",
+            text: "Modo de aprobación",
+          },
+          {
+            type: "table",
+            head: ["Modo", "Cómo funciona"],
+            rows: [
+              ["Aprobar todo", "Cada borrador necesita su aprobación antes de publicarse"],
+              ["Aprobar solo las críticas", "Las reseñas de 4 y 5 estrellas se responden siguiendo la guía de estilo; las demás esperan su aprobación"],
+            ],
+          },
+          {
+            type: "p",
+            text: "Recomendamos empezar con **aprobar todo** durante las primeras semanas. Cuando confíe en el tono, puede pasar al segundo modo. Vea cómo funciona todo en el día a día en la página de [uso](/es/docs/ai-review-management/usage).",
+          },
+        ],
+      },
+      fr: {
+        title: "Configuration de la Gestion des avis avec l'IA",
+        description:
+          "Définissez le ton des réponses, les règles pour les avis négatifs, les alertes et le mode de validation de la Gestion des avis avec l'IA pour votre fiche d'établissement Google.",
+        blocks: [
+          {
+            type: "p",
+            text: "La configuration détermine le ton des réponses et le moment où l'on vous demande d'intervenir. Vous pouvez changer n'importe quel réglage à tout moment ; il suffit de nous envoyer un message.",
+          },
+          {
+            type: "h2",
+            id: "tone-of-voice",
+            text: "Ton",
+          },
+          {
+            type: "table",
+            head: ["Élément", "Options habituelles"],
+            rows: [
+              ["Façon de s'adresser au client", "Par le prénom, neutre, plus formel"],
+              ["Registre", "Chaleureux et sympathique, professionnel et sobre, décontracté"],
+              ["Signature", "Nom de l'établissement, nom du propriétaire, l'équipe"],
+              ["Langue", "Répondre dans la langue de l'avis"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Nous vous demanderons trois ou quatre réponses que vous avez écrites et que vous aimez. C'est la meilleure référence pour garder la voix de votre établissement.",
+          },
+          {
+            type: "h2",
+            id: "negative-review-rules",
+            text: "Règles pour les avis négatifs",
+          },
+          {
+            type: "p",
+            text: "Les avis de 1 à 3 étoiles ne reçoivent jamais de réponse sans votre validation. Les principes que nous suivons par défaut sont :",
+          },
+          {
+            type: "ul",
+            items: [
+              "Répondre calmement, remercier et reconnaître l'expérience du client, sans polémiquer.",
+              "Ne pas entrer dans les détails ni trop se justifier ; proposer de poursuivre l'échange en privé, avec un contact de l'établissement.",
+              "**Ne jamais divulguer de données personnelles des clients**, comme ce qu'ils ont commandé, des dates de rendez-vous ou des informations de santé.",
+              "Ne pas proposer de compensation en public.",
+            ],
+          },
+          {
+            type: "h3",
+            id: "sample-reply",
+            text: "Exemple de réponse à une critique",
+          },
+          {
+            type: "code",
+            label: "Avis 2 étoiles sur le temps d'attente",
+            code: "Bonjour Anne, merci d'avoir pris le temps de laisser un avis, et nous sommes désolés que l'attente ait été si longue. Ce n'est pas l'expérience que nous voulons offrir. Nous aimerions comprendre ce qui s'est passé : si vous le pouvez, écrivez-nous à l'adresse e-mail du restaurant. L'équipe du Restaurant Exemple",
+          },
+          {
+            type: "p",
+            text: "Remarquez que la réponse ne polémique pas, ne révèle aucun détail de la visite et propose un canal privé. Pour les avis positifs, les réponses doivent être courtes, remercier et, chaque fois que c'est possible, citer un élément précis évoqué par le client, comme un plat ou le prénom de la personne qui l'a servi.",
+          },
+          {
+            type: "h2",
+            id: "alerts",
+            text: "Alertes",
+          },
+          {
+            type: "p",
+            text: "Par défaut, vous recevez une alerte immédiate pour chaque avis de 1 à 3 étoiles, avec le texte de l'avis et une réponse suggérée. Vous pouvez changer le seuil (par exemple seulement 1 et 2 étoiles), choisir qui reçoit les alertes et demander à être prévenu des avis contenant certains mots-clés, comme le prénom d'un membre de l'équipe.",
+          },
+          {
+            type: "h2",
+            id: "approval",
+            text: "Mode de validation",
+          },
+          {
+            type: "table",
+            head: ["Mode", "Fonctionnement"],
+            rows: [
+              ["Tout valider", "Chaque brouillon doit être validé par vous avant publication"],
+              ["Valider seulement les critiques", "Les avis 4 et 5 étoiles reçoivent une réponse selon le guide de style ; les autres attendent votre validation"],
+            ],
+          },
+          {
+            type: "p",
+            text: "Nous recommandons de commencer par **tout valider** pendant les premières semaines. Quand le ton vous convient, vous pouvez passer au second mode. Voyez comment tout fonctionne au quotidien sur la page [utilisation](/fr/docs/ai-review-management/usage).",
+          },
+        ],
+      },
+      de: {
+        title: "Konfiguration des KI-Bewertungsmanagements",
+        description:
+          "Legen Sie Ton der Antworten, Regeln für negative Bewertungen, Benachrichtigungen und Freigabemodus des KI-Bewertungsmanagements für Ihr Google-Unternehmensprofil fest.",
+        blocks: [
+          {
+            type: "p",
+            text: "Die Konfiguration bestimmt, wie die Antworten klingen und wann Sie eingreifen sollen. Sie können jede Einstellung jederzeit ändern; schicken Sie uns einfach eine Nachricht.",
+          },
+          {
+            type: "h2",
+            id: "tone-of-voice",
+            text: "Tonfall",
+          },
+          {
+            type: "table",
+            head: ["Element", "Übliche Optionen"],
+            rows: [
+              ["Anrede", "Mit Vornamen, neutral, förmlicher"],
+              ["Stil", "Herzlich und freundlich, professionell und zurückhaltend, locker"],
+              ["Grußformel", "Name des Betriebs, Name des Inhabers, das Team"],
+              ["Sprache", "In der Sprache antworten, in der die Bewertung geschrieben wurde"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Wir bitten Sie um drei oder vier Antworten, die Sie geschrieben haben und gelungen finden. Sie sind die beste Vorlage, um die Stimme Ihres Betriebs zu treffen.",
+          },
+          {
+            type: "h2",
+            id: "negative-review-rules",
+            text: "Regeln für negative Bewertungen",
+          },
+          {
+            type: "p",
+            text: "Bewertungen mit 1 bis 3 Sternen werden nie ohne Ihre Freigabe beantwortet. Standardmäßig gelten diese Leitlinien:",
+          },
+          {
+            type: "ul",
+            items: [
+              "Ruhig antworten, danken und die Erfahrung des Kunden anerkennen, ohne zu diskutieren.",
+              "Nicht ins Detail gehen und sich nicht lang rechtfertigen; anbieten, das Gespräch privat fortzusetzen, mit einem Kontakt des Betriebs.",
+              "**Niemals persönliche Daten von Kunden preisgeben**, etwa was sie bestellt haben, Termindaten oder Gesundheitsangaben.",
+              "Keine Entschädigung öffentlich anbieten.",
+            ],
+          },
+          {
+            type: "h3",
+            id: "sample-reply",
+            text: "Beispielantwort auf Kritik",
+          },
+          {
+            type: "code",
+            label: "Bewertung mit 2 Sternen zur Wartezeit",
+            code: "Hallo Anna, vielen Dank, dass Sie sich die Zeit für eine Bewertung genommen haben, und es tut uns leid, dass die Wartezeit so lang war. Das ist nicht das Erlebnis, das wir bieten möchten. Wir würden gern verstehen, was passiert ist: Wenn möglich, schreiben Sie uns an die E-Mail-Adresse des Restaurants. Ihr Team vom Restaurant Beispiel",
+          },
+          {
+            type: "p",
+            text: "Beachten Sie, dass die Antwort nicht diskutiert, keine Details zum Besuch preisgibt und einen privaten Kanal anbietet. Bei positiven Bewertungen sollten Antworten kurz sein, sich bedanken und nach Möglichkeit etwas Konkretes aufgreifen, das der Kunde erwähnt hat, etwa ein Gericht oder den Namen der Person, die ihn bedient hat.",
+          },
+          {
+            type: "h2",
+            id: "alerts",
+            text: "Benachrichtigungen",
+          },
+          {
+            type: "p",
+            text: "Standardmäßig erhalten Sie für jede Bewertung mit 1 bis 3 Sternen sofort eine Benachrichtigung mit dem Bewertungstext und einem Antwortvorschlag. Sie können die Schwelle ändern (zum Beispiel nur 1 und 2 Sterne), festlegen, wer benachrichtigt wird, und sich über Bewertungen mit bestimmten Stichwörtern informieren lassen, etwa dem Namen eines Teammitglieds.",
+          },
+          {
+            type: "h2",
+            id: "approval",
+            text: "Freigabemodus",
+          },
+          {
+            type: "table",
+            head: ["Modus", "So funktioniert er"],
+            rows: [
+              ["Alles freigeben", "Jeder Entwurf braucht Ihre Freigabe vor der Veröffentlichung"],
+              ["Nur Kritik freigeben", "Bewertungen mit 4 und 5 Sternen werden nach dem Stilleitfaden beantwortet; die übrigen warten auf Ihre Freigabe"],
+            ],
+          },
+          {
+            type: "p",
+            text: "Wir empfehlen, in den ersten Wochen mit **Alles freigeben** zu beginnen. Wenn Sie dem Ton vertrauen, können Sie in den zweiten Modus wechseln. Wie das alles im Alltag funktioniert, lesen Sie auf der Seite [Nutzung](/de/docs/ai-review-management/usage).",
+          },
+        ],
+      },
+      it: {
+        title: "Configurazione della Gestione delle recensioni con IA",
+        description:
+          "Impostate il tono delle risposte, le regole per le recensioni negative, gli avvisi e la modalità di approvazione della Gestione delle recensioni con IA per il vostro Profilo dell'attività su Google.",
+        blocks: [
+          {
+            type: "p",
+            text: "La configurazione stabilisce come suonano le risposte e quando vi viene chiesto di intervenire. Potete cambiare qualsiasi impostazione in qualsiasi momento; basta inviarci un messaggio.",
+          },
+          {
+            type: "h2",
+            id: "tone-of-voice",
+            text: "Tono",
+          },
+          {
+            type: "table",
+            head: ["Elemento", "Opzioni tipiche"],
+            rows: [
+              ["Modo di rivolgersi", "Per nome, neutro, più formale"],
+              ["Registro", "Caloroso e cordiale, professionale e sobrio, informale"],
+              ["Firma", "Nome dell'attività, nome del titolare, il team"],
+              ["Lingua", "Rispondere nella lingua in cui è scritta la recensione"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Vi chiederemo tre o quattro risposte che avete scritto e che vi piacciono. Sono il miglior riferimento per mantenere la voce della vostra attività.",
+          },
+          {
+            type: "h2",
+            id: "negative-review-rules",
+            text: "Regole per le recensioni negative",
+          },
+          {
+            type: "p",
+            text: "Le recensioni da 1 a 3 stelle non ricevono mai risposta senza la vostra approvazione. Le linee guida che seguiamo di default sono:",
+          },
+          {
+            type: "ul",
+            items: [
+              "Rispondere con calma, ringraziare e riconoscere l'esperienza del cliente, senza polemizzare.",
+              "Non entrare nei dettagli né giustificarsi troppo; proporre di continuare la conversazione in privato, con un contatto dell'attività.",
+              "**Non condividere mai dati personali dei clienti**, come cosa hanno ordinato, date degli appuntamenti o informazioni sulla salute.",
+              "Non offrire compensazioni in pubblico.",
+            ],
+          },
+          {
+            type: "h3",
+            id: "sample-reply",
+            text: "Esempio di risposta a una critica",
+          },
+          {
+            type: "code",
+            label: "Recensione da 2 stelle sul tempo di attesa",
+            code: "Buongiorno Anna, grazie per aver dedicato del tempo a lasciare una recensione, e ci dispiace che l'attesa sia stata così lunga. Non è l'esperienza che vogliamo offrire. Vorremmo capire cosa è successo: se potete, scriveteci all'indirizzo email del ristorante. Il team del Ristorante Esempio",
+          },
+          {
+            type: "p",
+            text: "Notate che la risposta non polemizza, non rivela dettagli della visita e offre un canale privato. Per le recensioni positive, le risposte devono essere brevi, ringraziare e, quando possibile, citare qualcosa di specifico scritto dal cliente, come un piatto o il nome di chi lo ha servito.",
+          },
+          {
+            type: "h2",
+            id: "alerts",
+            text: "Avvisi",
+          },
+          {
+            type: "p",
+            text: "Di default ricevete un avviso immediato per ogni recensione da 1 a 3 stelle, con il testo della recensione e una risposta suggerita. Potete cambiare la soglia (per esempio solo 1 e 2 stelle), scegliere chi riceve gli avvisi e chiedere di essere avvisati delle recensioni con parole chiave specifiche, come il nome di un membro del team.",
+          },
+          {
+            type: "h2",
+            id: "approval",
+            text: "Modalità di approvazione",
+          },
+          {
+            type: "table",
+            head: ["Modalità", "Come funziona"],
+            rows: [
+              ["Approvare tutto", "Ogni bozza richiede la vostra approvazione prima di essere pubblicata"],
+              ["Approvare solo le critiche", "Le recensioni da 4 e 5 stelle ricevono risposta secondo la guida di stile; le altre attendono la vostra approvazione"],
+            ],
+          },
+          {
+            type: "p",
+            text: "Consigliamo di iniziare con **approvare tutto** nelle prime settimane. Quando vi fidate del tono, potete passare alla seconda modalità. Vedete come funziona tutto nella quotidianità alla pagina sull'[utilizzo](/it/docs/ai-review-management/usage).",
+          },
+        ],
+      },
     },
     usage: {
       pt: {
@@ -657,6 +1641,322 @@ export const docs: ProductDocs = {
           {
             type: "p",
             text: "Every month you receive a report with your average rating trend, number of new reviews, response rate and the most mentioned topics, positive and negative. Use it to decide where to improve, such as waiting times or service. Questions? See the [FAQ](/en/docs/ai-review-management/faq).",
+          },
+        ],
+      },
+      es: {
+        title: "Uso diario de la Gestión de reseñas con IA",
+        description:
+          "Cómo aprobar respuestas, actuar ante los avisos de reseñas negativas, denunciar reseñas que incumplen las políticas de Google y leer su informe mensual de reseñas.",
+        blocks: [
+          {
+            type: "p",
+            text: "En el día a día, su tarea se reduce a aprobar borradores y actuar cuando llega una crítica. Esta página explica qué hacer en cada situación y qué permite o prohíbe Google.",
+          },
+          {
+            type: "h2",
+            id: "approving-drafts",
+            text: "Aprobar los borradores",
+          },
+          {
+            type: "p",
+            text: "Cada borrador llega con el texto de la reseña, las estrellas y la respuesta propuesta. Puede contestar con una simple aprobación, pedir cambios por escrito (por ejemplo, mencionar un plato o corregir un nombre) o decir que prefiere responder usted personalmente.",
+          },
+          {
+            type: "h2",
+            id: "negative-reviews",
+            text: "Cuando llega una reseña negativa",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Léala con calma",
+                body: "Evite responder en caliente. Compruebe con su equipo qué ocurrió, si se puede identificar la situación.",
+              },
+              {
+                title: "Revise la respuesta sugerida",
+                body: "El borrador agradece, reconoce la experiencia del cliente y le invita a continuar en privado. Ajústelo si hay algo concreto que añadir.",
+              },
+              {
+                title: "Apruebe y haga seguimiento",
+                body: "Una vez publicada, si el cliente se pone en contacto, resuelva la situación en privado. Algunos clientes actualizan su reseña por iniciativa propia.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "google-policies",
+            text: "Lo que las políticas de Google no permiten",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Ofrecer incentivos** (descuentos, regalos, sorteos) a cambio de reseñas.",
+              "**Pedir reseñas solo a los clientes satisfechos** o filtrar a quién se invita a opinar.",
+              "**Publicar reseñas falsas**, también las del personal, de familiares o del propio negocio.",
+              "Pedir a un cliente que retire una reseña a cambio de algo.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            text: "Estas prácticas pueden provocar la eliminación de reseñas o restricciones en su perfil. Steevanz no las utiliza ni las recomienda.",
+          },
+          {
+            type: "h2",
+            id: "reporting",
+            text: "Denunciar reseñas que incumplen las políticas",
+          },
+          {
+            type: "p",
+            text: "Si una reseña contiene insultos, contenido ofensivo, datos personales o spam, o viene claramente de alguien que nunca fue cliente, puede denunciarla a Google desde el propio perfil. Le ayudamos a preparar la denuncia, pero la decisión es siempre de Google: **denunciar no garantiza la eliminación**. Las críticas legítimas, aunque le parezcan injustas, no suelen eliminarse; en ese caso, una buena respuesta es su mejor defensa.",
+          },
+          {
+            type: "h2",
+            id: "monthly-report",
+            text: "Informe mensual",
+          },
+          {
+            type: "p",
+            text: "Cada mes recibe un informe con la evolución de la valoración media, el número de reseñas nuevas, el porcentaje de respuesta y los temas más mencionados, positivos y negativos. Úselo para decidir dónde mejorar, como los tiempos de espera o la atención. ¿Dudas? Consulte las [preguntas frecuentes](/es/docs/ai-review-management/faq).",
+          },
+        ],
+      },
+      fr: {
+        title: "Utilisation au quotidien de la Gestion des avis avec l'IA",
+        description:
+          "Comment valider les réponses, réagir aux alertes d'avis négatifs, signaler les avis qui enfreignent les règles de Google et lire votre rapport mensuel sur les avis.",
+        blocks: [
+          {
+            type: "p",
+            text: "Au quotidien, votre rôle se résume à valider les brouillons et à agir quand une critique arrive. Cette page explique quoi faire dans chaque situation et ce que Google autorise ou interdit.",
+          },
+          {
+            type: "h2",
+            id: "approving-drafts",
+            text: "Valider les brouillons",
+          },
+          {
+            type: "p",
+            text: "Chaque brouillon arrive avec le texte de l'avis, le nombre d'étoiles et la réponse proposée. Vous pouvez répondre par une simple validation, demander des modifications par écrit (par exemple citer un plat ou corriger un nom) ou indiquer que vous préférez répondre vous-même.",
+          },
+          {
+            type: "h2",
+            id: "negative-reviews",
+            text: "Quand un avis négatif arrive",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Lisez-le calmement",
+                body: "Évitez de répondre à chaud. Vérifiez avec votre équipe ce qui s'est passé, si la situation peut être identifiée.",
+              },
+              {
+                title: "Relisez la réponse suggérée",
+                body: "Le brouillon remercie, reconnaît l'expérience du client et l'invite à poursuivre en privé. Ajustez-le s'il y a un point précis à ajouter.",
+              },
+              {
+                title: "Validez et assurez le suivi",
+                body: "Une fois la réponse publiée, si le client vous contacte, réglez la situation en privé. Certains clients mettent à jour leur avis d'eux-mêmes.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "google-policies",
+            text: "Ce que les règles de Google interdisent",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Offrir des contreparties** (remises, cadeaux, tirages au sort) en échange d'avis.",
+              "**Ne solliciter que les clients satisfaits** ou filtrer les personnes invitées à donner leur avis.",
+              "**Publier de faux avis**, y compris de la part du personnel, de proches ou de l'établissement lui-même.",
+              "Demander à un client de retirer un avis en échange de quelque chose.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            text: "Ces pratiques peuvent entraîner la suppression d'avis ou des restrictions sur votre fiche. Steevanz ne les utilise pas et ne les recommande pas.",
+          },
+          {
+            type: "h2",
+            id: "reporting",
+            text: "Signaler les avis qui enfreignent les règles",
+          },
+          {
+            type: "p",
+            text: "Si un avis contient des insultes, des propos offensants, des données personnelles ou du spam, ou vient manifestement de quelqu'un qui n'a jamais été client, vous pouvez le signaler à Google depuis la fiche elle-même. Nous vous aidons à préparer le signalement, mais la décision revient toujours à Google : **signaler ne garantit pas la suppression**. Une critique légitime, même si vous la trouvez injuste, n'est généralement pas supprimée ; dans ce cas, une bonne réponse est votre meilleure défense.",
+          },
+          {
+            type: "h2",
+            id: "monthly-report",
+            text: "Rapport mensuel",
+          },
+          {
+            type: "p",
+            text: "Chaque mois, vous recevez un rapport avec l'évolution de votre note moyenne, le nombre de nouveaux avis, le taux de réponse et les sujets les plus cités, positifs et négatifs. Servez-vous-en pour décider où vous améliorer, comme les temps d'attente ou le service. Des questions ? Consultez les [questions fréquentes](/fr/docs/ai-review-management/faq).",
+          },
+        ],
+      },
+      de: {
+        title: "Das KI-Bewertungsmanagement im Alltag",
+        description:
+          "So geben Sie Antworten frei, reagieren auf Benachrichtigungen zu negativen Bewertungen, melden Bewertungen, die gegen Googles Richtlinien verstoßen, und lesen Ihren Monatsbericht.",
+        blocks: [
+          {
+            type: "p",
+            text: "Im Alltag beschränkt sich Ihre Aufgabe darauf, Entwürfe freizugeben und zu handeln, wenn Kritik eingeht. Diese Seite erklärt, was in jeder Situation zu tun ist und was Google erlaubt oder verbietet.",
+          },
+          {
+            type: "h2",
+            id: "approving-drafts",
+            text: "Entwürfe freigeben",
+          },
+          {
+            type: "p",
+            text: "Jeder Entwurf kommt mit dem Bewertungstext, der Sternezahl und der vorgeschlagenen Antwort. Sie können mit einer einfachen Freigabe antworten, schriftlich Änderungen wünschen (zum Beispiel ein Gericht erwähnen oder einen Namen korrigieren) oder sagen, dass Sie lieber selbst antworten.",
+          },
+          {
+            type: "h2",
+            id: "negative-reviews",
+            text: "Wenn eine negative Bewertung eingeht",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "In Ruhe lesen",
+                body: "Antworten Sie nicht im ersten Ärger. Klären Sie mit Ihrem Team, was passiert ist, wenn sich die Situation zuordnen lässt.",
+              },
+              {
+                title: "Vorgeschlagene Antwort prüfen",
+                body: "Der Entwurf bedankt sich, erkennt die Erfahrung des Kunden an und lädt ihn ein, das Gespräch privat fortzusetzen. Passen Sie ihn an, wenn etwas Konkretes ergänzt werden soll.",
+              },
+              {
+                title: "Freigeben und nachfassen",
+                body: "Meldet sich der Kunde nach der Veröffentlichung, klären Sie die Sache privat. Manche Kunden passen ihre Bewertung von sich aus an.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "google-policies",
+            text: "Was Googles Richtlinien nicht erlauben",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Anreize anbieten** (Rabatte, Geschenke, Gewinnspiele) im Gegenzug für Bewertungen.",
+              "**Nur zufriedene Kunden um Bewertungen bitten** oder filtern, wer zur Bewertung eingeladen wird.",
+              "**Gefälschte Bewertungen veröffentlichen**, auch von Mitarbeitenden, Familie oder dem Betrieb selbst.",
+              "Einen Kunden bitten, eine Bewertung gegen eine Gegenleistung zu löschen.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            text: "Solche Praktiken können dazu führen, dass Bewertungen entfernt oder Ihr Profil eingeschränkt wird. Steevanz nutzt sie nicht und empfiehlt sie nicht.",
+          },
+          {
+            type: "h2",
+            id: "reporting",
+            text: "Bewertungen melden, die gegen die Richtlinien verstoßen",
+          },
+          {
+            type: "p",
+            text: "Enthält eine Bewertung Beleidigungen, anstößige Inhalte, persönliche Daten oder Spam, oder stammt sie offensichtlich von jemandem, der nie Kunde war, können Sie sie direkt im Profil bei Google melden. Wir helfen bei der Meldung, die Entscheidung liegt aber immer bei Google: **Eine Meldung garantiert keine Entfernung**. Berechtigte Kritik wird in der Regel nicht entfernt, auch wenn Sie sie ungerecht finden; dann ist eine gute Antwort Ihre beste Verteidigung.",
+          },
+          {
+            type: "h2",
+            id: "monthly-report",
+            text: "Monatsbericht",
+          },
+          {
+            type: "p",
+            text: "Jeden Monat erhalten Sie einen Bericht mit der Entwicklung Ihrer Durchschnittsbewertung, der Zahl neuer Bewertungen, der Antwortquote und den meistgenannten Themen, positiven wie negativen. Nutzen Sie ihn, um zu entscheiden, wo Sie sich verbessern wollen, etwa bei Wartezeiten oder Service. Fragen? Lesen Sie die [häufigen Fragen](/de/docs/ai-review-management/faq).",
+          },
+        ],
+      },
+      it: {
+        title: "Uso quotidiano della Gestione delle recensioni con IA",
+        description:
+          "Come approvare le risposte, reagire agli avvisi di recensioni negative, segnalare le recensioni che violano le norme di Google e leggere il report mensile sulle recensioni.",
+        blocks: [
+          {
+            type: "p",
+            text: "Nella quotidianità il vostro compito si riduce ad approvare le bozze e intervenire quando arriva una critica. Questa pagina spiega cosa fare in ogni situazione e cosa Google consente o vieta.",
+          },
+          {
+            type: "h2",
+            id: "approving-drafts",
+            text: "Approvare le bozze",
+          },
+          {
+            type: "p",
+            text: "Ogni bozza arriva con il testo della recensione, le stelle e la risposta proposta. Potete rispondere con una semplice approvazione, chiedere modifiche per iscritto (per esempio citare un piatto o correggere un nome) oppure dire che preferite rispondere di persona.",
+          },
+          {
+            type: "h2",
+            id: "negative-reviews",
+            text: "Quando arriva una recensione negativa",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Leggetela con calma",
+                body: "Evitate di rispondere a caldo. Verificate con il vostro team cosa è successo, se la situazione è identificabile.",
+              },
+              {
+                title: "Rivedete la risposta suggerita",
+                body: "La bozza ringrazia, riconosce l'esperienza del cliente e lo invita a proseguire in privato. Modificatela se c'è qualcosa di specifico da aggiungere.",
+              },
+              {
+                title: "Approvate e seguite il caso",
+                body: "Una volta pubblicata la risposta, se il cliente vi contatta, risolvete la situazione in privato. Alcuni clienti aggiornano la recensione di loro iniziativa.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "google-policies",
+            text: "Cosa non consentono le norme di Google",
+          },
+          {
+            type: "ul",
+            items: [
+              "**Offrire incentivi** (sconti, omaggi, estrazioni a premi) in cambio di recensioni.",
+              "**Chiedere recensioni solo ai clienti soddisfatti** o filtrare chi viene invitato a recensire.",
+              "**Pubblicare recensioni false**, anche da parte del personale, di familiari o dell'attività stessa.",
+              "Chiedere a un cliente di rimuovere una recensione in cambio di qualcosa.",
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            text: "Queste pratiche possono portare alla rimozione delle recensioni o a limitazioni del vostro profilo. Steevanz non le usa e non le consiglia.",
+          },
+          {
+            type: "h2",
+            id: "reporting",
+            text: "Segnalare le recensioni che violano le norme",
+          },
+          {
+            type: "p",
+            text: "Se una recensione contiene insulti, contenuti offensivi, dati personali o spam, o proviene chiaramente da qualcuno che non è mai stato cliente, potete segnalarla a Google direttamente dal profilo. Vi aiutiamo a preparare la segnalazione, ma la decisione spetta sempre a Google: **segnalare non garantisce la rimozione**. Le critiche legittime, anche se vi sembrano ingiuste, di solito non vengono rimosse; in quel caso una buona risposta è la vostra difesa migliore.",
+          },
+          {
+            type: "h2",
+            id: "monthly-report",
+            text: "Report mensile",
+          },
+          {
+            type: "p",
+            text: "Ogni mese ricevete un report con l'andamento della valutazione media, il numero di nuove recensioni, la percentuale di risposta e gli argomenti più citati, positivi e negativi. Usatelo per decidere dove migliorare, per esempio i tempi di attesa o il servizio. Avete domande? Consultate le [domande frequenti](/it/docs/ai-review-management/faq).",
           },
         ],
       },
@@ -822,6 +2122,326 @@ export const docs: ProductDocs = {
           },
         ],
       },
+      es: {
+        title: "Resolución de problemas de la Gestión de reseñas con IA",
+        description:
+          "Soluciones a los problemas habituales de la Gestión de reseñas con IA: invitación de administrador que no llega, respuestas que no aparecen en Google, avisos que faltan y reseñas que desaparecen.",
+        blocks: [
+          {
+            type: "p",
+            text: "Estos son los problemas que aparecen con más frecuencia y cómo resolverlos. Si ninguno encaja, [contáctenos](/es/contact) con el nombre del perfil y una descripción de lo ocurrido.",
+          },
+          {
+            type: "h2",
+            id: "invitation",
+            text: "La invitación de administrador no funciona",
+          },
+          {
+            type: "ul",
+            items: [
+              "Asegúrese de que usa la cuenta de Google **propietaria** del perfil; los administradores no pueden invitar a otras personas.",
+              "Compruebe que escribió correctamente la dirección de email que le indicamos.",
+              "Si el perfil aún no está verificado, primero hay que completar la verificación.",
+              "Si la invitación ha caducado, basta con volver a enviarla.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "reply-not-showing",
+            text: "Una respuesta aprobada no aparece en Google",
+          },
+          {
+            type: "p",
+            text: "Las respuestas pueden tardar un poco en verse públicamente, y Google puede revisarlas antes de mostrarlas. Si una respuesta sigue sin verse después de 24 horas, avísenos; comprobaremos si la ha retenido algún filtro y ajustaremos el texto.",
+          },
+          {
+            type: "h2",
+            id: "missing-alerts",
+            text: "No recibo los avisos",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Revise el canal",
+                body: "Mire la carpeta de spam del email y compruebe que la conversación de WhatsApp no está archivada ni silenciada.",
+              },
+              {
+                title: "Revise el umbral de los avisos",
+                body: "Si configuró avisos solo para 1 y 2 estrellas, una reseña de 3 estrellas no genera un aviso inmediato.",
+              },
+              {
+                title: "Revise el acceso",
+                body: "Si alguien retiró el acceso de administrador de Steevanz, ya no vemos las nuevas reseñas. Compruebe los ajustes de personas y accesos del perfil.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "reviews-disappearing",
+            text: "Han desaparecido algunas reseñas",
+          },
+          {
+            type: "p",
+            text: "Google elimina a veces reseñas que sus filtros automáticos consideran sospechosas, y los autores pueden borrar sus propias reseñas. Ni Steevanz ni el propietario del perfil controlan esto. Si nota una bajada grande y repentina, hable con nosotros y lo analizamos.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Denuncias rechazadas",
+            text: "Si Google decide no eliminar una reseña denunciada, normalmente queda poco por hacer, salvo responder con cuidado. Una respuesta serena suele pesar más para los lectores que la propia crítica.",
+          },
+          {
+            type: "h2",
+            id: "tone-not-right",
+            text: "No me gusta el tono de los borradores",
+          },
+          {
+            type: "p",
+            text: "Es normal hacer algunos ajustes en las primeras semanas. Cuando pida un cambio, explique por qué (por ejemplo, demasiado formal, demasiado largo, no firmamos así). Usamos esos comentarios para actualizar la guía de estilo, y los siguientes borradores ya los reflejan. Si lo prefiere, podemos concertar una llamada corta para revisar varios ejemplos a la vez.",
+          },
+        ],
+      },
+      fr: {
+        title: "Dépannage de la Gestion des avis avec l'IA",
+        description:
+          "Solutions aux problèmes courants de la Gestion des avis avec l'IA : invitation de gestionnaire qui n'arrive pas, réponses invisibles sur Google, alertes manquantes et avis qui disparaissent.",
+        blocks: [
+          {
+            type: "p",
+            text: "Voici les problèmes les plus fréquents et comment les résoudre. Si aucun ne correspond, [contactez-nous](/fr/contact) en indiquant le nom de la fiche et ce qui s'est passé.",
+          },
+          {
+            type: "h2",
+            id: "invitation",
+            text: "L'invitation de gestionnaire ne fonctionne pas",
+          },
+          {
+            type: "ul",
+            items: [
+              "Vérifiez que vous utilisez le compte Google **propriétaire** de la fiche ; les gestionnaires ne peuvent pas inviter d'autres personnes.",
+              "Vérifiez que vous avez bien saisi l'adresse e-mail que nous vous avons donnée.",
+              "Si la fiche n'est pas encore validée, il faut d'abord terminer la validation.",
+              "Si l'invitation a expiré, il suffit de la renvoyer.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "reply-not-showing",
+            text: "Une réponse validée n'apparaît pas sur Google",
+          },
+          {
+            type: "p",
+            text: "Les réponses peuvent mettre un certain temps à devenir visibles publiquement, et Google peut les examiner avant de les afficher. Si une réponse n'est toujours pas visible après 24 heures, prévenez-nous ; nous vérifierons si elle a été bloquée par un filtre et ajusterons la formulation.",
+          },
+          {
+            type: "h2",
+            id: "missing-alerts",
+            text: "Je ne reçois pas les alertes",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Vérifiez le canal",
+                body: "Regardez dans le dossier spam de votre messagerie et vérifiez que la conversation WhatsApp n'est ni archivée ni en sourdine.",
+              },
+              {
+                title: "Vérifiez le seuil des alertes",
+                body: "Si vous avez réglé les alertes sur 1 et 2 étoiles seulement, un avis 3 étoiles ne déclenche pas d'alerte immédiate.",
+              },
+              {
+                title: "Vérifiez l'accès",
+                body: "Si quelqu'un a retiré l'accès gestionnaire de Steevanz, nous ne voyons plus les nouveaux avis. Vérifiez les paramètres « Utilisateurs et accès » de la fiche.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "reviews-disappearing",
+            text: "Certains avis ont disparu",
+          },
+          {
+            type: "p",
+            text: "Google supprime parfois des avis que ses filtres automatiques jugent suspects, et les auteurs peuvent supprimer leurs propres avis. Ni Steevanz ni le propriétaire de la fiche ne contrôlent cela. Si vous constatez une baisse importante et soudaine, parlez-nous-en et nous examinerons la situation.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Signalements refusés",
+            text: "Si Google refuse de supprimer un avis signalé, il reste en général peu à faire, à part répondre avec soin. Une réponse posée pèse souvent plus aux yeux des lecteurs que la critique elle-même.",
+          },
+          {
+            type: "h2",
+            id: "tone-not-right",
+            text: "Le ton des brouillons ne me plaît pas",
+          },
+          {
+            type: "p",
+            text: "Quelques ajustements sont normaux les premières semaines. Quand vous demandez une modification, expliquez pourquoi (par exemple trop formel, trop long, ce n'est pas notre façon de signer). Nous utilisons ces retours pour mettre à jour le guide de style, et les brouillons suivants en tiennent compte. Si vous préférez, nous pouvons prévoir un court appel pour revoir plusieurs exemples à la fois.",
+          },
+        ],
+      },
+      de: {
+        title: "Fehlerbehebung beim KI-Bewertungsmanagement",
+        description:
+          "Lösungen für häufige Probleme beim KI-Bewertungsmanagement: Verwalter-Einladung kommt nicht an, Antworten erscheinen nicht bei Google, Benachrichtigungen fehlen oder Bewertungen verschwinden.",
+        blocks: [
+          {
+            type: "p",
+            text: "Das sind die häufigsten Probleme und wie Sie sie lösen. Passt keines davon, [kontaktieren Sie uns](/de/contact) mit dem Namen des Profils und einer Beschreibung, was passiert ist.",
+          },
+          {
+            type: "h2",
+            id: "invitation",
+            text: "Die Verwalter-Einladung funktioniert nicht",
+          },
+          {
+            type: "ul",
+            items: [
+              "Stellen Sie sicher, dass Sie das Google-Konto nutzen, das **Inhaber** des Profils ist; Verwalter können keine anderen Personen einladen.",
+              "Prüfen Sie, ob Sie die E-Mail-Adresse, die wir Ihnen genannt haben, richtig eingegeben haben.",
+              "Ist das Profil noch nicht bestätigt, muss zuerst die Bestätigung abgeschlossen werden.",
+              "Ist die Einladung abgelaufen, schicken Sie sie einfach erneut.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "reply-not-showing",
+            text: "Eine freigegebene Antwort erscheint nicht bei Google",
+          },
+          {
+            type: "p",
+            text: "Es kann etwas dauern, bis Antworten öffentlich sichtbar sind, und Google prüft Antworten unter Umständen, bevor sie angezeigt werden. Ist eine Antwort nach 24 Stunden immer noch nicht sichtbar, sagen Sie uns Bescheid; wir prüfen, ob ein Filter sie zurückgehalten hat, und passen die Formulierung an.",
+          },
+          {
+            type: "h2",
+            id: "missing-alerts",
+            text: "Ich erhalte keine Benachrichtigungen",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Kanal prüfen",
+                body: "Sehen Sie im Spam-Ordner Ihres E-Mail-Postfachs nach und prüfen Sie, dass der WhatsApp-Chat nicht archiviert oder stummgeschaltet ist.",
+              },
+              {
+                title: "Schwelle der Benachrichtigungen prüfen",
+                body: "Haben Sie Benachrichtigungen nur für 1 und 2 Sterne eingestellt, löst eine Bewertung mit 3 Sternen keine Sofortbenachrichtigung aus.",
+              },
+              {
+                title: "Zugriff prüfen",
+                body: "Hat jemand den Verwalterzugriff von Steevanz entfernt, sehen wir keine neuen Bewertungen mehr. Prüfen Sie die Einstellungen für Nutzer und Zugriff des Profils.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "reviews-disappearing",
+            text: "Einige Bewertungen sind verschwunden",
+          },
+          {
+            type: "p",
+            text: "Google entfernt manchmal Bewertungen, die seine automatischen Filter für verdächtig halten, und Verfasser können ihre eigenen Bewertungen löschen. Weder Steevanz noch der Inhaber des Profils haben darauf Einfluss. Fällt Ihnen ein großer, plötzlicher Rückgang auf, sprechen Sie uns an, und wir sehen es uns an.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Abgelehnte Meldungen",
+            text: "Lehnt Google die Entfernung einer gemeldeten Bewertung ab, bleibt meist wenig mehr zu tun, als sorgfältig zu antworten. Eine ruhige Antwort hat bei Lesern oft mehr Gewicht als die Kritik selbst.",
+          },
+          {
+            type: "h2",
+            id: "tone-not-right",
+            text: "Der Ton der Entwürfe gefällt mir nicht",
+          },
+          {
+            type: "p",
+            text: "Etwas Feinabstimmung ist in den ersten Wochen normal. Wenn Sie eine Änderung wünschen, sagen Sie uns den Grund (zum Beispiel zu förmlich, zu lang, so unterschreiben wir nicht). Mit diesen Rückmeldungen aktualisieren wir den Stilleitfaden, und die nächsten Entwürfe berücksichtigen sie. Wenn Sie möchten, vereinbaren wir ein kurzes Gespräch, um mehrere Beispiele auf einmal durchzugehen.",
+          },
+        ],
+      },
+      it: {
+        title: "Risoluzione dei problemi della Gestione delle recensioni con IA",
+        description:
+          "Soluzioni ai problemi comuni della Gestione delle recensioni con IA: invito come gestore che non arriva, risposte che non compaiono su Google, avvisi mancanti e recensioni che spariscono.",
+        blocks: [
+          {
+            type: "p",
+            text: "Questi sono i problemi più frequenti e come risolverli. Se nessuno fa al caso vostro, [contattateci](/it/contact) indicando il nome del profilo e cosa è successo.",
+          },
+          {
+            type: "h2",
+            id: "invitation",
+            text: "L'invito come gestore non funziona",
+          },
+          {
+            type: "ul",
+            items: [
+              "Assicuratevi di usare l'account Google **proprietario** del profilo; i gestori non possono invitare altre persone.",
+              "Verificate di aver scritto correttamente l'indirizzo email che vi abbiamo indicato.",
+              "Se il profilo non è ancora verificato, bisogna prima completare la verifica.",
+              "Se l'invito è scaduto, basta inviarlo di nuovo.",
+            ],
+          },
+          {
+            type: "h2",
+            id: "reply-not-showing",
+            text: "Una risposta approvata non compare su Google",
+          },
+          {
+            type: "p",
+            text: "Le risposte possono impiegare un po' a diventare visibili pubblicamente, e Google può esaminarle prima di mostrarle. Se dopo 24 ore una risposta non è ancora visibile, avvisateci; verificheremo se è stata trattenuta da un filtro e modificheremo il testo.",
+          },
+          {
+            type: "h2",
+            id: "missing-alerts",
+            text: "Non ricevo gli avvisi",
+          },
+          {
+            type: "steps",
+            items: [
+              {
+                title: "Controllate il canale",
+                body: "Guardate nella cartella spam della posta e verificate che la chat di WhatsApp non sia archiviata o silenziata.",
+              },
+              {
+                title: "Controllate la soglia degli avvisi",
+                body: "Se avete impostato gli avvisi solo per 1 e 2 stelle, una recensione da 3 stelle non genera un avviso immediato.",
+              },
+              {
+                title: "Controllate l'accesso",
+                body: "Se qualcuno ha revocato l'accesso come gestore di Steevanz, non vediamo più le nuove recensioni. Controllate le impostazioni di persone e accesso del profilo.",
+              },
+            ],
+          },
+          {
+            type: "h2",
+            id: "reviews-disappearing",
+            text: "Alcune recensioni sono sparite",
+          },
+          {
+            type: "p",
+            text: "A volte Google rimuove recensioni che i suoi filtri automatici considerano sospette, e gli autori possono cancellare le proprie recensioni. Né Steevanz né il proprietario del profilo controllano questi casi. Se notate un calo forte e improvviso, parlatecene e lo analizziamo.",
+          },
+          {
+            type: "callout",
+            tone: "info",
+            title: "Segnalazioni respinte",
+            text: "Se Google decide di non rimuovere una recensione segnalata, di solito resta poco da fare oltre a rispondere con cura. Una risposta pacata spesso pesa di più per chi legge della critica stessa.",
+          },
+          {
+            type: "h2",
+            id: "tone-not-right",
+            text: "Il tono delle bozze non mi piace",
+          },
+          {
+            type: "p",
+            text: "Qualche aggiustamento nelle prime settimane è normale. Quando chiedete una modifica, spiegate il motivo (per esempio troppo formale, troppo lunga, non firmiamo così). Usiamo questi commenti per aggiornare la guida di stile, e le bozze successive ne tengono conto. Se preferite, possiamo fissare una breve chiamata per rivedere più esempi insieme.",
+          },
+        ],
+      },
     },
     faq: {
       pt: {
@@ -953,6 +2573,270 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "tip",
             text: "See the [product page](/en/products/ai-review-management) for pricing or [book a demo](/en/book-a-demo) to see sample replies.",
+          },
+        ],
+      },
+      es: {
+        title: "Preguntas frecuentes sobre la Gestión de reseñas con IA",
+        description:
+          "Respuestas a las dudas habituales sobre la Gestión de reseñas con IA: acceso al perfil de Google, aprobación de respuestas, reseñas negativas, políticas de Google e informes mensuales.",
+        blocks: [
+          {
+            type: "p",
+            text: "Las preguntas que más nos hacen sobre el servicio. Si necesita más detalle, [hable con nosotros](/es/contact).",
+          },
+          {
+            type: "h2",
+            id: "questions",
+            text: "Preguntas y respuestas",
+          },
+          {
+            type: "faq",
+            items: [
+              {
+                q: "¿Necesitan la contraseña de mi cuenta de Google?",
+                a: "No. Basta con invitar a Steevanz como administrador de su Perfil de Empresa de Google. Puede retirar ese acceso en cualquier momento.",
+              },
+              {
+                q: "¿Se publican respuestas sin que yo las vea?",
+                a: "Solo si elige ese modo para las reseñas de 4 y 5 estrellas. Las reseñas de 1 a 3 estrellas se le envían siempre para su aprobación.",
+              },
+              {
+                q: "¿Las respuestas parecerán escritas por una máquina?",
+                a: "No deberían. Acordamos con usted una guía de estilo, usamos sus propios ejemplos y evitamos repetir respuestas genéricas. Cada respuesta se refiere a lo que el cliente escribió de verdad.",
+              },
+              {
+                q: "¿Pueden borrar reseñas negativas?",
+                a: "No. Solo Google puede eliminar reseñas, y solo cuando incumplen sus políticas. Le ayudamos a denunciar esas reseñas, pero la eliminación no está garantizada.",
+              },
+              {
+                q: "¿Pueden ayudarme a conseguir más reseñas?",
+                a: "El servicio se centra en las respuestas. Para conseguir más reseñas de forma legítima, recomendamos nuestras placas para reseñas en Google, que facilitan pedírselo a cada cliente.",
+              },
+              {
+                q: "¿Puedo ofrecer un descuento a cambio de una reseña?",
+                a: "No. Las políticas de Google prohíben los incentivos a cambio de reseñas. Tampoco se permite pedir reseñas solo a los clientes satisfechos.",
+              },
+              {
+                q: "¿Responden a los turistas en inglés?",
+                a: "Sí. Por defecto respondemos en el idioma en que se escribió la reseña, dentro de los idiomas acordados con usted.",
+              },
+              {
+                q: "¿Funciona con otras plataformas además de Google?",
+                a: "El servicio está pensado para el Perfil de Empresa de Google. Si usa otras plataformas, hable con nosotros y estudiamos su caso.",
+              },
+              {
+                q: "¿Qué incluye el informe mensual?",
+                a: "La evolución de la valoración media, el número de reseñas nuevas, el porcentaje de respuesta y los temas más mencionados, con sugerencias sobre dónde mejorar.",
+              },
+              {
+                q: "¿Puedo cancelar?",
+                a: "Sí. Avísenos y retire el acceso de administrador de Steevanz. Las condiciones figuran en la propuesta que recibe antes de empezar.",
+              },
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Consulte la [página del producto](/es/products/ai-review-management) para ver los precios o [reserve una demostración](/es/book-a-demo) para ver ejemplos de respuestas.",
+          },
+        ],
+      },
+      fr: {
+        title: "Questions fréquentes sur la Gestion des avis avec l'IA",
+        description:
+          "Réponses aux questions courantes sur la Gestion des avis avec l'IA : accès à la fiche Google, validation des réponses, avis négatifs, règles de Google et rapports mensuels.",
+        blocks: [
+          {
+            type: "p",
+            text: "Les questions qu'on nous pose le plus souvent sur le service. Pour plus de détails, [écrivez-nous](/fr/contact).",
+          },
+          {
+            type: "h2",
+            id: "questions",
+            text: "Questions et réponses",
+          },
+          {
+            type: "faq",
+            items: [
+              {
+                q: "Avez-vous besoin du mot de passe de mon compte Google ?",
+                a: "Non. Il suffit d'inviter Steevanz comme gestionnaire de votre fiche d'établissement Google. Vous pouvez retirer cet accès à tout moment.",
+              },
+              {
+                q: "Des réponses sont-elles publiées sans que je les voie ?",
+                a: "Seulement si vous choisissez ce mode pour les avis 4 et 5 étoiles. Les avis de 1 à 3 étoiles vous sont toujours envoyés pour validation.",
+              },
+              {
+                q: "Les réponses auront-elles l'air écrites par une machine ?",
+                a: "Elles ne devraient pas. Nous convenons avec vous d'un guide de style, utilisons vos propres exemples et évitons les réponses génériques répétées. Chaque réponse fait référence à ce que le client a réellement écrit.",
+              },
+              {
+                q: "Pouvez-vous supprimer les avis négatifs ?",
+                a: "Non. Seul Google peut supprimer des avis, et seulement lorsqu'ils enfreignent ses règles. Nous vous aidons à signaler ces avis, mais la suppression n'est pas garantie.",
+              },
+              {
+                q: "Pouvez-vous m'aider à obtenir plus d'avis ?",
+                a: "Le service se concentre sur les réponses. Pour recueillir plus d'avis de façon légitime, nous recommandons nos plaques pour avis Google, qui permettent de solliciter facilement chaque client.",
+              },
+              {
+                q: "Puis-je offrir une remise en échange d'un avis ?",
+                a: "Non. Les règles de Google interdisent les contreparties en échange d'avis. Il est également interdit de ne solliciter que les clients satisfaits.",
+              },
+              {
+                q: "Répondez-vous aux touristes en anglais ?",
+                a: "Oui. Par défaut, nous répondons dans la langue de l'avis, parmi les langues convenues avec vous.",
+              },
+              {
+                q: "Le service fonctionne-t-il avec d'autres plateformes que Google ?",
+                a: "Le service est conçu pour la fiche d'établissement Google. Si vous utilisez d'autres plateformes, parlez-nous-en et nous étudierons votre cas.",
+              },
+              {
+                q: "Que contient le rapport mensuel ?",
+                a: "L'évolution de votre note moyenne, le nombre de nouveaux avis, le taux de réponse et les sujets les plus cités, avec des suggestions d'amélioration.",
+              },
+              {
+                q: "Puis-je résilier ?",
+                a: "Oui. Prévenez-nous et retirez l'accès gestionnaire de Steevanz. Les conditions figurent dans la proposition que vous recevez avant de commencer.",
+              },
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Consultez la [page du produit](/fr/products/ai-review-management) pour les prix ou [réservez une démonstration](/fr/book-a-demo) pour voir des exemples de réponses.",
+          },
+        ],
+      },
+      de: {
+        title: "Häufige Fragen zum KI-Bewertungsmanagement",
+        description:
+          "Antworten auf häufige Fragen zum KI-Bewertungsmanagement: Zugriff auf das Google-Profil, Freigabe von Antworten, negative Bewertungen, Googles Richtlinien und Monatsberichte.",
+        blocks: [
+          {
+            type: "p",
+            text: "Die Fragen, die uns am häufigsten zum Service gestellt werden. Wenn Sie mehr wissen möchten, [schreiben Sie uns](/de/contact).",
+          },
+          {
+            type: "h2",
+            id: "questions",
+            text: "Fragen und Antworten",
+          },
+          {
+            type: "faq",
+            items: [
+              {
+                q: "Brauchen Sie das Passwort meines Google-Kontos?",
+                a: "Nein. Sie laden Steevanz einfach als Verwalter Ihres Google-Unternehmensprofils ein. Diesen Zugriff können Sie jederzeit entfernen.",
+              },
+              {
+                q: "Werden Antworten veröffentlicht, ohne dass ich sie sehe?",
+                a: "Nur wenn Sie diesen Modus für Bewertungen mit 4 und 5 Sternen wählen. Bewertungen mit 1 bis 3 Sternen werden Ihnen immer zur Freigabe geschickt.",
+              },
+              {
+                q: "Klingen die Antworten nach Maschine?",
+                a: "Das sollten sie nicht. Wir vereinbaren mit Ihnen einen Stilleitfaden, nutzen Ihre eigenen Beispiele und vermeiden wiederholte Standardantworten. Jede Antwort geht auf das ein, was der Kunde tatsächlich geschrieben hat.",
+              },
+              {
+                q: "Können Sie negative Bewertungen löschen?",
+                a: "Nein. Nur Google kann Bewertungen entfernen, und nur wenn sie gegen seine Richtlinien verstoßen. Wir helfen Ihnen, solche Bewertungen zu melden, eine Entfernung ist aber nicht garantiert.",
+              },
+              {
+                q: "Können Sie mir helfen, mehr Bewertungen zu bekommen?",
+                a: "Der Service konzentriert sich auf die Antworten. Um auf legitime Weise mehr Bewertungen zu sammeln, empfehlen wir unsere Schilder für Google-Bewertungen, mit denen Sie jeden Kunden ganz einfach fragen können.",
+              },
+              {
+                q: "Darf ich einen Rabatt für eine Bewertung anbieten?",
+                a: "Nein. Googles Richtlinien verbieten Anreize im Gegenzug für Bewertungen. Ebenso ist es nicht erlaubt, nur zufriedene Kunden um Bewertungen zu bitten.",
+              },
+              {
+                q: "Antworten Sie Touristen auf Englisch?",
+                a: "Ja. Standardmäßig antworten wir in der Sprache, in der die Bewertung geschrieben wurde, innerhalb der mit Ihnen vereinbarten Sprachen.",
+              },
+              {
+                q: "Funktioniert es auch mit anderen Plattformen als Google?",
+                a: "Der Service ist für das Google-Unternehmensprofil gedacht. Wenn Sie andere Plattformen nutzen, sprechen Sie uns an, und wir sehen uns Ihren Fall an.",
+              },
+              {
+                q: "Was steht im Monatsbericht?",
+                a: "Die Entwicklung Ihrer Durchschnittsbewertung, die Zahl neuer Bewertungen, die Antwortquote und die meistgenannten Themen, mit Vorschlägen, wo Sie sich verbessern können.",
+              },
+              {
+                q: "Kann ich kündigen?",
+                a: "Ja. Geben Sie uns Bescheid und entfernen Sie den Verwalterzugriff von Steevanz. Die Bedingungen stehen im Angebot, das Sie vor dem Start erhalten.",
+              },
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Preise finden Sie auf der [Produktseite](/de/products/ai-review-management), oder [buchen Sie eine Vorführung](/de/book-a-demo), um Beispielantworten zu sehen.",
+          },
+        ],
+      },
+      it: {
+        title: "Domande frequenti sulla Gestione delle recensioni con IA",
+        description:
+          "Risposte ai dubbi comuni sulla Gestione delle recensioni con IA: accesso al profilo Google, approvazione delle risposte, recensioni negative, norme di Google e report mensili.",
+        blocks: [
+          {
+            type: "p",
+            text: "Le domande che ci fanno più spesso sul servizio. Se vi servono più dettagli, [scriveteci](/it/contact).",
+          },
+          {
+            type: "h2",
+            id: "questions",
+            text: "Domande e risposte",
+          },
+          {
+            type: "faq",
+            items: [
+              {
+                q: "Vi serve la password del mio account Google?",
+                a: "No. Basta invitare Steevanz come gestore del vostro Profilo dell'attività su Google. Potete revocare questo accesso in qualsiasi momento.",
+              },
+              {
+                q: "Vengono pubblicate risposte senza che io le veda?",
+                a: "Solo se scegliete questa modalità per le recensioni da 4 e 5 stelle. Le recensioni da 1 a 3 stelle vi vengono sempre inviate per l'approvazione.",
+              },
+              {
+                q: "Le risposte sembreranno scritte da una macchina?",
+                a: "Non dovrebbero. Concordiamo con voi una guida di stile, usiamo i vostri esempi ed evitiamo di ripetere risposte generiche. Ogni risposta fa riferimento a ciò che il cliente ha scritto davvero.",
+              },
+              {
+                q: "Potete cancellare le recensioni negative?",
+                a: "No. Solo Google può rimuovere le recensioni, e solo quando violano le sue norme. Vi aiutiamo a segnalarle, ma la rimozione non è garantita.",
+              },
+              {
+                q: "Potete aiutarmi a ottenere più recensioni?",
+                a: "Il servizio si concentra sulle risposte. Per raccogliere più recensioni in modo legittimo, consigliamo le nostre targhe per recensioni Google, che rendono facile chiederla a ogni cliente.",
+              },
+              {
+                q: "Posso offrire uno sconto in cambio di una recensione?",
+                a: "No. Le norme di Google vietano gli incentivi in cambio di recensioni. Non è consentito nemmeno chiedere recensioni solo ai clienti soddisfatti.",
+              },
+              {
+                q: "Rispondete ai turisti in inglese?",
+                a: "Sì. Di default rispondiamo nella lingua in cui è scritta la recensione, tra le lingue concordate con voi.",
+              },
+              {
+                q: "Funziona con piattaforme diverse da Google?",
+                a: "Il servizio è pensato per il Profilo dell'attività su Google. Se usate altre piattaforme, parlatecene e valutiamo il vostro caso.",
+              },
+              {
+                q: "Cosa contiene il report mensile?",
+                a: "L'andamento della valutazione media, il numero di nuove recensioni, la percentuale di risposta e gli argomenti più citati, con suggerimenti su dove migliorare.",
+              },
+              {
+                q: "Posso disdire?",
+                a: "Sì. Avvisateci e revocate l'accesso come gestore di Steevanz. Le condizioni sono indicate nella proposta che ricevete prima di iniziare.",
+              },
+            ],
+          },
+          {
+            type: "callout",
+            tone: "tip",
+            text: "Consultate la [pagina del prodotto](/it/products/ai-review-management) per i prezzi oppure [prenotate una demo](/it/book-a-demo) per vedere esempi di risposte.",
           },
         ],
       },

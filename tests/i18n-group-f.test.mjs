@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { docs as aiChatbot } from "../src/content/docs/ai-chatbot.ts";
+import { docs as aiReviews } from "../src/content/docs/ai-reviews.ts";
 import { docs as aiVoice } from "../src/content/docs/ai-voice.ts";
 
 // Help docs translated into es/fr/de/it (group F): AI Voice Receptionist, AI Chatbot, AI Reviews.
-const translated = { "ai-voice": aiVoice, "ai-chatbot": aiChatbot };
+const translated = { "ai-voice": aiVoice, "ai-chatbot": aiChatbot, "ai-reviews": aiReviews };
 const extra = ["es", "fr", "de", "it"];
 
 function shape(value) {
