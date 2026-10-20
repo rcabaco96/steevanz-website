@@ -12,6 +12,12 @@ interface OgInput {
   badge?: string;
 }
 
+/** The «S.» mark (the favicon's source), inlined so the image needs no request. */
+async function loadMark(): Promise<string> {
+  const png = await readFile(join(process.cwd(), "src/app/icon.png"));
+  return `data:image/png;base64,${png.toString("base64")}`;
+}
+
 async function loadFonts() {
   const directory = join(process.cwd(), "src/assets/og");
   const [display, sans] = await Promise.all([
@@ -25,7 +31,7 @@ async function loadFonts() {
 }
 
 export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput): Promise<ImageResponse> {
-  const fonts = await loadFonts();
+  const [fonts, mark] = await Promise.all([loadFonts(), loadMark()]);
   return new ImageResponse(
     (
       <div
@@ -43,24 +49,10 @@ export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 16,
-                background: "#7a2d60",
-                border: "2px solid rgba(247,241,232,0.25)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "Fraunces",
-                fontSize: 34,
-              }}
-            >
-              S
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element -- next/og renders plain img */}
+            <img src={mark} alt="" width={64} height={64} style={{ borderRadius: 16, border: "2px solid rgba(247,241,232,0.18)" }} />
             <div style={{ display: "flex", fontFamily: "Fraunces", fontSize: 36 }}>
-              Steevanz<span style={{ color: "#e9c685" }}>.</span>
+              Steevanz<span style={{ color: "#cfa563" }}>.</span>
             </div>
           </div>
           {badge ? (
@@ -69,7 +61,7 @@ export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput
                 display: "flex",
                 padding: "12px 24px",
                 borderRadius: 999,
-                background: "#e9c685",
+                background: "#cfa563",
                 color: "#1d1220",
                 fontSize: 28,
               }}
@@ -79,7 +71,7 @@ export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput
           ) : null}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 1000 }}>
-          <div style={{ display: "flex", fontSize: 24, letterSpacing: 4, textTransform: "uppercase", color: "#e9c685" }}>
+          <div style={{ display: "flex", fontSize: 24, letterSpacing: 4, textTransform: "uppercase", color: "#cfa563" }}>
             {eyebrow}
           </div>
           <div style={{ display: "flex", fontFamily: "Fraunces", fontSize: title.length > 48 ? 64 : 76, lineHeight: 1.05 }}>
@@ -90,7 +82,7 @@ export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput
           ) : null}
         </div>
         <div style={{ display: "flex", gap: 14, alignItems: "center", fontSize: 24, color: "rgba(247,241,232,0.7)" }}>
-          <div style={{ display: "flex", width: 12, height: 12, borderRadius: 999, background: "#e9c685" }} />
+          <div style={{ display: "flex", width: 12, height: 12, borderRadius: 999, background: "#cfa563" }} />
           steevanz.com
         </div>
       </div>

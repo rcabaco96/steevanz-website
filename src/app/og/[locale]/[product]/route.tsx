@@ -20,6 +20,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ loc
     eyebrow: copy.name,
     title: copy.heroTitle,
     subtitle: copy.tagline,
-    badge: priceLabel(getProduct(productId), locale),
+    // Prices are shown without VAT and say so (owner, 2026-10-18).
+    badge: `${priceLabel(getProduct(productId), locale)} ${locale === "en" ? "+ VAT" : "+ IVA"}`,
   });
 }

@@ -10,14 +10,14 @@ export function generateStaticParams() {
 
 const copy = {
   pt: {
-    eyebrow: "Tecnologia Steevanz · Inteligência artificial",
-    title: "Um toque. Mais uma review no Google.",
-    subtitle: "Placas com tecnologia Steevanz e ferramentas de IA para restaurantes, salões, clínicas e comércio local.",
+    eyebrow: "Tecnologia para negócios locais",
+    title: "Os seus clientes encontram, escolhem e voltam.",
+    subtitle: "Tecnologia do futuro. Com os bons modos de antigamente.",
   },
   en: {
-    eyebrow: "Steevanz technology · Artificial intelligence",
-    title: "One tap. One more Google review.",
-    subtitle: "Plates with Steevanz technology and AI tools for restaurants, salons, clinics and local shops.",
+    eyebrow: "Technology for local businesses",
+    title: "Your customers find you, choose you and come back.",
+    subtitle: "Technology of the future. With old-fashioned good manners.",
   },
 };
 
