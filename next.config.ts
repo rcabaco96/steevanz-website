@@ -52,11 +52,15 @@ const nextConfig: NextConfig = {
         [`/admin/clientes/:client/${from}`, `/admin/clientes/:client/${to}`],
       );
     }
-    return renamed.map(([source, destination]) => ({
-      source: `${source}/:rest*`,
-      destination: `${destination}/:rest*`,
-      permanent: true,
-    }));
+    return [
+      ...renamed.map(([source, destination]) => ({
+        source: `${source}/:rest*`,
+        destination: `${destination}/:rest*`,
+        permanent: true,
+      })),
+      // The new home was previewed at /novo until 2026-10-20; it is now «/».
+      { source: "/novo", destination: "/", permanent: true },
+    ];
   },
   async headers() {
     return [

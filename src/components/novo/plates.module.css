@@ -1,0 +1,337 @@
+/* The Google review plates band. A soft-gold field that keeps its colours in both themes; only
+   transform and opacity move, and nothing moves with reduced motion. */
+
+.band {
+  --ink: #1d1220;
+  --plum: #7a2d60;
+  --gold: #cfa563;
+  position: relative;
+  overflow: hidden;
+  background: #f6ead3;
+  color: var(--ink);
+  padding-block: 3.75rem 4rem;
+}
+
+@media (min-width: 1024px) {
+  .band {
+    padding-block: 6.5rem;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 2.75rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--plum);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.title {
+  margin-top: 0.85rem;
+  color: var(--ink);
+  max-width: 14ch;
+}
+
+.accent {
+  font-family: var(--font-fraunces-italic), var(--font-fraunces), ui-serif, Georgia, serif;
+  font-style: italic;
+  color: var(--plum);
+}
+
+.body {
+  margin-top: 1rem;
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: #47343f;
+}
+
+@media (min-width: 1024px) {
+  .body {
+    font-size: 1.1875rem;
+  }
+}
+
+.points {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.points li {
+  position: relative;
+  padding-left: 1.6rem;
+  line-height: 1.45;
+}
+
+.points li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.32em;
+  width: 0.85rem;
+  height: 0.5rem;
+  border-left: 2px solid var(--plum);
+  border-bottom: 2px solid var(--plum);
+  transform: rotate(-45deg);
+}
+
+.buy {
+  margin-top: 1.75rem;
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+@media (min-width: 480px) {
+  .buy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+  }
+}
+
+.price {
+  font-size: 1rem;
+  color: #47343f;
+  line-height: 1.3;
+}
+
+.price strong {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.priceFrom {
+  font-size: 0.9375rem;
+}
+
+.vat {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pack {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.875rem;
+  color: #6b5560;
+}
+
+/* ---------- The stage: plate in front, the customer's phone behind it ---------- */
+
+.stage {
+  position: relative;
+  min-height: 21rem;
+  display: grid;
+  place-items: center;
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    min-height: 30rem;
+  }
+}
+
+.disc {
+  position: absolute;
+  width: min(80vw, 26rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.55;
+  transform: translate3d(6%, 2%, 0);
+}
+
+.phone {
+  position: relative;
+  z-index: 1;
+  width: 11.5rem;
+  aspect-ratio: 9 / 18.5;
+  border-radius: 2rem;
+  padding: 0.45rem;
+  background: #17101a;
+  box-shadow:
+    0 2px 0 1px #3a2c3f inset,
+    0 40px 60px -30px rgb(60 30 50 / 0.55);
+  transform: translate3d(3rem, -0.75rem, 0) rotate(5deg);
+}
+
+@media (min-width: 1024px) {
+  .phone {
+    width: 15rem;
+    transform: translate3d(5rem, -1rem, 0) rotate(5deg);
+  }
+}
+
+.phone::after {
+  content: "";
+  position: absolute;
+  top: 0.95rem;
+  left: 50%;
+  width: 30%;
+  height: 0.9rem;
+  border-radius: 999px;
+  background: #0b070c;
+  transform: translateX(-50%);
+}
+
+.screen {
+  height: 100%;
+  border-radius: 1.6rem;
+  background: #fff;
+  color: #1d1220;
+  padding: 2.4rem 0.85rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+  .screen {
+    padding: 3rem 1.1rem 1.1rem;
+    gap: 0.8rem;
+    font-size: 0.875rem;
+  }
+}
+
+.biz {
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+.formTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.35em;
+  line-height: 1.15;
+}
+
+.stars {
+  display: flex;
+  gap: 0.2rem;
+  color: #8a7d84;
+}
+
+.stars svg {
+  width: 1.55em;
+  height: 1.55em;
+}
+
+.box {
+  flex: 1;
+  max-height: 7rem;
+  border: 1px solid #d9d0d5;
+  border-radius: 0.6rem;
+  padding: 0.55rem;
+  color: #8a7d84;
+  line-height: 1.35;
+}
+
+.publish {
+  align-self: flex-end;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: #1a73e8;
+  color: #fff;
+  font-weight: 600;
+}
+
+.plate {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 0;
+  width: 9rem;
+  transform: translate3d(-104%, 0, 0) rotate(-4deg);
+  filter: drop-shadow(0 24px 22px rgb(60 30 50 / 0.3));
+}
+
+@media (min-width: 1024px) {
+  .plate {
+    width: 12.5rem;
+    bottom: 1.5rem;
+    transform: translate3d(-112%, 0, 0) rotate(-4deg);
+  }
+}
+
+.plateSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The tap: a gold ripple on the plate's tap mark. */
+.tap {
+  position: absolute;
+  left: 50%;
+  top: 16.5%;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -1.375rem 0 0 -1.375rem;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tap {
+    animation: plate-ring 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  .phone {
+    animation: phone-bob 6s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes plate-ring {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+@keyframes phone-bob {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -0.6rem;
+  }
+}

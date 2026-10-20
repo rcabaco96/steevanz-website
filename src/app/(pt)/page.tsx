@@ -1,7 +1,26 @@
-import { HomePage, homeMetadata } from "@/components/pages/HomePage";
+import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
+import { NovoHome } from "@/components/novo/NovoHome";
+import { homeCopy } from "@/content/home";
+import { novoCopy } from "@/content/novo-home";
+import { faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = homeMetadata("pt");
+// The home page (2026-10-20: the /novo design became «/»). Indexable, canonical «/», with the
+// alternate to the English home. The English home is still components/pages/HomePage.
+export const metadata: Metadata = pageMetadata({
+  locale: "pt",
+  route: { key: "home" },
+  title: novoCopy.metaTitle,
+  description: novoCopy.metaDescription,
+  absoluteTitle: true,
+});
 
 export default function Page() {
-  return <HomePage locale="pt" />;
+  return (
+    <>
+      <JsonLd data={[organizationJsonLd("pt"), websiteJsonLd("pt"), faqJsonLd(homeCopy.pt.faq.items)]} />
+      <NovoHome />
+    </>
+  );
 }

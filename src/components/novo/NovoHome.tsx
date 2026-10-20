@@ -1,36 +1,23 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
 import { dolci } from "@/content/dolci-salati";
-import { clips, dayCopy, goals, heroClips, monthlyExtra, novoCopy } from "@/content/novo-home";
+import { clips, goals, monthlyExtra, novoCopy } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
 import { href } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
-import { BrandVideo, type BrandFilm } from "./BrandVideo";
 import { ClientStrip } from "./ClientStrip";
-import { DayJourney } from "./DayJourney";
 import { Goals, type GoalView } from "./Goals";
 import { MenuShowcase } from "./MenuShowcase";
 import { MobileBar } from "./MobileBar";
 import { HowWeWork, PricesFaq, SectorSolutions } from "./NovoSections";
 import { PhoneVideo } from "./PhoneVideo";
+import { PlatesBanner } from "./PlatesBanner";
 import styles from "./novo.module.css";
 
 const locale = "pt";
-
-/** The brand film, once its four files are in public/home/brand/ (until then, the phone hero). */
-function brandFilm(): BrandFilm | null {
-  const film: BrandFilm = {
-    mobile: { mp4: "/home/brand/hero-mobile.mp4", poster: "/home/brand/hero-mobile.jpg" },
-    desktop: { mp4: "/home/brand/hero-desktop.mp4", poster: "/home/brand/hero-desktop.jpg" },
-  };
-  const files = [film.mobile.mp4, film.mobile.poster, film.desktop.mp4, film.desktop.poster];
-  return files.every((file) => existsSync(path.join(process.cwd(), "public", file))) ? film : null;
-}
 
 function billingSuffix(product: Product): string {
   if (product.priceBilling === "monthly") return "/mês";
@@ -45,10 +32,9 @@ export function NovoHome() {
   const bookHref = href(locale, { key: "book" });
   const menuProductHref = href(locale, { key: "product", productId: "digital-menu" });
 
-  const film = brandFilm();
   const heroCtas = (
-    <div className={styles.ctaRow}>
-      <Link href={menuLive} className={`${styles.btn} ${styles.btnPrimary}`}>
+    <div className={`${styles.ctaRow} ${styles.heroCtas}`}>
+      <Link href={bookHref} className={`${styles.btn} ${styles.btnPrimary}`}>
         {copy.hero.primary}
         <ArrowRight size={18} />
       </Link>
@@ -81,55 +67,36 @@ export function NovoHome() {
 
   return (
     <div className={styles.root} data-novo>
-      {/* 1. Hero: the brand film when it exists, the phone with real recordings until then */}
-      {film ? (
-        <section id="novo-hero" aria-labelledby="novo-hero-title" className={`${styles.hero} ${styles.heroBrand}`}>
-          <div className={styles.wrap}>
-            <div className={styles.brandText}>
-              <h1 id="novo-hero-title" className={styles.heroTitle}>
-                {copy.hero.titleStart} <span className={styles.heroAccent}>{copy.hero.titleAccent}</span>
-              </h1>
-              <div>
-                <p className={styles.heroSub}>{copy.hero.subtitle}</p>
-                {heroCtas}
-              </div>
-            </div>
-            <div className={styles.filmStage}>
-              <BrandVideo film={film} label="Filme da Steevanz: os produtos da casa, a terminar no logótipo." />
-            </div>
-          </div>
-        </section>
-      ) : (
+      {/* 1. Hero: Steevanz as a brand (text first, no video, no phone) */}
       <section id="novo-hero" aria-labelledby="novo-hero-title" className={styles.hero}>
         <div className={`${styles.wrap} ${styles.heroGrid}`}>
           <div>
+            <p className={styles.heroEyebrow}>{copy.hero.eyebrow}</p>
             <h1 id="novo-hero-title" className={styles.heroTitle}>
               {copy.hero.titleStart} <span className={styles.heroAccent}>{copy.hero.titleAccent}</span>
             </h1>
             <p className={styles.heroSub}>{copy.hero.subtitle}</p>
             {heroCtas}
-            <p className={styles.heroSectors}>{copy.hero.sectors}</p>
           </div>
-          <div className={styles.stage}>
-            <div className={styles.dot} aria-hidden="true" />
-            <div className={styles.phone3d}>
-              <div className={styles.phoneIntro}>
-                <div className={`${styles.phone} ${styles.phoneHero}`}>
-                  <PhoneVideo clips={heroClips} priority minVisible={0.2} sizes="(min-width: 1024px) 312px, 248px" />
-                  <span className={`${styles.tap} ${styles.heroTap}`} aria-hidden="true" />
-                </div>
+          <div className={styles.heroBrand}>
+            <div className={styles.markWrap} aria-hidden="true">
+              <div className={styles.mark}>
+                <span className={styles.markS}>S</span>
+                <span className={styles.markDot} />
               </div>
             </div>
+            <p className={styles.brandLine}>
+              <span>{copy.brandLine[0]}</span> <span>{copy.brandLine[1]}</span>
+            </p>
           </div>
         </div>
       </section>
-      )}
 
       {/* 2. Confiam em nós */}
       <ClientStrip />
 
       {/* 3. O que quer melhorar? */}
-      <section aria-labelledby="novo-goals" className={styles.section}>
+      <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
         <div className={styles.wrap}>
           <h2 id="novo-goals" className={styles.h2} data-reveal>
             {copy.goals.title}
@@ -141,18 +108,8 @@ export function NovoHome() {
         </div>
       </section>
 
-      {/* 4. Um dia no seu negócio */}
-      <section aria-labelledby="novo-day" className={styles.section} style={{ paddingTop: 0 }}>
-        <div className={styles.wrap}>
-          <h2 id="novo-day" className={styles.h2} data-reveal>
-            {dayCopy.title}
-          </h2>
-          <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
-            {dayCopy.lead}
-          </p>
-          <DayJourney />
-        </div>
-      </section>
+      {/* 4. Placas de reviews do Google: the flagship, after the goals */}
+      <PlatesBanner />
 
       {/* 5. Menu digital showcase */}
       <section aria-labelledby="novo-menu" className={styles.showcase}>
@@ -252,14 +209,14 @@ export function NovoHome() {
               {copy.finalCta.secondary}
             </a>
           </div>
-          <p className={styles.finalLine}>{copy.finalCta.line}</p>
+          <p className={styles.finalLine}>{copy.brandLine.join(" ")}</p>
           <p className={styles.bigMark}>
             Steevanz<span>.</span>
           </p>
         </div>
       </section>
 
-      <MobileBar heroId="novo-hero" menuHref={menuLive} whatsappHref={whatsapp} />
+      <MobileBar heroId="novo-hero" bookHref={bookHref} whatsappHref={whatsapp} />
     </div>
   );
 }

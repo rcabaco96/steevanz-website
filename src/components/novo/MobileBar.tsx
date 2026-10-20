@@ -9,7 +9,7 @@ import styles from "./novo.module.css";
 // On phones, once the hero has scrolled away, a bottom bar with the two actions. It replaces the
 // floating WhatsApp button on this page, so nothing covers the page's own buttons.
 
-export function MobileBar({ heroId, menuHref, whatsappHref }: { heroId: string; menuHref: string; whatsappHref: string }) {
+export function MobileBar({ heroId, bookHref, whatsappHref }: { heroId: string; bookHref: string; whatsappHref: string }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -33,8 +33,8 @@ export function MobileBar({ heroId, menuHref, whatsappHref }: { heroId: string; 
 
   return (
     <div className={styles.bar} data-show={show ? "" : undefined} aria-hidden={!show} inert={!show}>
-      <Link href={menuHref} className={`${styles.btn} ${styles.btnPrimary}`}>
-        {novoCopy.bar.menu}
+      <Link href={bookHref} className={`${styles.btn} ${styles.btnPrimary}`}>
+        {novoCopy.bar.book}
       </Link>
       <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className={`${styles.btn} ${styles.whatsapp}`}>
         <WhatsAppIcon size={18} />

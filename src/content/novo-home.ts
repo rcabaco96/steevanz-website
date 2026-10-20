@@ -1,4 +1,4 @@
-// Copy for the new home page preview (/novo, pt only for now). Facts only: every price comes from
+// Copy for the home page («/», pt; the English home is still components/pages/HomePage). Facts only: every price comes from
 // products.ts and every client named here is one the owner allowed us to show. No invented numbers,
 // reviews or testimonials.
 
@@ -26,20 +26,18 @@ export const clips = {
   dolciLanding: clip("dolci-landing", "A landing page da Dolci e Salati, feita pela Steevanz."),
 };
 
-export const heroClips: PhoneClip[] = [clips.menuOpening, clips.menuFull, clips.dolciLanding, clips.menuOrder];
-
 export const novoCopy = {
   metaTitle: "Steevanz | Os seus clientes encontram, escolhem e voltam",
   metaDescription:
     "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas.",
   hero: {
+    eyebrow: "Tecnologia para negócios locais",
     titleStart: "Os seus clientes",
     titleAccent: "encontram, escolhem e voltam.",
     subtitle:
-      "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente, feitos e configurados por nós. Com os bons modos de antigamente.",
-    primary: "Ver um menu a funcionar",
+      "Websites, reservas, Menu digital, reviews no Google, cartão de cliente e assistentes com IA. Nós fazemos, configuramos e ficamos por perto.",
+    primary: "Agendar demonstração",
     secondary: "Falar connosco",
-    sectors: "Restaurantes e cafés · Cabeleireiros e estética · Clínicas · Alojamento · Lojas",
   },
   clients: {
     title: "Confiam em nós",
@@ -78,10 +76,11 @@ export const novoCopy = {
     body: "Uma conversa sem compromisso: mostramos tudo a funcionar e dizemos com franqueza o que faz sentido para o seu negócio.",
     primary: "Agendar demonstração",
     secondary: "Falar no WhatsApp",
-    line: "Tecnologia do futuro. Com os bons modos de antigamente.",
   },
+  /** The two-line brand line (owner, 2026-10-18): always both sentences, in this order. */
+  brandLine: ["Tecnologia do futuro.", "Com os bons modos de antigamente."] as const,
   bar: {
-    menu: "Ver um menu",
+    book: "Agendar demo",
     talk: "Falar connosco",
   },
 };
@@ -150,114 +149,44 @@ export const trustedClients: TrustedClient[] = [
   { id: "dolci-salati", name: "Dolci e Salati" },
 ];
 
-/* ---------- «Um dia no seu negócio» ---------- */
-
-export type DaySectorId = "cafe" | "salon" | "clinic" | "lodging";
-export type MomentId = "found" | "sees" | "books" | "review" | "returns";
-
-export interface DaySector {
-  id: DaySectorId;
-  tab: string;
-  business: string;
-  search: string;
-  /** Real photo used on the website screen (from public/media/photos, Pexels licence). */
-  photo: string;
-  /** The café shows the real Menu digital; the others their website. */
-  sees: "menu" | "site";
-  booking: { title: string; detail: string; confirm: string };
-  returns: "stamps" | "reminder" | "guide";
-  moments: Record<MomentId, { title: string; body: string }>;
-}
-
-export const dayCopy = {
-  title: "Um dia no seu negócio",
-  lead: "Do Google à próxima visita: o que o cliente vê no telemóvel, passo a passo.",
-  switchLabel: "Escolha o tipo de negócio",
-};
-
-export const daySectors: DaySector[] = [
-  {
-    id: "cafe",
-    tab: "Café",
-    business: "O seu café",
-    search: "café perto de mim",
-    photo: "/media/photos/cafe-counter.jpg",
-    sees: "menu",
-    booking: { title: "Mesa 4", detail: "2 galões · 2 tostas mistas", confirm: "Pedido #12 enviado" },
-    returns: "stamps",
-    moments: {
-      found: { title: "Encontra-o no Google", body: "Procura um café perto e o seu aparece, com website, horário e caminho." },
-      sees: { title: "Vê os pratos em vídeo", body: "Senta-se, um toque na placa e o Menu digital abre, com preços." },
-      books: { title: "Pede à mesa", body: "Escolhe no telemóvel e a equipa confirma o pedido no seu ecrã." },
-      review: { title: "Deixa a review com um toque", body: "À saída, a placa abre logo o formulário de review do seu perfil no Google." },
-      returns: { title: "Ganha um carimbo", body: "O cartão de cliente fica no telemóvel. Ninguém o esquece em casa." },
-    },
-  },
-  {
-    id: "salon",
-    tab: "Cabeleireiro",
-    business: "O seu salão",
-    search: "cabeleireiro perto de mim",
-    photo: "/media/photos/salon-chair.jpg",
-    sees: "site",
-    booking: { title: "Corte e brushing", detail: "Sáb, 16 · com a Ana", confirm: "Marcação confirmada · 10:30" },
-    returns: "stamps",
-    moments: {
-      found: { title: "Encontra-o no Google", body: "Procura um cabeleireiro perto e o seu salão aparece, com website e horário." },
-      sees: { title: "Conhece o salão", body: "O website mostra os serviços, os preços e o espaço, no telemóvel." },
-      books: { title: "Marca sozinho", body: "Escolhe o serviço, a pessoa e a hora. Recebe lembrete antes da marcação." },
-      review: { title: "Deixa a review com um toque", body: "Junto ao espelho ou à caixa, a placa abre o formulário de review no Google." },
-      returns: { title: "Ganha um carimbo", body: "Cada visita soma no cartão de cliente, sem papel nem app." },
-    },
-  },
-  {
-    id: "clinic",
-    tab: "Clínica",
-    business: "A sua clínica",
-    search: "clínica dentária perto de mim",
-    photo: "/media/photos/clinic.jpg",
-    sees: "site",
-    booking: { title: "Consulta de rotina", detail: "Qui, 14 · Dr.ª Marta", confirm: "Consulta marcada · 09:30" },
-    returns: "reminder",
-    moments: {
-      found: { title: "Encontra-a no Google", body: "Procura uma clínica perto e a sua aparece, com website, horário e contacto." },
-      sees: { title: "Conhece a clínica", body: "O website mostra as especialidades, a equipa e como chegar." },
-      books: { title: "Marca a consulta", body: "Por tipo de consulta e profissional, a qualquer hora, sem esperar ao telefone." },
-      review: { title: "Deixa a review com um toque", body: "Na receção, a placa abre o formulário de review do perfil da clínica no Google." },
-      returns: { title: "Volta na data certa", body: "Um lembrete chega antes da próxima consulta, para não haver faltas." },
-    },
-  },
-  {
-    id: "lodging",
-    tab: "Alojamento",
-    business: "A sua casa",
-    search: "alojamento local Algarve",
-    photo: "/media/photos/holiday-rental.jpg",
-    sees: "site",
-    booking: { title: "Reserva direta", detail: "12 a 15 de agosto · 2 hóspedes", confirm: "Reserva confirmada" },
-    returns: "guide",
-    moments: {
-      found: { title: "Encontra-a online", body: "No Google ou no Instagram, chega ao website da casa." },
-      sees: { title: "Vê a casa", body: "Fotos, comodidades e datas livres, num website com reserva direta." },
-      books: { title: "Reserva sem comissões", body: "Escolhe as datas e reserva diretamente consigo." },
-      review: { title: "Deixa a review com um toque", body: "Em hostels e guest houses com perfil no Google, a placa abre o formulário de review." },
-      returns: { title: "Tem o guia da casa", body: "Wi-Fi, check-out e recomendações em quatro línguas, num toque na placa." },
-    },
-  },
-];
-
-export const momentOrder: MomentId[] = ["found", "sees", "books", "review", "returns"];
-
 /* ---------- Como trabalhamos ---------- */
 
 export const howCopy = {
   title: "Como trabalhamos",
+  // Owner, 2026-10-20: steps 1 to 3 are his words; step 4 is our proposal (one line to change).
   steps: [
-    { title: "Uma conversa de 20 minutos", body: "Numa demonstração online ou por telefone percebemos o seu negócio e mostramos tudo a funcionar." },
-    { title: "Nós configuramos", body: "Tratamos da configuração, dos textos e das placas, e testamos em iPhone e Android." },
-    { title: "Começa a usar", body: "Recebe tudo pronto a usar, com uma explicação simples para a equipa." },
-    { title: "Acompanhamos", body: "Suporte por WhatsApp e e-mail, em português, por pessoas." },
+    { title: "Queixe-se", body: "Conte-nos o que o incomoda no seu negócio: mesas vazias, poucas reviews, clientes que não voltam." },
+    { title: "Oiça soluções", body: "Mostramos-lhe o que faz sentido, já a funcionar, com os preços à vista." },
+    { title: "Escolha a sua", body: "Só o que precisa. Sem pacotes forçados." },
+    { title: "Nós tratamos do resto", body: "Montamos, configuramos e ensinamos. E continuamos por perto." },
   ],
+};
+
+/* ---------- Placas de reviews do Google (banner) ---------- */
+
+/**
+ * The plates banner. The price is never written here: it is read from products.ts
+ * («google-review-plates»: priceFrom and the packs) and always shown without VAT, with «+ IVA».
+ * The phone shows only the review form («Deixe a sua avaliação»): never a rating, a count or a review.
+ */
+export const platesCopy = {
+  eyebrow: "Placas de reviews do Google",
+  titleStart: "Mais reviews no Google,",
+  titleAccent: "com um toque.",
+  body: "O cliente encosta o telemóvel à placa, ou lê o QR, e abre logo o formulário de review do seu negócio no Google. Sem instalar nada, sem procurar.",
+  points: ["No balcão, na mesa, na montra ou na parede", "Com o seu texto e, se quiser, o seu logótipo", "Configurada por nós, pronta a usar"],
+  from: "desde",
+  perPlate: "por placa",
+  vat: "+ IVA",
+  cta: "Conhecer as placas",
+  plate: { line1: "Gostou?", line2: "Toque para avaliar" },
+  screen: {
+    business: "O seu negócio",
+    title: "Deixe a sua avaliação",
+    placeholder: "Partilhe como foi a sua experiência…",
+    publish: "Publicar",
+  },
+  stageLabel: "A placa de reviews no balcão e, no telemóvel do cliente, o formulário «Deixe a sua avaliação» do Google.",
 };
 
 /* ---------- Setores, preços e perguntas ---------- */

@@ -93,7 +93,9 @@ export function HowWeWork() {
           <span className={styles.howLine} aria-hidden="true" />
           {howCopy.steps.map((step, index) => (
             <li key={step.title} className={styles.howStep} data-reveal style={{ ["--reveal-delay" as string]: `${index * 90}ms` }}>
-              <span className={styles.howDot} aria-hidden="true" />
+              <span className={styles.howDot} aria-hidden="true">
+                {index + 1}
+              </span>
               <h3 className={styles.howTitle}>{step.title}</h3>
               <p className={styles.howBody}>{step.body}</p>
             </li>
