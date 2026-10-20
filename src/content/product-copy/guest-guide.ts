@@ -277,13 +277,143 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
-  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
   es: {
     name: "Guía digital del alojamiento",
     shortName: "Guía digital",
     tagline: "La guía de la casa en cuatro idiomas, con un toque.",
     summary:
       "Una página para el móvil con todo lo que el huésped necesita saber: wifi, check-out, normas, electrodomésticos, basura, emergencias y sus recomendaciones. Se abre con un toque en una placa dentro del alojamiento y está en portugués, inglés y dos idiomas más.",
+    metaTitle: "Guía digital para alojamientos turísticos en 4 idiomas | Steevanz",
+    metaDescription:
+      "Una guía para alojamientos turísticos en portugués, inglés y dos idiomas más, que se abre con un toque o con un código QR. Incluye el libro de información que exige la ley portuguesa. Desde 69 € por alojamiento.",
+    heroTitle: "Menos preguntas, huéspedes más contentos",
+    heroSubtitle:
+      "Redactamos la guía de su casa, la traducimos a cuatro idiomas y le entregamos una placa que la abre con un toque. Los huéspedes encuentran el wifi, las normas de la casa y sus recomendaciones sin tener que escribirle.",
+    problem: {
+      title: "La carpeta de papel que nadie lee",
+      body:
+        "La carpeta del cajón se queda desactualizada, está en un solo idioma y acaba perdiéndose. Los huéspedes terminan preguntándolo todo por mensaje y usted responde lo mismo varias veces por semana.",
+      points: [
+        "La contraseña del wifi, preguntada en cada estancia",
+        "Normas de basura y de ruido que nadie encuentra",
+        "Un libro de información en cuatro idiomas difícil de mantener al día",
+      ],
+    },
+    solution: {
+      title: "Todo con un toque, en el idioma del huésped",
+      body:
+        "Una página sencilla para el móvil, organizada por temas, que se abre en el idioma del teléfono del huésped. Cuando algo cambia, actualizamos la guía y la placa sigue siendo la misma.",
+      points: [
+        "Portugués, inglés y dos idiomas más",
+        "Wifi con botón para copiar la contraseña",
+        "Versión para imprimir incluida",
+        "Placa con código QR para cualquier teléfono",
+      ],
+    },
+    steps: [
+      {
+        title: "Envíenos la información",
+        body: "Notas, fotos o la guía que ya tenga. Un audio de WhatsApp también sirve.",
+      },
+      {
+        title: "Redactamos y traducimos",
+        body: "Lo organizamos todo por temas y lo traducimos a cuatro idiomas. No se publica nada hasta que usted lo apruebe.",
+      },
+      {
+        title: "Le llega la placa",
+        body: "Grabada y probada en iPhone y Android, con código QR, lista para colocar dentro del alojamiento.",
+      },
+      {
+        title: "Los huéspedes tocan y lo saben",
+        body: "Wifi, check-out y recomendaciones en su móvil, en su idioma, sin tener que escribirle.",
+      },
+    ],
+    features: [
+      {
+        title: "Cuatro idiomas",
+        body: "Portugués, inglés y otros dos a elegir entre francés, español, alemán e italiano. La guía se abre en el idioma del teléfono y el huésped puede cambiarlo con un toque.",
+      },
+      {
+        title: "Incluye el libro de información",
+        body: "Funcionamiento del alojamiento, normas de la casa, residuos, electrodomésticos, ruido, normas del edificio y el contacto del responsable, como exige la ley portuguesa para el alojamiento local.",
+      },
+      {
+        title: "Sus recomendaciones",
+        body: "Los restaurantes, playas y paseos que usted elija, con mapa, además de la farmacia, el hospital y el centro de salud más cercanos.",
+      },
+      {
+        title: "Siempre al día",
+        body: "Hacemos los cambios en un plazo de dos días hábiles, sin placa nueva. ¿Ha cambiado la contraseña del wifi? Basta con enviarnos un mensaje.",
+      },
+      {
+        title: "Segura y sin datos personales",
+        body: "La guía no pide ni guarda datos de los huéspedes. Los códigos de la puerta, de la caja de llaves y de la alarma nunca aparecen, y la dirección de la guía es privada e imposible de adivinar.",
+      },
+      {
+        title: "Para varios alojamientos",
+        body: "Una guía y una placa por vivienda, con precios por volumen para gestores: 59 € por alojamiento a partir de 3, 55 € a partir de 5 y 49 € a partir de 10.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "lodging",
+        title: "Pisos y casas",
+        body: "Los huéspedes tocan la placa junto a la puerta y encuentran el wifi, las normas de la casa y las recomendaciones en su idioma, aunque lleguen a medianoche.",
+      },
+      {
+        sector: "lodging",
+        title: "Hostales y casas de huéspedes",
+        body: "Las placas en la recepción y en las habitaciones responden a las preguntas habituales y dejan a su equipo libre para recibir a los que llegan.",
+      },
+      {
+        sector: "lodging",
+        title: "Gestores de alojamientos turísticos",
+        body: "Una guía por vivienda, todas con el mismo aspecto y su marca. Cuando cambia una norma en todos sus alojamientos, nosotros hacemos los cambios.",
+      },
+      {
+        sector: "lodging",
+        title: "Turismo rural",
+        body: "Cómo llegar sin cobertura, dónde aparcar, la chimenea y la piscina: todo explicado antes de que el huésped tenga que llamar.",
+      },
+    ],
+    includes: [
+      "Redacción y organización de la guía",
+      "Traducción a cuatro idiomas",
+      "Placa con un toque y código QR",
+      "Versión en PDF para imprimir",
+      "12 meses de alojamiento web y cambios",
+      "Soporte por WhatsApp y email",
+    ],
+    faq: [
+      {
+        q: "¿Cuánto cuesta?",
+        a: "69 € por alojamiento, con la redacción de la guía, la traducción a cuatro idiomas, una placa, la versión para imprimir y los primeros 12 meses en línea. A partir del mes 13 son 3 € al mes por alojamiento. Para gestores: 59 € por alojamiento a partir de 3, 55 € a partir de 5 y 49 € a partir de 10. Precios sin IVA, confirmados en su propuesta.",
+      },
+      {
+        q: "¿Puedo tener más de dos idiomas adicionales?",
+        a: "Sí. Cada idioma adicional tiene un pequeño coste, que incluimos en su presupuesto.",
+      },
+      {
+        q: "¿Dónde se coloca la placa?",
+        a: "Dentro del alojamiento: junto a la entrada, en el salón o en la nevera. No recomendamos la puerta exterior, porque la guía incluye la contraseña del wifi.",
+      },
+      {
+        q: "¿La guía incluye los códigos de la puerta o de la caja de llaves?",
+        a: "Nunca. Los códigos de acceso los sigue enviando usted en su mensaje de check-in. La guía solo contiene información útil durante la estancia, y su dirección es privada e imposible de adivinar.",
+      },
+      {
+        q: "¿La guía pide reseñas a los huéspedes?",
+        a: "Tiene una sección neutral, «Valore su estancia», igual para todos: explica que Booking.com envía su solicitud de valoración por email y Airbnb en la app, después del check-out. Sin regalos, descuentos ni peticiones de cinco estrellas, como exigen las propias plataformas.",
+      },
+      {
+        q: "¿La guía sustituye a la placa obligatoria del alojamiento local?",
+        a: "No. La placa identificativa con su número de registro sigue un modelo oficial fijado por ley. Nuestra guía muestra su número de registro, pero no sustituye a esa placa.",
+      },
+      {
+        q: "¿Y si cambio la contraseña del wifi?",
+        a: "Envíenos un mensaje y la actualizamos en un plazo de dos días hábiles. La placa sigue siendo la misma.",
+      },
+    ],
   },
   fr: {
     name: "Livret d'accueil digital",
@@ -291,6 +421,137 @@ export const copy: ProductCopyByLocale = {
     tagline: "Le livret de la maison en quatre langues, d'un simple toucher.",
     summary:
       "Une page pour téléphone avec tout ce que vos voyageurs doivent savoir : wifi, départ, règles, appareils, poubelles, urgences et vos recommandations. Elle s'ouvre d'un toucher sur une plaque dans le logement, en portugais, en anglais et dans deux autres langues.",
+    metaTitle: "Livret d'accueil digital pour locations de vacances en 4 langues | Steevanz",
+    metaDescription:
+      "Un livret d'accueil pour locations de vacances en portugais, en anglais et dans deux autres langues, qui s'ouvre d'un toucher ou avec un QR code. Comprend le livret d'information exigé par la loi portugaise. À partir de 69 € par logement.",
+    heroTitle: "Moins de questions, des voyageurs plus heureux",
+    heroSubtitle:
+      "Nous rédigeons le livret de votre logement, le traduisons en quatre langues et vous livrons une plaque qui l'ouvre d'un toucher. Vos voyageurs trouvent le wifi, le règlement intérieur et vos recommandations sans avoir à vous écrire.",
+    problem: {
+      title: "Le classeur papier que personne ne lit",
+      body:
+        "Le classeur dans le tiroir n'est plus à jour, n'existe qu'en une langue et finit par se perdre. Les voyageurs demandent tout par message et vous répondez la même chose plusieurs fois par semaine.",
+      points: [
+        "Le mot de passe du wifi demandé à chaque séjour",
+        "Des règles de tri et de bruit introuvables",
+        "Un livret d'information en quatre langues difficile à tenir à jour",
+      ],
+    },
+    solution: {
+      title: "Tout d'un toucher, dans la langue du voyageur",
+      body:
+        "Une page simple pour téléphone, organisée par thèmes, qui s'ouvre dans la langue du téléphone du voyageur. Quand quelque chose change, nous mettons le livret à jour et la plaque reste la même.",
+      points: [
+        "Portugais, anglais et deux autres langues",
+        "Wifi avec un bouton pour copier le mot de passe",
+        "Version imprimable incluse",
+        "Plaque avec QR code pour tous les téléphones",
+      ],
+    },
+    steps: [
+      {
+        title: "Envoyez-nous les informations",
+        body: "Des notes, des photos ou le livret que vous avez déjà. Un message vocal WhatsApp fait aussi l'affaire.",
+      },
+      {
+        title: "Nous rédigeons et traduisons",
+        body: "Nous organisons tout par thèmes et le traduisons en quatre langues. Rien n'est mis en ligne sans votre accord.",
+      },
+      {
+        title: "Votre plaque arrive",
+        body: "Programmée et testée sur iPhone et Android, avec un QR code, prête à être posée dans le logement.",
+      },
+      {
+        title: "Un toucher, et ils savent tout",
+        body: "Wifi, départ et recommandations sur leur téléphone, dans leur langue, sans avoir à vous écrire.",
+      },
+    ],
+    features: [
+      {
+        title: "Quatre langues",
+        body: "Portugais, anglais et deux autres au choix parmi le français, l'espagnol, l'allemand et l'italien. Le livret s'ouvre dans la langue du téléphone et le voyageur peut en changer d'un toucher.",
+      },
+      {
+        title: "Comprend le livret d'information",
+        body: "Fonctionnement du logement, règlement intérieur, déchets, appareils, bruit, règles de l'immeuble et contact du responsable, comme l'exige la loi portugaise pour les locations de vacances.",
+      },
+      {
+        title: "Vos recommandations",
+        body: "Les restaurants, plages et balades que vous choisissez, avec une carte, ainsi que la pharmacie, l'hôpital et le centre de santé les plus proches.",
+      },
+      {
+        title: "Toujours à jour",
+        body: "Nous faisons les modifications sous deux jours ouvrés, sans nouvelle plaque. Vous avez changé le mot de passe du wifi ? Il suffit de nous envoyer un message.",
+      },
+      {
+        title: "Sûr, sans données personnelles",
+        body: "Le livret ne demande ni ne conserve aucune donnée des voyageurs. Les codes de la porte, de la boîte à clés et de l'alarme n'y figurent jamais, et l'adresse du livret est privée et impossible à deviner.",
+      },
+      {
+        title: "Pour plusieurs logements",
+        body: "Un livret et une plaque par logement, avec des tarifs dégressifs pour les gestionnaires : 59 € par logement à partir de 3, 55 € à partir de 5 et 49 € à partir de 10.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "lodging",
+        title: "Appartements et maisons",
+        body: "Les voyageurs touchent la plaque près de la porte et trouvent le wifi, le règlement intérieur et les recommandations dans leur langue, même s'ils arrivent à minuit.",
+      },
+      {
+        sector: "lodging",
+        title: "Auberges et maisons d'hôtes",
+        body: "Les plaques à la réception et dans les chambres répondent aux questions habituelles et libèrent votre équipe pour accueillir les nouveaux arrivants.",
+      },
+      {
+        sector: "lodging",
+        title: "Gestionnaires de locations",
+        body: "Un livret par logement, tous avec la même présentation et votre marque. Quand une règle change dans tous vos logements, nous faisons les modifications.",
+      },
+      {
+        sector: "lodging",
+        title: "Tourisme rural",
+        body: "Comment venir sans réseau, où se garer, la cheminée et la piscine : tout est expliqué avant que le voyageur ait besoin d'appeler.",
+      },
+    ],
+    includes: [
+      "Rédaction et organisation du livret",
+      "Traduction en quatre langues",
+      "Plaque à toucher avec QR code",
+      "Version PDF imprimable",
+      "12 mois d'hébergement et de modifications",
+      "Assistance par WhatsApp et par e-mail",
+    ],
+    faq: [
+      {
+        q: "Combien ça coûte ?",
+        a: "69 € par logement, comprenant la rédaction du livret, la traduction en quatre langues, une plaque, la version imprimable et les 12 premiers mois en ligne. À partir du 13e mois, c'est 3 € par mois et par logement. Pour les gestionnaires : 59 € par logement à partir de 3, 55 € à partir de 5 et 49 € à partir de 10. Prix hors TVA, confirmés dans votre proposition.",
+      },
+      {
+        q: "Puis-je avoir plus de deux langues supplémentaires ?",
+        a: "Oui. Chaque langue supplémentaire a un petit coût, que nous incluons dans votre devis.",
+      },
+      {
+        q: "Où placer la plaque ?",
+        a: "À l'intérieur du logement : près de l'entrée, dans le salon ou sur le frigo. Nous déconseillons la porte extérieure, car le livret contient le mot de passe du wifi.",
+      },
+      {
+        q: "Le livret contient-il les codes de la porte ou de la boîte à clés ?",
+        a: "Jamais. Les codes d'accès continuent de partir dans votre message d'arrivée. Le livret ne contient que des informations utiles pendant le séjour, et son adresse est privée et impossible à deviner.",
+      },
+      {
+        q: "Le livret demande-t-il des avis aux voyageurs ?",
+        a: "Il comporte une rubrique neutre, « Donnez votre avis sur le séjour », la même pour tous : elle explique que Booking.com envoie sa demande d'avis par e-mail et Airbnb dans l'application, après le départ. Ni cadeau, ni réduction, ni demande de cinq étoiles, comme l'exigent les plateformes elles-mêmes.",
+      },
+      {
+        q: "Le livret remplace-t-il la plaque obligatoire des locations de vacances ?",
+        a: "Non. La plaque d'identification avec votre numéro d'enregistrement suit un modèle officiel fixé par la loi. Notre livret affiche votre numéro d'enregistrement, mais ne remplace pas cette plaque.",
+      },
+      {
+        q: "Et si je change le mot de passe du wifi ?",
+        a: "Envoyez-nous un message et nous le mettons à jour sous deux jours ouvrés. La plaque reste la même.",
+      },
+    ],
   },
   de: {
     name: "Digitale Gästemappe",
@@ -298,6 +559,137 @@ export const copy: ProductCopyByLocale = {
     tagline: "Die Hausinfos in vier Sprachen, mit einem Antippen.",
     summary:
       "Eine Seite fürs Handy mit allem, was Gäste wissen müssen: WLAN, Check-out, Hausregeln, Geräte, Müll, Notfälle und Ihre Empfehlungen. Sie öffnet sich mit einem Antippen auf einem Schild in der Unterkunft, auf Portugiesisch, Englisch und in zwei weiteren Sprachen.",
+    metaTitle: "Digitale Gästemappe für Ferienunterkünfte in 4 Sprachen | Steevanz",
+    metaDescription:
+      "Eine Gästemappe für Ferienunterkünfte auf Portugiesisch, Englisch und in zwei weiteren Sprachen, die sich mit einem Antippen oder per QR-Code öffnet. Mit dem Informationsbuch, das das portugiesische Gesetz vorschreibt. Ab 69 € pro Unterkunft.",
+    heroTitle: "Weniger Fragen, zufriedenere Gäste",
+    heroSubtitle:
+      "Wir schreiben Ihre Gästemappe, übersetzen sie in vier Sprachen und liefern ein Schild, das sie mit einem Antippen öffnet. Ihre Gäste finden WLAN, Hausregeln und Ihre Empfehlungen, ohne Ihnen schreiben zu müssen.",
+    problem: {
+      title: "Der Papierordner, den niemand liest",
+      body:
+        "Der Ordner in der Schublade veraltet, gibt es nur in einer Sprache und geht irgendwann verloren. Am Ende fragen die Gäste alles per Nachricht, und Sie beantworten mehrmals pro Woche dasselbe.",
+      points: [
+        "Das WLAN-Passwort wird bei jedem Aufenthalt erfragt",
+        "Müll- und Ruheregeln, die niemand findet",
+        "Ein Informationsbuch in vier Sprachen, das kaum aktuell zu halten ist",
+      ],
+    },
+    solution: {
+      title: "Alles mit einem Antippen, in der Sprache des Gastes",
+      body:
+        "Eine einfache Handy-Seite, nach Themen geordnet, die sich in der Sprache des Gästehandys öffnet. Ändert sich etwas, aktualisieren wir die Mappe, und das Schild bleibt dasselbe.",
+      points: [
+        "Portugiesisch, Englisch und zwei weitere Sprachen",
+        "WLAN mit Button zum Kopieren des Passworts",
+        "Druckversion inklusive",
+        "Schild mit QR-Code für jedes Handy",
+      ],
+    },
+    steps: [
+      {
+        title: "Schicken Sie uns die Infos",
+        body: "Notizen, Fotos oder die Mappe, die Sie schon haben. Eine WhatsApp-Sprachnachricht geht auch.",
+      },
+      {
+        title: "Wir schreiben und übersetzen",
+        body: "Wir ordnen alles nach Themen und übersetzen es in vier Sprachen. Online geht erst, was Sie freigegeben haben.",
+      },
+      {
+        title: "Ihr Schild kommt an",
+        body: "Beschrieben und getestet auf iPhone und Android, mit QR-Code, bereit für den Platz in der Unterkunft.",
+      },
+      {
+        title: "Antippen und Bescheid wissen",
+        body: "WLAN, Check-out und Empfehlungen auf dem Handy, in der eigenen Sprache, ohne Ihnen schreiben zu müssen.",
+      },
+    ],
+    features: [
+      {
+        title: "Vier Sprachen",
+        body: "Portugiesisch, Englisch und zwei weitere nach Wahl aus Französisch, Spanisch, Deutsch und Italienisch. Die Mappe öffnet sich in der Sprache des Handys, und Gäste wechseln mit einem Antippen.",
+      },
+      {
+        title: "Mit dem Informationsbuch",
+        body: "So funktioniert die Unterkunft, Hausregeln, Müll, Geräte, Ruhezeiten, Hausordnung und der Kontakt der verantwortlichen Person, wie es das portugiesische Gesetz für Ferienunterkünfte vorschreibt.",
+      },
+      {
+        title: "Ihre Empfehlungen",
+        body: "Restaurants, Strände und Spaziergänge Ihrer Wahl, mit Karte, dazu die nächste Apotheke, das nächste Krankenhaus und das nächste Gesundheitszentrum.",
+      },
+      {
+        title: "Immer aktuell",
+        body: "Änderungen erledigen wir innerhalb von zwei Werktagen, ohne neues Schild. Neues WLAN-Passwort? Schicken Sie uns einfach eine Nachricht.",
+      },
+      {
+        title: "Sicher, ohne persönliche Daten",
+        body: "Die Mappe fragt keine Gästedaten ab und speichert keine. Codes für Tür, Schlüsselbox und Alarmanlage stehen nie darin, und die Adresse der Mappe ist privat und nicht zu erraten.",
+      },
+      {
+        title: "Für mehrere Unterkünfte",
+        body: "Eine Mappe und ein Schild pro Unterkunft, mit Mengenpreisen für Verwalter: 59 € pro Unterkunft ab 3, 55 € ab 5 und 49 € ab 10.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "lodging",
+        title: "Wohnungen und Häuser",
+        body: "Gäste tippen das Schild an der Tür an und finden WLAN, Hausregeln und Empfehlungen in ihrer Sprache, auch wenn sie um Mitternacht ankommen.",
+      },
+      {
+        sector: "lodging",
+        title: "Hostels und Pensionen",
+        body: "Schilder an der Rezeption und in den Zimmern beantworten die üblichen Fragen, und Ihr Team hat den Kopf frei für neue Gäste.",
+      },
+      {
+        sector: "lodging",
+        title: "Verwalter von Ferienunterkünften",
+        body: "Eine Mappe pro Unterkunft, alle im selben Look und mit Ihrer Marke. Ändert sich eine Regel in all Ihren Unterkünften, nehmen wir die Änderungen vor.",
+      },
+      {
+        sector: "lodging",
+        title: "Landtourismus",
+        body: "Anfahrt ohne Netz, wo man parkt, der Kamin und der Pool: alles erklärt, bevor der Gast anrufen muss.",
+      },
+    ],
+    includes: [
+      "Texten und Gliedern der Mappe",
+      "Übersetzung in vier Sprachen",
+      "Schild zum Antippen mit QR-Code",
+      "Druckbare PDF-Version",
+      "12 Monate Hosting und Änderungen",
+      "Support per WhatsApp und E-Mail",
+    ],
+    faq: [
+      {
+        q: "Was kostet das?",
+        a: "69 € pro Unterkunft, inklusive Texten der Mappe, Übersetzung in vier Sprachen, einem Schild, der Druckversion und den ersten 12 Monaten online. Ab dem 13. Monat sind es 3 € pro Monat und Unterkunft. Für Verwalter: 59 € pro Unterkunft ab 3, 55 € ab 5 und 49 € ab 10. Preise zzgl. MwSt., bestätigt in Ihrem Angebot.",
+      },
+      {
+        q: "Kann ich mehr als zwei zusätzliche Sprachen haben?",
+        a: "Ja. Jede weitere Sprache kostet einen kleinen Aufpreis, den wir in Ihr Angebot aufnehmen.",
+      },
+      {
+        q: "Wo kommt das Schild hin?",
+        a: "In die Unterkunft: an den Eingang, ins Wohnzimmer oder an den Kühlschrank. Von der Außentür raten wir ab, weil die Mappe das WLAN-Passwort enthält.",
+      },
+      {
+        q: "Stehen Tür- oder Schlüsselbox-Codes in der Mappe?",
+        a: "Nie. Die Zugangscodes verschicken Sie weiterhin in Ihrer Check-in-Nachricht. Die Mappe enthält nur Informationen, die während des Aufenthalts nützlich sind, und ihre Adresse ist privat und nicht zu erraten.",
+      },
+      {
+        q: "Bittet die Mappe die Gäste um Bewertungen?",
+        a: "Sie hat einen neutralen Bereich „Bewerten Sie Ihren Aufenthalt“, für alle gleich: Er erklärt, dass Booking.com die Bewertungsanfrage per E-Mail und Airbnb in der App schickt, nach dem Check-out. Keine Geschenke, Rabatte oder Bitten um fünf Sterne, wie es die Plattformen selbst verlangen.",
+      },
+      {
+        q: "Ersetzt die Mappe das Pflichtschild für Ferienunterkünfte?",
+        a: "Nein. Das Kennzeichnungsschild mit Ihrer Registrierungsnummer folgt einem amtlichen, gesetzlich festgelegten Muster. Unsere Mappe zeigt Ihre Registrierungsnummer, ersetzt dieses Schild aber nicht.",
+      },
+      {
+        q: "Und wenn ich das WLAN-Passwort ändere?",
+        a: "Schicken Sie uns eine Nachricht, und wir aktualisieren es innerhalb von zwei Werktagen. Das Schild bleibt dasselbe.",
+      },
+    ],
   },
   it: {
     name: "Guida digitale dell'alloggio",
@@ -305,5 +697,136 @@ export const copy: ProductCopyByLocale = {
     tagline: "La guida della casa in quattro lingue, con un tocco.",
     summary:
       "Una pagina per smartphone con tutto quello che l'ospite deve sapere: wifi, check-out, regole, elettrodomestici, rifiuti, emergenze e i vostri consigli. Si apre con un tocco su una targa all'interno dell'alloggio, in portoghese, inglese e altre due lingue.",
+    metaTitle: "Guida digitale per case vacanza in 4 lingue | Steevanz",
+    metaDescription:
+      "Una guida per case vacanza in portoghese, inglese e altre due lingue, che si apre con un tocco o con un codice QR. Include il libretto informativo richiesto dalla legge portoghese. Da 69 € per alloggio.",
+    heroTitle: "Meno domande, ospiti più contenti",
+    heroSubtitle:
+      "Scriviamo la guida della vostra casa, la traduciamo in quattro lingue e vi consegniamo una targa che la apre con un tocco. Gli ospiti trovano il wifi, le regole della casa e i vostri consigli senza dovervi scrivere.",
+    problem: {
+      title: "Il raccoglitore di carta che nessuno legge",
+      body:
+        "La cartellina nel cassetto non è aggiornata, è in una sola lingua e prima o poi si perde. Gli ospiti finiscono per chiedere tutto via messaggio e voi rispondete alle stesse domande più volte a settimana.",
+      points: [
+        "La password del wifi chiesta a ogni soggiorno",
+        "Regole su rifiuti e rumore che nessuno trova",
+        "Un libretto informativo in quattro lingue difficile da tenere aggiornato",
+      ],
+    },
+    solution: {
+      title: "Tutto con un tocco, nella lingua dell'ospite",
+      body:
+        "Una pagina semplice per smartphone, organizzata per argomenti, che si apre nella lingua del telefono dell'ospite. Quando qualcosa cambia, aggiorniamo la guida e la targa resta la stessa.",
+      points: [
+        "Portoghese, inglese e altre due lingue",
+        "Wifi con pulsante per copiare la password",
+        "Versione stampabile inclusa",
+        "Targa con codice QR per qualsiasi telefono",
+      ],
+    },
+    steps: [
+      {
+        title: "Inviateci le informazioni",
+        body: "Appunti, foto o la guida che avete già. Va bene anche un vocale su WhatsApp.",
+      },
+      {
+        title: "Scriviamo e traduciamo",
+        body: "Organizziamo tutto per argomenti e lo traduciamo in quattro lingue. Niente va online finché non lo approvate.",
+      },
+      {
+        title: "Arriva la vostra targa",
+        body: "Programmata e testata su iPhone e Android, con codice QR, pronta da sistemare all'interno dell'alloggio.",
+      },
+      {
+        title: "Un tocco e gli ospiti sanno tutto",
+        body: "Wifi, check-out e consigli sul loro telefono, nella loro lingua, senza dovervi scrivere.",
+      },
+    ],
+    features: [
+      {
+        title: "Quattro lingue",
+        body: "Portoghese, inglese e altre due a scelta tra francese, spagnolo, tedesco e italiano. La guida si apre nella lingua del telefono e l'ospite può cambiarla con un tocco.",
+      },
+      {
+        title: "Include il libretto informativo",
+        body: "Funzionamento dell'alloggio, regole della casa, rifiuti, elettrodomestici, rumore, regolamento condominiale e contatto del responsabile, come richiede la legge portoghese per gli affitti brevi.",
+      },
+      {
+        title: "I vostri consigli",
+        body: "Ristoranti, spiagge e passeggiate scelti da voi, con mappa, oltre alla farmacia, all'ospedale e al centro medico più vicini.",
+      },
+      {
+        title: "Sempre aggiornata",
+        body: "Facciamo le modifiche entro due giorni lavorativi, senza una nuova targa. Avete cambiato la password del wifi? Basta mandarci un messaggio.",
+      },
+      {
+        title: "Sicura, senza dati personali",
+        body: "La guida non chiede né conserva dati degli ospiti. I codici della porta, della cassetta delle chiavi e dell'allarme non compaiono mai, e l'indirizzo della guida è privato e impossibile da indovinare.",
+      },
+      {
+        title: "Per più alloggi",
+        body: "Una guida e una targa per ogni casa, con prezzi a volume per i gestori: 59 € per alloggio da 3, 55 € da 5 e 49 € da 10.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "lodging",
+        title: "Appartamenti e case",
+        body: "Gli ospiti toccano la targa vicino alla porta e trovano il wifi, le regole della casa e i consigli nella loro lingua, anche se arrivano a mezzanotte.",
+      },
+      {
+        sector: "lodging",
+        title: "Ostelli e B&B",
+        body: "Le targhe alla reception e nelle camere rispondono alle solite domande e lasciano il vostro staff libero di accogliere chi arriva.",
+      },
+      {
+        sector: "lodging",
+        title: "Gestori di case vacanza",
+        body: "Una guida per ogni casa, tutte con lo stesso stile e il vostro marchio. Quando una regola cambia in tutti i vostri alloggi, pensiamo noi alle modifiche.",
+      },
+      {
+        sector: "lodging",
+        title: "Turismo rurale",
+        body: "Come arrivare senza campo, dove parcheggiare, il camino e la piscina: tutto spiegato prima che l'ospite debba chiamare.",
+      },
+    ],
+    includes: [
+      "Stesura e organizzazione della guida",
+      "Traduzione in quattro lingue",
+      "Targa con un tocco e codice QR",
+      "Versione PDF stampabile",
+      "12 mesi di hosting e modifiche",
+      "Assistenza via WhatsApp ed email",
+    ],
+    faq: [
+      {
+        q: "Quanto costa?",
+        a: "69 € per alloggio, comprese la stesura della guida, la traduzione in quattro lingue, una targa, la versione stampabile e i primi 12 mesi online. Dal 13° mese sono 3 € al mese per alloggio. Per i gestori: 59 € per alloggio da 3, 55 € da 5 e 49 € da 10. Prezzi + IVA, confermati nella vostra proposta.",
+      },
+      {
+        q: "Posso avere più di due lingue aggiuntive?",
+        a: "Sì. Ogni lingua in più ha un piccolo costo, che includiamo nel vostro preventivo.",
+      },
+      {
+        q: "Dove si mette la targa?",
+        a: "All'interno dell'alloggio: vicino all'ingresso, in soggiorno o sul frigo. Sconsigliamo la porta esterna, perché la guida contiene la password del wifi.",
+      },
+      {
+        q: "La guida contiene i codici della porta o della cassetta delle chiavi?",
+        a: "Mai. I codici di accesso continuate a inviarli voi nel messaggio di check-in. La guida contiene solo informazioni utili durante il soggiorno, e il suo indirizzo è privato e impossibile da indovinare.",
+      },
+      {
+        q: "La guida chiede recensioni agli ospiti?",
+        a: "Ha una sezione neutra, «Valuta il tuo soggiorno», uguale per tutti: spiega che Booking.com invia la richiesta di recensione via email e Airbnb nell'app, dopo il check-out. Niente regali, sconti o richieste di cinque stelle, come richiedono le piattaforme stesse.",
+      },
+      {
+        q: "La guida sostituisce la targa obbligatoria per gli affitti brevi?",
+        a: "No. La targa identificativa con il vostro numero di registrazione segue un modello ufficiale stabilito per legge. La nostra guida mostra il vostro numero di registrazione, ma non sostituisce quella targa.",
+      },
+      {
+        q: "E se cambio la password del wifi?",
+        a: "Mandateci un messaggio e la aggiorniamo entro due giorni lavorativi. La targa resta la stessa.",
+      },
+    ],
   },
 };

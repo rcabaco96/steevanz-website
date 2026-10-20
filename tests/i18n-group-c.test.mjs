@@ -4,10 +4,11 @@ import { copy as aiChatbot } from "../src/content/product-copy/ai-chatbot.ts";
 import { copy as aiVoice } from "../src/content/product-copy/ai-voice.ts";
 import { copy as aiReviews } from "../src/content/product-copy/ai-reviews.ts";
 import { copy as automation } from "../src/content/product-copy/automation.ts";
+import { copy as guestGuide } from "../src/content/product-copy/guest-guide.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
 
 // Product pages translated in full into es, fr, de, it (group C of the site translation, 2026-10-20).
-const translated = { "ai-chatbot": aiChatbot, "ai-voice": aiVoice, "ai-reviews": aiReviews, "automation": automation };
+const translated = { "ai-chatbot": aiChatbot, "ai-voice": aiVoice, "ai-reviews": aiReviews, "automation": automation, "guest-guide": guestGuide };
 
 function shape(value) {
   if (Array.isArray(value)) return value.map(shape);

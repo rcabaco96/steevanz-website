@@ -531,7 +531,7 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "lodging",
         title: "Locations de vacances",
-        body: "Il répond aux voyageurs sur WhatsApp, à toute heure et dans leur langue : wifi, départ, stationnement, où dîner. Il s'appuie sur le guide du logement, ne partage jamais les codes d'accès et transmet aussitôt à l'hôte les urgences et les demandes particulières.",
+        body: "Il répond aux voyageurs sur WhatsApp, à toute heure et dans leur langue : wifi, départ, stationnement, où dîner. Il s'appuie sur le livret d'accueil, ne partage jamais les codes d'accès et transmet aussitôt à l'hôte les urgences et les demandes particulières.",
       },
     ],
     includes: [
@@ -569,7 +569,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Est-ce adapté aux locations de vacances ?",
-        a: "Oui. L'assistant s'appuie sur le guide digital de chaque logement et répond sur WhatsApp, dans la langue du voyageur, aux questions sur le wifi, l'arrivée et le départ, les appareils, le stationnement, les transports et les bonnes adresses. Il suit des règles fixes : il ne partage jamais les codes de la porte, de la boîte à clés ou de l'alarme, et ne confirme jamais qui séjourne dans le logement ; en cas d'urgence, il indique le 112 et vous prévient immédiatement ; les réclamations, les dégâts, les remboursements et les demandes d'arrivée anticipée ou de départ tardif vous sont transmis avec un résumé. Un numéro WhatsApp couvre jusqu'à cinq logements.",
+        a: "Oui. L'assistant s'appuie sur le livret d'accueil digital de chaque logement et répond sur WhatsApp, dans la langue du voyageur, aux questions sur le wifi, l'arrivée et le départ, les appareils, le stationnement, les transports et les bonnes adresses. Il suit des règles fixes : il ne partage jamais les codes de la porte, de la boîte à clés ou de l'alarme, et ne confirme jamais qui séjourne dans le logement ; en cas d'urgence, il indique le 112 et vous prévient immédiatement ; les réclamations, les dégâts, les remboursements et les demandes d'arrivée anticipée ou de départ tardif vous sont transmis avec un résumé. Un numéro WhatsApp couvre jusqu'à cinq logements.",
       },
     ],
   },
@@ -674,7 +674,7 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "lodging",
         title: "Ferienunterkünfte",
-        body: "Antwortet Gästen in WhatsApp, zu jeder Uhrzeit und in ihrer Sprache: WLAN, Check-out, Parken, wo man gut isst. Er lernt aus dem Gästehandbuch, gibt niemals Zugangscodes weiter und leitet Notfälle und Sonderwünsche sofort an den Gastgeber weiter.",
+        body: "Antwortet Gästen in WhatsApp, zu jeder Uhrzeit und in ihrer Sprache: WLAN, Check-out, Parken, wo man gut isst. Er lernt aus der Gästemappe, gibt niemals Zugangscodes weiter und leitet Notfälle und Sonderwünsche sofort an den Gastgeber weiter.",
       },
     ],
     includes: [
@@ -712,7 +712,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Eignet er sich für Ferienunterkünfte?",
-        a: "Ja. Der Assistent lernt aus dem digitalen Gästehandbuch jeder Unterkunft und beantwortet in WhatsApp, in der Sprache des Gastes, Fragen zu WLAN, Check-in und Check-out, Haushaltsgeräten, Parken, Verkehrsmitteln und Empfehlungen. Dabei gelten feste Regeln: Er gibt niemals Codes für Tür, Schlüsselbox oder Alarmanlage weiter und bestätigt nie, wer gerade zu Gast ist; im Notfall verweist er auf die 112 und benachrichtigt Sie sofort; Beschwerden, Schäden, Erstattungen sowie Wünsche nach frühem Check-in oder spätem Check-out gehen mit einer Zusammenfassung an Sie. Eine WhatsApp-Nummer reicht für bis zu fünf Unterkünfte.",
+        a: "Ja. Der Assistent lernt aus der digitalen Gästemappe jeder Unterkunft und beantwortet in WhatsApp, in der Sprache des Gastes, Fragen zu WLAN, Check-in und Check-out, Haushaltsgeräten, Parken, Verkehrsmitteln und Empfehlungen. Dabei gelten feste Regeln: Er gibt niemals Codes für Tür, Schlüsselbox oder Alarmanlage weiter und bestätigt nie, wer gerade zu Gast ist; im Notfall verweist er auf die 112 und benachrichtigt Sie sofort; Beschwerden, Schäden, Erstattungen sowie Wünsche nach frühem Check-in oder spätem Check-out gehen mit einer Zusammenfassung an Sie. Eine WhatsApp-Nummer reicht für bis zu fünf Unterkünfte.",
       },
     ],
   },
