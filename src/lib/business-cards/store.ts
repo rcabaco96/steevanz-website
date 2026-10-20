@@ -17,7 +17,7 @@ import {
 
 // Reads of the business cards and keychain tags (service role: RLS lets nothing else in). The admin
 // reads fresh rows; the public pages read through the caches below, refreshed by every save in the
-// admin. Until the migration (20261020200000_business_cards_keychains.sql) is applied, the cards come
+// admin. Until the migration (20261020210000_business_cards_keychains.sql) is applied, the cards come
 // from src/content/business-cards.ts and the tags don't exist.
 
 export const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

@@ -16,7 +16,7 @@ type FormAction = (state: ActionState, formData: FormData) => Promise<ActionStat
 export function CardsNotReady({ what }: { what: "cards" | "tags" }) {
   return (
     <EmptyState>
-      A base de dados ainda não tem as tabelas dos cartões e tags. Falta aplicar a migração <code className="font-mono text-xs">20261020200000_business_cards_keychains.sql</code>.
+      A base de dados ainda não tem as tabelas dos cartões e tags. Falta aplicar a migração <code className="font-mono text-xs">20261020210000_business_cards_keychains.sql</code>.
       {what === "cards" ? " Até lá, o cartão de exemplo (rogerio-cabaco) continua a abrir a partir do ficheiro do site." : " Até lá, os endereços /k/… dão «página não encontrada»."}
     </EmptyState>
   );

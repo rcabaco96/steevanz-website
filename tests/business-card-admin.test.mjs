@@ -217,7 +217,7 @@ describe("fallback to the content file before the migration", () => {
   });
 
   it("seeds the migration with the content file's card", () => {
-    const sql = readFileSync(new URL("../supabase/migrations/20261020200000_business_cards_keychains.sql", import.meta.url), "utf8");
+    const sql = readFileSync(new URL("../supabase/migrations/20261020210000_business_cards_keychains.sql", import.meta.url), "utf8");
     for (const value of [fileCard.slug, fileCard.name, fileCard.role, fileCard.email, fileCard.website, fileCard.phone, fileCard.photo.src, ...fileCard.socials.map((social) => social.url)]) {
       assert.ok(sql.includes(value), value);
     }

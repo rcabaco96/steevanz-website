@@ -1,6 +1,6 @@
 // The people behind each «Cartão de visita digital»: the page /c/<slug> and its contact file /c/<slug>/vcard.
 // Since 2026-10-20 the cards live in the database (table business_cards, edited in /admin/cartoes); this file is
-// the fallback while that table doesn't exist yet (migration 20261020200000_business_cards_keychains.sql), so the
+// the fallback while that table doesn't exist yet (migration 20261020210000_business_cards_keychains.sql), so the
 // example card never breaks. Only real people who asked for a card, with the details they gave us.
 // Relative imports with extensions keep this module runnable by `node --test` (tests/business-card.test.mjs).
 import type { Locale, Localized } from "../lib/i18n.ts";

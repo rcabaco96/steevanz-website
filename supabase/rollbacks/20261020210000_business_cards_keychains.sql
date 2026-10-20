@@ -1,4 +1,4 @@
--- Rollback of supabase/migrations/20261020200000_business_cards_keychains.sql (one transaction).
+-- Rollback of supabase/migrations/20261020210000_business_cards_keychains.sql (one transaction).
 -- Drops the two tables (every card and tag added in the admin goes with them) and the tap function.
 -- The site keeps working: /c/<slug> falls back to src/content/business-cards.ts and /k/<code> gives
 -- «página não encontrada».

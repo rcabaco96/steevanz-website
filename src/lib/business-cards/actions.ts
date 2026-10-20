@@ -34,7 +34,7 @@ type ServiceClient = ReturnType<typeof createServiceClient>;
 
 const photoBucket = "business-card-photos";
 const photoMaxBytes = 2 * 1024 * 1024;
-const notReadyMessage = "A base de dados ainda não tem as tabelas dos cartões e tags (falta aplicar a migração 20261020200000_business_cards_keychains.sql).";
+const notReadyMessage = "A base de dados ainda não tem as tabelas dos cartões e tags (falta aplicar a migração 20261020210000_business_cards_keychains.sql).";
 
 class CardMessage extends Error {}
 
