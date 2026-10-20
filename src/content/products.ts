@@ -46,6 +46,8 @@ export interface ProductCustomization {
   logoExtraPer: "unit" | "line";
   logoExtraIsProvisional: boolean;
   textMaxLength: number;
+  /** Only the format is chosen in the cart (no logo option, no text): e.g. the keychain, with or without a key ring. */
+  formatOnly?: boolean;
 }
 
 // Quantity discount: from `quantity` units on, every unit costs `unitPrice` (12 plates pay the 10-plate price).
@@ -225,17 +227,31 @@ export const products: Product[] = [
   },
   {
     // Owner, 2026-10-20: 5 € + IVA each, tap only (no QR code). Packs of 10 for 45 € and 25 for 100 € confirmed.
+    // Two formats at the same price (owner, 2026-10-20): with a key ring («Porta-chaves») or without (a tag to stick
+    // or hang). The tag stores a /k/<code> address, so Steevanz can change its destination later at no extra cost.
     id: "keychain",
     slug: { pt: "chaveiro-digital", en: "digital-keychain" },
     family: "plates",
     icon: "key-tap",
     priceFrom: 5,
     priceBilling: "one-time",
-    priceQualifier: { pt: "por chaveiro, abre o WhatsApp, o Instagram ou o site", en: "per keychain, opens WhatsApp, Instagram or your website", es: "por llavero, abre WhatsApp, Instagram o la web", fr: "par porte-clés, ouvre WhatsApp, Instagram ou le site", de: "pro Anhänger, öffnet WhatsApp, Instagram oder die Website", it: "per portachiavi, apre WhatsApp, Instagram o il sito" },
+    priceQualifier: { pt: "cada, com ou sem argola; abre o WhatsApp, o Instagram ou o site", en: "each, with or without a key ring; opens WhatsApp, Instagram or your website", es: "cada uno, con o sin anilla; abre WhatsApp, Instagram o la web", fr: "pièce, avec ou sans anneau ; ouvre WhatsApp, Instagram ou le site", de: "pro Stück, mit oder ohne Ring; öffnet WhatsApp, Instagram oder die Website", it: "al pezzo, con o senza anello; apre WhatsApp, Instagram o il sito" },
     priceIsProvisional: true,
     sectors: ["restaurants", "beauty", "retail", "lodging"],
     related: ["business-card", "social-plates", "google-review-plates"],
     packUnit: "keychain",
+    customization: {
+      formats: [
+        { id: "keyring", label: { pt: "Porta-chaves (com argola)", en: "Keychain (with key ring)", es: "Llavero (con anilla)", fr: "Porte-clés (avec anneau)", de: "Schlüsselanhänger (mit Ring)", it: "Portachiavi (con anello)" } },
+        { id: "tag", label: { pt: "Tag (sem argola, para colar ou pendurar)", en: "Tag (no key ring, to stick or hang)", es: "Etiqueta (sin anilla, para pegar o colgar)", fr: "Étiquette (sans anneau, à coller ou à suspendre)", de: "Tag (ohne Ring, zum Aufkleben oder Aufhängen)", it: "Tag (senza anello, da attaccare o appendere)" } },
+      ],
+      // Only the format is chosen: no logo extra and no text (personalisation is seen at the demo).
+      formatOnly: true,
+      logoExtra: 0,
+      logoExtraPer: "unit",
+      logoExtraIsProvisional: false,
+      textMaxLength: 0,
+    },
     packs: [
       { quantity: 10, unitPrice: 4.5 },
       { quantity: 25, unitPrice: 4 },

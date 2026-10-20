@@ -105,7 +105,7 @@ function KeychainArt() {
   );
 }
 
-/** The «Chaveiro digital» hero: a phone taps the keychain and the business's WhatsApp chat opens. */
+/** The «Porta-chaves digital» hero: a phone taps the keychain and the business's WhatsApp chat opens. */
 export function KeychainScene({ locale }: { locale: Locale }) {
   const t = localize(cardSceneCopy, locale);
   return (

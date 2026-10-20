@@ -2,17 +2,17 @@ import type { ProductCopyByLocale } from "../types";
 
 export const copy: ProductCopyByLocale = {
   pt: {
-    name: "Chaveiro digital",
-    shortName: "Chaveiro digital",
-    tagline: "Um toque no chaveiro e o seu negócio abre no telemóvel do cliente.",
+    name: "Porta-chaves digital",
+    shortName: "Porta-chaves digital",
+    tagline: "Um toque no porta-chaves e o seu negócio abre no telemóvel do cliente.",
     summary:
-      "Um pequeno chaveiro que, com um toque do telemóvel, abre o WhatsApp, o Instagram ou o website do seu negócio. Funciona em iPhone e Android, sem app. Nós configuramos e testamos cada um.",
-    metaTitle: "Chaveiro digital para o seu negócio | Steevanz",
+      "Um pequeno porta-chaves (ou uma tag para colar ou pendurar) que, com um toque do telemóvel, abre o WhatsApp, o Instagram ou o website do seu negócio. Funciona em iPhone e Android, sem app. Nós configuramos e testamos cada um.",
+    metaTitle: "Porta-chaves digital para o seu negócio | Steevanz",
     metaDescription:
-      "Chaveiro digital: um toque do telemóvel abre o WhatsApp, o Instagram ou o website do seu negócio. iPhone e Android, sem app. 5 € + IVA por chaveiro.",
+      "Porta-chaves digital: um toque do telemóvel abre o WhatsApp, o Instagram ou o website do seu negócio. iPhone e Android, sem app. 5 € + IVA cada.",
     heroTitle: "O seu negócio nas chaves dos seus clientes",
     heroSubtitle:
-      "Um chaveiro pequeno que vai para o porta-chaves de quem gosta de si. Com um toque do telemóvel, abre uma conversa no WhatsApp com o seu negócio, o seu Instagram ou o seu website. Sem app, em iPhone e Android. Nós configuramos e testamos cada chaveiro antes da entrega.",
+      "Um porta-chaves pequeno que vai para as chaves de quem gosta de si, ou uma tag para colar ou pendurar onde quiser. Com um toque do telemóvel, abre uma conversa no WhatsApp com o seu negócio, o seu Instagram ou o seu website. Sem app, em iPhone e Android. Nós configuramos e testamos cada porta-chaves antes da entrega.",
     problem: {
       title: "Os clientes querem voltar a falar consigo, mas o contacto perde-se",
       body:
@@ -26,26 +26,26 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "O seu contacto sempre à mão, nas chaves",
       body:
-        "O chaveiro digital fica nas chaves do cliente, que andam sempre com ele. Quando quiser falar consigo, basta aproximar o telemóvel do chaveiro: abre logo o destino que escolheu, sem procurar nada.",
+        "O porta-chaves digital fica nas chaves do cliente, que andam sempre com ele. Quando quiser falar consigo, basta aproximar o telemóvel do porta-chaves: abre logo o destino que escolheu, sem procurar nada. E se um dia quiser mudar o destino, mudamos nós, sem custo: o porta-chaves fica igual.",
       points: [
         "Um toque abre o WhatsApp, o Instagram ou o website do seu negócio",
         "Funciona em iPhone e Android, sem instalar nenhuma app",
         "Configurado e testado por nós em iPhone e Android antes da entrega",
-        "5 € + IVA por chaveiro, com preço mais baixo em quantidade",
+        "5 € + IVA cada, com ou sem argola, com preço mais baixo em quantidade",
       ],
     },
     steps: [
       {
         title: "Escolha o destino",
-        body: "WhatsApp, Instagram ou website: cada chaveiro abre um destino, que escolhe na encomenda.",
+        body: "WhatsApp, Instagram ou website, num porta-chaves com argola ou numa tag sem argola. Pode mudar o destino mais tarde, sem custo.",
       },
       {
         title: "Diga-nos quantos",
-        body: "Um chaveiro custa 5 € + IVA. Em packs, 10 por 45 € e 25 por 100 €, + IVA.",
+        body: "Cada um, com ou sem argola, custa 5 € + IVA. Em packs, 10 por 45 € e 25 por 100 €, + IVA.",
       },
       {
         title: "Nós configuramos e testamos",
-        body: "Preparamos cada chaveiro com o seu destino e testamo-lo em iPhone e Android antes de o entregar.",
+        body: "Preparamos cada porta-chaves com o seu destino e testamo-lo em iPhone e Android antes de o entregar.",
       },
       {
         title: "Ofereça aos seus clientes",
@@ -55,11 +55,11 @@ export const copy: ProductCopyByLocale = {
     features: [
       {
         title: "Um toque e abre",
-        body: "O cliente aproxima o telemóvel do chaveiro e o destino abre de imediato, sem procurar o seu nome nem copiar números.",
+        body: "O cliente aproxima o telemóvel do porta-chaves e o destino abre de imediato, sem procurar o seu nome nem copiar números.",
       },
       {
         title: "WhatsApp, Instagram ou website",
-        body: "Escolhe na encomenda o destino de cada chaveiro: uma conversa no WhatsApp com o seu negócio, o seu perfil no Instagram ou o seu website.",
+        body: "Cada porta-chaves abre uma conversa no WhatsApp com o seu negócio, o seu perfil no Instagram ou o seu website. Se quiser mudar o destino mais tarde, mudamos nós no nosso painel, sem custo: não precisa de trocar o porta-chaves.",
       },
       {
         title: "Sem app",
@@ -67,11 +67,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Sempre à mão",
-        body: "Fica no porta-chaves do cliente, que anda com ele todos os dias. O seu contacto deixa de depender de um cartão guardado numa gaveta.",
+        body: "Fica nas chaves do cliente, que andam com ele todos os dias. O seu contacto deixa de depender de um cartão guardado numa gaveta.",
       },
       {
         title: "Testado antes da entrega",
-        body: "Configuramos o destino de cada chaveiro e testamo-lo em iPhone e Android. Chega-lhe pronto a oferecer.",
+        body: "Configuramos o destino de cada porta-chaves e testamo-lo em iPhone e Android. Chega-lhe pronto a oferecer.",
       },
       {
         title: "Mais simples do que um cartão",
@@ -82,7 +82,7 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "restaurants",
         title: "Cafés e restaurantes",
-        body: "Ofereça um chaveiro aos clientes habituais. Para reservar uma mesa ou fazer uma encomenda, um toque abre o WhatsApp do seu negócio.",
+        body: "Ofereça um porta-chaves aos clientes habituais. Para reservar uma mesa ou fazer uma encomenda, um toque abre o WhatsApp do seu negócio.",
       },
       {
         sector: "lodging",
@@ -92,7 +92,7 @@ export const copy: ProductCopyByLocale = {
       {
         label: "Imobiliário",
         title: "Agências imobiliárias",
-        body: "Entregue o chaveiro com as chaves da casa nova. O seu contacto fica à mão, na chave que o cliente vai usar todos os dias.",
+        body: "Entregue o porta-chaves com as chaves da casa nova. O seu contacto fica à mão, na chave que o cliente vai usar todos os dias.",
       },
       {
         label: "Eventos e feiras",
@@ -101,39 +101,43 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Chaveiros com tecnologia Steevanz, na quantidade que escolher",
-      "Configuração do destino: WhatsApp, Instagram ou website",
-      "Testes de cada chaveiro em iPhone e Android antes da entrega",
+      "Porta-chaves com tecnologia Steevanz, na quantidade que escolher",
+      "Configuração do destino (WhatsApp, Instagram ou website) e mudanças de destino mais tarde, sem custo",
+      "Testes de cada porta-chaves em iPhone e Android antes da entrega",
       "Conselhos sobre a quem oferecer e como explicar aos clientes",
       "Suporte por WhatsApp e email",
     ],
     faq: [
       {
         q: "Funciona em iPhone e em Android?",
-        a: "Sim, sem app. Os iPhone XS e mais recentes leem o chaveiro sem instalar nada: basta aproximar o topo do telemóvel. A maioria dos Android lê-o desde que a opção de leitura por aproximação esteja ligada nas definições de ligações.",
+        a: "Sim, sem app. Os iPhone XS e mais recentes leem o porta-chaves sem instalar nada: basta aproximar o topo do telemóvel. A maioria dos Android lê-o desde que a opção de leitura por aproximação esteja ligada nas definições de ligações.",
       },
       {
         q: "Tem QR code?",
-        a: "Não. O chaveiro funciona só com um toque. Por isso, telemóveis muito antigos ou sem leitura por aproximação não o conseguem abrir. Se precisa de um QR code, o Cartão de visita digital e as placas têm um impresso.",
+        a: "Não. O porta-chaves funciona só com um toque. Por isso, telemóveis muito antigos ou sem leitura por aproximação não o conseguem abrir. Se precisa de um QR code, o Cartão de visita digital e as placas têm um impresso.",
       },
       {
         q: "Abre o quê?",
-        a: "Um destino por chaveiro, à sua escolha na encomenda: uma conversa no WhatsApp com o seu negócio, o seu Instagram ou o seu website.",
+        a: "Um destino por porta-chaves: uma conversa no WhatsApp com o seu negócio, o seu Instagram ou o seu website. Pode mudá-lo mais tarde, sem custo: o porta-chaves guarda um link curto da Steevanz, que nós apontamos para o novo destino no nosso painel. O porta-chaves fica igual.",
+      },
+      {
+        q: "Tem de ser com argola?",
+        a: "Não. Há dois formatos, com o mesmo preço: o porta-chaves, com argola para as chaves, e a tag, sem argola, para colar ou pendurar (por exemplo, numa montra, num balcão ou numa mala). Escolhe o formato no carrinho.",
       },
       {
         q: "Quanto custa?",
-        a: "5 € + IVA por chaveiro. Em packs, 10 chaveiros por 45 € e 25 chaveiros por 100 €, + IVA.",
+        a: "5 € + IVA cada, com ou sem argola. Em packs, 10 por 45 € e 25 por 100 €, + IVA.",
       },
       {
         q: "Quanto tempo demora?",
-        a: "Configuramos e testamos os chaveiros em poucos dias úteis. Indicamos o prazo exato na demonstração.",
+        a: "Configuramos e testamos os porta-chaves em poucos dias úteis. Indicamos o prazo exato na demonstração.",
       },
       {
         q: "Qual é a diferença para o Cartão de visita digital?",
-        a: "O cartão abre uma página de contactos completa e tem também QR code. O chaveiro é mais pequeno e mais simples: com um toque, abre diretamente um único destino.",
+        a: "O cartão abre uma página de contactos completa e tem também QR code. O porta-chaves é mais pequeno e mais simples: com um toque, abre diretamente um único destino.",
       },
       {
-        q: "Posso ter o meu logótipo no chaveiro?",
+        q: "Posso ter o meu logótipo no porta-chaves?",
         a: "A personalização, como o seu logótipo, é um tema que vemos consigo na demonstração.",
       },
     ],
@@ -143,13 +147,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Digital keychain",
     tagline: "One tap on the keychain and your business opens on your customer's phone.",
     summary:
-      "A small keychain that, with one tap of a phone, opens your business's WhatsApp, Instagram or website. Works on iPhone and Android, no app needed. We set up and test every one.",
+      "A small keychain (or a tag to stick or hang) that, with one tap of a phone, opens your business's WhatsApp, Instagram or website. Works on iPhone and Android, no app needed. We set up and test every one.",
     metaTitle: "Digital Keychain for Your Business | Steevanz",
     metaDescription:
-      "Digital keychain: one tap of a phone opens your business's WhatsApp, Instagram or website. iPhone and Android, no app. €5 + VAT per keychain.",
+      "Digital keychain: one tap of a phone opens your business's WhatsApp, Instagram or website. iPhone and Android, no app. €5 + VAT each.",
     heroTitle: "Your business on your customers' keys",
     heroSubtitle:
-      "A small keychain that goes on the keyring of the people who like what you do. With one tap of a phone, it opens a WhatsApp chat with your business, your Instagram or your website. No app, on iPhone and Android. We set up and test every keychain before delivery.",
+      "A small keychain for the keyring of the people who like what you do, or a tag to stick or hang wherever you like. With one tap of a phone, it opens a WhatsApp chat with your business, your Instagram or your website. No app, on iPhone and Android. We set up and test every keychain before delivery.",
     problem: {
       title: "Customers want to get back in touch, but your contact gets lost",
       body:
@@ -163,22 +167,22 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Your contact always at hand, on their keys",
       body:
-        "The digital keychain lives on your customer's keys, which go everywhere with them. When they want to reach you, they just hold their phone near the keychain: the destination you chose opens straight away, with nothing to search for.",
+        "The digital keychain lives on your customer's keys, which go everywhere with them. When they want to reach you, they just hold their phone near the keychain: the destination you chose opens straight away, with nothing to search for. And if you ever want to change the destination, we change it for you at no extra cost: the keychain stays the same.",
       points: [
         "One tap opens your business's WhatsApp, Instagram or website",
         "Works on iPhone and Android, with no app to install",
         "Set up and tested by us on iPhone and Android before delivery",
-        "€5 + VAT per keychain, with a lower price for larger quantities",
+        "€5 + VAT each, with or without a key ring, with a lower price for larger quantities",
       ],
     },
     steps: [
       {
         title: "Choose the destination",
-        body: "WhatsApp, Instagram or website: each keychain opens one destination, which you choose when you order.",
+        body: "WhatsApp, Instagram or website, on a keychain with a key ring or a tag without one. You can change the destination later at no extra cost.",
       },
       {
         title: "Tell us how many",
-        body: "One keychain costs €5 + VAT. In packs, 10 for €45 and 25 for €100, + VAT.",
+        body: "Each one, with or without a key ring, costs €5 + VAT. In packs, 10 for €45 and 25 for €100, + VAT.",
       },
       {
         title: "We set up and test",
@@ -196,7 +200,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "WhatsApp, Instagram or website",
-        body: "You choose each keychain's destination when you order: a WhatsApp chat with your business, your Instagram profile or your website.",
+        body: "Each keychain opens a WhatsApp chat with your business, your Instagram profile or your website. To change the destination later, we change it in our system at no extra cost: no need to replace the keychain.",
       },
       {
         title: "No app",
@@ -239,7 +243,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Keychains with Steevanz technology, in the quantity you choose",
-      "Destination setup: WhatsApp, Instagram or website",
+      "Destination setup (WhatsApp, Instagram or website) and later destination changes at no extra cost",
       "Testing of every keychain on iPhone and Android before delivery",
       "Advice on who to give them to and how to explain them to customers",
       "Support by WhatsApp and email",
@@ -255,11 +259,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "What does it open?",
-        a: "One destination per keychain, chosen when you order: a WhatsApp chat with your business, your Instagram or your website.",
+        a: "One destination per keychain: a WhatsApp chat with your business, your Instagram or your website. You can change it later at no extra cost: the keychain holds a short Steevanz link, which we point to the new destination in our system. The keychain stays the same.",
+      },
+      {
+        q: "Does it have to have a key ring?",
+        a: "No. There are two formats at the same price: the keychain, with a key ring, and the tag, without one, to stick or hang (on a shop window, a counter or a bag, for example). You choose the format in your cart.",
       },
       {
         q: "How much does it cost?",
-        a: "€5 + VAT per keychain. In packs, 10 keychains for €45 and 25 keychains for €100, + VAT.",
+        a: "€5 + VAT each, with or without a key ring. In packs, 10 for €45 and 25 for €100, + VAT.",
       },
       {
         q: "How long does it take?",
@@ -280,13 +288,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Llavero digital",
     tagline: "Un toque en el llavero y su negocio se abre en el móvil del cliente.",
     summary:
-      "Un pequeño llavero que, con un toque del móvil, abre el WhatsApp, el Instagram o la web de su negocio. Funciona en iPhone y Android, sin app. Nosotros configuramos y probamos cada uno.",
+      "Un pequeño llavero (o una etiqueta para pegar o colgar) que, con un toque del móvil, abre el WhatsApp, el Instagram o la web de su negocio. Funciona en iPhone y Android, sin app. Nosotros configuramos y probamos cada uno.",
     metaTitle: "Llavero digital para su negocio | Steevanz",
     metaDescription:
-      "Llavero digital: un toque con el móvil abre el WhatsApp, el Instagram o la web de su negocio. iPhone y Android, sin app. 5 € + IVA por llavero.",
+      "Llavero digital: un toque con el móvil abre el WhatsApp, el Instagram o la web de su negocio. iPhone y Android, sin app. 5 € + IVA cada uno.",
     heroTitle: "Su negocio en las llaves de sus clientes",
     heroSubtitle:
-      "Un llavero pequeño que va en las llaves de quienes aprecian lo que usted hace. Con un toque del móvil, abre una conversación de WhatsApp con su negocio, su Instagram o su web. Sin app, en iPhone y Android. Nosotros configuramos y probamos cada llavero antes de la entrega.",
+      "Un llavero pequeño que va en las llaves de quienes aprecian lo que usted hace, o una etiqueta para pegar o colgar donde quiera. Con un toque del móvil, abre una conversación de WhatsApp con su negocio, su Instagram o su web. Sin app, en iPhone y Android. Nosotros configuramos y probamos cada llavero antes de la entrega.",
     problem: {
       title: "Sus clientes quieren volver a contactarle, pero el contacto se pierde",
       body:
@@ -300,22 +308,22 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Su contacto siempre a mano, en las llaves",
       body:
-        "El llavero digital va en las llaves del cliente, que le acompañan a todas partes. Cuando quiera hablar con usted, basta con acercar el móvil al llavero: se abre al momento el destino que usted eligió, sin buscar nada.",
+        "El llavero digital va en las llaves del cliente, que le acompañan a todas partes. Cuando quiera hablar con usted, basta con acercar el móvil al llavero: se abre al momento el destino que usted eligió, sin buscar nada. Y si algún día quiere cambiar el destino, lo cambiamos nosotros sin coste adicional: el llavero sigue siendo el mismo.",
       points: [
         "Un toque abre el WhatsApp, el Instagram o la web de su negocio",
         "Funciona en iPhone y Android, sin instalar ninguna app",
         "Configurado y probado por nosotros en iPhone y Android antes de la entrega",
-        "5 € + IVA por llavero, con precio más bajo por cantidad",
+        "5 € + IVA cada uno, con o sin anilla, con precio más bajo por cantidad",
       ],
     },
     steps: [
       {
         title: "Elija el destino",
-        body: "WhatsApp, Instagram o web: cada llavero abre un destino, que usted elige al hacer el pedido.",
+        body: "WhatsApp, Instagram o web, en un llavero con anilla o en una etiqueta sin anilla. Puede cambiar el destino más adelante sin coste adicional.",
       },
       {
         title: "Díganos cuántos",
-        body: "Un llavero cuesta 5 € + IVA. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
+        body: "Cada uno, con o sin anilla, cuesta 5 € + IVA. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
       },
       {
         title: "Los configuramos y probamos",
@@ -333,7 +341,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "WhatsApp, Instagram o web",
-        body: "Usted elige al hacer el pedido el destino de cada llavero: una conversación de WhatsApp con su negocio, su perfil de Instagram o su web.",
+        body: "Cada llavero abre una conversación de WhatsApp con su negocio, su perfil de Instagram o su web. Si más adelante quiere cambiar el destino, lo cambiamos nosotros en nuestro sistema sin coste adicional: no hace falta cambiar el llavero.",
       },
       {
         title: "Sin app",
@@ -376,7 +384,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Llaveros con tecnología Steevanz, en la cantidad que elija",
-      "Configuración del destino: WhatsApp, Instagram o web",
+      "Configuración del destino (WhatsApp, Instagram o web) y cambios de destino posteriores sin coste adicional",
       "Pruebas de cada llavero en iPhone y Android antes de la entrega",
       "Consejos sobre a quién regalarlos y cómo explicárselos a los clientes",
       "Soporte por WhatsApp y email",
@@ -392,11 +400,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Qué abre?",
-        a: "Un destino por llavero, que usted elige al hacer el pedido: una conversación de WhatsApp con su negocio, su Instagram o su web.",
+        a: "Un destino por llavero: una conversación de WhatsApp con su negocio, su Instagram o su web. Puede cambiarlo más adelante sin coste adicional: el llavero guarda un enlace corto de Steevanz, que nosotros dirigimos al nuevo destino en nuestro sistema. El llavero sigue siendo el mismo.",
+      },
+      {
+        q: "¿Tiene que llevar anilla?",
+        a: "No. Hay dos formatos al mismo precio: el llavero, con anilla para las llaves, y la etiqueta, sin anilla, para pegar o colgar (en un escaparate, un mostrador o un bolso, por ejemplo). El formato se elige en el carrito.",
       },
       {
         q: "¿Cuánto cuesta?",
-        a: "5 € + IVA por llavero. En packs, 10 llaveros por 45 € y 25 llaveros por 100 €, + IVA.",
+        a: "5 € + IVA cada uno, con o sin anilla. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
       },
       {
         q: "¿Cuánto tarda?",
@@ -417,13 +429,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Porte-clés digital",
     tagline: "On approche le téléphone du porte-clés, et votre établissement s'ouvre sur l'écran du client.",
     summary:
-      "Un petit porte-clés qui, d'un simple geste du téléphone, ouvre le WhatsApp, l'Instagram ou le site web de votre établissement. Fonctionne sur iPhone et Android, sans application. Nous configurons et testons chacun d'eux.",
+      "Un petit porte-clés (ou une étiquette à coller ou à suspendre) qui, d'un simple geste du téléphone, ouvre le WhatsApp, l'Instagram ou le site web de votre établissement. Fonctionne sur iPhone et Android, sans application. Nous configurons et testons chacun d'eux.",
     metaTitle: "Porte-clés digital pour votre établissement | Steevanz",
     metaDescription:
       "Porte-clés digital : en approchant le téléphone, il ouvre le WhatsApp, l'Instagram ou le site de votre établissement. iPhone et Android, sans app. 5 € + TVA.",
     heroTitle: "Votre établissement sur les clés de vos clients",
     heroSubtitle:
-      "Un petit porte-clés qui rejoint le trousseau de ceux qui apprécient ce que vous faites. D'un simple geste du téléphone, il ouvre une conversation WhatsApp avec votre établissement, votre Instagram ou votre site web. Sans application, sur iPhone et Android. Nous configurons et testons chaque porte-clés avant la livraison.",
+      "Un petit porte-clés qui rejoint le trousseau de ceux qui apprécient ce que vous faites, ou une étiquette à coller ou à suspendre où vous voulez. D'un simple geste du téléphone, il ouvre une conversation WhatsApp avec votre établissement, votre Instagram ou votre site web. Sans application, sur iPhone et Android. Nous configurons et testons chaque porte-clés avant la livraison.",
     problem: {
       title: "Vos clients veulent vous recontacter, mais vos coordonnées se perdent",
       body:
@@ -437,22 +449,22 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Vos coordonnées toujours à portée de main, sur leurs clés",
       body:
-        "Le porte-clés digital reste sur les clés du client, qui le suivent partout. Quand il veut vous joindre, il lui suffit d'approcher son téléphone du porte-clés : la destination que vous avez choisie s'ouvre aussitôt, sans rien chercher.",
+        "Le porte-clés digital reste sur les clés du client, qui le suivent partout. Quand il veut vous joindre, il lui suffit d'approcher son téléphone du porte-clés : la destination que vous avez choisie s'ouvre aussitôt, sans rien chercher. Et si un jour vous voulez changer de destination, nous la changeons pour vous sans frais supplémentaires : le porte-clés reste le même.",
       points: [
         "D'un simple geste, il ouvre le WhatsApp, l'Instagram ou le site de votre établissement",
         "Fonctionne sur iPhone et Android, sans application à installer",
         "Configuré et testé par nos soins sur iPhone et Android avant la livraison",
-        "5 € + TVA par porte-clés, avec un prix plus bas en quantité",
+        "5 € + TVA pièce, avec ou sans anneau, avec un prix plus bas en quantité",
       ],
     },
     steps: [
       {
         title: "Choisissez la destination",
-        body: "WhatsApp, Instagram ou site web : chaque porte-clés ouvre une destination, que vous choisissez à la commande.",
+        body: "WhatsApp, Instagram ou site web, sur un porte-clés avec anneau ou une étiquette sans anneau. Vous pourrez changer la destination plus tard sans frais supplémentaires.",
       },
       {
         title: "Dites-nous combien",
-        body: "Un porte-clés coûte 5 € + TVA. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
+        body: "Chacun, avec ou sans anneau, coûte 5 € + TVA. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
       },
       {
         title: "Nous configurons et testons",
@@ -470,7 +482,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "WhatsApp, Instagram ou site web",
-        body: "Vous choisissez à la commande la destination de chaque porte-clés : une conversation WhatsApp avec votre établissement, votre profil Instagram ou votre site web.",
+        body: "Chaque porte-clés ouvre une conversation WhatsApp avec votre établissement, votre profil Instagram ou votre site web. Pour changer la destination plus tard, nous la modifions dans notre système sans frais supplémentaires : inutile de remplacer le porte-clés.",
       },
       {
         title: "Sans application",
@@ -513,7 +525,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Porte-clés avec la technologie Steevanz, dans la quantité de votre choix",
-      "Configuration de la destination : WhatsApp, Instagram ou site web",
+      "Configuration de la destination (WhatsApp, Instagram ou site web) et changements de destination ultérieurs sans frais supplémentaires",
       "Test de chaque porte-clés sur iPhone et Android avant la livraison",
       "Conseils sur les personnes à qui les offrir et sur la façon de les présenter",
       "Assistance par WhatsApp et e-mail",
@@ -529,11 +541,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Qu'est-ce qu'il ouvre ?",
-        a: "Une destination par porte-clés, choisie à la commande : une conversation WhatsApp avec votre établissement, votre Instagram ou votre site web.",
+        a: "Une destination par porte-clés : une conversation WhatsApp avec votre établissement, votre Instagram ou votre site web. Vous pouvez la changer plus tard sans frais supplémentaires : le porte-clés contient un lien court Steevanz, que nous redirigeons vers la nouvelle destination dans notre système. Le porte-clés reste le même.",
+      },
+      {
+        q: "Faut-il un anneau ?",
+        a: "Non. Il existe deux formats au même prix : le porte-clés, avec un anneau pour les clés, et l'étiquette, sans anneau, à coller ou à suspendre (sur une vitrine, un comptoir ou un sac, par exemple). Vous choisissez le format dans le panier.",
       },
       {
         q: "Combien ça coûte ?",
-        a: "5 € + TVA par porte-clés. En lots, 10 porte-clés pour 45 € et 25 porte-clés pour 100 €, + TVA.",
+        a: "5 € + TVA pièce, avec ou sans anneau. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
       },
       {
         q: "Combien de temps faut-il ?",
@@ -554,13 +570,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Digitaler Schlüsselanhänger",
     tagline: "Einmal antippen, und Ihr Betrieb öffnet sich auf dem Handy Ihres Kunden.",
     summary:
-      "Ein kleiner Schlüsselanhänger, der mit einem Antippen des Handys WhatsApp, Instagram oder die Website Ihres Betriebs öffnet. Funktioniert auf iPhone und Android, ohne App. Wir richten jeden ein und testen ihn.",
+      "Ein kleiner Schlüsselanhänger (oder ein Tag zum Aufkleben oder Aufhängen), der mit einem Antippen des Handys WhatsApp, Instagram oder die Website Ihres Betriebs öffnet. Funktioniert auf iPhone und Android, ohne App. Wir richten jeden ein und testen ihn.",
     metaTitle: "Digitaler Schlüsselanhänger für Ihren Betrieb | Steevanz",
     metaDescription:
       "Digitaler Schlüsselanhänger: Einmal antippen öffnet WhatsApp, Instagram oder die Website Ihres Betriebs. iPhone und Android, ohne App. 5 € zzgl. MwSt.",
     heroTitle: "Ihr Betrieb am Schlüsselbund Ihrer Kunden",
     heroSubtitle:
-      "Ein kleiner Anhänger für den Schlüsselbund der Menschen, die Ihre Arbeit schätzen. Einmal mit dem Handy antippen, und es öffnet sich ein WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram oder Ihre Website. Ohne App, auf iPhone und Android. Wir richten jeden Anhänger vor der Lieferung ein und testen ihn.",
+      "Ein kleiner Anhänger für den Schlüsselbund der Menschen, die Ihre Arbeit schätzen, oder ein Tag zum Aufkleben oder Aufhängen, wo Sie möchten. Einmal mit dem Handy antippen, und es öffnet sich ein WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram oder Ihre Website. Ohne App, auf iPhone und Android. Wir richten jeden Anhänger vor der Lieferung ein und testen ihn.",
     problem: {
       title: "Ihre Kunden möchten sich wieder melden, aber der Kontakt geht verloren",
       body:
@@ -574,22 +590,22 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Ihr Kontakt immer griffbereit, am Schlüsselbund",
       body:
-        "Der digitale Schlüsselanhänger hängt an den Schlüsseln Ihres Kunden, die er überallhin mitnimmt. Wenn er Sie erreichen möchte, hält er einfach das Handy an den Anhänger: Das gewählte Ziel öffnet sich sofort, ohne Suchen.",
+        "Der digitale Schlüsselanhänger hängt an den Schlüsseln Ihres Kunden, die er überallhin mitnimmt. Wenn er Sie erreichen möchte, hält er einfach das Handy an den Anhänger: Das gewählte Ziel öffnet sich sofort, ohne Suchen. Und wenn Sie das Ziel eines Tages ändern möchten, ändern wir es ohne Aufpreis für Sie: Der Anhänger bleibt derselbe.",
       points: [
         "Einmal antippen öffnet WhatsApp, Instagram oder die Website Ihres Betriebs",
         "Funktioniert auf iPhone und Android, ohne App-Installation",
         "Vor der Lieferung von uns eingerichtet und auf iPhone und Android getestet",
-        "5 € zzgl. MwSt. pro Anhänger, günstiger bei größeren Mengen",
+        "5 € zzgl. MwSt. pro Stück, mit oder ohne Ring, günstiger bei größeren Mengen",
       ],
     },
     steps: [
       {
         title: "Ziel wählen",
-        body: "WhatsApp, Instagram oder Website: Jeder Anhänger öffnet ein Ziel, das Sie bei der Bestellung festlegen.",
+        body: "WhatsApp, Instagram oder Website, als Anhänger mit Schlüsselring oder als Tag ohne Ring. Das Ziel können Sie später ohne Aufpreis ändern lassen.",
       },
       {
         title: "Menge nennen",
-        body: "Ein Anhänger kostet 5 € zzgl. MwSt. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
+        body: "Jedes Stück, mit oder ohne Ring, kostet 5 € zzgl. MwSt. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
       },
       {
         title: "Wir richten ein und testen",
@@ -607,7 +623,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "WhatsApp, Instagram oder Website",
-        body: "Sie wählen bei der Bestellung das Ziel jedes Anhängers: einen WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram-Profil oder Ihre Website.",
+        body: "Jeder Anhänger öffnet einen WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram-Profil oder Ihre Website. Soll das Ziel später wechseln, ändern wir es in unserem System ohne Aufpreis: Der Anhänger muss nicht ersetzt werden.",
       },
       {
         title: "Ohne App",
@@ -650,7 +666,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Schlüsselanhänger mit Steevanz-Technologie, in der gewünschten Menge",
-      "Einrichtung des Ziels: WhatsApp, Instagram oder Website",
+      "Einrichtung des Ziels (WhatsApp, Instagram oder Website) und spätere Zieländerungen ohne Aufpreis",
       "Test jedes Anhängers auf iPhone und Android vor der Lieferung",
       "Tipps, wem Sie die Anhänger schenken und wie Sie sie Kunden erklären",
       "Support per WhatsApp und E-Mail",
@@ -666,11 +682,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Was öffnet er?",
-        a: "Ein Ziel pro Anhänger, das Sie bei der Bestellung wählen: einen WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram oder Ihre Website.",
+        a: "Ein Ziel pro Anhänger: einen WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram oder Ihre Website. Sie können es später ohne Aufpreis ändern lassen: Der Anhänger enthält einen kurzen Steevanz-Link, den wir in unserem System auf das neue Ziel umleiten. Der Anhänger bleibt derselbe.",
+      },
+      {
+        q: "Muss er einen Schlüsselring haben?",
+        a: "Nein. Es gibt zwei Formate zum gleichen Preis: den Anhänger mit Schlüsselring und das Tag ohne Ring, zum Aufkleben oder Aufhängen (zum Beispiel am Schaufenster, an der Theke oder an einer Tasche). Das Format wählen Sie im Warenkorb.",
       },
       {
         q: "Was kostet er?",
-        a: "5 € zzgl. MwSt. pro Anhänger. Im Paket 10 Anhänger für 45 € und 25 Anhänger für 100 €, zzgl. MwSt.",
+        a: "5 € zzgl. MwSt. pro Stück, mit oder ohne Ring. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
       },
       {
         q: "Wie lange dauert es?",
@@ -691,13 +711,13 @@ export const copy: ProductCopyByLocale = {
     shortName: "Portachiavi digitale",
     tagline: "Un tocco sul portachiavi e la Sua attività si apre sul telefono del cliente.",
     summary:
-      "Un piccolo portachiavi che, con un tocco del telefono, apre il WhatsApp, l'Instagram o il sito web della Sua attività. Funziona su iPhone e Android, senza app. Configuriamo e testiamo noi ogni pezzo.",
+      "Un piccolo portachiavi (o un tag da attaccare o appendere) che, con un tocco del telefono, apre il WhatsApp, l'Instagram o il sito web della Sua attività. Funziona su iPhone e Android, senza app. Configuriamo e testiamo noi ogni pezzo.",
     metaTitle: "Portachiavi digitale per la Sua attività | Steevanz",
     metaDescription:
       "Portachiavi digitale: un tocco del telefono apre il WhatsApp, l'Instagram o il sito della Sua attività. iPhone e Android, senza app. 5 € + IVA al pezzo.",
     heroTitle: "La Sua attività sulle chiavi dei Suoi clienti",
     heroSubtitle:
-      "Un piccolo portachiavi che finisce nel mazzo di chiavi di chi apprezza il Suo lavoro. Con un tocco del telefono apre una chat WhatsApp con la Sua attività, il Suo Instagram o il Suo sito web. Senza app, su iPhone e Android. Configuriamo e testiamo ogni portachiavi prima della consegna.",
+      "Un piccolo portachiavi che finisce nel mazzo di chiavi di chi apprezza il Suo lavoro, oppure un tag da attaccare o appendere dove preferisce. Con un tocco del telefono apre una chat WhatsApp con la Sua attività, il Suo Instagram o il Suo sito web. Senza app, su iPhone e Android. Configuriamo e testiamo ogni portachiavi prima della consegna.",
     problem: {
       title: "I clienti vogliono ricontattarLa, ma il contatto si perde",
       body:
@@ -711,7 +731,7 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Il Suo contatto sempre a portata di mano, sulle chiavi",
       body:
-        "Il portachiavi digitale resta sulle chiavi del cliente, che lo accompagnano ovunque. Quando vuole contattarLa, gli basta avvicinare il telefono al portachiavi: si apre subito la destinazione che Lei ha scelto, senza cercare nulla.",
+        "Il portachiavi digitale resta sulle chiavi del cliente, che lo accompagnano ovunque. Quando vuole contattarLa, gli basta avvicinare il telefono al portachiavi: si apre subito la destinazione che Lei ha scelto, senza cercare nulla. E se un giorno vuole cambiare destinazione, la cambiamo noi senza costi aggiuntivi: il portachiavi resta lo stesso.",
       points: [
         "Un tocco apre il WhatsApp, l'Instagram o il sito della Sua attività",
         "Funziona su iPhone e Android, senza installare nessuna app",
@@ -722,11 +742,11 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Scelga la destinazione",
-        body: "WhatsApp, Instagram o sito web: ogni portachiavi apre una destinazione, che Lei sceglie al momento dell'ordine.",
+        body: "WhatsApp, Instagram o sito web, su un portachiavi con anello o su un tag senza anello. Potrà cambiare la destinazione in seguito senza costi aggiuntivi.",
       },
       {
         title: "Ci dica quanti",
-        body: "Un portachiavi costa 5 € + IVA. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
+        body: "Ogni pezzo, con o senza anello, costa 5 € + IVA. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
       },
       {
         title: "Configuriamo e testiamo",
@@ -744,7 +764,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "WhatsApp, Instagram o sito web",
-        body: "Lei sceglie al momento dell'ordine la destinazione di ogni portachiavi: una chat WhatsApp con la Sua attività, il Suo profilo Instagram o il Suo sito web.",
+        body: "Ogni portachiavi apre una chat WhatsApp con la Sua attività, il Suo profilo Instagram o il Suo sito web. Per cambiare la destinazione in seguito, la modifichiamo noi nel nostro sistema senza costi aggiuntivi: non serve sostituire il portachiavi.",
       },
       {
         title: "Senza app",
@@ -787,7 +807,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Portachiavi con tecnologia Steevanz, nella quantità che preferisce",
-      "Configurazione della destinazione: WhatsApp, Instagram o sito web",
+      "Configurazione della destinazione (WhatsApp, Instagram o sito web) e successivi cambi di destinazione senza costi aggiuntivi",
       "Test di ogni portachiavi su iPhone e Android prima della consegna",
       "Consigli su a chi regalarli e su come spiegarli ai clienti",
       "Assistenza via WhatsApp ed email",
@@ -803,11 +823,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Che cosa apre?",
-        a: "Una destinazione per portachiavi, scelta da Lei al momento dell'ordine: una chat WhatsApp con la Sua attività, il Suo Instagram o il Suo sito web.",
+        a: "Una destinazione per portachiavi: una chat WhatsApp con la Sua attività, il Suo Instagram o il Suo sito web. Può cambiarla in seguito senza costi aggiuntivi: il portachiavi contiene un breve link Steevanz, che indirizziamo noi verso la nuova destinazione nel nostro sistema. Il portachiavi resta lo stesso.",
+      },
+      {
+        q: "Deve avere per forza l'anello?",
+        a: "No. Ci sono due formati allo stesso prezzo: il portachiavi, con l'anello per le chiavi, e il tag, senza anello, da attaccare o appendere (per esempio su una vetrina, un bancone o una borsa). Il formato si sceglie nel carrello.",
       },
       {
         q: "Quanto costa?",
-        a: "5 € + IVA al pezzo. In confezione, 10 portachiavi per 45 € e 25 portachiavi per 100 €, + IVA.",
+        a: "5 € + IVA al pezzo, con o senza anello. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
       },
       {
         q: "Quanto tempo serve?",

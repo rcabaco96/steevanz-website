@@ -8,7 +8,7 @@ import { getProduct } from "../src/content/products.ts";
 import { priceCart } from "../src/lib/cart/pricing.ts";
 import { buildVCard, escapeText, foldLine } from "../src/lib/business-card/vcard.ts";
 
-// «Cartão de visita digital» and «Chaveiro digital» (owner, 2026-10-20): prices and packs from products.ts,
+// «Cartão de visita digital» and «Porta-chaves digital» (owner, 2026-10-20): prices and packs from products.ts,
 // complete in the six languages, house words, and a contact file phones can import.
 
 const locales = ["pt", "en", "es", "fr", "de", "it"];

@@ -7,7 +7,7 @@ export const es: Record<DocPageId, DocPageContent> = {
     blocks: [
       {
         type: "p",
-        text: "El llavero digital es un pequeño llavero para las llaves. Con un toque del móvil, abre el WhatsApp, el Instagram o la web de su negocio. Funciona en iPhone y Android, sin app.",
+        text: "El llavero digital es un pequeño llavero para las llaves, o una etiqueta sin anilla para pegar o colgar. Con un toque del móvil, abre el WhatsApp, el Instagram o la web de su negocio. Funciona en iPhone y Android, sin app.",
       },
       {
         type: "p",
@@ -26,9 +26,9 @@ export const es: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "precios", text: "Precios" },
       {
         type: "table",
-        head: ["Cantidad", "Precio por llavero", "Total"],
+        head: ["Cantidad", "Precio por unidad", "Total"],
         rows: [
-          ["1 llavero", "5 €", "5 €"],
+          ["1 unidad", "5 €", "5 €"],
           ["Pack de 10", "4,50 €", "45 €"],
           ["Pack de 25", "4 €", "100 €"],
         ],
@@ -67,7 +67,7 @@ export const es: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "elegir-destino", text: "1. Elija el destino" },
       {
         type: "p",
-        text: "Cada llavero abre un destino, que se elige al hacer el pedido. Díganos cuál y envíenos lo que necesitamos:",
+        text: "Cada llavero abre un destino. Díganos cuál y envíenos lo que necesitamos (si más adelante quiere otro, lo cambiamos sin coste adicional):",
       },
       {
         type: "table",
@@ -81,7 +81,7 @@ export const es: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "cantidad", text: "2. Díganos cuántos" },
       {
         type: "p",
-        text: "Puede pedir llaveros sueltos o packs de 10 y de 25. Si quiere hablar de personalización, como su logotipo, lo vemos con usted en la demostración.",
+        text: "Hay dos formatos al mismo precio: el llavero, con anilla, y la etiqueta, sin anilla, para pegar o colgar. Puede pedir llaveros sueltos o packs de 10 y de 25. Si quiere hablar de personalización, como su logotipo, lo vemos con usted en la demostración.",
       },
       { type: "h2", id: "configurar-probar", text: "3. Los configuramos y probamos" },
       {
@@ -102,7 +102,7 @@ export const es: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "un-destino", text: "Un destino por llavero" },
       {
         type: "p",
-        text: "Cada llavero abre siempre el destino elegido en el pedido. Elija el que sus clientes más usan para contactarle.",
+        text: "Cada llavero abre un destino. Elija el que sus clientes más usan para contactarle. Si algún día quiere cambiarlo, díganoslo: cambiamos el destino en nuestro sistema sin coste adicional y el llavero sigue siendo el mismo.",
       },
       { type: "h2", id: "whatsapp", text: "WhatsApp" },
       {
@@ -201,11 +201,15 @@ export const es: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "¿Qué abre?",
-            a: "Un destino por llavero, elegido al hacer el pedido: una conversación de WhatsApp con su negocio, su Instagram o su web.",
+            a: "Un destino por llavero: una conversación de WhatsApp con su negocio, su Instagram o su web. Puede cambiarlo más adelante sin coste adicional: el llavero guarda un enlace corto de Steevanz, que nosotros dirigimos al nuevo destino en nuestro sistema. El llavero sigue siendo el mismo.",
           },
           {
             q: "¿Cuánto cuesta?",
-            a: "5 € + IVA por llavero. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
+            a: "5 € + IVA cada uno, con o sin anilla. En packs, 10 por 45 € y 25 por 100 €, + IVA.",
+          },
+          {
+            q: "¿Tiene que llevar anilla?",
+            a: "No. Hay dos formatos al mismo precio: el llavero, con anilla para las llaves, y la etiqueta, sin anilla, para pegar o colgar (en un escaparate, un mostrador o un bolso, por ejemplo). El formato se elige en el carrito.",
           },
           {
             q: "¿Cuánto tarda?",

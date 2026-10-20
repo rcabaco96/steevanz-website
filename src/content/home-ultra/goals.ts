@@ -31,7 +31,7 @@ export const goalChipLabels: Record<ProductId, string> = {
   "social-plates": "Placas para redes sociais",
   "guest-guide": "Guia do alojamento",
   "business-card": "Cartão de visita digital",
-  keychain: "Chaveiro digital",
+  keychain: "Porta-chaves digital",
   automation: "Automação à medida",
 };
 

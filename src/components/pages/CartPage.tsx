@@ -38,6 +38,7 @@ export function CartPage({ locale }: { locale: Locale }) {
             logoExtraCents: product.customization.logoExtra * 100,
             logoExtraPer: product.customization.logoExtraPer,
             textMaxLength: product.customization.textMaxLength,
+            formatOnly: product.customization.formatOnly === true,
           }
         : undefined,
       packs: product.packs?.map((pack) => ({ quantity: pack.quantity, unitCents: pack.unitPrice * 100 })),

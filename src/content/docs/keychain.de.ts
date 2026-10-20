@@ -7,7 +7,7 @@ export const de: Record<DocPageId, DocPageContent> = {
     blocks: [
       {
         type: "p",
-        text: "Der digitale Schlüsselanhänger ist ein kleiner Anhänger für den Schlüsselbund. Einmal mit dem Handy antippen, und er öffnet WhatsApp, Instagram oder die Website Ihres Betriebs. Er funktioniert auf iPhone und Android, ohne App.",
+        text: "Der digitale Schlüsselanhänger ist ein kleiner Anhänger für den Schlüsselbund, oder ein Tag ohne Ring zum Aufkleben oder Aufhängen. Einmal mit dem Handy antippen, und er öffnet WhatsApp, Instagram oder die Website Ihres Betriebs. Er funktioniert auf iPhone und Android, ohne App.",
       },
       {
         type: "p",
@@ -26,9 +26,9 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "preise", text: "Preise" },
       {
         type: "table",
-        head: ["Menge", "Preis pro Anhänger", "Gesamt"],
+        head: ["Menge", "Preis pro Stück", "Gesamt"],
         rows: [
-          ["1 Anhänger", "5 €", "5 €"],
+          ["1 Stück", "5 €", "5 €"],
           ["Paket mit 10", "4,50 €", "45 €"],
           ["Paket mit 25", "4 €", "100 €"],
         ],
@@ -67,7 +67,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "ziel-waehlen", text: "1. Ziel wählen" },
       {
         type: "p",
-        text: "Jeder Anhänger öffnet ein Ziel, das bei der Bestellung festgelegt wird. Sagen Sie uns, welches, und schicken Sie uns, was wir brauchen:",
+        text: "Jeder Anhänger öffnet ein Ziel. Sagen Sie uns, welches, und schicken Sie uns, was wir brauchen (möchten Sie später ein anderes, ändern wir es ohne Aufpreis):",
       },
       {
         type: "table",
@@ -81,7 +81,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "menge", text: "2. Menge nennen" },
       {
         type: "p",
-        text: "Sie können einzelne Anhänger oder Pakete mit 10 und 25 Stück bestellen. Wenn Sie über eine Personalisierung sprechen möchten, etwa mit Ihrem Logo, besprechen wir das in der Vorführung.",
+        text: "Es gibt zwei Formate zum gleichen Preis: den Anhänger mit Schlüsselring und das Tag ohne Ring, zum Aufkleben oder Aufhängen. Sie können einzelne Anhänger oder Pakete mit 10 und 25 Stück bestellen. Wenn Sie über eine Personalisierung sprechen möchten, etwa mit Ihrem Logo, besprechen wir das in der Vorführung.",
       },
       { type: "h2", id: "einrichten-testen", text: "3. Wir richten ein und testen" },
       {
@@ -102,7 +102,7 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "ein-ziel", text: "Ein Ziel pro Anhänger" },
       {
         type: "p",
-        text: "Jeder Anhänger öffnet immer das bei der Bestellung gewählte Ziel. Wählen Sie das, was Ihre Kunden am häufigsten nutzen, um Sie zu erreichen.",
+        text: "Jeder Anhänger öffnet ein Ziel. Wählen Sie das, was Ihre Kunden am häufigsten nutzen, um Sie zu erreichen. Möchten Sie es eines Tages ändern, sagen Sie uns Bescheid: Wir ändern das Ziel in unserem System ohne Aufpreis, und der Anhänger bleibt derselbe.",
       },
       { type: "h2", id: "whatsapp", text: "WhatsApp" },
       {
@@ -201,11 +201,15 @@ export const de: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Was öffnet er?",
-            a: "Ein Ziel pro Anhänger, das bei der Bestellung gewählt wird: einen WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram oder Ihre Website.",
+            a: "Ein Ziel pro Anhänger: einen WhatsApp-Chat mit Ihrem Betrieb, Ihr Instagram oder Ihre Website. Sie können es später ohne Aufpreis ändern lassen: Der Anhänger enthält einen kurzen Steevanz-Link, den wir in unserem System auf das neue Ziel umleiten. Der Anhänger bleibt derselbe.",
           },
           {
             q: "Was kostet er?",
-            a: "5 € zzgl. MwSt. pro Anhänger. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
+            a: "5 € zzgl. MwSt. pro Stück, mit oder ohne Ring. Im Paket 10 Stück für 45 € und 25 Stück für 100 €, zzgl. MwSt.",
+          },
+          {
+            q: "Muss er einen Schlüsselring haben?",
+            a: "Nein. Es gibt zwei Formate zum gleichen Preis: den Anhänger mit Schlüsselring und das Tag ohne Ring, zum Aufkleben oder Aufhängen (zum Beispiel am Schaufenster, an der Theke oder an einer Tasche). Das Format wählen Sie im Warenkorb.",
           },
           {
             q: "Wie lange dauert es?",

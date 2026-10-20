@@ -597,7 +597,7 @@ const goalList = [
       products: {
         loyalty: { benefit: "Carimbos no telemóvel, e a recompensa chega sozinha." },
         "social-plates": { benefit: "Um toque e passam a segui-lo nas redes sociais." },
-        keychain: { benefit: "O seu WhatsApp ou Instagram no chaveiro do cliente, a um toque." },
+        keychain: { benefit: "O seu WhatsApp ou Instagram nas chaves do cliente, a um toque." },
       },
     },
     en: {
@@ -700,7 +700,7 @@ export const goalCtas: Record<ProductId, Localized<string>> = {
   loyalty: { pt: "Conhecer o cartão", en: "Discover the loyalty card", es: "Conocer la tarjeta", fr: "Découvrir la carte de fidélité", de: "Die Kundenkarte entdecken", it: "Scopra la carta fedeltà" },
   "social-plates": { pt: "Conhecer as placas para redes", en: "Discover the social media plates", es: "Conocer las placas para redes", fr: "Découvrir les plaques réseaux sociaux", de: "Die Social-Media-Schilder entdecken", it: "Scopra le targhe social" },
   "business-card": { pt: "Conhecer o cartão de visita", en: "Discover the business card", es: "Conocer la tarjeta de visita", fr: "Découvrir la carte de visite", de: "Die Visitenkarte entdecken", it: "Scopra il biglietto da visita" },
-  keychain: { pt: "Conhecer o chaveiro", en: "Discover the keychain", es: "Conocer el llavero", fr: "Découvrir le porte-clés", de: "Den Schlüsselanhänger entdecken", it: "Scopra il portachiavi" },
+  keychain: { pt: "Conhecer o porta-chaves", en: "Discover the keychain", es: "Conocer el llavero", fr: "Découvrir le porte-clés", de: "Den Schlüsselanhänger entdecken", it: "Scopra il portachiavi" },
   automation: { pt: "Conhecer a automação", en: "Discover automation", es: "Conocer la automatización", fr: "Découvrir l'automatisation", de: "Die Automatisierung entdecken", it: "Scopra l'automazione" },
 };
 

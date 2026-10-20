@@ -126,7 +126,11 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
                   {t.common.requestInfo}
                 </ButtonLink>
               </div>
-              {product.customization ? <p className="-mt-2 pr-[4.75rem] text-sm text-subtle sm:pr-0">{localizePartial(cartCopy, locale).customize.productHint}</p> : null}
+              {product.customization ? (
+                <p className="-mt-2 pr-[4.75rem] text-sm text-subtle sm:pr-0">
+                  {product.customization.formatOnly ? localizePartial(cartCopy, locale).customize.productHintFormat : localizePartial(cartCopy, locale).customize.productHint}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -238,6 +242,22 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               {labels.priceTitle}
             </h2>
             <Price product={product} locale={locale} size="lg" showQualifier />
+            {/* Format-only products (the keychain) show their formats here: same price for every one. */}
+            {product.customization?.formatOnly ? (
+              <div className="flex flex-col gap-3">
+                <h3 className="text-sm font-semibold text-text">{labels.formatsSamePrice}</h3>
+                <ul className="flex flex-col gap-2">
+                  {product.customization.formats.map((format) => (
+                    <li key={format.id} className="flex items-start gap-3 rounded-xl border border-line bg-surface-2/50 px-3.5 py-3 text-sm text-text">
+                      <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-soft text-accent-text">
+                        <Check size={12} />
+                      </span>
+                      {localize(format.label, locale)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             {product.packs?.length ? (
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-semibold text-text">{labels.packsTitle}</h3>

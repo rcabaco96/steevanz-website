@@ -63,6 +63,8 @@ export interface CartCopy {
     textPlaceholder: string;
     addVariant: string;
     productHint: string;
+    /** The same hint for a product where only the format is chosen. */
+    productHintFormat: string;
   };
   packs: {
     title: string;
@@ -145,6 +147,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
       textPlaceholder: "Ex.: Gostou? Deixe-nos a sua opinião!",
       addVariant: "Adicionar outro formato ou versão",
       productHint: "Formato, logótipo e texto escolhem-se no carrinho.",
+      productHintFormat: "O formato escolhe-se no carrinho.",
     },
     packs: {
       title: "Packs com desconto",
@@ -225,6 +228,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
       textPlaceholder: "e.g. Enjoyed it? Leave us a review!",
       addVariant: "Add another format or version",
       productHint: "Choose the format, logo and text in your cart.",
+      productHintFormat: "Choose the format in your cart.",
     },
     packs: {
       title: "Discounted packs",
@@ -305,6 +309,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
       textPlaceholder: "Ej.: ¿Le ha gustado? ¡Déjenos su opinión!",
       addVariant: "Añadir otro formato o versión",
       productHint: "El formato, el logotipo y el texto se eligen en el carrito.",
+      productHintFormat: "El formato se elige en el carrito.",
     },
     packs: {
       title: "Packs con descuento",
@@ -385,6 +390,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
       textPlaceholder: "Ex. : Vous avez aimé ? Laissez-nous votre avis !",
       addVariant: "Ajouter un autre format ou une autre version",
       productHint: "Le format, le logo et le texte se choisissent dans le panier.",
+      productHintFormat: "Le format se choisit dans le panier.",
     },
     packs: {
       title: "Packs à prix réduit",
@@ -465,6 +471,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
       textPlaceholder: "z. B. Hat es Ihnen gefallen? Hinterlassen Sie uns eine Bewertung!",
       addVariant: "Weiteres Format oder weitere Version hinzufügen",
       productHint: "Format, Logo und Text wählen Sie im Warenkorb.",
+      productHintFormat: "Das Format wählen Sie im Warenkorb.",
     },
     packs: {
       title: "Rabattpakete",
@@ -545,6 +552,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
       textPlaceholder: "Es.: Le è piaciuto? Ci lasci la Sua opinione!",
       addVariant: "Aggiunga un altro formato o versione",
       productHint: "Formato, logo e testo si scelgono nel carrello.",
+      productHintFormat: "Il formato si sceglie nel carrello.",
     },
     packs: {
       title: "Pacchetti scontati",

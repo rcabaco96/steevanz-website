@@ -7,7 +7,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
     blocks: [
       {
         type: "p",
-        text: "Le porte-clés digital est un petit porte-clés pour le trousseau de vos clients. D'un simple geste du téléphone, il ouvre le WhatsApp, l'Instagram ou le site web de votre établissement. Il fonctionne sur iPhone et Android, sans application.",
+        text: "Le porte-clés digital est un petit porte-clés pour le trousseau de vos clients, ou une étiquette sans anneau à coller ou à suspendre. D'un simple geste du téléphone, il ouvre le WhatsApp, l'Instagram ou le site web de votre établissement. Il fonctionne sur iPhone et Android, sans application.",
       },
       {
         type: "p",
@@ -26,9 +26,9 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "tarifs", text: "Tarifs" },
       {
         type: "table",
-        head: ["Quantité", "Prix par porte-clés", "Total"],
+        head: ["Quantité", "Prix à la pièce", "Total"],
         rows: [
-          ["1 porte-clés", "5 €", "5 €"],
+          ["1 pièce", "5 €", "5 €"],
           ["Lot de 10", "4,50 €", "45 €"],
           ["Lot de 25", "4 €", "100 €"],
         ],
@@ -67,7 +67,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "choisir-destination", text: "1. Choisissez la destination" },
       {
         type: "p",
-        text: "Chaque porte-clés ouvre une destination, choisie à la commande. Dites-nous laquelle et envoyez-nous ce dont nous avons besoin :",
+        text: "Chaque porte-clés ouvre une destination. Dites-nous laquelle et envoyez-nous ce dont nous avons besoin (si vous en voulez une autre plus tard, nous la changeons sans frais supplémentaires) :",
       },
       {
         type: "table",
@@ -81,7 +81,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "quantite", text: "2. Dites-nous combien" },
       {
         type: "p",
-        text: "Vous pouvez commander à l'unité ou par lots de 10 et de 25. Si vous souhaitez parler de personnalisation, comme votre logo, nous voyons cela avec vous lors de la démonstration.",
+        text: "Il existe deux formats au même prix : le porte-clés, avec un anneau, et l'étiquette, sans anneau, à coller ou à suspendre. Vous pouvez commander à l'unité ou par lots de 10 et de 25. Si vous souhaitez parler de personnalisation, comme votre logo, nous voyons cela avec vous lors de la démonstration.",
       },
       { type: "h2", id: "configurer-tester", text: "3. Nous configurons et testons" },
       {
@@ -102,7 +102,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "une-destination", text: "Une destination par porte-clés" },
       {
         type: "p",
-        text: "Chaque porte-clés ouvre toujours la destination choisie à la commande. Choisissez celle que vos clients utilisent le plus pour vous joindre.",
+        text: "Chaque porte-clés ouvre une destination. Choisissez celle que vos clients utilisent le plus pour vous joindre. Si un jour vous voulez la changer, dites-le-nous : nous modifions la destination dans notre système sans frais supplémentaires, et le porte-clés reste le même.",
       },
       { type: "h2", id: "whatsapp", text: "WhatsApp" },
       {
@@ -201,11 +201,15 @@ export const fr: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Qu'est-ce qu'il ouvre ?",
-            a: "Une destination par porte-clés, choisie à la commande : une conversation WhatsApp avec votre établissement, votre Instagram ou votre site web.",
+            a: "Une destination par porte-clés : une conversation WhatsApp avec votre établissement, votre Instagram ou votre site web. Vous pouvez la changer plus tard sans frais supplémentaires : le porte-clés contient un lien court Steevanz, que nous redirigeons vers la nouvelle destination dans notre système. Le porte-clés reste le même.",
           },
           {
             q: "Combien ça coûte ?",
-            a: "5 € + TVA par porte-clés. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
+            a: "5 € + TVA pièce, avec ou sans anneau. En lots, 10 pour 45 € et 25 pour 100 €, + TVA.",
+          },
+          {
+            q: "Faut-il un anneau ?",
+            a: "Non. Il existe deux formats au même prix : le porte-clés, avec un anneau pour les clés, et l'étiquette, sans anneau, à coller ou à suspendre (sur une vitrine, un comptoir ou un sac, par exemple). Vous choisissez le format dans le panier.",
           },
           {
             q: "Combien de temps faut-il ?",

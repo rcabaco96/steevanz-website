@@ -7,7 +7,7 @@ export const en: Record<DocPageId, DocPageContent> = {
     blocks: [
       {
         type: "p",
-        text: "The digital keychain is a small tag for your customers' keys. With one tap of a phone, it opens your business's WhatsApp, Instagram or website. It works on iPhone and Android, with no app.",
+        text: "The digital keychain is a small tag for your customers' keys, with a key ring, or without one to stick or hang. With one tap of a phone, it opens your business's WhatsApp, Instagram or website. It works on iPhone and Android, with no app.",
       },
       {
         type: "p",
@@ -26,9 +26,9 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "pricing", text: "Pricing" },
       {
         type: "table",
-        head: ["Quantity", "Price per keychain", "Total"],
+        head: ["Quantity", "Price per unit", "Total"],
         rows: [
-          ["1 keychain", "€5", "€5"],
+          ["1 unit", "€5", "€5"],
           ["Pack of 10", "€4.50", "€45"],
           ["Pack of 25", "€4", "€100"],
         ],
@@ -67,7 +67,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "choose-destination", text: "1. Choose the destination" },
       {
         type: "p",
-        text: "Each keychain opens one destination, chosen when you order. Tell us which one and send us what we need:",
+        text: "Each keychain opens one destination. Tell us which one and send us what we need (if you want a different one later, we change it at no extra cost):",
       },
       {
         type: "table",
@@ -81,7 +81,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "quantity", text: "2. Tell us how many" },
       {
         type: "p",
-        text: "You can order single keychains or packs of 10 and 25. If you'd like to talk about personalisation, such as your logo, we'll go through it with you at the demo.",
+        text: "There are two formats at the same price: the keychain, with a key ring, and the tag, without one, to stick or hang. You can order single keychains or packs of 10 and 25. If you'd like to talk about personalisation, such as your logo, we'll go through it with you at the demo.",
       },
       { type: "h2", id: "setup-and-test", text: "3. We set up and test" },
       {
@@ -102,7 +102,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "one-destination", text: "One destination per keychain" },
       {
         type: "p",
-        text: "Each keychain always opens the destination chosen when you ordered. Pick the one your customers use most to get in touch with you.",
+        text: "Each keychain opens one destination. Pick the one your customers use most to get in touch with you. If you ever want to change it, just tell us: we change the destination in our system at no extra cost, and the keychain stays the same.",
       },
       { type: "h2", id: "whatsapp", text: "WhatsApp" },
       {
@@ -201,11 +201,15 @@ export const en: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "What does it open?",
-            a: "One destination per keychain, chosen when you order: a WhatsApp chat with your business, your Instagram or your website.",
+            a: "One destination per keychain: a WhatsApp chat with your business, your Instagram or your website. You can change it later at no extra cost: the keychain holds a short Steevanz link, which we point to the new destination in our system. The keychain stays the same.",
           },
           {
             q: "How much does it cost?",
-            a: "€5 + VAT per keychain. In packs, 10 for €45 and 25 for €100, + VAT.",
+            a: "€5 + VAT each, with or without a key ring. In packs, 10 for €45 and 25 for €100, + VAT.",
+          },
+          {
+            q: "Does it have to have a key ring?",
+            a: "No. There are two formats at the same price: the keychain, with a key ring, and the tag, without one, to stick or hang (on a shop window, a counter or a bag, for example). You choose the format in your cart.",
           },
           {
             q: "How long does it take?",

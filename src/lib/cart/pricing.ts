@@ -66,6 +66,8 @@ export function sanitizeOptions(productId: ProductId, input: unknown): CartLineO
   const format = customization.formats.some((candidate) => candidate.id === raw.format)
     ? String(raw.format)
     : customization.formats[0].id;
+  // Format-only products (the keychain) take no logo and no text.
+  if (customization.formatOnly) return { format, logo: false, text: "" };
   const text = typeof raw.text === "string" ? raw.text.slice(0, customization.textMaxLength) : "";
   return { format, logo: raw.logo === true, text };
 }

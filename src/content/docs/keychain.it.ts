@@ -7,7 +7,7 @@ export const it: Record<DocPageId, DocPageContent> = {
     blocks: [
       {
         type: "p",
-        text: "Il portachiavi digitale è un piccolo portachiavi per il mazzo di chiavi. Con un tocco del telefono apre il WhatsApp, l'Instagram o il sito web della Sua attività. Funziona su iPhone e Android, senza app.",
+        text: "Il portachiavi digitale è un piccolo portachiavi per il mazzo di chiavi, oppure un tag senza anello da attaccare o appendere. Con un tocco del telefono apre il WhatsApp, l'Instagram o il sito web della Sua attività. Funziona su iPhone e Android, senza app.",
       },
       {
         type: "p",
@@ -28,7 +28,7 @@ export const it: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Quantità", "Prezzo al pezzo", "Totale"],
         rows: [
-          ["1 portachiavi", "5 €", "5 €"],
+          ["1 pezzo", "5 €", "5 €"],
           ["Confezione da 10", "4,50 €", "45 €"],
           ["Confezione da 25", "4 €", "100 €"],
         ],
@@ -67,7 +67,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "scegliere-destinazione", text: "1. Scelga la destinazione" },
       {
         type: "p",
-        text: "Ogni portachiavi apre una destinazione, scelta al momento dell'ordine. Ci dica quale e ci invii ciò che ci serve:",
+        text: "Ogni portachiavi apre una destinazione. Ci dica quale e ci invii ciò che ci serve (se in seguito ne vuole un'altra, la cambiamo senza costi aggiuntivi):",
       },
       {
         type: "table",
@@ -81,7 +81,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "quantita", text: "2. Ci dica quanti" },
       {
         type: "p",
-        text: "Può ordinare singoli portachiavi o confezioni da 10 e da 25. Se desidera parlare di personalizzazione, come il Suo logo, ne parliamo insieme durante la demo.",
+        text: "Ci sono due formati allo stesso prezzo: il portachiavi, con l'anello, e il tag, senza anello, da attaccare o appendere. Può ordinare singoli portachiavi o confezioni da 10 e da 25. Se desidera parlare di personalizzazione, come il Suo logo, ne parliamo insieme durante la demo.",
       },
       { type: "h2", id: "configurare-testare", text: "3. Configuriamo e testiamo" },
       {
@@ -102,7 +102,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "una-destinazione", text: "Una destinazione per portachiavi" },
       {
         type: "p",
-        text: "Ogni portachiavi apre sempre la destinazione scelta nell'ordine. Scelga quella che i Suoi clienti usano di più per contattarLa.",
+        text: "Ogni portachiavi apre una destinazione. Scelga quella che i Suoi clienti usano di più per contattarLa. Se un giorno vuole cambiarla, ce lo dica: modifichiamo la destinazione nel nostro sistema senza costi aggiuntivi e il portachiavi resta lo stesso.",
       },
       { type: "h2", id: "whatsapp", text: "WhatsApp" },
       {
@@ -201,11 +201,15 @@ export const it: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Che cosa apre?",
-            a: "Una destinazione per portachiavi, scelta al momento dell'ordine: una chat WhatsApp con la Sua attività, il Suo Instagram o il Suo sito web.",
+            a: "Una destinazione per portachiavi: una chat WhatsApp con la Sua attività, il Suo Instagram o il Suo sito web. Può cambiarla in seguito senza costi aggiuntivi: il portachiavi contiene un breve link Steevanz, che indirizziamo noi verso la nuova destinazione nel nostro sistema. Il portachiavi resta lo stesso.",
           },
           {
             q: "Quanto costa?",
-            a: "5 € + IVA al pezzo. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
+            a: "5 € + IVA al pezzo, con o senza anello. In confezione, 10 per 45 € e 25 per 100 €, + IVA.",
+          },
+          {
+            q: "Deve avere per forza l'anello?",
+            a: "No. Ci sono due formati allo stesso prezzo: il portachiavi, con l'anello per le chiavi, e il tag, senza anello, da attaccare o appendere (per esempio su una vetrina, un bancone o una borsa). Il formato si sceglie nel carrello.",
           },
           {
             q: "Quanto tempo serve?",

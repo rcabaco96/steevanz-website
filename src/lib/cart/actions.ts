@@ -104,6 +104,7 @@ function customizationLines({ productId, options }: CartLine, locale: Locale = "
   const t = localize(emailText, locale);
   const format = customization.formats.find((candidate) => candidate.id === options.format)?.label ?? null;
   const formatLabel = format ? localize(format, locale) : options.format;
+  if (customization.formatOnly) return [`${t.format}: ${formatLabel}`];
   const text = options.text.trim();
   return [
     `${t.format}: ${formatLabel}`,

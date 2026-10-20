@@ -2,16 +2,16 @@ import type { DocPageContent, DocPageId } from "../types";
 
 export const pt: Record<DocPageId, DocPageContent> = {
   "getting-started": {
-    title: "Primeiros passos com o chaveiro digital",
-    description: "O que é o chaveiro digital, o que pode abrir, quanto custa e como o cliente o usa com um toque do telemóvel.",
+    title: "Primeiros passos com o porta-chaves digital",
+    description: "O que é o porta-chaves digital, o que pode abrir, quanto custa e como o cliente o usa com um toque do telemóvel.",
     blocks: [
       {
         type: "p",
-        text: "O chaveiro digital é um pequeno chaveiro para as chaves. Com um toque do telemóvel, abre o WhatsApp, o Instagram ou o website do seu negócio. Funciona em iPhone e Android, sem app.",
+        text: "O porta-chaves digital é um pequeno porta-chaves para as chaves, ou uma tag sem argola para colar ou pendurar. Com um toque do telemóvel, abre o WhatsApp, o Instagram ou o website do seu negócio. Funciona em iPhone e Android, sem app.",
       },
       {
         type: "p",
-        text: "Nós tratamos de tudo: configuramos o destino de cada chaveiro e testamo-lo em iPhone e Android antes da entrega.",
+        text: "Nós tratamos de tudo: configuramos o destino de cada porta-chaves e testamo-lo em iPhone e Android antes da entrega.",
       },
       { type: "h2", id: "o-que-abre", text: "O que pode abrir" },
       {
@@ -26,9 +26,9 @@ export const pt: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "precos", text: "Preços" },
       {
         type: "table",
-        head: ["Quantidade", "Preço por chaveiro", "Total"],
+        head: ["Quantidade", "Preço por unidade", "Total"],
         rows: [
-          ["1 chaveiro", "5 €", "5 €"],
+          ["1 unidade", "5 €", "5 €"],
           ["Pack de 10", "4,50 €", "45 €"],
           ["Pack de 25", "4 €", "100 €"],
         ],
@@ -38,7 +38,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
       {
         type: "ol",
         items: [
-          "O cliente aproxima o telemóvel do chaveiro.",
+          "O cliente aproxima o telemóvel do porta-chaves.",
           "O destino que escolheu abre de imediato.",
           "Não precisa de instalar nenhuma app nem de procurar o seu nome.",
         ],
@@ -47,13 +47,13 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "callout",
         tone: "info",
         title: "Só com um toque",
-        text: "O chaveiro não tem QR code. Telemóveis muito antigos ou sem leitura por aproximação não o conseguem abrir. Para esses casos, o Cartão de visita digital e as placas têm QR code.",
+        text: "O porta-chaves não tem QR code. Telemóveis muito antigos ou sem leitura por aproximação não o conseguem abrir. Para esses casos, o Cartão de visita digital e as placas têm QR code.",
       },
       { type: "h2", id: "proximos-passos", text: "Próximos passos" },
       {
         type: "ul",
         items: [
-          "[Encomenda e entrega](/docs/chaveiro-digital/instalacao): o que nos enviar e o que acontece até receber os chaveiros.",
+          "[Encomenda e entrega](/docs/chaveiro-digital/instalacao): o que nos enviar e o que acontece até receber os porta-chaves.",
           "[Configuração](/docs/chaveiro-digital/configuracao): como escolher entre WhatsApp, Instagram e website.",
           "[Utilização](/docs/chaveiro-digital/utilizacao): a quem oferecer e como explicar ao cliente.",
         ],
@@ -61,13 +61,13 @@ export const pt: Record<DocPageId, DocPageContent> = {
     ],
   },
   setup: {
-    title: "Encomenda e entrega do chaveiro digital",
+    title: "Encomenda e entrega do porta-chaves digital",
     description: "O que nos enviar para cada destino, como escolher a quantidade e o que fazemos antes da entrega.",
     blocks: [
       { type: "h2", id: "escolher-destino", text: "1. Escolha o destino" },
       {
         type: "p",
-        text: "Cada chaveiro abre um destino, escolhido na encomenda. Diga-nos qual e envie-nos o que precisamos:",
+        text: "Cada porta-chaves abre um destino. Diga-nos qual e envie-nos o que precisamos (se mais tarde quiser outro, mudamos sem custo):",
       },
       {
         type: "table",
@@ -81,28 +81,28 @@ export const pt: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "quantidade", text: "2. Diga-nos quantos" },
       {
         type: "p",
-        text: "Pode encomendar à unidade ou em packs de 10 e de 25. Se quiser falar de personalização, como o seu logótipo, vemos isso consigo na demonstração.",
+        text: "Há dois formatos, com o mesmo preço: o porta-chaves, com argola, e a tag, sem argola, para colar ou pendurar. Pode encomendar à unidade ou em packs de 10 e de 25. Se quiser falar de personalização, como o seu logótipo, vemos isso consigo na demonstração.",
       },
       { type: "h2", id: "configurar-testar", text: "3. Nós configuramos e testamos" },
       {
         type: "p",
-        text: "Configuramos cada chaveiro com o seu destino e testamo-lo em iPhone e Android antes da entrega. Fica pronto em poucos dias úteis; indicamos o prazo exato na demonstração.",
+        text: "Configuramos cada porta-chaves com o seu destino e testamo-lo em iPhone e Android antes da entrega. Fica pronto em poucos dias úteis; indicamos o prazo exato na demonstração.",
       },
       {
         type: "callout",
         tone: "tip",
-        text: "Quando receber os chaveiros, experimente um com o seu telemóvel antes de os oferecer.",
+        text: "Quando receber os porta-chaves, experimente um com o seu telemóvel antes de os oferecer.",
       },
     ],
   },
   configuration: {
-    title: "Configuração do chaveiro digital",
+    title: "Configuração do porta-chaves digital",
     description: "Como escolher entre WhatsApp, Instagram e website, com conselhos para cada destino.",
     blocks: [
-      { type: "h2", id: "um-destino", text: "Um destino por chaveiro" },
+      { type: "h2", id: "um-destino", text: "Um destino por porta-chaves" },
       {
         type: "p",
-        text: "Cada chaveiro abre sempre o destino escolhido na encomenda. Escolha o que os seus clientes mais usam para falar consigo.",
+        text: "Cada porta-chaves abre um destino. Escolha o que os seus clientes mais usam para falar consigo. Se um dia quiser mudar, diga-nos: mudamos o destino no nosso painel, sem custo, e o porta-chaves fica igual.",
       },
       { type: "h2", id: "whatsapp", text: "WhatsApp" },
       {
@@ -122,13 +122,13 @@ export const pt: Record<DocPageId, DocPageContent> = {
       {
         type: "callout",
         tone: "info",
-        text: "A personalização do chaveiro, como o seu logótipo, é um tema que vemos consigo na demonstração.",
+        text: "A personalização do porta-chaves, como o seu logótipo, é um tema que vemos consigo na demonstração.",
       },
     ],
   },
   usage: {
-    title: "Utilização do chaveiro digital",
-    description: "A quem oferecer o chaveiro e como explicar ao cliente, numa frase, o que ele faz.",
+    title: "Utilização do porta-chaves digital",
+    description: "A quem oferecer o porta-chaves e como explicar ao cliente, numa frase, o que ele faz.",
     blocks: [
       { type: "h2", id: "a-quem-oferecer", text: "A quem oferecer" },
       {
@@ -137,14 +137,14 @@ export const pt: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Cafés, restaurantes, salões e lojas", "Ofereça aos clientes habituais: o seu WhatsApp ou Instagram fica sempre nas chaves deles"],
           ["Alojamento local", "O porta-chaves da chave da casa abre o WhatsApp do anfitrião"],
-          ["Imobiliárias", "Entregue o chaveiro com as chaves da casa nova"],
+          ["Imobiliárias", "Entregue o porta-chaves com as chaves da casa nova"],
           ["Equipas, eventos e feiras", "Um brinde útil, que fica nas chaves em vez de ir para o lixo"],
         ],
       },
       { type: "h2", id: "explicar", text: "Explique numa frase" },
       {
         type: "p",
-        text: "Ao entregar o chaveiro, diga por exemplo: «Aproxime o telemóvel deste chaveiro e fala connosco no WhatsApp.» Mostrar uma vez com o seu telemóvel ajuda.",
+        text: "Ao entregar o porta-chaves, diga por exemplo: «Aproxime o telemóvel deste porta-chaves e fala connosco no WhatsApp.» Mostrar uma vez com o seu telemóvel ajuda.",
       },
       {
         type: "callout",
@@ -154,14 +154,14 @@ export const pt: Record<DocPageId, DocPageContent> = {
     ],
   },
   troubleshooting: {
-    title: "Resolução de problemas do chaveiro digital",
-    description: "O que fazer quando o toque não abre nada ou quando um chaveiro abre o destino errado.",
+    title: "Resolução de problemas do porta-chaves digital",
+    description: "O que fazer quando o toque não abre nada ou quando um porta-chaves abre o destino errado.",
     blocks: [
       { type: "h2", id: "toque-nao-abre", text: "O toque não abre nada" },
       {
         type: "ul",
         items: [
-          "Nos iPhone XS e mais recentes, aproxime o topo do telemóvel do chaveiro, com o ecrã ligado.",
+          "Nos iPhone XS e mais recentes, aproxime o topo do telemóvel do porta-chaves, com o ecrã ligado.",
           "Nos Android, ligue a leitura por aproximação nas definições de ligações.",
           "Se a capa do telemóvel for grossa, experimente sem ela.",
         ],
@@ -170,14 +170,14 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "callout",
         tone: "warning",
         title: "Não há QR code",
-        text: "O chaveiro funciona só com um toque. Telemóveis muito antigos ou sem leitura por aproximação não o conseguem abrir. Para esses clientes, o Cartão de visita digital e as placas têm QR code.",
+        text: "O porta-chaves funciona só com um toque. Telemóveis muito antigos ou sem leitura por aproximação não o conseguem abrir. Para esses clientes, o Cartão de visita digital e as placas têm QR code.",
       },
       { type: "h2", id: "destino-errado", text: "Abre o destino errado" },
       {
         type: "p",
-        text: "Testamos cada chaveiro antes da entrega. Se algo não estiver certo, fale connosco por WhatsApp ou email, diga-nos o que devia abrir e vemos consigo a solução.",
+        text: "Testamos cada porta-chaves antes da entrega. Se algo não estiver certo, fale connosco por WhatsApp ou email, diga-nos o que devia abrir e vemos consigo a solução.",
       },
-      { type: "h2", id: "mais-chaveiros", text: "Precisa de mais chaveiros" },
+      { type: "h2", id: "mais-chaveiros", text: "Precisa de mais porta-chaves" },
       {
         type: "p",
         text: "Pode encomendar mais quando quiser, à unidade ou em packs. Fale connosco por WhatsApp ou email.",
@@ -185,7 +185,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
     ],
   },
   faq: {
-    title: "Perguntas frequentes sobre o chaveiro digital",
+    title: "Perguntas frequentes sobre o porta-chaves digital",
     description: "Respostas rápidas sobre telemóveis compatíveis, QR code, destinos, preços e prazos.",
     blocks: [
       {
@@ -201,11 +201,15 @@ export const pt: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Abre o quê?",
-            a: "Um destino por chaveiro, escolhido na encomenda: uma conversa no WhatsApp com o seu negócio, o seu Instagram ou o seu website.",
+            a: "Um destino por porta-chaves: uma conversa no WhatsApp com o seu negócio, o seu Instagram ou o seu website. Pode mudá-lo mais tarde, sem custo: o porta-chaves guarda um link curto da Steevanz, que nós apontamos para o novo destino no nosso painel. O porta-chaves fica igual.",
           },
           {
             q: "Quanto custa?",
-            a: "5 € + IVA por chaveiro. Em packs, 10 por 45 € e 25 por 100 €, + IVA.",
+            a: "5 € + IVA cada, com ou sem argola. Em packs, 10 por 45 € e 25 por 100 €, + IVA.",
+          },
+          {
+            q: "Tem de ser com argola?",
+            a: "Não. Há dois formatos, com o mesmo preço: o porta-chaves, com argola para as chaves, e a tag, sem argola, para colar ou pendurar (por exemplo, numa montra, num balcão ou numa mala). Escolhe o formato no carrinho.",
           },
           {
             q: "Quanto tempo demora?",
@@ -213,7 +217,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Qual é a diferença para o Cartão de visita digital?",
-            a: "O cartão abre uma página de contactos completa e tem QR code. O chaveiro é mais pequeno e mais simples: abre diretamente um único destino.",
+            a: "O cartão abre uma página de contactos completa e tem QR code. O porta-chaves é mais pequeno e mais simples: abre diretamente um único destino.",
           },
         ],
       },

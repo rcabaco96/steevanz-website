@@ -1,6 +1,6 @@
 import type { Localized } from "@/lib/i18n";
 
-// Words of the product-page hero scenes for the «Cartão de visita digital» and the «Chaveiro digital»
+// Words of the product-page hero scenes for the «Cartão de visita digital» and the «Porta-chaves digital»
 // (components/visuals/CardTapScene.tsx). The card is the real Steevanz example card (/c/rogerio-cabaco).
 
 export interface CardSceneCopy {
@@ -21,7 +21,7 @@ export interface CardSceneCopy {
 export const cardSceneCopy: Localized<CardSceneCopy> = {
   pt: {
     cardAria: "Um telemóvel toca no cartão de visita Steevanz e abre a página de contacto de Rogério Cabaço, com o botão «Guardar contacto».",
-    keychainAria: "Um telemóvel toca no chaveiro digital e abre a conversa de WhatsApp do negócio.",
+    keychainAria: "Um telemóvel toca no porta-chaves digital e abre a conversa de WhatsApp do negócio.",
     idle: "Aproxime o telemóvel",
     chipNoApp: "Sem app",
     chipTapQr: "Toque + QR",

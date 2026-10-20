@@ -30,6 +30,8 @@ export interface CartCatalogItem {
     logoExtraCents: number;
     logoExtraPer: "unit" | "line";
     textMaxLength: number;
+    /** Only the format is chosen (no logo, no text): the keychain. */
+    formatOnly: boolean;
   };
   packs?: { quantity: number; unitCents: number }[];
 }
@@ -522,70 +524,99 @@ function LineCustomization({
   const t = copy.customize;
 
   return (
-    <fieldset className="grid gap-4 rounded-2xl border border-line bg-surface-2/50 p-4 sm:ml-15 sm:grid-cols-2">
+    <fieldset className={`grid gap-4 rounded-2xl border border-line bg-surface-2/50 p-4 sm:ml-15 ${customization.formatOnly ? "" : "sm:grid-cols-2"}`}>
       <legend className="sr-only">{t.title}</legend>
-      <div className="flex flex-col gap-2">
-        <label htmlFor={`${id}-format`} className="text-sm font-semibold text-text">
-          {t.format}
-        </label>
-        <div className="relative">
-          <select
-            id={`${id}-format`}
-            value={options.format}
-            onChange={(event) => cart.setOptions(line.id, { format: event.target.value })}
-            className={`${inputClasses} h-12 cursor-pointer appearance-none pr-11`}
-          >
-            {customization.formats.map((format) => (
-              <option key={format.value} value={format.value}>
-                {format.label}
-              </option>
-            ))}
-          </select>
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-subtle"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
+      {customization.formatOnly ? (
+        // Only the format to choose (the keychain): every option visible, long labels wrap on phones.
+        <div role="radiogroup" aria-labelledby={`${id}-format`} className="flex flex-col gap-2">
+          <p id={`${id}-format`} className="text-sm font-semibold text-text">
+            {t.format}
+          </p>
+          {customization.formats.map((format) => (
+            <label
+              key={format.value}
+              className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-line bg-surface px-3.5 py-3 text-sm text-text transition-colors hover:border-line-strong has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50"
+            >
+              <input
+                type="radio"
+                name={`${id}-format`}
+                value={format.value}
+                checked={options.format === format.value}
+                onChange={() => cart.setOptions(line.id, { format: format.value })}
+                className="h-5 w-5 shrink-0 cursor-pointer accent-accent"
+              />
+              {format.label}
+            </label>
+          ))}
         </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor={`${id}-text`} className="flex items-baseline justify-between gap-3 text-sm font-semibold text-text">
-          <span>{t.text}</span>
-          <span className="tabular text-xs font-normal text-subtle">
-            {options.text.length}/{customization.textMaxLength}
-          </span>
-        </label>
-        <input
-          id={`${id}-text`}
-          type="text"
-          value={options.text}
-          maxLength={customization.textMaxLength}
-          placeholder={t.textPlaceholder}
-          onChange={(event) => cart.setOptions(line.id, { text: event.target.value })}
-          className={`${inputClasses} h-12`}
-        />
-      </div>
-      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-sm transition-colors hover:border-line-strong has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50 sm:col-span-2">
-        <input
-          type="checkbox"
-          checked={options.logo}
-          onChange={(event) => cart.setOptions(line.id, { logo: event.target.checked })}
-          className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded-md accent-accent"
-        />
-        <span className="flex flex-col gap-0.5">
-          <span className="font-semibold text-text">{t.logo}</span>
-          <span className="tabular text-subtle">
-            {(customization.logoExtraPer === "line" ? t.logoExtraOnce : t.logoExtra).replace("{price}", formatCents(customization.logoExtraCents, locale))}
-          </span>
-        </span>
-      </label>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <label htmlFor={`${id}-format`} className="text-sm font-semibold text-text">
+            {t.format}
+          </label>
+          <div className="relative">
+            <select
+              id={`${id}-format`}
+              value={options.format}
+              onChange={(event) => cart.setOptions(line.id, { format: event.target.value })}
+              className={`${inputClasses} h-12 cursor-pointer appearance-none pr-11`}
+            >
+              {customization.formats.map((format) => (
+                <option key={format.value} value={format.value}>
+                  {format.label}
+                </option>
+              ))}
+            </select>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-subtle"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+      )}
+      {customization.formatOnly ? null : (
+        <>
+          <div className="flex flex-col gap-2">
+            <label htmlFor={`${id}-text`} className="flex items-baseline justify-between gap-3 text-sm font-semibold text-text">
+              <span>{t.text}</span>
+              <span className="tabular text-xs font-normal text-subtle">
+                {options.text.length}/{customization.textMaxLength}
+              </span>
+            </label>
+            <input
+              id={`${id}-text`}
+              type="text"
+              value={options.text}
+              maxLength={customization.textMaxLength}
+              placeholder={t.textPlaceholder}
+              onChange={(event) => cart.setOptions(line.id, { text: event.target.value })}
+              className={`${inputClasses} h-12`}
+            />
+          </div>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-sm transition-colors hover:border-line-strong has-[:checked]:border-accent/50 has-[:checked]:bg-accent-soft/50 sm:col-span-2">
+            <input
+              type="checkbox"
+              checked={options.logo}
+              onChange={(event) => cart.setOptions(line.id, { logo: event.target.checked })}
+              className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded-md accent-accent"
+            />
+            <span className="flex flex-col gap-0.5">
+              <span className="font-semibold text-text">{t.logo}</span>
+              <span className="tabular text-subtle">
+                {(customization.logoExtraPer === "line" ? t.logoExtraOnce : t.logoExtra).replace("{price}", formatCents(customization.logoExtraCents, locale))}
+              </span>
+            </span>
+          </label>
+        </>
+      )}
     </fieldset>
   );
 }
