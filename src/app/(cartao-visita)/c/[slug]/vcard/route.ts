@@ -1,35 +1,16 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import sharp from "sharp";
-import { businessCards, getBusinessCard, type BusinessCard } from "@/content/business-cards";
-import { buildVCard, vcardFileName, type VCardPhoto } from "@/lib/business-card/vcard";
+import { buildVCard, vcardFileName } from "@/lib/business-card/vcard";
+import { loadPublicCard, vcardPhoto } from "@/lib/business-cards/store";
 
-// «Guardar contacto»: the card owner's contact file, made at build time for every card (fast, with the photo inside).
-export const dynamic = "force-static";
-export const dynamicParams = false;
+// «Guardar contacto»: the card owner's contact file, made on request from the card (database or content
+// file) with the photo inside. The card and the photo come from caches, so it stays fast.
+export const dynamic = "force-dynamic";
 
-export function generateStaticParams() {
-  return businessCards.map((card) => ({ slug: card.slug }));
-}
-
-/** The photo as a small JPEG on cream (round PNGs have transparent corners; contacts crop it round again). */
-async function photoFor(card: BusinessCard): Promise<VCardPhoto | undefined> {
-  if (!card.photo) return undefined;
-  try {
-    const source = await readFile(join(process.cwd(), "public", card.photo.src));
-    const jpeg = await sharp(source).resize(240, 240, { fit: "cover" }).flatten({ background: "#fbf7f1" }).jpeg({ quality: 82 }).toBuffer();
-    return { base64: jpeg.toString("base64"), type: "JPEG" };
-  } catch {
-    // Without the photo the contact still saves.
-    return undefined;
-  }
-}
-
-export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const card = getBusinessCard((await params).slug);
-  if (!card) return new Response("Not found", { status: 404 });
-  const body = buildVCard(card, await photoFor(card));
-  return new Response(body, {
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const card = await loadPublicCard((await params).slug);
+  if (!card) return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex, nofollow" } });
+  // A site path ("/assinatura/foto.png") is fetched from this same site; uploaded photos by their address.
+  const photo = card.photo ? await vcardPhoto(new URL(card.photo.src, request.url).toString()) : undefined;
+  return new Response(buildVCard(card, photo), {
     headers: {
       "Content-Type": "text/vcard; charset=utf-8",
       "Content-Disposition": `attachment; filename="${vcardFileName(card)}"`,

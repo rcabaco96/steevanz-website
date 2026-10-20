@@ -4,14 +4,17 @@ import { notFound } from "next/navigation";
 import "../../../globals.css";
 import { fontVariables } from "@/app/fonts";
 import { ThemeScript } from "@/components/site/ThemeScript";
-import { businessCards, getBusinessCard } from "@/content/business-cards";
+import { businessCards } from "@/content/business-cards";
+import { loadPublicCard } from "@/lib/business-cards/store";
 import { htmlLang } from "@/lib/i18n";
 import { rootViewport } from "@/lib/root-metadata";
 
 // The root layout of a «Cartão de visita digital» page (/c/<slug>): its own html, in the card owner's language.
-// Public, never indexed, prerendered for every card in content/business-cards.ts.
-export const dynamicParams = false;
+// Public, never indexed. The cards come from the database (edited in /admin/cartoes), or from
+// content/business-cards.ts before its migration; each page is rendered on its first visit and kept,
+// refreshed at once by every save in the admin.
 
+/** The content file's cards are built with the site; the others on their first visit. */
 export function generateStaticParams() {
   return businessCards.map((card) => ({ slug: card.slug }));
 }
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = rootViewport;
 
 export default async function BusinessCardLayout({ children, params }: { children: ReactNode; params: Promise<{ slug: string }> }) {
-  const card = getBusinessCard((await params).slug);
+  const card = await loadPublicCard((await params).slug);
   if (!card) notFound();
   return (
     <html lang={htmlLang[card.locale]} className={fontVariables} suppressHydrationWarning>
