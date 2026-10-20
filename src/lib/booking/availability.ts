@@ -67,10 +67,15 @@ export async function loadAvailabilityTables(client: SupabaseClient): Promise<Av
   };
 }
 
+/** Demos: first bookable day is today + 2 in Portugal (owner, 2026-10-20: never today or tomorrow). */
+export const demoMinLeadDays = 2;
+
 export function toAvailabilityConfig(tables: AvailabilityTables): AvailabilityConfig {
   return {
     timeZone: tables.settings.timezone || site.timeZone,
     minNoticeHours: tables.settings.min_notice_hours,
+    // Demos are booked from the day after tomorrow on, so the owner has time to prepare.
+    minLeadDays: demoMinLeadDays,
     maxDaysAhead: tables.settings.max_days_ahead,
     rules: tables.rules.map((rule) => ({
       weekday: rule.weekday,

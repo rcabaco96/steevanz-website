@@ -75,6 +75,14 @@ describe("computeAvailability", () => {
     assert.equal(day(days, "2026-10-02").slots[0].time, "10:00");
   });
 
+  it("never offers today or tomorrow when the lead is 2 days", () => {
+    // Monday 2026-10-19, 08:00 in Lisbon: Monday and Tuesday stay empty, Wednesday opens.
+    const days = computeAvailability(baseConfig({ minLeadDays: 2 }), new Date("2026-10-19T07:00:00Z"), []);
+    assert.equal(day(days, "2026-10-19").slots.length, 0);
+    assert.equal(day(days, "2026-10-20").slots.length, 0);
+    assert.equal(day(days, "2026-10-21").slots[0].time, "10:00");
+  });
+
   it("removes breaks and keeps 30 minute slots", () => {
     const days = computeAvailability(baseConfig(), now, []);
     const friday = day(days, "2026-10-02");

@@ -15,6 +15,8 @@ export interface WeeklyBreak {
 export interface AvailabilityConfig {
   timeZone: string;
   minNoticeHours: number;
+  /** Whole days before the first bookable day: 2 means never today nor tomorrow (owner, 2026-10-20). */
+  minLeadDays?: number;
   maxDaysAhead: number;
   rules: WeeklyRule[];
   breaks: WeeklyBreak[];
@@ -153,7 +155,7 @@ export function computeAvailability(config: AvailabilityConfig, now: Date, busy:
   for (let offset = 0; offset <= config.maxDaysAhead; offset += 1) {
     const date = addDaysToDate(today, offset);
     const weekday = weekdayOfDate(date);
-    if (blocked.has(date)) {
+    if (offset < (config.minLeadDays ?? 0) || blocked.has(date)) {
       days.push({ date, weekday, slots: [] });
       continue;
     }
