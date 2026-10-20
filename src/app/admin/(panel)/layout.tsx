@@ -7,7 +7,7 @@ import { getAdminContext } from "@/lib/admin/auth";
 
 // Day to day first: what to do today, the clients and their orders, the people who asked about us
 // (demos, information requests and the demo hours, as tabs inside «Contactos»), then reviews and the
-// clients' digital menus in videos.
+// clients' digital menus in videos, and the clients' WhatsApp assistants.
 const links = [
   { href: "/admin", label: "Início", exact: true },
   { href: "/admin/clientes", label: "Clientes" },
@@ -15,6 +15,7 @@ const links = [
   { href: "/admin/bookings", label: "Contactos", also: ["/admin/leads", "/admin/prospecao", "/admin/availability"] },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/menus", label: "Menus em vídeo" },
+  { href: "/admin/chatbot", label: "Chatbot IA" },
 ];
 
 export default async function AdminPanelLayout({ children }: { children: ReactNode }) {
