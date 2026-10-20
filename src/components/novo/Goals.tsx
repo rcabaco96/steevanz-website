@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useDeferredValue, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { clips, novoCopy, type GoalDemo } from "@/content/novo-home";
+import type { Locale } from "@/lib/i18n";
 import { PhoneVideo } from "./PhoneVideo";
 import styles from "./novo.module.css";
 
@@ -30,9 +31,10 @@ export interface GoalView {
   products: GoalProductView[];
 }
 
-function Demo({ demo }: { demo: GoalDemo }) {
+function Demo({ demo, locale }: { demo: GoalDemo; locale: Locale }) {
+  const t = novoCopy[locale].goals.demo;
   if (demo === "website" || demo === "menu") {
-    const clip = demo === "website" ? clips.dolciLanding : clips.menuGrid;
+    const clip = (demo === "website" ? clips.dolciLanding : clips.menuGrid)[locale];
     return (
       <div className={`${styles.phone} ${styles.phoneDemo}`}>
         <PhoneVideo clips={[clip]} sizes="224px" minVisible={0.4} />
@@ -41,22 +43,16 @@ function Demo({ demo }: { demo: GoalDemo }) {
   }
   if (demo === "booking") {
     return (
-      <div className={styles.mini} aria-label="Exemplo do ecrã de reservas: escolher o dia e a hora e receber a confirmação." role="img">
-        <p className={styles.miniTitle}>Reservar mesa</p>
-        <p className={styles.miniSub}>4 pessoas</p>
+      <div className={styles.mini} aria-label={t.bookingLabel} role="img">
+        <p className={styles.miniTitle}>{t.bookingTitle}</p>
+        <p className={styles.miniSub}>{t.bookingPeople}</p>
         <div className={styles.days} aria-hidden="true">
-          <span className={`${styles.chip} ${styles.chipDay}`}>
-            <small>Qui</small>14
-          </span>
-          <span className={`${styles.chip} ${styles.chipDay}`}>
-            <small>Sex</small>15
-          </span>
-          <span className={`${styles.chip} ${styles.chipDay} ${styles.chipOn}`}>
-            <small>Sáb</small>16
-          </span>
-          <span className={`${styles.chip} ${styles.chipDay}`}>
-            <small>Dom</small>17
-          </span>
+          {t.days.map((day, index) => (
+            <span key={day} className={`${styles.chip} ${styles.chipDay}${index === 2 ? ` ${styles.chipOn}` : ""}`}>
+              <small>{day}</small>
+              {14 + index}
+            </span>
+          ))}
         </div>
         <div className={styles.slots} aria-hidden="true">
           <span className={`${styles.chip} ${styles.chipOff}`}>19:30</span>
@@ -73,18 +69,19 @@ function Demo({ demo }: { demo: GoalDemo }) {
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
             <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Reserva confirmada · Sáb 20:30
+          {t.bookingConfirmed}
         </p>
       </div>
     );
   }
   return (
-    <div className={styles.card} role="img" aria-label="Exemplo do cartão de cliente digital, a ganhar carimbos.">
+    <div className={styles.card} role="img" aria-label={t.cardLabel}>
       <div className={styles.cardTop}>
         <span className={styles.cardBrand}>
-          O seu café<span>.</span>
+          {t.cardBrand}
+          <span>.</span>
         </span>
-        <span>Cartão de cliente</span>
+        <span>{t.cardName}</span>
       </div>
       <div className={styles.stamps} aria-hidden="true">
         {Array.from({ length: 10 }, (_, i) => (
@@ -93,12 +90,13 @@ function Demo({ demo }: { demo: GoalDemo }) {
           </span>
         ))}
       </div>
-      <p className={styles.cardFoot}>Ao 10.º carimbo, o café é por nossa conta.</p>
+      <p className={styles.cardFoot}>{t.cardFoot}</p>
     </div>
   );
 }
 
-export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: string; price: string } }) {
+export function Goals({ locale, goals, custom }: { locale: Locale; goals: GoalView[]; custom: { href: string; price: string } }) {
+  const copy = novoCopy[locale].goals;
   const [active, setActive] = useState(0);
   const [auto, setAuto] = useState(true);
   const [inView, setInView] = useState(false);
@@ -152,7 +150,7 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
       onPointerLeave={() => setHover(false)}
       onPointerDown={(event) => event.pointerType === "mouse" && setAuto(false)}
     >
-      <div role="tablist" aria-label={novoCopy.goals.title} className={styles.tabs}>
+      <div role="tablist" aria-label={copy.title} className={styles.tabs}>
         {goals.map((item, index) => (
           <button
             key={item.id}
@@ -177,7 +175,7 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
       <div key={goal.id} role="tabpanel" id={`${baseId}-panel`} aria-labelledby={`${baseId}-tab-${goal.id}`} className={styles.panel}>
         <p className={styles.goalLead}>{goal.lead}</p>
         <div className={styles.demo}>
-          <Demo demo={goal.demo} />
+          <Demo demo={goal.demo} locale={locale} />
         </div>
         <div className={styles.goalRest}>
           <ul className={styles.productList}>
@@ -186,7 +184,7 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
                 <Link href={product.href} className={styles.productLink}>
                   <span className={styles.productName}>{product.name}</span>
                   <span className={styles.productPrice}>
-                    {novoCopy.goals.from} <strong>{product.price}</strong>
+                    {copy.from} <strong>{product.price}</strong>
                     {product.suffix}
                   </span>
                   <span className={styles.productTag}>{product.tagline}</span>
@@ -196,9 +194,11 @@ export function Goals({ goals, custom }: { goals: GoalView[]; custom: { href: st
           </ul>
           <p className={styles.custom}>
             <span>
-              <strong>{novoCopy.goals.custom.label}:</strong> {novoCopy.goals.custom.body}
+              <strong>{copy.custom.label}:</strong> {copy.custom.body}
             </span>
-            <Link href={custom.href}>Automação, desde {custom.price}</Link>
+            <Link href={custom.href}>
+              {copy.custom.link} {custom.price}
+            </Link>
           </p>
         </div>
       </div>

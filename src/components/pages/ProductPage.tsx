@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { photos } from "@/content/media";
 import { getProductCopy } from "@/content/product-copy";
 import { pageLabels } from "@/content/page-labels";
+import { productExamples, type ProductExamples } from "@/content/product-examples";
 import { adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct, type Product } from "@/content/products";
 import { getSector } from "@/content/sectors";
@@ -193,6 +194,8 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       </Section>
 
+      {productExamples[productId] ? <ProductExamplesSection examples={productExamples[productId]} locale={locale} /> : null}
+
       {webId ? (
         <>
           <WebModelosSection locale={locale} productId={webId} />
@@ -298,5 +301,34 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         secondaryHref={whatsappUrl(t.common.whatsappMessage)}
       />
     </>
+  );
+}
+
+/** Live demos of the product, lower down the page and secondary to «Agendar demonstração» (content/product-examples.ts). */
+function ProductExamplesSection({ examples, locale }: { examples: ProductExamples; locale: Locale }) {
+  const copy = examples.copy[locale];
+  return (
+    <Section labelledBy="examples-title">
+      <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
+      <ul className="mt-10 grid gap-4 sm:grid-cols-3">
+        {examples.items.map((item, index) => (
+          <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
+            <a
+              href={item.external ? `${item.href}/${locale}` : item.href}
+              {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
+              className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
+            >
+              <span className="display text-2xl text-text">{item.label[locale]}</span>
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
+                {copy.open}
+                <ArrowRight size={16} />
+                {item.external ? <span className="sr-only">{locale === "pt" ? " (abre noutro separador)" : " (opens in a new tab)"}</span> : null}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6 text-sm text-subtle">{copy.note}</p>
+    </Section>
   );
 }

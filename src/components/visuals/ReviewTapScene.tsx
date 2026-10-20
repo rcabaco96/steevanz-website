@@ -1,4 +1,4 @@
-import type { HomeCopy } from "@/content/home";
+import type { TapSceneCopy } from "@/content/novo-home";
 import { StarFilled, TapWaves } from "@/components/icons";
 import { TapPlate } from "./TapPlate";
 import styles from "./ReviewTapScene.module.css";
@@ -9,7 +9,7 @@ import styles from "./ReviewTapScene.module.css";
  * the customer taps the five stars and presses «Publicar» (owner, 2026-10-20; no «published» notice).
  * CSS only, free, no video to load; with reduced motion it shows the form with the stars, still.
  */
-export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
+export function ReviewTapScene({ copy }: { copy: TapSceneCopy }) {
   return (
     <div className={styles.scene} role="img" aria-label={copy.ariaLabel}>
       <div className={styles.glow} />

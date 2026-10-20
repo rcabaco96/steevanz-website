@@ -114,8 +114,6 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
         {sector.pack ? <SectorPackCard pack={sector.pack} locale={locale} /> : null}
       </Section>
 
-      {sector.examples ? <SectorExamplesSection examples={sector.examples} locale={locale} /> : null}
-
       <Section tone="soft" labelledBy="day-title">
         {/* Stacked: the heading, then the video or picture, then the moments of the day. On a computer the
             heading and the moments on the left, the media on the right (sticky). */}
@@ -188,36 +186,6 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
         secondaryHref={whatsappUrl(t.common.whatsappMessage)}
       />
     </>
-  );
-}
-
-/** Live demo websites for the sector (opened in a new tab). */
-function SectorExamplesSection({ examples, locale }: { examples: NonNullable<Sector["examples"]>; locale: Locale }) {
-  const copy = examples.copy[locale];
-  return (
-    <Section labelledBy="examples-title">
-      <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-      <ul className="mt-10 grid gap-4 sm:grid-cols-3">
-        {examples.items.map((item, index) => (
-          <li key={item.base} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
-            <a
-              href={`${item.base}/${locale}`}
-              target="_blank"
-              rel="noopener"
-              className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
-            >
-              <span className="display text-2xl text-text">{item.label[locale]}</span>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
-                {copy.open}
-                <ArrowRight size={16} />
-                <span className="sr-only">{locale === "pt" ? " (abre noutro separador)" : " (opens in a new tab)"}</span>
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-6 text-sm text-subtle">{copy.note}</p>
-    </Section>
   );
 }
 

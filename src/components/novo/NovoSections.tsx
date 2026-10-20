@@ -3,15 +3,14 @@ import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
 import { photos } from "@/content/media";
-import { howCopy, monthlyExtra, sectorsCopy } from "@/content/novo-home";
+import { howCopy, monthlyExtra, perMonth, sectorsCopy } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct } from "@/content/products";
 import { sectors } from "@/content/sectors";
+import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import base from "./novo.module.css";
 import styles from "./sections.module.css";
-
-const locale = "pt";
 
 /** «desde» for a set of products: what is paid once plus what is paid each month. */
 function bundleFrom(productIds: Parameters<typeof getProduct>[0][]): { once: number; monthly: number } {
@@ -28,22 +27,23 @@ function bundleFrom(productIds: Parameters<typeof getProduct>[0][]): { once: num
   return { once, monthly };
 }
 
-function fromLabel(once: number, monthly: number): string {
+function fromLabel(once: number, monthly: number, locale: Locale): string {
   const parts = [];
   if (once) parts.push(formatEuro(once, locale));
-  if (monthly) parts.push(`${formatEuro(monthly, locale)}/mês`);
+  if (monthly) parts.push(`${formatEuro(monthly, locale)}${perMonth(locale)}`);
   return parts.join(" + ");
 }
 
-export function SectorSolutions() {
+export function SectorSolutions({ locale }: { locale: Locale }) {
+  const t = sectorsCopy[locale];
   return (
     <section aria-labelledby="novo-sectors" className={base.section}>
       <div className={base.wrap}>
         <h2 id="novo-sectors" className={base.h2} data-reveal>
-          {sectorsCopy.title}
+          {t.title}
         </h2>
         <p className={base.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
-          {sectorsCopy.lead}
+          {t.lead}
         </p>
         <ul className={styles.rail}>
           {sectors.map((sector) => {
@@ -63,10 +63,10 @@ export function SectorSolutions() {
                     ))}
                   </ul>
                   <p className={styles.sectorPrice}>
-                    {sector.pack ? "Pack, desde" : sectorsCopy.together} <strong>{fromLabel(price.once, price.monthly)}</strong>
+                    {sector.pack ? t.pack : t.together} <strong>{fromLabel(price.once, price.monthly, locale)}</strong>
                   </p>
                   <Link href={href(locale, { key: "sector", sectorId: sector.id })} className={styles.sectorLink}>
-                    {sectorsCopy.see} {copy.name.toLowerCase()}
+                    {t.see} {copy.name.toLowerCase()}
                     <ArrowRight size={16} />
                   </Link>
                 </div>
@@ -79,17 +79,18 @@ export function SectorSolutions() {
   );
 }
 
-export function HowWeWork() {
+export function HowWeWork({ locale }: { locale: Locale }) {
+  const copy = howCopy[locale];
   return (
     <section aria-labelledby="novo-how" className={base.section}>
       <div className={base.wrap}>
         <h2 id="novo-how" className={base.h2} data-reveal>
-          {howCopy.title}
+          {copy.title}
         </h2>
         <ol className={styles.how}>
           <span className={styles.howTrack} aria-hidden="true" />
           <span className={styles.howLine} aria-hidden="true" />
-          {howCopy.steps.map((step, index) => (
+          {copy.steps.map((step, index) => (
             <li key={step.title} className={styles.howStep} data-reveal style={{ ["--reveal-delay" as string]: `${index * 90}ms` }}>
               <span className={styles.howDot} aria-hidden="true">
                 {index + 1}

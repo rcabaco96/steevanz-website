@@ -2,16 +2,17 @@ import type { Metadata, Viewport } from "next";
 import type { Locale } from "./i18n";
 import { siteUrl } from "./site";
 
+// The fallback title and description (pages without their own), with the home's slogan (owner, 2026-10-20).
 const defaults = {
   pt: {
-    title: "Steevanz — Placas para reviews no Google e IA para negócios locais",
+    title: "Steevanz | Os seus clientes encontram, compram e voltam",
     description:
-      "Placas com tecnologia Steevanz que levam os clientes à sua página de reviews no Google com um toque, e soluções de IA para reservas, atendimento e automação. Para restaurantes, salões, clínicas, lojas e alojamento local.",
+      "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas. Tecnologia do futuro. Com os bons modos de antigamente.",
   },
   en: {
-    title: "Steevanz — Plates for Google reviews and AI for local businesses",
+    title: "Steevanz | Your customers find you, buy from you and come back",
     description:
-      "Plates with Steevanz technology that take customers to your Google review page in one tap, plus AI solutions for bookings, customer service and automation. For restaurants, salons, clinics, shops and holiday rentals.",
+      "Websites, video digital menus, bookings, Google reviews and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops. Technology of the future. With good old-fashioned manners.",
   },
 };
 

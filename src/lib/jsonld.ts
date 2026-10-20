@@ -25,7 +25,7 @@ export function organizationJsonLd(locale: Locale): JsonLdNode {
     description:
       locale === "pt"
         ? "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas. Tecnologia do futuro. Com os bons modos de antigamente."
-        : "Websites, video digital menus, bookings, Google reviews and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops.",
+        : "Websites, video digital menus, bookings, Google reviews and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops. Technology of the future. With good old-fashioned manners.",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",

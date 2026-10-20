@@ -1,9 +1,9 @@
-import type { HomeCopy } from "@/content/home";
+import type { TapSceneCopy } from "@/content/novo-home";
 import { Check, StarFilled, TapWaves } from "@/components/icons";
 import { TapPlate } from "./TapPlate";
 import styles from "./HeroTapScene.module.css";
 
-export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
+export function HeroTapScene({ copy }: { copy: TapSceneCopy }) {
   return (
     <div className={styles.scene} role="img" aria-label={copy.ariaLabel}>
       <div className={styles.halo} />

@@ -2,29 +2,32 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { goals, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
 import { productAds } from "../src/content/product-ads.ts";
 
-// The home page («/», pt): route, components and content.
+// The home page, «/» (pt) and «/en» (en): routes, components and content.
 const dir = "src/components/novo";
 const pageFiles = [
   "src/app/(pt)/page.tsx",
+  "src/app/(en)/en/page.tsx",
   "src/content/novo-home.ts",
   ...readdirSync(dir)
     .filter((name) => /\.(tsx?|css)$/.test(name))
     .map((name) => join(dir, name)),
 ].map((path) => ({ path, text: readFileSync(path, "utf8") }));
 
-describe("home page («/»)", () => {
+describe("home page («/» and «/en»)", () => {
   it("has the four steps of «Como trabalhamos», in order", () => {
     assert.deepEqual(
-      howCopy.steps.map((step) => step.title),
+      howCopy.pt.steps.map((step) => step.title),
       ["Queixe-se", "Oiça soluções", "Escolha a sua", "Nós tratamos do resto"],
     );
+    assert.equal(howCopy.en.steps.length, 4);
   });
 
   it("keeps the brand line as the two sentences", () => {
-    assert.deepEqual([...novoCopy.brandLine], ["Tecnologia do futuro.", "Com os bons modos de antigamente."]);
+    assert.deepEqual([...novoCopy.pt.brandLine], ["Tecnologia do futuro.", "Com os bons modos de antigamente."]);
+    assert.deepEqual([...novoCopy.en.brandLine], ["Technology of the future.", "With good old-fashioned manners."]);
     for (const { path, text } of pageFiles) {
       const line = (text.match(/bons modos de antigamente/gi) ?? []).length;
       const future = (text.match(/Tecnologia do futuro/g) ?? []).length;
@@ -44,7 +47,7 @@ describe("home page («/»)", () => {
       assert.doesNotMatch(text, /\bNFC\b/, path);
       assert.doesNotMatch(text, /de sempre/i, path);
       assert.doesNotMatch(text, /★|\d[.,]\d\s*estrelas/i, path);
-      assert.doesNotMatch(text, /com IVA|IVA \(\d|IVA incluído/i, path);
+      assert.doesNotMatch(text, /com IVA|IVA \(\d|IVA incluído|incl\.? VAT|including VAT|VAT included/i, path);
     }
   });
 
@@ -52,8 +55,11 @@ describe("home page («/»)", () => {
     const banner = readFileSync(join(dir, "PlatesBanner.tsx"), "utf8");
     assert.match(banner, /getProduct\("google-review-plates"\)/);
     assert.doesNotMatch(banner, /\b(29|25|23|20)\s*€/);
-    assert.equal(platesCopy.vat, "+ IVA");
-    assert.doesNotMatch(JSON.stringify(platesCopy), /\d\s*€/);
+    assert.equal(platesCopy.pt.vat, "+ IVA");
+    assert.equal(platesCopy.en.vat, "+ VAT");
+    assert.equal(loyaltyCopy.en.vat, "+ VAT");
+    assert.equal(novoCopy.en.showcase.vat, "+ VAT");
+    assert.doesNotMatch(JSON.stringify(platesCopy), /\d\s*€|€\s*\d/);
   });
 
   it("shows the Menu digital ad (web version and poster in public/) and the old hero's plate scene", () => {
@@ -67,7 +73,7 @@ describe("home page («/»)", () => {
 
   it("has no Dolci e Salati case section and no «fidelização» in the loyalty band", () => {
     for (const { path, text } of pageFiles) assert.doesNotMatch(text, /novo-case|copy\.dolci/, path);
-    assert.doesNotMatch(JSON.stringify(loyaltyCopy), /fideliza|\d\s*€/i);
+    assert.doesNotMatch(JSON.stringify(loyaltyCopy), /fideliza|\d\s*€|€\s*\d/i);
   });
 
   it("never shows a «published» toast in the plate scenes (the stars on the form fill: owner, 2026-10-20)", () => {
@@ -82,11 +88,49 @@ describe("home page («/»)", () => {
   it("has no prices or FAQ section, and no FAQ structured data", () => {
     const home = readFileSync(join(dir, "NovoHome.tsx"), "utf8");
     assert.doesNotMatch(home, /PricesFaq|novo-prices/);
-    assert.doesNotMatch(readFileSync("src/app/(pt)/page.tsx", "utf8"), /faqJsonLd/);
+    for (const page of ["src/app/(pt)/page.tsx", "src/app/(en)/en/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
     // Section order: clients, plates, Menu digital, loyalty card, goals, sectors, how we work, final call.
     const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
     const positions = order.map((needle) => home.indexOf(needle));
     assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
     assert.deepEqual([...positions].sort((a, b) => a - b), positions);
+  });
+
+  it("is the same page in English at «/en», and the old home is gone (owner, 2026-10-20)", () => {
+    const en = readFileSync("src/app/(en)/en/page.tsx", "utf8");
+    assert.match(en, /<NovoHome locale="en"/);
+    assert.match(en, /novoHomeMetadata\("en"\)/);
+    assert.match(en, /websiteJsonLd\("en"\)/);
+    assert.match(readFileSync("src/app/(pt)/page.tsx", "utf8"), /<NovoHome locale="pt"/);
+    for (const old of ["src/components/pages/HomePage.tsx", "src/content/home.ts", "src/components/marketing/Marquee.tsx"]) {
+      assert.equal(existsSync(old), false, old);
+    }
+    assert.equal(goals.en.length, goals.pt.length);
+    assert.deepEqual(goals.en.map((goal) => goal.id), goals.pt.map((goal) => goal.id));
+  });
+
+  it("has the slogan «encontram, compram e voltam» in the title and the hero", () => {
+    assert.equal(novoCopy.pt.hero.titleAccent, "encontram, compram e voltam.");
+    assert.match(novoCopy.pt.metaTitle, /encontram, compram e voltam/);
+    assert.match(novoCopy.en.metaTitle, /find you, buy from you and come back/);
+    for (const { path, text } of pageFiles) assert.doesNotMatch(text, /escolhem e voltam/, path);
+  });
+
+  it("sends every product call to its product page with «Conhecer …», never straight to a demo", () => {
+    for (const { path, text } of pageFiles) {
+      assert.doesNotMatch(text, /\/menu\/|demoMenuHref|Ver um menu|alojamento-template/, path);
+    }
+    assert.match(novoCopy.pt.showcase.cta, /^Conhecer /);
+    assert.match(platesCopy.pt.cta, /^Conhecer /);
+    assert.match(loyaltyCopy.pt.cta, /^Conhecer /);
+    for (const cta of [novoCopy.en.showcase.cta, platesCopy.en.cta, loyaltyCopy.en.cta]) assert.match(cta, /^Discover /);
+    assert.doesNotMatch(readFileSync("src/components/pages/SectorPage.tsx", "utf8"), /SectorExamples|alojamento-template/);
+    assert.doesNotMatch(readFileSync("src/content/sectors.ts", "utf8"), /alojamento-template|examples:/);
+  });
+
+  it("gives every product page «Agendar demonstração» in the hero and at the end", () => {
+    const page = readFileSync("src/components/pages/ProductPage.tsx", "utf8");
+    assert.ok((page.match(/t\.common\.bookDemo/g) ?? []).length >= 3);
+    assert.match(page, /<CtaBand[\s\S]*primaryLabel=\{t\.common\.bookDemo\}/);
   });
 });

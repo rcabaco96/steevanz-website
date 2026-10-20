@@ -1,10 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
-import { demoMenuHref, goals, monthlyExtra, novoCopy } from "@/content/novo-home";
+import { goals, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
+import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
+import { pageMetadata } from "@/lib/seo";
 import { whatsappUrl } from "@/lib/site";
 import { ClientStrip } from "./ClientStrip";
 import { Goals, type GoalView } from "./Goals";
@@ -14,18 +17,23 @@ import { LoyaltyBanner } from "./LoyaltyBanner";
 import { PlatesBanner } from "./PlatesBanner";
 import styles from "./novo.module.css";
 
-const locale = "pt";
+// The home page, the same in both languages: «/» (pt) and «/en» (en), with the copy in content/novo-home.ts.
 
-function billingSuffix(product: Product): string {
-  if (product.priceBilling === "monthly") return "/mês";
-  const extra = monthlyExtra(product);
-  return extra ? ` + ${formatEuro(extra, locale)}/mês` : "";
+/** Indexable, canonical «/» or «/en», each with the other as its alternate (lib/seo). */
+export function novoHomeMetadata(locale: Locale): Metadata {
+  const copy = novoCopy[locale];
+  return pageMetadata({ locale, route: { key: "home" }, title: copy.metaTitle, description: copy.metaDescription, absoluteTitle: true });
 }
 
-export function NovoHome() {
-  const copy = novoCopy;
-  const menuLive = demoMenuHref;
-  const whatsapp = whatsappUrl("Olá! Gostava de saber mais sobre as soluções da Steevanz.");
+function billingSuffix(product: Product, locale: Locale): string {
+  if (product.priceBilling === "monthly") return perMonth(locale);
+  const extra = monthlyExtra(product);
+  return extra ? ` + ${formatEuro(extra, locale)}${perMonth(locale)}` : "";
+}
+
+export function NovoHome({ locale }: { locale: Locale }) {
+  const copy = novoCopy[locale];
+  const whatsapp = whatsappUrl(copy.whatsappMessage);
   const bookHref = href(locale, { key: "book" });
   const menuProductHref = href(locale, { key: "product", productId: "digital-menu" });
 
@@ -42,7 +50,7 @@ export function NovoHome() {
     </div>
   );
 
-  const goalViews: GoalView[] = goals.map((goal) => ({
+  const goalViews: GoalView[] = goals[locale].map((goal) => ({
     id: goal.id,
     title: goal.title,
     lead: goal.lead,
@@ -56,7 +64,7 @@ export function NovoHome() {
         name: label ?? productCopy.name,
         tagline: productCopy.tagline,
         price: formatEuro(product.priceFrom, locale),
-        suffix: billingSuffix(product),
+        suffix: billingSuffix(product, locale),
       };
     }),
   }));
@@ -92,15 +100,16 @@ export function NovoHome() {
       </section>
 
       {/* 2. Confiam em nós */}
-      <ClientStrip />
+      <ClientStrip locale={locale} />
 
       {/* 3. Placas de reviews do Google: the flagship, first after the clients */}
-      <PlatesBanner />
+      <PlatesBanner locale={locale} />
 
       {/* 4. Menu digital showcase */}
       <section aria-labelledby="novo-menu" className={styles.showcase}>
         <div className={styles.wrap}>
           <MenuShowcase
+            locale={locale}
             head={
               <>
                 <h2 id="novo-menu" className={styles.h2}>
@@ -111,15 +120,13 @@ export function NovoHome() {
             }
             foot={
               <>
-                <Link href={menuLive} className={`${styles.btn} ${styles.btnGold}`}>
+                {/* The product's call to action goes to its page, which has «Agendar demonstração» (owner, 2026-10-20). */}
+                <Link href={menuProductHref} className={`${styles.btn} ${styles.btnGold}`}>
                   {copy.showcase.cta}
                   <ArrowRight size={18} />
                 </Link>
-                <Link href={menuProductHref} className={styles.inlineLink}>
-                  {copy.showcase.product}
-                </Link>
                 <p className={styles.showcasePrice}>
-                  desde {formatEuro(menuProduct.priceFrom, locale)} {menuProduct.priceQualifier[locale]}
+                  {copy.showcase.from} {formatEuro(menuProduct.priceFrom, locale)} {menuProduct.priceQualifier[locale]} {copy.showcase.vat}
                 </p>
               </>
             }
@@ -128,7 +135,7 @@ export function NovoHome() {
       </section>
 
       {/* 5. Cartão de cliente digital: after the menu, to make them come back */}
-      <LoyaltyBanner />
+      <LoyaltyBanner locale={locale} />
 
       {/* 6. O que quer melhorar? (the goals with live demos, after the three product bands) */}
       <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
@@ -139,15 +146,15 @@ export function NovoHome() {
           <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
             {copy.goals.lead}
           </p>
-          <Goals goals={goalViews} custom={{ href: href(locale, { key: "product", productId: "automation" }), price: formatEuro(automation.priceFrom, locale) }} />
+          <Goals locale={locale} goals={goalViews} custom={{ href: href(locale, { key: "product", productId: "automation" }), price: formatEuro(automation.priceFrom, locale) }} />
         </div>
       </section>
 
       {/* 7. Soluções por setor */}
-      <SectorSolutions />
+      <SectorSolutions locale={locale} />
 
       {/* 8. Como trabalhamos */}
-      <HowWeWork />
+      <HowWeWork locale={locale} />
 
       {/* 9. Final CTA and close */}
       <section aria-labelledby="novo-final" className={styles.final}>

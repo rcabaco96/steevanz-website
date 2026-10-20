@@ -2,26 +2,25 @@ import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
 import { AdVideo } from "@/components/media/AdVideo";
 import { formatEuro } from "@/components/ui/Price";
-import { loyaltyCopy } from "@/content/novo-home";
+import { loyaltyCopy, perMonth } from "@/content/novo-home";
 import { adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct } from "@/content/products";
+import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import base from "./novo.module.css";
 import styles from "./plates.module.css";
-
-const locale = "pt";
 
 // The «Cartão de cliente digital» band, after the Menu digital showcase: the plates band's layout (text
 // on the left, the video on the right on a computer, owner 2026-10-20), on soft rose, with the card's ad
 // video. The price comes from products.ts, «/mês + IVA».
 
-export function LoyaltyBanner() {
-  const copy = loyaltyCopy;
+export function LoyaltyBanner({ locale }: { locale: Locale }) {
+  const copy = loyaltyCopy[locale];
   const product = getProduct("loyalty");
   const ad = productAds.loyalty!;
   const productHref = href(locale, { key: "product", productId: product.id });
-  const perMonth = product.priceBilling === "monthly" ? "/mês" : "";
-  const qualifier = product.priceQualifier[locale].replace(/^por mês,?\s*/, "");
+  const monthly = product.priceBilling === "monthly" ? perMonth(locale) : "";
+  const qualifier = product.priceQualifier[locale].replace(/^(por mês|per month),?\s*/, "");
 
   return (
     <section aria-labelledby="novo-loyalty" className={`${styles.band} ${styles.bandRose}`}>
@@ -50,7 +49,7 @@ export function LoyaltyBanner() {
           <div className={styles.buy} data-reveal style={{ ["--reveal-delay" as string]: "240ms" }}>
             <p className={styles.price}>
               <span className={styles.priceFrom}>{copy.from}</span> <strong>{formatEuro(product.priceFrom, locale)}</strong>
-              {perMonth} {qualifier} <span className={styles.vat}>{copy.vat}</span>
+              {monthly} {qualifier} <span className={styles.vat}>{copy.vat}</span>
             </p>
             <Link href={productHref} className={`${base.btn} ${base.btnInk}`}>
               {copy.cta}

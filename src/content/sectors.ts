@@ -51,12 +51,6 @@ export interface SectorPack {
 
 export type SectorSide = { kind: "photo"; photo: PhotoId } | { kind: "product"; productId: ProductId };
 
-/** Live demo websites made by Steevanz for the sector, opened in a new tab (`${base}/${locale}`). */
-export interface SectorExamples {
-  items: { base: string; label: Localized<string> }[];
-  copy: Localized<{ eyebrow: string; title: string; lead: string; open: string; note: string }>;
-}
-
 export interface Sector {
   id: SectorId;
   slug: Localized<string>;
@@ -67,7 +61,6 @@ export interface Sector {
   /** Honest limits of the bundle for this sector, shown under the recommended products. */
   bundleNote?: Localized<string>;
   pack?: SectorPack;
-  examples?: SectorExamples;
   copy: Localized<SectorCopy>;
 }
 
@@ -332,30 +325,6 @@ export const sectors: Sector[] = [
     // The website (direct bookings, no platform commission) instead of the Google plates, which only suit
     // places that can have a Google profile (said in the bundle note).
     bundle: ["guest-guide", "ai-chatbot", "automation", "website"],
-    // The owner's alojamento-template demos (2026-10-12): fictional brand, no reviews (an empty state).
-    examples: {
-      items: [
-        { base: "https://alojamento-template.vercel.app/vista-bb5622", label: { pt: "Modelo 1", en: "Model 1" } },
-        { base: "https://alojamento-template.vercel.app/vista-df3246", label: { pt: "Modelo 2", en: "Model 2" } },
-        { base: "https://alojamento-template.vercel.app/vista-b3438b", label: { pt: "Modelo 3", en: "Model 3" } },
-      ],
-      copy: {
-        pt: {
-          eyebrow: "Exemplos",
-          title: "Websites com reservas diretas, prontos a ver",
-          lead: "Três modelos de website para alojamento local, com pesquisa por datas e reserva direta. Abra-os no telemóvel ou no computador: adaptamos o escolhido às suas casas, fotos e cores.",
-          open: "Abrir o exemplo",
-          note: "Websites de demonstração: a marca «Maré Alta», as casas e os contactos são fictícios.",
-        },
-        en: {
-          eyebrow: "Examples",
-          title: "Direct-booking websites, ready to look at",
-          lead: "Three website designs for holiday rentals, with date search and direct booking. Open them on your phone or computer: we adapt the one you pick to your homes, photos and colours.",
-          open: "Open the example",
-          note: "Demo websites: the «Maré Alta» brand, the homes and the contact details are fictional.",
-        },
-      },
-    },
     bundleNote: {
       pt: "As placas para reviews no Google são só para alojamentos que podem ter perfil no Google: hostels, guest houses, quartos com o anfitrião presente e casas onde recebe os hóspedes pessoalmente. Apartamentos e moradias com entrada autónoma não podem ter perfil, por regra do próprio Google. Nesses casos, o guia explica ao hóspede onde avaliar na Booking ou no Airbnb, da mesma forma para todos e sem ofertas em troca.",
       en: "Google review plates are only for places that can have a Google profile: hostels, guest houses, rooms with the host on site and homes where you welcome guests in person. Self-check-in flats and villas can't have a profile, under Google's own rules. For those, the guide tells guests where to review on Booking.com or Airbnb, the same way for everyone and with nothing offered in return.",

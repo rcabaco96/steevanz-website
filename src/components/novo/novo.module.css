@@ -115,12 +115,17 @@
   }
 }
 
-/* The «S.» mark (plum tile, cream S, gold dot) on a gold disc, with the brand line. */
+/* The «S.» mark (plum tile, cream S, gold dot) on a gold disc, with the brand line.
+   The disc never reaches the brand line (owner, 2026-10-20): at its largest frame (disc-breathe) it goes
+   at most 0.38 × mark past the tile on the right and 0.16 × mark below it, and the mark's box reserves
+   exactly that room (--disc-x, --disc-y) before the gap, which is only the safe space above/beside the text. */
 .heroBrand {
   --mark: 4.25rem;
+  --disc-x: calc(var(--mark) * 0.38);
+  --disc-y: calc(var(--mark) * 0.16);
   display: flex;
   align-items: center;
-  gap: clamp(1.6rem, 8vw, 2.25rem);
+  gap: clamp(1rem, 4.5vw, 1.5rem);
   padding-top: 0.25rem;
 }
 
@@ -128,7 +133,7 @@
   .heroBrand {
     --mark: clamp(14rem, 22vw, 20rem);
     flex-direction: column;
-    gap: 4.5rem;
+    gap: 2.5rem;
     padding-top: 0;
   }
 }
@@ -138,6 +143,8 @@
   flex: none;
   width: var(--mark);
   aspect-ratio: 1;
+  /* Side by side (phones): the disc's room on the right. */
+  margin-right: var(--disc-x);
 }
 
 .markWrap::before {
@@ -150,6 +157,12 @@
   background: var(--gold);
   opacity: 0.85;
   transform: translate3d(30%, 10%, 0) scale(1.12);
+}
+
+/* The brand line on its own layer, above the disc. */
+.brandLine {
+  position: relative;
+  z-index: 1;
 }
 
 .mark {
@@ -221,8 +234,11 @@
     align-items: center;
   }
   .markWrap {
-    /* The disc sits down and to the right of the tile: shift the pair so its middle is the axis. */
+    /* The disc sits down and to the right of the tile: shift the pair so its middle is the axis. Stacked,
+       the disc's room is below the tile instead. */
     translate: calc(var(--mark) * -0.18) 0;
+    margin-right: 0;
+    margin-bottom: var(--disc-y);
   }
   .brandLine {
     align-items: center;
@@ -311,8 +327,9 @@
 }
 
 @keyframes disc-breathe {
+  /* Its largest frame: 0.38 × mark right of the tile, 0.16 × mark below it (see .heroBrand). */
   to {
-    transform: translate3d(26%, 14%, 0) scale(1.2);
+    transform: translate3d(30%, 8%, 0) scale(1.16);
   }
 }
 
@@ -1314,17 +1331,6 @@
 .showcasePrice {
   font-size: 0.9375rem;
   color: rgb(255 255 255 / 0.82);
-}
-
-.showcase a.inlineLink {
-  font-weight: 600;
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-color: var(--gold);
-  min-height: 2.75rem;
-  display: inline-flex;
-  align-items: center;
 }
 
 /* ---------- Final CTA + close ---------- */

@@ -366,5 +366,3 @@ export function canonicalProductId(value: string): string {
 export function productIdVariants(id: string): string[] {
   return [id, ...Object.keys(renamedProductIds).filter((old) => renamedProductIds[old] === id)];
 }
-
-export const flagshipProduct = products.find((product) => product.flagship) ?? products[0];

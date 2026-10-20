@@ -2,22 +2,20 @@ import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
 import { HeroTapScene } from "@/components/visuals/HeroTapScene";
-import { homeCopy } from "@/content/home";
-import { platesCopy } from "@/content/novo-home";
+import { platesCopy, sceneCopy } from "@/content/novo-home";
 import { getProduct } from "@/content/products";
+import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { PauseOffscreen } from "./PauseOffscreen";
 import base from "./novo.module.css";
 import styles from "./plates.module.css";
 
-const locale = "pt";
-
 // The Google review plates, as the first band after the clients strip. Prices come from
-// products.ts, without VAT and with «+ IVA». The animation is the old home hero's plate scene
+// products.ts, without VAT and with «+ IVA». The animation is the plate scene HeroTapScene
 // (owner, 2026-10-20), on a dark panel, paused while off screen.
 
-export function PlatesBanner() {
-  const copy = platesCopy;
+export function PlatesBanner({ locale }: { locale: Locale }) {
+  const copy = platesCopy[locale];
   const product = getProduct("google-review-plates");
   const bestPack = product.packs?.reduce((best, pack) => (pack.unitPrice < best.unitPrice ? pack : best));
   const productHref = href(locale, { key: "product", productId: product.id });
@@ -38,7 +36,7 @@ export function PlatesBanner() {
         </div>
 
         <PauseOffscreen className={styles.panel}>
-          <HeroTapScene copy={homeCopy[locale].scene} />
+          <HeroTapScene copy={sceneCopy[locale]} />
         </PauseOffscreen>
 
         <div className={styles.rest}>
@@ -53,7 +51,7 @@ export function PlatesBanner() {
               <strong>{formatEuro(product.priceFrom, locale)}</strong> {copy.perPlate} <span className={styles.vat}>{copy.vat}</span>
               {bestPack ? (
                 <small className={styles.pack}>
-                  {formatEuro(bestPack.unitPrice, locale)} {copy.perPlate} a partir de {bestPack.quantity}
+                  {copy.pack.replace("{price}", formatEuro(bestPack.unitPrice, locale)).replace("{quantity}", String(bestPack.quantity))}
                 </small>
               ) : null}
             </p>
