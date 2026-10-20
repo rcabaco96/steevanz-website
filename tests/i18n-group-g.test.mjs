@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { docs as digitalMenu } from "../src/content/docs/digital-menu.ts";
+import { docs as guestGuide } from "../src/content/docs/guest-guide.ts";
 
 // Help docs translated into es, fr, de and it (group G): same shape as pt, links in the page's own language,
 // and the house words (no «NFC», no VAT-inclusive prices).
 
 const extra = ["es", "fr", "de", "it"];
-const translated = { digitalMenu };
+const translated = { digitalMenu, guestGuide };
 
 function shape(value) {
   if (Array.isArray(value)) return value.map(shape);
