@@ -585,7 +585,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
     rules: [
       "Banner dei cookie in cui «Rifiuta» è facile quanto «Accetta».",
       "Collegamento ben visibile al Libro dei reclami elettronico portoghese.",
-      "Dati dell'azienda e prezzi con IVA, come richiesto dalla legge.",
+      "Dati dell'azienda, prezzi e informazioni al consumatore come richiesto dalla legge.",
       "Realizzato secondo le linee guida di accessibilità WCAG 2.1 AA.",
       "Dominio registrato a vostro nome: il sito è vostro.",
       "Pagamento in due parti: 50% all'accettazione e 50% prima della pubblicazione.",

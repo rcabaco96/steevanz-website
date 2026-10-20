@@ -1329,7 +1329,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
             "**Dati dell'azienda:** nome, numero fiscale portoghese (NIF), indirizzo, telefono, email, orari e social.",
             "**Marchio:** logo (possibilmente vettoriale), colori e, se li avete, i caratteri tipografici.",
             shop
-              ? "**Prodotti:** una foto per prodotto e il foglio di calcolo che vi inviamo, con nome, descrizione, prezzo con IVA, varianti, magazzino, peso e categoria."
+              ? "**Prodotti:** una foto per prodotto e il foglio di calcolo che vi inviamo, con nome, descrizione, prezzo, varianti, magazzino, peso e categoria."
               : "**Foto:** vostre o da archivi di immagini con licenza.",
             "**Testi** di ogni sezione o pagina, oppure l'opzione copywriting con una chiamata di 20 minuti.",
             "**Dominio:** l'accesso al dominio che avete già, o il nome che volete registrare a vostro nome.",
@@ -1403,7 +1403,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
             "Banner dei cookie in cui «Rifiuta» è facile quanto «Accetta», e niente di non essenziale prima del consenso.",
             "Informativa sulla privacy e sui cookie, a partire da modelli che approvate voi.",
             "Collegamento ben visibile al Libro dei reclami elettronico portoghese.",
-            "Dati dell'azienda e prezzi con IVA, come richiesto dalla legge.",
+            "Dati dell'azienda, prezzi e informazioni al consumatore come richiesto dalla legge.",
             "Realizzazione secondo le linee guida di accessibilità WCAG 2.1 AA.",
           ],
         },
@@ -1414,7 +1414,7 @@ function docsIt({ f, c, link }: DocContext): DocSet {
             items: [
               "**Pagamenti:** MB WAY, riferimento Multibanco e carta, con il vostro account presso il fornitore (ifthenpay, Eupago, Easypay o Stripe). I soldi arrivano sul vostro conto.",
               "**Spedizioni:** tariffe per zona e peso (Portogallo continentale, isole, UE), spedizione gratuita sopra un certo importo e ritiro in negozio.",
-              "**Checkout:** totale con IVA e spese di spedizione prima del pagamento, e pulsante «Ordine con obbligo di pagamento».",
+              "**Checkout:** totale e spese di spedizione visibili prima del pagamento, e pulsante «Ordine con obbligo di pagamento».",
               "**Fatturazione:** ogni vendita richiede una fattura emessa con un software certificato. Come opzione, colleghiamo Moloni o InvoiceXpress.",
               "**Vendita a distanza:** condizioni di vendita, diritto di recesso di 14 giorni con modulo, e l'organismo di risoluzione alternativa delle controversie.",
             ],

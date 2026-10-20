@@ -31,6 +31,7 @@ const termsUpdatedEn = "Last updated: 20 October 2026";
 const termsUpdatedEs = "Última actualización: 20 de octubre de 2026 · Esta traducción es informativa; en caso de divergencia prevalece la versión en portugués.";
 const termsUpdatedFr = "Dernière mise à jour : 20 octobre 2026 · Cette traduction est fournie à titre informatif ; en cas de divergence, la version portugaise prévaut.";
 const termsUpdatedDe = "Zuletzt aktualisiert: 20. Oktober 2026 · Diese Übersetzung dient nur zur Information; bei Abweichungen gilt die portugiesische Fassung.";
+const termsUpdatedIt = "Ultimo aggiornamento: 20 ottobre 2026 · Questa traduzione ha valore informativo; in caso di divergenza prevale la versione in portoghese.";
 
 export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> = {
   privacy: {
@@ -1280,13 +1281,13 @@ export const legalDocuments: Record<LegalDocumentId, Localized<LegalDocument>> =
       title: "Termini e condizioni",
       intro:
         "Questi termini regolano l'uso del sito steevanz.com. Navigando sul sito accettate queste condizioni. La prestazione dei servizi è sempre regolata da una proposta e da un contratto specifici.",
-      updated: updatedIt,
+      updated: termsUpdatedIt,
       sections: [
         {
           id: "purpose",
           title: "1. Scopo del sito",
           paragraphs: [
-            "Questo sito presenta i prodotti e i servizi di Steevanz e permette di richiedere demo e informazioni. Non è possibile acquistare prodotti né sottoscrivere servizi direttamente sul sito.",
+            "Questo sito presenta i prodotti e i servizi di Steevanz e permette di richiedere demo e informazioni e di inviare ordini tramite il carrello. Gli ordini inviati sul sito non vengono pagati online e non costituiscono un acquisto: sono una richiesta, che Steevanz conferma con una proposta scritta. I prezzi della proposta sono indicati IVA esclusa, a cui si aggiunge l'IVA all'aliquota di legge in vigore. Il contratto inizia solo con l'accettazione della proposta.",
           ],
         },
         {

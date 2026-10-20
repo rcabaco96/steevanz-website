@@ -988,7 +988,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quali regole di legge devo rispettare?",
-        a: "Dati dell'azienda, prezzi con IVA, informazioni precontrattuali, diritto di recesso di 14 giorni, indicazione dell'organismo di risoluzione alternativa delle controversie, Libro dei reclami elettronico, cookie e privacy. Prepariamo la struttura e i modelli. Il contenuto finale va verificato da voi, dal vostro commercialista o dal vostro avvocato.",
+        a: "Dati dell'azienda, prezzi presentati come richiesto dalla legge, informazioni precontrattuali, diritto di recesso di 14 giorni, indicazione dell'organismo di risoluzione alternativa delle controversie, Libro dei reclami elettronico, cookie e privacy. Prepariamo la struttura e i modelli. Il contenuto finale va verificato da voi, dal vostro commercialista o dal vostro avvocato.",
       },
       {
         q: "E se ho più di 50 prodotti?",
