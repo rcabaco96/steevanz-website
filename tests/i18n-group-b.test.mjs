@@ -66,3 +66,25 @@ describe("web shared copy, checkout brief and product examples in es, fr, de, it
     }
   });
 });
+
+describe("web docs (landing page, website, online shop) in es, fr, de, it", () => {
+  it("has every page in each language, translated, with links in that language", async () => {
+    const { webDocs } = await import("../src/content/docs/web.ts");
+    for (const id of ["landing-page", "website", "online-shop"]) {
+      const { pages } = webDocs(id);
+      for (const [pageId, page] of Object.entries(pages)) {
+        for (const locale of extraLocales) {
+          const label = `docs.${id}.${pageId}.${locale}`;
+          assert.ok(page[locale], `${label} is missing`);
+          assert.equal(page[locale].blocks.length, page.en.blocks.length, `${label}: blocks`);
+          assert.deepEqual(page[locale].blocks.map((block) => block.type), page.en.blocks.map((block) => block.type), `${label}: block types`);
+          assert.notEqual(page[locale].title, page.en.title, `${label}: title still English`);
+          const texts = strings(page[locale]);
+          assertHouseRules(texts, label);
+          const links = texts.flatMap((text) => [...text.matchAll(/\]\((\/[^)]*)\)/g)].map((match) => match[1]));
+          for (const href of links) assert.match(href, new RegExp(`^/${locale}(/|$)`), `${label}: ${href}`);
+        }
+      }
+    }
+  });
+});
