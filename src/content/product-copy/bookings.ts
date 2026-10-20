@@ -259,4 +259,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Sistema de reservas online",
+    shortName: "Reservas online",
+    tagline: "Reservas y citas a cualquier hora, sin coger el teléfono.",
+    summary:
+      "Agenda online para restaurantes y servicios, con confirmación y recordatorio por email, las reservas en el calendario del móvil y un enlace listo para Instagram.",
+  },
+  fr: {
+    name: "Système de réservation en ligne",
+    shortName: "Réservations en ligne",
+    tagline: "Réservations et rendez-vous à toute heure, sans décrocher le téléphone.",
+    summary:
+      "Un agenda en ligne pour restaurants et services, avec confirmation et rappel par e-mail, les réservations dans le calendrier de votre téléphone et un lien prêt pour Instagram.",
+  },
+  de: {
+    name: "Online-Reservierungssystem",
+    shortName: "Online-Reservierung",
+    tagline: "Reservierungen und Termine zu jeder Uhrzeit, ohne ans Telefon zu gehen.",
+    summary:
+      "Ein Online-Kalender für Restaurants und Dienstleister, mit Bestätigung und Erinnerung per E-Mail, den Reservierungen im Kalender Ihres Handys und einem fertigen Link für Instagram.",
+  },
+  it: {
+    name: "Sistema di prenotazione online",
+    shortName: "Prenotazioni online",
+    tagline: "Prenotazioni e appuntamenti a qualsiasi ora, senza rispondere al telefono.",
+    summary:
+      "Un'agenda online per ristoranti e servizi, con conferma e promemoria via email, le prenotazioni nel calendario del telefono e un link pronto per Instagram.",
+  },
 };

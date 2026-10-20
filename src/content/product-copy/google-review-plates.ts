@@ -287,4 +287,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Placas para reseñas en Google",
+    shortName: "Placas reseñas Google",
+    tagline: "Un toque con el móvil y su cliente ya está escribiendo su reseña.",
+    summary:
+      "Placas, pegatinas y expositores de mesa que, con un toque o con el código QR, abren directamente el formulario de reseña de su negocio en Google. Nosotros lo configuramos todo.",
+  },
+  fr: {
+    name: "Plaques pour avis Google",
+    shortName: "Plaques avis Google",
+    tagline: "Un toucher avec le téléphone, et votre client rédige déjà son avis.",
+    summary:
+      "Plaques, autocollants et chevalets de table qui, d'un toucher ou par QR code, ouvrent directement le formulaire d'avis Google de votre établissement. Nous configurons tout.",
+  },
+  de: {
+    name: "Schilder für Google-Bewertungen",
+    shortName: "Google-Bewertungsschilder",
+    tagline: "Einmal mit dem Handy antippen, und Ihr Gast schreibt schon seine Bewertung.",
+    summary:
+      "Schilder, Aufkleber und Tischaufsteller, die mit einem Antippen oder per QR-Code direkt das Google-Bewertungsformular Ihres Betriebs öffnen. Wir richten alles ein.",
+  },
+  it: {
+    name: "Targhe per recensioni Google",
+    shortName: "Targhe recensioni Google",
+    tagline: "Un tocco con il telefono e il cliente sta già scrivendo la sua recensione.",
+    summary:
+      "Targhe, adesivi ed espositori da tavolo che, con un tocco o tramite QR code, aprono direttamente il modulo di recensione Google della vostra attività. Configuriamo tutto noi.",
+  },
 };

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
-import { goals, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
+import { goalCtas, goals, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { whatsappUrl } from "@/lib/site";
@@ -17,11 +17,12 @@ import { LoyaltyBanner } from "./LoyaltyBanner";
 import { PlatesBanner } from "./PlatesBanner";
 import styles from "./novo.module.css";
 
-// The home page, the same in both languages: «/» (pt) and «/en» (en), with the copy in content/novo-home.ts.
+// The home page, the same in the six languages: «/» (pt), «/en», «/es», «/fr», «/de» and «/it», with the copy in
+// content/novo-home.ts.
 
-/** Indexable, canonical «/» or «/en», each with the other as its alternate (lib/seo). */
+/** Indexable, canonical «/», «/en», …, each with the others as its alternates (lib/seo). */
 export function novoHomeMetadata(locale: Locale): Metadata {
-  const copy = novoCopy[locale];
+  const copy = localize(novoCopy, locale);
   return pageMetadata({ locale, route: { key: "home" }, title: copy.metaTitle, description: copy.metaDescription, absoluteTitle: true });
 }
 
@@ -32,7 +33,7 @@ function billingSuffix(product: Product, locale: Locale): string {
 }
 
 export function NovoHome({ locale }: { locale: Locale }) {
-  const copy = novoCopy[locale];
+  const copy = localize(novoCopy, locale);
   const whatsapp = whatsappUrl(copy.whatsappMessage);
   const bookHref = href(locale, { key: "book" });
   const menuProductHref = href(locale, { key: "product", productId: "digital-menu" });
@@ -50,25 +51,24 @@ export function NovoHome({ locale }: { locale: Locale }) {
     </div>
   );
 
-  const goalViews: GoalView[] = goals[locale].map((goal) => ({
+  const goalViews: GoalView[] = localize(goals, locale).map((goal) => ({
     id: goal.id,
     title: goal.title,
     lead: goal.lead,
-    demo: goal.demo,
-    products: goal.products.map(({ id, label }) => {
+    products: goal.products.map(({ id, label, benefit }) => {
       const product = getProduct(id);
-      const productCopy = getProductCopy(id, locale);
       return {
         id,
         href: href(locale, { key: "product", productId: id }),
-        name: label ?? productCopy.name,
-        tagline: productCopy.tagline,
-        price: formatEuro(product.priceFrom, locale),
-        suffix: billingSuffix(product, locale),
+        icon: product.icon,
+        name: label ?? getProductCopy(id, locale).name,
+        benefit,
+        // Always without VAT, and saying so (owner, 2026-10-18).
+        price: `${copy.goals.from} ${formatEuro(product.priceFrom, locale)}${billingSuffix(product, locale)} ${copy.goals.vat}`,
+        cta: localize(goalCtas[id], locale),
       };
     }),
   }));
-  const automation = getProduct("automation");
   const menuProduct = getProduct("digital-menu");
 
   return (
@@ -126,7 +126,7 @@ export function NovoHome({ locale }: { locale: Locale }) {
                   <ArrowRight size={18} />
                 </Link>
                 <p className={styles.showcasePrice}>
-                  {copy.showcase.from} {formatEuro(menuProduct.priceFrom, locale)} {menuProduct.priceQualifier[locale]} {copy.showcase.vat}
+                  {copy.showcase.from} {formatEuro(menuProduct.priceFrom, locale)} {localize(menuProduct.priceQualifier, locale)} {copy.showcase.vat}
                 </p>
               </>
             }
@@ -146,7 +146,7 @@ export function NovoHome({ locale }: { locale: Locale }) {
           <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
             {copy.goals.lead}
           </p>
-          <Goals locale={locale} goals={goalViews} custom={{ href: href(locale, { key: "product", productId: "automation" }), price: formatEuro(automation.priceFrom, locale) }} />
+          <Goals label={copy.goals.title} goals={goalViews} />
         </div>
       </section>
 

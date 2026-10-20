@@ -277,4 +277,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Menú digital",
+    shortName: "Menú digital",
+    tagline: "Cada plato en su vídeo, con su precio, con un toque en la mesa.",
+    summary:
+      "La carta de su negocio en vídeo: cada plato tiene su vídeo vertical, con nombre, precio y descripción. El cliente la abre con un toque o con el QR de la placa de la mesa y, si usted quiere, pide desde ahí mismo.",
+  },
+  fr: {
+    name: "Menu digital",
+    shortName: "Menu digital",
+    tagline: "Chaque plat dans sa vidéo, avec son prix, d'un toucher sur la table.",
+    summary:
+      "La carte de votre établissement en vidéo : chaque plat a sa vidéo verticale, avec son nom, son prix et sa description. Le client l'ouvre d'un toucher ou avec le QR code de la plaque de table et, si vous le souhaitez, commande directement.",
+  },
+  de: {
+    name: "Digitale Speisekarte",
+    shortName: "Digitale Speisekarte",
+    tagline: "Jedes Gericht im eigenen Video, mit Preis, mit einem Antippen am Tisch.",
+    summary:
+      "Ihre Speisekarte als Video: Jedes Gericht hat sein eigenes Hochformat-Video mit Name, Preis und Beschreibung. Gäste öffnen sie mit einem Antippen oder über den QR-Code am Tischschild und bestellen, wenn Sie möchten, direkt von dort.",
+  },
+  it: {
+    name: "Menù digitale",
+    shortName: "Menù digitale",
+    tagline: "Ogni piatto nel suo video, con il prezzo, con un tocco al tavolo.",
+    summary:
+      "Il menù della vostra attività in video: ogni piatto ha il suo video verticale, con nome, prezzo e descrizione. Il cliente lo apre con un tocco o con il QR della targa sul tavolo e, se volete, ordina direttamente da lì.",
+  },
 };

@@ -5,7 +5,7 @@ import { formatEuro } from "@/components/ui/Price";
 import { loyaltyCopy, perMonth } from "@/content/novo-home";
 import { adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct } from "@/content/products";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import base from "./novo.module.css";
 import styles from "./plates.module.css";
@@ -15,12 +15,12 @@ import styles from "./plates.module.css";
 // video. The price comes from products.ts, «/mês + IVA».
 
 export function LoyaltyBanner({ locale }: { locale: Locale }) {
-  const copy = loyaltyCopy[locale];
+  const copy = localize(loyaltyCopy, locale);
   const product = getProduct("loyalty");
   const ad = productAds.loyalty!;
   const productHref = href(locale, { key: "product", productId: product.id });
   const monthly = product.priceBilling === "monthly" ? perMonth(locale) : "";
-  const qualifier = product.priceQualifier[locale].replace(/^(por mês|per month),?\s*/, "");
+  const qualifier = localize(product.priceQualifier, locale).replace(/^(por mês|per month|al mes|par mois|pro Monat|al mese),?\s*/, "");
 
   return (
     <section aria-labelledby="novo-loyalty" className={`${styles.band} ${styles.bandRose}`}>
@@ -38,7 +38,7 @@ export function LoyaltyBanner({ locale }: { locale: Locale }) {
         </div>
         <div className={styles.adStage}>
           <div className={styles.adDisc} aria-hidden="true" />
-          <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
+          <AdVideo src={ad.src} poster={ad.poster} label={localize(ad.label, locale)} copy={localize(adVideoLabels, locale)} />
         </div>
         <div className={styles.rest}>
           <ul className={styles.points} data-reveal style={{ ["--reveal-delay" as string]: "180ms" }}>

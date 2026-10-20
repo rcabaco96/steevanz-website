@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { FormField } from "@/content/booking";
 import { toProductId } from "@/content/products";
 import { sectors } from "@/content/sectors";
+import { locales } from "@/lib/i18n";
 import { leadKinds } from "./types";
 
 export const otherSectorValue = "other";
@@ -40,7 +41,7 @@ const contactShape = {
     .trim()
     .refine((value) => value === "" || toProductId(value) !== null)
     .transform((value) => (value.length ? toProductId(value) : null)),
-  locale: z.enum(["pt", "en"]),
+  locale: z.enum(locales),
   consent: z.literal("on"),
   utm_source: trackingText,
   utm_medium: trackingText,

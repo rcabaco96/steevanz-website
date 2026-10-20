@@ -6,7 +6,7 @@ import { cartCopy } from "@/content/cart";
 import { products } from "@/content/products";
 import { getProductCopy } from "@/content/product-copy";
 import { ui } from "@/content/ui";
-import { htmlLang, type Locale } from "@/lib/i18n";
+import { localizePartial, localize, htmlLang, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/site";
 import { Footer } from "./Footer";
@@ -19,7 +19,7 @@ import { WhatsAppButton } from "./WhatsAppButton";
 const isVercelDeployment = Boolean(process.env.VERCEL);
 
 export function SiteShell({ locale, children }: { locale: Locale; children: ReactNode }) {
-  const t = ui[locale];
+  const t = localize(ui, locale);
   const navProducts: NavProduct[] = products.map((product) => {
     const copy = getProductCopy(product.id, locale);
     return {
@@ -57,12 +57,12 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
             allProducts: t.nav.allProducts,
             mainNavLabel: t.nav.mainNavLabel,
             themeToggle: t.theme.toggle,
-            languageSwitch: t.language.switchTo,
-            languageShort: t.language.short,
+            languageLabel: t.language.label,
+            languageButton: t.language.button,
             homeLabel: "Steevanz",
-            cart: cartCopy[locale].headerLabel,
-            cartWithCount: cartCopy[locale].headerLabelCount,
-            account: cartCopy[locale].accountLabel,
+            cart: localizePartial(cartCopy, locale).headerLabel,
+            cartWithCount: localizePartial(cartCopy, locale).headerLabelCount,
+            account: localizePartial(cartCopy, locale).accountLabel,
             families: t.nav.families,
           }}
           links={{

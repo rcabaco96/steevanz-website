@@ -269,4 +269,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Recepcionista de voz con IA",
+    shortName: "Voz IA",
+    tagline: "Ninguna llamada se queda sin respuesta, aunque tenga las manos ocupadas.",
+    summary:
+      "Una recepcionista con IA que atiende el teléfono las 24 horas, responde a las preguntas frecuentes, gestiona reservas y pasa las llamadas urgentes a su equipo.",
+  },
+  fr: {
+    name: "Réceptionniste vocale IA",
+    shortName: "Voix IA",
+    tagline: "Aucun appel sans réponse, même quand vous avez les mains prises.",
+    summary:
+      "Une réceptionniste IA qui répond au téléphone 24 h/24, traite les questions fréquentes, prend les réservations et transfère les appels urgents à votre équipe.",
+  },
+  de: {
+    name: "KI-Telefonrezeption",
+    shortName: "KI-Telefon",
+    tagline: "Kein Anruf bleibt unbeantwortet, auch wenn Sie gerade alle Hände voll zu tun haben.",
+    summary:
+      "Eine KI-Rezeptionistin, die rund um die Uhr ans Telefon geht, häufige Fragen beantwortet, Reservierungen aufnimmt und dringende Anrufe an Ihr Team weiterleitet.",
+  },
+  it: {
+    name: "Receptionist vocale con IA",
+    shortName: "Voce IA",
+    tagline: "Nessuna chiamata senza risposta, anche quando avete le mani occupate.",
+    summary:
+      "Una receptionist con IA che risponde al telefono 24 ore su 24, gestisce le domande frequenti, prende le prenotazioni e passa le chiamate urgenti al vostro staff.",
+  },
 };

@@ -1,133 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
-import { clips, novoCopy, type GoalDemo } from "@/content/novo-home";
-import type { Locale } from "@/lib/i18n";
-import { PhoneVideo } from "./PhoneVideo";
+import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { ArrowRight, ProductGlyph } from "@/components/icons";
+import type { ProductIcon } from "@/content/products";
 import styles from "./novo.module.css";
 
-// «O que quer melhorar?»: four goals of equal weight. Each one shows its product working (a real
-// recording, or the product's own screen drawn live) next to what solves it and what it costs.
-// While the section is on screen the goals advance by themselves, slowly; the first tap, key or
-// hover hands control to the visitor (and with reduced motion they never advance alone).
-
-const ADVANCE_MS = 9000;
+// «O que quer melhorar?» (owner, 2026-10-20): the goals as tabs; each goal shows the products that
+// solve it as equal cards (icon, name, what it does for that goal, «desde … + IVA», «Conhecer …»).
+// No illustration of a single product and no auto-advance: the visitor picks the goal.
 
 export interface GoalProductView {
   id: string;
   href: string;
+  icon: ProductIcon;
   name: string;
-  tagline: string;
+  benefit: string;
   price: string;
-  suffix: string;
+  cta: string;
 }
 
 export interface GoalView {
   id: string;
   title: string;
   lead: string;
-  demo: GoalDemo;
   products: GoalProductView[];
 }
 
-function Demo({ demo, locale }: { demo: GoalDemo; locale: Locale }) {
-  const t = novoCopy[locale].goals.demo;
-  if (demo === "website" || demo === "menu") {
-    const clip = (demo === "website" ? clips.dolciLanding : clips.menuGrid)[locale];
-    return (
-      <div className={`${styles.phone} ${styles.phoneDemo}`}>
-        <PhoneVideo clips={[clip]} sizes="224px" minVisible={0.4} />
-      </div>
-    );
-  }
-  if (demo === "booking") {
-    return (
-      <div className={styles.mini} aria-label={t.bookingLabel} role="img">
-        <p className={styles.miniTitle}>{t.bookingTitle}</p>
-        <p className={styles.miniSub}>{t.bookingPeople}</p>
-        <div className={styles.days} aria-hidden="true">
-          {t.days.map((day, index) => (
-            <span key={day} className={`${styles.chip} ${styles.chipDay}${index === 2 ? ` ${styles.chipOn}` : ""}`}>
-              <small>{day}</small>
-              {14 + index}
-            </span>
-          ))}
-        </div>
-        <div className={styles.slots} aria-hidden="true">
-          <span className={`${styles.chip} ${styles.chipOff}`}>19:30</span>
-          <span className={styles.chip}>20:00</span>
-          <span className={`${styles.chip} ${styles.slotPick}`}>
-            20:30
-            <span className={`${styles.tap} ${styles.slotTap}`} />
-          </span>
-          <span className={styles.chip}>21:00</span>
-          <span className={`${styles.chip} ${styles.chipOff}`}>21:30</span>
-          <span className={styles.chip}>22:00</span>
-        </div>
-        <p className={styles.confirm} aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          {t.bookingConfirmed}
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className={styles.card} role="img" aria-label={t.cardLabel}>
-      <div className={styles.cardTop}>
-        <span className={styles.cardBrand}>
-          {t.cardBrand}
-          <span>.</span>
-        </span>
-        <span>{t.cardName}</span>
-      </div>
-      <div className={styles.stamps} aria-hidden="true">
-        {Array.from({ length: 10 }, (_, i) => (
-          <span key={i} className={styles.stamp} style={{ ["--i" as string]: i }}>
-            {i < 7 ? <i /> : null}
-          </span>
-        ))}
-      </div>
-      <p className={styles.cardFoot}>{t.cardFoot}</p>
-    </div>
-  );
-}
-
-export function Goals({ locale, goals, custom }: { locale: Locale; goals: GoalView[]; custom: { href: string; price: string } }) {
-  const copy = novoCopy[locale].goals;
+export function Goals({ label, goals }: { label: string; goals: GoalView[] }) {
   const [active, setActive] = useState(0);
-  const [auto, setAuto] = useState(true);
-  const [inView, setInView] = useState(false);
-  const [hover, setHover] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const baseId = useId();
-  // The tab answers at once; the heavier panel follows in the next frame (keeps taps responsive).
-  const shown = useDeferredValue(active);
-  const goal = goals[shown];
-  const running = auto && inView && !hover;
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el || !("IntersectionObserver" in window)) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.45 });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!running) return;
-    const timer = window.setTimeout(() => setActive((current) => (current + 1) % goals.length), ADVANCE_MS);
-    return () => window.clearTimeout(timer);
-  }, [running, active, goals.length]);
-
-  const choose = (index: number) => {
-    setAuto(false);
-    setActive(index);
-  };
+  const goal = goals[active];
 
   const onKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
@@ -137,20 +41,13 @@ export function Goals({ locale, goals, custom }: { locale: Locale; goals: GoalVi
     if (event.key === "End") next = goals.length - 1;
     if (next === null) return;
     event.preventDefault();
-    choose(next);
+    setActive(next);
     tabRefs.current[next]?.focus();
   };
 
   return (
-    <div
-      ref={rootRef}
-      className={styles.goals}
-      data-running={running ? "" : undefined}
-      onPointerEnter={(event) => event.pointerType === "mouse" && setHover(true)}
-      onPointerLeave={() => setHover(false)}
-      onPointerDown={(event) => event.pointerType === "mouse" && setAuto(false)}
-    >
-      <div role="tablist" aria-label={copy.title} className={styles.tabs}>
+    <div className={styles.goals}>
+      <div role="tablist" aria-label={label} className={styles.tabs}>
         {goals.map((item, index) => (
           <button
             key={item.id}
@@ -164,43 +61,31 @@ export function Goals({ locale, goals, custom }: { locale: Locale; goals: GoalVi
             aria-controls={`${baseId}-panel`}
             tabIndex={active === index ? 0 : -1}
             className={styles.tab}
-            onClick={() => choose(index)}
+            onClick={() => setActive(index)}
             onKeyDown={(event) => onKey(event, index)}
           >
             {item.title}
-            {active === index && auto ? <span key={active} className={styles.tabProgress} style={{ animationDuration: `${ADVANCE_MS}ms` }} aria-hidden="true" /> : null}
           </button>
         ))}
       </div>
       <div key={goal.id} role="tabpanel" id={`${baseId}-panel`} aria-labelledby={`${baseId}-tab-${goal.id}`} className={styles.panel}>
         <p className={styles.goalLead}>{goal.lead}</p>
-        <div className={styles.demo}>
-          <Demo demo={goal.demo} locale={locale} />
-        </div>
-        <div className={styles.goalRest}>
-          <ul className={styles.productList}>
-            {goal.products.map((product) => (
-              <li key={product.id}>
-                <Link href={product.href} className={styles.productLink}>
-                  <span className={styles.productName}>{product.name}</span>
-                  <span className={styles.productPrice}>
-                    {copy.from} <strong>{product.price}</strong>
-                    {product.suffix}
-                  </span>
-                  <span className={styles.productTag}>{product.tagline}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <p className={styles.custom}>
-            <span>
-              <strong>{copy.custom.label}:</strong> {copy.custom.body}
-            </span>
-            <Link href={custom.href}>
-              {copy.custom.link} {custom.price}
-            </Link>
-          </p>
-        </div>
+        <ul className={styles.goalCards}>
+          {goal.products.map((product) => (
+            <li key={product.id} className={styles.goalCard}>
+              <span className={styles.goalIcon} aria-hidden="true">
+                <ProductGlyph icon={product.icon} size={20} />
+              </span>
+              <h3 className={styles.goalName}>{product.name}</h3>
+              <p className={styles.goalBenefit}>{product.benefit}</p>
+              <p className={styles.goalPrice}>{product.price}</p>
+              <Link href={product.href} className={styles.goalLink}>
+                {product.cta}
+                <ArrowRight size={16} />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

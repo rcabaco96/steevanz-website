@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { photos, type PhotoId } from "@/content/media";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 
 interface PhotoProps {
   id: PhotoId;
@@ -19,7 +19,7 @@ export function Photo({ id, locale, sizes, className = "", imageClassName = "", 
     return (
       <Image
         src={photo.src}
-        alt={photo.alt[locale]}
+        alt={localize(photo.alt, locale)}
         width={photo.width}
         height={photo.height}
         sizes={sizes}
@@ -32,7 +32,7 @@ export function Photo({ id, locale, sizes, className = "", imageClassName = "", 
     <div className={`relative overflow-hidden ${className}`}>
       <Image
         src={photo.src}
-        alt={photo.alt[locale]}
+        alt={localize(photo.alt, locale)}
         fill
         sizes={sizes}
         priority={priority}

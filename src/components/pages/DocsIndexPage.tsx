@@ -7,18 +7,18 @@ import { ui } from "@/content/ui";
 import { ArrowRight, ProductGlyph } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { SectionHeader } from "@/components/ui/Section";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { site, whatsappUrl } from "@/lib/site";
 
 const copy = {
   pt: {
-    metaTitle: "Documentação e guias de utilização | Steevanz Docs",
-    metaDescription: "Guias práticos para instalar, configurar e usar as placas, reservas, lista de espera, chatbot, receção por voz e automações da Steevanz.",
+    metaTitle: "Documentação e glocalize(ui, locale)s de utilização | Steevanz Docs",
+    metaDescription: "Glocalize(ui, locale)s práticos para instalar, configurar e usar as placas, reservas, lista de espera, chatbot, receção por voz e automações da Steevanz.",
     eyebrow: "Documentação",
     title: "Tudo o que precisa de saber, passo a passo.",
-    lead: "Guias escritos para quem gere um negócio, não para engenheiros. Da colocação de uma placa à configuração de um chatbot.",
+    lead: "Glocalize(ui, locale)s escritos para quem gere um negócio, não para engenheiros. Da colocação de uma placa à configuração de um chatbot.",
     helpTitle: "Não encontrou o que procurava?",
     helpBody: "Escreva-nos. Respondemos por WhatsApp ou e-mail em dias úteis.",
   },
@@ -34,12 +34,12 @@ const copy = {
 };
 
 export function docsIndexMetadata(locale: Locale): Metadata {
-  return pageMetadata({ locale, route: { key: "docs" }, title: copy[locale].metaTitle, description: copy[locale].metaDescription });
+  return pageMetadata({ locale, route: { key: "docs" }, title: localize(copy, locale).metaTitle, description: localize(copy, locale).metaDescription });
 }
 
 export function DocsIndexPage({ locale }: { locale: Locale }) {
-  const t = ui[locale];
-  const text = copy[locale];
+  const t = localize(ui, locale);
+  const text = localize(copy, locale);
   return (
     <section aria-labelledby="docs-title" className="relative isolate overflow-hidden pt-24 pb-20 sm:pt-32">
       <div aria-hidden="true" className="glow-backdrop absolute inset-0 -z-10" />
@@ -70,7 +70,7 @@ export function DocsIndexPage({ locale }: { locale: Locale }) {
                         href={href(locale, { key: "doc", productId: product.id, pageId: page.id })}
                         className="group flex items-center justify-between rounded-lg px-2 py-1.5 text-[0.95rem] text-muted transition-colors hover:bg-surface-2 hover:text-text"
                       >
-                        {page.label[locale]}
+                        {localize(page.label, locale)}
                         <ArrowRight size={14} className="opacity-0 transition-opacity group-hover:opacity-100" />
                       </Link>
                     </li>

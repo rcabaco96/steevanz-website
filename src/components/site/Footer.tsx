@@ -5,7 +5,7 @@ import { getProductCopy } from "@/content/product-copy";
 import { sectors } from "@/content/sectors";
 import { ui } from "@/content/ui";
 import { InstagramIcon, MailIcon, PhoneIcon, WhatsAppIcon } from "@/components/icons";
-import type { Locale } from "@/lib/i18n";
+import { localize, localizePartial, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { site, whatsappUrl } from "@/lib/site";
 import { Logo } from "./Logo";
@@ -17,7 +17,7 @@ interface FooterLink {
 }
 
 export function Footer({ locale }: { locale: Locale }) {
-  const t = ui[locale];
+  const t = localize(ui, locale);
   const companyLinks: FooterLink[] = [
     { href: href(locale, { key: "about" }), label: t.nav.about },
     { href: href(locale, { key: "contact" }), label: t.nav.contact },
@@ -29,14 +29,14 @@ export function Footer({ locale }: { locale: Locale }) {
     { href: href(locale, { key: "products" }), label: t.nav.allProducts },
     ...sectors.map((sector) => ({
       href: href(locale, { key: "sector", sectorId: sector.id }),
-      label: sector.copy[locale].name,
+      label: localizePartial(sector.copy, locale).name,
     })),
   ];
   const legalLinks: FooterLink[] = [
-    { href: href(locale, { key: "privacy" }), label: locale === "pt" ? "Política de privacidade" : "Privacy policy" },
-    { href: href(locale, { key: "cookies" }), label: locale === "pt" ? "Política de cookies" : "Cookie policy" },
-    { href: href(locale, { key: "terms" }), label: locale === "pt" ? "Termos e condições" : "Terms and conditions" },
-    { href: "https://www.livroreclamacoes.pt", label: locale === "pt" ? "Livro de Reclamações" : "Complaints book", external: true },
+    { href: href(locale, { key: "privacy" }), label: t.footer.privacy },
+    { href: href(locale, { key: "cookies" }), label: t.footer.cookies },
+    { href: href(locale, { key: "terms" }), label: t.footer.terms },
+    { href: "https://www.livroreclamacoes.pt", label: t.footer.complaints, external: true },
   ];
 
   return (

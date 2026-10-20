@@ -3,12 +3,13 @@ import { getProductCopy } from "@/content/product-copy";
 import { ui } from "@/content/ui";
 import { ButtonLink } from "@/components/ui/Button";
 import { TapPlate } from "@/components/visuals/TapPlate";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale, type Localized } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import Link from "next/link";
 
-const copy = {
+const copy: Localized<{ title404: string; eyebrow: string; title: string; body: string; home: string; plateLine1: string; plateLine2: string }> = {
   pt: {
+    title404: "Página não encontrada | Steevanz",
     eyebrow: "Erro 404",
     title: "Esta placa não leva a lado nenhum.",
     body: "A página que procura não existe ou mudou de sítio. Experimente um destes caminhos:",
@@ -17,6 +18,7 @@ const copy = {
     plateLine2: "Página não encontrada",
   },
   en: {
+    title404: "Page not found | Steevanz",
     eyebrow: "Error 404",
     title: "This plate doesn't lead anywhere.",
     body: "The page you're looking for doesn't exist or has moved. Try one of these instead:",
@@ -24,11 +26,52 @@ const copy = {
     plateLine1: "Oops!",
     plateLine2: "Page not found",
   },
+  es: {
+    title404: "Página no encontrada | Steevanz",
+    eyebrow: "Error 404",
+    title: "Esta placa no lleva a ninguna parte.",
+    body: "La página que busca no existe o ha cambiado de sitio. Pruebe uno de estos caminos:",
+    home: "Volver al inicio",
+    plateLine1: "¡Ups!",
+    plateLine2: "Página no encontrada",
+  },
+  fr: {
+    title404: "Page introuvable | Steevanz",
+    eyebrow: "Erreur 404",
+    title: "Cette plaque ne mène nulle part.",
+    body: "La page que vous cherchez n'existe pas ou a changé d'adresse. Essayez plutôt l'un de ces chemins :",
+    home: "Retour à l'accueil",
+    plateLine1: "Oups !",
+    plateLine2: "Page introuvable",
+  },
+  de: {
+    title404: "Seite nicht gefunden | Steevanz",
+    eyebrow: "Fehler 404",
+    title: "Dieses Schild führt nirgendwohin.",
+    body: "Die gesuchte Seite gibt es nicht oder sie ist umgezogen. Versuchen Sie es mit einem dieser Wege:",
+    home: "Zur Startseite",
+    plateLine1: "Hoppla!",
+    plateLine2: "Seite nicht gefunden",
+  },
+  it: {
+    title404: "Pagina non trovata | Steevanz",
+    eyebrow: "Errore 404",
+    title: "Questa targa non porta da nessuna parte.",
+    body: "La pagina che cerca non esiste o è stata spostata. Provi uno di questi percorsi:",
+    home: "Torna alla home",
+    plateLine1: "Ops!",
+    plateLine2: "Pagina non trovata",
+  },
 };
 
+/** The 404 page title in `locale`. */
+export function notFoundTitle(locale: Locale): string {
+  return localize(copy, locale).title404;
+}
+
 export function NotFoundContent({ locale }: { locale: Locale }) {
-  const text = copy[locale];
-  const t = ui[locale];
+  const text = localize(copy, locale);
+  const t = localize(ui, locale);
   return (
     <section className="relative isolate overflow-hidden pt-28 pb-24 sm:pt-36">
       <div aria-hidden="true" className="glow-backdrop absolute inset-0 -z-10" />

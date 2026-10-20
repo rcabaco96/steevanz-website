@@ -335,4 +335,33 @@ export const copy: ProductCopyByLocale = {
       },
     },
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Landing page",
+    shortName: "Landing page",
+    tagline: "Una página, un objetivo: más contactos y reservas.",
+    summary:
+      "Una página única, rápida y pensada para el móvil, que lleva a quien la visita a llamar, reservar o hacer un pedido. Precio cerrado y lista en 5 días laborables.",
+  },
+  fr: {
+    name: "Landing page",
+    shortName: "Landing page",
+    tagline: "Une page, un objectif : plus de contacts et de réservations.",
+    summary:
+      "Une page unique, rapide et pensée pour le mobile, qui amène les visiteurs à appeler, réserver ou commander. Prix fixe, prête en 5 jours ouvrés.",
+  },
+  de: {
+    name: "Landingpage",
+    shortName: "Landingpage",
+    tagline: "Eine Seite, ein Ziel: mehr Anfragen und Reservierungen.",
+    summary:
+      "Eine einzelne, schnelle Seite, gemacht fürs Handy, die Besucher zum Anrufen, Reservieren oder Bestellen bringt. Festpreis, fertig in 5 Werktagen.",
+  },
+  it: {
+    name: "Landing page",
+    shortName: "Landing page",
+    tagline: "Una pagina, un obiettivo: più contatti e prenotazioni.",
+    summary:
+      "Una pagina unica, veloce e pensata per lo smartphone, che porta chi la visita a chiamare, prenotare o ordinare. Prezzo fisso, pronta in 5 giorni lavorativi.",
+  },
 };

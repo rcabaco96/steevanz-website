@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { htmlLang, ogLocale, type Locale } from "./i18n";
-import { localizedHrefs, type Route } from "./routes";
-import { absoluteUrl, site } from "./site";
+// Relative imports with extensions keep this module runnable by `node --test` (tests/site-i18n.test.mjs).
+import { defaultLocale, htmlLang, locales, ogLocale, type Locale } from "./i18n.ts";
+import { localizedHrefs, type Route } from "./routes.ts";
+import { absoluteUrl, site } from "./site.ts";
 
 interface PageMetadataInput {
   locale: Locale;
@@ -12,6 +13,15 @@ interface PageMetadataInput {
   absoluteTitle?: boolean;
   noIndex?: boolean;
   type?: "website" | "article";
+}
+
+/** hreflang alternates: the page in each of the six languages, plus x-default (Portuguese). */
+export function languageAlternates(route: Route): Record<string, string> {
+  const paths = localizedHrefs(route);
+  return {
+    ...Object.fromEntries(locales.map((locale) => [htmlLang[locale], absoluteUrl(paths[locale])])),
+    "x-default": absoluteUrl(paths[defaultLocale]),
+  };
 }
 
 export function pageMetadata({
@@ -26,7 +36,6 @@ export function pageMetadata({
 }: PageMetadataInput): Metadata {
   const paths = localizedHrefs(route);
   const canonical = absoluteUrl(paths[locale]);
-  const alternateLocale: Locale = locale === "pt" ? "en" : "pt";
   const ogImage = image ?? `/og/${locale}`;
   const images = [{ url: ogImage, width: 1200, height: 630, alt: title }];
 
@@ -35,11 +44,7 @@ export function pageMetadata({
     description,
     alternates: {
       canonical,
-      languages: {
-        [htmlLang.pt]: absoluteUrl(paths.pt),
-        [htmlLang.en]: absoluteUrl(paths.en),
-        "x-default": absoluteUrl(paths.pt),
-      },
+      languages: languageAlternates(route),
     },
     openGraph: {
       type,
@@ -48,7 +53,7 @@ export function pageMetadata({
       title,
       description,
       locale: ogLocale[locale],
-      alternateLocale: [ogLocale[alternateLocale]],
+      alternateLocale: locales.filter((other) => other !== locale).map((other) => ogLocale[other]),
       images,
     },
     twitter: {

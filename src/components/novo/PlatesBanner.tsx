@@ -4,7 +4,7 @@ import { formatEuro } from "@/components/ui/Price";
 import { HeroTapScene } from "@/components/visuals/HeroTapScene";
 import { platesCopy, sceneCopy } from "@/content/novo-home";
 import { getProduct } from "@/content/products";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { PauseOffscreen } from "./PauseOffscreen";
 import base from "./novo.module.css";
@@ -15,7 +15,7 @@ import styles from "./plates.module.css";
 // (owner, 2026-10-20), on a dark panel, paused while off screen.
 
 export function PlatesBanner({ locale }: { locale: Locale }) {
-  const copy = platesCopy[locale];
+  const copy = localize(platesCopy, locale);
   const product = getProduct("google-review-plates");
   const bestPack = product.packs?.reduce((best, pack) => (pack.unitPrice < best.unitPrice ? pack : best));
   const productHref = href(locale, { key: "product", productId: product.id });
@@ -36,7 +36,7 @@ export function PlatesBanner({ locale }: { locale: Locale }) {
         </div>
 
         <PauseOffscreen className={styles.panel}>
-          <HeroTapScene copy={sceneCopy[locale]} />
+          <HeroTapScene copy={localize(sceneCopy, locale)} />
         </PauseOffscreen>
 
         <div className={styles.rest}>

@@ -1,7 +1,7 @@
 import { getProductCopy } from "@/content/product-copy";
 import { toProductId } from "@/content/products";
 import { sectors } from "@/content/sectors";
-import type { Locale } from "@/lib/i18n";
+import { localizePartial, type Locale } from "@/lib/i18n";
 import type { LeadKind, PipelineStatus } from "./types";
 
 export const statusLabels: Record<PipelineStatus, string> = {
@@ -19,7 +19,7 @@ export const kindLabels: Record<LeadKind, string> = {
 };
 
 export function productLabel(productId: string | null | undefined, locale: Locale = "pt"): string {
-  if (!productId) return locale === "pt" ? "Sem produto definido" : "No product selected";
+  if (!productId) return locale === "pt" ? "Sem produto definido" : "No product selected"; // admin and emails: pt or en
   const id = toProductId(productId);
   if (!id) return productId;
   return getProductCopy(id, locale).name;
@@ -28,6 +28,6 @@ export function productLabel(productId: string | null | undefined, locale: Local
 export function sectorLabel(sectorId: string | null | undefined, locale: Locale = "pt"): string {
   if (!sectorId) return "";
   const sector = sectors.find((candidate) => candidate.id === sectorId);
-  if (sector) return sector.copy[locale].name;
+  if (sector) return localizePartial(sector.copy, locale).name;
   return locale === "pt" ? "Outro" : "Other";
 }

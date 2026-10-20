@@ -9,7 +9,7 @@ import { productAds } from "../src/content/product-ads.ts";
 const dir = "src/components/novo";
 const pageFiles = [
   "src/app/(pt)/page.tsx",
-  "src/app/(en)/en/page.tsx",
+  "src/app/(intl)/[lang]/page.tsx",
   "src/content/novo-home.ts",
   ...readdirSync(dir)
     .filter((name) => /\.(tsx?|css)$/.test(name))
@@ -88,7 +88,7 @@ describe("home page («/» and «/en»)", () => {
   it("has no prices or FAQ section, and no FAQ structured data", () => {
     const home = readFileSync(join(dir, "NovoHome.tsx"), "utf8");
     assert.doesNotMatch(home, /PricesFaq|novo-prices/);
-    for (const page of ["src/app/(pt)/page.tsx", "src/app/(en)/en/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
+    for (const page of ["src/app/(pt)/page.tsx", "src/app/(intl)/[lang]/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
     // Section order: clients, plates, Menu digital, loyalty card, goals, sectors, how we work, final call.
     const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
     const positions = order.map((needle) => home.indexOf(needle));
@@ -96,17 +96,21 @@ describe("home page («/» and «/en»)", () => {
     assert.deepEqual([...positions].sort((a, b) => a - b), positions);
   });
 
-  it("is the same page in English at «/en», and the old home is gone (owner, 2026-10-20)", () => {
-    const en = readFileSync("src/app/(en)/en/page.tsx", "utf8");
-    assert.match(en, /<NovoHome locale="en"/);
-    assert.match(en, /novoHomeMetadata\("en"\)/);
-    assert.match(en, /websiteJsonLd\("en"\)/);
+  it("is the same page at «/en», «/es», «/fr», «/de» and «/it», and the old home is gone (owner, 2026-10-20)", () => {
+    const intl = readFileSync("src/app/(intl)/[lang]/page.tsx", "utf8");
+    assert.match(intl, /<NovoHome locale=\{locale\}/);
+    assert.match(intl, /novoHomeMetadata\(await localeOf\(params\)\)/);
+    assert.match(intl, /websiteJsonLd\(locale\)/);
     assert.match(readFileSync("src/app/(pt)/page.tsx", "utf8"), /<NovoHome locale="pt"/);
     for (const old of ["src/components/pages/HomePage.tsx", "src/content/home.ts", "src/components/marketing/Marquee.tsx"]) {
       assert.equal(existsSync(old), false, old);
     }
-    assert.equal(goals.en.length, goals.pt.length);
-    assert.deepEqual(goals.en.map((goal) => goal.id), goals.pt.map((goal) => goal.id));
+    for (const locale of ["en", "es", "fr", "de", "it"]) {
+      assert.equal(goals[locale].length, goals.pt.length, locale);
+      assert.deepEqual(goals[locale].map((goal) => goal.id), goals.pt.map((goal) => goal.id), locale);
+      const ids = (list) => list.map((goal) => goal.products.map((product) => product.id));
+      assert.deepEqual(ids(goals[locale]), ids(goals.pt), locale);
+    }
   });
 
   it("has the slogan «encontram, compram e voltam» in the title and the hero", () => {

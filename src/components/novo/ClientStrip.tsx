@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { novoCopy, trustedClients, type TrustedClient } from "@/content/novo-home";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import styles from "./novo.module.css";
 
 // «Confiam em nós»: a slow marquee of the clients we may name. It pauses on hover and with the
@@ -28,7 +28,7 @@ function ClientName({ client }: { client: TrustedClient }) {
 
 export function ClientStrip({ locale }: { locale: Locale }) {
   const [paused, setPaused] = useState(false);
-  const copy = novoCopy[locale].clients;
+  const copy = localize(novoCopy, locale).clients;
   return (
     <section aria-labelledby="novo-clients" className={styles.clients}>
       <div className={styles.wrap}>

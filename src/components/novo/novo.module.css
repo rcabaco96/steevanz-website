@@ -429,119 +429,6 @@
   transform: translateX(3px);
 }
 
-/* The phone itself. */
-.phone {
-  position: relative;
-  width: var(--phone-w, 15rem);
-  aspect-ratio: 1170 / 2532;
-  border-radius: calc(var(--phone-w, 15rem) * 0.16);
-  padding: calc(var(--phone-w, 15rem) * 0.035);
-  background: #17101a;
-  box-shadow:
-    0 2px 0 1px #3a2c3f inset,
-    0 40px 60px -30px rgb(60 30 50 / 0.55),
-    0 18px 30px -18px rgb(60 30 50 / 0.4);
-}
-
-.phone::after {
-  /* Dynamic island. */
-  content: "";
-  position: absolute;
-  top: calc(var(--phone-w, 15rem) * 0.065);
-  left: 50%;
-  width: 30%;
-  height: calc(var(--phone-w, 15rem) * 0.075);
-  border-radius: 999px;
-  background: #0b070c;
-  transform: translateX(-50%);
-  z-index: 3;
-}
-
-.screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: calc(var(--phone-w, 15rem) * 0.125);
-  background: #f4ece1;
-  transform: translateZ(0);
-}
-
-.screenMedia {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.screenVideo {
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.screenVideo[data-playing] {
-  opacity: 1;
-}
-
-/* The tap: a gold dot that ripples where the thumb lands. */
-.tap {
-  position: absolute;
-  z-index: 4;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.tap::before,
-.tap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--gold);
-}
-
-.tap::before {
-  inset: 32%;
-}
-
-.tap::after {
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .tap::after {
-    animation: tap-ring 2.4s var(--ease) infinite;
-  }
-  .tap::before {
-    animation: tap-press 2.4s var(--ease) infinite;
-  }
-}
-
-@keyframes tap-ring {
-  0% {
-    transform: scale(0.4);
-    opacity: 0.55;
-  }
-  60%,
-  100% {
-    transform: scale(1.6);
-    opacity: 0;
-  }
-}
-
-@keyframes tap-press {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  12% {
-    transform: scale(0.8);
-  }
-}
-
 /* ---------- Clients ---------- */
 
 .clients {
@@ -688,37 +575,63 @@
   }
 }
 
+/* ---------- O que quer melhorar? (goal tabs + equal product cards) ---------- */
+
+.goals {
+  margin-top: 1.5rem;
+}
+
 .tabs {
-  margin-top: 1.75rem;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
 }
 
-@media (min-width: 768px) {
+/* Five goals on a phone: two per row, the last one across. */
+@media (max-width: 639px) {
+  .tab:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 640px) {
   .tabs {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .tabs {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.625rem;
   }
 }
 
 .tab {
-  position: relative;
-  min-height: 3.25rem;
-  padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  text-align: left;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.875rem;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.0625rem, 3.6vw, 1.5rem);
-  letter-spacing: -0.015em;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
   line-height: 1.15;
   color: var(--text);
   background: var(--bg-soft);
+  overflow-wrap: anywhere;
+  hyphens: auto;
   transition:
-    background-color 0.3s var(--ease),
-    color 0.3s var(--ease),
-    transform 0.25s var(--ease);
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease),
+    transform 0.2s var(--ease);
+}
+
+@media (min-width: 1024px) {
+  .tab {
+    min-height: 3.25rem;
+    border-radius: 1rem;
+    font-size: 1.1875rem;
+  }
 }
 
 .tab:hover {
@@ -729,440 +642,163 @@
   transform: scale(0.98);
 }
 
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .tab[aria-selected="true"] {
   background: var(--plum);
   color: #fff;
 }
 
-.tab[aria-selected="true"]::after {
-  content: "";
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: var(--gold);
-}
-
 .panel {
-  margin-top: 1.25rem;
-  display: grid;
-  gap: 1.75rem;
-  padding: 1.25rem;
-  border-radius: 1.75rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1.5rem;
   background: var(--bg-soft);
-}
-
-/* Stacked: the goal's lead, then its demo, then the products. Side by side: the demo on the left, the
-   lead and the products centred on the right. */
-.panel > .goalLead {
-  grid-area: lead;
-}
-
-.panel > .demo {
-  grid-area: demo;
-}
-
-.goalRest {
-  grid-area: rest;
-}
-
-.panel {
-  grid-template-areas: "lead" "demo" "rest";
-}
-
-.goalRest .productList {
-  margin-top: 0;
 }
 
 @media (min-width: 768px) {
   .panel {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: 1fr auto auto 1fr;
-    grid-template-areas: "demo ." "demo lead" "demo rest" "demo .";
-    padding: 2.5rem;
-    gap: 0 3rem;
-  }
-  .goalRest .productList {
-    margin-top: 1.25rem;
+    padding: 1.5rem;
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .panel {
-    animation: panel-in 0.5s var(--ease) both;
+    animation: panel-in 0.35s var(--ease) both;
   }
 }
 
 @keyframes panel-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 0.75rem, 0);
-  }
-}
-
-.demo {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 24rem;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  background: var(--bg);
-  padding-block: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .demo {
-    min-height: 34rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .demo {
-    min-height: 40rem;
-  }
-}
-
-.phoneDemo {
-  --phone-w: min(64vw, 15.5rem);
-}
-
-@media (min-width: 768px) {
-  .phoneDemo {
-    --phone-w: 17rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .phoneDemo {
-    --phone-w: 19rem;
-  }
-}
-
-/* The goal's progress, while the goals advance by themselves. */
-.tabProgress {
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 0.45rem;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--gold);
-  transform-origin: left;
-  transform: scaleX(0);
-  animation: tab-progress linear forwards;
-  animation-play-state: paused;
-}
-
-.goals[data-running] .tabProgress {
-  animation-play-state: running;
-}
-
-@keyframes tab-progress {
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tabProgress {
-    display: none;
+    transform: translate3d(0, 0.5rem, 0);
   }
 }
 
 .goalLead {
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   line-height: 1.5;
   color: var(--text);
-  max-width: 30rem;
+  max-width: 40rem;
 }
 
-.productList {
-  margin-top: 1.25rem;
+.goalCards {
+  margin-top: 1rem;
   display: grid;
+  gap: 0.75rem;
 }
 
-.productLink {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 0.25rem 1rem;
-  padding-block: 0.875rem;
-  min-height: 2.75rem;
-  border-top: 1px solid var(--line);
-  transition: color 0.2s var(--ease);
-}
-
-.productLink:hover .productName {
-  color: var(--accent-text);
-}
-
-.productName {
-  font-weight: 600;
-  font-size: 1.0625rem;
-  color: var(--text);
-  transition: color 0.2s var(--ease);
-}
-
-.productTag {
-  grid-column: 1 / -1;
-  font-size: 0.9375rem;
-  color: var(--text-muted);
-}
-
-@media (max-width: 639px) {
-  .productTag {
-    display: none;
+@media (min-width: 640px) {
+  .goalCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.productPrice {
+@media (min-width: 1024px) {
+  .goalCards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.goalCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 1.125rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition:
+    border-color 0.2s var(--ease),
+    transform 0.2s var(--ease);
+}
+
+.goalCard:hover {
+  border-color: var(--line-strong);
+}
+
+.goalIcon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.goalName {
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.goalBenefit {
+  grid-column: 1 / -1;
+  align-self: start;
+  margin-top: 0.5rem;
   font-size: 0.9375rem;
+  line-height: 1.45;
   color: var(--text-muted);
-  white-space: nowrap;
+}
+
+.goalPrice,
+.goalLink {
+  grid-column: 1 / -1;
+}
+
+.goalPrice {
+  margin-top: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
   font-variant-numeric: tabular-nums;
 }
 
-.productPrice strong {
-  font-weight: 700;
-  color: var(--text);
-}
-
-.custom {
-  margin-top: 1.25rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 1rem;
-  font-size: 1rem;
-  color: var(--text-muted);
-}
-
-.custom a {
-  font-weight: 600;
-  color: var(--accent-text);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
-}
-
-/* Booking demo (an illustration of the product's screens). */
-.mini {
-  width: min(100%, 19rem);
-  border-radius: 1.25rem;
-  background: var(--surface);
-  padding: 1.1rem;
-  box-shadow: 0 24px 40px -28px rgb(60 30 50 / 0.45);
-  color: var(--text);
-}
-
-.miniTitle {
+/* The whole card is the touch target (see ::after), so the line itself stays short. */
+.goalLink {
+  margin-top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  justify-self: start;
   font-weight: 600;
   font-size: 0.9375rem;
+  color: var(--accent-text);
 }
 
-.miniSub {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
+/* The whole card opens the product page. */
+.goalLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
 
-.days,
-.slots {
-  margin-top: 0.75rem;
-  display: grid;
-  gap: 0.375rem;
+.goalLink:focus-visible {
+  outline: none;
 }
 
-.days {
-  grid-template-columns: repeat(4, 1fr);
+.goalCard:has(.goalLink:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-.slots {
-  grid-template-columns: repeat(3, 1fr);
+.goalLink svg {
+  transition: transform 0.25s var(--ease);
 }
 
-.chip {
-  display: grid;
-  place-items: center;
-  min-height: 2.25rem;
-  border-radius: 0.6rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  background: var(--surface-2);
-  color: var(--text);
-}
-
-.chipDay {
-  min-height: 3rem;
-  line-height: 1.1;
-}
-
-.chipDay small {
-  display: block;
-  font-weight: 500;
-  font-size: 0.6875rem;
-  color: var(--text-muted);
-}
-
-.chipOn {
-  background: var(--plum);
-  color: #fff;
-}
-
-.chipOn small {
-  color: rgb(255 255 255 / 0.8);
-}
-
-.chipOff {
-  opacity: 0.4;
-  text-decoration: line-through;
-}
-
-.slotPick {
-  position: relative;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .slotPick {
-    animation: slot-pick 5s var(--ease) infinite;
-  }
-  .confirm {
-    animation: confirm-show 5s var(--ease) infinite;
-  }
-}
-
-@keyframes slot-pick {
-  0%,
-  30% {
-    background: var(--surface-2);
-    color: var(--text);
-  }
-  36%,
-  100% {
-    background: var(--plum);
-    color: #fff;
-  }
-}
-
-.confirm {
-  margin-top: 0.875rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 0.8rem;
-  background: var(--success-soft);
-  color: var(--success);
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-@keyframes confirm-show {
-  0%,
-  40% {
-    opacity: 0;
-    transform: translate3d(0, 0.5rem, 0);
-  }
-  48%,
-  92% {
-    opacity: 1;
-    transform: none;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.slotTap {
-  width: 2.25rem;
-  height: 2.25rem;
-  right: -0.6rem;
-  bottom: -0.9rem;
-}
-
-/* Loyalty stamps demo. */
-.card {
-  width: min(100%, 20rem);
-  aspect-ratio: 1.6;
-  border-radius: 1.1rem;
-  padding: 1rem 1.1rem;
-  background: var(--plum);
-  color: #fff;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  box-shadow: 0 24px 40px -24px rgb(60 30 50 / 0.6);
-}
-
-.cardTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 0.8125rem;
-}
-
-.cardBrand {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-}
-
-.cardBrand span {
-  color: var(--gold);
-}
-
-.stamps {
-  align-self: center;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.45rem;
-}
-
-.stamp {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 1.5px dashed rgb(255 255 255 / 0.4);
-  display: grid;
-  place-items: center;
-}
-
-.stamp i {
-  width: 70%;
-  height: 70%;
-  border-radius: 50%;
-  background: var(--gold);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .stamp i {
-    animation: stamp-in 6s var(--ease) infinite;
-    animation-delay: calc(var(--i) * 0.45s);
-  }
-}
-
-@keyframes stamp-in {
-  0% {
-    transform: scale(1.8) rotate(-20deg);
-    opacity: 0;
-  }
-  7% {
-    transform: scale(0.9);
-    opacity: 1;
-  }
-  10%,
-  85% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  95%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.cardFoot {
-  font-size: 0.8125rem;
-  color: rgb(255 255 255 / 0.85);
+.goalCard:hover .goalLink svg {
+  transform: translateX(3px);
 }
 
 /* ---------- Menu showcase (plum field) ---------- */
@@ -1307,16 +943,6 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--plum-deep);
-}
-
-.phoneShow {
-  --phone-w: min(64vw, 16rem);
-}
-
-@media (min-width: 1024px) {
-  .phoneShow {
-    --phone-w: 20rem;
-  }
 }
 
 .showcaseFoot {

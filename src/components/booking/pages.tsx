@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
 import { Check, MailIcon, WhatsAppIcon } from "@/components/icons";
@@ -10,8 +11,9 @@ import { ui } from "@/content/ui";
 import { getAvailability } from "@/lib/booking/availability";
 import { otherSectorValue } from "@/lib/booking/schema";
 import { utmKeys, type LeadKind } from "@/lib/booking/types";
-import type { Locale } from "@/lib/i18n";
+import { localize, localizePartial, type Locale } from "@/lib/i18n";
 import { bookingHref, bookingProductParam, href } from "@/lib/routes";
+import { pageMetadata } from "@/lib/seo";
 import { serviceSupabaseConfig } from "@/lib/supabase/env";
 import { site, whatsappUrl } from "@/lib/site";
 import { BookingFlow } from "./BookingFlow";
@@ -19,6 +21,16 @@ import { InfoRequestForm } from "./InfoRequestForm";
 import type { SelectOption } from "./fields";
 
 export type SearchParams = Record<string, string | string[] | undefined>;
+
+export function bookingMetadata(locale: Locale): Metadata {
+  const copy = localize(bookingCopy, locale);
+  return pageMetadata({ locale, route: { key: "book" }, title: copy.metaTitle, description: copy.metaDescription });
+}
+
+export function infoRequestMetadata(locale: Locale): Metadata {
+  const copy = localize(infoRequestCopy, locale);
+  return pageMetadata({ locale, route: { key: "requestInfo" }, title: copy.metaTitle, description: copy.metaDescription });
+}
 
 function firstParam(params: SearchParams, key: string): string {
   const value = params[key];
@@ -31,8 +43,8 @@ function productOptions(locale: Locale): SelectOption[] {
 
 function sectorOptions(locale: Locale): SelectOption[] {
   return [
-    ...sectors.map((sector) => ({ value: sector.id, label: sector.copy[locale].name })),
-    { value: otherSectorValue, label: bookingCopy[locale].form.sectorOther },
+    ...sectors.map((sector) => ({ value: sector.id, label: localizePartial(sector.copy, locale).name })),
+    { value: otherSectorValue, label: localize(bookingCopy, locale).form.sectorOther },
   ];
 }
 
@@ -87,7 +99,7 @@ function PageFrame({ children }: { children: ReactNode }) {
 }
 
 function ContactFallback({ locale, title, body, cta }: { locale: Locale; title: string; body: string; cta?: { href: string; label: string } }) {
-  const t = ui[locale].common;
+  const t = localize(ui, locale).common;
   return (
     <div role="status" className="card flex flex-col gap-5 p-6 sm:p-8">
       <div className="flex flex-col gap-2">
@@ -115,7 +127,7 @@ function ContactFallback({ locale, title, body, cta }: { locale: Locale; title: 
 
 export async function BookingPageView({ locale, searchParams }: { locale: Locale; searchParams: SearchParams }) {
   redirectRenamedProduct(href(locale, { key: "book" }), searchParams);
-  const copy = bookingCopy[locale];
+  const copy = localize(bookingCopy, locale);
   const availability = await getAvailability();
 
   return (
@@ -162,7 +174,7 @@ export async function BookingPageView({ locale, searchParams }: { locale: Locale
 
 export function InfoRequestPageView({ locale, searchParams }: { locale: Locale; searchParams: SearchParams }) {
   redirectRenamedProduct(href(locale, { key: "requestInfo" }), searchParams);
-  const copy = infoRequestCopy[locale];
+  const copy = localize(infoRequestCopy, locale);
   const kindParam = firstParam(searchParams, "tipo") || firstParam(searchParams, "type");
   const initialKind: LeadKind = waitlistParamValues.includes(kindParam) ? "waitlist" : "info_request";
   const productId = productFrom(searchParams);

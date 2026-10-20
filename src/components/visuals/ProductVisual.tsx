@@ -4,7 +4,7 @@ import { mockupCopy, type MockupCopy } from "@/content/mockups";
 import type { Product } from "@/content/products";
 import type { ProductId } from "@/content/types";
 import { Check, TapWaves, PhoneIcon, SparkleIcon, StarFilled } from "@/components/icons";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import { TapPlate, type PlateSymbol } from "./TapPlate";
 import { LandingPageMockup, OnlineShopMockup, WebsiteMockup } from "./WebMockups";
 
@@ -357,13 +357,13 @@ interface ProductVisualProps {
 }
 
 export function ProductVisual({ product, locale, priority = false }: ProductVisualProps) {
-  const t = mockupCopy[locale];
+  const t = localize(mockupCopy, locale);
 
   if (product.image) {
     return (
       <Image
         src={product.image.src}
-        alt={product.image.alt[locale]}
+        alt={localize(product.image.alt, locale)}
         width={product.image.width}
         height={product.image.height}
         sizes="(min-width: 1024px) 40vw, 90vw"

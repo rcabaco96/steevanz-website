@@ -279,4 +279,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Gestión de reseñas con IA",
+    shortName: "Reseñas IA",
+    tagline: "Responda a todas sus reseñas de Google sin perder horas en ello.",
+    summary:
+      "Vigilamos las reseñas de su negocio en Google, la IA prepara respuestas con el tono de su marca para que usted las apruebe y le avisamos al momento cuando llega una valoración negativa.",
+  },
+  fr: {
+    name: "Gestion des avis avec l'IA",
+    shortName: "Avis IA",
+    tagline: "Répondez à tous vos avis Google sans y passer des heures.",
+    summary:
+      "Nous suivons les avis Google de votre établissement, l'IA prépare des réponses dans le ton de votre marque, que vous validez, et vous êtes prévenu tout de suite lorsqu'un avis négatif arrive.",
+  },
+  de: {
+    name: "KI-Bewertungsmanagement",
+    shortName: "KI-Bewertungen",
+    tagline: "Auf jede Google-Bewertung antworten, ohne Stunden damit zu verbringen.",
+    summary:
+      "Wir behalten die Google-Bewertungen Ihres Betriebs im Blick, die KI formuliert Antworten im Ton Ihrer Marke zur Freigabe, und Sie werden sofort benachrichtigt, wenn eine negative Bewertung eingeht.",
+  },
+  it: {
+    name: "Gestione delle recensioni con IA",
+    shortName: "Recensioni IA",
+    tagline: "Rispondete a ogni recensione su Google senza perderci ore.",
+    summary:
+      "Monitoriamo le recensioni Google della vostra attività, l'IA prepara le risposte nel tono del vostro marchio da approvare e vi avvisiamo subito quando arriva una recensione negativa.",
+  },
 };

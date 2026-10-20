@@ -243,4 +243,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Lista de espera digital",
+    shortName: "Lista de espera",
+    tagline: "Sus clientes saben cuánto falta y están en la puerta cuando les toca.",
+    summary:
+      "Cola virtual por código QR o con un toque, con tiempo de espera estimado y aviso en el móvil cuando la mesa o el turno están listos. Sin aglomeraciones en la puerta.",
+  },
+  fr: {
+    name: "Liste d'attente digitale",
+    shortName: "Liste d'attente",
+    tagline: "Vos clients savent combien de temps il reste et sont là quand leur tour arrive.",
+    summary:
+      "Une file d'attente virtuelle par QR code ou d'un toucher, avec un temps d'attente estimé et une alerte sur le téléphone quand la table ou le tour est prêt. Fini la foule devant la porte.",
+  },
+  de: {
+    name: "Digitale Warteliste",
+    shortName: "Warteliste",
+    tagline: "Ihre Kunden wissen, wie lange es noch dauert, und stehen pünktlich an der Tür.",
+    summary:
+      "Eine virtuelle Warteschlange per QR-Code oder Antippen, mit geschätzter Wartezeit und Benachrichtigung aufs Handy, sobald der Tisch frei oder man an der Reihe ist. Kein Gedränge an der Tür.",
+  },
+  it: {
+    name: "Lista d'attesa digitale",
+    shortName: "Lista d'attesa",
+    tagline: "I clienti sanno quanto manca e sono alla porta quando arriva il loro turno.",
+    summary:
+      "Una coda virtuale tramite QR code o con un tocco, con tempo di attesa stimato e avviso sul telefono quando il tavolo o il turno è pronto. Niente folla davanti alla porta.",
+  },
 };

@@ -253,4 +253,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Placas para redes sociales y web",
+    shortName: "Placas redes sociales",
+    tagline: "Nuevos seguidores y contactos con un toque, sin deletrear nada.",
+    summary:
+      "Placas y tarjetas que llevan al cliente a su Instagram, Facebook, TikTok, web o página de enlaces. Incluye tarjetas de visita digitales que comparten su contacto.",
+  },
+  fr: {
+    name: "Plaques pour réseaux sociaux et site web",
+    shortName: "Plaques réseaux sociaux",
+    tagline: "De nouveaux abonnés et contacts d'un toucher, sans rien épeler.",
+    summary:
+      "Plaques et cartes qui mènent vos clients vers votre Instagram, Facebook, TikTok, site web ou page de liens. Avec des cartes de visite digitales qui partagent vos coordonnées.",
+  },
+  de: {
+    name: "Schilder für Social Media und Website",
+    shortName: "Social-Media-Schilder",
+    tagline: "Neue Follower und Kontakte mit einem Antippen, ohne etwas buchstabieren zu müssen.",
+    summary:
+      "Schilder und Karten, die Ihre Kunden zu Ihrem Instagram, Facebook, TikTok, Ihrer Website oder Linkseite bringen. Inklusive digitaler Visitenkarten, die Ihre Kontaktdaten teilen.",
+  },
+  it: {
+    name: "Targhe per social e sito web",
+    shortName: "Targhe social",
+    tagline: "Nuovi follower e contatti con un tocco, senza dover dettare nulla.",
+    summary:
+      "Targhe e card che portano il cliente al vostro Instagram, Facebook, TikTok, sito o pagina di link. Include biglietti da visita digitali che condividono i vostri contatti.",
+  },
 };

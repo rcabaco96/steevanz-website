@@ -1,4 +1,4 @@
-import type { Localized } from "@/lib/i18n";
+import type { LocalizedPartial } from "@/lib/i18n";
 
 export interface CartCopy {
   metaTitle: string;
@@ -71,7 +71,8 @@ export interface CartCopy {
   };
 }
 
-export const cartCopy: Localized<CartCopy> = {
+// es, fr, de, it: only the labels shown on every page (header, add buttons) so far; the cart page itself falls back to English.
+export const cartCopy: LocalizedPartial<CartCopy> = {
   pt: {
     metaTitle: "Carrinho | Steevanz",
     metaDescription: "Escolha os produtos Steevanz para o seu negócio e veja quanto fica a pagar.",
@@ -231,5 +232,41 @@ export const cartCopy: Localized<CartCopy> = {
       option: "{count} pcs",
       unit: "{price}/pc",
     },
+  },
+  es: {
+    add: "Añadir al carrito",
+    addShort: "Añadir",
+    inCart: "En el carrito",
+    addedAnnouncement: "Añadido al carrito.",
+    headerLabel: "Carrito",
+    headerLabelCount: "Carrito, {count} productos",
+    accountLabel: "Mi cuenta",
+  },
+  fr: {
+    add: "Ajouter au panier",
+    addShort: "Ajouter",
+    inCart: "Dans le panier",
+    addedAnnouncement: "Ajouté au panier.",
+    headerLabel: "Panier",
+    headerLabelCount: "Panier, {count} articles",
+    accountLabel: "Mon compte",
+  },
+  de: {
+    add: "In den Warenkorb",
+    addShort: "Hinzufügen",
+    inCart: "Im Warenkorb",
+    addedAnnouncement: "Zum Warenkorb hinzugefügt.",
+    headerLabel: "Warenkorb",
+    headerLabelCount: "Warenkorb, {count} Artikel",
+    accountLabel: "Mein Konto",
+  },
+  it: {
+    add: "Aggiungi al carrello",
+    addShort: "Aggiungi",
+    inCart: "Nel carrello",
+    addedAnnouncement: "Aggiunto al carrello.",
+    headerLabel: "Carrello",
+    headerLabelCount: "Carrello, {count} articoli",
+    accountLabel: "Il mio account",
   },
 };

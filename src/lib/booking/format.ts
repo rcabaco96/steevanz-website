@@ -1,6 +1,4 @@
-import type { Locale } from "@/lib/i18n";
-
-const intlLocale: Record<Locale, string> = { pt: "pt-PT", en: "en-GB" };
+import { dateLocale as intlLocale, type Locale } from "@/lib/i18n";
 
 export function formatSlotDate(iso: string, locale: Locale, timeZone: string): string {
   return new Intl.DateTimeFormat(intlLocale[locale], {

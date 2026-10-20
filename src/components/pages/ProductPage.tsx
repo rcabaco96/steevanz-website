@@ -25,7 +25,7 @@ import { Faq } from "@/components/ui/Faq";
 import { Price, formatEuro } from "@/components/ui/Price";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { ProductVisual } from "@/components/visuals/ProductVisual";
-import type { Locale } from "@/lib/i18n";
+import { baseLocaleOf, localize, localizePartial, type Locale } from "@/lib/i18n";
 import { faqJsonLd, productJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
@@ -49,8 +49,8 @@ export function requestInfoHref(locale: Locale, productId: ProductId): string {
 export function ProductPage({ locale, productId }: { locale: Locale; productId: ProductId }) {
   const product: Product = getProduct(productId);
   const copy = getProductCopy(productId, locale);
-  const labels = pageLabels[locale].product;
-  const t = ui[locale];
+  const labels = localize(pageLabels, locale).product;
+  const t = localize(ui, locale);
   const productHref = href(locale, { key: "product", productId });
   const bookHref = bookingHref(locale, productId);
   const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icons/icon-512.png";
@@ -58,7 +58,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   const webId = isWebProductId(productId) ? productId : null;
   // The product's ad video, when there is one, takes the hero picture's place (content/product-ads.ts).
   const ad = productAds[productId];
-  const cartLabels = { add: cartCopy[locale].add, inCart: cartCopy[locale].inCart, added: cartCopy[locale].addedAnnouncement };
+  const cartLabels = { add: localizePartial(cartCopy, locale).add, inCart: localizePartial(cartCopy, locale).inCart, added: localizePartial(cartCopy, locale).addedAnnouncement };
 
   return (
     <>
@@ -98,7 +98,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
             </div>
             <div className="flex justify-center lg:col-start-2 lg:row-span-4 lg:row-start-1">
               {ad ? (
-                <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
+                <AdVideo src={ad.src} poster={ad.poster} label={localize(ad.label, locale)} copy={localize(adVideoLabels, locale)} />
               ) : (
                 <ProductVisual product={product} locale={locale} />
               )}
@@ -115,7 +115,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
                   {t.common.requestInfo}
                 </ButtonLink>
               </div>
-              {product.customization ? <p className="-mt-2 text-sm text-subtle">{cartCopy[locale].customize.productHint}</p> : null}
+              {product.customization ? <p className="-mt-2 text-sm text-subtle">{localizePartial(cartCopy, locale).customize.productHint}</p> : null}
             </div>
           </div>
         </div>
@@ -185,7 +185,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
           {copy.useCases.map((useCase, index) => (
             <article key={useCase.title} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className={`card flex flex-col gap-3 p-7 ${index === copy.useCases.length - 1 && copy.useCases.length % 2 === 1 ? "md:col-span-2" : ""}`}>
               <Link href={href(locale, { key: "sector", sectorId: useCase.sector })} className="eyebrow w-fit hover:underline">
-                {getSector(useCase.sector).copy[locale].name}
+                {localizePartial(getSector(useCase.sector).copy, locale).name}
               </Link>
               <h3 className="text-xl font-semibold text-text">{useCase.title}</h3>
               <p className="leading-relaxed text-muted">{useCase.body}</p>
@@ -306,7 +306,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
 
 /** Live demos of the product, lower down the page and secondary to «Agendar demonstração» (content/product-examples.ts). */
 function ProductExamplesSection({ examples, locale }: { examples: ProductExamples; locale: Locale }) {
-  const copy = examples.copy[locale];
+  const copy = localizePartial(examples.copy, locale);
   return (
     <Section labelledBy="examples-title">
       <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
@@ -314,15 +314,15 @@ function ProductExamplesSection({ examples, locale }: { examples: ProductExample
         {examples.items.map((item, index) => (
           <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
             <a
-              href={item.external ? `${item.href}/${locale}` : item.href}
+              href={item.external ? `${item.href}/${baseLocaleOf(locale)}` : item.href}
               {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
               className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
             >
-              <span className="display text-2xl text-text">{item.label[locale]}</span>
+              <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
                 {copy.open}
                 <ArrowRight size={16} />
-                {item.external ? <span className="sr-only">{locale === "pt" ? " (abre noutro separador)" : " (opens in a new tab)"}</span> : null}
+                {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
               </span>
             </a>
           </li>

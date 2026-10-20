@@ -345,4 +345,33 @@ export const copy: ProductCopyByLocale = {
       },
     },
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Tienda online",
+    shortName: "Tienda online",
+    tagline: "Venda online con MB WAY, Multibanco y tarjeta, sin complicaciones.",
+    summary:
+      "Una tienda online lista para vender: hasta 50 productos cargados, pagos con MB WAY, Multibanco y tarjeta, envíos configurados y los requisitos legales resueltos. Precio cerrado.",
+  },
+  fr: {
+    name: "Boutique en ligne",
+    shortName: "Boutique en ligne",
+    tagline: "Vendez en ligne par MB WAY, Multibanco et carte, sans complications.",
+    summary:
+      "Une boutique en ligne prête à vendre : jusqu'à 50 produits ajoutés, paiements MB WAY, Multibanco et carte, livraisons configurées et obligations légales prises en charge. Prix fixe.",
+  },
+  de: {
+    name: "Onlineshop",
+    shortName: "Onlineshop",
+    tagline: "Online verkaufen mit MB WAY, Multibanco und Karte, ganz unkompliziert.",
+    summary:
+      "Ein Onlineshop, der sofort verkaufen kann: bis zu 50 Produkte eingepflegt, Zahlung per MB WAY, Multibanco und Karte, Versand eingerichtet und die rechtlichen Vorgaben erledigt. Festpreis.",
+  },
+  it: {
+    name: "Negozio online",
+    shortName: "Negozio online",
+    tagline: "Vendete online con MB WAY, Multibanco e carta, senza complicazioni.",
+    summary:
+      "Un negozio online pronto a vendere: fino a 50 prodotti caricati, pagamenti con MB WAY, Multibanco e carta, spedizioni configurate e adempimenti legali sistemati. Prezzo fisso.",
+  },
 };

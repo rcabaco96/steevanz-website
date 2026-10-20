@@ -1,9 +1,9 @@
 import type { Product } from "@/content/products";
 import { ui } from "@/content/ui";
-import type { Locale } from "@/lib/i18n";
+import { localize, numberLocale, type Locale } from "@/lib/i18n";
 
 export function formatEuro(amount: number, locale: Locale): string {
-  return new Intl.NumberFormat(locale === "pt" ? "pt-PT" : "en-IE", {
+  return new Intl.NumberFormat(numberLocale[locale], {
     style: "currency",
     currency: "EUR",
     maximumFractionDigits: 0,
@@ -11,7 +11,7 @@ export function formatEuro(amount: number, locale: Locale): string {
 }
 
 export function priceLabel(product: Product, locale: Locale): string {
-  const t = ui[locale].common;
+  const t = localize(ui, locale).common;
   const suffix = product.priceBilling === "monthly" ? t.perMonth : "";
   return `${t.from} ${formatEuro(product.priceFrom, locale)}${suffix}`;
 }
@@ -24,7 +24,7 @@ interface PriceProps {
 }
 
 export function Price({ product, locale, size = "sm", showQualifier = false }: PriceProps) {
-  const t = ui[locale];
+  const t = localize(ui, locale);
   const amountClass = size === "lg" ? "text-5xl sm:text-6xl" : "text-2xl";
   return (
     <div className="flex flex-col gap-1">
@@ -36,7 +36,7 @@ export function Price({ product, locale, size = "sm", showQualifier = false }: P
       </p>
       {showQualifier ? (
         <p className="text-sm text-muted">
-          {product.priceQualifier[locale]}
+          {localize(product.priceQualifier, locale)}
           {product.priceIsProvisional ? <span className="text-subtle"> · {t.common.provisional}</span> : null}
         </p>
       ) : null}

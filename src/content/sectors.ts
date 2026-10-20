@@ -1,6 +1,6 @@
-import type { Localized } from "@/lib/i18n";
+import type { Localized, LocalizedPartial } from "@/lib/i18n";
 import type { PhotoId } from "./media";
-import { sectorSlugs } from "./sector-slugs";
+import { sectorSlugs } from "./sector-slugs.ts";
 import type { FaqItem, ProductId, SectorId, TitledText } from "./types";
 
 export interface SectorCopy {
@@ -61,7 +61,7 @@ export interface Sector {
   /** Honest limits of the bundle for this sector, shown under the recommended products. */
   bundleNote?: Localized<string>;
   pack?: SectorPack;
-  copy: Localized<SectorCopy>;
+  copy: LocalizedPartial<SectorCopy>;
 }
 
 export const sectors: Sector[] = [
@@ -126,6 +126,35 @@ export const sectors: Sector[] = [
           { q: "How long does it take to get everything running?", a: "The plates are ready within a few working days. Bookings and the waiting list are usually live in one to two weeks, including staff training." },
         ],
       },
+      // es, fr, de, it: the fields shown on the home, the sectors index and the products index; the sector page falls back to English.
+      es: {
+        name: "Restaurantes y cafeterías",
+        cardTitle: "Restaurantes y cafeterías",
+        cardBody: "Más reseñas en Google, mesas llenas sin llamadas perdidas y una lista de espera que no colapsa la puerta.",
+        bundleTitle: "El pack para restaurantes",
+        bundleBody: "Placas en las mesas y en la barra para pedir reseñas en el momento justo, reservas online con recordatorios que reducen las ausencias, lista de espera digital con aviso en el móvil y una recepcionista de voz que atiende cuando su equipo no puede.",
+      },
+      fr: {
+        name: "Restaurants et cafés",
+        cardTitle: "Restaurants et cafés",
+        cardBody: "Plus d'avis Google, des tables pleines sans appels manqués et une liste d'attente qui ne bouche pas l'entrée.",
+        bundleTitle: "La formule restaurants",
+        bundleBody: "Des plaques sur les tables et au comptoir pour demander un avis au bon moment, des réservations en ligne avec des rappels qui réduisent les absences, une liste d'attente digitale avec alerte sur le téléphone et une réceptionniste vocale qui répond quand votre équipe ne peut pas.",
+      },
+      de: {
+        name: "Restaurants und Cafés",
+        cardTitle: "Restaurants und Cafés",
+        cardBody: "Mehr Google-Bewertungen, volle Tische ohne verpasste Anrufe und eine Warteliste, die nicht die Tür versperrt.",
+        bundleTitle: "Das Paket für Restaurants",
+        bundleBody: "Schilder auf den Tischen und an der Theke, um im richtigen Moment um Bewertungen zu bitten, Online-Reservierungen mit Erinnerungen gegen No-Shows, eine digitale Warteliste mit Benachrichtigung aufs Handy und eine Telefonrezeption, die rangeht, wenn Ihr Team keine Hand frei hat.",
+      },
+      it: {
+        name: "Ristoranti e bar",
+        cardTitle: "Ristoranti e bar",
+        cardBody: "Più recensioni su Google, tavoli pieni senza chiamate perse e una lista d'attesa che non intasa l'ingresso.",
+        bundleTitle: "Il pacchetto per ristoranti",
+        bundleBody: "Targhe sui tavoli e al banco per chiedere recensioni al momento giusto, prenotazioni online con promemoria che riducono le disdette, lista d'attesa digitale con avviso sul telefono e una receptionist vocale che risponde quando lo staff non può.",
+      },
     },
   },
   {
@@ -188,6 +217,35 @@ export const sectors: Sector[] = [
           { q: "Do clients need to install an app for the loyalty card?", a: "No. The card opens in the browser and can sit on the phone's home screen. Clients just tap or scan a QR code." },
           { q: "Can I take a deposit for longer appointments?", a: "We can set up deposits for specific services such as colouring or long treatments. We'll go through the details in the demo." },
         ],
+      },
+      // es, fr, de, it: the fields shown on the home, the sectors index and the products index; the sector page falls back to English.
+      es: {
+        name: "Peluquerías y estética",
+        cardTitle: "Peluquerías y estética",
+        cardBody: "Agenda siempre llena, menos ausencias y clientes que vuelven gracias a la tarjeta de cliente en el móvil.",
+        bundleTitle: "El pack para salones",
+        bundleBody: "Citas online por servicio y por profesional, recordatorios automáticos, tarjeta de cliente sin app, placas para reseñas junto al espejo o a la caja y un chatbot que responde a precios y disponibilidad las 24 horas.",
+      },
+      fr: {
+        name: "Coiffure et esthétique",
+        cardTitle: "Coiffure et esthétique",
+        cardBody: "Un agenda toujours plein, moins de rendez-vous manqués et des clients qui reviennent grâce à la carte de fidélité sur leur téléphone.",
+        bundleTitle: "La formule salons",
+        bundleBody: "Rendez-vous en ligne par prestation et par professionnel, rappels automatiques, carte de fidélité sans application, plaques pour avis près du miroir ou de la caisse et un chatbot qui répond sur les prix et les disponibilités 24 h/24.",
+      },
+      de: {
+        name: "Friseur und Kosmetik",
+        cardTitle: "Friseur und Kosmetik",
+        cardBody: "Ein immer voller Terminkalender, weniger No-Shows und Kunden, die dank der Kundenkarte auf dem Handy wiederkommen.",
+        bundleTitle: "Das Paket für Salons",
+        bundleBody: "Online-Termine nach Leistung und Mitarbeiter, automatische Erinnerungen, eine Kundenkarte ohne App, Bewertungsschilder am Spiegel oder an der Kasse und ein Chatbot, der rund um die Uhr Preise und freie Termine beantwortet.",
+      },
+      it: {
+        name: "Parrucchieri ed estetica",
+        cardTitle: "Parrucchieri ed estetica",
+        cardBody: "Agenda sempre piena, meno disdette e clienti che tornano grazie alla carta fedeltà sullo smartphone.",
+        bundleTitle: "Il pacchetto per saloni",
+        bundleBody: "Appuntamenti online per servizio e per professionista, promemoria automatici, carta fedeltà senza app, targhe per recensioni vicino allo specchio o alla cassa e un chatbot che risponde su prezzi e disponibilità 24 ore su 24.",
       },
     },
   },
@@ -252,6 +310,35 @@ export const sectors: Sector[] = [
           { q: "Does it work with multiple doctors and specialities?", a: "Yes. Each practitioner has their own diary, appointment types, durations and hours." },
         ],
       },
+      // es, fr, de, it: the fields shown on the home, the sectors index and the products index; the sector page falls back to English.
+      es: {
+        name: "Clínicas y consultas",
+        cardTitle: "Clínicas y consultas",
+        cardBody: "Una recepción que siempre atiende, citas con recordatorio y una sala de espera más tranquila para los pacientes.",
+        bundleTitle: "El pack para clínicas",
+        bundleBody: "Recepcionista de voz con IA que atiende, resuelve dudas administrativas y da citas, agenda online por tipo de consulta y profesional, aviso en el móvil cuando le toca al paciente y seguimiento de las reseñas en Google.",
+      },
+      fr: {
+        name: "Cliniques et cabinets",
+        cardTitle: "Cliniques et cabinets",
+        cardBody: "Un accueil qui répond toujours, des rendez-vous avec rappel et une salle d'attente plus sereine pour les patients.",
+        bundleTitle: "La formule cliniques",
+        bundleBody: "Une réceptionniste vocale IA qui répond, traite les questions administratives et prend les rendez-vous, un agenda en ligne par type de consultation et par praticien, une alerte sur le téléphone quand c'est le tour du patient et un suivi de vos avis Google.",
+      },
+      de: {
+        name: "Kliniken und Praxen",
+        cardTitle: "Kliniken und Praxen",
+        cardBody: "Ein Empfang, der immer erreichbar ist, Termine mit Erinnerung und ein ruhigeres Wartezimmer für Ihre Patienten.",
+        bundleTitle: "Das Paket für Praxen",
+        bundleBody: "Eine KI-Telefonrezeption, die Anrufe annimmt, organisatorische Fragen klärt und Termine vergibt, Online-Terminplanung nach Behandlungsart und Behandler, eine Benachrichtigung aufs Handy, wenn der Patient an der Reihe ist, und die Betreuung Ihrer Google-Bewertungen.",
+      },
+      it: {
+        name: "Cliniche e studi",
+        cardTitle: "Cliniche e studi",
+        cardBody: "Una reception che risponde sempre, appuntamenti con promemoria e una sala d'attesa più tranquilla per i pazienti.",
+        bundleTitle: "Il pacchetto per cliniche",
+        bundleBody: "Receptionist vocale con IA che risponde, chiarisce dubbi amministrativi e fissa appuntamenti, agenda online per tipo di visita e professionista, avviso sul telefono quando tocca al paziente e monitoraggio delle recensioni Google.",
+      },
     },
   },
   {
@@ -314,6 +401,35 @@ export const sectors: Sector[] = [
           { q: "Can I change where the plate points later?", a: "Yes. Our plates use an address we manage for you, so we can change the destination without reprinting anything." },
           { q: "Does it work if a customer has an older phone?", a: "Every plate also carries a QR code. Anyone whose phone can't read it with a tap points the camera and lands in the same place." },
         ],
+      },
+      // es, fr, de, it: the fields shown on the home, the sectors index and the products index; the sector page falls back to English.
+      es: {
+        name: "Comercio local",
+        cardTitle: "Comercio local",
+        cardBody: "Más seguidores, más reseñas y clientes que vuelven, con tecnología sencilla en el mostrador y en el escaparate.",
+        bundleTitle: "El pack para comercios",
+        bundleBody: "Placa en el mostrador para reseñas en Google, placa o pegatina en el escaparate para seguirle en redes sociales, tarjeta de cliente digital sin app y un chatbot que responde sobre stock, horarios y pedidos.",
+      },
+      fr: {
+        name: "Commerces de proximité",
+        cardTitle: "Commerces de proximité",
+        cardBody: "Plus d'abonnés, plus d'avis et des clients qui reviennent, avec une technologie simple au comptoir et en vitrine.",
+        bundleTitle: "La formule commerces",
+        bundleBody: "Une plaque au comptoir pour les avis Google, une plaque ou un autocollant en vitrine pour vous suivre sur les réseaux sociaux, une carte de fidélité digitale sans application et un chatbot qui répond sur le stock, les horaires et les commandes.",
+      },
+      de: {
+        name: "Lokaler Handel",
+        cardTitle: "Lokaler Handel",
+        cardBody: "Mehr Follower, mehr Bewertungen und Kunden, die wiederkommen, mit einfacher Technik an der Theke und im Schaufenster.",
+        bundleTitle: "Das Paket für den Handel",
+        bundleBody: "Ein Schild an der Theke für Google-Bewertungen, ein Schild oder Aufkleber im Schaufenster, damit man Ihnen in den sozialen Netzwerken folgt, eine digitale Kundenkarte ohne App und ein Chatbot, der Fragen zu Bestand, Öffnungszeiten und Bestellungen beantwortet.",
+      },
+      it: {
+        name: "Negozi di quartiere",
+        cardTitle: "Negozi di quartiere",
+        cardBody: "Più follower, più recensioni e clienti che ritornano, con una tecnologia semplice al banco e in vetrina.",
+        bundleTitle: "Il pacchetto per negozi",
+        bundleBody: "Targa al banco per le recensioni Google, targa o adesivo in vetrina per seguirvi sui social, carta fedeltà digitale senza app e un chatbot che risponde su disponibilità, orari e ordini.",
       },
     },
   },
@@ -444,6 +560,35 @@ export const sectors: Sector[] = [
           { q: "Will the assistant give the door code to anyone who asks?", a: "No. Access codes are never shared by the assistant and never appear in the guide. You keep sending them in your check-in message. Emergencies and complaints go straight to you." },
           { q: "I run several properties. How does it work?", a: "Each property has its own guide and plate, and the assistant knows which home each guest is staying in. Managers with several properties get volume pricing." },
         ],
+      },
+      // es, fr, de, it: the fields shown on the home, the sectors index and the products index; the sector page falls back to English.
+      es: {
+        name: "Alojamientos turísticos",
+        cardTitle: "Alojamientos turísticos",
+        cardBody: "Huéspedes bien informados en cualquier idioma, menos mensajes a medianoche y limpiezas que se organizan solas.",
+        bundleTitle: "El pack para alojamientos turísticos",
+        bundleBody: "Una guía digital de la casa en cuatro idiomas, que se abre con un toque en una placa dentro del alojamiento, un asistente con IA en WhatsApp que responde a los huéspedes las 24 horas con la información de la guía, avisos automáticos al equipo de limpieza y recordatorios de los registros de viajeros a partir del calendario que ya utiliza y, si quiere, una web con reservas directas.",
+      },
+      fr: {
+        name: "Locations de vacances",
+        cardTitle: "Locations de vacances",
+        cardBody: "Des voyageurs bien informés dans toutes les langues, moins de messages en pleine nuit et des ménages qui s'organisent tout seuls.",
+        bundleTitle: "La formule locations de vacances",
+        bundleBody: "Un livret d'accueil digital en quatre langues, qui s'ouvre d'un toucher sur une plaque dans le logement, un assistant IA sur WhatsApp qui répond aux voyageurs 24 h/24 avec les informations du livret, des avis automatiques à l'équipe de ménage, des rappels pour les déclarations des voyageurs à partir du calendrier que vous utilisez déjà et, si vous le souhaitez, un site web avec réservation directe.",
+      },
+      de: {
+        name: "Ferienunterkünfte",
+        cardTitle: "Ferienunterkünfte",
+        cardBody: "Gut informierte Gäste in jeder Sprache, weniger Nachrichten mitten in der Nacht und Reinigungen, die sich von selbst organisieren.",
+        bundleTitle: "Das Paket für Ferienunterkünfte",
+        bundleBody: "Eine digitale Gästemappe in vier Sprachen, die sich mit einem Antippen auf einem Schild in der Unterkunft öffnet, ein KI-Assistent auf WhatsApp, der Gästen rund um die Uhr mit den Infos aus der Mappe antwortet, automatische Hinweise an Ihr Reinigungsteam, Erinnerungen an die Gästemeldungen auf Basis des Kalenders, den Sie bereits nutzen, und, wenn Sie möchten, eine Website mit Direktbuchung.",
+      },
+      it: {
+        name: "Case vacanza",
+        cardTitle: "Case vacanza",
+        cardBody: "Ospiti ben informati in ogni lingua, meno messaggi nel cuore della notte e pulizie che si organizzano da sole.",
+        bundleTitle: "Il pacchetto per case vacanza",
+        bundleBody: "Una guida digitale della casa in quattro lingue, che si apre con un tocco su una targa all'interno dell'alloggio, un assistente con IA su WhatsApp che risponde agli ospiti 24 ore su 24 con le informazioni della guida, avvisi automatici al team delle pulizie, promemoria per le comunicazioni degli ospiti a partire dal calendario che già usate e, se volete, un sito web con prenotazione diretta.",
       },
     },
   },

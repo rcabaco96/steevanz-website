@@ -18,14 +18,14 @@ import { Faq } from "@/components/ui/Faq";
 import { formatEuro } from "@/components/ui/Price";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { ProductVisual } from "@/components/visuals/ProductVisual";
-import type { Locale } from "@/lib/i18n";
+import { localizePartial, localize, type Locale } from "@/lib/i18n";
 import { faqJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { whatsappUrl } from "@/lib/site";
 
 export function sectorMetadata(locale: Locale, sectorId: SectorId): Metadata {
-  const copy = getSector(sectorId).copy[locale];
+  const copy = localizePartial(getSector(sectorId).copy, locale);
   return pageMetadata({ locale, route: { key: "sector", sectorId }, title: copy.metaTitle, description: copy.metaDescription });
 }
 
@@ -36,9 +36,9 @@ const sectorVideos: Partial<Record<SectorId, VideoId>> = {
 
 export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: SectorId }) {
   const sector = getSector(sectorId);
-  const copy = sector.copy[locale];
-  const labels = pageLabels[locale];
-  const t = ui[locale];
+  const copy = localizePartial(sector.copy, locale);
+  const labels = localize(pageLabels, locale);
+  const t = localize(ui, locale);
   const sectorHref = href(locale, { key: "sector", sectorId });
   const videoId = sectorVideos[sectorId];
 
@@ -108,7 +108,7 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
         {sector.bundleNote ? (
           <p data-reveal className="mt-8 flex max-w-3xl gap-3 rounded-2xl border border-line bg-surface-2/50 p-5 text-sm leading-relaxed text-muted">
             <AlertIcon size={18} className="mt-0.5 shrink-0 text-gold-text" />
-            <span>{sector.bundleNote[locale]}</span>
+            <span>{localize(sector.bundleNote, locale)}</span>
           </p>
         ) : null}
         {sector.pack ? <SectorPackCard pack={sector.pack} locale={locale} /> : null}
@@ -123,7 +123,7 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
           </div>
           <div data-reveal className="overflow-hidden rounded-[2rem] border border-line lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1">
             {videoId ? (
-              <LazyVideo video={videos[videoId]} label={videos[videoId].alt[locale]} className="aspect-[4/5] h-auto w-full object-cover sm:aspect-video lg:aspect-[4/5]" />
+              <LazyVideo video={videos[videoId]} label={localize(videos[videoId].alt, locale)} className="aspect-[4/5] h-auto w-full object-cover sm:aspect-video lg:aspect-[4/5]" />
             ) : sector.side.kind === "product" ? (
               <div className="bg-surface px-4 py-10 sm:px-10">
                 <ProductVisual product={getProduct(sector.side.productId)} locale={locale} />
@@ -163,7 +163,7 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
                   .map((other) => (
                     <li key={other.id}>
                       <Link href={href(locale, { key: "sector", sectorId: other.id })} className="inline-block rounded-full border border-line px-4 py-2 text-sm font-medium text-muted hover:border-line-strong hover:text-text">
-                        {other.copy[locale].name}
+                        {localizePartial(other.copy, locale).name}
                       </Link>
                     </li>
                   ))}
@@ -190,8 +190,8 @@ export function SectorPage({ locale, sectorId }: { locale: Locale; sectorId: Sec
 }
 
 function SectorPackCard({ pack, locale }: { pack: NonNullable<Sector["pack"]>; locale: Locale }) {
-  const copy = pack.copy[locale];
-  const t = ui[locale];
+  const copy = localizePartial(pack.copy, locale);
+  const t = localize(ui, locale);
   const money = (amount: number) => formatEuro(amount, locale);
   const fill = (template: string, setup: number, monthly: number) => template.replace("{setup}", money(setup)).replace("{monthly}", money(monthly));
   return (

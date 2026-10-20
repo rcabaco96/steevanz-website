@@ -8,7 +8,7 @@ import { ArrowRight, ChevronDown, CloseIcon, MenuIcon, ProductGlyph, UserIcon } 
 import type { Locale } from "@/lib/i18n";
 import { CartButton } from "@/components/cart/CartButton";
 import { buttonClasses } from "@/components/ui/Button";
-import { LanguageSwitch } from "./LanguageSwitch";
+import { LanguagePicker } from "./LanguagePicker";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -32,8 +32,9 @@ export interface HeaderLabels {
   allProducts: string;
   mainNavLabel: string;
   themeToggle: string;
-  languageSwitch: string;
-  languageShort: string;
+  languageLabel: string;
+  /** The language button label; {language} is the current language name. */
+  languageButton: string;
   homeLabel: string;
   cart: string;
   cartWithCount: string;
@@ -204,7 +205,7 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-1">
-            <LanguageSwitch locale={locale} label={labels.languageSwitch} short={labels.languageShort} />
+            <LanguagePicker locale={locale} label={labels.languageLabel} buttonLabel={labels.languageButton} />
             <span className="hidden sm:block">
               <ThemeToggle label={labels.themeToggle} />
             </span>

@@ -1,6 +1,7 @@
 "use server";
 
 import { after } from "next/server";
+import { baseLocaleOf } from "@/lib/i18n";
 import type { FormField } from "@/content/booking";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { getAvailability } from "./availability";
@@ -94,7 +95,8 @@ export async function submitBooking(_previous: BookingActionState, formData: For
       business_name: data.businessName,
       sector: data.sector,
       message: data.message,
-      locale: data.locale,
+      // The table takes pt or en (check constraint); the owner email keeps the real language.
+      locale: baseLocaleOf(data.locale),
       consent_at: new Date().toISOString(),
       ...trackingColumns(data),
     })
@@ -156,7 +158,8 @@ export async function submitLead(_previous: LeadActionState, formData: FormData)
       business_name: data.businessName,
       sector: data.sector,
       message: data.message,
-      locale: data.locale,
+      // The table takes pt or en (check constraint); the owner email keeps the real language.
+      locale: baseLocaleOf(data.locale),
       consent_at: new Date().toISOString(),
       ...trackingColumns(data),
     })

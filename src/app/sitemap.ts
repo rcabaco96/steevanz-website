@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { allPublicRoutes } from "@/lib/all-routes";
-import { htmlLang, locales } from "@/lib/i18n";
+import { locales } from "@/lib/i18n";
 import { localizedHrefs, type Route } from "@/lib/routes";
+import { languageAlternates } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 
 function priorityFor(route: Route): number {
@@ -12,15 +13,12 @@ function priorityFor(route: Route): number {
   return 0.4;
 }
 
+// Every public page in each of the six languages, each entry with its hreflang alternates.
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
   return allPublicRoutes().flatMap((route) => {
     const paths = localizedHrefs(route);
-    const languages = {
-      [htmlLang.pt]: absoluteUrl(paths.pt),
-      [htmlLang.en]: absoluteUrl(paths.en),
-      "x-default": absoluteUrl(paths.pt),
-    };
+    const languages = languageAlternates(route);
     return locales.map((locale) => ({
       url: absoluteUrl(paths[locale]),
       lastModified,

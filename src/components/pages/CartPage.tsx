@@ -10,31 +10,31 @@ import { products } from "@/content/products";
 import { sectors } from "@/content/sectors";
 import { webBriefCopy } from "@/content/web-brief";
 import { ui } from "@/content/ui";
-import type { Locale } from "@/lib/i18n";
+import { localizePartial, localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 
 export function cartMetadata(locale: Locale): Metadata {
-  const copy = cartCopy[locale];
+  const copy = localizePartial(cartCopy, locale);
   return pageMetadata({ locale, route: { key: "cart" }, title: copy.metaTitle, description: copy.metaDescription, absoluteTitle: true, noIndex: true });
 }
 
 export function CartPage({ locale }: { locale: Locale }) {
-  const copy = cartCopy[locale];
-  const formCopy = infoRequestCopy[locale].form;
+  const copy = localizePartial(cartCopy, locale);
+  const formCopy = localize(infoRequestCopy, locale).form;
   const catalog: CartCatalogItem[] = products.map((product) => {
     const productCopy = getProductCopy(product.id, locale);
     return {
       id: product.id,
       name: productCopy.name,
       shortName: productCopy.shortName,
-      qualifier: product.priceQualifier[locale],
-      billingLabel: `${priceLabel(product, locale)} · ${ui[locale].billing[product.priceBilling]}`,
+      qualifier: localize(product.priceQualifier, locale),
+      billingLabel: `${priceLabel(product, locale)} · ${localize(ui, locale).billing[product.priceBilling]}`,
       href: href(locale, { key: "product", productId: product.id }),
       icon: product.icon,
       customization: product.customization
         ? {
-            formats: product.customization.formats.map((format) => ({ value: format.id, label: format.label[locale] })),
+            formats: product.customization.formats.map((format) => ({ value: format.id, label: localize(format.label, locale) })),
             logoExtraCents: product.customization.logoExtra * 100,
             logoExtraPer: product.customization.logoExtraPer,
             textMaxLength: product.customization.textMaxLength,
@@ -44,7 +44,7 @@ export function CartPage({ locale }: { locale: Locale }) {
     };
   });
   const sectorOptions = [
-    ...sectors.map((sector) => ({ value: sector.id, label: sector.copy[locale].name })),
+    ...sectors.map((sector) => ({ value: sector.id, label: localizePartial(sector.copy, locale).name })),
     { value: otherSectorValue, label: formCopy.sectorOther },
   ];
 
@@ -67,7 +67,7 @@ export function CartPage({ locale }: { locale: Locale }) {
           locale={locale}
           copy={copy}
           formCopy={formCopy}
-          briefCopy={webBriefCopy[locale]}
+          briefCopy={localize(webBriefCopy, locale)}
           catalog={catalog}
           sectors={sectorOptions}
           links={{

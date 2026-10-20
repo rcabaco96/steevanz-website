@@ -287,4 +287,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Chatbot con IA para web y WhatsApp",
+    shortName: "Chatbot IA",
+    tagline: "Respuestas acertadas a cualquier hora, en su web y en WhatsApp.",
+    summary:
+      "Un asistente con IA entrenado con la información de su negocio: carta, precios, horarios y servicios. Responde las 24 horas en varios idiomas y deriva a reservas o a su equipo.",
+  },
+  fr: {
+    name: "Chatbot IA pour site web et WhatsApp",
+    shortName: "Chatbot IA",
+    tagline: "Les bonnes réponses à toute heure, sur votre site et sur WhatsApp.",
+    summary:
+      "Un assistant IA formé avec les informations de votre établissement : carte, prix, horaires et services. Il répond 24 h/24 en plusieurs langues et passe le relais aux réservations ou à votre équipe.",
+  },
+  de: {
+    name: "KI-Chatbot für Website und WhatsApp",
+    shortName: "KI-Chatbot",
+    tagline: "Die richtigen Antworten zu jeder Uhrzeit, auf Ihrer Website und in WhatsApp.",
+    summary:
+      "Ein KI-Assistent, trainiert mit den Informationen Ihres Betriebs: Speisekarte, Preise, Öffnungszeiten und Leistungen. Er antwortet rund um die Uhr in mehreren Sprachen und leitet an Reservierungen oder Ihr Team weiter.",
+  },
+  it: {
+    name: "Chatbot con IA per sito e WhatsApp",
+    shortName: "Chatbot IA",
+    tagline: "Le risposte giuste a qualsiasi ora, sul sito e su WhatsApp.",
+    summary:
+      "Un assistente con IA addestrato con le informazioni della vostra attività: menù, prezzi, orari e servizi. Risponde 24 ore su 24 in più lingue e passa la parola alle prenotazioni o al vostro staff.",
+  },
 };

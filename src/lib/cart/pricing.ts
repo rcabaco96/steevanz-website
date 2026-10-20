@@ -1,7 +1,7 @@
 // Relative imports with extensions keep this module runnable by `node --test` (tests/cart-pricing.test.mjs).
 import { getProduct, toProductId, type PriceBilling, type Product } from "../../content/products.ts";
 import type { ProductId } from "../../content/types.ts";
-import type { Locale } from "../i18n.ts";
+import { numberLocale, type Locale } from "../i18n.ts";
 
 export const vatRate = 23;
 export const maxQuantity = 99;
@@ -142,7 +142,7 @@ export function priceCart(lines: CartLine[]): Record<CartGroupId, GroupTotals> {
 }
 
 export function formatCents(cents: number, locale: Locale): string {
-  return new Intl.NumberFormat(locale === "pt" ? "pt-PT" : "en-IE", {
+  return new Intl.NumberFormat(numberLocale[locale], {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 2,

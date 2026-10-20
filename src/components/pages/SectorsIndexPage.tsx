@@ -8,19 +8,19 @@ import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { CtaBand } from "@/components/marketing/CtaBand";
 import { Photo } from "@/components/media/Photo";
 import { SectionHeader } from "@/components/ui/Section";
-import type { Locale } from "@/lib/i18n";
+import { localize, localizePartial, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { whatsappUrl } from "@/lib/site";
 
 export function sectorsIndexMetadata(locale: Locale): Metadata {
-  const labels = pageLabels[locale].sectors;
+  const labels = localize(pageLabels, locale).sectors;
   return pageMetadata({ locale, route: { key: "sectors" }, title: labels.metaTitle, description: labels.metaDescription });
 }
 
 export function SectorsIndexPage({ locale }: { locale: Locale }) {
-  const labels = pageLabels[locale];
-  const t = ui[locale];
+  const labels = localize(pageLabels, locale);
+  const t = localize(ui, locale);
   return (
     <>
       <section aria-labelledby="sectors-title" className="relative isolate overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24">
@@ -36,7 +36,7 @@ export function SectorsIndexPage({ locale }: { locale: Locale }) {
           <SectionHeader as="h1" id="sectors-title" eyebrow={labels.sectors.eyebrow} title={labels.sectors.title} lead={labels.sectors.lead} />
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             {sectors.map((sector, index) => {
-              const copy = sector.copy[locale];
+              const copy = localizePartial(sector.copy, locale);
               // An odd last card spans both columns, photo beside the text, so the grid never ends with a gap.
               const wide = index === sectors.length - 1 && sectors.length % 2 === 1;
               return (

@@ -1,5 +1,6 @@
 // Relative imports with extensions keep this module runnable by `node --test` (tests/web-brief.test.mjs).
 import { isWebProduct } from "../../content/products.ts";
+import { localize } from "../i18n.ts";
 import {
   briefContentStatuses,
   briefDomainStatuses,
@@ -69,7 +70,7 @@ export function parseBrief(raw: Record<string, unknown>): BriefResult {
 
 /** The brief as label/value rows, in form order, skipping unanswered questions. */
 export function briefRows(brief: WebBrief, locale: Locale): { label: string; value: string }[] {
-  const copy = webBriefCopy[locale];
+  const copy = localize(webBriefCopy, locale);
   const values: Record<BriefField, string | null> = {
     webBusiness: brief.business,
     webGoal: copy.goals[brief.goal],
@@ -88,5 +89,5 @@ export function briefRows(brief: WebBrief, locale: Locale): { label: string; val
 
 /** One line per answer, for the stored order (shown in the admin order page). */
 export function briefDetails(brief: WebBrief, locale: Locale = "pt"): string[] {
-  return [`${webBriefCopy[locale].emailTitle}:`, ...briefRows(brief, locale).map((row) => `${row.label}: ${row.value}`)];
+  return [`${localize(webBriefCopy, locale).emailTitle}:`, ...briefRows(brief, locale).map((row) => `${row.label}: ${row.value}`)];
 }

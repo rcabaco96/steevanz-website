@@ -10,20 +10,20 @@ import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { InlineText } from "@/components/ui/InlineText";
 import { Section, SectionHeader } from "@/components/ui/Section";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 import { organizationJsonLd } from "@/lib/jsonld";
 import { href, type StaticRouteKey } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { site, whatsappUrl } from "@/lib/site";
 
 export function aboutMetadata(locale: Locale): Metadata {
-  const copy = aboutCopy[locale];
+  const copy = localize(aboutCopy, locale);
   return pageMetadata({ locale, route: { key: "about" }, title: copy.metaTitle, description: copy.metaDescription });
 }
 
 export function AboutPage({ locale }: { locale: Locale }) {
-  const copy = aboutCopy[locale];
-  const t = ui[locale];
+  const copy = localize(aboutCopy, locale);
+  const t = localize(ui, locale);
   return (
     <>
       <JsonLd data={organizationJsonLd(locale)} />
@@ -100,13 +100,13 @@ export function AboutPage({ locale }: { locale: Locale }) {
 }
 
 export function contactMetadata(locale: Locale): Metadata {
-  const copy = contactCopy[locale];
+  const copy = localize(contactCopy, locale);
   return pageMetadata({ locale, route: { key: "contact" }, title: copy.metaTitle, description: copy.metaDescription });
 }
 
 export function ContactPage({ locale }: { locale: Locale }) {
-  const copy = contactCopy[locale];
-  const t = ui[locale];
+  const copy = localize(contactCopy, locale);
+  const t = localize(ui, locale);
   const channels = [
     { icon: WhatsAppIcon, title: copy.channels.whatsapp, body: copy.channels.whatsappBody, value: site.whatsappDisplay, link: whatsappUrl(t.common.whatsappMessage), external: true, highlight: true },
     { icon: MailIcon, title: copy.channels.email, body: copy.channels.emailBody, value: site.email, link: `mailto:${site.email}`, external: false, highlight: false },
@@ -191,7 +191,7 @@ const legalRouteKeys: Record<LegalDocumentId, StaticRouteKey> = {
 };
 
 export function legalMetadata(locale: Locale, documentId: LegalDocumentId): Metadata {
-  const document = legalDocuments[documentId][locale];
+  const document = localize(legalDocuments[documentId], locale);
   return pageMetadata({
     locale,
     route: { key: legalRouteKeys[documentId] },
@@ -201,8 +201,8 @@ export function legalMetadata(locale: Locale, documentId: LegalDocumentId): Meta
 }
 
 export function LegalPage({ locale, documentId }: { locale: Locale; documentId: LegalDocumentId }) {
-  const document = legalDocuments[documentId][locale];
-  const t = ui[locale];
+  const document = localize(legalDocuments[documentId], locale);
+  const t = localize(ui, locale);
   return (
     <div className="container-page pt-24 pb-20 sm:pt-32">
       <Breadcrumbs

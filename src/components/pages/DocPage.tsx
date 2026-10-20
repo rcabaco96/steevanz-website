@@ -11,7 +11,7 @@ import { DocBlocks } from "@/components/docs/DocBlocks";
 import { ArrowLeft, ArrowRight, ChevronDown, ProductGlyph } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { ButtonLink } from "@/components/ui/Button";
-import type { Locale } from "@/lib/i18n";
+import { htmlLang, localize, type Locale } from "@/lib/i18n";
 import { faqJsonLd, howToJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
@@ -36,7 +36,7 @@ const docsLabels = {
 };
 
 export function docMetadata(locale: Locale, productId: ProductId, pageId: DocPageId): Metadata {
-  const page = getDocPage(productId, pageId)[locale];
+  const page = localize(getDocPage(productId, pageId), locale);
   const productName = getProductCopy(productId, locale).shortName;
   return pageMetadata({
     locale,
@@ -78,7 +78,7 @@ function DocsSidebar({ locale, productId, pageId }: { locale: Locale; productId:
                           isCurrent ? "bg-accent-soft font-semibold text-accent-text" : "text-muted hover:text-text"
                         }`}
                       >
-                        {page.label[locale]}
+                        {localize(page.label, locale)}
                       </Link>
                     </li>
                   );
@@ -93,11 +93,11 @@ function DocsSidebar({ locale, productId, pageId }: { locale: Locale; productId:
 }
 
 export function DocPage({ locale, productId, pageId }: { locale: Locale; productId: ProductId; pageId: DocPageId }) {
-  const t = ui[locale];
-  const labels = docsLabels[locale];
+  const t = localize(ui, locale);
+  const labels = localize(docsLabels, locale);
   const product = getProduct(productId);
   const productCopy = getProductCopy(productId, locale);
-  const page = getDocPage(productId, pageId)[locale];
+  const page = localize(getDocPage(productId, pageId), locale);
   const pageMeta = getDocPageMeta(pageId);
   const path = href(locale, { key: "doc", productId, pageId });
   const toc = tableOfContents(page.blocks);
@@ -111,7 +111,7 @@ export function DocPage({ locale, productId, pageId }: { locale: Locale; product
       "@type": "TechArticle",
       headline: page.title,
       description: page.description,
-      inLanguage: locale === "pt" ? "pt-PT" : "en",
+      inLanguage: htmlLang[locale],
       about: productCopy.name,
       publisher: { "@type": "Organization", name: "Steevanz" },
     },
@@ -148,7 +148,7 @@ export function DocPage({ locale, productId, pageId }: { locale: Locale; product
             items={[
               { name: t.nav.docs, path: href(locale, { key: "docs" }) },
               { name: productCopy.shortName, path: href(locale, { key: "doc", productId, pageId: "getting-started" }) },
-              { name: pageMeta.label[locale], path },
+              { name: localize(pageMeta.label, locale), path },
             ]}
           />
           <header className="mt-6 border-b border-line pb-8">
@@ -188,7 +188,7 @@ export function DocPage({ locale, productId, pageId }: { locale: Locale; product
                 <span className="flex items-center gap-1.5 text-sm text-subtle">
                   <ArrowLeft size={14} /> {t.common.previous}
                 </span>
-                <span className="font-semibold text-text">{previous.label[locale]}</span>
+                <span className="font-semibold text-text">{localize(previous.label, locale)}</span>
               </Link>
             ) : (
               <span />
@@ -198,7 +198,7 @@ export function DocPage({ locale, productId, pageId }: { locale: Locale; product
                 <span className="flex items-center gap-1.5 text-sm text-subtle">
                   {t.common.next} <ArrowRight size={14} />
                 </span>
-                <span className="font-semibold text-text">{next.label[locale]}</span>
+                <span className="font-semibold text-text">{localize(next.label, locale)}</span>
               </Link>
             ) : null}
           </nav>

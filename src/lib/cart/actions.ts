@@ -13,7 +13,7 @@ import { fieldErrorsFrom, formDataToObject, orderFormKeys, orderSubmissionSchema
 import { honeypotField } from "@/lib/booking/types";
 import type { OrderItem, OrderTotals } from "@/lib/accounts/types";
 import { getSession } from "@/lib/auth/session";
-import type { Locale } from "@/lib/i18n";
+import { baseLocaleOf, localize, type Locale, type Localized } from "@/lib/i18n";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { briefDetails, briefRows, cartNeedsBrief, parseBrief, type WebBrief } from "./brief";
 import { alreadyActive, type OwnedProduct } from "./ownership";
@@ -55,7 +55,7 @@ const emailText = {
     text: "Text",
     noText: "no text",
   },
-} satisfies Record<Locale, unknown>;
+} satisfies Localized<unknown>;
 
 /** The customer's order confirmation email: ready, switched off for now (owner, 2026-10-11). */
 const sendCustomerConfirmation = false;
@@ -83,7 +83,7 @@ const confirmationText = {
     monthly: "Monthly total",
     note: "“From” prices are indicative: the final price is the one in the proposal. To add anything, just reply to this email.",
   },
-} satisfies Record<Locale, unknown>;
+} satisfies Localized<unknown>;
 
 function orderReference(): string {
   const date = new Date().toISOString().slice(2, 10).replace(/-/g, "");
@@ -101,11 +101,12 @@ function parseItems(raw: string) {
 function customizationLines({ productId, options }: CartLine, locale: Locale = "pt"): string[] {
   const customization = getProduct(productId).customization;
   if (!customization || !options) return [];
-  const t = emailText[locale];
-  const format = customization.formats.find((candidate) => candidate.id === options.format)?.label[locale] ?? options.format;
+  const t = localize(emailText, locale);
+  const format = customization.formats.find((candidate) => candidate.id === options.format)?.label ?? null;
+  const formatLabel = format ? localize(format, locale) : options.format;
   const text = options.text.trim();
   return [
-    `${t.format}: ${format}`,
+    `${t.format}: ${formatLabel}`,
     options.logo
       ? `${t.logo}: ${t.yes} (+${formatCents(customization.logoExtra * 100, locale)}${customization.logoExtraPer === "line" ? t.logoOnce : t.perUnit})`
       : `${t.logo}: ${t.no}`,
@@ -131,7 +132,7 @@ function orderItems(totals: Record<CartGroupId, GroupTotals>, brief: WebBrief | 
 }
 
 function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "pt"): EmailTable {
-  const t = emailText[locale];
+  const t = localize(emailText, locale);
   const suffix = group === "monthly" ? t.perMonth : "";
   const money = (cents: number) => `${formatCents(cents, locale)}${suffix}`;
   return {
@@ -139,7 +140,7 @@ function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "p
     head: t.head,
     rows: totals.lines.map((line) => {
       const product = getProduct(line.productId);
-      const name = `${productLabel(line.productId, locale)} (${ui[locale].billing[product.priceBilling]})`;
+      const name = `${productLabel(line.productId, locale)} (${localize(ui, locale).billing[product.priceBilling]})`;
       return [[name, ...customizationLines(line, locale)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
     }),
     // Without VAT, «+ IVA»: VAT-inclusive amounts are never shown (owner, 2026-10-18).
@@ -148,7 +149,7 @@ function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "p
 }
 
 function briefSection(brief: WebBrief | null, locale: Locale): EmailSection[] {
-  return brief ? [{ title: webBriefCopy[locale].emailTitle, rows: briefRows(brief, locale) }] : [];
+  return brief ? [{ title: localize(webBriefCopy, locale).emailTitle, rows: briefRows(brief, locale) }] : [];
 }
 
 /** The products active on the signed-in client's account (the cart marks or removes them). */
@@ -218,7 +219,8 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       business_name: data.businessName ?? null,
       sector: data.sector ?? null,
       message: data.message ?? null,
-      locale: data.locale,
+      // The table takes pt or en (check constraint); the email above keeps the real language.
+      locale: baseLocaleOf(data.locale),
       items: orderItems(totals, brief),
       totals: orderTotals,
     });
@@ -256,7 +258,7 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   // Off for now (owner, 2026-10-11): only the owner is emailed; flip sendCustomerConfirmation to send it.
   if (!sendCustomerConfirmation) return { status: "success", reference };
   const locale: Locale = data.locale;
-  const text = confirmationText[locale];
+  const text = localize(confirmationText, locale);
   after(async () => {
     await sendOwnerEmail({
       to: [data.email],
@@ -266,10 +268,10 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
       intro: [text.hello(data.name.split(/\s+/)[0]), text.next, ...(brief ? [text.web] : [])],
       rows: [
         { label: text.reference, value: reference },
-        { label: text.oneTime, value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.subtotalCents, locale)} ${emailText[locale].plusVat}` : null },
+        { label: text.oneTime, value: totals.oneTime.lines.length ? `${formatCents(totals.oneTime.subtotalCents, locale)} ${localize(emailText, locale).plusVat}` : null },
         {
           label: text.monthly,
-          value: totals.monthly.lines.length ? `${formatCents(totals.monthly.subtotalCents, locale)}${emailText[locale].perMonth} ${emailText[locale].plusVat}` : null,
+          value: totals.monthly.lines.length ? `${formatCents(totals.monthly.subtotalCents, locale)}${localize(emailText, locale).perMonth} ${localize(emailText, locale).plusVat}` : null,
         },
       ],
       tables: groups.map((group) => groupTable(group, totals[group], locale)),

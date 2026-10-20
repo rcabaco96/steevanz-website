@@ -1,12 +1,8 @@
 Vídeos e imagens da nova home (/novo)
 
-menu-abertura, menu-grelha, menu-ecra-inteiro, menu-pedido, menu-pedido-longo (.mp4 e .jpg)
+menu-abertura, menu-ecra-inteiro, menu-pedido, menu-pedido-longo (.mp4 e .jpg)
   Gravações de ecrã do Menu digital da Steevanz (menu de demonstração «O seu restaurante»), feitas por nós.
   Os vídeos dos pratos que aparecem dentro do menu são da Pixabay (Pixabay Content License, uso comercial permitido).
-
-dolci-landing (.mp4 e .jpg)
-  Gravação de ecrã da landing page da Dolci e Salati (/dolci-salati), trabalho real da Steevanz,
-  mostrada com autorização do dono (2026-10-18).
 
 Fotografias de setor e da Dolci e Salati usadas na página: as de public/media (licença Pexels, ver
 public/media/CREDITS.md) e as da própria Dolci e Salati (public/media/clients/dolci-salati).

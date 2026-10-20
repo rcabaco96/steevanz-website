@@ -1,4 +1,4 @@
-import type { Locale, Localized } from "@/lib/i18n";
+import type { Localized, LocalizedPartial } from "@/lib/i18n";
 
 export type ProductId =
   | "google-review-plates"
@@ -92,4 +92,8 @@ export interface ProductCopy {
   web?: WebProductCopy;
 }
 
-export type ProductCopyByLocale = Record<Locale, ProductCopy>;
+/**
+ * A product page in each language. Spanish, French, German and Italian may hold only some fields
+ * (name, tagline, …): the rest of the page shows the English text until it is translated.
+ */
+export type ProductCopyByLocale = LocalizedPartial<ProductCopy>;

@@ -2,11 +2,11 @@ import type { WebProductCopy } from "@/content/types";
 import { webSharedCopy, type WebProductId } from "@/content/web-products";
 import { Check, MinusIcon, PlusIcon } from "@/components/icons";
 import { Section, SectionHeader } from "@/components/ui/Section";
-import type { Locale } from "@/lib/i18n";
+import { localize, type Locale } from "@/lib/i18n";
 
 /** «Modelos por setor»: text-only starting points per sector for a website product. */
 export function WebModelosSection({ locale, productId }: { locale: Locale; productId: WebProductId }) {
-  const t = webSharedCopy[locale];
+  const t = localize(webSharedCopy, locale);
   return (
     <Section labelledBy="modelos-title">
       <SectionHeader id="modelos-title" eyebrow={t.modelosEyebrow} title={t.modelosTitle} lead={t.modelosLead} />
@@ -34,9 +34,9 @@ export function WebModelosSection({ locale, productId }: { locale: Locale; produ
   );
 }
 
-/** The legal and practical basics every website product is built with. */
+/** The legal and practical basics every website product is blocalize(ui, locale)t with. */
 export function WebRulesSection({ locale, productId }: { locale: Locale; productId: WebProductId }) {
-  const t = webSharedCopy[locale];
+  const t = localize(webSharedCopy, locale);
   const rules = productId === "online-shop" ? [...t.rules, ...t.shopRules] : t.rules;
   return (
     <Section tone="soft" labelledBy="rules-title">
@@ -61,7 +61,7 @@ export function WebRulesSection({ locale, productId }: { locale: Locale; product
 
 /** Below the price card: what is not included, the priced options and the monthly plan. */
 export function WebExtras({ locale, web }: { locale: Locale; web: WebProductCopy }) {
-  const t = webSharedCopy[locale];
+  const t = localize(webSharedCopy, locale);
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
       <div data-reveal className="card p-7 sm:p-10">

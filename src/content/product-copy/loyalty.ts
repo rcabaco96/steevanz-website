@@ -259,4 +259,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Tarjeta de cliente digital",
+    shortName: "Tarjeta de cliente",
+    tagline: "Sellos digitales que sus clientes no pierden ni se dejan en casa.",
+    summary:
+      "Una tarjeta de cliente en el móvil: el cliente se apunta con un toque o con un código QR, sin app, y su equipo la sella en cada visita. Recompensas automáticas.",
+  },
+  fr: {
+    name: "Carte de fidélité digitale",
+    shortName: "Carte de fidélité",
+    tagline: "Des tampons digitaux que vos clients ne perdent pas et n'oublient pas chez eux.",
+    summary:
+      "Une carte de fidélité sur le téléphone du client : il la rejoint d'un toucher ou par QR code, sans application, et votre équipe la tamponne à chaque visite. Récompenses automatiques.",
+  },
+  de: {
+    name: "Digitale Kundenkarte",
+    shortName: "Kundenkarte",
+    tagline: "Digitale Stempel, die Ihre Kunden weder verlieren noch zu Hause vergessen.",
+    summary:
+      "Eine Kundenkarte auf dem Handy: Ihre Kunden melden sich mit einem Antippen oder per QR-Code an, ohne App, und Ihr Team stempelt bei jedem Besuch. Prämien kommen automatisch.",
+  },
+  it: {
+    name: "Carta fedeltà digitale",
+    shortName: "Carta fedeltà",
+    tagline: "Timbri digitali che i clienti non perdono né dimenticano a casa.",
+    summary:
+      "Una carta fedeltà sullo smartphone: il cliente si iscrive con un tocco o con un QR code, senza app, e il vostro staff la timbra a ogni visita. Premi automatici.",
+  },
 };

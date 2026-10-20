@@ -359,4 +359,33 @@ export const copy: ProductCopyByLocale = {
       },
     },
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Web para su negocio",
+    shortName: "Web",
+    tagline: "Su negocio bien presentado, en el móvil y en Google.",
+    summary:
+      "Una web completa de hasta 5 páginas, rápida y fácil de mantener, con servicios, precios, galería, contactos y las herramientas Steevanz conectadas. Precio cerrado y lista en 10 días laborables.",
+  },
+  fr: {
+    name: "Site web pour votre activité",
+    shortName: "Site web",
+    tagline: "Votre activité bien présentée, sur mobile et sur Google.",
+    summary:
+      "Un site complet jusqu'à 5 pages, rapide et facile à faire vivre, avec services, prix, galerie, contacts et vos outils Steevanz connectés. Prix fixe, prêt en 10 jours ouvrés.",
+  },
+  de: {
+    name: "Website für Ihr Unternehmen",
+    shortName: "Website",
+    tagline: "Ihr Geschäft gut präsentiert, auf dem Handy und bei Google.",
+    summary:
+      "Eine vollständige Website mit bis zu 5 Seiten, schnell und leicht zu pflegen, mit Leistungen, Preisen, Galerie, Kontakt und Ihren verbundenen Steevanz-Tools. Festpreis, fertig in 10 Werktagen.",
+  },
+  it: {
+    name: "Sito web per la vostra attività",
+    shortName: "Sito web",
+    tagline: "La vostra attività ben presentata, sullo smartphone e su Google.",
+    summary:
+      "Un sito completo fino a 5 pagine, veloce e facile da gestire, con servizi, prezzi, galleria, contatti e gli strumenti Steevanz collegati. Prezzo fisso, pronto in 10 giorni lavorativi.",
+  },
 };

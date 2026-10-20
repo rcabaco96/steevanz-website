@@ -11,19 +11,19 @@ import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { CtaBand } from "@/components/marketing/CtaBand";
 import { ProductCard } from "@/components/marketing/ProductCard";
 import { Section, SectionHeader } from "@/components/ui/Section";
-import type { Locale } from "@/lib/i18n";
+import { localize, localizePartial, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl, whatsappUrl } from "@/lib/site";
 
 export function productsIndexMetadata(locale: Locale): Metadata {
-  const labels = pageLabels[locale].products;
+  const labels = localize(pageLabels, locale).products;
   return pageMetadata({ locale, route: { key: "products" }, title: labels.metaTitle, description: labels.metaDescription });
 }
 
 export function ProductsIndexPage({ locale }: { locale: Locale }) {
-  const labels = pageLabels[locale];
-  const t = ui[locale];
+  const labels = localize(pageLabels, locale);
+  const t = localize(ui, locale);
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -81,7 +81,7 @@ export function ProductsIndexPage({ locale }: { locale: Locale }) {
         <SectionHeader id="bundles-title" eyebrow={labels.products.bundlesEyebrow} title={labels.products.bundlesTitle} lead={labels.products.bundlesLead} />
         <div className="mt-12 grid gap-5 md:grid-cols-2">
           {sectors.map((sector, index) => {
-            const copy = sector.copy[locale];
+            const copy = localizePartial(sector.copy, locale);
             return (
               <article key={sector.id} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className={`card flex flex-col gap-5 p-7 ${index === sectors.length - 1 && sectors.length % 2 === 1 ? "md:col-span-2" : ""}`}>
                 <div className="flex flex-col gap-2">

@@ -7,7 +7,7 @@ import { howCopy, monthlyExtra, perMonth, sectorsCopy } from "@/content/novo-hom
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct } from "@/content/products";
 import { sectors } from "@/content/sectors";
-import type { Locale } from "@/lib/i18n";
+import { localizePartial, localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import base from "./novo.module.css";
 import styles from "./sections.module.css";
@@ -35,7 +35,7 @@ function fromLabel(once: number, monthly: number, locale: Locale): string {
 }
 
 export function SectorSolutions({ locale }: { locale: Locale }) {
-  const t = sectorsCopy[locale];
+  const t = localize(sectorsCopy, locale);
   return (
     <section aria-labelledby="novo-sectors" className={base.section}>
       <div className={base.wrap}>
@@ -47,13 +47,13 @@ export function SectorSolutions({ locale }: { locale: Locale }) {
         </p>
         <ul className={styles.rail}>
           {sectors.map((sector) => {
-            const copy = sector.copy[locale];
+            const copy = localizePartial(sector.copy, locale);
             const price = sector.pack ? { once: sector.pack.setup, monthly: sector.pack.monthly } : bundleFrom(sector.bundle);
             const photo = photos[sector.photo];
             return (
               <li key={sector.id} className={styles.sector}>
                 <div className={styles.sectorPhoto}>
-                  <Image src={photo.src} alt={photo.alt[locale]} fill sizes="(min-width: 1280px) 240px, 82vw" style={{ objectFit: "cover" }} />
+                  <Image src={photo.src} alt={localize(photo.alt, locale)} fill sizes="(min-width: 1280px) 240px, 82vw" style={{ objectFit: "cover" }} />
                 </div>
                 <div className={styles.sectorBody}>
                   <h3 className={styles.sectorName}>{copy.name}</h3>
@@ -66,7 +66,7 @@ export function SectorSolutions({ locale }: { locale: Locale }) {
                     {sector.pack ? t.pack : t.together} <strong>{fromLabel(price.once, price.monthly, locale)}</strong>
                   </p>
                   <Link href={href(locale, { key: "sector", sectorId: sector.id })} className={styles.sectorLink}>
-                    {t.see} {copy.name.toLowerCase()}
+                    {t.see.replace("{sector}", t.lowerSector ? copy.name.toLowerCase() : copy.name)}
                     <ArrowRight size={16} />
                   </Link>
                 </div>
@@ -80,7 +80,7 @@ export function SectorSolutions({ locale }: { locale: Locale }) {
 }
 
 export function HowWeWork({ locale }: { locale: Locale }) {
-  const copy = howCopy[locale];
+  const copy = localize(howCopy, locale);
   return (
     <section aria-labelledby="novo-how" className={base.section}>
       <div className={base.wrap}>

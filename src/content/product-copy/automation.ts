@@ -279,4 +279,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Automatización de procesos a medida",
+    shortName: "Automatización",
+    tagline: "Menos tareas repetitivas, más tiempo para su negocio.",
+    summary:
+      "Automatizamos facturas, seguimiento de contactos, recordatorios y conexiones entre las herramientas que ya utiliza. Proyectos a medida, con precio cerrado antes de empezar.",
+  },
+  fr: {
+    name: "Automatisation sur mesure",
+    shortName: "Automatisation",
+    tagline: "Moins de tâches répétitives, plus de temps pour votre activité.",
+    summary:
+      "Nous automatisons factures, suivi des contacts, rappels et liaisons entre les outils que vous utilisez déjà. Des projets sur mesure, avec un prix fixé avant de commencer.",
+  },
+  de: {
+    name: "Prozessautomatisierung nach Maß",
+    shortName: "Automatisierung",
+    tagline: "Weniger Routineaufgaben, mehr Zeit für Ihr Geschäft.",
+    summary:
+      "Wir automatisieren Rechnungen, die Nachverfolgung von Anfragen, Erinnerungen und die Verbindungen zwischen den Tools, die Sie bereits nutzen. Projekte nach Maß, mit Festpreis vor Beginn.",
+  },
+  it: {
+    name: "Automazione dei processi su misura",
+    shortName: "Automazione",
+    tagline: "Meno attività ripetitive, più tempo per il vostro lavoro.",
+    summary:
+      "Automatizziamo fatture, follow-up dei contatti, promemoria e collegamenti tra gli strumenti che già usate. Progetti su misura, con prezzo fisso concordato prima di iniziare.",
+  },
 };

@@ -277,4 +277,33 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
+  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
+  es: {
+    name: "Guía digital del alojamiento",
+    shortName: "Guía digital",
+    tagline: "La guía de la casa en cuatro idiomas, con un toque.",
+    summary:
+      "Una página para el móvil con todo lo que el huésped necesita saber: wifi, check-out, normas, electrodomésticos, basura, emergencias y sus recomendaciones. Se abre con un toque en una placa dentro del alojamiento y está en portugués, inglés y dos idiomas más.",
+  },
+  fr: {
+    name: "Livret d'accueil digital",
+    shortName: "Livret d'accueil",
+    tagline: "Le livret de la maison en quatre langues, d'un simple toucher.",
+    summary:
+      "Une page pour téléphone avec tout ce que vos voyageurs doivent savoir : wifi, départ, règles, appareils, poubelles, urgences et vos recommandations. Elle s'ouvre d'un toucher sur une plaque dans le logement, en portugais, en anglais et dans deux autres langues.",
+  },
+  de: {
+    name: "Digitale Gästemappe",
+    shortName: "Gästemappe",
+    tagline: "Die Hausinfos in vier Sprachen, mit einem Antippen.",
+    summary:
+      "Eine Seite fürs Handy mit allem, was Gäste wissen müssen: WLAN, Check-out, Hausregeln, Geräte, Müll, Notfälle und Ihre Empfehlungen. Sie öffnet sich mit einem Antippen auf einem Schild in der Unterkunft, auf Portugiesisch, Englisch und in zwei weiteren Sprachen.",
+  },
+  it: {
+    name: "Guida digitale dell'alloggio",
+    shortName: "Guida digitale",
+    tagline: "La guida della casa in quattro lingue, con un tocco.",
+    summary:
+      "Una pagina per smartphone con tutto quello che l'ospite deve sapere: wifi, check-out, regole, elettrodomestici, rifiuti, emergenze e i vostri consigli. Si apre con un tocco su una targa all'interno dell'alloggio, in portoghese, inglese e altre due lingue.",
+  },
 };

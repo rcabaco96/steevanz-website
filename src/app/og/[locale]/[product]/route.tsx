@@ -1,7 +1,8 @@
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, productIds, toProductId } from "@/content/products";
 import { priceLabel } from "@/components/ui/Price";
-import { isLocale, locales } from "@/lib/i18n";
+import { ui } from "@/content/ui";
+import { isLocale, locales, localize } from "@/lib/i18n";
 import { renderOgImage } from "@/lib/og";
 
 export const dynamic = "force-static";
@@ -21,6 +22,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ loc
     title: copy.heroTitle,
     subtitle: copy.tagline,
     // Prices are shown without VAT and say so (owner, 2026-10-18).
-    badge: `${priceLabel(getProduct(productId), locale)} ${locale === "en" ? "+ VAT" : "+ IVA"}`,
+    badge: `${priceLabel(getProduct(productId), locale)} ${localize(ui, locale).common.vatExcluded}`,
   });
 }
