@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { docs as bookings } from "../src/content/docs/bookings.ts";
+import { docs as googleReviewPlates } from "../src/content/docs/google-review-plates.ts";
 import { docs as loyalty } from "../src/content/docs/loyalty.ts";
 import { docs as socialPlates } from "../src/content/docs/social-plates.ts";
 
@@ -8,7 +9,7 @@ import { docs as socialPlates } from "../src/content/docs/social-plates.ts";
 // and the house words (no «NFC», no VAT-inclusive prices).
 
 const extra = ["es", "fr", "de", "it"];
-const translated = { loyalty, bookings, socialPlates };
+const translated = { loyalty, bookings, socialPlates, googleReviewPlates };
 
 function shape(value) {
   if (Array.isArray(value)) return value.map(shape);
