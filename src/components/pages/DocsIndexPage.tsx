@@ -7,18 +7,18 @@ import { ui } from "@/content/ui";
 import { ArrowRight, ProductGlyph } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { SectionHeader } from "@/components/ui/Section";
-import { localize, type Locale } from "@/lib/i18n";
+import { localize, type Locale, type Localized } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { site, whatsappUrl } from "@/lib/site";
 
 const copy = {
   pt: {
-    metaTitle: "Documentação e glocalize(ui, locale)s de utilização | Steevanz Docs",
-    metaDescription: "Glocalize(ui, locale)s práticos para instalar, configurar e usar as placas, reservas, lista de espera, chatbot, receção por voz e automações da Steevanz.",
+    metaTitle: "Documentação e guias de utilização | Steevanz Docs",
+    metaDescription: "Guias práticos para instalar, configurar e usar as placas, reservas, lista de espera, chatbot, receção por voz e automações da Steevanz.",
     eyebrow: "Documentação",
     title: "Tudo o que precisa de saber, passo a passo.",
-    lead: "Glocalize(ui, locale)s escritos para quem gere um negócio, não para engenheiros. Da colocação de uma placa à configuração de um chatbot.",
+    lead: "Guias escritos para quem gere um negócio, não para engenheiros. Da colocação de uma placa à configuração de um chatbot.",
     helpTitle: "Não encontrou o que procurava?",
     helpBody: "Escreva-nos. Respondemos por WhatsApp ou e-mail em dias úteis.",
   },
@@ -31,7 +31,43 @@ const copy = {
     helpTitle: "Couldn't find what you were looking for?",
     helpBody: "Write to us. We reply by WhatsApp or email on working days.",
   },
-};
+  es: {
+    metaTitle: "Documentación y guías de uso | Steevanz Docs",
+    metaDescription: "Guías prácticas para instalar, configurar y usar las placas, las reservas, la lista de espera, el chatbot, la recepción por voz y las automatizaciones de Steevanz.",
+    eyebrow: "Documentación",
+    title: "Todo lo que necesita saber, paso a paso.",
+    lead: "Guías escritas para quien gestiona un negocio, no para ingenieros. Desde colocar una placa hasta configurar un chatbot.",
+    helpTitle: "¿No ha encontrado lo que buscaba?",
+    helpBody: "Escríbanos. Respondemos por WhatsApp o correo electrónico en días laborables.",
+  },
+  fr: {
+    metaTitle: "Documentation et guides d'utilisation | Steevanz Docs",
+    metaDescription: "Des guides pratiques pour installer, configurer et utiliser les plaques, les réservations, la liste d'attente, le chatbot, l'accueil vocal et les automatisations Steevanz.",
+    eyebrow: "Documentation",
+    title: "Tout ce que vous devez savoir, étape par étape.",
+    lead: "Des guides écrits pour ceux qui gèrent une entreprise, pas pour des ingénieurs. De la pose d'une plaque à la configuration d'un chatbot.",
+    helpTitle: "Vous n'avez pas trouvé ce que vous cherchiez ?",
+    helpBody: "Écrivez-nous. Nous répondons par WhatsApp ou par e-mail les jours ouvrés.",
+  },
+  de: {
+    metaTitle: "Dokumentation und Anleitungen | Steevanz Docs",
+    metaDescription: "Praktische Anleitungen zum Einrichten, Konfigurieren und Nutzen der Steevanz-Schilder, Reservierungen, Warteliste, des Chatbots, des KI-Telefons und der Automatisierungen.",
+    eyebrow: "Dokumentation",
+    title: "Alles, was Sie wissen müssen, Schritt für Schritt.",
+    lead: "Anleitungen für Menschen, die ein Geschäft führen, nicht für Ingenieure. Vom Aufstellen eines Schildes bis zur Einrichtung eines Chatbots.",
+    helpTitle: "Nicht gefunden, was Sie gesucht haben?",
+    helpBody: "Schreiben Sie uns. Wir antworten werktags per WhatsApp oder E-Mail.",
+  },
+  it: {
+    metaTitle: "Documentazione e guide all'uso | Steevanz Docs",
+    metaDescription: "Guide pratiche per installare, configurare e usare le targhe, le prenotazioni, la lista d'attesa, il chatbot, la reception vocale e le automazioni Steevanz.",
+    eyebrow: "Documentazione",
+    title: "Tutto ciò che vi serve sapere, passo dopo passo.",
+    lead: "Guide scritte per chi gestisce un'attività, non per ingegneri. Dal posizionamento di una targa alla configurazione di un chatbot.",
+    helpTitle: "Non avete trovato ciò che cercavate?",
+    helpBody: "Scriveteci. Rispondiamo via WhatsApp o e-mail nei giorni feriali.",
+  },
+} satisfies Localized<{ metaTitle: string; metaDescription: string; eyebrow: string; title: string; lead: string; helpTitle: string; helpBody: string }>;
 
 export function docsIndexMetadata(locale: Locale): Metadata {
   return pageMetadata({ locale, route: { key: "docs" }, title: localize(copy, locale).metaTitle, description: localize(copy, locale).metaDescription });

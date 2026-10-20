@@ -11,7 +11,7 @@ import { DocBlocks } from "@/components/docs/DocBlocks";
 import { ArrowLeft, ArrowRight, ChevronDown, ProductGlyph } from "@/components/icons";
 import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { ButtonLink } from "@/components/ui/Button";
-import { htmlLang, localize, type Locale } from "@/lib/i18n";
+import { htmlLang, localize, type Locale, type Localized } from "@/lib/i18n";
 import { faqJsonLd, howToJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
@@ -33,7 +33,39 @@ const docsLabels = {
     contact: "Contact us",
     productPage: "View the product",
   },
-};
+  es: {
+    navLabel: "Navegación de la documentación",
+    browse: "Explorar la documentación",
+    needHelp: "¿Necesita ayuda?",
+    needHelpBody: "Nuestro equipo responde por WhatsApp y correo electrónico en días laborables.",
+    contact: "Hablar con nosotros",
+    productPage: "Ver el producto",
+  },
+  fr: {
+    navLabel: "Navigation de la documentation",
+    browse: "Parcourir la documentation",
+    needHelp: "Besoin d'aide ?",
+    needHelpBody: "Notre équipe répond par WhatsApp et par e-mail les jours ouvrés.",
+    contact: "Nous contacter",
+    productPage: "Voir le produit",
+  },
+  de: {
+    navLabel: "Navigation der Dokumentation",
+    browse: "Dokumentation durchsuchen",
+    needHelp: "Brauchen Sie Hilfe?",
+    needHelpBody: "Unser Team antwortet werktags per WhatsApp und E-Mail.",
+    contact: "Kontakt aufnehmen",
+    productPage: "Zum Produkt",
+  },
+  it: {
+    navLabel: "Navigazione della documentazione",
+    browse: "Sfoglia la documentazione",
+    needHelp: "Vi serve aiuto?",
+    needHelpBody: "Il nostro team risponde via WhatsApp ed e-mail nei giorni feriali.",
+    contact: "Contattateci",
+    productPage: "Vedi il prodotto",
+  },
+} satisfies Localized<{ navLabel: string; browse: string; needHelp: string; needHelpBody: string; contact: string; productPage: string }>;
 
 export function docMetadata(locale: Locale, productId: ProductId, pageId: DocPageId): Metadata {
   const page = localize(getDocPage(productId, pageId), locale);
