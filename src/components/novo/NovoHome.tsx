@@ -55,7 +55,10 @@ export function NovoHome({ locale }: { locale: Locale }) {
     id: goal.id,
     title: goal.title,
     lead: goal.lead,
-    products: goal.products.map(({ id, label, benefit }) => {
+    // Always from the cheapest «desde» price up (owner, 2026-10-20); the content order breaks ties.
+    products: [...goal.products]
+      .sort((a, b) => getProduct(a.id).priceFrom - getProduct(b.id).priceFrom)
+      .map(({ id, label, benefit }) => {
       const product = getProduct(id);
       return {
         id,
@@ -67,7 +70,7 @@ export function NovoHome({ locale }: { locale: Locale }) {
         price: `${copy.goals.from} ${formatEuro(product.priceFrom, locale)}${billingSuffix(product, locale)} ${copy.goals.vat}`,
         cta: localize(goalCtas[id], locale),
       };
-    }),
+      }),
   }));
   const menuProduct = getProduct("digital-menu");
 

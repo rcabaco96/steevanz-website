@@ -314,7 +314,7 @@ export const products: Product[] = [
     slug: { pt: "loja-online", en: "online-shop" },
     family: "web",
     icon: "bag",
-    priceFrom: 750,
+    priceFrom: 900,
     priceBilling: "project",
     priceQualifier: { pt: "até 50 produtos, + 19 €/mês e 3% por venda, sem fidelização", en: "up to 50 products, + €19/month and 3% per sale, no lock-in", es: "hasta 50 productos, + 19 €/mes y 3 % por venta, sin permanencia", fr: "jusqu'à 50 produits, + 19 €/mois et 3 % par vente, sans engagement", de: "bis zu 50 Produkte, + 19 €/Monat und 3 % pro Verkauf, ohne Mindestlaufzeit", it: "fino a 50 prodotti, + 19 €/mese e 3% per vendita, senza vincoli" },
     priceIsProvisional: true,
