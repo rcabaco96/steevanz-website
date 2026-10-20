@@ -621,7 +621,7 @@ export const copy: ProductCopyByLocale = {
     problem: {
       title: "Aspettare davanti alla porta fa scappare i clienti",
       body:
-        "Nelle ore di punta si forma la coda all'ingresso o la sala d'attesa si riempie. Il vostro staff perde tempo tra nomi scritti su carta e risposte a chi chiede quanto manca. Alcuni clienti rinunciano e vanno dal vicino senza che ve ne accorgiate.",
+        "Nelle ore di punta si forma la coda all'ingresso o la sala d'attesa si riempie. Il Suo staff perde tempo tra nomi scritti su carta e risposte a chi chiede quanto manca. Alcuni clienti rinunciano e vanno dal vicino senza che Lei se ne accorga.",
       points: [
         "Clienti che se ne vanno quando vedono la coda",
         "Liste di carta difficili da gestire nelle ore di punta",
@@ -631,7 +631,7 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Una coda che non tiene nessuno fermo in piedi",
       body:
-        "Con una lista d'attesa digitale, ogni cliente sa quale numero è servito e quanto gli manca, e riceve un avviso sul telefono quando arriva il suo turno. Al vostro staff basta chiamare il successivo con un tocco.",
+        "Con una lista d'attesa digitale, ogni cliente sa quale numero è servito e quanto gli manca, e riceve un avviso sul telefono quando arriva il suo turno. Al Suo staff basta chiamare il successivo con un tocco.",
       points: [
         "Iscrizione tramite QR code, con un tocco o tramite lo staff",
         "Tempo di attesa stimato visibile al cliente",
@@ -676,7 +676,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Funziona con le prenotazioni",
-        body: "Se usate anche il nostro sistema di prenotazione, la coda e le prenotazioni del giorno stanno una accanto all'altra, per gestire la sala senza sorprese.",
+        body: "Se usa anche il nostro sistema di prenotazione, la coda e le prenotazioni del giorno stanno una accanto all'altra, per gestire la sala senza sorprese.",
       },
     ],
     useCases: [
@@ -697,7 +697,7 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Lista d'attesa configurata su misura per il vostro locale",
+      "Lista d'attesa configurata su misura per il Suo locale",
       "Targa con QR code per l'ingresso",
       "Schermo di chiamata per un televisore all'ingresso (facoltativo)",
       "Pannello per lo staff su tablet, telefono o computer",
@@ -723,7 +723,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso disdire il piano mensile?",
-        a: "Sì. Il piano è mensile e senza vincolo di durata, e potete disdirlo quando volete.",
+        a: "Sì. Il piano è mensile e senza vincolo di durata, e può disdirlo quando vuole.",
       },
     ],
   },

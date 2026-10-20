@@ -651,7 +651,7 @@ export const copy: ProductCopyByLocale = {
     shortName: "Carta fedeltà",
     tagline: "Timbri digitali che i clienti non perdono né dimenticano a casa.",
     summary:
-      "Una carta fedeltà sullo smartphone: il cliente si iscrive con un tocco o con un QR code, senza app, e il vostro staff la timbra a ogni visita. Premi automatici.",
+      "Una carta fedeltà sullo smartphone: il cliente si iscrive con un tocco o con un QR code, senza app, e il Suo staff la timbra a ogni visita. Premi automatici.",
     metaTitle: "Carta fedeltà digitale | Steevanz",
     metaDescription:
       "Carta fedeltà digitale a cui il cliente si iscrive con un tocco o con un QR code: timbri sullo smartphone, senza app e senza tessere di carta. Premi automatici e statistiche semplici.",
@@ -659,9 +659,9 @@ export const copy: ProductCopyByLocale = {
     heroSubtitle:
       "Il cliente si iscrive con un tocco o inquadrando un QR, riceve un timbro a ogni visita e ottiene il premio in automatico. La carta vive sul suo smartphone, a un tocco dalla schermata Home. Niente da installare.",
     problem: {
-      title: "Le tessere di carta si perdono e non vi dicono nulla",
+      title: "Le tessere di carta si perdono e non Le dicono nulla",
       body:
-        "Una tessera a timbri di carta funziona, finché non resta dimenticata in un'altra giacca o finisce nel cestino. E soprattutto non sapete chi sono i vostri clienti abituali, ogni quanto tornano né quanti premi sono stati davvero usati. Senza contare chi si timbra la tessera da solo, a casa.",
+        "Una tessera a timbri di carta funziona, finché non resta dimenticata in un'altra giacca o finisce nel cestino. E soprattutto non sa chi sono i Suoi clienti abituali, ogni quanto tornano né quanti premi sono stati davvero usati. Senza contare chi si timbra la tessera da solo, a casa.",
       points: [
         "Tessere perse: clienti che ripartono da zero",
         "Nessuna idea di chi torna e con quale frequenza",
@@ -669,20 +669,20 @@ export const copy: ProductCopyByLocale = {
       ],
     },
     solution: {
-      title: "Premiare i clienti, in modo semplice, per voi e per loro",
+      title: "Premiare i clienti, in modo semplice, per Lei e per loro",
       body:
-        "La carta vive sullo smartphone del cliente e il vostro staff timbra ogni visita in pochi secondi. Quando la carta è completa, il premio è disponibile in automatico.",
+        "La carta vive sullo smartphone del cliente e il Suo staff timbra ogni visita in pochi secondi. Quando la carta è completa, il premio è disponibile in automatico.",
       points: [
         "Carta sullo smartphone, a un tocco dalla schermata Home, senza app",
-        "Timbri dati dal vostro staff inquadrando il QR della carta",
+        "Timbri dati dal Suo staff inquadrando il QR della carta",
         "Premio sbloccato in automatico",
         "Statistiche semplici su visite e clienti abituali",
       ],
     },
     steps: [
       {
-        title: "Decidete la regola",
-        body: "Per esempio: 9 caffè acquistati, il 10° è in omaggio. Prepariamo la carta con il nome della vostra attività.",
+        title: "Decida la regola",
+        body: "Per esempio: 9 caffè acquistati, il 10° è in omaggio. Prepariamo la carta con il nome della Sua attività.",
       },
       {
         title: "Il cliente si iscrive",
@@ -690,7 +690,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Un timbro a ogni visita",
-        body: "A ogni acquisto il cliente mostra la carta e il vostro staff dà il timbro inquadrando il QR della carta.",
+        body: "A ogni acquisto il cliente mostra la carta e il Suo staff dà il timbro inquadrando il QR della carta.",
       },
       {
         title: "Premio automatico",
@@ -704,30 +704,30 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Timbri in pochi secondi",
-        body: "Il vostro staff inquadra il QR della carta con lo smartphone del banco e dà il timbro con un tocco. La targa con QR serve ai clienti per iscriversi.",
+        body: "Il Suo staff inquadra il QR della carta con lo smartphone del banco e dà il timbro con un tocco. La targa con QR serve ai clienti per iscriversi.",
       },
       {
         title: "Premi automatici",
-        body: "Impostate le regole una volta e il sistema fa il resto: conta i timbri, mostra ogni premio sulla carta (anche quelli piccoli lungo il percorso, come un caffè al 3° timbro) e lo segna come usato.",
+        body: "Imposta le regole una volta e il sistema fa il resto: conta i timbri, mostra ogni premio sulla carta (anche quelli piccoli lungo il percorso, come un caffè al 3° timbro) e lo segna come usato.",
       },
       {
         title: "Protezione dagli abusi",
-        body: "I timbri sono confermati dal vostro staff e registrati: niente tessere timbrate a casa, niente premi riscossi due volte.",
+        body: "I timbri sono confermati dal Suo staff e registrati: niente tessere timbrate a casa, niente premi riscossi due volte.",
       },
       {
         title: "Statistiche chiare",
-        body: "Vedete quanti clienti si sono iscritti, ogni quanto tornano e quanti premi sono stati consegnati, senza fogli di calcolo.",
+        body: "Vede quanti clienti si sono iscritti, ogni quanto tornano e quanti premi sono stati consegnati, senza fogli di calcolo.",
       },
       {
-        title: "Con il nome della vostra attività",
-        body: "La carta porta il nome della vostra attività e vive sullo smartphone del cliente, senza app: a un tocco dalla schermata Home.",
+        title: "Con il nome della Sua attività",
+        body: "La carta porta il nome della Sua attività e vive sullo smartphone del cliente, senza app: a un tocco dalla schermata Home.",
       },
     ],
     useCases: [
       {
         sector: "restaurants",
         title: "Bar e panetterie",
-        body: "Il classico caffè in omaggio dopo dieci, senza tessere di carta sul bancone. Ideale se avete clienti abituali che passano ogni giorno.",
+        body: "Il classico caffè in omaggio dopo dieci, senza tessere di carta sul bancone. Ideale se ha clienti abituali che passano ogni giorno.",
       },
       {
         sector: "beauty",
@@ -737,15 +737,15 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "retail",
         title: "Negozi di quartiere",
-        body: "Premiate chi fa acquisti nel quartiere invece di andare al centro commerciale, con un pensiero quando la carta è completa.",
+        body: "Un modo per premiare chi fa acquisti nel quartiere invece di andare al centro commerciale, con un pensiero quando la carta è completa.",
       },
     ],
     includes: [
-      "Carta preparata con il nome della vostra attività, le vostre regole e il vostro premio",
+      "Carta preparata con il nome della Sua attività, le Sue regole e il Suo premio",
       "Targa da banco con QR code stampato",
       "Configurazione delle regole di timbri e premi",
       "Pannello con le statistiche di visite e premi",
-      "Breve formazione per il vostro staff",
+      "Breve formazione per il Suo staff",
       "Assistenza via WhatsApp ed email",
     ],
     faq: [
@@ -759,7 +759,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come evito i timbri falsi?",
-        a: "Ogni timbro viene confermato dal vostro staff al momento dell'acquisto e registrato. Così non c'è modo di raccogliere timbri senza passare dal banco.",
+        a: "Ogni timbro viene confermato dal Suo staff al momento dell'acquisto e registrato. Così non c'è modo di raccogliere timbri senza passare dal banco.",
       },
       {
         q: "Quali dati dei clienti vengono salvati?",
@@ -767,11 +767,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso disdire il piano mensile?",
-        a: "Sì. Il piano è mensile e senza vincolo di durata. Vi consigliamo di avvisare i clienti per tempo, così possono usare i premi già guadagnati.",
+        a: "Sì. Il piano è mensile e senza vincolo di durata. Le consigliamo di avvisare i clienti per tempo, così possono usare i premi già guadagnati.",
       },
       {
         q: "Quanto tempo serve per partire?",
-        a: "La carta e la targa sono di solito pronte in pochi giorni lavorativi, una volta definita insieme la regola. I tempi esatti ve li confermiamo durante la demo.",
+        a: "La carta e la targa sono di solito pronte in pochi giorni lavorativi, una volta definita insieme la regola. I tempi esatti Le vengono confermati durante la demo.",
       },
     ],
   },

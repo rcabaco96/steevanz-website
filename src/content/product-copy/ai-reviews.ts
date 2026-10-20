@@ -699,19 +699,19 @@ export const copy: ProductCopyByLocale = {
   it: {
     name: "Gestione delle recensioni con IA",
     shortName: "Recensioni IA",
-    tagline: "Rispondete a ogni recensione su Google senza perderci ore.",
+    tagline: "Risponda a ogni recensione su Google senza perderci ore.",
     summary:
-      "Monitoriamo le recensioni Google della vostra attività, l'IA prepara le risposte nel tono del vostro marchio da approvare e vi avvisiamo subito quando arriva una recensione negativa.",
+      "Monitoriamo le recensioni Google della Sua attività, l'IA prepara le risposte nel tono del Suo marchio da approvare e La avvisiamo subito quando arriva una recensione negativa.",
     metaTitle: "Gestione delle recensioni Google con IA | Steevanz",
     metaDescription:
-      "Gestione delle recensioni Google con IA: risposte scritte nel tono del vostro marchio da approvare, avvisi immediati per le recensioni negative e un report mensile chiaro sulle tendenze.",
-    heroTitle: "Ogni recensione con la sua risposta, con la vostra voce",
+      "Gestione delle recensioni Google con IA: risposte scritte nel tono del Suo marchio da approvare, avvisi immediati per le recensioni negative e un report mensile chiaro sulle tendenze.",
+    heroTitle: "Ogni recensione con la sua risposta, con la Sua voce",
     heroSubtitle:
-      "Teniamo d'occhio le recensioni Google della vostra attività, l'IA prepara una risposta per ognuna e voi la approvate con un tocco. Le recensioni negative vi arrivano subito, così potete rispondere in tempo.",
+      "Teniamo d'occhio le recensioni Google della Sua attività, l'IA prepara una risposta per ognuna e Lei la approva con un tocco. Le recensioni negative Le arrivano subito, così può rispondere in tempo.",
     problem: {
       title: "Rispondere alle recensioni è importante, ma finisce sempre in fondo alla lista",
       body:
-        "Sapete che rispondere alle recensioni dimostra attenzione verso i clienti, ma nella quotidianità il tempo non c'è. Le risposte si accumulano, le recensioni negative restano senza risposta per settimane e, quando finalmente rispondete, lo fate di corsa. E tutto questo lo vede chiunque cerchi la vostra attività.",
+        "Sa bene che rispondere alle recensioni dimostra attenzione verso i clienti, ma nella quotidianità il tempo non c'è. Le risposte si accumulano, le recensioni negative restano senza risposta per settimane e, quando finalmente risponde, lo fa di corsa. E tutto questo lo vede chiunque cerchi la Sua attività.",
       points: [
         "Recensioni senza risposta che danno un'impressione di trascuratezza",
         "Recensioni negative scoperte troppo tardi",
@@ -719,11 +719,11 @@ export const copy: ProductCopyByLocale = {
       ],
     },
     solution: {
-      title: "L'IA scrive, voi decidete",
+      title: "L'IA scrive, Lei decide",
       body:
-        "L'IA prepara risposte personalizzate nel tono del vostro marchio e ve le invia per l'approvazione. Niente viene pubblicato senza il vostro sì. Le recensioni negative fanno scattare un avviso immediato.",
+        "L'IA prepara risposte personalizzate nel tono del Suo marchio e le sottopone alla Sua approvazione. Niente viene pubblicato senza il Suo sì. Le recensioni negative fanno scattare un avviso immediato.",
       points: [
-        "Monitoraggio continuo delle vostre recensioni Google",
+        "Monitoraggio continuo delle Sue recensioni Google",
         "Risposte scritte dall'IA da approvare o modificare",
         "Avvisi immediati per le recensioni negative",
         "Report mensile con temi e tendenze",
@@ -731,38 +731,38 @@ export const copy: ProductCopyByLocale = {
     },
     steps: [
       {
-        title: "Colleghiamo il vostro profilo",
-        body: "Con il vostro permesso, colleghiamo il sistema al vostro Profilo dell'attività su Google.",
+        title: "Colleghiamo il Suo profilo",
+        body: "Con il Suo permesso, colleghiamo il sistema al Suo Profilo dell'attività su Google.",
       },
       {
-        title: "Definiamo il vostro tono",
-        body: "Formale o informale, con firma o senza. Mettiamo a punto con voi lo stile delle risposte.",
+        title: "Definiamo il Suo tono",
+        body: "Formale o informale, con firma o senza. Mettiamo a punto con Lei lo stile delle risposte.",
       },
       {
-        title: "Approvate con un tocco",
-        body: "Le risposte suggerite arrivano via WhatsApp o email e voi le approvate, le modificate o le scartate.",
+        title: "Approva con un tocco",
+        body: "Le risposte suggerite arrivano via WhatsApp o email e Lei le approva, le modifica o le scarta.",
       },
       {
-        title: "Seguite l'andamento",
-        body: "Ogni mese ricevete un report su cosa i clienti apprezzano e criticano di più.",
+        title: "Segua l'andamento",
+        body: "Ogni mese riceve un report su cosa i clienti apprezzano e criticano di più.",
       },
     ],
     features: [
       {
         title: "Monitoraggio continuo",
-        body: "Ogni nuova recensione sul vostro Profilo dell'attività su Google viene rilevata in automatico, senza doverlo controllare a mano.",
+        body: "Ogni nuova recensione sul Suo Profilo dell'attività su Google viene rilevata in automatico, senza doverlo controllare a mano.",
       },
       {
-        title: "Risposte con la vostra voce",
-        body: "L'IA scrive risposte personalizzate che riprendono quanto detto dal cliente, nello stile della vostra attività, senza le solite frasi fatte ogni volta.",
+        title: "Risposte con la Sua voce",
+        body: "L'IA scrive risposte personalizzate che riprendono quanto detto dal cliente, nello stile della Sua attività, senza le solite frasi fatte ogni volta.",
       },
       {
         title: "Approvazione prima della pubblicazione",
-        body: "Nessuna risposta va online senza la vostra approvazione. Potete accettarla, modificarla o riscriverla, perché l'IA può sbagliare e l'ultima parola spetta a voi.",
+        body: "Nessuna risposta va online senza la Sua approvazione. Può accettarla, modificarla o riscriverla, perché l'IA può sbagliare e l'ultima parola spetta a Lei.",
       },
       {
         title: "Avvisi per le recensioni negative",
-        body: "Quando arriva una recensione da una o due stelle, venite avvisati subito per rispondere con calma e sistemare le cose.",
+        body: "Quando arriva una recensione da una o due stelle, riceve subito un avviso per rispondere con calma e sistemare le cose.",
       },
       {
         title: "Report mensile",
@@ -801,9 +801,9 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Collegamento al vostro Profilo dell'attività su Google",
+      "Collegamento al Suo Profilo dell'attività su Google",
       "Tono di voce e regole di risposta",
-      "Risposte scritte dall'IA per la vostra approvazione",
+      "Risposte scritte dall'IA per la Sua approvazione",
       "Avvisi immediati per le recensioni negative via WhatsApp o email",
       "Report mensile",
       "Assistenza via WhatsApp ed email",
@@ -811,19 +811,19 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Le risposte vengono pubblicate in automatico?",
-        a: "No, di default ogni risposta richiede la vostra approvazione. L'IA può sbagliare o fraintendere una recensione, quindi la decisione finale è sempre vostra.",
+        a: "No, di default ogni risposta richiede la Sua approvazione. L'IA può sbagliare o fraintendere una recensione, quindi la decisione finale è sempre Sua.",
       },
       {
         q: "Potete cancellare le recensioni negative?",
-        a: "No. Solo Google può rimuovere le recensioni, e solo quando violano le sue norme. Possiamo aiutarvi a individuare e segnalare questi casi, ma la risposta migliore a una critica giusta è una replica onesta e ponderata.",
+        a: "No. Solo Google può rimuovere le recensioni, e solo quando violano le sue norme. Possiamo aiutarLa a individuare e segnalare questi casi, ma la risposta migliore a una critica giusta è una replica onesta e ponderata.",
       },
       {
         q: "Steevanz fa parte di Google?",
-        a: "No. Steevanz è un'azienda indipendente, senza alcun legame con Google. Lavoriamo sul vostro Profilo dell'attività su Google con i permessi che ci concedete.",
+        a: "No. Steevanz è un'azienda indipendente, senza alcun legame con Google. Lavoriamo sul Suo Profilo dell'attività su Google con i permessi che ci concede.",
       },
       {
         q: "Di quale accesso avete bisogno?",
-        a: "Accesso come gestore al vostro Profilo dell'attività su Google, che potete revocare in qualsiasi momento. Non ci serve mai la vostra password.",
+        a: "Accesso come gestore al Suo Profilo dell'attività su Google, che può revocare in qualsiasi momento. Non ci serve mai la Sua password.",
       },
       {
         q: "Come vengono trattati i dati?",
@@ -831,7 +831,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso disdire il piano mensile?",
-        a: "Sì, il piano è mensile e senza vincoli. Quando disdite, rimuoviamo il nostro accesso al vostro profilo.",
+        a: "Sì, il piano è mensile e senza vincoli. Quando disdice, rimuoviamo il nostro accesso al Suo profilo.",
       },
     ],
   },

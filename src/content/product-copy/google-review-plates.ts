@@ -721,15 +721,15 @@ export const copy: ProductCopyByLocale = {
     shortName: "Targhe recensioni Google",
     tagline: "Un tocco con il telefono e il cliente sta già scrivendo la sua recensione.",
     summary:
-      "Targhe, adesivi ed espositori da tavolo che, con un tocco o tramite QR code, aprono direttamente il modulo di recensione Google della vostra attività. Configuriamo tutto noi.",
+      "Targhe, adesivi ed espositori da tavolo che, con un tocco o tramite QR code, aprono direttamente il modulo di recensione Google della Sua attività. Configuriamo tutto noi.",
     metaTitle: "Targhe per recensioni Google | Steevanz",
     metaDescription:
-      "Targhe per recensioni Google: un tocco con il telefono apre il modulo di recensione della vostra attività. Senza app, con QR code incluso e tutto configurato dal nostro team.",
+      "Targhe per recensioni Google: un tocco con il telefono apre il modulo di recensione della Sua attività. Senza app, con QR code incluso e tutto configurato dal nostro team.",
     heroTitle: "Più recensioni su Google, con un solo tocco",
     heroSubtitle:
-      "Il cliente avvicina il telefono alla targa e si apre subito il modulo di recensione Google della vostra attività. Niente ricerche del vostro nome, niente da installare, nessun bisogno di chiedere due volte. Prepariamo noi la targa e configuriamo il link.",
+      "Il cliente avvicina il telefono alla targa e si apre subito il modulo di recensione Google della Sua attività. Niente ricerche del Suo nome, niente da installare, nessun bisogno di chiedere due volte. Prepariamo noi la targa e configuriamo il link.",
     problem: {
-      title: "I vostri clienti apprezzano quello che fate, ma non lo dicono su Google",
+      title: "I Suoi clienti apprezzano quello che fa, ma non lo dicono su Google",
       body:
         "La maggior parte dei clienti soddisfatti se ne va senza scrivere una recensione. Non perché non voglia, ma perché costa fatica: aprire Google, cercare l'attività, trovare il pulsante giusto. Intanto, chi cerca in zona confronta stelle e numero di recensioni prima di scegliere dove andare.",
       points: [
@@ -739,9 +739,9 @@ export const copy: ProductCopyByLocale = {
       ],
     },
     solution: {
-      title: "Trasformate una bella esperienza in una recensione, al momento giusto",
+      title: "Trasformi una bella esperienza in una recensione, al momento giusto",
       body:
-        "Le nostre targhe portano il cliente direttamente al modulo di recensione Google della vostra attività, quando l'esperienza è ancora fresca. Un tocco o una scansione del QR, ed è già lì.",
+        "Le nostre targhe portano il cliente direttamente al modulo di recensione Google della Sua attività, quando l'esperienza è ancora fresca. Un tocco o una scansione del QR, ed è già lì.",
       points: [
         "Funziona con la maggior parte degli smartphone recenti, senza app",
         "QR code stampato sulla targa per i telefoni che non leggono il tocco",
@@ -751,26 +751,26 @@ export const copy: ProductCopyByLocale = {
     },
     steps: [
       {
-        title: "Scegliete il formato",
-        body: "Targa da banco, espositore da tavolo, adesivo o targa da parete. Vi aiutiamo a scegliere dove si vedrà meglio.",
+        title: "Scelga il formato",
+        body: "Targa da banco, espositore da tavolo, adesivo o targa da parete. La aiutiamo a scegliere dove si vedrà meglio.",
       },
       {
         title: "La configuriamo",
-        body: "Colleghiamo ogni targa al modulo di recensione del vostro Profilo dell'attività su Google e la testiamo su iPhone e Android.",
+        body: "Colleghiamo ogni targa al modulo di recensione del Suo Profilo dell'attività su Google e la testiamo su iPhone e Android.",
       },
       {
-        title: "Posizionatela e invitate",
-        body: "Mettete la targa nel punto giusto e, alla fine di ogni visita, invitate i clienti a dare la loro opinione.",
+        title: "Posizioni la targa e inviti",
+        body: "Metta la targa nel punto giusto e, alla fine di ogni visita, inviti i clienti a dare la loro opinione.",
       },
       {
-        title: "Guardate i risultati",
-        body: "Vedete arrivare le nuove recensioni sul vostro profilo e rispondete per mostrare che ci tenete.",
+        title: "Guardi i risultati",
+        body: "Vede arrivare le nuove recensioni sul Suo profilo e risponde per mostrare che ci tiene.",
       },
     ],
     features: [
       {
         title: "Un tocco per recensire",
-        body: "Il chip apre il modulo di recensione Google della vostra attività direttamente sul telefono del cliente, senza passaggi in più e senza ricerche.",
+        body: "Il chip apre il modulo di recensione Google della Sua attività direttamente sul telefono del cliente, senza passaggi in più e senza ricerche.",
       },
       {
         title: "QR code di riserva",
@@ -786,7 +786,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Link riconfigurabile",
-        body: "Se cambiate profilo, vi trasferite o volete che la targa porti altrove, aggiorniamo il link senza sostituire la targa.",
+        body: "Se cambia profilo, si trasferisce o vuole che la targa porti altrove, aggiorniamo il link senza sostituire la targa.",
       },
       {
         title: "Secondo le regole",
@@ -821,8 +821,8 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Targa con QR code stampato, nel formato che preferite",
-      "Configurazione del link per le recensioni del vostro Profilo dell'attività su Google",
+      "Targa con QR code stampato, nel formato che preferisce",
+      "Configurazione del link per le recensioni del Suo Profilo dell'attività su Google",
       "Test su iPhone e Android prima della consegna",
       "Consigli su dove posizionare la targa e su come invitare i clienti",
       "Riconfigurazione del link ogni volta che serve",
@@ -839,23 +839,23 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "È consentito dalle regole di Google?",
-        a: "Sì, purché lo si usi in modo onesto. Google vieta di offrire sconti o regali in cambio di recensioni e vieta di filtrare i clienti per chiedere l'opinione solo a quelli soddisfatti. Le nostre targhe chiedono a tutti allo stesso modo. Steevanz non è affiliata a Google: rendiamo semplicemente il vostro profilo più facile da raggiungere.",
+        a: "Sì, purché lo si usi in modo onesto. Google vieta di offrire sconti o regali in cambio di recensioni e vieta di filtrare i clienti per chiedere l'opinione solo a quelli soddisfatti. Le nostre targhe chiedono a tutti allo stesso modo. Steevanz non è affiliata a Google: rendiamo semplicemente il Suo profilo più facile da raggiungere.",
       },
       {
         q: "Quanto tempo serve per averla pronta?",
-        a: "Appena ci inviate il link o il nome del vostro Profilo dell'attività su Google, configuriamo e testiamo le targhe in pochi giorni lavorativi. I tempi esatti dipendono da quantità e formato, e ve li confermiamo durante la demo.",
+        a: "Appena ci invia il link o il nome del Suo Profilo dell'attività su Google, configuriamo e testiamo le targhe in pochi giorni lavorativi. I tempi esatti dipendono da quantità e formato, e li confermiamo con Lei durante la demo.",
       },
       {
         q: "Potete garantire più stelle?",
-        a: "No, e nessuno di onesto dovrebbe farlo. La targa rende più facile a più clienti dare la propria opinione, il che di solito offre un'immagine più fedele del vostro servizio. La vostra valutazione dipende sempre dall'esperienza che vivono i clienti.",
+        a: "No, e nessuno di onesto dovrebbe farlo. La targa rende più facile a più clienti dare la propria opinione, il che di solito offre un'immagine più fedele del Suo servizio. La Sua valutazione dipende sempre dall'esperienza che vivono i clienti.",
       },
       {
         q: "E se non ho un Profilo dell'attività su Google?",
-        a: "Vi aiutiamo a trovare il profilo giusto o a capire i passaggi per crearlo e verificarlo. La targa viene configurata solo quando il profilo è attivo e pronto a ricevere recensioni.",
+        a: "La aiutiamo a trovare il profilo giusto o a capire i passaggi per crearlo e verificarlo. La targa viene configurata solo quando il profilo è attivo e pronto a ricevere recensioni.",
       },
       {
         q: "Gestisco un affitto per vacanze. Le targhe fanno per me?",
-        a: "Se è un ostello, un affittacamere, camere con l'host presente o una casa dove accogliete gli ospiti di persona, sì: può avere un profilo Google e la targa chiede una recensione alla fine del soggiorno. Appartamenti e ville con self check-in non possono avere un profilo, secondo le regole stesse di Google, e Booking.com e Airbnb non hanno link di recensione che una targa possa aprire. Per questi casi consigliamo la Guida digitale dell'alloggio, che indica dove lasciare una recensione, allo stesso modo per tutti e senza offrire nulla in cambio.",
+        a: "Se è un ostello, un affittacamere, camere con l'host presente o una casa dove accoglie gli ospiti di persona, sì: può avere un profilo Google e la targa chiede una recensione alla fine del soggiorno. Appartamenti e ville con self check-in non possono avere un profilo, secondo le regole stesse di Google, e Booking.com e Airbnb non hanno link di recensione che una targa possa aprire. Per questi casi consigliamo la Guida digitale dell'alloggio, che indica dove lasciare una recensione, allo stesso modo per tutti e senza offrire nulla in cambio.",
       },
     ],
   },

@@ -674,74 +674,74 @@ export const copy: ProductCopyByLocale = {
   it: {
     name: "Receptionist vocale con IA",
     shortName: "Voce IA",
-    tagline: "Nessuna chiamata senza risposta, anche quando avete le mani occupate.",
+    tagline: "Nessuna chiamata senza risposta, anche quando ha le mani occupate.",
     summary:
-      "Una receptionist con IA che risponde al telefono 24 ore su 24, gestisce le domande frequenti, prende le prenotazioni e passa le chiamate urgenti al vostro staff.",
+      "Una receptionist con IA che risponde al telefono 24 ore su 24, gestisce le domande frequenti, prende le prenotazioni e passa le chiamate urgenti al Suo staff.",
     metaTitle: "Receptionist vocale con IA per le chiamate | Steevanz",
     metaDescription:
-      "Receptionist vocale con IA che risponde alle chiamate 24 ore su 24, gestisce le domande, prende le prenotazioni e vi invia un riassunto via WhatsApp o email. Configurata da Steevanz.",
-    heroTitle: "Rispondete a ogni chiamata, anche in pieno servizio",
+      "Receptionist vocale con IA che risponde alle chiamate 24 ore su 24, gestisce le domande, prende le prenotazioni e Le invia un riassunto via WhatsApp o email. Configurata da Steevanz.",
+    heroTitle: "Risponda a ogni chiamata, anche in pieno servizio",
     heroSubtitle:
-      "Una receptionist vocale con IA che risponde al telefono della vostra attività a qualsiasi ora, gestisce le domande più comuni, prende le prenotazioni e passa le chiamate urgenti al vostro staff. Poi ricevete un riassunto via WhatsApp o email.",
+      "Una receptionist vocale con IA che risponde al telefono della Sua attività a qualsiasi ora, gestisce le domande più comuni, prende le prenotazioni e passa le chiamate urgenti al Suo staff. Poi riceve un riassunto via WhatsApp o email.",
     problem: {
       title: "Ogni chiamata persa può essere un cliente perso",
       body:
-        "Quando state tagliando i capelli, servendo ai tavoli o siete con un paziente, non potete rispondere. Il cliente chiama una volta, forse due, poi chiama qualcun altro. Fuori orario il telefono squilla a vuoto. E assumere qualcuno solo per rispondere al telefono non sempre conviene.",
+        "Quando sta tagliando i capelli, servendo ai tavoli o è con un paziente, non può rispondere. Il cliente chiama una volta, forse due, poi chiama qualcun altro. Fuori orario il telefono squilla a vuoto. E assumere qualcuno solo per rispondere al telefono non sempre conviene.",
       points: [
         "Chiamate perse proprio nelle ore di punta",
-        "Domande semplici che interrompono il vostro lavoro",
+        "Domande semplici che interrompono il Suo lavoro",
         "Nessuno che risponda fuori dall'orario di apertura",
       ],
     },
     solution: {
       title: "Una voce gentile che non è mai occupata",
       body:
-        "La receptionist vocale con IA risponde a nome della vostra attività, parla in modo naturale, usa le vostre informazioni e sa quando passare la chiamata a una persona.",
+        "La receptionist vocale con IA risponde a nome della Sua attività, parla in modo naturale, usa le Sue informazioni e sa quando passare la chiamata a una persona.",
       points: [
         "Risponde 24 ore su 24, anche nei weekend e nei giorni festivi",
         "Gestisce le domande su orari, servizi e indirizzo",
-        "Registra prenotazioni e appuntamenti nella vostra agenda",
+        "Registra prenotazioni e appuntamenti nella Sua agenda",
         "Passa le chiamate urgenti e invia un riassunto di ognuna",
       ],
     },
     steps: [
       {
         title: "Scriviamo il copione",
-        body: "Raccogliamo orari, servizi, domande frequenti e le regole per passare una chiamata al vostro staff.",
+        body: "Raccogliamo orari, servizi, domande frequenti e le regole per passare una chiamata al Suo staff.",
       },
       {
         title: "Impostiamo la voce",
-        body: "Scegliamo la voce e il tono giusti e proviamo con voi una serie di chiamate realistiche prima di partire.",
+        body: "Scegliamo la voce e il tono giusti e proviamo con Lei una serie di chiamate realistiche prima di partire.",
       },
       {
         title: "Attiviamo la deviazione",
-        body: "Le chiamate senza risposta, o tutte le chiamate se preferite, passano alla receptionist con IA.",
+        body: "Le chiamate senza risposta, o tutte le chiamate se preferisce, passano alla receptionist con IA.",
       },
       {
-        title: "Ricevete i riassunti",
-        body: "Dopo ogni chiamata vi arriva via WhatsApp o email un riassunto di quanto è stato chiesto.",
+        title: "Riceve i riassunti",
+        body: "Dopo ogni chiamata Le arriva via WhatsApp o email un riassunto di quanto è stato chiesto.",
       },
     ],
     features: [
       {
         title: "Sempre attiva",
-        body: "Risponde a qualsiasi ora, anche quando tutti sono occupati o siete chiusi, così nessuna chiamata resta a squillare senza risposta.",
+        body: "Risponde a qualsiasi ora, anche quando tutti sono occupati o l'attività è chiusa, così nessuna chiamata resta a squillare senza risposta.",
       },
       {
         title: "Risponde alle domande comuni",
-        body: "Orari, indirizzo, parcheggio, servizi e prezzi indicativi, in base alle informazioni che ci avete dato.",
+        body: "Orari, indirizzo, parcheggio, servizi e prezzi indicativi, in base alle informazioni che ci ha fornito.",
       },
       {
         title: "Prenotazioni al telefono",
-        body: "Registra prenotazioni di tavoli o appuntamenti direttamente nella vostra agenda, confermando con chi chiama giorno, ora e nome.",
+        body: "Registra prenotazioni di tavoli o appuntamenti direttamente nella Sua agenda, confermando con chi chiama giorno, ora e nome.",
       },
       {
         title: "Deviazione delle chiamate urgenti",
-        body: "Se chi chiama vuole parlare con una persona o la questione è urgente, la chiamata viene deviata al numero dello staff che scegliete voi.",
+        body: "Se chi chiama vuole parlare con una persona o la questione è urgente, la chiamata viene deviata al numero dello staff che sceglie Lei.",
       },
       {
         title: "Riassunto di ogni chiamata",
-        body: "Ricevete via WhatsApp o email chi ha chiamato, cosa voleva e cosa è stato risolto, così potete richiamare quando avete un momento.",
+        body: "Riceve via WhatsApp o email chi ha chiamato, cosa voleva e cosa è stato risolto, così può richiamare quando ha un momento.",
       },
       {
         title: "Parla in modo naturale",
@@ -757,51 +757,51 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "beauty",
         title: "Parrucchieri ed estetica",
-        body: "Fissa e conferma gli appuntamenti mentre il vostro staff è con i clienti, senza interrompere un taglio o un trattamento.",
+        body: "Fissa e conferma gli appuntamenti mentre il Suo staff è con i clienti, senza interrompere un taglio o un trattamento.",
       },
       {
         sector: "clinics",
         title: "Cliniche e studi",
-        body: "Risponde alle domande amministrative e fissa gli appuntamenti, passando subito al vostro staff qualsiasi urgenza.",
+        body: "Risponde alle domande amministrative e fissa gli appuntamenti, passando subito al Suo staff qualsiasi urgenza.",
       },
       {
         sector: "lodging",
         title: "B&B e gestori di case vacanza",
-        body: "Risponde alle chiamate degli ospiti in più lingue, dà informazioni su orari di check-in, indicazioni e parcheggio, e vi invia su WhatsApp le richieste che hanno bisogno di voi.",
+        body: "Risponde alle chiamate degli ospiti in più lingue, dà informazioni su orari di check-in, indicazioni e parcheggio, e Le invia su WhatsApp le richieste che hanno bisogno di Lei.",
       },
     ],
     includes: [
       "Copione e regole di gestione delle chiamate",
-      "Impostazione della voce e test con voi",
-      "Collegamento al vostro numero attuale tramite deviazione di chiamata",
-      "Integrazione con la vostra agenda delle prenotazioni",
+      "Impostazione della voce e test con Lei",
+      "Collegamento al Suo numero attuale tramite deviazione di chiamata",
+      "Integrazione con la Sua agenda delle prenotazioni",
       "Riassunti delle chiamate via WhatsApp o email",
       "Regolazioni continue e assistenza via WhatsApp ed email",
     ],
     faq: [
       {
         q: "Devo cambiare numero di telefono?",
-        a: "No. Mantenete il vostro numero e attiviamo la deviazione di chiamata, per esempio solo quando non rispondete o fuori orario. Vi guidiamo passo passo con il vostro operatore telefonico.",
+        a: "No. Mantiene il Suo numero e attiviamo la deviazione di chiamata, per esempio solo quando non risponde o fuori orario. La guidiamo passo passo con il Suo operatore telefonico.",
       },
       {
         q: "Chi chiama saprà di parlare con un'IA?",
-        a: "Sì, ed è giusto così. Per trasparenza, la receptionist si presenta come l'assistente automatico della vostra attività e offre sempre la possibilità di parlare con una persona.",
+        a: "Sì, ed è giusto così. Per trasparenza, la receptionist si presenta come l'assistente automatico della Sua attività e offre sempre la possibilità di parlare con una persona.",
       },
       {
         q: "E se l'IA non conosce la risposta o sbaglia?",
-        a: "L'IA può sbagliare, per questo limitiamo le risposte alle vostre informazioni e fissiamo regole chiare: se non sa qualcosa, prende un messaggio perché il vostro staff richiami, oppure devia la chiamata.",
+        a: "L'IA può sbagliare, per questo limitiamo le risposte alle Sue informazioni e fissiamo regole chiare: se non sa qualcosa, prende un messaggio perché il Suo staff richiami, oppure devia la chiamata.",
       },
       {
         q: "Le chiamate vengono registrate?",
-        a: "Solo se lo autorizzate, e chi chiama viene avvisato all'inizio della chiamata. I dati sono trattati nel rispetto del GDPR e usati solo per fornire il servizio.",
+        a: "Solo se lo autorizza, e chi chiama viene avvisato all'inizio della chiamata. I dati sono trattati nel rispetto del GDPR e usati solo per fornire il servizio.",
       },
       {
         q: "Quanto ci vuole per l'attivazione?",
-        a: "Di solito una o due settimane, compresi la stesura del copione e i test con voi prima di collegare le chiamate reali.",
+        a: "Di solito una o due settimane, compresi la stesura del copione e i test con Lei prima di collegare le chiamate reali.",
       },
       {
         q: "Posso disdire quando voglio?",
-        a: "Sì, il piano è mensile e senza vincoli. Basta disattivare la deviazione di chiamata e il vostro numero funziona esattamente come prima.",
+        a: "Sì, il piano è mensile e senza vincoli. Basta disattivare la deviazione di chiamata e il Suo numero funziona esattamente come prima.",
       },
     ],
   },

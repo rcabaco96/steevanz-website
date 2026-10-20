@@ -721,17 +721,17 @@ export const copy: ProductCopyByLocale = {
     shortName: "Chatbot IA",
     tagline: "Le risposte giuste a qualsiasi ora, sul sito e su WhatsApp.",
     summary:
-      "Un assistente con IA addestrato con le informazioni della vostra attività: menù, prezzi, orari e servizi. Risponde 24 ore su 24 in più lingue e passa la parola alle prenotazioni o al vostro staff.",
+      "Un assistente con IA addestrato con le informazioni della Sua attività: menù, prezzi, orari e servizi. Risponde 24 ore su 24 in più lingue e passa la parola alle prenotazioni o al Suo staff.",
     metaTitle: "Chatbot con IA per sito e WhatsApp | Steevanz",
     metaDescription:
-      "Chatbot con IA per il sito e il WhatsApp della vostra attività: risponde 24 ore su 24 su orari, prezzi e servizi, in italiano, inglese e altre lingue.",
-    heroTitle: "Un assistente che risponde mentre voi lavorate",
+      "Chatbot con IA per il sito e il WhatsApp della Sua attività: risponde 24 ore su 24 su orari, prezzi e servizi, in italiano, inglese e altre lingue.",
+    heroTitle: "Un assistente che risponde mentre Lei lavora",
     heroSubtitle:
-      "Un chatbot con IA che conosce il vostro menù, i prezzi, gli orari e i servizi, e risponde ai clienti sul sito e su WhatsApp, a qualsiasi ora e in più lingue. Quando serve, passa la conversazione al vostro staff.",
+      "Un chatbot con IA che conosce il Suo menù, i prezzi, gli orari e i servizi, e risponde ai clienti sul sito e su WhatsApp, a qualsiasi ora e in più lingue. Quando serve, passa la conversazione al Suo staff.",
     problem: {
       title: "Le stesse domande, tutti i giorni, a tutte le ore",
       body:
-        "A che ora aprite? Avete piatti senza glutine? Quanto costano i colpi di sole? Rispondere sempre agli stessi messaggi su WhatsApp e sul sito porta via ore al vostro staff. E le domande che arrivano la sera o in pieno servizio restano senza risposta finché non è troppo tardi.",
+        "A che ora aprite? Avete piatti senza glutine? Quanto costano i colpi di sole? Rispondere sempre agli stessi messaggi su WhatsApp e sul sito porta via ore al Suo staff. E le domande che arrivano la sera o in pieno servizio restano senza risposta finché non è troppo tardi.",
       points: [
         "Messaggi ripetuti che tolgono tempo all'accoglienza di persona",
         "Clienti che lasciano perdere perché non ricevono una risposta rapida",
@@ -739,42 +739,42 @@ export const copy: ProductCopyByLocale = {
       ],
     },
     solution: {
-      title: "Risposte rapide, con il tono della vostra attività",
+      title: "Risposte rapide, con il tono della Sua attività",
       body:
-        "Addestriamo il chatbot con le informazioni reali della vostra attività e lo mettiamo sul sito e su WhatsApp. Risponde alle domande frequenti, aiuta a prenotare e passa la conversazione a una persona quando serve.",
+        "Addestriamo il chatbot con le informazioni reali della Sua attività e lo mettiamo sul sito e su WhatsApp. Risponde alle domande frequenti, aiuta a prenotare e passa la conversazione a una persona quando serve.",
       points: [
-        "Addestrato con il vostro menù, i prezzi, gli orari e i servizi",
+        "Addestrato con il Suo menù, i prezzi, gli orari e i servizi",
         "Disponibile 24 ore su 24 in italiano, inglese e altre lingue",
-        "Indirizza i clienti al vostro sistema di prenotazione",
-        "Passa la conversazione al vostro staff quando serve",
+        "Indirizza i clienti al Suo sistema di prenotazione",
+        "Passa la conversazione al Suo staff quando serve",
       ],
     },
     steps: [
       {
         title: "Raccogliamo le informazioni",
-        body: "Menù, prezzi, orari, servizi, regole e le domande che vi fanno più spesso.",
+        body: "Menù, prezzi, orari, servizi, regole e le domande che Le fanno più spesso.",
       },
       {
         title: "Addestriamo e testiamo",
-        body: "Configuriamo il chatbot con il tono della vostra attività e verifichiamo le risposte insieme a voi prima di pubblicarlo.",
+        body: "Configuriamo il chatbot con il tono della Sua attività e verifichiamo le risposte insieme a Lei prima di pubblicarlo.",
       },
       {
         title: "Lo colleghiamo al sito e a WhatsApp",
-        body: "Installiamo la chat sul vostro sito e la colleghiamo al numero WhatsApp Business della vostra attività.",
+        body: "Installiamo la chat sul Suo sito e la colleghiamo al numero WhatsApp Business della Sua attività.",
       },
       {
         title: "Lo perfezioniamo nel tempo",
-        body: "Rivediamo le conversazioni con voi e aggiorniamo le informazioni ogni volta che qualcosa cambia.",
+        body: "Rivediamo le conversazioni con Lei e aggiorniamo le informazioni ogni volta che qualcosa cambia.",
       },
     ],
     features: [
       {
-        title: "Conosce la vostra attività",
-        body: "Risponde in base alle informazioni che ci date, come menù, prezzi, orari e servizi, invece di dare risposte generiche prese da internet.",
+        title: "Conosce la Sua attività",
+        body: "Risponde in base alle informazioni che ci fornisce, come menù, prezzi, orari e servizi, invece di dare risposte generiche prese da internet.",
       },
       {
         title: "Sito e WhatsApp",
-        body: "Lo stesso assistente nella chat del sito e su WhatsApp Business, i canali dove i vostri clienti vi scrivono già.",
+        body: "Lo stesso assistente nella chat del sito e su WhatsApp Business, i canali dove i Suoi clienti Le scrivono già.",
       },
       {
         title: "Più lingue",
@@ -786,11 +786,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Passaggio a una persona",
-        body: "Domande delicate, reclami o richieste fuori dal comune passano al vostro staff, insieme a un riassunto della conversazione.",
+        body: "Domande delicate, reclami o richieste fuori dal comune passano al Suo staff, insieme a un riassunto della conversazione.",
       },
       {
-        title: "Sotto il vostro controllo",
-        body: "Decidete voi cosa il chatbot può rispondere e cosa no. Aggiorniamo le informazioni ogni volta che cambia un prezzo, un orario o un piatto.",
+        title: "Sotto il Suo controllo",
+        body: "Decide Lei cosa il chatbot può rispondere e cosa no. Aggiorniamo le informazioni ogni volta che cambia un prezzo, un orario o un piatto.",
       },
     ],
     useCases: [
@@ -821,21 +821,21 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Raccolta e organizzazione delle informazioni della vostra attività",
-      "Configurazione del chatbot con il tono del vostro marchio",
+      "Raccolta e organizzazione delle informazioni della Sua attività",
+      "Configurazione del chatbot con il tono del Suo marchio",
       "Installazione sul sito e collegamento a WhatsApp Business",
-      "Regole di passaggio al vostro staff e alle prenotazioni",
+      "Regole di passaggio al Suo staff e alle prenotazioni",
       "Aggiornamento dei contenuti ogni volta che qualcosa cambia",
       "Assistenza via WhatsApp ed email",
     ],
     faq: [
       {
         q: "Il chatbot può sbagliare?",
-        a: "Sì. L'IA non è perfetta e a volte può dare una risposta imprecisa. Per questo limitiamo il chatbot alle informazioni che ci date, lo testiamo prima di pubblicarlo e impostiamo il passaggio a una persona per gli argomenti delicati.",
+        a: "Sì. L'IA non è perfetta e a volte può dare una risposta imprecisa. Per questo limitiamo il chatbot alle informazioni che ci fornisce, lo testiamo prima di pubblicarlo e impostiamo il passaggio a una persona per gli argomenti delicati.",
       },
       {
         q: "Devo avere un sito?",
-        a: "Non necessariamente. Il chatbot può funzionare solo su WhatsApp Business. Se avete un sito, lo installiamo anche lì.",
+        a: "Non necessariamente. Il chatbot può funzionare solo su WhatsApp Business. Se ha un sito, lo installiamo anche lì.",
       },
       {
         q: "In quali lingue risponde?",
@@ -843,19 +843,19 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come vengono trattati i dati delle conversazioni?",
-        a: "Le conversazioni sono trattate nel rispetto del GDPR e usate solo per fornire il servizio e migliorare le risposte del vostro chatbot. Informiamo i clienti che stanno parlando con un assistente automatico.",
+        a: "Le conversazioni sono trattate nel rispetto del GDPR e usate solo per fornire il servizio e migliorare le risposte del Suo chatbot. Informiamo i clienti che stanno parlando con un assistente automatico.",
       },
       {
         q: "Quanto ci vuole per metterlo in funzione?",
-        a: "Dipende dalla quantità di informazioni, ma di solito il chatbot è pronto in una o due settimane, test con voi compresi.",
+        a: "Dipende dalla quantità di informazioni, ma di solito il chatbot è pronto in una o due settimane, test con Lei compresi.",
       },
       {
         q: "Posso disdire il piano mensile?",
-        a: "Sì, il piano è mensile e senza vincoli. Se disdite, scolleghiamo il chatbot dal sito e da WhatsApp.",
+        a: "Sì, il piano è mensile e senza vincoli. Se disdice, scolleghiamo il chatbot dal sito e da WhatsApp.",
       },
       {
         q: "Funziona per le case vacanza?",
-        a: "Sì. L'assistente impara dalla guida digitale di ogni alloggio e risponde su WhatsApp, nella lingua dell'ospite, a domande su WiFi, check-in e check-out, elettrodomestici, parcheggio, trasporti e consigli. Segue regole fisse: non condivide mai i codici della porta, della cassetta delle chiavi o dell'allarme, né conferma chi sta soggiornando; in caso di emergenza indica il 112 e vi avvisa subito; reclami, danni, rimborsi e richieste di check-in anticipato o check-out posticipato passano a voi con un riassunto. Un numero WhatsApp vale per un massimo di cinque alloggi.",
+        a: "Sì. L'assistente impara dalla guida digitale di ogni alloggio e risponde su WhatsApp, nella lingua dell'ospite, a domande su WiFi, check-in e check-out, elettrodomestici, parcheggio, trasporti e consigli. Segue regole fisse: non condivide mai i codici della porta, della cassetta delle chiavi o dell'allarme, né conferma chi sta soggiornando; in caso di emergenza indica il 112 e La avvisa subito; reclami, danni, rimborsi e richieste di check-in anticipato o check-out posticipato passano a Lei con un riassunto. Un numero WhatsApp vale per un massimo di cinque alloggi.",
       },
     ],
   },

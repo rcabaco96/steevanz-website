@@ -696,17 +696,17 @@ export const copy: ProductCopyByLocale = {
     shortName: "Guida digitale",
     tagline: "La guida della casa in quattro lingue, con un tocco.",
     summary:
-      "Una pagina per smartphone con tutto quello che l'ospite deve sapere: wifi, check-out, regole, elettrodomestici, rifiuti, emergenze e i vostri consigli. Si apre con un tocco su una targa all'interno dell'alloggio, in portoghese, inglese e altre due lingue.",
+      "Una pagina per smartphone con tutto quello che l'ospite deve sapere: wifi, check-out, regole, elettrodomestici, rifiuti, emergenze e i Suoi consigli. Si apre con un tocco su una targa all'interno dell'alloggio, in portoghese, inglese e altre due lingue.",
     metaTitle: "Guida digitale per case vacanza in 4 lingue | Steevanz",
     metaDescription:
       "Una guida per case vacanza in portoghese, inglese e altre due lingue, che si apre con un tocco o con un codice QR. Include il libretto informativo richiesto dalla legge portoghese. Da 69 € per alloggio.",
     heroTitle: "Meno domande, ospiti più contenti",
     heroSubtitle:
-      "Scriviamo la guida della vostra casa, la traduciamo in quattro lingue e vi consegniamo una targa che la apre con un tocco. Gli ospiti trovano il wifi, le regole della casa e i vostri consigli senza dovervi scrivere.",
+      "Scriviamo la guida della Sua casa, la traduciamo in quattro lingue e Le consegniamo una targa che la apre con un tocco. Gli ospiti trovano il wifi, le regole della casa e i Suoi consigli senza doverLe scrivere.",
     problem: {
       title: "Il raccoglitore di carta che nessuno legge",
       body:
-        "La cartellina nel cassetto non è aggiornata, è in una sola lingua e prima o poi si perde. Gli ospiti finiscono per chiedere tutto via messaggio e voi rispondete alle stesse domande più volte a settimana.",
+        "La cartellina nel cassetto non è aggiornata, è in una sola lingua e prima o poi si perde. Gli ospiti finiscono per chiedere tutto via messaggio e Lei risponde alle stesse domande più volte a settimana.",
       points: [
         "La password del wifi chiesta a ogni soggiorno",
         "Regole su rifiuti e rumore che nessuno trova",
@@ -726,20 +726,20 @@ export const copy: ProductCopyByLocale = {
     },
     steps: [
       {
-        title: "Inviateci le informazioni",
-        body: "Appunti, foto o la guida che avete già. Va bene anche un vocale su WhatsApp.",
+        title: "Ci invii le informazioni",
+        body: "Appunti, foto o la guida che ha già. Va bene anche un vocale su WhatsApp.",
       },
       {
         title: "Scriviamo e traduciamo",
-        body: "Organizziamo tutto per argomenti e lo traduciamo in quattro lingue. Niente va online finché non lo approvate.",
+        body: "Organizziamo tutto per argomenti e lo traduciamo in quattro lingue. Niente va online finché non lo approva Lei.",
       },
       {
-        title: "Arriva la vostra targa",
+        title: "Arriva la Sua targa",
         body: "Programmata e testata su iPhone e Android, con codice QR, pronta da sistemare all'interno dell'alloggio.",
       },
       {
         title: "Un tocco e gli ospiti sanno tutto",
-        body: "Wifi, check-out e consigli sul loro telefono, nella loro lingua, senza dovervi scrivere.",
+        body: "Wifi, check-out e consigli sul loro telefono, nella loro lingua, senza doverLe scrivere.",
       },
     ],
     features: [
@@ -752,12 +752,12 @@ export const copy: ProductCopyByLocale = {
         body: "Funzionamento dell'alloggio, regole della casa, rifiuti, elettrodomestici, rumore, regolamento condominiale e contatto del responsabile, come richiede la legge portoghese per le case vacanza.",
       },
       {
-        title: "I vostri consigli",
-        body: "Ristoranti, spiagge e passeggiate scelti da voi, con mappa, oltre alla farmacia, all'ospedale e al centro medico più vicini.",
+        title: "I Suoi consigli",
+        body: "Ristoranti, spiagge e passeggiate scelti da Lei, con mappa, oltre alla farmacia, all'ospedale e al centro medico più vicini.",
       },
       {
         title: "Sempre aggiornata",
-        body: "Facciamo le modifiche entro due giorni lavorativi, senza una nuova targa. Avete cambiato la password del wifi? Basta mandarci un messaggio.",
+        body: "Facciamo le modifiche entro due giorni lavorativi, senza una nuova targa. Ha cambiato la password del wifi? Basta mandarci un messaggio.",
       },
       {
         title: "Sicura, senza dati personali",
@@ -777,12 +777,12 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "lodging",
         title: "Ostelli e B&B",
-        body: "Le targhe alla reception e nelle camere rispondono alle solite domande e lasciano il vostro staff libero di accogliere chi arriva.",
+        body: "Le targhe alla reception e nelle camere rispondono alle solite domande e lasciano il Suo staff libero di accogliere chi arriva.",
       },
       {
         sector: "lodging",
         title: "Gestori di case vacanza",
-        body: "Una guida per ogni casa, tutte con lo stesso stile e il vostro marchio. Quando una regola cambia in tutti i vostri alloggi, pensiamo noi alle modifiche.",
+        body: "Una guida per ogni casa, tutte con lo stesso stile e il Suo marchio. Quando una regola cambia in tutti i Suoi alloggi, pensiamo noi alle modifiche.",
       },
       {
         sector: "lodging",
@@ -801,11 +801,11 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto costa?",
-        a: "69 € per alloggio, comprese la stesura della guida, la traduzione in quattro lingue, una targa, la versione stampabile e i primi 12 mesi online. Dal 13° mese sono 3 € al mese per alloggio. Per i gestori: 59 € per alloggio da 3, 55 € da 5 e 49 € da 10. Prezzi + IVA, confermati nella vostra proposta.",
+        a: "69 € per alloggio, comprese la stesura della guida, la traduzione in quattro lingue, una targa, la versione stampabile e i primi 12 mesi online. Dal 13° mese sono 3 € al mese per alloggio. Per i gestori: 59 € per alloggio da 3, 55 € da 5 e 49 € da 10. Prezzi + IVA, confermati nella Sua proposta.",
       },
       {
         q: "Posso avere più di due lingue aggiuntive?",
-        a: "Sì. Ogni lingua in più ha un piccolo costo, che includiamo nel vostro preventivo.",
+        a: "Sì. Ogni lingua in più ha un piccolo costo, che includiamo nel Suo preventivo.",
       },
       {
         q: "Dove si mette la targa?",
@@ -813,19 +813,19 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "La guida contiene i codici della porta o della cassetta delle chiavi?",
-        a: "Mai. I codici di accesso continuate a inviarli voi nel messaggio di check-in. La guida contiene solo informazioni utili durante il soggiorno, e il suo indirizzo è privato e impossibile da indovinare.",
+        a: "Mai. I codici di accesso continua a inviarli Lei nel messaggio di check-in. La guida contiene solo informazioni utili durante il soggiorno, e il suo indirizzo è privato e impossibile da indovinare.",
       },
       {
         q: "La guida chiede recensioni agli ospiti?",
-        a: "Ha una sezione neutra, «Valuta il tuo soggiorno», uguale per tutti: spiega che Booking.com invia la richiesta di recensione via email e Airbnb nell'app, dopo il check-out. Niente regali, sconti o richieste di cinque stelle, come richiedono le piattaforme stesse.",
+        a: "Ha una sezione neutra, «Valuti il Suo soggiorno», uguale per tutti: spiega che Booking.com invia la richiesta di recensione via email e Airbnb nell'app, dopo il check-out. Niente regali, sconti o richieste di cinque stelle, come richiedono le piattaforme stesse.",
       },
       {
         q: "La guida sostituisce la targa obbligatoria per le case vacanza?",
-        a: "No. La targa identificativa con il vostro numero di registrazione segue un modello ufficiale stabilito per legge. La nostra guida mostra il vostro numero di registrazione, ma non sostituisce quella targa.",
+        a: "No. La targa identificativa con il Suo numero di registrazione segue un modello ufficiale stabilito per legge. La nostra guida mostra il Suo numero di registrazione, ma non sostituisce quella targa.",
       },
       {
         q: "E se cambio la password del wifi?",
-        a: "Mandateci un messaggio e la aggiorniamo entro due giorni lavorativi. La targa resta la stessa.",
+        a: "Ci mandi un messaggio e la aggiorniamo entro due giorni lavorativi. La targa resta la stessa.",
       },
     ],
   },

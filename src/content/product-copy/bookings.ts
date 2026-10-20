@@ -654,10 +654,10 @@ export const copy: ProductCopyByLocale = {
       "Un'agenda online per ristoranti e servizi, con conferma e promemoria via email, le prenotazioni nel calendario del telefono e un link pronto per Instagram.",
     metaTitle: "Sistema di prenotazione online per attività locali | Steevanz",
     metaDescription:
-      "Sistema di prenotazione online per ristoranti, saloni e studi: prenotazioni a qualsiasi ora, promemoria via email e meno appuntamenti saltati. Lo configuriamo noi per voi.",
-    heroTitle: "Un'agenda piena, anche quando siete chiusi",
+      "Sistema di prenotazione online per ristoranti, saloni e studi: prenotazioni a qualsiasi ora, promemoria via email e meno appuntamenti saltati. Lo configuriamo noi per Lei.",
+    heroTitle: "Un'agenda piena, anche fuori orario",
     heroSubtitle:
-      "I vostri clienti prenotano un tavolo, un appuntamento o un servizio online, a qualsiasi ora, dal vostro Instagram, dal sito o dal profilo Google. Ricevono promemoria automatici e il vostro staff vede tutto in un'unica agenda.",
+      "I Suoi clienti prenotano un tavolo, un appuntamento o un servizio online, a qualsiasi ora, dal Suo Instagram, dal sito o dal profilo Google. Ricevono promemoria automatici e il Suo staff vede tutto in un'unica agenda.",
     problem: {
       title: "Il telefono squilla sempre nel momento peggiore",
       body:
@@ -669,9 +669,9 @@ export const copy: ProductCopyByLocale = {
       ],
     },
     solution: {
-      title: "Un'agenda online che lavora per voi",
+      title: "Un'agenda online che lavora per Lei",
       body:
-        "Il cliente sceglie il giorno, l'ora, il servizio e perfino la persona che lo seguirà, senza telefonare. Il sistema conferma, invia i promemoria e tiene aggiornata l'agenda del vostro staff.",
+        "Il cliente sceglie il giorno, l'ora, il servizio e perfino la persona che lo seguirà, senza telefonare. Il sistema conferma, invia i promemoria e tiene aggiornata l'agenda del Suo staff.",
       points: [
         "Prenotazioni a qualsiasi ora, da qualsiasi canale",
         "Conferma e promemoria automatici via email",
@@ -681,12 +681,12 @@ export const copy: ProductCopyByLocale = {
     },
     steps: [
       {
-        title: "Raccontateci come lavorate",
-        body: "Coperti, servizi, durate, orari e staff. Prepariamo l'agenda su misura per la vostra attività.",
+        title: "Ci racconti come lavora",
+        body: "Coperti, servizi, durate, orari e staff. Prepariamo l'agenda su misura per la Sua attività.",
       },
       {
-        title: "Condividete il link",
-        body: "Aggiungiamo il link di prenotazione al vostro Instagram, al sito e al Profilo dell'attività su Google.",
+        title: "Condivida il link",
+        body: "Aggiungiamo il link di prenotazione al Suo Instagram, al sito e al Profilo dell'attività su Google.",
       },
       {
         title: "I clienti prenotano",
@@ -708,19 +708,19 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Nel calendario del telefono",
-        body: "Iscrivetevi all'agenda in Google Calendar, su iPhone o in Outlook e vedete le prenotazioni dove vedete già il resto della giornata.",
+        body: "Si iscriva all'agenda in Google Calendar, su iPhone o in Outlook e veda le prenotazioni dove vede già il resto della giornata.",
       },
       {
         title: "Un link per tutti i canali",
-        body: "Un unico link di prenotazione per la bio di Instagram, il sito, WhatsApp e il pulsante di prenotazione del vostro Profilo dell'attività su Google.",
+        body: "Un unico link di prenotazione per la bio di Instagram, il sito, WhatsApp e il pulsante di prenotazione del Suo Profilo dell'attività su Google.",
       },
       {
         title: "Facile da gestire",
-        body: "Aggiungete le prenotazioni telefoniche, modificatele e bloccate degli orari (un evento, un giorno libero) dallo smartphone, senza formazioni complicate.",
+        body: "Aggiunga le prenotazioni telefoniche, le modifichi e blocchi degli orari (un evento, un giorno libero) dallo smartphone, senza formazioni complicate.",
       },
       {
         title: "Ritardi senza confusione",
-        body: "Impostate la tolleranza di ritardo che il cliente vede quando prenota. Per gli appuntamenti dei servizi, in una giornata difficile, avvisate con un tocco i clienti delle ore successive che siete in ritardo.",
+        body: "Imposti la tolleranza di ritardo che il cliente vede quando prenota. Per gli appuntamenti dei servizi, in una giornata difficile, avvisi con un tocco del ritardo i clienti delle ore successive.",
       },
     ],
     useCases: [
@@ -742,7 +742,7 @@ export const copy: ProductCopyByLocale = {
     ],
     includes: [
       "Configurazione completa di coperti o servizi, orari e staff",
-      "Pagina di prenotazione con il nome e i servizi della vostra attività",
+      "Pagina di prenotazione con il nome e i servizi della Sua attività",
       "Conferma e promemoria via email",
       "Calendario per vedere le prenotazioni sul telefono",
       "Link di prenotazione su Instagram, sul sito e sul profilo Google",
@@ -759,19 +759,19 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso continuare a ricevere prenotazioni per telefono?",
-        a: "Certo. Il vostro staff aggiunge le prenotazioni telefoniche o di persona nella stessa agenda, così non ci sono mai doppie prenotazioni.",
+        a: "Certo. Il Suo staff aggiunge le prenotazioni telefoniche o di persona nella stessa agenda, così non ci sono mai doppie prenotazioni.",
       },
       {
         q: "Quanto tempo serve per la configurazione?",
-        a: "Appena abbiamo servizi, orari e staff, l'agenda è di solito pronta in pochi giorni lavorativi. Vi confermiamo i tempi per il vostro caso durante la demo.",
+        a: "Appena abbiamo servizi, orari e staff, l'agenda è di solito pronta in pochi giorni lavorativi. Le confermiamo i tempi per il Suo caso durante la demo.",
       },
       {
         q: "Come vengono trattati i dati dei clienti?",
-        a: "Conserviamo solo ciò che serve per gestire le prenotazioni e inviare i promemoria. I dati sono trattati nel rispetto del GDPR e restano vostri.",
+        a: "Conserviamo solo ciò che serve per gestire le prenotazioni e inviare i promemoria. I dati sono trattati nel rispetto del GDPR e restano Suoi.",
       },
       {
         q: "Posso disdire quando voglio?",
-        a: "Sì, il piano è mensile e senza vincolo di durata. Se disdite, vi aiutiamo a esportare le prenotazioni e i contatti.",
+        a: "Sì, il piano è mensile e senza vincolo di durata. Se disdice, La aiutiamo a esportare le prenotazioni e i contatti.",
       },
     ],
   },

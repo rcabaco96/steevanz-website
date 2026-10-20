@@ -636,17 +636,17 @@ export const copy: ProductCopyByLocale = {
     shortName: "Targhe social",
     tagline: "Nuovi follower e contatti con un tocco, senza dover dettare nulla.",
     summary:
-      "Targhe e card che portano il cliente al vostro Instagram, Facebook, TikTok, sito o pagina di link. Include biglietti da visita digitali che condividono i vostri contatti.",
+      "Targhe e card che portano il cliente al Suo Instagram, Facebook, TikTok, sito o pagina di link. Include biglietti da visita digitali che condividono i Suoi contatti.",
     metaTitle: "Targhe per social e biglietti da visita digitali | Steevanz",
     metaDescription:
-      "Targhe e card per i social: con un tocco il cliente arriva al vostro Instagram, al vostro TikTok, al sito o al vostro biglietto da visita digitale. Senza app, configurato da noi.",
-    heroTitle: "Dal bancone al vostro Instagram con un tocco",
+      "Targhe e card per i social: con un tocco il cliente arriva al Suo Instagram, al Suo TikTok, al sito o al Suo biglietto da visita digitale. Senza app, configurato da noi.",
+    heroTitle: "Dal bancone al Suo Instagram con un tocco",
     heroSubtitle:
-      "Una targa che apre il vostro Instagram, TikTok, Facebook, il sito o una pagina con tutti i vostri link. E biglietti da visita digitali che salvano i vostri contatti sul telefono di chi li tocca. Configuriamo tutto noi.",
+      "Una targa che apre il Suo Instagram, TikTok, Facebook, il sito o una pagina con tutti i Suoi link. E biglietti da visita digitali che salvano i Suoi contatti sul telefono di chi li tocca. Configuriamo tutto noi.",
     problem: {
       title: "Dire il nome del profilo ad alta voce non basta",
       body:
-        "Un cliente apprezza il vostro locale e vuole seguirvi, ma deve chiedere il nome del profilo, scriverlo giusto e trovare quello corretto tra diversi profili simili. Molti si arrendono a metà. I biglietti da visita di carta finiscono in un cassetto e i vostri contatti non arrivano mai sul telefono.",
+        "Un cliente apprezza il Suo locale e vuole seguirLa, ma deve chiedere il nome del profilo, scriverlo giusto e trovare quello corretto tra diversi profili simili. Molti si arrendono a metà. I biglietti da visita di carta finiscono in un cassetto e i Suoi contatti non arrivano mai sul telefono.",
       points: [
         "Nomi profilo difficili da scrivere o simili a quelli di altri",
         "Biglietti da visita di carta che nessuno conserva",
@@ -656,40 +656,40 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Un tocco, la destinazione giusta",
       body:
-        "Ogni targa o card apre esattamente il profilo, il sito o la pagina che scegliete voi. Se avete più canali, creiamo una pagina di link ospitata da Steevanz che li riunisce tutti.",
+        "Ogni targa o card apre esattamente il profilo, il sito o la pagina che sceglie Lei. Se ha più canali, creiamo una pagina di link ospitata da Steevanz che li riunisce tutti.",
       points: [
         "Instagram, Facebook, TikTok, sito o pagina di link",
-        "Biglietto da visita digitale che salva il vostro contatto sul telefono",
+        "Biglietto da visita digitale che salva il Suo contatto sul telefono",
         "Codice QR stampato per i telefoni che non leggono il tocco",
         "Destinazione modificabile in qualsiasi momento, senza una nuova targa",
       ],
     },
     steps: [
       {
-        title: "Diteci i vostri canali",
-        body: "Inviateci i link dei vostri social, il sito e i dati che volete sul biglietto da visita.",
+        title: "Ci dica i Suoi canali",
+        body: "Ci invii i link dei Suoi social, il sito e i dati che vuole sul biglietto da visita.",
       },
       {
         title: "Creiamo la pagina e le card",
-        body: "Creiamo la vostra pagina di link con i colori del vostro marchio e configuriamo ogni targa o card con la destinazione giusta.",
+        body: "Creiamo la Sua pagina di link con i colori del Suo marchio e configuriamo ogni targa o card con la destinazione giusta.",
       },
       {
-        title: "Un tocco e vi seguono",
-        body: "Il cliente avvicina il telefono e arriva sul vostro profilo, pronto a seguirvi o a salvare i vostri contatti.",
+        title: "Un tocco e La seguono",
+        body: "Il cliente avvicina il telefono e arriva sul Suo profilo, pronto a seguirLa o a salvare i Suoi contatti.",
       },
     ],
     features: [
       {
         title: "Dritti ai social",
-        body: "La targa apre il vostro profilo Instagram, Facebook o TikTok, nell'app se è installata, senza che il cliente debba cercare il nome del profilo.",
+        body: "La targa apre il Suo profilo Instagram, Facebook o TikTok, nell'app se è installata, senza che il cliente debba cercare il nome del profilo.",
       },
       {
         title: "Pagina di link ospitata",
-        body: "Una pagina semplice con i colori del vostro marchio e tutti i vostri link, ospitata da Steevanz. Perfetta anche per la bio di Instagram.",
+        body: "Una pagina semplice con i colori del Suo marchio e tutti i Suoi link, ospitata da Steevanz. Perfetta anche per la bio di Instagram.",
       },
       {
         title: "Biglietto da visita digitale",
-        body: "Una card che condivide i vostri dati in formato vCard: nome, telefono, email e indirizzo si salvano sul telefono con un solo tocco.",
+        body: "Una card che condivide i Suoi dati in formato vCard: nome, telefono, email e indirizzo si salvano sul telefono con un solo tocco.",
       },
       {
         title: "Codice QR incluso",
@@ -697,7 +697,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Destinazione modificabile",
-        body: "Avete cambiato nome profilo, lanciato una campagna o aperto un negozio online? Cambiamo la destinazione senza una nuova targa.",
+        body: "Ha cambiato nome profilo, lanciato una campagna o aperto un negozio online? Cambiamo la destinazione senza una nuova targa.",
       },
       {
         title: "Formati su misura",
@@ -708,29 +708,29 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "restaurants",
         title: "Ristoranti e bar",
-        body: "Una targa vicino alla cassa porta i clienti all'Instagram dove pubblicate il piatto del giorno, le novità e gli eventi.",
+        body: "Una targa vicino alla cassa porta i clienti all'Instagram dove pubblica il piatto del giorno, le novità e gli eventi.",
       },
       {
         sector: "beauty",
         title: "Parrucchieri ed estetica",
-        body: "Le clienti guardano i vostri lavori su Instagram o TikTok senza alzarsi dalla poltrona. Ogni professionista può avere il proprio biglietto da visita digitale.",
+        body: "Le clienti guardano i Suoi lavori su Instagram o TikTok senza alzarsi dalla poltrona. Ogni professionista può avere il proprio biglietto da visita digitale.",
       },
       {
         sector: "retail",
         title: "Negozi",
-        body: "Un adesivo in vetrina o sul bancone porta al vostro negozio online, ai vostri social o a una pagina con tutti i modi per contattarvi.",
+        body: "Un adesivo in vetrina o sul bancone porta al Suo negozio online, ai Suoi social o a una pagina con tutti i modi per contattarLa.",
       },
       {
         sector: "lodging",
         title: "Ostelli e B&B",
-        body: "Una targa «Seguici» nella zona comune o alla reception porta gli ospiti al vostro Instagram, così si ricorderanno di voi per il prossimo viaggio.",
+        body: "Una targa «Ci segua» nella zona comune o alla reception porta gli ospiti al Suo Instagram, così si ricorderanno di Lei per il prossimo viaggio.",
       },
     ],
     includes: [
       "Targhe o card con codice QR stampato",
       "Configurazione di ogni destinazione: social, sito o pagina di link",
-      "Pagina di link ospitata da Steevanz con i colori del vostro marchio",
-      "Biglietto da visita digitale in formato vCard, se lo scegliete",
+      "Pagina di link ospitata da Steevanz con i colori del Suo marchio",
+      "Biglietto da visita digitale in formato vCard, se lo sceglie",
       "Cambi di destinazione ogni volta che servono",
       "Assistenza via WhatsApp ed email",
     ],
@@ -741,19 +741,19 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso avere una targa per ogni social?",
-        a: "Sì. Molte attività preferiscono una sola targa che apre la pagina di link, così il cliente sceglie il canale. Ma configuriamo anche targhe dedicate a Instagram, TikTok o al vostro sito.",
+        a: "Sì. Molte attività preferiscono una sola targa che apre la pagina di link, così il cliente sceglie il canale. Ma configuriamo anche targhe dedicate a Instagram, TikTok o al Suo sito.",
       },
       {
         q: "Come funziona il biglietto da visita digitale?",
-        a: "Quando qualcuno tocca la card, il suo telefono mostra i vostri contatti e propone di salvarli. Non serve nessuna app, né da una parte né dall'altra.",
+        a: "Quando qualcuno tocca la card, il telefono di chi la tocca mostra i Suoi contatti e propone di salvarli. Non serve nessuna app, né da una parte né dall'altra.",
       },
       {
         q: "Posso cambiare la destinazione più avanti?",
-        a: "Sì. Poiché la destinazione è gestita da Steevanz, cambiamo il link quando ce lo chiedete, e la targa o la card che avete già continua a funzionare.",
+        a: "Sì. Poiché la destinazione è gestita da Steevanz, cambiamo il link quando ce lo chiede, e la targa o la card che ha già continua a funzionare.",
       },
       {
         q: "La pagina di link raccoglie dati dei visitatori?",
-        a: "La pagina serve solo a mostrare i vostri link. Non chiediamo dati personali ai visitatori, e le eventuali informazioni tecniche sono trattate nel rispetto del GDPR.",
+        a: "La pagina serve solo a mostrare i Suoi link. Non chiediamo dati personali ai visitatori, e le eventuali informazioni tecniche sono trattate nel rispetto del GDPR.",
       },
     ],
   },

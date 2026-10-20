@@ -696,17 +696,17 @@ export const copy: ProductCopyByLocale = {
     shortName: "Menù digitale",
     tagline: "Ogni piatto nel suo video, con il prezzo, con un tocco al tavolo.",
     summary:
-      "Il menù della vostra attività in video: ogni piatto ha il suo video verticale, con nome, prezzo e descrizione. Il cliente lo apre con un tocco o con il QR della targa sul tavolo e, se volete, ordina direttamente da lì.",
+      "Il menù della Sua attività in video: ogni piatto ha il suo video verticale, con nome, prezzo e descrizione. Il cliente lo apre con un tocco o con il QR della targa sul tavolo e, se Lei lo desidera, ordina direttamente da lì.",
     metaTitle: "Menù digitale per ristoranti | Steevanz",
     metaDescription:
-      "Un menù in video per ristoranti e bar: un video per piatto, con il prezzo, che si apre con un tocco o con un QR sul tavolo, con ordini al tavolo se volete. Targhe a 20 €, 15 € da 10 in su.",
+      "Un menù in video per ristoranti e bar: un video per piatto, con il prezzo, che si apre con un tocco o con un QR sul tavolo, con ordini al tavolo se lo desidera. Targhe a 20 €, 15 € da 10 in su.",
     heroTitle: "Il menù prende vita con un tocco al tavolo",
     heroSubtitle:
-      "Ogni piatto ha il suo video verticale, con nome, prezzo e descrizione, su una pagina tutta vostra. Il cliente tocca la targa sul tavolo o inquadra il QR, scorre i piatti come nei Reels e vede cosa mangerà prima di ordinare. Senza app. Pensiamo a tutto noi.",
+      "Ogni piatto ha il suo video verticale, con nome, prezzo e descrizione, su una pagina tutta Sua. Il cliente tocca la targa sul tavolo o inquadra il QR, scorre i piatti come nei Reels e vede cosa mangerà prima di ordinare. Senza app. Pensiamo a tutto noi.",
     problem: {
       title: "Un menù di carta non mette appetito",
       body:
-        "Il nome di un piatto su un foglio plastificato dice poco. Il cliente non sa quanto è grande la porzione né come arriva il piatto in tavola: chiede al cameriere, esita e finisce per ordinare quello che conosce già. I video che pubblicate sui social esistono, ma chi è seduto al tavolo non li trova.",
+        "Il nome di un piatto su un foglio plastificato dice poco. Il cliente non sa quanto è grande la porzione né come arriva il piatto in tavola: chiede al cameriere, esita e finisce per ordinare quello che conosce già. I video che pubblica sui social esistono, ma chi è seduto al tavolo non li trova.",
       points: [
         "Piatti che nessuno ordina perché nessuno sa come sono",
         "Camerieri che spiegano lo stesso piatto a ogni tavolo",
@@ -716,29 +716,29 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Il menù sotto gli occhi, a ogni tavolo",
       body:
-        "Ogni targa apre il menù in video della vostra attività, su una pagina pensata per lo smartphone. I piatti sono ordinati in categorie, come Brunch o Bevande, e ognuno mostra il suo video, con il prezzo. Un tocco apre il piatto a schermo intero.",
+        "Ogni targa apre il menù in video della Sua attività, su una pagina pensata per lo smartphone. I piatti sono ordinati in categorie, come Brunch o Bevande, e ognuno mostra il suo video, con il prezzo. Un tocco apre il piatto a schermo intero.",
       points: [
         "Un video verticale per piatto, con nome, prezzo e descrizione",
         "Categorie su misura, come Brunch, Bevande o Tutti",
-        "Ordini al tavolo, se volete: il tavolo ordina dallo smartphone",
+        "Ordini al tavolo, se lo desidera: il tavolo ordina dallo smartphone",
         "Si apre con un tocco o con il QR code stampato, senza app",
       ],
     },
     steps: [
       {
-        title: "Filmate i piatti",
-        body: "Girate con lo smartphone un breve video verticale di ogni piatto. Vi diamo una guida per girare i video.",
+        title: "Filmi i piatti",
+        body: "Giri con lo smartphone un breve video verticale di ogni piatto. Le diamo una guida per girare i video.",
       },
       {
         title: "Prepariamo il menù",
-        body: "Inviateci i video, i nomi, i prezzi e le descrizioni. Prepariamo il menù con il vostro logo e le vostre categorie, e ospitiamo i video.",
+        body: "Ci invii i video, i nomi, i prezzi e le descrizioni. Prepariamo il menù con il Suo logo e le Sue categorie, e ospitiamo i video.",
       },
       {
         title: "Programmiamo le targhe",
-        body: "Adesivo rotondo o base rotonda, uno per tavolo, con il vostro testo e, se volete, il vostro logo. Ogni targa esce programmata, bloccata e testata su iPhone e Android, con un QR code che apre lo stesso menù.",
+        body: "Adesivo rotondo o base rotonda, uno per tavolo, con il Suo testo e, se lo desidera, il Suo logo. Ogni targa esce programmata, bloccata e testata su iPhone e Android, con un QR code che apre lo stesso menù.",
       },
       {
-        title: "Tocca e scegli",
+        title: "Il cliente tocca e sceglie",
         body: "Il cliente tocca la targa o inquadra il QR, vede i piatti in video, con i prezzi, e sceglie. Con gli ordini al tavolo attivi, ordina subito.",
       },
     ],
@@ -749,15 +749,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Come nei Reels",
-        body: "I piatti scorrono in una griglia. Un tocco apre lo schermo intero, riprendendo da dove era arrivato il video, e si scorre in su e in giù per vedere gli altri. Il menù si apre con un'animazione del vostro logo.",
+        body: "I piatti scorrono in una griglia. Un tocco apre lo schermo intero, riprendendo da dove era arrivato il video, e si scorre in su e in giù per vedere gli altri. Il menù si apre con un'animazione del Suo logo.",
       },
       {
         title: "Ordini al tavolo",
-        body: "Facoltativi, menù per menù. Ogni tavolo ha la sua targa e tutti gli smartphone del tavolo condividono lo stesso ordine in tempo reale, con «Aggiungi» su ogni piatto e una nota per piatto, come «senza cipolla».",
+        body: "Facoltativi, menù per menù. Ogni tavolo ha la sua targa e tutti gli smartphone del tavolo condividono lo stesso ordine in tempo reale, con «Aggiunga» su ogni piatto e una nota per piatto, come «senza cipolla».",
       },
       {
-        title: "Confermato dal vostro staff",
-        body: "«Ordina» mostra un QR code e il numero dell'ordine. Il cameriere lo inquadra con la fotocamera dello smartphone, senza app né login, conferma con un tocco e il tavolo vede subito «Ordine confermato ✓».",
+        title: "Confermato dal Suo staff",
+        body: "«Ordini» mostra un QR code e il numero dell'ordine. Il cameriere lo inquadra con la fotocamera dello smartphone, senza app né login, conferma con un tocco e il tavolo vede subito «Ordine confermato ✓».",
       },
       {
         title: "Piccola e rotonda",
@@ -765,7 +765,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Prezzi sempre giusti",
-        body: "È cambiato un prezzo o c'è un piatto nuovo? Ditecelo e aggiorniamo il menù. Le targhe restano le stesse.",
+        body: "È cambiato un prezzo o c'è un piatto nuovo? Ce lo dica e aggiorniamo il menù. Le targhe restano le stesse.",
       },
     ],
     useCases: [
@@ -791,10 +791,10 @@ export const copy: ProductCopyByLocale = {
       },
     ],
     includes: [
-      "Menù in video con pagina propria, categorie e il vostro logo",
+      "Menù in video con pagina propria, categorie e il Suo logo",
       "Preparazione del menù e hosting del menù e dei video",
       "Guida per girare i video dei piatti",
-      "Ordini al tavolo, se volete, con una targa per tavolo",
+      "Ordini al tavolo, se lo desidera, con una targa per tavolo",
       "Targhe rotonde con QR code stampato, programmate e testate su iPhone e Android",
       "Assistenza via WhatsApp ed email",
     ],
@@ -805,11 +805,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Non ho ancora video dei piatti. E adesso?",
-        a: "Girateli con lo smartphone: un breve video verticale per piatto. Vi diamo una guida per girarli e prepariamo il menù appena li avete.",
+        a: "Li giri con lo smartphone: un breve video verticale per piatto. Le diamo una guida per girarli e prepariamo il menù appena li ha.",
       },
       {
         q: "Come funzionano gli ordini al tavolo?",
-        a: "Ogni tavolo ha la sua targa. Chi è al tavolo tocca «Aggiungi» sui piatti, aggiunge una nota se vuole e tutti vedono lo stesso ordine in tempo reale. «Ordina» mostra un QR code e il numero dell'ordine: il cameriere lo inquadra con la fotocamera dello smartphone, senza app né login, e conferma con un tocco. Il tavolo vede «Ordine confermato ✓». Gli ordini al tavolo si attivano o si disattivano menù per menù.",
+        a: "Ogni tavolo ha la sua targa. Chi è al tavolo tocca «Aggiunga» sui piatti, aggiunge una nota se vuole e tutti vedono lo stesso ordine in tempo reale. «Ordini» mostra un QR code e il numero dell'ordine: il cameriere lo inquadra con la fotocamera dello smartphone, senza app né login, e conferma con un tocco. Il tavolo vede «Ordine confermato ✓». Gli ordini al tavolo si attivano o si disattivano menù per menù.",
       },
       {
         q: "Quanto costa?",
@@ -817,7 +817,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come tengo aggiornati i prezzi?",
-        a: "Diteci cosa è cambiato e aggiorniamo il menù: prezzi, piatti, categorie e video. Le targhe non cambiano.",
+        a: "Ci dica cosa è cambiato e aggiorniamo il menù: prezzi, piatti, categorie e video. Le targhe non cambiano.",
       },
       {
         q: "Sostituisce il menù cartaceo?",
@@ -825,7 +825,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Quali smartphone leggono le targhe?",
-        a: "Gli iPhone XS e successivi leggono le targhe senza app: basta avvicinare la parte alta del telefono. Sugli iPhone dal 7 all'X, usate il lettore di tag nel Centro di Controllo. La maggior parte degli Android le legge se la lettura contactless è attiva. Per tutti gli altri c'è un QR code stampato.",
+        a: "Gli iPhone XS e successivi leggono le targhe senza app: basta avvicinare la parte alta del telefono. Sugli iPhone dal 7 all'X, si usa il lettore di tag nel Centro di Controllo. La maggior parte degli Android le legge se la lettura contactless è attiva. Per tutti gli altri c'è un QR code stampato.",
       },
     ],
   },

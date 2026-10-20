@@ -699,15 +699,15 @@ export const copy: ProductCopyByLocale = {
   it: {
     name: "Automazione dei processi su misura",
     shortName: "Automazione",
-    tagline: "Meno attività ripetitive, più tempo per il vostro lavoro.",
+    tagline: "Meno attività ripetitive, più tempo per il Suo lavoro.",
     summary:
-      "Automatizziamo fatture, follow-up dei contatti, promemoria e collegamenti tra gli strumenti che già usate. Progetti su misura, con prezzo fisso concordato prima di iniziare.",
+      "Automatizziamo fatture, follow-up dei contatti, promemoria e collegamenti tra gli strumenti che già usa. Progetti su misura, con prezzo fisso concordato prima di iniziare.",
     metaTitle: "Automazione dei processi per piccole attività | Steevanz",
     metaDescription:
-      "Automazione dei processi su misura per piccole attività: fatture, promemoria, follow-up dei contatti e collegamenti tra i vostri strumenti, a un prezzo fisso concordato in anticipo.",
-    heroTitle: "Lasciate che le attività ripetitive vadano da sole",
+      "Automazione dei processi su misura per piccole attività: fatture, promemoria, follow-up dei contatti e collegamenti tra i Suoi strumenti, a un prezzo fisso concordato in anticipo.",
+    heroTitle: "Lasci che le attività ripetitive vadano da sole",
     heroSubtitle:
-      "Copiare i dati dei moduli nei fogli di calcolo, emettere fatture, inviare promemoria, rispondere alle richieste. Automatizziamo queste attività collegando gli strumenti che già usate, in un progetto su misura a prezzo fisso.",
+      "Copiare i dati dei moduli nei fogli di calcolo, emettere fatture, inviare promemoria, rispondere alle richieste. Automatizziamo queste attività collegando gli strumenti che già usa, in un progetto su misura a prezzo fisso.",
     problem: {
       title: "Ore perse a copiare, incollare e ricordarsi",
       body:
@@ -721,7 +721,7 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Processi che vanno da soli, dall'inizio alla fine",
       body:
-        "Guardiamo con voi dove si perde tempo, progettiamo l'automazione e colleghiamo gli strumenti che già usate. Il risultato è un processo che funziona senza interventi e vi avvisa quando serve il vostro aiuto.",
+        "Guardiamo con Lei dove si perde tempo, progettiamo l'automazione e colleghiamo gli strumenti che già usa. Il risultato è un processo che funziona senza interventi e La avvisa quando serve il Suo aiuto.",
       points: [
         "Analisi gratuita dei processi che portano via più tempo",
         "Collegamenti tra moduli, fogli di calcolo, fatturazione ed email",
@@ -732,29 +732,29 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Primo colloquio",
-        body: "Durante una demo individuiamo le attività ripetitive che vi portano via più tempo.",
+        body: "Durante una demo individuiamo le attività ripetitive che Le portano via più tempo.",
       },
       {
         title: "Proposta a prezzo fisso",
-        body: "Vi inviamo cosa automatizzeremo, i tempi e il prezzo finale, senza sorprese.",
+        body: "Le inviamo cosa automatizzeremo, i tempi e il prezzo finale, senza sorprese.",
       },
       {
         title: "Realizziamo e testiamo",
-        body: "Costruiamo l'automazione con i vostri strumenti e la testiamo con voi su casi reali.",
+        body: "Costruiamo l'automazione con i Suoi strumenti e la testiamo con Lei su casi reali.",
       },
       {
         title: "Consegna e assistenza",
-        body: "Vi spieghiamo come funziona e restiamo disponibili per modifiche e assistenza.",
+        body: "Le spieghiamo come funziona e restiamo disponibili per modifiche e assistenza.",
       },
     ],
     features: [
       {
         title: "Fatturazione automatica",
-        body: "Fatture emesse nel vostro software di fatturazione a partire da una prenotazione, un ordine o un modulo, e inviate al cliente via email in automatico.",
+        body: "Fatture emesse nel Suo software di fatturazione a partire da una prenotazione, un ordine o un modulo, e inviate al cliente via email in automatico.",
       },
       {
         title: "Follow-up dei contatti",
-        body: "Ogni richiesta di preventivo o di informazioni riceve una risposta immediata e un promemoria per il vostro staff, così nessun potenziale cliente viene dimenticato.",
+        body: "Ogni richiesta di preventivo o di informazioni riceve una risposta immediata e un promemoria per il Suo staff, così nessun potenziale cliente viene dimenticato.",
       },
       {
         title: "Promemoria e avvisi",
@@ -770,7 +770,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Prezzo fisso",
-        body: "Ogni progetto ha un perimetro e un prezzo concordati prima di iniziare. Sapete esattamente cosa riceverete e quanto pagherete.",
+        body: "Ogni progetto ha un perimetro e un prezzo concordati prima di iniziare. Sa esattamente cosa riceverà e quanto pagherà.",
       },
     ],
     useCases: [
@@ -797,13 +797,13 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "lodging",
         title: "Case vacanza: «Pulizie e scadenze»",
-        body: "A partire dai vostri calendari Airbnb e Booking.com, avvisa il team delle pulizie il giorno prima di ogni partenza, segnala i cambi nello stesso giorno, ricorda all'host la scadenza della comunicazione degli ospiti e invia un riepilogo settimanale. Prezzo fisso di 149 € per un massimo di cinque alloggi.",
+        body: "A partire dai Suoi calendari Airbnb e Booking.com, avvisa il team delle pulizie il giorno prima di ogni partenza, segnala i cambi nello stesso giorno, ricorda all'host la scadenza della comunicazione degli ospiti e invia un riepilogo settimanale. Prezzo fisso di 149 € per un massimo di cinque alloggi.",
       },
     ],
     includes: [
       "Analisi dei processi da automatizzare",
       "Proposta con perimetro, tempi e prezzo fisso",
-      "Realizzazione e test con i vostri strumenti",
+      "Realizzazione e test con i Suoi strumenti",
       "Documentazione semplice di ciò che è stato automatizzato",
       "Formazione dello staff",
       "Assistenza via WhatsApp ed email dopo la consegna",
@@ -811,11 +811,11 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Devo cambiare gli strumenti che uso?",
-        a: "Di solito no. Lavoriamo con gli strumenti che avete già, come fogli di calcolo, email, software di fatturazione o moduli online. Proponiamo un cambio solo quando uno strumento non permette alcun collegamento.",
+        a: "Di solito no. Lavoriamo con gli strumenti che ha già, come fogli di calcolo, email, software di fatturazione o moduli online. Proponiamo un cambio solo quando uno strumento non permette alcun collegamento.",
       },
       {
         q: "Come funziona il prezzo fisso?",
-        a: "Dopo l'analisi vi inviamo una proposta con cosa faremo, i tempi e il prezzo finale. Se il perimetro non cambia, non cambia nemmeno il prezzo.",
+        a: "Dopo l'analisi Le inviamo una proposta con cosa faremo, i tempi e il prezzo finale. Se il perimetro non cambia, non cambia nemmeno il prezzo.",
       },
       {
         q: "Quanto dura un progetto?",
@@ -827,11 +827,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come vengono protetti i miei dati?",
-        a: "Usiamo solo gli accessi necessari, trattiamo i dati nel rispetto del GDPR e documentiamo dove passano. Gli account restano vostri e potete revocarci l'accesso in qualsiasi momento.",
+        a: "Usiamo solo gli accessi necessari, trattiamo i dati nel rispetto del GDPR e documentiamo dove passano. Gli account restano Suoi e può revocarci l'accesso in qualsiasi momento.",
       },
       {
         q: "Cosa fa l'automazione «Pulizie e scadenze» per le case vacanza?",
-        a: "Usa i link del calendario (iCal) che Airbnb e Booking.com forniscono per ogni annuncio. Il giorno prima di ogni partenza invia al vostro team delle pulizie l'orario di partenza, il prossimo arrivo e l'alloggio, via WhatsApp o email. Il giorno dopo ogni arrivo vi ricorda la scadenza di tre giorni lavorativi per comunicare gli ospiti al SIBA, in Portogallo (un promemoria, non l'invio) e, una volta alla settimana, vi manda un riepilogo di arrivi e partenze. Ha dei limiti: i calendari non riportano nomi né numero degli ospiti e si aggiornano con qualche ora di ritardo. Prezzo fisso di 149 € per un massimo di cinque alloggi, oppure incluso nel pacchetto per case vacanza.",
+        a: "Usa i link del calendario (iCal) che Airbnb e Booking.com forniscono per ogni annuncio. Il giorno prima di ogni partenza invia al Suo team delle pulizie l'orario di partenza, il prossimo arrivo e l'alloggio, via WhatsApp o email. Il giorno dopo ogni arrivo Le ricorda la scadenza di tre giorni lavorativi per comunicare gli ospiti al SIBA, in Portogallo (un promemoria, non l'invio) e, una volta alla settimana, Le manda un riepilogo di arrivi e partenze. Ha dei limiti: i calendari non riportano nomi né numero degli ospiti e si aggiornano con qualche ora di ritardo. Prezzo fisso di 149 € per un massimo di cinque alloggi, oppure incluso nel pacchetto per case vacanza.",
       },
     ],
   },
