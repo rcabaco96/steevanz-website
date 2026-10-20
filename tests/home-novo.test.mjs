@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { goals, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { businessCardBandCopy, goals, guideBandCopy, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
 import { productAds } from "../src/content/product-ads.ts";
 
 // The home page, «/» (pt) and «/en» (en): routes, components and content.
@@ -66,6 +66,8 @@ describe("home page («/» and «/en»)", () => {
     for (const ad of Object.values(productAds)) for (const file of [ad.src, ad.poster]) assert.ok(existsSync(join("public", file)), file);
     assert.match(readFileSync(join(dir, "MenuShowcase.tsx"), "utf8"), /<AdVideo/);
     assert.match(readFileSync(join(dir, "LoyaltyBanner.tsx"), "utf8"), /<AdVideo/);
+    assert.match(readFileSync(join(dir, "AdBand.tsx"), "utf8"), /<AdVideo/);
+    for (const id of ["digital-menu", "loyalty", "guest-guide", "business-card"]) assert.ok(productAds[id], id);
     assert.match(readFileSync("src/components/pages/ProductPage.tsx", "utf8"), /<AdVideo/);
     assert.match(readFileSync("src/components/media/AdVideo.tsx", "utf8"), /preload="none"/);
     assert.match(readFileSync(join(dir, "PlatesBanner.tsx"), "utf8"), /<HeroTapScene/);
@@ -74,6 +76,7 @@ describe("home page («/» and «/en»)", () => {
   it("has no Dolci e Salati case section and no «fidelização» in the loyalty band", () => {
     for (const { path, text } of pageFiles) assert.doesNotMatch(text, /novo-case|copy\.dolci/, path);
     assert.doesNotMatch(JSON.stringify(loyaltyCopy), /fideliza|\d\s*€|€\s*\d/i);
+    for (const copy of [guideBandCopy, businessCardBandCopy]) assert.doesNotMatch(JSON.stringify(copy), /fideliza|\d\s*€|€\s*\d/i);
   });
 
   it("never shows a «published» toast in the plate scenes (the stars on the form fill: owner, 2026-10-20)", () => {
@@ -89,8 +92,9 @@ describe("home page («/» and «/en»)", () => {
     const home = readFileSync(join(dir, "NovoHome.tsx"), "utf8");
     assert.doesNotMatch(home, /PricesFaq|novo-prices/);
     for (const page of ["src/app/(pt)/page.tsx", "src/app/(intl)/[lang]/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
-    // Section order: clients, plates, Menu digital, loyalty card, goals, sectors, how we work, final call.
-    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
+    // Section order: clients, plates, Menu digital, loyalty card, goals (right below the loyalty card: owner rule),
+    // guest guide, business card, sectors, how we work, final call.
+    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'id="novo-goals"', 'productId="guest-guide"', 'productId="business-card"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
     const positions = order.map((needle) => home.indexOf(needle));
     assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
     assert.deepEqual([...positions].sort((a, b) => a - b), positions);
@@ -130,6 +134,14 @@ describe("home page («/» and «/en»)", () => {
     assert.match(novoCopy.pt.showcase.cta, /^Conhecer /);
     assert.match(platesCopy.pt.cta, /^Conhecer /);
     assert.match(loyaltyCopy.pt.cta, /^Conhecer /);
+    assert.equal(guideBandCopy.pt.cta, "Conhecer o guia");
+    assert.equal(businessCardBandCopy.pt.cta, "Conhecer os cartões");
+    for (const copy of [guideBandCopy, businessCardBandCopy]) {
+      assert.match(copy.en.cta, /^Discover /);
+      assert.match(copy.it.cta, /^Scopra /);
+      assert.equal(copy.en.vat, "+ VAT");
+      assert.equal(copy.de.vat, "zzgl. MwSt.");
+    }
     for (const cta of [novoCopy.en.showcase.cta, platesCopy.en.cta, loyaltyCopy.en.cta]) assert.match(cta, /^Discover /);
     assert.doesNotMatch(readFileSync("src/components/pages/SectorPage.tsx", "utf8"), /SectorExamples|alojamento-template/);
     assert.doesNotMatch(readFileSync("src/content/sectors.ts", "utf8"), /alojamento-template|examples:/);

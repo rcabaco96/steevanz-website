@@ -55,6 +55,11 @@
   .rest > .points:first-child {
     margin-top: 1.25rem;
   }
+  /* The media on the left (AdBand), so neighbouring bands alternate sides. */
+  .flip {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    grid-template-areas: "media ." "media head" "media rest" "media .";
+  }
 }
 
 .eyebrow {

@@ -36,6 +36,30 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
       it: "Spot della carta fedeltà digitale di Steevanz: il cliente si iscrive con un tocco, raccoglie timbri sul telefono e il premio arriva da solo.",
     },
   },
+  "guest-guide": {
+    src: "/home/guia-alojamento-anuncio-720.mp4",
+    poster: "/home/guia-alojamento-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio do Guia digital do alojamento da Steevanz: o hóspede toca na placa e encontra no telemóvel o WiFi, o check-in e check-out, as regras da casa e as recomendações.",
+      en: "Steevanz digital guest guide ad: guests tap the plate and find the WiFi, check-in and check-out, house rules and recommendations on their phone.",
+      es: "Anuncio de la Guía digital del alojamiento de Steevanz: el huésped toca la placa y encuentra en el móvil el wifi, el check-in y el check-out, las normas de la casa y las recomendaciones.",
+      fr: "Publicité du livret d'accueil digital Steevanz : le voyageur touche la plaque et trouve sur son téléphone le wifi, l'arrivée et le départ, le règlement intérieur et les recommandations.",
+      de: "Werbespot der digitalen Gästemappe von Steevanz: Gäste tippen auf das Schild und finden auf dem Handy WLAN, Check-in und Check-out, Hausregeln und Empfehlungen.",
+      it: "Spot della guida digitale dell'alloggio di Steevanz: l'ospite tocca la targa e trova sul telefono il wifi, check-in e check-out, le regole della casa e i consigli.",
+    },
+  },
+  "business-card": {
+    src: "/home/cartao-visita-anuncio-720.mp4",
+    poster: "/home/cartao-visita-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio do Cartão de visita digital da Steevanz: um toque no cartão abre a página de contacto e o contacto fica guardado no telemóvel.",
+      en: "Steevanz digital business card ad: one tap on the card opens the contact page and the contact is saved on the phone.",
+      es: "Anuncio de la Tarjeta de visita digital de Steevanz: un toque en la tarjeta abre la página de contacto y el contacto queda guardado en el móvil.",
+      fr: "Publicité de la carte de visite digitale Steevanz : un toucher sur la carte ouvre la page de contact et le contact est enregistré dans le téléphone.",
+      de: "Werbespot der digitalen Visitenkarte von Steevanz: Ein Antippen der Karte öffnet die Kontaktseite und der Kontakt wird im Handy gespeichert.",
+      it: "Spot del biglietto da visita digitale di Steevanz: un tocco sul biglietto apre la pagina di contatto e il contatto viene salvato nel telefono.",
+    },
+  },
 };
 
 /** The video's buttons. */

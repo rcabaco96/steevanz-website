@@ -17,3 +17,13 @@ cartao-cliente-anuncio-720 (.mp4 e .jpg) — home e página do Cartão de client
   Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Cartao de Cliente.mp4»
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Carimbo em segundos.» (11 s).
+
+guia-alojamento-anuncio-720 (.mp4 e .jpg) — home e página do Guia digital do alojamento (2026-10-20)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Guia do Alojamento.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Está tudo aqui.» (10 s).
+
+cartao-visita-anuncio-720 (.mp4 e .jpg) — home e página do Cartão de visita digital (2026-10-20)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Cartao de Visita.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Fica guardado.» (12 s).

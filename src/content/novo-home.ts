@@ -857,6 +857,179 @@ export const loyaltyCopy: Localized<typeof loyaltyPt> = {
   },
 };
 
+/* ---------- Guia digital do alojamento e Cartão de visita digital (bandas com o anúncio) ---------- */
+
+/**
+ * The two bands with the guest guide and business card ads (content/product-ads.ts), after the goals.
+ * Facts from content/product-copy/guest-guide.ts and business-card.ts. No prices here: they are read
+ * from products.ts and shown without VAT, with «+ IVA». {price}, {quantity} and {quantities} are filled in
+ * by components/novo/AdBand.
+ */
+export interface AdBandCopy {
+  eyebrow: string;
+  titleStart: string;
+  titleAccent: string;
+  body: string;
+  points: string[];
+  /** «desde» before the price, or "" when the price is a flat one. */
+  from: string;
+  /** «por placa», «por cartão», … */
+  per: string;
+  note: string;
+  vat: string;
+  cta: string;
+}
+
+export const guideBandCopy: Localized<AdBandCopy> = {
+  pt: {
+    eyebrow: "Guia digital do alojamento",
+    titleStart: "Menos perguntas,",
+    titleAccent: "hóspedes mais felizes.",
+    body: "O hóspede toca na placa e encontra o WiFi, o check-in, as regras da casa e as suas recomendações, na língua dele. Menos mensagens para si.",
+    points: ["WiFi com botão para copiar a password", "Português, inglês e mais duas línguas", "Atualizado por nós, sem trocar a placa"],
+    from: "desde",
+    per: "por placa",
+    note: "Uma placa por alojamento e uma só mensalidade por conta. {price} por placa a partir de {quantity} alojamentos.",
+    vat: "+ IVA",
+    cta: "Conhecer o guia",
+  },
+  en: {
+    eyebrow: "Digital guest guide",
+    titleStart: "Fewer questions,",
+    titleAccent: "happier guests.",
+    body: "Guests tap the plate and find the WiFi, check-in, house rules and your recommendations, in their own language. Fewer messages for you.",
+    points: ["WiFi with a button to copy the password", "Portuguese, English and two more languages", "Kept up to date by us, no new plate needed"],
+    from: "from",
+    per: "per plate",
+    note: "One plate per property and a single monthly fee per account. {price} per plate for {quantity} properties or more.",
+    vat: "+ VAT",
+    cta: "Discover the guest guide",
+  },
+  es: {
+    eyebrow: "Guía digital del alojamiento",
+    titleStart: "Menos preguntas,",
+    titleAccent: "huéspedes más contentos.",
+    body: "El huésped toca la placa y encuentra el wifi, el check-in, las normas de la casa y sus recomendaciones, en su idioma. Menos mensajes para usted.",
+    points: ["Wifi con botón para copiar la contraseña", "Portugués, inglés y dos idiomas más", "Actualizada por nosotros, sin cambiar la placa"],
+    from: "desde",
+    per: "por placa",
+    note: "Una placa por alojamiento y una sola cuota mensual por cuenta. {price} por placa a partir de {quantity} alojamientos.",
+    vat: "+ IVA",
+    cta: "Conocer la guía",
+  },
+  fr: {
+    eyebrow: "Livret d'accueil digital",
+    titleStart: "Moins de questions,",
+    titleAccent: "des voyageurs plus heureux.",
+    body: "Le voyageur touche la plaque et trouve le wifi, l'arrivée, le règlement intérieur et vos recommandations, dans sa langue. Moins de messages pour vous.",
+    points: ["Wifi avec un bouton pour copier le mot de passe", "Portugais, anglais et deux autres langues", "Mis à jour par nous, sans changer la plaque"],
+    from: "à partir de",
+    per: "la plaque",
+    note: "Une plaque par logement et un seul abonnement mensuel par compte. {price} la plaque à partir de {quantity} logements.",
+    vat: "+ TVA",
+    cta: "Découvrir le livret d'accueil",
+  },
+  de: {
+    eyebrow: "Digitale Gästemappe",
+    titleStart: "Weniger Fragen,",
+    titleAccent: "zufriedenere Gäste.",
+    body: "Ihre Gäste tippen auf das Schild und finden WLAN, Check-in, Hausregeln und Ihre Empfehlungen in ihrer eigenen Sprache. Weniger Nachrichten für Sie.",
+    points: ["WLAN mit Taste zum Kopieren des Passworts", "Portugiesisch, Englisch und zwei weitere Sprachen", "Von uns aktuell gehalten, ohne neues Schild"],
+    from: "ab",
+    per: "pro Schild",
+    note: "Ein Schild pro Unterkunft und eine einzige Monatsgebühr pro Konto. {price} pro Schild ab {quantity} Unterkünften.",
+    vat: "zzgl. MwSt.",
+    cta: "Die Gästemappe entdecken",
+  },
+  it: {
+    eyebrow: "Guida digitale dell'alloggio",
+    titleStart: "Meno domande,",
+    titleAccent: "ospiti più contenti.",
+    body: "L'ospite tocca la targa e trova il wifi, il check-in, le regole della casa e i Suoi consigli, nella sua lingua. Meno messaggi per Lei.",
+    points: ["Wifi con un pulsante per copiare la password", "Portoghese, inglese e altre due lingue", "Aggiornata da noi, senza cambiare la targa"],
+    from: "da",
+    per: "a targa",
+    note: "Una targa per alloggio e un solo canone mensile per account. {price} a targa da {quantity} alloggi.",
+    vat: "+ IVA",
+    cta: "Scopra la guida",
+  },
+};
+
+export const businessCardBandCopy: Localized<AdBandCopy> = {
+  pt: {
+    eyebrow: "Cartão de visita digital",
+    titleStart: "O seu contacto,",
+    titleAccent: "guardado num toque.",
+    body: "O cliente aproxima o telemóvel do seu cartão, ou lê o QR, e abre-se a sua página de contacto. Com o botão «Guardar contacto», os seus dados ficam no telemóvel dele, sem erros.",
+    points: ["Em iPhone e Android, sem app", "Nome, contactos e logótipo da empresa incluídos", "Mudou de número? Atualizamos sem custo extra"],
+    from: "",
+    per: "por cartão",
+    note: "Packs de {quantities} cartões, desde {price} por cartão.",
+    vat: "+ IVA",
+    cta: "Conhecer os cartões",
+  },
+  en: {
+    eyebrow: "Digital business card",
+    titleStart: "Your contact,",
+    titleAccent: "saved with one tap.",
+    body: "Your client holds their phone to your card, or scans the QR, and your contact page opens. With the «Save contact» button, your details go straight into their phone, with no typos.",
+    points: ["On iPhone and Android, no app", "Name, contact details and company logo included", "New number? We update it at no extra cost"],
+    from: "",
+    per: "per card",
+    note: "Packs of {quantities} cards, from {price} per card.",
+    vat: "+ VAT",
+    cta: "Discover the business cards",
+  },
+  es: {
+    eyebrow: "Tarjeta de visita digital",
+    titleStart: "Su contacto,",
+    titleAccent: "guardado con un toque.",
+    body: "El cliente acerca el móvil a su tarjeta, o lee el QR, y se abre su página de contacto. Con el botón «Guardar contacto», sus datos quedan en el móvil del cliente, sin errores.",
+    points: ["En iPhone y Android, sin app", "Nombre, contactos y logotipo de la empresa incluidos", "¿Ha cambiado de número? Lo actualizamos sin coste extra"],
+    from: "",
+    per: "por tarjeta",
+    note: "Packs de {quantities} tarjetas, desde {price} por tarjeta.",
+    vat: "+ IVA",
+    cta: "Conocer las tarjetas",
+  },
+  fr: {
+    eyebrow: "Carte de visite digitale",
+    titleStart: "Votre contact,",
+    titleAccent: "enregistré d'un toucher.",
+    body: "Votre client approche son téléphone de votre carte, ou scanne le QR code, et votre page de contact s'ouvre. Avec le bouton «Enregistrer le contact», vos coordonnées arrivent dans son téléphone, sans erreur.",
+    points: ["Sur iPhone et Android, sans application", "Nom, coordonnées et logo de l'entreprise inclus", "Nouveau numéro ? Nous le mettons à jour sans frais"],
+    from: "",
+    per: "la carte",
+    note: "Packs de {quantities} cartes, à partir de {price} la carte.",
+    vat: "+ TVA",
+    cta: "Découvrir les cartes de visite",
+  },
+  de: {
+    eyebrow: "Digitale Visitenkarte",
+    titleStart: "Ihr Kontakt,",
+    titleAccent: "mit einem Antippen gespeichert.",
+    body: "Ihr Kunde hält das Handy an Ihre Karte oder scannt den QR-Code, und Ihre Kontaktseite öffnet sich. Mit der Taste „Kontakt speichern“ landen Ihre Daten fehlerfrei in seinem Handy.",
+    points: ["Auf iPhone und Android, ohne App", "Name, Kontaktdaten und Firmenlogo inklusive", "Neue Nummer? Wir aktualisieren ohne Aufpreis"],
+    from: "",
+    per: "pro Karte",
+    note: "Pakete mit {quantities} Karten, ab {price} pro Karte.",
+    vat: "zzgl. MwSt.",
+    cta: "Die Visitenkarten entdecken",
+  },
+  it: {
+    eyebrow: "Biglietto da visita digitale",
+    titleStart: "Il Suo contatto,",
+    titleAccent: "salvato con un tocco.",
+    body: "Il cliente avvicina il telefono al Suo biglietto, o inquadra il QR, e si apre la Sua pagina di contatto. Con il pulsante «Salvi il contatto», i Suoi dati finiscono nel suo telefono, senza errori.",
+    points: ["Su iPhone e Android, senza app", "Nome, contatti e logo dell'azienda inclusi", "Nuovo numero? Lo aggiorniamo senza costi extra"],
+    from: "",
+    per: "a biglietto",
+    note: "Pacchetti da {quantities} biglietti, da {price} a biglietto.",
+    vat: "+ IVA",
+    cta: "Scopra i biglietti da visita",
+  },
+};
+
 /* ---------- Placas para avaliações (banner): Google, Tripadvisor ou Booking.com ---------- */
 
 /**

@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
-import { goalCtas, goals, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
+import { businessCardBandCopy, goalCtas, goals, guideBandCopy, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
 import { localize, type Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
 import { whatsappUrl } from "@/lib/site";
+import { AdBand } from "./AdBand";
 import { ClientStrip } from "./ClientStrip";
 import { Goals, type GoalView } from "./Goals";
 import { MenuShowcase } from "./MenuShowcase";
@@ -153,13 +154,18 @@ export function NovoHome({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* 7. Soluções por setor */}
+      {/* 7. Guia digital do alojamento and 8. Cartão de visita digital, each with its ad (owner, 2026-10-20): after the
+          goals, so «O que quer melhorar?» stays right below the loyalty card band; the video sides alternate. */}
+      <AdBand locale={locale} productId="guest-guide" copy={guideBandCopy} headingId="novo-guide" tone="gold" media="left" />
+      <AdBand locale={locale} productId="business-card" copy={businessCardBandCopy} headingId="novo-business-card" tone="rose" media="right" />
+
+      {/* 9. Soluções por setor */}
       <SectorSolutions locale={locale} />
 
-      {/* 8. Como trabalhamos */}
+      {/* 10. Como trabalhamos */}
       <HowWeWork locale={locale} />
 
-      {/* 9. Final CTA and close */}
+      {/* 11. Final CTA and close */}
       <section aria-labelledby="novo-final" className={styles.final}>
         <div className={styles.wrap}>
           <h2 id="novo-final" className={styles.h2} data-reveal>
