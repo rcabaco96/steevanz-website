@@ -104,7 +104,10 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               )}
             </div>
             <div className="flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-3">
-              <Price product={product} locale={locale} showQualifier />
+              {/* On phones the price notes wrap before the floating WhatsApp button (owner, 2026-10-20). */}
+              <div className="pr-[4.75rem] sm:pr-0">
+                <Price product={product} locale={locale} showQualifier />
+              </div>
               <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
                 <ButtonLink href={bookHref} size="lg">
                   {t.common.bookDemo}
@@ -115,7 +118,7 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
                   {t.common.requestInfo}
                 </ButtonLink>
               </div>
-              {product.customization ? <p className="-mt-2 text-sm text-subtle">{localizePartial(cartCopy, locale).customize.productHint}</p> : null}
+              {product.customization ? <p className="-mt-2 pr-[4.75rem] text-sm text-subtle sm:pr-0">{localizePartial(cartCopy, locale).customize.productHint}</p> : null}
             </div>
           </div>
         </div>
