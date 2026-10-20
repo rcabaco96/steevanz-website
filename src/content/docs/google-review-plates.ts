@@ -5,13 +5,13 @@ export const docs: ProductDocs = {
   pages: {
     "getting-started": {
       pt: {
-        title: "Primeiros passos com as placas Google Reviews",
+        title: "Primeiros passos com as placas para avaliações",
         description:
-          "Saiba como funcionam as placas para reviews no Google, o que recebe da Steevanz e o que precisa de preparar antes de começar a recolher reviews.",
+          "Saiba como funcionam as placas para avaliações no Google, no Tripadvisor e na Booking.com, o que recebe da Steevanz e o que precisa de preparar antes de começar.",
         blocks: [
           {
             type: "p",
-            text: "As placas Google Reviews permitem que os seus clientes deixem uma avaliação no Google em poucos segundos: basta aproximar o telemóvel da placa, ou apontar a câmara para o código QR impresso, e o formulário de avaliação do seu negócio abre de imediato. Sem pesquisas, sem procurar o nome da loja no Google Maps, sem passos intermédios.",
+            text: "As placas para avaliações levam os seus clientes, em poucos segundos, à página certa para avaliar o seu negócio: basta aproximar o telemóvel da placa, ou apontar a câmara para o código QR impresso. Cada placa abre um destino, à sua escolha: o Google, o Tripadvisor ou a Booking.com. Sem pesquisas, sem procurar o nome da loja, sem passos intermédios.",
           },
           {
             type: "p",
@@ -20,7 +20,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "como-funciona", text: "Como funciona" },
           {
             type: "p",
-            text: "Cada placa tem um chip (do tipo **NTAG213** ou **NTAG215**) escondido no interior e um código QR impresso na frente. O chip e o QR apontam para um endereço curto gerido pela Steevanz, que por sua vez redireciona o cliente para o formulário de avaliação do seu Perfil da Empresa no Google.",
+            text: "Cada placa tem um chip (do tipo **NTAG213** ou **NTAG215**) escondido no interior e um código QR impresso na frente. O chip e o QR apontam para um endereço curto gerido pela Steevanz, que por sua vez redireciona o cliente para o destino dessa placa. No Google, por exemplo, é o formulário de avaliação do seu Perfil da Empresa.",
           },
           {
             type: "ol",
@@ -37,6 +37,26 @@ export const docs: ProductDocs = {
             title: "Nada para instalar",
             text: "O cliente não precisa de instalar nenhuma aplicação. A leitura por aproximação está incluída na grande maioria dos telemóveis recentes e o QR funciona com a câmara de qualquer smartphone.",
           },
+          { type: "h2", id: "plataformas", text: "Google, Tripadvisor ou Booking.com" },
+          {
+            type: "p",
+            text: "Escolhe o destino de cada placa na encomenda. Uma placa abre sempre um único destino: se quer avaliações em duas plataformas, usa duas placas.",
+          },
+          {
+            type: "table",
+            head: ["Plataforma", "O que a placa abre", "Quem pode avaliar"],
+            rows: [
+              ["Google", "O formulário de avaliação do seu Perfil da Empresa", "Qualquer cliente com conta Google"],
+              ["Tripadvisor", "A página de avaliação do seu negócio no Tripadvisor", "Qualquer cliente com conta Tripadvisor"],
+              ["Booking.com", "A página do seu alojamento na Booking.com", "Só hóspedes que reservaram pela Booking, pelo convite que a Booking envia por email depois do check-out"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "A Booking.com funciona de outra forma",
+            text: "A Booking.com não tem um link de avaliação aberto a todos. Por isso, a placa da Booking não deixa ninguém avaliar diretamente: abre a página do alojamento e lembra o hóspede de usar o email de avaliação que a Booking lhe envia depois do check-out. Nunca diga a um hóspede que reservou por outro canal que pode avaliar na Booking.com.",
+          },
           { type: "h2", id: "formatos-disponiveis", text: "Formatos disponíveis" },
           {
             type: "table",
@@ -52,14 +72,14 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Um **Perfil da Empresa no Google** (antigo Google My Business) ativo e verificado.",
+              "Para cada destino, a página do negócio ativa: um **Perfil da Empresa no Google** verificado, a página no Tripadvisor ou a página do alojamento na Booking.com.",
               "Acesso a esse perfil como proprietário ou gestor, ou disponibilidade para nos enviar o link de avaliação.",
               "Uma ideia dos locais onde quer colocar as placas, para escolhermos os formatos certos.",
             ],
           },
           {
             type: "p",
-            text: "Se ainda não tem o perfil verificado, trate disso primeiro: sem um perfil ativo, o Google não mostra o formulário de avaliação. Podemos orientá-lo no processo durante a [demonstração gratuita](/agendar).",
+            text: "Se usar o Google e o perfil ainda não estiver verificado, trate disso primeiro: sem um perfil ativo, o Google não mostra o formulário de avaliação. Podemos orientá-lo no processo durante a [demonstração gratuita](/agendar).",
           },
           { type: "h2", id: "proximos-passos", text: "Próximos passos" },
           {
@@ -74,18 +94,18 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "A Steevanz não é o Google nem tem qualquer afiliação com a Google. As placas apenas encaminham os seus clientes para o formulário público de avaliação do seu perfil.",
+            text: "A Steevanz não tem qualquer afiliação com a Google, o Tripadvisor ou a Booking.com. As placas apenas encaminham os seus clientes para as páginas públicas do seu negócio nessas plataformas.",
           },
         ],
       },
       en: {
-        title: "Getting started with Google review plates",
+        title: "Getting started with review plates",
         description:
-          "Learn how Google review plates work, what Steevanz delivers and what you need to prepare before you start collecting more Google reviews.",
+          "Learn how review plates for Google, Tripadvisor and Booking.com work, what Steevanz delivers and what you need to prepare before you start.",
         blocks: [
           {
             type: "p",
-            text: "Google review plates let your customers leave a Google review in seconds: they tap their phone on the plate, or point the camera at the printed QR code, and your business's review form opens straight away. No searching, no hunting for your shop on Google Maps, no extra steps.",
+            text: "Review plates take your customers to the right page to review your business in seconds: they tap their phone on the plate, or point the camera at the printed QR code. Each plate opens one destination of your choice: Google, Tripadvisor or Booking.com. No searching, no hunting for your shop, no extra steps.",
           },
           {
             type: "p",
@@ -94,7 +114,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "How it works" },
           {
             type: "p",
-            text: "Each plate has a chip (**NTAG213** or **NTAG215**) hidden inside and a QR code printed on the front. Both point to a short link managed by Steevanz, which redirects the customer to the review form of your Google Business Profile.",
+            text: "Each plate has a chip (**NTAG213** or **NTAG215**) hidden inside and a QR code printed on the front. Both point to a short link managed by Steevanz, which redirects the customer to that plate's destination. On Google, for example, that's the review form of your Google Business Profile.",
           },
           {
             type: "ol",
@@ -111,6 +131,26 @@ export const docs: ProductDocs = {
             title: "Nothing to install",
             text: "Customers don't need to install any app. Tap reading is built into the vast majority of recent phones, and the QR code works with any smartphone camera.",
           },
+          { type: "h2", id: "platforms", text: "Google, Tripadvisor or Booking.com" },
+          {
+            type: "p",
+            text: "You choose each plate's destination when you order. A plate always opens a single destination: if you want reviews on two platforms, you use two plates.",
+          },
+          {
+            type: "table",
+            head: ["Platform", "What the plate opens", "Who can review"],
+            rows: [
+              ["Google", "The review form of your Business Profile", "Any customer with a Google account"],
+              ["Tripadvisor", "Your business's review page on Tripadvisor", "Any customer with a Tripadvisor account"],
+              ["Booking.com", "Your property's page on Booking.com", "Only guests who booked through Booking, from the invitation Booking emails after check-out"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Booking.com works differently",
+            text: "Booking.com has no review link open to everyone. So the Booking plate doesn't let anyone review directly: it opens the property's page and reminds guests to use the review email Booking sends them after check-out. Never tell a guest who booked through another channel that they can review on Booking.com.",
+          },
           { type: "h2", id: "available-formats", text: "Available formats" },
           {
             type: "table",
@@ -126,14 +166,14 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "An active, verified **Google Business Profile** (formerly Google My Business).",
+              "For each destination, your business's live page: a verified **Google Business Profile**, your Tripadvisor page or your property's page on Booking.com.",
               "Owner or manager access to that profile, or the ability to send us your review link.",
               "A rough idea of where you want the plates, so we can pick the right formats.",
             ],
           },
           {
             type: "p",
-            text: "If your profile isn't verified yet, sort that out first: without an active profile, Google won't show the review form. We can guide you through it during the [free demo](/en/book-a-demo).",
+            text: "If you use Google and your profile isn't verified yet, sort that out first: without an active profile, Google won't show the review form. We can guide you through it during the [free demo](/en/book-a-demo).",
           },
           { type: "h2", id: "next-steps", text: "Next steps" },
           {
@@ -148,18 +188,18 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Steevanz is not Google and has no affiliation with Google. The plates simply send your customers to the public review form of your profile.",
+            text: "Steevanz has no affiliation with Google, Tripadvisor or Booking.com. The plates simply send your customers to your business's public pages on those platforms.",
           },
         ],
       },
       es: {
-        title: "Primeros pasos con las placas para reseñas en Google",
+        title: "Primeros pasos con las placas para reseñas",
         description:
-          "Descubra cómo funcionan las placas para reseñas en Google, qué recibe de Steevanz y qué debe preparar antes de empezar a recoger más reseñas en Google.",
+          "Descubra cómo funcionan las placas para reseñas en Google, Tripadvisor y Booking.com, qué recibe de Steevanz y qué debe preparar antes de empezar.",
         blocks: [
           {
             type: "p",
-            text: "Las placas para reseñas en Google permiten que sus clientes dejen una reseña en Google en pocos segundos: basta con acercar el móvil a la placa, o apuntar la cámara al código QR impreso, y el formulario de reseñas de su negocio se abre al instante. Sin búsquedas, sin buscar el nombre del local en Google Maps, sin pasos intermedios.",
+            text: "Las placas para reseñas llevan a sus clientes en pocos segundos a la página correcta para valorar su negocio: basta con acercar el móvil a la placa o apuntar la cámara al código QR impreso. Cada placa abre un destino, a su elección: Google, Tripadvisor o Booking.com. Sin búsquedas, sin buscar el nombre de la tienda, sin pasos intermedios.",
           },
           {
             type: "p",
@@ -168,7 +208,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "Cómo funciona" },
           {
             type: "p",
-            text: "Cada placa tiene un chip (**NTAG213** o **NTAG215**) escondido en su interior y un código QR impreso en la parte delantera. El chip y el QR apuntan a una dirección corta gestionada por Steevanz, que redirige al cliente al formulario de reseñas de su Perfil de Empresa de Google.",
+            text: "Cada placa tiene un chip (**NTAG213** o **NTAG215**) escondido en su interior y un código QR impreso en la parte delantera. Ambos apuntan a un enlace corto gestionado por Steevanz, que redirige al cliente al destino de esa placa. En Google, por ejemplo, es el formulario de reseñas de su Perfil de Empresa.",
           },
           {
             type: "ol",
@@ -185,6 +225,26 @@ export const docs: ProductDocs = {
             title: "Nada que instalar",
             text: "El cliente no necesita instalar ninguna app. La lectura con un toque viene incluida en la gran mayoría de los móviles recientes, y el QR funciona con la cámara de cualquier smartphone.",
           },
+          { type: "h2", id: "platforms", text: "Google, Tripadvisor o Booking.com" },
+          {
+            type: "p",
+            text: "Usted elige el destino de cada placa en el pedido. Una placa abre siempre un único destino: si quiere reseñas en dos plataformas, utiliza dos placas.",
+          },
+          {
+            type: "table",
+            head: ["Plataforma", "Qué abre la placa", "Quién puede opinar"],
+            rows: [
+              ["Google", "El formulario de reseñas de su Perfil de Empresa", "Cualquier cliente con cuenta de Google"],
+              ["Tripadvisor", "La página de reseñas de su negocio en Tripadvisor", "Cualquier cliente con cuenta de Tripadvisor"],
+              ["Booking.com", "La página de su alojamiento en Booking.com", "Solo huéspedes que reservaron por Booking, desde la invitación que Booking envía por correo tras el check-out"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Booking.com funciona de otra manera",
+            text: "Booking.com no tiene un enlace de valoración abierto a todos. Por eso, la placa de Booking no permite valorar directamente a nadie: abre la página del alojamiento y recuerda al huésped que use el correo de valoración que Booking le envía tras el check-out. Nunca diga a un huésped que reservó por otro canal que puede valorar en Booking.com.",
+          },
           { type: "h2", id: "available-formats", text: "Formatos disponibles" },
           {
             type: "table",
@@ -200,14 +260,14 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Un **Perfil de Empresa de Google** (antes Google My Business) activo y verificado.",
+              "Para cada destino, la página activa del negocio: un **Perfil de Empresa de Google** verificado, su página en Tripadvisor o la página del alojamiento en Booking.com.",
               "Acceso a ese perfil como propietario o administrador, o la posibilidad de enviarnos su enlace de reseñas.",
               "Una idea de dónde quiere colocar las placas, para elegir los formatos adecuados.",
             ],
           },
           {
             type: "p",
-            text: "Si todavía no tiene el perfil verificado, resuélvalo primero: sin un perfil activo, Google no muestra el formulario de reseñas. Podemos orientarle en el proceso durante la [demostración gratuita](/es/book-a-demo).",
+            text: "Si usa Google y su perfil todavía no está verificado, resuélvalo primero: sin un perfil activo, Google no muestra el formulario de reseñas. Podemos orientarle en el proceso durante la [demostración gratuita](/es/book-a-demo).",
           },
           { type: "h2", id: "next-steps", text: "Próximos pasos" },
           {
@@ -222,18 +282,18 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Steevanz no es Google ni tiene ninguna afiliación con Google. Las placas solo llevan a sus clientes al formulario público de reseñas de su perfil.",
+            text: "Steevanz no tiene ninguna afiliación con Google, Tripadvisor ni Booking.com. Las placas solo llevan a sus clientes a las páginas públicas de su negocio en esas plataformas.",
           },
         ],
       },
       fr: {
-        title: "Premiers pas avec les plaques pour avis Google",
+        title: "Premiers pas avec les plaques pour avis",
         description:
-          "Découvrez comment fonctionnent les plaques pour avis Google, ce que Steevanz vous livre et ce qu'il faut préparer avant de commencer à recueillir plus d'avis Google.",
+          "Découvrez comment fonctionnent les plaques pour avis sur Google, Tripadvisor et Booking.com, ce que Steevanz vous livre et ce qu'il faut préparer avant de commencer.",
         blocks: [
           {
             type: "p",
-            text: "Les plaques pour avis Google permettent à vos clients de laisser un avis Google en quelques secondes : il suffit d'approcher le téléphone de la plaque, ou de pointer l'appareil photo vers le QR code imprimé, et le formulaire d'avis de votre commerce s'ouvre aussitôt. Sans recherche, sans chercher votre établissement sur Google Maps, sans étape intermédiaire.",
+            text: "Les plaques pour avis mènent vos clients en quelques secondes vers la bonne page pour évaluer votre établissement : il suffit d'approcher le téléphone de la plaque, ou de pointer l'appareil photo vers le QR code imprimé. Chaque plaque ouvre une destination de votre choix : Google, Tripadvisor ou Booking.com. Pas de recherche, pas besoin de chercher votre commerce, aucune étape intermédiaire.",
           },
           {
             type: "p",
@@ -242,7 +302,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "Comment ça marche" },
           {
             type: "p",
-            text: "Chaque plaque contient une puce (**NTAG213** ou **NTAG215**) cachée à l'intérieur et un QR code imprimé sur la face avant. Les deux pointent vers une adresse courte gérée par Steevanz, qui redirige le client vers le formulaire d'avis de votre fiche d'établissement Google.",
+            text: "Chaque plaque contient une puce (**NTAG213** ou **NTAG215**) cachée à l'intérieur et un QR code imprimé sur le devant. Les deux pointent vers un lien court géré par Steevanz, qui redirige le client vers la destination de cette plaque. Sur Google, par exemple, c'est le formulaire d'avis de votre fiche d'établissement.",
           },
           {
             type: "ol",
@@ -259,6 +319,26 @@ export const docs: ProductDocs = {
             title: "Rien à installer",
             text: "Le client n'a besoin d'installer aucune application. La lecture d'un toucher est intégrée à la grande majorité des téléphones récents, et le QR code fonctionne avec l'appareil photo de n'importe quel smartphone.",
           },
+          { type: "h2", id: "platforms", text: "Google, Tripadvisor ou Booking.com" },
+          {
+            type: "p",
+            text: "Vous choisissez la destination de chaque plaque à la commande. Une plaque ouvre toujours une seule destination : si vous voulez des avis sur deux plateformes, vous utilisez deux plaques.",
+          },
+          {
+            type: "table",
+            head: ["Plateforme", "Ce que la plaque ouvre", "Qui peut laisser un avis"],
+            rows: [
+              ["Google", "Le formulaire d'avis de votre fiche d'établissement", "Tout client ayant un compte Google"],
+              ["Tripadvisor", "La page d'avis de votre établissement sur Tripadvisor", "Tout client ayant un compte Tripadvisor"],
+              ["Booking.com", "La page de votre hébergement sur Booking.com", "Seulement les voyageurs qui ont réservé via Booking, depuis l'invitation que Booking envoie par e-mail après le départ"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Booking.com fonctionne autrement",
+            text: "Booking.com n'a pas de lien d'avis ouvert à tous. La plaque Booking ne permet donc à personne de laisser un avis directement : elle ouvre la page de l'hébergement et rappelle au voyageur d'utiliser l'e-mail d'avis que Booking lui envoie après le départ. Ne dites jamais à un voyageur qui a réservé par un autre canal qu'il peut laisser un avis sur Booking.com.",
+          },
           { type: "h2", id: "available-formats", text: "Formats disponibles" },
           {
             type: "table",
@@ -274,14 +354,14 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Une **fiche d'établissement Google** (anciennement Google My Business) active et validée.",
+              "Pour chaque destination, la page active de votre établissement : une **fiche d'établissement Google** validée, votre page Tripadvisor ou la page de l'hébergement sur Booking.com.",
               "Un accès à cette fiche en tant que propriétaire ou gestionnaire, ou la possibilité de nous envoyer votre lien d'avis.",
               "Une idée des endroits où vous voulez placer les plaques, pour choisir les bons formats.",
             ],
           },
           {
             type: "p",
-            text: "Si votre fiche n'est pas encore validée, réglez cela d'abord : sans fiche active, Google n'affiche pas le formulaire d'avis. Nous pouvons vous guider pendant la [démonstration gratuite](/fr/book-a-demo).",
+            text: "Si vous utilisez Google et que votre fiche n'est pas encore validée, réglez cela d'abord : sans fiche active, Google n'affiche pas le formulaire d'avis. Nous pouvons vous guider pendant la [démonstration gratuite](/fr/book-a-demo).",
           },
           { type: "h2", id: "next-steps", text: "Prochaines étapes" },
           {
@@ -296,18 +376,18 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Steevanz n'est pas Google et n'a aucune affiliation avec Google. Les plaques dirigent simplement vos clients vers le formulaire public d'avis de votre fiche.",
+            text: "Steevanz n'a aucune affiliation avec Google, Tripadvisor ou Booking.com. Les plaques dirigent simplement vos clients vers les pages publiques de votre établissement sur ces plateformes.",
           },
         ],
       },
       de: {
-        title: "Erste Schritte mit den Schildern für Google-Bewertungen",
+        title: "Erste Schritte mit den Schildern für Bewertungen",
         description:
-          "So funktionieren die Schilder für Google-Bewertungen, das liefert Steevanz und das sollten Sie vorbereiten, bevor Sie mehr Google-Bewertungen sammeln.",
+          "So funktionieren die Schilder für Bewertungen auf Google, Tripadvisor und Booking.com, das liefert Steevanz und das sollten Sie vor dem Start vorbereiten.",
         blocks: [
           {
             type: "p",
-            text: "Mit den Schildern für Google-Bewertungen hinterlassen Ihre Kunden in Sekunden eine Bewertung bei Google: Sie halten das Handy an das Schild oder richten die Kamera auf den aufgedruckten QR-Code, und das Bewertungsformular Ihres Geschäfts öffnet sich sofort. Kein Suchen, kein Nachschlagen Ihres Geschäfts in Google Maps, keine Zwischenschritte.",
+            text: "Die Schilder für Bewertungen bringen Ihre Kunden in wenigen Sekunden auf die richtige Seite, um Ihren Betrieb zu bewerten: einfach das Handy an das Schild halten oder die Kamera auf den aufgedruckten QR-Code richten. Jedes Schild öffnet ein Ziel Ihrer Wahl: Google, Tripadvisor oder Booking.com. Kein Suchen, kein Nachschlagen Ihres Geschäfts, keine Zwischenschritte.",
           },
           {
             type: "p",
@@ -316,7 +396,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "So funktioniert es" },
           {
             type: "p",
-            text: "Jedes Schild hat innen einen versteckten Chip (**NTAG213** oder **NTAG215**) und vorne einen aufgedruckten QR-Code. Beide verweisen auf eine von Steevanz verwaltete Kurzadresse, die den Kunden zum Bewertungsformular Ihres Google-Unternehmensprofils weiterleitet.",
+            text: "Jedes Schild hat einen Chip (**NTAG213** oder **NTAG215**) im Inneren und einen QR-Code auf der Vorderseite. Beide zeigen auf einen von Steevanz verwalteten Kurzlink, der den Kunden zum Ziel dieses Schildes weiterleitet. Bei Google ist das zum Beispiel das Bewertungsformular Ihres Google-Unternehmensprofils.",
           },
           {
             type: "ol",
@@ -333,6 +413,26 @@ export const docs: ProductDocs = {
             title: "Nichts zu installieren",
             text: "Der Kunde muss keine App installieren. Das Lesen per Antippen ist in den allermeisten aktuellen Handys eingebaut, und der QR-Code funktioniert mit der Kamera jedes Smartphones.",
           },
+          { type: "h2", id: "platforms", text: "Google, Tripadvisor oder Booking.com" },
+          {
+            type: "p",
+            text: "Sie wählen das Ziel jedes Schildes bei der Bestellung. Ein Schild öffnet immer genau ein Ziel: Wenn Sie Bewertungen auf zwei Plattformen möchten, nutzen Sie zwei Schilder.",
+          },
+          {
+            type: "table",
+            head: ["Plattform", "Was das Schild öffnet", "Wer bewerten kann"],
+            rows: [
+              ["Google", "Das Bewertungsformular Ihres Unternehmensprofils", "Jeder Kunde mit Google-Konto"],
+              ["Tripadvisor", "Die Bewertungsseite Ihres Betriebs auf Tripadvisor", "Jeder Kunde mit Tripadvisor-Konto"],
+              ["Booking.com", "Die Seite Ihrer Unterkunft auf Booking.com", "Nur Gäste, die über Booking gebucht haben, über die Einladung, die Booking nach dem Check-out per E-Mail schickt"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Booking.com funktioniert anders",
+            text: "Booking.com hat keinen Bewertungslink, der allen offensteht. Das Booking-Schild lässt deshalb niemanden direkt bewerten: Es öffnet die Seite der Unterkunft und erinnert den Gast an die Bewertungs-E-Mail, die Booking ihm nach dem Check-out schickt. Sagen Sie einem Gast, der über einen anderen Kanal gebucht hat, nie, dass er auf Booking.com bewerten kann.",
+          },
           { type: "h2", id: "available-formats", text: "Verfügbare Formate" },
           {
             type: "table",
@@ -348,14 +448,14 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Ein aktives, bestätigtes **Google-Unternehmensprofil** (früher Google My Business).",
+              "Für jedes Ziel die aktive Seite Ihres Betriebs: ein bestätigtes **Google-Unternehmensprofil**, Ihre Tripadvisor-Seite oder die Seite der Unterkunft auf Booking.com.",
               "Zugriff auf dieses Profil als Inhaber oder Verwalter, oder die Möglichkeit, uns Ihren Bewertungslink zu senden.",
               "Eine Vorstellung davon, wo die Schilder stehen sollen, damit wir die passenden Formate wählen.",
             ],
           },
           {
             type: "p",
-            text: "Ist Ihr Profil noch nicht bestätigt, erledigen Sie das zuerst: Ohne aktives Profil zeigt Google das Bewertungsformular nicht an. Wir können Sie während der [kostenlosen Vorführung](/de/book-a-demo) dabei begleiten.",
+            text: "Wenn Sie Google nutzen und Ihr Profil noch nicht bestätigt ist, erledigen Sie das zuerst: Ohne aktives Profil zeigt Google das Bewertungsformular nicht an. Wir können Sie während der [kostenlosen Vorführung](/de/book-a-demo) dabei begleiten.",
           },
           { type: "h2", id: "next-steps", text: "Nächste Schritte" },
           {
@@ -370,18 +470,18 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Steevanz ist nicht Google und steht in keiner Verbindung zu Google. Die Schilder leiten Ihre Kunden nur zum öffentlichen Bewertungsformular Ihres Profils weiter.",
+            text: "Steevanz steht in keiner Verbindung zu Google, Tripadvisor oder Booking.com. Die Schilder leiten Ihre Kunden nur zu den öffentlichen Seiten Ihres Betriebs auf diesen Plattformen weiter.",
           },
         ],
       },
       it: {
-        title: "Primi passi con le targhe per recensioni Google",
+        title: "Primi passi con le targhe per recensioni",
         description:
-          "Scopra come funzionano le targhe per recensioni Google, cosa riceve da Steevanz e cosa preparare prima di iniziare a raccogliere più recensioni su Google.",
+          "Scopra come funzionano le targhe per recensioni su Google, Tripadvisor e Booking.com, cosa riceve da Steevanz e cosa preparare prima di iniziare.",
         blocks: [
           {
             type: "p",
-            text: "Le targhe per recensioni Google permettono ai Suoi clienti di lasciare una recensione su Google in pochi secondi: basta avvicinare il telefono alla targa, o inquadrare il QR code stampato, e il modulo di recensione della Sua attività si apre subito. Senza ricerche, senza cercare il locale su Google Maps, senza passaggi intermedi.",
+            text: "Le targhe per recensioni portano i Suoi clienti in pochi secondi alla pagina giusta per recensire la Sua attività: basta avvicinare il telefono alla targa, o inquadrare il QR code stampato. Ogni targa apre una destinazione a Sua scelta: Google, Tripadvisor o Booking.com. Senza ricerche, senza cercare il nome del locale, senza passaggi intermedi.",
           },
           {
             type: "p",
@@ -390,7 +490,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "Come funziona" },
           {
             type: "p",
-            text: "Ogni targa ha un chip (**NTAG213** o **NTAG215**) nascosto all'interno e un QR code stampato sul fronte. Il chip e il QR puntano a un indirizzo breve gestito da Steevanz, che reindirizza il cliente al modulo di recensione del Suo Profilo dell'attività su Google.",
+            text: "Ogni targa ha un chip (**NTAG213** o **NTAG215**) nascosto all'interno e un QR code stampato sul fronte. Entrambi puntano a un link breve gestito da Steevanz, che reindirizza il cliente alla destinazione di quella targa. Su Google, per esempio, è il modulo di recensione del Suo Profilo dell'attività.",
           },
           {
             type: "ol",
@@ -407,6 +507,26 @@ export const docs: ProductDocs = {
             title: "Nulla da installare",
             text: "Il cliente non deve installare nessuna app. La lettura con un tocco è integrata nella grande maggioranza dei telefoni recenti, e il QR funziona con la fotocamera di qualsiasi smartphone.",
           },
+          { type: "h2", id: "platforms", text: "Google, Tripadvisor o Booking.com" },
+          {
+            type: "p",
+            text: "Sceglie la destinazione di ogni targa al momento dell'ordine. Una targa apre sempre una sola destinazione: se vuole recensioni su due piattaforme, usa due targhe.",
+          },
+          {
+            type: "table",
+            head: ["Piattaforma", "Cosa apre la targa", "Chi può recensire"],
+            rows: [
+              ["Google", "Il modulo di recensione del Suo Profilo dell'attività", "Qualsiasi cliente con un account Google"],
+              ["Tripadvisor", "La pagina delle recensioni della Sua attività su Tripadvisor", "Qualsiasi cliente con un account Tripadvisor"],
+              ["Booking.com", "La pagina della Sua struttura su Booking.com", "Solo gli ospiti che hanno prenotato tramite Booking, dall'invito che Booking invia via e-mail dopo il check-out"],
+            ],
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Booking.com funziona in un altro modo",
+            text: "Booking.com non ha un link di recensione aperto a tutti. Per questo la targa Booking non permette a nessuno di recensire direttamente: apre la pagina della struttura e ricorda all'ospite di usare l'e-mail di recensione che Booking gli invia dopo il check-out. Non dica mai a un ospite che ha prenotato tramite un altro canale che può recensire su Booking.com.",
+          },
           { type: "h2", id: "available-formats", text: "Formati disponibili" },
           {
             type: "table",
@@ -422,14 +542,14 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Un **Profilo dell'attività su Google** (ex Google My Business) attivo e verificato.",
+              "Per ogni destinazione, la pagina attiva della Sua attività: un **Profilo dell'attività su Google** verificato, la Sua pagina su Tripadvisor o la pagina della struttura su Booking.com.",
               "Accesso a quel profilo come proprietario o gestore, oppure la possibilità di inviarci il link per le recensioni.",
               "Un'idea di dove vuole posizionare le targhe, per scegliere i formati giusti.",
             ],
           },
           {
             type: "p",
-            text: "Se il profilo non è ancora verificato, se ne occupi prima: senza un profilo attivo, Google non mostra il modulo di recensione. Possiamo guidarLa durante la [demo gratuita](/it/book-a-demo).",
+            text: "Se usa Google e il profilo non è ancora verificato, se ne occupi prima: senza un profilo attivo, Google non mostra il modulo di recensione. Possiamo guidarLa durante la [demo gratuita](/it/book-a-demo).",
           },
           { type: "h2", id: "next-steps", text: "Prossimi passi" },
           {
@@ -444,22 +564,22 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Steevanz non è Google e non ha alcuna affiliazione con Google. Le targhe portano semplicemente i Suoi clienti al modulo pubblico di recensione del Suo profilo.",
+            text: "Steevanz non ha alcuna affiliazione con Google, Tripadvisor o Booking.com. Le targhe portano semplicemente i Suoi clienti alle pagine pubbliche della Sua attività su queste piattaforme.",
           },
         ],
       },
     },
     setup: {
       pt: {
-        title: "Instalação das placas Google Reviews",
+        title: "Instalação das placas para avaliações",
         description:
-          "Como obter o link de avaliação do Perfil da Empresa no Google, validar o Place ID e escolher o melhor local para instalar cada placa no seu negócio.",
+          "Como obter o link de cada destino (Google, Tripadvisor ou Booking.com), validar o Place ID do Google e escolher o melhor local para cada placa no seu negócio.",
         blocks: [
           {
             type: "p",
-            text: "A instalação tem duas partes: obter o link de avaliação correto do seu perfil Google e colocar as placas nos sítios certos. A Steevanz trata da gravação e dos testes; do seu lado, basta confirmar os dados e escolher os locais.",
+            text: "A instalação tem duas partes: obter o link certo para o destino de cada placa (Google, Tripadvisor ou Booking.com) e colocar as placas nos sítios certos. A Steevanz trata da gravação e dos testes; do seu lado, basta confirmar os dados e escolher os locais.",
           },
-          { type: "h2", id: "obter-link-avaliacao", text: "Obter o link de avaliação" },
+          { type: "h2", id: "obter-link-avaliacao", text: "Obter o link de avaliação do Google" },
           {
             type: "p",
             text: "Existem duas formas fiáveis de obter o link. Pode enviar-nos qualquer uma delas, ou simplesmente dar-nos acesso de gestor ao perfil e nós tratamos do resto.",
@@ -506,6 +626,22 @@ export const docs: ProductDocs = {
             title: "Confirme que é o negócio certo",
             text: "Se houver perfis duplicados ou uma loja com nome parecido na mesma rua, é fácil copiar o Place ID errado. Verifique sempre que a janela de avaliação mostra o nome e a morada corretos.",
           },
+          { type: "h2", id: "tripadvisor", text: "Tripadvisor" },
+          {
+            type: "p",
+            text: "Para uma placa do Tripadvisor, envie-nos o link da página do seu negócio no Tripadvisor (abra a página e copie o endereço). Configuramos a placa para abrir a página de avaliação desse negócio. Qualquer cliente pode avaliar, desde que tenha sessão iniciada numa conta Tripadvisor ou a crie no momento.",
+          },
+          { type: "h2", id: "booking", text: "Booking.com" },
+          {
+            type: "p",
+            text: "Para uma placa da Booking, envie-nos o link da página do seu alojamento na Booking.com. A Booking.com só aceita avaliações de hóspedes que reservaram pela Booking e ficaram alojados: depois do check-out, a Booking envia a cada um, por email, um convite para avaliar. Não existe um link público de avaliação, por isso a placa abre a página do alojamento e o texto impresso lembra o hóspede de usar esse email (por exemplo, «Reservou pela Booking? Avalie-nos no email da Booking»).",
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Hóspedes de outros canais",
+            text: "Quem reservou diretamente consigo ou por outra plataforma não consegue avaliar na Booking.com. Para esses hóspedes, use uma placa do Google ou do Tripadvisor.",
+          },
           { type: "h2", id: "escolher-local", text: "Escolher o local de cada placa" },
           {
             type: "p",
@@ -534,15 +670,15 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Setting up your Google review plates",
+        title: "Setting up your review plates",
         description:
-          "How to get your Google Business Profile review link, check the Place ID and choose the best spot for each review plate in your business premises.",
+          "How to get the link for each destination (Google, Tripadvisor or Booking.com), check the Google Place ID and choose the best spot for each plate in your premises.",
         blocks: [
           {
             type: "p",
-            text: "Setup has two parts: getting the correct review link from your Google profile and putting the plates in the right places. Steevanz writes and tests the chips; on your side, you just confirm the details and choose the spots.",
+            text: "Setup has two parts: getting the right link for each plate's destination (Google, Tripadvisor or Booking.com) and putting the plates in the right places. Steevanz writes and tests the chips; on your side, you just confirm the details and choose the spots.",
           },
-          { type: "h2", id: "get-review-link", text: "Getting your review link" },
+          { type: "h2", id: "get-review-link", text: "Getting your Google review link" },
           {
             type: "p",
             text: "There are two reliable ways to get the link. You can send us either one, or simply give us manager access to your profile and we'll handle the rest.",
@@ -589,6 +725,22 @@ export const docs: ProductDocs = {
             title: "Make sure it's the right business",
             text: "If there are duplicate listings or a similarly named shop on the same street, it's easy to copy the wrong Place ID. Always check the review window shows the correct name and address.",
           },
+          { type: "h2", id: "tripadvisor", text: "Tripadvisor" },
+          {
+            type: "p",
+            text: "For a Tripadvisor plate, send us the link to your business's Tripadvisor page (open the page and copy the address). We set the plate to open that business's review page. Any customer can review, as long as they're signed in to a Tripadvisor account or create one there and then.",
+          },
+          { type: "h2", id: "booking", text: "Booking.com" },
+          {
+            type: "p",
+            text: "For a Booking plate, send us the link to your property's page on Booking.com. Booking.com only accepts reviews from guests who booked through Booking and stayed: after check-out, Booking emails each of them an invitation to review. There's no public review link, so the plate opens the property's page and the printed text reminds guests to use that email (for example, “Booked on Booking? Review us from Booking's email”).",
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Guests from other channels",
+            text: "Guests who booked directly with you or through another platform can't review on Booking.com. For them, use a Google or Tripadvisor plate.",
+          },
           { type: "h2", id: "choose-placement", text: "Choosing where each plate goes" },
           {
             type: "p",
@@ -617,15 +769,15 @@ export const docs: ProductDocs = {
         ],
       },
       es: {
-        title: "Instalación de las placas para reseñas en Google",
+        title: "Instalación de las placas para reseñas",
         description:
-          "Cómo obtener el enlace de reseñas de su Perfil de Empresa de Google, comprobar el Place ID y elegir el mejor sitio para cada placa en su local.",
+          "Cómo obtener el enlace de cada destino (Google, Tripadvisor o Booking.com), comprobar el Place ID de Google y elegir el mejor sitio para cada placa en su local.",
         blocks: [
           {
             type: "p",
-            text: "La instalación tiene dos partes: obtener el enlace de reseñas correcto de su perfil de Google y colocar las placas en los sitios adecuados. Steevanz graba y prueba los chips; por su parte, solo tiene que confirmar los datos y elegir los sitios.",
+            text: "La instalación tiene dos partes: obtener el enlace correcto para el destino de cada placa (Google, Tripadvisor o Booking.com) y colocar las placas en los sitios adecuados. Steevanz se encarga de grabar y probar los chips; por su parte, solo tiene que confirmar los datos y elegir los lugares.",
           },
-          { type: "h2", id: "get-review-link", text: "Obtener el enlace de reseñas" },
+          { type: "h2", id: "get-review-link", text: "Obtener el enlace de reseñas de Google" },
           {
             type: "p",
             text: "Hay dos formas fiables de obtener el enlace. Puede enviarnos cualquiera de las dos, o simplemente darnos acceso de administrador a su perfil y nos encargamos del resto.",
@@ -672,6 +824,22 @@ export const docs: ProductDocs = {
             title: "Asegúrese de que es el negocio correcto",
             text: "Si hay fichas duplicadas o un local con un nombre parecido en la misma calle, es fácil copiar el Place ID equivocado. Compruebe siempre que la ventana de reseña muestra el nombre y la dirección correctos.",
           },
+          { type: "h2", id: "tripadvisor", text: "Tripadvisor" },
+          {
+            type: "p",
+            text: "Para una placa de Tripadvisor, envíenos el enlace de la página de su negocio en Tripadvisor (abra la página y copie la dirección). Configuramos la placa para que abra la página de reseñas de ese negocio. Cualquier cliente puede opinar, siempre que haya iniciado sesión en una cuenta de Tripadvisor o la cree en ese momento.",
+          },
+          { type: "h2", id: "booking", text: "Booking.com" },
+          {
+            type: "p",
+            text: "Para una placa de Booking, envíenos el enlace de la página de su alojamiento en Booking.com. Booking.com solo acepta valoraciones de huéspedes que reservaron por Booking y se alojaron: tras el check-out, Booking envía a cada uno, por correo electrónico, una invitación para valorar. No existe un enlace público de valoración, así que la placa abre la página del alojamiento y el texto impreso recuerda al huésped que use ese correo (por ejemplo, «¿Reservó por Booking? Valórenos desde el correo de Booking»).",
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Huéspedes de otros canales",
+            text: "Quien reservó directamente con usted o por otra plataforma no puede valorar en Booking.com. Para esos huéspedes, use una placa de Google o de Tripadvisor.",
+          },
           { type: "h2", id: "choose-placement", text: "Elegir dónde va cada placa" },
           {
             type: "p",
@@ -700,15 +868,15 @@ export const docs: ProductDocs = {
         ],
       },
       fr: {
-        title: "Installation des plaques pour avis Google",
+        title: "Installation des plaques pour avis",
         description:
-          "Comment obtenir le lien d'avis de votre fiche d'établissement Google, vérifier le Place ID et choisir le meilleur emplacement pour chaque plaque dans votre établissement.",
+          "Comment obtenir le lien de chaque destination (Google, Tripadvisor ou Booking.com), vérifier le Place ID Google et choisir le meilleur emplacement pour chaque plaque.",
         blocks: [
           {
             type: "p",
-            text: "L'installation comporte deux parties : obtenir le bon lien d'avis de votre fiche Google et placer les plaques aux bons endroits. Steevanz programme et teste les puces ; de votre côté, il suffit de confirmer les informations et de choisir les emplacements.",
+            text: "L'installation comporte deux parties : obtenir le bon lien pour la destination de chaque plaque (Google, Tripadvisor ou Booking.com) et placer les plaques aux bons endroits. Steevanz programme et teste les puces ; de votre côté, il suffit de confirmer les informations et de choisir les emplacements.",
           },
-          { type: "h2", id: "get-review-link", text: "Obtenir votre lien d'avis" },
+          { type: "h2", id: "get-review-link", text: "Obtenir votre lien d'avis Google" },
           {
             type: "p",
             text: "Il existe deux façons fiables d'obtenir le lien. Vous pouvez nous envoyer l'un ou l'autre, ou simplement nous donner un accès gestionnaire à votre fiche et nous nous occupons du reste.",
@@ -755,6 +923,22 @@ export const docs: ProductDocs = {
             title: "Vérifiez qu'il s'agit du bon commerce",
             text: "S'il existe des fiches en double ou un commerce au nom proche dans la même rue, il est facile de copier le mauvais Place ID. Vérifiez toujours que la fenêtre d'avis affiche le bon nom et la bonne adresse.",
           },
+          { type: "h2", id: "tripadvisor", text: "Tripadvisor" },
+          {
+            type: "p",
+            text: "Pour une plaque Tripadvisor, envoyez-nous le lien de la page de votre établissement sur Tripadvisor (ouvrez la page et copiez l'adresse). Nous configurons la plaque pour qu'elle ouvre la page d'avis de cet établissement. Tout client peut laisser un avis, à condition d'être connecté à un compte Tripadvisor ou d'en créer un sur le moment.",
+          },
+          { type: "h2", id: "booking", text: "Booking.com" },
+          {
+            type: "p",
+            text: "Pour une plaque Booking, envoyez-nous le lien de la page de votre hébergement sur Booking.com. Booking.com n'accepte que les avis des voyageurs qui ont réservé via Booking et séjourné chez vous : après le départ, Booking envoie à chacun, par e-mail, une invitation à laisser un avis. Il n'existe pas de lien d'avis public : la plaque ouvre donc la page de l'hébergement et le texte imprimé rappelle au voyageur d'utiliser cet e-mail (par exemple, « Réservé via Booking ? Donnez votre avis depuis l'e-mail de Booking »).",
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Voyageurs venus par d'autres canaux",
+            text: "Ceux qui ont réservé directement auprès de vous ou via une autre plateforme ne peuvent pas laisser d'avis sur Booking.com. Pour eux, utilisez une plaque Google ou Tripadvisor.",
+          },
           { type: "h2", id: "choose-placement", text: "Choisir l'emplacement de chaque plaque" },
           {
             type: "p",
@@ -783,15 +967,15 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Einrichtung der Schilder für Google-Bewertungen",
+        title: "Einrichtung der Schilder für Bewertungen",
         description:
-          "Wie Sie den Bewertungslink Ihres Google-Unternehmensprofils erhalten, die Place ID prüfen und für jedes Schild den besten Platz in Ihrem Geschäft wählen.",
+          "Wie Sie den Link für jedes Ziel (Google, Tripadvisor oder Booking.com) erhalten, die Google Place ID prüfen und für jedes Schild den besten Platz wählen.",
         blocks: [
           {
             type: "p",
-            text: "Die Einrichtung hat zwei Teile: den richtigen Bewertungslink aus Ihrem Google-Profil holen und die Schilder an den richtigen Stellen aufstellen. Steevanz beschreibt und testet die Chips; Sie bestätigen nur die Angaben und wählen die Plätze.",
+            text: "Die Einrichtung hat zwei Teile: den richtigen Link für das Ziel jedes Schildes besorgen (Google, Tripadvisor oder Booking.com) und die Schilder an die richtigen Stellen bringen. Steevanz beschreibt und testet die Chips; Sie bestätigen nur die Angaben und wählen die Plätze.",
           },
-          { type: "h2", id: "get-review-link", text: "Den Bewertungslink erhalten" },
+          { type: "h2", id: "get-review-link", text: "Den Google-Bewertungslink erhalten" },
           {
             type: "p",
             text: "Es gibt zwei zuverlässige Wege, den Link zu bekommen. Sie können uns einen davon senden oder uns einfach Verwalterzugriff auf Ihr Profil geben, und wir erledigen den Rest.",
@@ -838,6 +1022,22 @@ export const docs: ProductDocs = {
             title: "Prüfen Sie, ob es das richtige Geschäft ist",
             text: "Gibt es doppelte Einträge oder ein Geschäft mit ähnlichem Namen in derselben Straße, kopiert man leicht die falsche Place ID. Prüfen Sie immer, ob das Bewertungsfenster den richtigen Namen und die richtige Adresse zeigt.",
           },
+          { type: "h2", id: "tripadvisor", text: "Tripadvisor" },
+          {
+            type: "p",
+            text: "Für ein Tripadvisor-Schild schicken Sie uns den Link zur Seite Ihres Betriebs auf Tripadvisor (Seite öffnen und Adresse kopieren). Wir richten das Schild so ein, dass es die Bewertungsseite dieses Betriebs öffnet. Jeder Kunde kann bewerten, sofern er in einem Tripadvisor-Konto angemeldet ist oder gleich eines anlegt.",
+          },
+          { type: "h2", id: "booking", text: "Booking.com" },
+          {
+            type: "p",
+            text: "Für ein Booking-Schild schicken Sie uns den Link zur Seite Ihrer Unterkunft auf Booking.com. Booking.com nimmt nur Bewertungen von Gästen an, die über Booking gebucht und bei Ihnen übernachtet haben: Nach dem Check-out schickt Booking jedem von ihnen per E-Mail eine Einladung zur Bewertung. Einen öffentlichen Bewertungslink gibt es nicht, deshalb öffnet das Schild die Seite der Unterkunft und der aufgedruckte Text erinnert den Gast an diese E-Mail (zum Beispiel «Über Booking gebucht? Bewerten Sie uns in der E-Mail von Booking»).",
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Gäste aus anderen Kanälen",
+            text: "Wer direkt bei Ihnen oder über eine andere Plattform gebucht hat, kann auf Booking.com nicht bewerten. Für diese Gäste nutzen Sie ein Google- oder Tripadvisor-Schild.",
+          },
           { type: "h2", id: "choose-placement", text: "Wo jedes Schild hinkommt" },
           {
             type: "p",
@@ -866,15 +1066,15 @@ export const docs: ProductDocs = {
         ],
       },
       it: {
-        title: "Installazione delle targhe per recensioni Google",
+        title: "Installazione delle targhe per recensioni",
         description:
-          "Come ottenere il link per le recensioni del Suo Profilo dell'attività su Google, verificare il Place ID e scegliere il posto migliore per ogni targa nel Suo locale.",
+          "Come ottenere il link di ogni destinazione (Google, Tripadvisor o Booking.com), verificare il Place ID di Google e scegliere il posto migliore per ogni targa.",
         blocks: [
           {
             type: "p",
-            text: "L'installazione ha due parti: ottenere il link per le recensioni corretto dal Suo profilo Google e mettere le targhe nei posti giusti. Steevanz programma e testa i chip; da parte Sua, basta confermare i dati e scegliere i punti.",
+            text: "L'installazione ha due parti: ottenere il link giusto per la destinazione di ogni targa (Google, Tripadvisor o Booking.com) e posizionare le targhe nei punti giusti. Steevanz si occupa della programmazione e dei test; da parte Sua, basta confermare i dati e scegliere i posti.",
           },
-          { type: "h2", id: "get-review-link", text: "Ottenere il link per le recensioni" },
+          { type: "h2", id: "get-review-link", text: "Ottenere il link per le recensioni Google" },
           {
             type: "p",
             text: "Ci sono due modi affidabili per ottenere il link. Può inviarci l'uno o l'altro, oppure darci semplicemente l'accesso da gestore al Suo profilo e pensiamo noi al resto.",
@@ -920,6 +1120,22 @@ export const docs: ProductDocs = {
             tone: "warning",
             title: "Verifichi che sia l'attività giusta",
             text: "Se ci sono schede duplicate o un locale con un nome simile nella stessa via, è facile copiare il Place ID sbagliato. Verifichi sempre che la finestra di recensione mostri il nome e l'indirizzo corretti.",
+          },
+          { type: "h2", id: "tripadvisor", text: "Tripadvisor" },
+          {
+            type: "p",
+            text: "Per una targa Tripadvisor, ci invii il link della pagina della Sua attività su Tripadvisor (apra la pagina e copi l'indirizzo). Configuriamo la targa perché apra la pagina delle recensioni di quell'attività. Qualsiasi cliente può recensire, purché abbia effettuato l'accesso a un account Tripadvisor o ne crei uno sul momento.",
+          },
+          { type: "h2", id: "booking", text: "Booking.com" },
+          {
+            type: "p",
+            text: "Per una targa Booking, ci invii il link della pagina della Sua struttura su Booking.com. Booking.com accetta solo recensioni di ospiti che hanno prenotato tramite Booking e soggiornato da Lei: dopo il check-out, Booking invia a ciascuno, via e-mail, un invito a lasciare una recensione. Non esiste un link pubblico di recensione, quindi la targa apre la pagina della struttura e il testo stampato ricorda all'ospite di usare quell'e-mail (per esempio, «Ha prenotato con Booking? Ci recensisca dall'e-mail di Booking»).",
+          },
+          {
+            type: "callout",
+            tone: "warning",
+            title: "Ospiti da altri canali",
+            text: "Chi ha prenotato direttamente con Lei o tramite un'altra piattaforma non può recensire su Booking.com. Per questi ospiti, usi una targa Google o Tripadvisor.",
           },
           { type: "h2", id: "choose-placement", text: "Scegliere dove va ogni targa" },
           {
@@ -969,7 +1185,7 @@ export const docs: ProductDocs = {
             items: [
               "Ninguém consegue reescrever a placa com uma aplicação de escrita de chips, nem por brincadeira nem por má intenção.",
               "O bloqueio é irreversível: o conteúdo gravado no chip nunca mais muda.",
-              "Mesmo assim, o destino final pode ser alterado, porque o chip aponta para o nosso redirecionamento e não diretamente para o Google.",
+              "Mesmo assim, o destino final pode ser alterado, porque o chip aponta para o nosso redirecionamento e não diretamente para o Google, o Tripadvisor ou a Booking.com.",
             ],
           },
           {
@@ -981,7 +1197,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "redirecionamento-dinamico", text: "Redirecionamento dinâmico" },
           {
             type: "p",
-            text: "O chip e o código QR apontam para um link curto da Steevanz. Quando alguém toca na placa, o nosso servidor encaminha-o de imediato para o link de avaliação do seu perfil. O cliente não nota diferença: o encaminhamento demora uma fração de segundo.",
+            text: "O chip e o código QR apontam para um link curto da Steevanz. Quando alguém toca na placa, o nosso servidor encaminha-o de imediato para o destino dessa placa: o Google, o Tripadvisor ou a Booking.com. O cliente não nota diferença: o encaminhamento demora uma fração de segundo.",
           },
           {
             type: "p",
@@ -1012,7 +1228,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "varias-lojas", text: "Várias lojas ou vários perfis" },
           {
             type: "p",
-            text: "Se tem mais do que um estabelecimento, cada loja tem o seu próprio perfil Google e, por isso, o seu próprio link. Identificamos as placas por loja para que nunca haja trocas: as avaliações do Porto não vão parar ao perfil de Lisboa.",
+            text: "Se tem mais do que um estabelecimento, cada loja tem o seu próprio perfil e, por isso, o seu próprio link. Identificamos as placas por loja para que nunca haja trocas: as avaliações do Porto não vão parar ao perfil de Lisboa. O mesmo vale para as plataformas: cada placa abre um único destino, e uma placa do Google e outra do Tripadvisor são duas placas diferentes.",
           },
           {
             type: "callout",
@@ -1040,7 +1256,7 @@ export const docs: ProductDocs = {
             items: [
               "Nobody can rewrite the plate with a chip-writing app, whether as a prank or with bad intent.",
               "Locking is irreversible: the content stored on the chip never changes again.",
-              "The final destination can still be changed, because the chip points to our redirect rather than straight to Google.",
+              "Even so, the final destination can be changed, because the chip points to our redirect and not directly to Google, Tripadvisor or Booking.com.",
             ],
           },
           {
@@ -1052,7 +1268,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "dynamic-redirect", text: "Dynamic redirect" },
           {
             type: "p",
-            text: "The chip and the QR code point to a Steevanz short link. When someone taps the plate, our server immediately forwards them to your profile's review link. The customer won't notice: the redirect takes a fraction of a second.",
+            text: "The chip and the QR code point to a short Steevanz link. When someone taps the plate, our server instantly forwards them to that plate's destination: Google, Tripadvisor or Booking.com. Customers don't notice a thing: the redirect takes a fraction of a second.",
           },
           {
             type: "p",
@@ -1083,7 +1299,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "multiple-locations", text: "Multiple locations or profiles" },
           {
             type: "p",
-            text: "If you have more than one location, each has its own Google profile and therefore its own link. We tag plates by location so nothing gets mixed up: reviews for your Porto shop never end up on your Lisbon profile.",
+            text: "If you have more than one location, each one has its own profile and therefore its own link. We label plates by location so nothing gets mixed up: reviews for Porto never end up on the Lisbon profile. The same goes for platforms: each plate opens a single destination, so a Google plate and a Tripadvisor plate are two different plates.",
           },
           {
             type: "callout",
@@ -1111,7 +1327,7 @@ export const docs: ProductDocs = {
             items: [
               "Nadie puede reescribir la placa con una app de grabación de chips, ni en broma ni con mala intención.",
               "El bloqueo es irreversible: el contenido guardado en el chip no vuelve a cambiar nunca.",
-              "El destino final sí se puede cambiar, porque el chip apunta a nuestra redirección y no directamente a Google.",
+              "Aun así, el destino final se puede cambiar, porque el chip apunta a nuestra redirección y no directamente a Google, Tripadvisor o Booking.com.",
             ],
           },
           {
@@ -1123,7 +1339,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "dynamic-redirect", text: "Redirección dinámica" },
           {
             type: "p",
-            text: "El chip y el código QR apuntan a un enlace corto de Steevanz. Cuando alguien toca la placa, nuestro servidor lo lleva al instante al enlace de reseñas de su perfil. El cliente no lo nota: la redirección dura una fracción de segundo.",
+            text: "El chip y el código QR apuntan a un enlace corto de Steevanz. Cuando alguien toca la placa, nuestro servidor lo lleva al instante al destino de esa placa: Google, Tripadvisor o Booking.com. El cliente no nota la diferencia: la redirección tarda una fracción de segundo.",
           },
           {
             type: "p",
@@ -1154,7 +1370,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "multiple-locations", text: "Varios locales o perfiles" },
           {
             type: "p",
-            text: "Si tiene más de un local, cada uno tiene su propio perfil de Google y, por tanto, su propio enlace. Identificamos las placas por local para que nada se mezcle: las reseñas de su tienda de Oporto nunca acaban en su perfil de Lisboa.",
+            text: "Si tiene más de un local, cada uno tiene su propio perfil y, por tanto, su propio enlace. Identificamos las placas por local para que nunca haya confusiones: las reseñas de Oporto no acaban en el perfil de Lisboa. Lo mismo vale para las plataformas: cada placa abre un único destino, así que una placa de Google y otra de Tripadvisor son dos placas distintas.",
           },
           {
             type: "callout",
@@ -1182,7 +1398,7 @@ export const docs: ProductDocs = {
             items: [
               "Personne ne peut reprogrammer la plaque avec une application d'écriture de puces, que ce soit pour plaisanter ou avec de mauvaises intentions.",
               "Le verrouillage est irréversible : le contenu enregistré sur la puce ne change plus jamais.",
-              "La destination finale peut tout de même être modifiée, car la puce pointe vers notre redirection et non directement vers Google.",
+              "Malgré tout, la destination finale peut être modifiée, car la puce pointe vers notre redirection et non directement vers Google, Tripadvisor ou Booking.com.",
             ],
           },
           {
@@ -1194,7 +1410,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "dynamic-redirect", text: "Redirection dynamique" },
           {
             type: "p",
-            text: "La puce et le QR code pointent vers un lien court Steevanz. Quand quelqu'un touche la plaque, notre serveur le redirige aussitôt vers le lien d'avis de votre fiche. Le client ne s'en aperçoit pas : la redirection prend une fraction de seconde.",
+            text: "La puce et le QR code pointent vers un lien court Steevanz. Quand quelqu'un touche la plaque, notre serveur le redirige aussitôt vers la destination de cette plaque : Google, Tripadvisor ou Booking.com. Le client ne remarque rien : la redirection prend une fraction de seconde.",
           },
           {
             type: "p",
@@ -1225,7 +1441,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "multiple-locations", text: "Plusieurs établissements ou fiches" },
           {
             type: "p",
-            text: "Si vous avez plusieurs établissements, chacun a sa propre fiche Google et donc son propre lien. Nous identifions les plaques par établissement pour que rien ne se mélange : les avis de votre boutique de Porto n'arrivent jamais sur votre fiche de Lisbonne.",
+            text: "Si vous avez plusieurs établissements, chacun a sa propre fiche et donc son propre lien. Nous identifions les plaques par établissement pour éviter toute confusion : les avis de Porto n'atterrissent jamais sur la fiche de Lisbonne. Il en va de même pour les plateformes : chaque plaque ouvre une seule destination, donc une plaque Google et une plaque Tripadvisor sont deux plaques différentes.",
           },
           {
             type: "callout",
@@ -1253,7 +1469,7 @@ export const docs: ProductDocs = {
             items: [
               "Niemand kann das Schild mit einer Chip-App überschreiben, weder aus Spaß noch in böser Absicht.",
               "Das Sperren ist endgültig: Der auf dem Chip gespeicherte Inhalt ändert sich nie mehr.",
-              "Das endgültige Ziel lässt sich trotzdem ändern, weil der Chip auf unsere Weiterleitung zeigt und nicht direkt auf Google.",
+              "Trotzdem lässt sich das endgültige Ziel ändern, weil der Chip auf unsere Weiterleitung zeigt und nicht direkt auf Google, Tripadvisor oder Booking.com.",
             ],
           },
           {
@@ -1265,7 +1481,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "dynamic-redirect", text: "Dynamische Weiterleitung" },
           {
             type: "p",
-            text: "Der Chip und der QR-Code verweisen auf einen Steevanz-Kurzlink. Tippt jemand das Schild an, leitet unser Server ihn sofort zum Bewertungslink Ihres Profils weiter. Der Kunde merkt davon nichts: Die Weiterleitung dauert den Bruchteil einer Sekunde.",
+            text: "Chip und QR-Code zeigen auf einen Kurzlink von Steevanz. Wenn jemand das Schild antippt, leitet unser Server ihn sofort zum Ziel dieses Schildes weiter: Google, Tripadvisor oder Booking.com. Der Kunde merkt davon nichts: Die Weiterleitung dauert einen Sekundenbruchteil.",
           },
           {
             type: "p",
@@ -1296,7 +1512,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "multiple-locations", text: "Mehrere Standorte oder Profile" },
           {
             type: "p",
-            text: "Haben Sie mehr als einen Standort, hat jeder sein eigenes Google-Profil und damit seinen eigenen Link. Wir kennzeichnen die Schilder nach Standort, damit nichts durcheinandergerät: Bewertungen für Ihr Geschäft in Porto landen nie in Ihrem Lissabonner Profil.",
+            text: "Wenn Sie mehr als einen Standort haben, hat jeder sein eigenes Profil und damit seinen eigenen Link. Wir kennzeichnen die Schilder nach Standort, damit nichts vertauscht wird: Bewertungen für Porto landen nie im Profil von Lissabon. Dasselbe gilt für die Plattformen: Jedes Schild öffnet genau ein Ziel, ein Google-Schild und ein Tripadvisor-Schild sind also zwei verschiedene Schilder.",
           },
           {
             type: "callout",
@@ -1324,7 +1540,7 @@ export const docs: ProductDocs = {
             items: [
               "Nessuno può riscrivere la targa con un'app di programmazione dei chip, né per scherzo né con cattive intenzioni.",
               "Il blocco è irreversibile: il contenuto salvato sul chip non cambia mai più.",
-              "La destinazione finale si può comunque cambiare, perché il chip punta al nostro reindirizzamento e non direttamente a Google.",
+              "Comunque, la destinazione finale si può cambiare, perché il chip punta al nostro reindirizzamento e non direttamente a Google, Tripadvisor o Booking.com.",
             ],
           },
           {
@@ -1336,7 +1552,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "dynamic-redirect", text: "Reindirizzamento dinamico" },
           {
             type: "p",
-            text: "Il chip e il QR code puntano a un link breve Steevanz. Quando qualcuno tocca la targa, il nostro server lo porta subito al link per le recensioni del Suo profilo. Il cliente non se ne accorge: il reindirizzamento dura una frazione di secondo.",
+            text: "Il chip e il QR code puntano a un link breve di Steevanz. Quando qualcuno tocca la targa, il nostro server lo porta subito alla destinazione di quella targa: Google, Tripadvisor o Booking.com. Il cliente non nota nulla: il reindirizzamento richiede una frazione di secondo.",
           },
           {
             type: "p",
@@ -1367,7 +1583,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "multiple-locations", text: "Più sedi o profili" },
           {
             type: "p",
-            text: "Se ha più di una sede, ognuna ha il proprio profilo Google e quindi il proprio link. Identifichiamo le targhe per sede perché nulla si confonda: le recensioni del negozio di Porto non finiscono mai sul profilo di Lisbona.",
+            text: "Se ha più di una sede, ognuna ha il proprio profilo e quindi il proprio link. Identifichiamo le targhe per sede, così non ci sono scambi: le recensioni di Porto non finiscono mai sul profilo di Lisbona. Lo stesso vale per le piattaforme: ogni targa apre una sola destinazione, quindi una targa Google e una Tripadvisor sono due targhe diverse.",
           },
           {
             type: "callout",
@@ -1381,7 +1597,7 @@ export const docs: ProductDocs = {
       pt: {
         title: "Utilização: como pedir avaliações todos os dias",
         description:
-          "Guia prático para a sua equipa pedir avaliações no Google com as placas, respeitando as regras do Google, e manter as placas limpas e funcionais.",
+          "Guia prático para a sua equipa pedir avaliações com as placas, respeitando as regras do Google, do Tripadvisor e da Booking.com, e manter as placas limpas e funcionais.",
         blocks: [
           {
             type: "p",
@@ -1405,10 +1621,10 @@ export const docs: ProductDocs = {
             tone: "tip",
             text: "Mostre como se faz. Muitas pessoas nunca encostaram o telemóvel a uma placa; se a pessoa da equipa demonstrar com o próprio telemóvel na primeira semana, a taxa de utilização sobe claramente.",
           },
-          { type: "h2", id: "regras-google", text: "Regras do Google que tem de cumprir" },
+          { type: "h2", id: "regras-google", text: "Regras das plataformas que tem de cumprir" },
           {
             type: "p",
-            text: "O Google tem políticas claras sobre conteúdo de avaliações. Ignorá-las pode levar à remoção de avaliações ou a restrições no perfil.",
+            text: "O Google, o Tripadvisor e a Booking.com têm políticas claras sobre avaliações. Ignorá-las pode levar à remoção de avaliações ou a restrições na sua página.",
           },
           {
             type: "ul",
@@ -1417,6 +1633,7 @@ export const docs: ProductDocs = {
               "**Não faça seleção de avaliações** (review gating): peça a todos os clientes, não apenas aos que parecem satisfeitos.",
               "**Não escreva avaliações** em nome de clientes nem peça à equipa ou à família para avaliar.",
               "**Não pressione**: o pedido deve ser simpático e opcional.",
+              "**Booking.com**: só quem reservou pela Booking pode avaliar, pelo email que a Booking envia depois do check-out. Não diga a outros hóspedes que podem avaliar lá.",
             ],
           },
           {
@@ -1434,6 +1651,7 @@ export const docs: ProductDocs = {
               ["Cabeleireiro ou estética", "Ao terminar, quando o cliente vê o resultado ao espelho"],
               ["Clínica", "Na receção, ao marcar a próxima consulta"],
               ["Loja", "Ao embalar a compra, junto à caixa"],
+              ["Alojamento", "No check-out, ao despedir-se do hóspede"],
             ],
           },
           { type: "h2", id: "limpeza-manutencao", text: "Limpeza e manutenção" },
@@ -1449,14 +1667,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "acompanhar-resultados", text: "Acompanhar resultados" },
           {
             type: "p",
-            text: "Compare o número de avaliações do seu perfil Google mês a mês. Se tiver também o serviço de [gestão de reviews com IA](/produtos/gestao-reviews-ia), as respostas às novas avaliações ficam tratadas automaticamente, com a sua aprovação.",
+            text: "Compare o número de avaliações de cada plataforma mês a mês. Se tiver também o serviço de [gestão de reviews com IA](/produtos/gestao-reviews-ia), as respostas às novas avaliações do Google ficam tratadas automaticamente, com a sua aprovação.",
           },
         ],
       },
       en: {
         title: "Usage: asking for reviews every day",
         description:
-          "A practical guide for your team to ask for Google reviews with your plates while following Google's rules, and to keep your plates clean and working.",
+          "A practical guide for your team to ask for reviews with your plates while following the rules of Google, Tripadvisor and Booking.com, and to keep your plates clean and working.",
         blocks: [
           {
             type: "p",
@@ -1480,10 +1698,10 @@ export const docs: ProductDocs = {
             tone: "tip",
             text: "Show them how. Many people have never tapped their phone on a plate; if staff demonstrate with their own phone in the first week, usage goes up noticeably.",
           },
-          { type: "h2", id: "google-rules", text: "Google rules you must follow" },
+          { type: "h2", id: "google-rules", text: "Platform rules you must follow" },
           {
             type: "p",
-            text: "Google has clear policies on review content. Ignoring them can lead to reviews being removed or restrictions on your profile.",
+            text: "Google, Tripadvisor and Booking.com have clear policies on reviews. Ignoring them can lead to reviews being removed or restrictions on your page.",
           },
           {
             type: "ul",
@@ -1492,6 +1710,7 @@ export const docs: ProductDocs = {
               "**Don't gate reviews**: ask every customer, not just the ones who seem happy.",
               "**Don't write reviews** on behalf of customers or ask staff or family to review you.",
               "**Don't pressure people**: the request should be friendly and optional.",
+              "**Booking.com**: only guests who booked through Booking can review, from the email Booking sends after check-out. Don't tell other guests they can review there.",
             ],
           },
           {
@@ -1509,6 +1728,7 @@ export const docs: ProductDocs = {
               ["Hair or beauty salon", "At the end, when the client sees the result in the mirror"],
               ["Clinic", "At reception, when booking the next appointment"],
               ["Shop", "While bagging the purchase at the till"],
+              ["Accommodation", "At check-out, when saying goodbye to the guest"],
             ],
           },
           { type: "h2", id: "cleaning-care", text: "Cleaning and care" },
@@ -1524,14 +1744,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "track-results", text: "Tracking results" },
           {
             type: "p",
-            text: "Compare the number of reviews on your Google profile month by month. If you also use our [AI review management](/en/products/ai-review-management) service, replies to new reviews are handled automatically, with your approval.",
+            text: "Compare the number of reviews on each platform month by month. If you also use our [AI review management](/en/products/ai-review-management) service, replies to new Google reviews are handled automatically, with your approval.",
           },
         ],
       },
       es: {
         title: "Uso: pedir reseñas cada día",
         description:
-          "Guía práctica para que su equipo pida reseñas en Google con las placas respetando las normas de Google, y para mantener las placas limpias y en buen estado.",
+          "Guía práctica para que su equipo pida reseñas con las placas respetando las normas de Google, Tripadvisor y Booking.com, y para mantener las placas limpias y en buen estado.",
         blocks: [
           {
             type: "p",
@@ -1555,10 +1775,10 @@ export const docs: ProductDocs = {
             tone: "tip",
             text: "Enséñeles cómo se hace. Mucha gente nunca ha acercado el móvil a una placa; si el equipo lo demuestra con su propio móvil la primera semana, el uso aumenta claramente.",
           },
-          { type: "h2", id: "google-rules", text: "Normas de Google que debe cumplir" },
+          { type: "h2", id: "google-rules", text: "Normas de las plataformas que debe cumplir" },
           {
             type: "p",
-            text: "Google tiene políticas claras sobre el contenido de las reseñas. Ignorarlas puede llevar a la eliminación de reseñas o a restricciones en su perfil.",
+            text: "Google, Tripadvisor y Booking.com tienen políticas claras sobre las reseñas. Ignorarlas puede llevar a la eliminación de reseñas o a restricciones en su página.",
           },
           {
             type: "ul",
@@ -1567,6 +1787,7 @@ export const docs: ProductDocs = {
               "**No filtre las reseñas**: pídala a todos los clientes, no solo a los que parecen satisfechos.",
               "**No escriba reseñas** en nombre de los clientes ni pida a empleados o familiares que le valoren.",
               "**No presione**: la petición debe ser amable y opcional.",
+              "**Booking.com**: solo quien reservó por Booking puede valorar, desde el correo que Booking envía tras el check-out. No diga a otros huéspedes que pueden valorar allí.",
             ],
           },
           {
@@ -1584,6 +1805,7 @@ export const docs: ProductDocs = {
               ["Peluquería o centro de estética", "Al final, cuando el cliente ve el resultado en el espejo"],
               ["Clínica", "En recepción, al reservar la próxima cita"],
               ["Tienda", "Mientras se embolsa la compra en la caja"],
+              ["Alojamiento", "En el check-out, al despedirse del huésped"],
             ],
           },
           { type: "h2", id: "cleaning-care", text: "Limpieza y cuidados" },
@@ -1599,14 +1821,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "track-results", text: "Seguir los resultados" },
           {
             type: "p",
-            text: "Compare el número de reseñas de su perfil de Google mes a mes. Si además usa nuestro servicio de [gestión de reseñas con IA](/es/products/ai-review-management), las respuestas a las nuevas reseñas se gestionan automáticamente, con su aprobación.",
+            text: "Compare el número de reseñas de cada plataforma mes a mes. Si además usa nuestro servicio de [gestión de reseñas con IA](/es/products/ai-review-management), las respuestas a las nuevas reseñas de Google se gestionan automáticamente, con su aprobación.",
           },
         ],
       },
       fr: {
         title: "Utilisation : demander des avis chaque jour",
         description:
-          "Un guide pratique pour que votre équipe demande des avis Google avec vos plaques en respectant les règles de Google, et pour garder vos plaques propres et en état de marche.",
+          "Un guide pratique pour que votre équipe demande des avis avec vos plaques en respectant les règles de Google, Tripadvisor et Booking.com, et pour garder vos plaques propres et en état de marche.",
         blocks: [
           {
             type: "p",
@@ -1630,10 +1852,10 @@ export const docs: ProductDocs = {
             tone: "tip",
             text: "Montrez comment faire. Beaucoup de gens n'ont jamais approché leur téléphone d'une plaque ; si l'équipe fait la démonstration avec son propre téléphone la première semaine, l'utilisation augmente nettement.",
           },
-          { type: "h2", id: "google-rules", text: "Les règles de Google à respecter" },
+          { type: "h2", id: "google-rules", text: "Les règles des plateformes à respecter" },
           {
             type: "p",
-            text: "Google a des règles claires sur le contenu des avis. Les ignorer peut entraîner la suppression d'avis ou des restrictions sur votre fiche.",
+            text: "Google, Tripadvisor et Booking.com ont des règles claires sur les avis. Les ignorer peut entraîner la suppression d'avis ou des restrictions sur votre page.",
           },
           {
             type: "ul",
@@ -1642,6 +1864,7 @@ export const docs: ProductDocs = {
               "**Ne filtrez pas les avis** : demandez à tous les clients, pas seulement à ceux qui semblent satisfaits.",
               "**N'écrivez pas d'avis** à la place des clients et ne demandez pas à vos employés ou à votre famille de vous noter.",
               "**Ne faites pas pression** : la demande doit rester aimable et facultative.",
+              "**Booking.com** : seuls les voyageurs qui ont réservé via Booking peuvent laisser un avis, depuis l'e-mail que Booking envoie après le départ. Ne dites pas aux autres voyageurs qu'ils peuvent en laisser un.",
             ],
           },
           {
@@ -1659,6 +1882,7 @@ export const docs: ProductDocs = {
               ["Salon de coiffure ou de beauté", "À la fin, quand le client voit le résultat dans le miroir"],
               ["Clinique", "À l'accueil, en prenant le prochain rendez-vous"],
               ["Boutique", "En emballant l'achat à la caisse"],
+              ["Hébergement", "Au départ, en disant au revoir au voyageur"],
             ],
           },
           { type: "h2", id: "cleaning-care", text: "Nettoyage et entretien" },
@@ -1674,14 +1898,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "track-results", text: "Suivre les résultats" },
           {
             type: "p",
-            text: "Comparez le nombre d'avis de votre fiche Google mois après mois. Si vous utilisez aussi notre service de [gestion des avis avec l'IA](/fr/products/ai-review-management), les réponses aux nouveaux avis sont gérées automatiquement, avec votre validation.",
+            text: "Comparez le nombre d'avis sur chaque plateforme mois après mois. Si vous utilisez aussi notre service de [gestion des avis avec l'IA](/fr/products/ai-review-management), les réponses aux nouveaux avis Google sont gérées automatiquement, avec votre validation.",
           },
         ],
       },
       de: {
         title: "Nutzung: täglich um Bewertungen bitten",
         description:
-          "Ein praktischer Leitfaden, wie Ihr Team mit den Schildern um Google-Bewertungen bittet und dabei die Regeln von Google einhält, und wie Sie die Schilder sauber und funktionsfähig halten.",
+          "Ein praktischer Leitfaden, wie Ihr Team mit den Schildern um Bewertungen bittet und dabei die Regeln von Google, Tripadvisor und Booking.com einhält, und wie Sie die Schilder sauber und funktionsfähig halten.",
         blocks: [
           {
             type: "p",
@@ -1705,10 +1929,10 @@ export const docs: ProductDocs = {
             tone: "tip",
             text: "Zeigen Sie, wie es geht. Viele Menschen haben ihr Handy noch nie an ein Schild gehalten; wenn das Team es in der ersten Woche mit dem eigenen Handy vormacht, steigt die Nutzung deutlich.",
           },
-          { type: "h2", id: "google-rules", text: "Google-Regeln, die Sie einhalten müssen" },
+          { type: "h2", id: "google-rules", text: "Regeln der Plattformen, die Sie einhalten müssen" },
           {
             type: "p",
-            text: "Google hat klare Richtlinien für Bewertungsinhalte. Wer sie ignoriert, riskiert gelöschte Bewertungen oder Einschränkungen des Profils.",
+            text: "Google, Tripadvisor und Booking.com haben klare Richtlinien für Bewertungen. Wer sie ignoriert, riskiert gelöschte Bewertungen oder Einschränkungen auf seiner Seite.",
           },
           {
             type: "ul",
@@ -1717,6 +1941,7 @@ export const docs: ProductDocs = {
               "**Bewertungen nicht filtern**: Fragen Sie jeden Kunden, nicht nur die, die zufrieden wirken.",
               "**Keine Bewertungen schreiben** im Namen von Kunden und keine Mitarbeiter oder Familienmitglieder um Bewertungen bitten.",
               "**Keinen Druck ausüben**: Die Bitte soll freundlich und freiwillig sein.",
+              "**Booking.com**: Nur Gäste, die über Booking gebucht haben, können bewerten, über die E-Mail, die Booking nach dem Check-out schickt. Sagen Sie anderen Gästen nicht, dass sie dort bewerten können.",
             ],
           },
           {
@@ -1734,6 +1959,7 @@ export const docs: ProductDocs = {
               ["Friseur- oder Kosmetiksalon", "Am Ende, wenn der Kunde das Ergebnis im Spiegel sieht"],
               ["Praxis", "Am Empfang, beim Vereinbaren des nächsten Termins"],
               ["Geschäft", "Beim Einpacken des Einkaufs an der Kasse"],
+              ["Unterkunft", "Beim Check-out, wenn Sie den Gast verabschieden"],
             ],
           },
           { type: "h2", id: "cleaning-care", text: "Reinigung und Pflege" },
@@ -1749,14 +1975,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "track-results", text: "Ergebnisse verfolgen" },
           {
             type: "p",
-            text: "Vergleichen Sie die Zahl der Bewertungen in Ihrem Google-Profil Monat für Monat. Nutzen Sie auch unser [KI-Bewertungsmanagement](/de/products/ai-review-management), werden Antworten auf neue Bewertungen automatisch erledigt, mit Ihrer Freigabe.",
+            text: "Vergleichen Sie die Zahl der Bewertungen auf jeder Plattform Monat für Monat. Nutzen Sie auch unser [KI-Bewertungsmanagement](/de/products/ai-review-management), werden Antworten auf neue Google-Bewertungen automatisch erledigt, mit Ihrer Freigabe.",
           },
         ],
       },
       it: {
         title: "Uso: chiedere recensioni ogni giorno",
         description:
-          "Una guida pratica perché il Suo staff chieda recensioni Google con le targhe rispettando le regole di Google, e per mantenere le targhe pulite e funzionanti.",
+          "Una guida pratica perché il Suo staff chieda recensioni con le targhe rispettando le regole di Google, Tripadvisor e Booking.com, e per mantenere le targhe pulite e funzionanti.",
         blocks: [
           {
             type: "p",
@@ -1780,10 +2006,10 @@ export const docs: ProductDocs = {
             tone: "tip",
             text: "Mostri come si fa. Molte persone non hanno mai avvicinato il telefono a una targa; se lo staff lo dimostra con il proprio telefono nella prima settimana, l'uso aumenta in modo evidente.",
           },
-          { type: "h2", id: "google-rules", text: "Regole di Google da rispettare" },
+          { type: "h2", id: "google-rules", text: "Le regole delle piattaforme da rispettare" },
           {
             type: "p",
-            text: "Google ha norme chiare sui contenuti delle recensioni. Ignorarle può portare alla rimozione delle recensioni o a limitazioni sul Suo profilo.",
+            text: "Google, Tripadvisor e Booking.com hanno regole chiare sulle recensioni. Ignorarle può portare alla rimozione di recensioni o a restrizioni sulla Sua pagina.",
           },
           {
             type: "ul",
@@ -1792,6 +2018,7 @@ export const docs: ProductDocs = {
               "**Non filtri le recensioni**: la chieda a tutti i clienti, non solo a quelli che sembrano soddisfatti.",
               "**Non scriva recensioni** al posto dei clienti e non chieda a dipendenti o familiari di recensire la Sua attività.",
               "**Non faccia pressione**: la richiesta deve essere cordiale e facoltativa.",
+              "**Booking.com**: può recensire solo chi ha prenotato tramite Booking, dall'e-mail che Booking invia dopo il check-out. Non dica agli altri ospiti che possono recensire lì.",
             ],
           },
           {
@@ -1809,6 +2036,7 @@ export const docs: ProductDocs = {
               ["Parrucchiere o centro estetico", "Alla fine, quando il cliente vede il risultato allo specchio"],
               ["Clinica", "In reception, prenotando il prossimo appuntamento"],
               ["Negozio", "Mentre si imbusta l'acquisto alla cassa"],
+              ["Struttura ricettiva", "Al check-out, quando saluta l'ospite"],
             ],
           },
           { type: "h2", id: "cleaning-care", text: "Pulizia e manutenzione" },
@@ -1824,14 +2052,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "track-results", text: "Seguire i risultati" },
           {
             type: "p",
-            text: "Confronti il numero di recensioni del Suo profilo Google mese per mese. Se usa anche il nostro servizio di [gestione delle recensioni con IA](/it/products/ai-review-management), le risposte alle nuove recensioni sono gestite automaticamente, con la Sua approvazione.",
+            text: "Confronti il numero di recensioni su ogni piattaforma mese per mese. Se usa anche il nostro servizio di [gestione delle recensioni con IA](/it/products/ai-review-management), le risposte alle nuove recensioni Google sono gestite automaticamente, con la Sua approvazione.",
           },
         ],
       },
     },
     troubleshooting: {
       pt: {
-        title: "Resolução de problemas das placas Google Reviews",
+        title: "Resolução de problemas das placas para avaliações",
         description:
           "O que fazer quando uma placa não abre a página de avaliação: compatibilidade de telemóveis, capas, metal, links alterados e perfis Google suspensos.",
         blocks: [
@@ -1877,9 +2105,10 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Abre o perfil mas não a janela de avaliação**: alguns navegadores abrem primeiro a ficha do negócio. O cliente pode tocar em \"Escrever uma avaliação\". Se acontecer sempre, avise-nos para revermos o link.",
-              "**Pede para iniciar sessão**: o Google exige uma conta para publicar avaliações. É um comportamento normal.",
+              "**Pede para iniciar sessão**: o Google e o Tripadvisor exigem uma conta para publicar avaliações. É um comportamento normal.",
               "**Mostra outro negócio**: o link ou o Place ID está errado. Contacte-nos para corrigir o redirecionamento.",
               "**Página de erro**: pode ser uma falha momentânea de rede. Se persistir, contacte-nos.",
+              "**Na Booking.com não aparece formulário de avaliação**: é normal. A placa da Booking abre a página do alojamento; o hóspede avalia pelo convite que a Booking lhe envia por email depois do check-out.",
             ],
           },
           { type: "h2", id: "perfil-suspenso", text: "Perfil suspenso ou link alterado" },
@@ -1912,7 +2141,7 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Troubleshooting Google review plates",
+        title: "Troubleshooting review plates",
         description:
           "What to do when a plate won't open the review page: phone compatibility, phone cases, metal surfaces, changed links and suspended Google profiles.",
         blocks: [
@@ -1958,9 +2187,10 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Opens the listing but not the review window**: some browsers show the business listing first. The customer can tap \"Write a review\". If it always happens, let us know so we can check the link.",
-              "**Asks to sign in**: Google requires an account to post reviews. This is normal.",
+              "**It asks the customer to sign in**: Google and Tripadvisor require an account to post reviews. This is normal.",
               "**Shows another business**: the link or Place ID is wrong. Contact us and we'll fix the redirect.",
               "**Error page**: it may be a temporary network glitch. If it persists, get in touch.",
+              "**No review form on Booking.com**: that's normal. The Booking plate opens the property's page; guests review from the invitation Booking emails them after check-out.",
             ],
           },
           { type: "h2", id: "suspended-profile", text: "Suspended profile or changed link" },
@@ -1993,7 +2223,7 @@ export const docs: ProductDocs = {
         ],
       },
       es: {
-        title: "Solución de problemas de las placas para reseñas en Google",
+        title: "Solución de problemas de las placas para reseñas",
         description:
           "Qué hacer cuando una placa no abre la página de reseñas: compatibilidad del móvil, fundas, superficies metálicas, enlaces cambiados y perfiles de Google suspendidos.",
         blocks: [
@@ -2039,9 +2269,10 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Abre la ficha pero no la ventana de reseña**: algunos navegadores muestran primero la ficha del negocio. El cliente puede tocar «Escribir una reseña». Si ocurre siempre, avísenos para revisar el enlace.",
-              "**Pide iniciar sesión**: Google exige una cuenta para publicar reseñas. Es normal.",
+              "**Pide iniciar sesión**: Google y Tripadvisor exigen una cuenta para publicar reseñas. Es un comportamiento normal.",
               "**Muestra otro negocio**: el enlace o el Place ID son incorrectos. Contacte con nosotros y corregimos la redirección.",
               "**Página de error**: puede ser un fallo temporal de la red. Si continúa, contacte con nosotros.",
+              "**En Booking.com no aparece un formulario de valoración**: es normal. La placa de Booking abre la página del alojamiento; el huésped valora desde la invitación que Booking le envía por correo tras el check-out.",
             ],
           },
           { type: "h2", id: "suspended-profile", text: "Perfil suspendido o enlace cambiado" },
@@ -2074,7 +2305,7 @@ export const docs: ProductDocs = {
         ],
       },
       fr: {
-        title: "Résolution des problèmes des plaques pour avis Google",
+        title: "Résolution des problèmes des plaques pour avis",
         description:
           "Que faire quand une plaque n'ouvre pas la page d'avis : compatibilité du téléphone, coques, surfaces métalliques, liens modifiés et fiches Google suspendues.",
         blocks: [
@@ -2120,9 +2351,10 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Ouvre la fiche mais pas la fenêtre d'avis** : certains navigateurs affichent d'abord la fiche du commerce. Le client peut toucher «Donner un avis». Si cela arrive à chaque fois, prévenez-nous pour que nous vérifiions le lien.",
-              "**Demande de se connecter** : Google exige un compte pour publier un avis. C'est normal.",
+              "**Une connexion est demandée** : Google et Tripadvisor exigent un compte pour publier un avis. C'est un comportement normal.",
               "**Affiche un autre commerce** : le lien ou le Place ID est erroné. Contactez-nous et nous corrigeons la redirection.",
               "**Page d'erreur** : il peut s'agir d'un problème réseau passager. Si cela persiste, contactez-nous.",
+              "**Pas de formulaire d'avis sur Booking.com** : c'est normal. La plaque Booking ouvre la page de l'hébergement ; le voyageur laisse son avis depuis l'invitation que Booking lui envoie par e-mail après le départ.",
             ],
           },
           { type: "h2", id: "suspended-profile", text: "Fiche suspendue ou lien modifié" },
@@ -2155,7 +2387,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Fehlerbehebung für Schilder für Google-Bewertungen",
+        title: "Fehlerbehebung für Bewertungsschilder",
         description:
           "Was tun, wenn ein Schild die Bewertungsseite nicht öffnet: Handy-Kompatibilität, Handyhüllen, Metallflächen, geänderte Links und gesperrte Google-Profile.",
         blocks: [
@@ -2201,9 +2433,10 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Öffnet den Eintrag, aber nicht das Bewertungsfenster**: Manche Browser zeigen zuerst den Unternehmenseintrag. Der Kunde kann auf «Rezension schreiben» tippen. Passiert das immer, sagen Sie uns Bescheid, damit wir den Link prüfen.",
-              "**Fordert zur Anmeldung auf**: Google verlangt ein Konto, um Bewertungen zu veröffentlichen. Das ist normal.",
+              "**Es wird eine Anmeldung verlangt**: Google und Tripadvisor verlangen ein Konto, um Bewertungen zu veröffentlichen. Das ist normal.",
               "**Zeigt ein anderes Geschäft**: Der Link oder die Place ID ist falsch. Kontaktieren Sie uns, und wir korrigieren die Weiterleitung.",
               "**Fehlerseite**: Das kann eine vorübergehende Netzwerkstörung sein. Besteht sie weiter, melden Sie sich.",
+              "**Auf Booking.com erscheint kein Bewertungsformular**: Das ist normal. Das Booking-Schild öffnet die Seite der Unterkunft; der Gast bewertet über die Einladung, die Booking ihm nach dem Check-out per E-Mail schickt.",
             ],
           },
           { type: "h2", id: "suspended-profile", text: "Gesperrtes Profil oder geänderter Link" },
@@ -2236,7 +2469,7 @@ export const docs: ProductDocs = {
         ],
       },
       it: {
-        title: "Risoluzione dei problemi delle targhe per recensioni Google",
+        title: "Risoluzione dei problemi delle targhe per recensioni",
         description:
           "Cosa fare quando una targa non apre la pagina delle recensioni: compatibilità del telefono, cover, superfici metalliche, link cambiati e profili Google sospesi.",
         blocks: [
@@ -2282,9 +2515,10 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Apre la scheda ma non la finestra di recensione**: alcuni browser mostrano prima la scheda dell'attività. Il cliente può toccare «Scrivi una recensione». Se succede sempre, ci avvisi per verificare il link.",
-              "**Chiede di accedere**: Google richiede un account per pubblicare recensioni. È normale.",
+              "**Chiede di accedere**: Google e Tripadvisor richiedono un account per pubblicare recensioni. È normale.",
               "**Mostra un'altra attività**: il link o il Place ID è sbagliato. Ci contatti e correggiamo il reindirizzamento.",
               "**Pagina di errore**: può essere un problema temporaneo di rete. Se persiste, ci contatti.",
+              "**Su Booking.com non compare il modulo di recensione**: è normale. La targa Booking apre la pagina della struttura; l'ospite recensisce dall'invito che Booking gli invia via e-mail dopo il check-out.",
             ],
           },
           { type: "h2", id: "suspended-profile", text: "Profilo sospeso o link cambiato" },
@@ -2319,9 +2553,9 @@ export const docs: ProductDocs = {
     },
     faq: {
       pt: {
-        title: "Perguntas frequentes sobre placas Google Reviews",
+        title: "Perguntas frequentes sobre as placas para avaliações",
         description:
-          "Respostas às dúvidas mais comuns sobre placas para reviews no Google: compatibilidade, regras do Google, alterações de link, limpeza e substituição.",
+          "Respostas às dúvidas mais comuns sobre as placas para avaliações: compatibilidade, Google, Tripadvisor e Booking.com, alterações de link, limpeza e substituição.",
         blocks: [
           { type: "h2", id: "perguntas", text: "Perguntas frequentes" },
           {
@@ -2329,23 +2563,31 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "O cliente precisa de instalar alguma aplicação?",
-                a: "Não. A leitura por aproximação está integrada na maioria dos telemóveis recentes e o código QR funciona com a câmara. O formulário abre no navegador ou na aplicação Google Maps.",
+                a: "Não. A leitura por aproximação está integrada na maioria dos telemóveis recentes e o código QR funciona com a câmara. A página abre no navegador ou na aplicação da plataforma (Google Maps, Tripadvisor ou Booking.com).",
               },
               {
                 q: "Funciona em todos os iPhones?",
                 a: "Do iPhone XS em diante, a leitura é automática com o ecrã desbloqueado. Nos iPhone 7, 8 e X é preciso usar o botão do leitor de etiquetas na Centro de Controlo. Em modelos mais antigos, use o código QR.",
               },
               {
-                q: "A Steevanz tem alguma ligação à Google?",
-                a: "Não. A Steevanz é uma empresa independente. As placas apenas encaminham os clientes para o formulário público de avaliação do seu Perfil da Empresa no Google.",
+                q: "A Steevanz tem alguma ligação à Google, ao Tripadvisor ou à Booking.com?",
+                a: "Não. A Steevanz é uma empresa independente. As placas apenas encaminham os clientes para as páginas públicas do seu negócio nessas plataformas.",
               },
               {
                 q: "Posso oferecer um desconto a quem deixar avaliação?",
-                a: "Não. As políticas do Google proíbem incentivos em troca de avaliações, mesmo que a avaliação seja honesta. Peça a todos os clientes, sem contrapartidas.",
+                a: "Não. O Google, o Tripadvisor e a Booking.com proíbem incentivos em troca de avaliações, mesmo que a avaliação seja honesta. Peça a todos os clientes, sem contrapartidas.",
               },
               {
                 q: "Posso pedir avaliações só aos clientes satisfeitos?",
                 a: "Não deve. Pedir seletivamente (review gating) vai contra as regras do Google. Peça a todos; as críticas ocasionais tornam o perfil mais credível.",
+              },
+              {
+                q: "Uma placa pode abrir o Google e o Tripadvisor?",
+                a: "Não. Cada placa abre um único destino, que escolhe na encomenda: o Google, o Tripadvisor ou a Booking.com. Para duas plataformas, use duas placas. Se mais tarde quiser que uma placa abra outro destino, atualizamos o redirecionamento.",
+              },
+              {
+                q: "Qualquer hóspede me pode avaliar na Booking.com pela placa?",
+                a: "Não. A Booking.com só aceita avaliações de quem reservou pela Booking e ficou alojado, através do convite que envia por email depois do check-out. A placa da Booking abre a página do alojamento e lembra o hóspede desse email. No Google e no Tripadvisor, qualquer cliente que abra o link pode avaliar.",
               },
               {
                 q: "Alguém pode reprogramar a minha placa?",
@@ -2377,9 +2619,9 @@ export const docs: ProductDocs = {
         ],
       },
       en: {
-        title: "Google review plates FAQ",
+        title: "Review plates FAQ",
         description:
-          "Answers to the most common questions about Google review plates: phone compatibility, Google's rules, link changes, cleaning and replacements.",
+          "Answers to the most common questions about review plates: phone compatibility, Google, Tripadvisor and Booking.com, link changes, cleaning and replacements.",
         blocks: [
           { type: "h2", id: "questions", text: "Frequently asked questions" },
           {
@@ -2387,23 +2629,31 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Do customers need to install an app?",
-                a: "No. Tap reading is built into most recent phones and the QR code works with the camera. The review form opens in the browser or in the Google Maps app.",
+                a: "No. Tap reading is built into most recent phones and the QR code works with the camera. The page opens in the browser or in the platform's app (Google Maps, Tripadvisor or Booking.com).",
               },
               {
                 q: "Does it work on every iPhone?",
                 a: "From iPhone XS onwards, reading is automatic with the screen unlocked. On iPhone 7, 8 and X you need the tag reader button in Control Centre. On older models, use the QR code.",
               },
               {
-                q: "Is Steevanz connected to Google?",
-                a: "No. Steevanz is an independent company. The plates simply send customers to the public review form of your Google Business Profile.",
+                q: "Is Steevanz connected to Google, Tripadvisor or Booking.com?",
+                a: "No. Steevanz is an independent company. The plates simply send customers to your business's public pages on those platforms.",
               },
               {
                 q: "Can I offer a discount to customers who leave a review?",
-                a: "No. Google's policies forbid incentives in exchange for reviews, even honest ones. Ask every customer, with nothing in return.",
+                a: "No. Google, Tripadvisor and Booking.com forbid incentives in exchange for reviews, even honest ones. Ask every customer, with nothing in return.",
               },
               {
                 q: "Can I only ask happy customers?",
                 a: "You shouldn't. Selective asking (review gating) breaks Google's rules. Ask everyone; the occasional criticism makes your profile more credible.",
+              },
+              {
+                q: "Can one plate open both Google and Tripadvisor?",
+                a: "No. Each plate opens a single destination, which you choose when you order: Google, Tripadvisor or Booking.com. For two platforms, use two plates. If you later want a plate to open another destination, we update the redirect.",
+              },
+              {
+                q: "Can any guest review me on Booking.com through the plate?",
+                a: "No. Booking.com only accepts reviews from guests who booked through Booking and stayed, from the invitation it emails after check-out. The Booking plate opens the property's page and reminds guests of that email. On Google and Tripadvisor, any customer who opens the link can leave a review.",
               },
               {
                 q: "Can someone reprogram my plate?",
@@ -2435,9 +2685,9 @@ export const docs: ProductDocs = {
         ],
       },
       es: {
-        title: "Preguntas frecuentes sobre las placas para reseñas en Google",
+        title: "Preguntas frecuentes sobre las placas para reseñas",
         description:
-          "Respuestas a las dudas más habituales sobre las placas para reseñas en Google: compatibilidad de móviles, normas de Google, cambios de enlace, limpieza y sustituciones.",
+          "Respuestas a las dudas más habituales sobre las placas para reseñas: compatibilidad de móviles, Google, Tripadvisor y Booking.com, cambios de enlace, limpieza y sustituciones.",
         blocks: [
           { type: "h2", id: "questions", text: "Preguntas frecuentes" },
           {
@@ -2445,23 +2695,31 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "¿Los clientes tienen que instalar una app?",
-                a: "No. La lectura con un toque viene incluida en la mayoría de los móviles recientes y el código QR funciona con la cámara. El formulario de reseñas se abre en el navegador o en la app Google Maps.",
+                a: "No. La lectura por proximidad está integrada en la mayoría de los móviles recientes y el código QR funciona con la cámara. La página se abre en el navegador o en la app de la plataforma (Google Maps, Tripadvisor o Booking.com).",
               },
               {
                 q: "¿Funciona en todos los iPhone?",
                 a: "Desde el iPhone XS, la lectura es automática con la pantalla desbloqueada. En los iPhone 7, 8 y X hace falta el botón del lector de etiquetas del Centro de control. En modelos más antiguos, use el código QR.",
               },
               {
-                q: "¿Steevanz tiene relación con Google?",
-                a: "No. Steevanz es una empresa independiente. Las placas solo llevan a los clientes al formulario público de reseñas de su Perfil de Empresa de Google.",
+                q: "¿Tiene Steevanz alguna relación con Google, Tripadvisor o Booking.com?",
+                a: "No. Steevanz es una empresa independiente. Las placas solo llevan a los clientes a las páginas públicas de su negocio en esas plataformas.",
               },
               {
                 q: "¿Puedo ofrecer un descuento a los clientes que dejen una reseña?",
-                a: "No. Las políticas de Google prohíben los incentivos a cambio de reseñas, aunque sean sinceras. Pídala a todos los clientes, sin nada a cambio.",
+                a: "No. Google, Tripadvisor y Booking.com prohíben los incentivos a cambio de reseñas, aunque la reseña sea sincera. Pídala a todos los clientes, sin nada a cambio.",
               },
               {
                 q: "¿Puedo pedirla solo a los clientes satisfechos?",
                 a: "No debería. Pedirla de forma selectiva (filtrado de reseñas) incumple las normas de Google. Pídala a todos; alguna crítica ocasional hace su perfil más creíble.",
+              },
+              {
+                q: "¿Una placa puede abrir Google y Tripadvisor?",
+                a: "No. Cada placa abre un único destino, que usted elige en el pedido: Google, Tripadvisor o Booking.com. Para dos plataformas, use dos placas. Si más adelante quiere que una placa abra otro destino, actualizamos la redirección.",
+              },
+              {
+                q: "¿Cualquier huésped puede valorarme en Booking.com con la placa?",
+                a: "No. Booking.com solo acepta valoraciones de quien reservó por Booking y se alojó, desde la invitación que envía por correo tras el check-out. La placa de Booking abre la página del alojamiento y recuerda al huésped ese correo. En Google y Tripadvisor, cualquier cliente que abra el enlace puede dejar su reseña.",
               },
               {
                 q: "¿Alguien puede reprogramar mi placa?",
@@ -2493,9 +2751,9 @@ export const docs: ProductDocs = {
         ],
       },
       fr: {
-        title: "Questions fréquentes sur les plaques pour avis Google",
+        title: "Questions fréquentes sur les plaques pour avis",
         description:
-          "Réponses aux questions les plus courantes sur les plaques pour avis Google : compatibilité des téléphones, règles de Google, changement de lien, nettoyage et remplacements.",
+          "Réponses aux questions les plus courantes sur les plaques pour avis : compatibilité des téléphones, Google, Tripadvisor et Booking.com, changement de lien, nettoyage et remplacements.",
         blocks: [
           { type: "h2", id: "questions", text: "Questions fréquentes" },
           {
@@ -2503,23 +2761,31 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Les clients doivent-ils installer une application ?",
-                a: "Non. La lecture d'un toucher est intégrée à la plupart des téléphones récents et le QR code fonctionne avec l'appareil photo. Le formulaire d'avis s'ouvre dans le navigateur ou dans l'application Google Maps.",
+                a: "Non. La lecture sans contact est intégrée à la plupart des téléphones récents et le QR code fonctionne avec l'appareil photo. La page s'ouvre dans le navigateur ou dans l'application de la plateforme (Google Maps, Tripadvisor ou Booking.com).",
               },
               {
                 q: "Est-ce que ça marche sur tous les iPhone ?",
                 a: "À partir de l'iPhone XS, la lecture est automatique écran déverrouillé. Sur les iPhone 7, 8 et X, il faut le bouton du lecteur de tags dans le Centre de contrôle. Sur les modèles plus anciens, utilisez le QR code.",
               },
               {
-                q: "Steevanz est-elle liée à Google ?",
-                a: "Non. Steevanz est une entreprise indépendante. Les plaques dirigent simplement les clients vers le formulaire public d'avis de votre fiche d'établissement Google.",
+                q: "Steevanz a-t-elle un lien avec Google, Tripadvisor ou Booking.com ?",
+                a: "Non. Steevanz est une entreprise indépendante. Les plaques dirigent simplement vos clients vers les pages publiques de votre établissement sur ces plateformes.",
               },
               {
                 q: "Puis-je offrir une réduction aux clients qui laissent un avis ?",
-                a: "Non. Les règles de Google interdisent toute contrepartie en échange d'avis, même sincères. Demandez à tous les clients, sans rien en retour.",
+                a: "Non. Google, Tripadvisor et Booking.com interdisent les contreparties en échange d'avis, même sincères. Sollicitez tous vos clients, sans rien en retour.",
               },
               {
                 q: "Puis-je demander uniquement aux clients satisfaits ?",
                 a: "Vous ne devriez pas. Demander de façon sélective (filtrage des avis) enfreint les règles de Google. Demandez à tout le monde ; une critique de temps en temps rend votre fiche plus crédible.",
+              },
+              {
+                q: "Une plaque peut-elle ouvrir Google et Tripadvisor ?",
+                a: "Non. Chaque plaque ouvre une seule destination, que vous choisissez à la commande : Google, Tripadvisor ou Booking.com. Pour deux plateformes, utilisez deux plaques. Si vous voulez plus tard qu'une plaque ouvre une autre destination, nous mettons la redirection à jour.",
+              },
+              {
+                q: "N'importe quel voyageur peut-il me laisser un avis sur Booking.com avec la plaque ?",
+                a: "Non. Booking.com n'accepte que les avis de ceux qui ont réservé via Booking et séjourné chez vous, depuis l'invitation envoyée par e-mail après le départ. La plaque Booking ouvre la page de l'hébergement et rappelle cet e-mail au voyageur. Sur Google et Tripadvisor, tout client qui ouvre le lien peut laisser un avis.",
               },
               {
                 q: "Quelqu'un peut-il reprogrammer ma plaque ?",
@@ -2551,9 +2817,9 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Häufige Fragen zu den Schildern für Google-Bewertungen",
+        title: "Häufige Fragen zu den Schildern für Bewertungen",
         description:
-          "Antworten auf die häufigsten Fragen zu den Schildern für Google-Bewertungen: Handy-Kompatibilität, Google-Regeln, Linkänderungen, Reinigung und Ersatz.",
+          "Antworten auf die häufigsten Fragen zu den Schildern für Bewertungen: Handy-Kompatibilität, Google, Tripadvisor und Booking.com, Linkänderungen, Reinigung und Ersatz.",
         blocks: [
           { type: "h2", id: "questions", text: "Häufige Fragen" },
           {
@@ -2561,23 +2827,31 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Müssen Kunden eine App installieren?",
-                a: "Nein. Das Lesen per Antippen ist in den meisten aktuellen Handys eingebaut, und der QR-Code funktioniert mit der Kamera. Das Bewertungsformular öffnet sich im Browser oder in der Google-Maps-App.",
+                a: "Nein. Kontaktloses Lesen ist in den meisten aktuellen Handys eingebaut, und der QR-Code funktioniert mit der Kamera. Die Seite öffnet sich im Browser oder in der App der Plattform (Google Maps, Tripadvisor oder Booking.com).",
               },
               {
                 q: "Funktioniert es auf jedem iPhone?",
                 a: "Ab dem iPhone XS liest das Handy automatisch, wenn der Bildschirm entsperrt ist. Beim iPhone 7, 8 und X brauchen Sie die Taste des Tag-Lesers im Kontrollzentrum. Bei älteren Modellen nutzen Sie den QR-Code.",
               },
               {
-                q: "Hat Steevanz eine Verbindung zu Google?",
-                a: "Nein. Steevanz ist ein unabhängiges Unternehmen. Die Schilder leiten Kunden nur zum öffentlichen Bewertungsformular Ihres Google-Unternehmensprofils weiter.",
+                q: "Ist Steevanz mit Google, Tripadvisor oder Booking.com verbunden?",
+                a: "Nein. Steevanz ist ein unabhängiges Unternehmen. Die Schilder leiten Kunden nur zu den öffentlichen Seiten Ihres Betriebs auf diesen Plattformen weiter.",
               },
               {
                 q: "Darf ich Kunden, die eine Bewertung hinterlassen, einen Rabatt geben?",
-                a: "Nein. Die Richtlinien von Google verbieten Anreize im Austausch für Bewertungen, auch für ehrliche. Fragen Sie jeden Kunden, ohne Gegenleistung.",
+                a: "Nein. Google, Tripadvisor und Booking.com verbieten Gegenleistungen für Bewertungen, auch für ehrliche. Fragen Sie jeden Kunden, ohne etwas dafür zu bieten.",
               },
               {
                 q: "Darf ich nur zufriedene Kunden fragen?",
                 a: "Das sollten Sie nicht. Selektives Fragen (Review Gating) verstößt gegen die Regeln von Google. Fragen Sie alle; gelegentliche Kritik macht Ihr Profil glaubwürdiger.",
+              },
+              {
+                q: "Kann ein Schild Google und Tripadvisor öffnen?",
+                a: "Nein. Jedes Schild öffnet genau ein Ziel, das Sie bei der Bestellung wählen: Google, Tripadvisor oder Booking.com. Für zwei Plattformen nutzen Sie zwei Schilder. Soll ein Schild später ein anderes Ziel öffnen, ändern wir die Weiterleitung.",
+              },
+              {
+                q: "Kann mich jeder Gast über das Schild auf Booking.com bewerten?",
+                a: "Nein. Booking.com nimmt nur Bewertungen von Gästen an, die über Booking gebucht und übernachtet haben, über die Einladung, die nach dem Check-out per E-Mail kommt. Das Booking-Schild öffnet die Seite der Unterkunft und erinnert den Gast an diese E-Mail. Bei Google und Tripadvisor kann jeder Kunde, der den Link öffnet, eine Bewertung abgeben.",
               },
               {
                 q: "Kann jemand mein Schild umprogrammieren?",
@@ -2609,9 +2883,9 @@ export const docs: ProductDocs = {
         ],
       },
       it: {
-        title: "Domande frequenti sulle targhe per recensioni Google",
+        title: "Domande frequenti sulle targhe per recensioni",
         description:
-          "Risposte ai dubbi più comuni sulle targhe per recensioni Google: compatibilità dei telefoni, regole di Google, cambi di link, pulizia e sostituzioni.",
+          "Risposte ai dubbi più comuni sulle targhe per recensioni: compatibilità dei telefoni, Google, Tripadvisor e Booking.com, cambi di link, pulizia e sostituzioni.",
         blocks: [
           { type: "h2", id: "questions", text: "Domande frequenti" },
           {
@@ -2619,23 +2893,31 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "I clienti devono installare un'app?",
-                a: "No. La lettura con un tocco è integrata nella maggior parte dei telefoni recenti e il QR code funziona con la fotocamera. Il modulo di recensione si apre nel browser o nell'app Google Maps.",
+                a: "No. La lettura contactless è integrata nella maggior parte dei telefoni recenti e il QR code funziona con la fotocamera. La pagina si apre nel browser o nell'app della piattaforma (Google Maps, Tripadvisor o Booking.com).",
               },
               {
                 q: "Funziona su tutti gli iPhone?",
                 a: "Dall'iPhone XS in poi la lettura è automatica con lo schermo sbloccato. Su iPhone 7, 8 e X serve il pulsante del lettore di tag nel Centro di Controllo. Sui modelli più vecchi, si usa il QR code.",
               },
               {
-                q: "Steevanz è collegata a Google?",
-                a: "No. Steevanz è un'azienda indipendente. Le targhe portano semplicemente i clienti al modulo pubblico di recensione del Suo Profilo dell'attività su Google.",
+                q: "Steevanz ha qualche legame con Google, Tripadvisor o Booking.com?",
+                a: "No. Steevanz è un'azienda indipendente. Le targhe portano semplicemente i clienti alle pagine pubbliche della Sua attività su queste piattaforme.",
               },
               {
                 q: "Posso offrire uno sconto ai clienti che lasciano una recensione?",
-                a: "No. Le norme di Google vietano gli incentivi in cambio di recensioni, anche sincere. La chieda a tutti i clienti, senza nulla in cambio.",
+                a: "No. Google, Tripadvisor e Booking.com vietano gli incentivi in cambio di recensioni, anche se sincere. Chieda a tutti i clienti, senza nulla in cambio.",
               },
               {
                 q: "Posso chiederla solo ai clienti soddisfatti?",
                 a: "Non dovrebbe. Chiedere in modo selettivo (review gating) viola le regole di Google. Chieda a tutti; qualche critica occasionale rende il Suo profilo più credibile.",
+              },
+              {
+                q: "Una targa può aprire Google e Tripadvisor?",
+                a: "No. Ogni targa apre una sola destinazione, che sceglie al momento dell'ordine: Google, Tripadvisor o Booking.com. Per due piattaforme, usi due targhe. Se in seguito vuole che una targa apra un'altra destinazione, aggiorniamo il reindirizzamento.",
+              },
+              {
+                q: "Qualsiasi ospite può recensirmi su Booking.com con la targa?",
+                a: "No. Booking.com accetta solo recensioni di chi ha prenotato tramite Booking e soggiornato, dall'invito che invia via e-mail dopo il check-out. La targa Booking apre la pagina della struttura e ricorda all'ospite quell'e-mail. Su Google e Tripadvisor, qualsiasi cliente che apre il link può lasciare una recensione.",
               },
               {
                 q: "Qualcuno può riprogrammare la mia targa?",

@@ -65,11 +65,11 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "combinar-placas",
-            text: "Combinar com as placas para reviews no Google",
+            text: "Combinar com as placas para avaliações",
           },
           {
             type: "p",
-            text: "O serviço funciona especialmente bem com as [placas para reviews no Google](/produtos/placas-google-reviews): as placas ajudam a receber mais avaliações, e a gestão com IA garante que todas têm resposta. Para começar, consulte a [instalação](/docs/gestao-reviews-ia/instalacao) ou [marque uma demonstração](/agendar).",
+            text: "O serviço funciona especialmente bem com as [placas para avaliações](/produtos/placas-google-reviews): as placas ajudam a receber mais avaliações, e a gestão com IA garante que todas têm resposta. Para começar, consulte a [instalação](/docs/gestao-reviews-ia/instalacao) ou [marque uma demonstração](/agendar).",
           },
         ],
       },
@@ -134,11 +134,11 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "pair-with-plates",
-            text: "Pairing with Google review plates",
+            text: "Pairing with review plates",
           },
           {
             type: "p",
-            text: "The service works especially well with [Google review plates](/en/products/google-review-plates): the plates help you collect more reviews, and AI management makes sure every one gets a reply. To get going, see [setup](/en/docs/ai-review-management/setup) or [book a demo](/en/book-a-demo).",
+            text: "The service works especially well with [review plates](/en/products/google-review-plates): the plates help you collect more reviews, and AI management makes sure every one gets a reply. To get going, see [setup](/en/docs/ai-review-management/setup) or [book a demo](/en/book-a-demo).",
           },
         ],
       },
@@ -203,11 +203,11 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "pair-with-plates",
-            text: "Junto con las placas para reseñas en Google",
+            text: "Junto con las placas para reseñas",
           },
           {
             type: "p",
-            text: "El servicio funciona especialmente bien junto con las [placas para reseñas en Google](/es/products/google-review-plates): las placas le ayudan a conseguir más reseñas y la gestión con IA se asegura de que todas reciban respuesta. Para empezar, consulte la [instalación](/es/docs/ai-review-management/setup) o [reserve una demostración](/es/book-a-demo).",
+            text: "El servicio funciona especialmente bien junto con las [placas para reseñas](/es/products/google-review-plates): las placas le ayudan a conseguir más reseñas y la gestión con IA se asegura de que todas reciban respuesta. Para empezar, consulte la [instalación](/es/docs/ai-review-management/setup) o [reserve una demostración](/es/book-a-demo).",
           },
         ],
       },
@@ -272,11 +272,11 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "pair-with-plates",
-            text: "Avec les plaques pour avis Google",
+            text: "Avec les plaques pour avis",
           },
           {
             type: "p",
-            text: "Le service fonctionne particulièrement bien avec les [plaques pour avis Google](/fr/products/google-review-plates) : les plaques vous aident à recueillir plus d'avis, et la gestion avec l'IA veille à ce que chacun reçoive une réponse. Pour commencer, consultez l'[installation](/fr/docs/ai-review-management/setup) ou [réservez une démonstration](/fr/book-a-demo).",
+            text: "Le service fonctionne particulièrement bien avec les [plaques pour avis](/fr/products/google-review-plates) : les plaques vous aident à recueillir plus d'avis, et la gestion avec l'IA veille à ce que chacun reçoive une réponse. Pour commencer, consultez l'[installation](/fr/docs/ai-review-management/setup) ou [réservez une démonstration](/fr/book-a-demo).",
           },
         ],
       },
@@ -341,11 +341,11 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "pair-with-plates",
-            text: "Zusammen mit den Schildern für Google-Bewertungen",
+            text: "Zusammen mit den Schildern für Bewertungen",
           },
           {
             type: "p",
-            text: "Der Service funktioniert besonders gut zusammen mit den [Schildern für Google-Bewertungen](/de/products/google-review-plates): Die Schilder helfen Ihnen, mehr Bewertungen zu sammeln, und das KI-Management sorgt dafür, dass jede eine Antwort bekommt. Zum Start lesen Sie die [Einrichtung](/de/docs/ai-review-management/setup) oder [buchen Sie eine Vorführung](/de/book-a-demo).",
+            text: "Der Service funktioniert besonders gut zusammen mit den [Schildern für Bewertungen](/de/products/google-review-plates): Die Schilder helfen Ihnen, mehr Bewertungen zu sammeln, und das KI-Management sorgt dafür, dass jede eine Antwort bekommt. Zum Start lesen Sie die [Einrichtung](/de/docs/ai-review-management/setup) oder [buchen Sie eine Vorführung](/de/book-a-demo).",
           },
         ],
       },
@@ -410,11 +410,11 @@ export const docs: ProductDocs = {
           {
             type: "h2",
             id: "pair-with-plates",
-            text: "Insieme alle targhe per recensioni Google",
+            text: "Insieme alle targhe per recensioni",
           },
           {
             type: "p",
-            text: "Il servizio funziona particolarmente bene insieme alle [targhe per recensioni Google](/it/products/google-review-plates): le targhe La aiutano a raccogliere più recensioni e la gestione con IA fa sì che ognuna riceva una risposta. Per iniziare, consulti l'[installazione](/it/docs/ai-review-management/setup) oppure [prenoti una demo](/it/book-a-demo).",
+            text: "Il servizio funziona particolarmente bene insieme alle [targhe per recensioni](/it/products/google-review-plates): le targhe La aiutano a raccogliere più recensioni e la gestione con IA fa sì che ognuna riceva una risposta. Per iniziare, consulti l'[installazione](/it/docs/ai-review-management/setup) oppure [prenoti una demo](/it/book-a-demo).",
           },
         ],
       },
@@ -2479,7 +2479,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Podem ajudar-me a ter mais avaliações?",
-                a: "O serviço foca-se nas respostas. Para receber mais avaliações de forma legítima, recomendamos as nossas placas para reviews no Google, que facilitam o pedido a todos os clientes.",
+                a: "O serviço foca-se nas respostas. Para receber mais avaliações de forma legítima, recomendamos as nossas placas para avaliações, que facilitam o pedido a todos os clientes.",
               },
               {
                 q: "Posso oferecer um desconto a quem deixar uma avaliação?",
@@ -2545,7 +2545,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Can you help me get more reviews?",
-                a: "The service focuses on replies. To collect more reviews legitimately, we recommend our Google review plates, which make it easy to ask every customer.",
+                a: "The service focuses on replies. To collect more reviews legitimately, we recommend our review plates, which make it easy to ask every customer.",
               },
               {
                 q: "Can I offer a discount for leaving a review?",
@@ -2611,7 +2611,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "¿Pueden ayudarme a conseguir más reseñas?",
-                a: "El servicio se centra en las respuestas. Para conseguir más reseñas de forma legítima, recomendamos nuestras placas para reseñas en Google, que facilitan pedírselo a cada cliente.",
+                a: "El servicio se centra en las respuestas. Para conseguir más reseñas de forma legítima, recomendamos nuestras placas para reseñas, que facilitan pedírselo a cada cliente.",
               },
               {
                 q: "¿Puedo ofrecer un descuento a cambio de una reseña?",
@@ -2677,7 +2677,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Pouvez-vous m'aider à obtenir plus d'avis ?",
-                a: "Le service se concentre sur les réponses. Pour recueillir plus d'avis de façon légitime, nous recommandons nos plaques pour avis Google, qui permettent de solliciter facilement chaque client.",
+                a: "Le service se concentre sur les réponses. Pour recueillir plus d'avis de façon légitime, nous recommandons nos plaques pour avis, qui permettent de solliciter facilement chaque client.",
               },
               {
                 q: "Puis-je offrir une remise en échange d'un avis ?",
@@ -2743,7 +2743,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Können Sie mir helfen, mehr Bewertungen zu bekommen?",
-                a: "Der Service konzentriert sich auf die Antworten. Um auf legitime Weise mehr Bewertungen zu sammeln, empfehlen wir unsere Schilder für Google-Bewertungen, mit denen Sie jeden Kunden ganz einfach fragen können.",
+                a: "Der Service konzentriert sich auf die Antworten. Um auf legitime Weise mehr Bewertungen zu sammeln, empfehlen wir unsere Schilder für Bewertungen, mit denen Sie jeden Kunden ganz einfach fragen können.",
               },
               {
                 q: "Darf ich einen Rabatt für eine Bewertung anbieten?",
@@ -2809,7 +2809,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Potete aiutarmi a ottenere più recensioni?",
-                a: "Il servizio si concentra sulle risposte. Per raccogliere più recensioni in modo legittimo, consigliamo le nostre targhe per recensioni Google, che rendono facile chiederla a ogni cliente.",
+                a: "Il servizio si concentra sulle risposte. Per raccogliere più recensioni in modo legittimo, consigliamo le nostre targhe per recensioni, che rendono facile chiederla a ogni cliente.",
               },
               {
                 q: "Posso offrire uno sconto in cambio di una recensione?",

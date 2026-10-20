@@ -32,7 +32,7 @@ const pt = {
   },
   products: {
     metaTitle: "Produtos: placas, reservas, IA e websites para negócios | Steevanz",
-    metaDescription: "Placas para reviews no Google, redes sociais e menu digital, cartão de fidelidade, reservas, lista de espera, IA, landing pages, websites e lojas online.",
+    metaDescription: "Placas para avaliações, redes sociais e menu digital, cartão de fidelidade, reservas, lista de espera, IA, landing pages, websites e lojas online.",
     eyebrow: "Produtos",
     title: "Ferramentas simples para negócios que atendem pessoas.",
     lead: "Soluções que funcionam sozinhas ou em conjunto. Todas configuradas por nós, todas com suporte em português.",
@@ -95,7 +95,7 @@ const en: PageLabels = {
   },
   products: {
     metaTitle: "Products: plates, bookings, AI and websites for business | Steevanz",
-    metaDescription: "Plates for Google reviews, social media and digital menus, loyalty, bookings, waiting lists, AI, landing pages, websites and online shops.",
+    metaDescription: "Plates for reviews, social media and digital menus, loyalty, bookings, waiting lists, AI, landing pages, websites and online shops.",
     eyebrow: "Products",
     title: "Simple tools for businesses that serve people.",
     lead: "Solutions that work on their own or together. All set up by us, all with friendly local support.",
@@ -156,7 +156,7 @@ const es: PageLabels = {
   },
   products: {
     metaTitle: "Productos: placas, reservas, IA y webs para negocios | Steevanz",
-    metaDescription: "Placas para reseñas en Google, redes sociales y menú digital, tarjeta de cliente, reservas, lista de espera, IA, landing pages, webs y tiendas online.",
+    metaDescription: "Placas para reseñas, redes sociales y menú digital, tarjeta de cliente, reservas, lista de espera, IA, landing pages, webs y tiendas online.",
     eyebrow: "Productos",
     title: "Herramientas sencillas para negocios que atienden a personas.",
     lead: "Soluciones que funcionan solas o juntas. Todas configuradas por nosotros, todas con soporte cercano.",
@@ -217,7 +217,7 @@ const fr: PageLabels = {
   },
   products: {
     metaTitle: "Produits : plaques, réservations, IA et sites web pour les pros | Steevanz",
-    metaDescription: "Plaques pour avis Google, réseaux sociaux et menu digital, carte de fidélité, réservations, liste d'attente, IA, landing pages, sites web et boutiques en ligne.",
+    metaDescription: "Plaques pour avis, réseaux sociaux et menu digital, carte de fidélité, réservations, liste d'attente, IA, landing pages, sites web et boutiques en ligne.",
     eyebrow: "Produits",
     title: "Des outils simples pour les commerces qui accueillent du monde.",
     lead: "Des solutions qui fonctionnent seules ou ensemble. Toutes configurées par nous, toutes avec un accompagnement proche.",
@@ -278,7 +278,7 @@ const de: PageLabels = {
   },
   products: {
     metaTitle: "Produkte: Schilder, Reservierungen, KI und Websites für Betriebe | Steevanz",
-    metaDescription: "Schilder für Google-Bewertungen, Social Media und digitale Speisekarte, Kundenkarte, Reservierungen, Warteliste, KI, Landingpages, Websites und Onlineshops.",
+    metaDescription: "Schilder für Bewertungen, Social Media und digitale Speisekarte, Kundenkarte, Reservierungen, Warteliste, KI, Landingpages, Websites und Onlineshops.",
     eyebrow: "Produkte",
     title: "Einfache Werkzeuge für Betriebe, die Menschen bedienen.",
     lead: "Lösungen, die allein oder zusammen funktionieren. Alle von uns eingerichtet, alle mit persönlicher Betreuung.",
@@ -339,7 +339,7 @@ const it: PageLabels = {
   },
   products: {
     metaTitle: "Prodotti: targhe, prenotazioni, IA e siti web per attività | Steevanz",
-    metaDescription: "Targhe per recensioni Google, social e menù digitale, carta fedeltà, prenotazioni, lista d'attesa, IA, landing page, siti web e negozi online.",
+    metaDescription: "Targhe per recensioni, social e menù digitale, carta fedeltà, prenotazioni, lista d'attesa, IA, landing page, siti web e negozi online.",
     eyebrow: "Prodotti",
     title: "Strumenti semplici per le attività che accolgono persone.",
     lead: "Soluzioni che funzionano da sole o insieme. Tutte configurate da noi, tutte con un'assistenza vicina.",

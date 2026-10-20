@@ -5,7 +5,8 @@ import styles from "./ReviewTapScene.module.css";
 
 /**
  * The flagship section's moving picture (2026-10-11: replaced a stock video that showed a card
- * payment at a terminal): a phone comes to the counter plate, the tap opens Google's review form,
+ * payment at a terminal): a phone comes to the counter plate, the tap opens the review form (Google, Tripadvisor
+ * or Booking.com; the plate names them in plain text),
  * the customer taps the five stars and presses «Publicar» (owner, 2026-10-20; no «published» notice).
  * CSS only, free, no video to load; with reduced motion it shows the form with the stars, still.
  */
@@ -15,7 +16,7 @@ export function ReviewTapScene({ copy }: { copy: TapSceneCopy }) {
       <div className={styles.glow} />
       <div className={styles.counter} />
       <div className={styles.plateWrap}>
-        <TapPlate variant="square" finish="white" line1={copy.plateLine1} line2={copy.plateLine2} className={styles.plate} />
+        <TapPlate variant="square" finish="white" line1={copy.plateLine1} line2={copy.plateLine2} marks={copy.plateMarks} className={styles.plate} />
         <span className={styles.pulse} />
         <span className={`${styles.pulse} ${styles.pulseLate}`} />
       </div>

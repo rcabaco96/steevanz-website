@@ -75,9 +75,9 @@ export const sectors: Sector[] = [
       pt: {
         name: "Restaurantes e cafés",
         cardTitle: "Restaurantes e cafés",
-        cardBody: "Mais reviews no Google, mesas cheias sem telefonemas perdidos e uma fila de espera que não entope a porta.",
+        cardBody: "Mais avaliações no Google e no Tripadvisor, mesas cheias sem telefonemas perdidos e uma fila de espera que não entope a porta.",
         metaTitle: "Placas e IA para restaurantes | Steevanz",
-        metaDescription: "Placas para reviews no Google, reservas online, lista de espera digital e receção por voz com IA. Pensado para restaurantes e cafés em Portugal.",
+        metaDescription: "Placas para avaliações no Google e no Tripadvisor, reservas online, lista de espera digital e receção por voz com IA. Pensado para restaurantes e cafés em Portugal.",
         heroTitle: "A sala cheia. O telefone atendido. As reviews a crescer.",
         heroSubtitle: "Num restaurante, cada minuto de serviço conta. Juntamos as ferramentas que tiram trabalho à equipa e trazem mais clientes pela porta, sem apps para instalar e com a configuração feita por nós.",
         pains: [
@@ -102,9 +102,9 @@ export const sectors: Sector[] = [
       en: {
         name: "Restaurants and cafés",
         cardTitle: "Restaurants and cafés",
-        cardBody: "More Google reviews, full tables without missed calls and a waiting list that doesn't block the door.",
+        cardBody: "More reviews on Google and Tripadvisor, full tables without missed calls and a waiting list that doesn't block the door.",
         metaTitle: "Plates and AI for restaurants | Steevanz",
-        metaDescription: "Plates for Google reviews, online bookings, digital waiting lists and an AI voice receptionist. Built for restaurants and cafés in Portugal.",
+        metaDescription: "Review plates for Google and Tripadvisor, online bookings, digital waiting lists and an AI voice receptionist. Built for restaurants and cafés in Portugal.",
         heroTitle: "A full room. Every call answered. Reviews climbing.",
         heroSubtitle: "In a restaurant, every minute of service counts. We bring together the tools that take work off your team and bring more guests through the door, with no apps to install and the setup done by us.",
         pains: [
@@ -129,11 +129,11 @@ export const sectors: Sector[] = [
       es: {
         name: "Restaurantes y cafeterías",
         cardTitle: "Restaurantes y cafeterías",
-        cardBody: "Más reseñas en Google, mesas llenas sin llamadas perdidas y una lista de espera que no colapsa la puerta.",
+        cardBody: "Más reseñas en Google y Tripadvisor, mesas llenas sin llamadas perdidas y una lista de espera que no colapsa la puerta.",
         bundleTitle: "El pack para restaurantes",
         bundleBody: "Placas en las mesas y en la barra para pedir reseñas en el momento justo, reservas online con recordatorios que reducen las ausencias, lista de espera digital con aviso en el móvil y una recepcionista de voz que atiende cuando su equipo no puede.",
         metaTitle: "Placas e IA para restaurantes | Steevanz",
-        metaDescription: "Placas para reseñas en Google, reservas online, lista de espera digital y recepcionista de voz con IA. Pensado para restaurantes y cafeterías en Portugal.",
+        metaDescription: "Placas para reseñas en Google y Tripadvisor, reservas online, lista de espera digital y recepcionista de voz con IA. Pensado para restaurantes y cafeterías en Portugal.",
         heroTitle: "La sala llena. El teléfono atendido. Las reseñas creciendo.",
         heroSubtitle: "En un restaurante, cada minuto de servicio cuenta. Reunimos las herramientas que quitan trabajo al equipo y traen más clientes por la puerta, sin apps que instalar y con la configuración hecha por nosotros.",
         pains: [
@@ -156,11 +156,11 @@ export const sectors: Sector[] = [
       fr: {
         name: "Restaurants et cafés",
         cardTitle: "Restaurants et cafés",
-        cardBody: "Plus d'avis Google, des tables pleines sans appels manqués et une liste d'attente qui ne bouche pas l'entrée.",
+        cardBody: "Plus d'avis Google et Tripadvisor, des tables pleines sans appels manqués et une liste d'attente qui ne bouche pas l'entrée.",
         bundleTitle: "La formule restaurants",
         bundleBody: "Des plaques sur les tables et au comptoir pour demander un avis au bon moment, des réservations en ligne avec des rappels qui réduisent les absences, une liste d'attente digitale avec alerte sur le téléphone et une réceptionniste vocale qui répond quand votre équipe ne peut pas.",
         metaTitle: "Plaques et IA pour restaurants | Steevanz",
-        metaDescription: "Plaques pour avis Google, réservations en ligne, liste d'attente digitale et réceptionniste vocale IA. Conçu pour les restaurants et les cafés au Portugal.",
+        metaDescription: "Plaques pour avis Google et Tripadvisor, réservations en ligne, liste d'attente digitale et réceptionniste vocale IA. Conçu pour les restaurants et les cafés au Portugal.",
         heroTitle: "Une salle pleine. Chaque appel décroché. Des avis en hausse.",
         heroSubtitle: "Dans un restaurant, chaque minute de service compte. Nous réunissons les outils qui allègent le travail de votre équipe et font entrer plus de clients, sans application à installer et avec une configuration faite par nos soins.",
         pains: [
@@ -183,11 +183,11 @@ export const sectors: Sector[] = [
       de: {
         name: "Restaurants und Cafés",
         cardTitle: "Restaurants und Cafés",
-        cardBody: "Mehr Google-Bewertungen, volle Tische ohne verpasste Anrufe und eine Warteliste, die nicht die Tür versperrt.",
+        cardBody: "Mehr Bewertungen auf Google und Tripadvisor, volle Tische ohne verpasste Anrufe und eine Warteliste, die nicht die Tür versperrt.",
         bundleTitle: "Das Paket für Restaurants",
         bundleBody: "Schilder auf den Tischen und an der Theke, um im richtigen Moment um Bewertungen zu bitten, Online-Reservierungen mit Erinnerungen gegen No-Shows, eine digitale Warteliste mit Benachrichtigung aufs Handy und eine Telefonrezeption, die rangeht, wenn Ihr Team keine Hand frei hat.",
         metaTitle: "Schilder und KI für Restaurants | Steevanz",
-        metaDescription: "Schilder für Google-Bewertungen, Online-Reservierungen, digitale Warteliste und KI-Telefonrezeption. Gemacht für Restaurants und Cafés in Portugal.",
+        metaDescription: "Schilder für Bewertungen auf Google und Tripadvisor, Online-Reservierungen, digitale Warteliste und KI-Telefonrezeption. Gemacht für Restaurants und Cafés in Portugal.",
         heroTitle: "Volles Haus. Jeder Anruf angenommen. Die Bewertungen steigen.",
         heroSubtitle: "Im Restaurant zählt jede Minute im Service. Wir bündeln die Werkzeuge, die Ihrem Team Arbeit abnehmen und mehr Gäste durch die Tür bringen, ohne Apps zum Installieren und von uns eingerichtet.",
         pains: [
@@ -210,11 +210,11 @@ export const sectors: Sector[] = [
       it: {
         name: "Ristoranti e bar",
         cardTitle: "Ristoranti e bar",
-        cardBody: "Più recensioni su Google, tavoli pieni senza chiamate perse e una lista d'attesa che non intasa l'ingresso.",
+        cardBody: "Più recensioni su Google e Tripadvisor, tavoli pieni senza chiamate perse e una lista d'attesa che non intasa l'ingresso.",
         bundleTitle: "Il pacchetto per ristoranti",
         bundleBody: "Targhe sui tavoli e al banco per chiedere recensioni al momento giusto, prenotazioni online con promemoria che riducono le disdette, lista d'attesa digitale con avviso sul telefono e una receptionist vocale che risponde quando lo staff non può.",
         metaTitle: "Targhe e IA per ristoranti | Steevanz",
-        metaDescription: "Targhe per recensioni Google, prenotazioni online, lista d'attesa digitale e receptionist vocale con IA. Pensato per ristoranti e bar in Portogallo.",
+        metaDescription: "Targhe per recensioni su Google e Tripadvisor, prenotazioni online, lista d'attesa digitale e receptionist vocale con IA. Pensato per ristoranti e bar in Portogallo.",
         heroTitle: "La sala piena. Il telefono che risponde. Le recensioni che crescono.",
         heroSubtitle: "In un ristorante ogni minuto di servizio conta. Riuniamo gli strumenti che tolgono lavoro allo staff e portano più clienti alla porta, senza app da installare e con la configurazione fatta da noi.",
         pains: [
@@ -248,7 +248,7 @@ export const sectors: Sector[] = [
         cardTitle: "Cabeleireiros e estética",
         cardBody: "Agenda sempre cheia, menos faltas e clientes que voltam por causa do cartão de fidelidade no telemóvel.",
         metaTitle: "Marcações online e placas para cabeleireiros | Steevanz",
-        metaDescription: "Agenda online com lembretes por email, placas para reviews, cartão de fidelidade digital e chatbot com IA para cabeleireiros e centros de estética.",
+        metaDescription: "Agenda online com lembretes por email, placas para avaliações, cartão de fidelidade digital e chatbot com IA para cabeleireiros e centros de estética.",
         heroTitle: "Mãos ocupadas com clientes, não com o telemóvel.",
         heroSubtitle: "Entre um corte e uma coloração não há tempo para responder a mensagens. Deixe as marcações, os lembretes e as perguntas repetidas connosco e concentre-se no que faz melhor.",
         pains: [
@@ -257,7 +257,7 @@ export const sectors: Sector[] = [
           { title: "Clientes que experimentam e não voltam", body: "Sem um motivo concreto para regressar, é fácil o cliente ir ao salão mais perto de casa na próxima vez." },
         ],
         bundleTitle: "O pacote para salões",
-        bundleBody: "Marcações online por serviço e por profissional, lembretes automáticos, cartão de fidelidade sem app, placas para reviews junto ao espelho ou à caixa e um chatbot que responde a preços e disponibilidade 24 horas por dia.",
+        bundleBody: "Marcações online por serviço e por profissional, lembretes automáticos, cartão de fidelidade sem app, placas para avaliações junto ao espelho ou à caixa e um chatbot que responde a preços e disponibilidade 24 horas por dia.",
         dayInTheLife: [
           { title: "08:00 — Agenda do dia já confirmada", body: "Os lembretes saíram na véspera. Quem não pode vir remarcou sozinho e a vaga voltou a ficar disponível." },
           { title: "11:00 — Perguntas respondidas sem parar o trabalho", body: "O chatbot responde a preços, duração dos serviços e horários, e envia o link de marcação." },
@@ -275,7 +275,7 @@ export const sectors: Sector[] = [
         cardTitle: "Hair salons and beauty",
         cardBody: "A full diary, fewer no-shows and clients who come back thanks to a loyalty card on their phone.",
         metaTitle: "Online bookings and review plates for salons | Steevanz",
-        metaDescription: "Online appointments with email reminders, plates for Google reviews, a digital loyalty card and an AI chatbot for hair salons and beauty clinics.",
+        metaDescription: "Online appointments with email reminders, review plates, a digital loyalty card and an AI chatbot for hair salons and beauty clinics.",
         heroTitle: "Hands busy with clients, not with your phone.",
         heroSubtitle: "Between a cut and a colour there's no time to answer messages. Leave bookings, reminders and repeated questions to us and focus on what you do best.",
         pains: [
@@ -590,7 +590,7 @@ export const sectors: Sector[] = [
         cardTitle: "Comércio local",
         cardBody: "Mais seguidores, mais reviews e clientes que regressam, com tecnologia simples no balcão e na montra.",
         metaTitle: "Placas e cartão de cliente para comércio local | Steevanz",
-        metaDescription: "Placas para reviews no Google e redes sociais, cartão de fidelidade digital e chatbot com IA para lojas, padarias, floristas e comércio de bairro.",
+        metaDescription: "Placas para avaliações e para redes sociais, cartão de fidelidade digital e chatbot com IA para lojas, padarias, floristas e comércio de bairro.",
         heroTitle: "A loja do bairro, com a força das grandes marcas.",
         heroSubtitle: "Os clientes gostam de comprar perto de casa. Ajudamos a que o encontrem no Google, o sigam nas redes sociais e voltem, com ferramentas simples que funcionam a partir do balcão.",
         pains: [
@@ -617,7 +617,7 @@ export const sectors: Sector[] = [
         cardTitle: "Local retail",
         cardBody: "More followers, more reviews and returning customers, with simple tech at the counter and in the window.",
         metaTitle: "Plates and customer cards for local shops | Steevanz",
-        metaDescription: "Plates for Google reviews and social media, a digital loyalty card and an AI chatbot for shops, bakeries, florists and neighbourhood retail.",
+        metaDescription: "Review plates and social media plates, a digital loyalty card and an AI chatbot for shops, bakeries, florists and neighbourhood retail.",
         heroTitle: "Your neighbourhood shop, with big-brand muscle.",
         heroSubtitle: "People love buying close to home. We help them find you on Google, follow you on social media and come back, with simple tools that work from your counter.",
         pains: [
@@ -646,7 +646,7 @@ export const sectors: Sector[] = [
         bundleTitle: "El pack para comercios",
         bundleBody: "Placa en el mostrador para reseñas en Google, placa o pegatina en el escaparate para seguirle en redes sociales, tarjeta de cliente digital sin app y un chatbot que responde sobre stock, horarios y pedidos.",
         metaTitle: "Placas y tarjeta de cliente para el comercio local | Steevanz",
-        metaDescription: "Placas para reseñas en Google y redes sociales, tarjeta de cliente digital y chatbot con IA para tiendas, panaderías, floristerías y comercios de barrio.",
+        metaDescription: "Placas para reseñas y para redes sociales, tarjeta de cliente digital y chatbot con IA para tiendas, panaderías, floristerías y comercios de barrio.",
         heroTitle: "La tienda del barrio, con la fuerza de las grandes marcas.",
         heroSubtitle: "A los clientes les gusta comprar cerca de casa. Le ayudamos a que le encuentren en Google, le sigan en redes sociales y vuelvan, con herramientas sencillas que funcionan desde el mostrador.",
         pains: [
@@ -673,7 +673,7 @@ export const sectors: Sector[] = [
         bundleTitle: "La formule commerces",
         bundleBody: "Une plaque au comptoir pour les avis Google, une plaque ou un autocollant en vitrine pour vous suivre sur les réseaux sociaux, une carte de fidélité digitale sans application et un chatbot qui répond sur le stock, les horaires et les commandes.",
         metaTitle: "Plaques et carte de fidélité pour les commerces de proximité | Steevanz",
-        metaDescription: "Plaques pour avis Google et réseaux sociaux, carte de fidélité digitale et chatbot IA pour boutiques, boulangeries, fleuristes et commerces de quartier.",
+        metaDescription: "Plaques pour avis et pour réseaux sociaux, carte de fidélité digitale et chatbot IA pour boutiques, boulangeries, fleuristes et commerces de quartier.",
         heroTitle: "Le commerce de quartier, avec la force des grandes marques.",
         heroSubtitle: "Les clients aiment acheter près de chez eux. Nous les aidons à vous trouver sur Google, à vous suivre sur les réseaux sociaux et à revenir, avec des outils simples qui fonctionnent depuis votre comptoir.",
         pains: [
@@ -700,7 +700,7 @@ export const sectors: Sector[] = [
         bundleTitle: "Das Paket für den Handel",
         bundleBody: "Ein Schild an der Theke für Google-Bewertungen, ein Schild oder Aufkleber im Schaufenster, damit man Ihnen in den sozialen Netzwerken folgt, eine digitale Kundenkarte ohne App und ein Chatbot, der Fragen zu Bestand, Öffnungszeiten und Bestellungen beantwortet.",
         metaTitle: "Schilder und Kundenkarte für den lokalen Handel | Steevanz",
-        metaDescription: "Schilder für Google-Bewertungen und soziale Netzwerke, digitale Kundenkarte und KI-Chatbot für Läden, Bäckereien, Floristen und den Handel im Viertel.",
+        metaDescription: "Schilder für Bewertungen und soziale Netzwerke, digitale Kundenkarte und KI-Chatbot für Läden, Bäckereien, Floristen und den Handel im Viertel.",
         heroTitle: "Der Laden um die Ecke, mit der Kraft der großen Marken.",
         heroSubtitle: "Kunden kaufen gern in der Nähe. Wir helfen, dass sie Sie bei Google finden, Ihnen in den sozialen Netzwerken folgen und wiederkommen, mit einfachen Werkzeugen, die von der Theke aus funktionieren.",
         pains: [
@@ -727,7 +727,7 @@ export const sectors: Sector[] = [
         bundleTitle: "Il pacchetto per negozi",
         bundleBody: "Targa al banco per le recensioni Google, targa o adesivo in vetrina per seguire il Suo negozio sui social, carta fedeltà digitale senza app e un chatbot che risponde su disponibilità, orari e ordini.",
         metaTitle: "Targhe e carta fedeltà per i negozi di quartiere | Steevanz",
-        metaDescription: "Targhe per recensioni Google e social, carta fedeltà digitale e chatbot con IA per negozi, panetterie, fioristi e commercio di quartiere.",
+        metaDescription: "Targhe per recensioni e per i social, carta fedeltà digitale e chatbot con IA per negozi, panetterie, fioristi e commercio di quartiere.",
         heroTitle: "Il negozio di quartiere, con la forza dei grandi marchi.",
         heroSubtitle: "Ai clienti piace comprare vicino a casa. Li aiutiamo a trovare il Suo negozio su Google, a seguirlo sui social e a tornare, con strumenti semplici che funzionano dal banco.",
         pains: [
@@ -754,16 +754,17 @@ export const sectors: Sector[] = [
     slug: sectorSlugs.lodging,
     photo: "holiday-rental",
     side: { kind: "product", productId: "guest-guide" },
-    // The website (direct bookings, no platform commission) instead of the Google plates, which only suit
-    // places that can have a Google profile (said in the bundle note).
+    // The website (direct bookings, no platform commission) instead of the review plates, which open Google
+    // (only places that can have a Google profile), Tripadvisor or Booking.com (only guests who booked there,
+    // from Booking's own email): said in the bundle note.
     bundle: ["guest-guide", "ai-chatbot", "automation", "website"],
     bundleNote: {
-      pt: "As placas para reviews no Google são só para alojamentos que podem ter perfil no Google: hostels, guest houses, quartos com o anfitrião presente e casas onde recebe os hóspedes pessoalmente. Apartamentos e moradias com entrada autónoma não podem ter perfil, por regra do próprio Google. Nesses casos, o guia explica ao hóspede onde avaliar na Booking ou no Airbnb, da mesma forma para todos e sem ofertas em troca.",
-      en: "Google review plates are only for places that can have a Google profile: hostels, guest houses, rooms with the host on site and homes where you welcome guests in person. Self-check-in flats and villas can't have a profile, under Google's own rules. For those, the guide tells guests where to review on Booking.com or Airbnb, the same way for everyone and with nothing offered in return.",
-      es: "Las placas para reseñas en Google son solo para alojamientos que pueden tener perfil en Google: hostales, casas de huéspedes, habitaciones con el anfitrión presente y casas donde recibe a los huéspedes en persona. Los apartamentos y las casas con entrada autónoma no pueden tener perfil, por norma del propio Google. En esos casos, la guía explica al huésped dónde valorar en Booking o en Airbnb, igual para todos y sin ofrecer nada a cambio.",
-      fr: "Les plaques pour avis Google sont réservées aux hébergements qui peuvent avoir une fiche Google : auberges de jeunesse, maisons d'hôtes, chambres chez l'habitant avec l'hôte sur place et maisons où vous accueillez les voyageurs en personne. Les appartements et les villas en arrivée autonome ne peuvent pas avoir de fiche, selon les règles de Google. Dans ce cas, le livret indique au voyageur où laisser un avis sur Booking.com ou Airbnb, de la même façon pour tous et sans rien offrir en échange.",
-      de: "Die Schilder für Google-Bewertungen eignen sich nur für Unterkünfte, die ein Google-Profil haben dürfen: Hostels, Gästehäuser, Zimmer mit anwesendem Gastgeber und Häuser, in denen Sie die Gäste persönlich empfangen. Ferienwohnungen und Ferienhäuser mit Self-Check-in dürfen nach Googles eigenen Regeln kein Profil haben. Dort erklärt die Gästemappe, wo man auf Booking.com oder Airbnb bewerten kann, für alle gleich und ohne Gegenleistung.",
-      it: "Le targhe per recensioni Google sono solo per gli alloggi che possono avere un profilo Google: ostelli, guest house, camere con l'host presente e case in cui accoglie gli ospiti di persona. Appartamenti e ville con ingresso autonomo non possono avere un profilo, per regola di Google stesso. In questi casi la guida spiega all'ospite dove lasciare una recensione su Booking.com o Airbnb, allo stesso modo per tutti e senza offrire nulla in cambio.",
+      pt: "As placas para avaliações abrem o Google, o Tripadvisor ou a Booking.com, um destino por placa. O Google só aceita perfis de alojamentos onde recebe os hóspedes pessoalmente (hostels, guest houses, quartos com o anfitrião presente): apartamentos e moradias com entrada autónoma não podem ter perfil. Na Booking.com só avalia quem reservou pela Booking, no email que recebe depois do check-out, e a placa lembra-o disso. O guia explica ao hóspede onde avaliar na Booking ou no Airbnb, da mesma forma para todos e sem ofertas em troca.",
+      en: "Review plates open Google, Tripadvisor or Booking.com, one destination per plate. Google only accepts profiles for places where you welcome guests in person (hostels, guest houses, rooms with the host on site): self-check-in flats and villas can't have one. On Booking.com only guests who booked through Booking can review, from the email they get after check-out, and the plate reminds them of it. The guide tells guests where to review on Booking.com or Airbnb, the same way for everyone and with nothing offered in return.",
+      es: "Las placas para reseñas abren Google, Tripadvisor o Booking.com, un destino por placa. Google solo acepta perfiles de alojamientos donde recibe a los huéspedes en persona (hostales, casas de huéspedes, habitaciones con el anfitrión presente): los apartamentos y las casas con entrada autónoma no pueden tenerlo. En Booking.com solo opina quien reservó por Booking, desde el correo que recibe tras el check-out, y la placa se lo recuerda. La guía explica al huésped dónde valorar en Booking o en Airbnb, igual para todos y sin ofrecer nada a cambio.",
+      fr: "Les plaques pour avis ouvrent Google, Tripadvisor ou Booking.com, une destination par plaque. Google n'accepte que les fiches des hébergements où vous accueillez les voyageurs en personne (auberges, maisons d'hôtes, chambres chez l'habitant) : les appartements et villas en arrivée autonome ne peuvent pas en avoir. Sur Booking.com, seuls ceux qui ont réservé via Booking peuvent laisser un avis, depuis l'e-mail reçu après le départ, et la plaque le leur rappelle. Le livret indique au voyageur où laisser un avis sur Booking.com ou Airbnb, de la même façon pour tous et sans rien offrir en échange.",
+      de: "Die Schilder für Bewertungen öffnen Google, Tripadvisor oder Booking.com, ein Ziel pro Schild. Google akzeptiert nur Profile von Unterkünften, in denen Sie die Gäste persönlich empfangen (Hostels, Gästehäuser, Zimmer mit anwesendem Gastgeber): Ferienwohnungen und Ferienhäuser mit Self-Check-in dürfen keines haben. Auf Booking.com bewerten nur Gäste, die über Booking gebucht haben, über die E-Mail nach dem Check-out, und das Schild erinnert sie daran. Die Gästemappe erklärt, wo man auf Booking.com oder Airbnb bewerten kann, für alle gleich und ohne Gegenleistung.",
+      it: "Le targhe per recensioni aprono Google, Tripadvisor o Booking.com, una destinazione per targa. Google accetta solo profili di alloggi in cui accoglie gli ospiti di persona (ostelli, guest house, camere con l'host presente): appartamenti e ville con ingresso autonomo non possono averlo. Su Booking.com recensisce solo chi ha prenotato tramite Booking, dall'e-mail che riceve dopo il check-out, e la targa glielo ricorda. La guida spiega all'ospite dove lasciare una recensione su Booking.com o Airbnb, allo stesso modo per tutti e senza offrire nulla in cambio.",
     },
     pack: {
       setup: 149,
@@ -786,7 +787,7 @@ export const sectors: Sector[] = [
             "Assistente com IA no WhatsApp, treinado com o guia, que responde aos hóspedes 24 horas e lhe passa as urgências",
             "Automatização «Limpezas e prazos»: aviso à equipa de limpeza na véspera de cada saída, lembrete dos boletins e resumo semanal",
             "Guia online e alterações incluídos enquanto o pack estiver ativo",
-            "Em hostels e guest houses com perfil no Google, uma placa para reviews incluída",
+            "Em hostels e guest houses com perfil no Google, uma placa para avaliações incluída",
           ],
           setupLabel: "de configuração",
           monthlyLabel: "/mês",

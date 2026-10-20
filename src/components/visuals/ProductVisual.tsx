@@ -379,6 +379,8 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
     const line1 = isReview ? t.reviewLine1 : t.socialLine1;
     const line2 = isReview ? t.reviewLine2 : t.socialLine2;
     const symbol: PlateSymbol = isReview ? "stars" : "social";
+    // Review plates: one plate, one destination (owner, 2026-10-20), so each plate names its own platform, in plain text.
+    const marks = (platform: string) => (isReview ? platform : undefined);
     return (
       <div className="relative mx-auto aspect-square w-full max-w-md" data-image-slot={t.imageSlot}>
         <div aria-hidden="true" className="absolute inset-[6%] rounded-full bg-[radial-gradient(closest-side,rgb(var(--glow)/0.25),transparent)]" />
@@ -388,6 +390,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           symbol={symbol}
           line1={line1}
           line2={line2}
+          marks={marks("Google")}
           className="absolute top-[4%] left-[8%] h-auto w-[52%] drop-shadow-[0_30px_40px_rgba(0,0,0,0.3)]"
         />
         <TapPlate
@@ -396,6 +399,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           symbol={symbol}
           line1={line1}
           line2={line2}
+          marks={marks("Tripadvisor")}
           className="absolute right-[4%] bottom-[14%] h-auto w-[40%] rotate-[6deg] drop-shadow-[0_24px_30px_rgba(0,0,0,0.22)]"
         />
         <TapPlate
@@ -404,6 +408,7 @@ export function ProductVisual({ product, locale, priority = false }: ProductVisu
           symbol={symbol}
           line1={line1}
           line2={line2}
+          marks={marks("Booking.com")}
           className="absolute bottom-[4%] left-[14%] h-auto w-[28%] -rotate-[8deg] drop-shadow-[0_18px_24px_rgba(0,0,0,0.25)]"
         />
         <FloatingChip className="top-[8%] right-[4%]">

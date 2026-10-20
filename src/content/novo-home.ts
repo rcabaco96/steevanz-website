@@ -11,6 +11,8 @@ import type { ProductId } from "./types";
 export interface TapSceneCopy {
   plateLine1: string;
   plateLine2: string;
+  /** Small plain-text platform names under the plate's lines (no logos). */
+  plateMarks: string;
   screenIdle: string;
   screenTitle: string;
   screenPrompt: string;
@@ -22,83 +24,89 @@ export interface TapSceneCopy {
 
 export const sceneCopy: Localized<TapSceneCopy> = {
   pt: {
-    plateLine1: "Gostou?",
-    plateLine2: "Toque para avaliar",
+    plateLine1: "Avalie-nos",
+    plateLine2: "Toque ou leia o QR",
+    plateMarks: "Google · Booking · Tripadvisor",
     screenIdle: "Aproxime o telemóvel",
     screenTitle: "O seu restaurante",
     screenPrompt: "Deixe a sua avaliação",
     screenButton: "Publicar",
     chipNoApp: "Sem app",
     chipTap: "Abre em segundos",
-    ariaLabel: "Animação: um telemóvel toca numa placa e abre o formulário de review do Google, onde o cliente toca nas estrelas.",
+    ariaLabel: "Animação: um telemóvel toca numa placa para avaliações e abre o formulário de avaliação, onde o cliente toca nas estrelas.",
   },
   en: {
-    plateLine1: "Enjoyed it?",
-    plateLine2: "Tap to review",
+    plateLine1: "Review us",
+    plateLine2: "Tap or scan the QR",
+    plateMarks: "Google · Booking · Tripadvisor",
     screenIdle: "Hold your phone near",
     screenTitle: "Your restaurant",
     screenPrompt: "Leave a review",
     screenButton: "Post",
     chipNoApp: "No app",
     chipTap: "Opens in seconds",
-    ariaLabel: "Animation: a phone taps a plate and opens the Google review form, where the customer taps the stars.",
+    ariaLabel: "Animation: a phone taps a review plate and opens the review form, where the customer taps the stars.",
   },
   es: {
-    plateLine1: "¿Le ha gustado?",
-    plateLine2: "Toque para valorar",
+    plateLine1: "Valórenos",
+    plateLine2: "Toque o escanee el QR",
+    plateMarks: "Google · Booking · Tripadvisor",
     screenIdle: "Acerque el móvil",
     screenTitle: "Su restaurante",
     screenPrompt: "Deje su reseña",
     screenButton: "Publicar",
     chipNoApp: "Sin app",
     chipTap: "Se abre en segundos",
-    ariaLabel: "Animación: un móvil toca una placa y abre el formulario de reseña de Google, donde el cliente toca las estrellas.",
+    ariaLabel: "Animación: un móvil toca una placa para reseñas y abre el formulario de reseña, donde el cliente toca las estrellas.",
   },
   fr: {
-    plateLine1: "Ça vous a plu ?",
-    plateLine2: "Touchez pour noter",
+    plateLine1: "Notez-nous",
+    plateLine2: "Touchez ou scannez le QR",
+    plateMarks: "Google · Booking · Tripadvisor",
     screenIdle: "Approchez votre téléphone",
     screenTitle: "Votre restaurant",
     screenPrompt: "Laissez votre avis",
     screenButton: "Publier",
     chipNoApp: "Sans application",
     chipTap: "S'ouvre en quelques secondes",
-    ariaLabel: "Animation : un téléphone touche une plaque et ouvre le formulaire d'avis Google, où le client touche les étoiles.",
+    ariaLabel: "Animation : un téléphone touche une plaque pour avis et ouvre le formulaire d'avis, où le client touche les étoiles.",
   },
   de: {
-    plateLine1: "Hat's geschmeckt?",
-    plateLine2: "Antippen und bewerten",
+    plateLine1: "Ihre Meinung?",
+    plateLine2: "Antippen oder QR scannen",
+    plateMarks: "Google · Booking · Tripadvisor",
     screenIdle: "Handy hierhin halten",
     screenTitle: "Ihr Restaurant",
     screenPrompt: "Bewertung abgeben",
     screenButton: "Posten",
     chipNoApp: "Keine App",
     chipTap: "Öffnet in Sekunden",
-    ariaLabel: "Animation: Ein Handy berührt ein Schild und öffnet das Google-Bewertungsformular, in dem der Gast die Sterne antippt.",
+    ariaLabel: "Animation: Ein Handy berührt ein Bewertungsschild und öffnet das Bewertungsformular, in dem der Gast die Sterne antippt.",
   },
   it: {
-    plateLine1: "Le è piaciuto?",
-    plateLine2: "Tocchi per recensire",
+    plateLine1: "Ci recensisca",
+    plateLine2: "Tocchi o inquadri il QR",
+    plateMarks: "Google · Booking · Tripadvisor",
     screenIdle: "Avvicini il telefono",
     screenTitle: "Il Suo ristorante",
     screenPrompt: "Lasci una recensione",
     screenButton: "Pubblica",
     chipNoApp: "Senza app",
     chipTap: "Si apre in pochi secondi",
-    ariaLabel: "Animazione: un telefono tocca una targa e apre il modulo di recensione Google, dove il cliente tocca le stelle.",
+    ariaLabel: "Animazione: un telefono tocca una targa per recensioni e apre il modulo di recensione, dove il cliente tocca le stelle.",
   },
 };
 
 const novoPt = {
   metaTitle: "Steevanz | Os seus clientes encontram, compram e voltam",
   metaDescription:
-    "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas.",
+    "Websites, Menu digital em vídeo, reservas, placas para avaliações e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas.",
   hero: {
     eyebrow: "Tecnologia para negócios locais",
     titleStart: "Os seus clientes",
     titleAccent: "encontram, compram e voltam.",
     subtitle:
-      "Websites, reservas, Menu digital, reviews no Google, cartão de cliente e assistentes com IA. Nós fazemos, configuramos e ficamos por perto.",
+      "Websites, reservas, Menu digital, placas para avaliações, cartão de cliente e assistentes com IA. Nós fazemos, configuramos e ficamos por perto.",
     primary: "Agendar demonstração",
     secondary: "Falar connosco",
   },
@@ -144,13 +152,13 @@ export const novoCopy: Localized<NovoCopy> = {
   en: {
     metaTitle: "Steevanz | Your customers find you, buy from you and come back",
     metaDescription:
-      "Websites, video digital menus, bookings, Google reviews and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops.",
+      "Websites, video digital menus, bookings, review plates and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops.",
     hero: {
       eyebrow: "Technology for local businesses",
       titleStart: "Your customers",
       titleAccent: "find you, buy from you and come back.",
       subtitle:
-        "Websites, bookings, digital menus, Google reviews, loyalty cards and AI assistants. We build it, set it up and stay close by.",
+        "Websites, bookings, digital menus, review plates, loyalty cards and AI assistants. We build it, set it up and stay close by.",
       primary: "Book a demo",
       secondary: "Talk to us",
     },
@@ -191,13 +199,13 @@ export const novoCopy: Localized<NovoCopy> = {
   es: {
     metaTitle: "Steevanz | Sus clientes le encuentran, le compran y vuelven",
     metaDescription:
-      "Webs, Menú digital en vídeo, reservas, reseñas en Google y tarjeta de cliente digital para restaurantes, cafeterías, peluquerías, clínicas, alojamientos y tiendas.",
+      "Webs, Menú digital en vídeo, reservas, placas para reseñas y tarjeta de cliente digital para restaurantes, cafeterías, peluquerías, clínicas, alojamientos y tiendas.",
     hero: {
       eyebrow: "Tecnología para negocios locales",
       titleStart: "Sus clientes",
       titleAccent: "le encuentran, le compran y vuelven.",
       subtitle:
-        "Webs, reservas, Menú digital, reseñas en Google, tarjeta de cliente y asistentes con IA. Nosotros lo hacemos, lo configuramos y seguimos a su lado.",
+        "Webs, reservas, Menú digital, placas para reseñas, tarjeta de cliente y asistentes con IA. Nosotros lo hacemos, lo configuramos y seguimos a su lado.",
       primary: "Reservar una demostración",
       secondary: "Hablar con nosotros",
     },
@@ -237,13 +245,13 @@ export const novoCopy: Localized<NovoCopy> = {
   fr: {
     metaTitle: "Steevanz | Vos clients vous trouvent, achètent chez vous et reviennent",
     metaDescription:
-      "Sites web, Menu digital en vidéo, réservations, avis Google et carte de fidélité digitale pour restaurants, cafés, salons de coiffure, cliniques, locations de vacances et boutiques.",
+      "Sites web, Menu digital en vidéo, réservations, plaques pour avis et carte de fidélité digitale pour restaurants, cafés, salons de coiffure, cliniques, locations de vacances et boutiques.",
     hero: {
       eyebrow: "Technologie pour les commerces locaux",
       titleStart: "Vos clients",
       titleAccent: "vous trouvent, achètent chez vous et reviennent.",
       subtitle:
-        "Sites web, réservations, Menu digital, avis Google, carte de fidélité et assistants IA. Nous les créons, les configurons et restons à vos côtés.",
+        "Sites web, réservations, Menu digital, plaques pour avis, carte de fidélité et assistants IA. Nous les créons, les configurons et restons à vos côtés.",
       primary: "Réserver une démo",
       secondary: "Nous parler",
     },
@@ -283,13 +291,13 @@ export const novoCopy: Localized<NovoCopy> = {
   de: {
     metaTitle: "Steevanz | Ihre Kunden finden Sie, kaufen bei Ihnen und kommen wieder",
     metaDescription:
-      "Websites, digitale Speisekarte mit Videos, Reservierungen, Google-Bewertungen und digitale Kundenkarte für Restaurants, Cafés, Friseursalons, Praxen, Ferienunterkünfte und Geschäfte.",
+      "Websites, digitale Speisekarte mit Videos, Reservierungen, Bewertungsschilder und digitale Kundenkarte für Restaurants, Cafés, Friseursalons, Praxen, Ferienunterkünfte und Geschäfte.",
     hero: {
       eyebrow: "Technologie für lokale Betriebe",
       titleStart: "Ihre Kunden",
       titleAccent: "finden Sie, kaufen bei Ihnen und kommen wieder.",
       subtitle:
-        "Websites, Reservierungen, digitale Speisekarte, Google-Bewertungen, Kundenkarte und KI-Assistenten. Wir bauen es, richten es ein und bleiben an Ihrer Seite.",
+        "Websites, Reservierungen, digitale Speisekarte, Bewertungsschilder, Kundenkarte und KI-Assistenten. Wir bauen es, richten es ein und bleiben an Ihrer Seite.",
       primary: "Demo vereinbaren",
       secondary: "Mit uns sprechen",
     },
@@ -329,13 +337,13 @@ export const novoCopy: Localized<NovoCopy> = {
   it: {
     metaTitle: "Steevanz | I Suoi clienti La trovano, comprano da Lei e tornano",
     metaDescription:
-      "Siti web, Menù digitale in video, prenotazioni, recensioni Google e carta fedeltà digitale per ristoranti, bar, parrucchieri, cliniche, case vacanza e negozi.",
+      "Siti web, Menù digitale in video, prenotazioni, targhe per recensioni e carta fedeltà digitale per ristoranti, bar, parrucchieri, cliniche, case vacanza e negozi.",
     hero: {
       eyebrow: "Tecnologia per le attività locali",
       titleStart: "I Suoi clienti",
       titleAccent: "La trovano, comprano da Lei e tornano.",
       subtitle:
-        "Siti web, prenotazioni, Menù digitale, recensioni Google, carta fedeltà e assistenti con IA. Li realizziamo, li configuriamo e restiamo al Suo fianco.",
+        "Siti web, prenotazioni, Menù digitale, targhe per recensioni, carta fedeltà e assistenti con IA. Li realizziamo, li configuriamo e restiamo al Suo fianco.",
       primary: "Prenoti una demo",
       secondary: "Parliamone",
     },
@@ -410,7 +418,7 @@ const goalList = [
         website: { benefit: "Um site rápido que aparece no Google e convence quem chega." },
         "landing-page": { benefit: "Uma página com um só objetivo: que liguem, reservem ou encomendem." },
         "online-shop": { benefit: "Venda a quem o encontra online, com MB WAY, Multibanco e cartão." },
-        "google-review-plates": { benefit: "Mais reviews no Google, para subir quando o procuram." },
+        "google-review-plates": { benefit: "Mais avaliações no Google, no Tripadvisor ou na Booking, para subir quando o procuram." },
       },
     },
     en: {
@@ -420,7 +428,7 @@ const goalList = [
         website: { benefit: "A fast site that shows up on Google and wins visitors over." },
         "landing-page": { benefit: "One page, one goal: getting people to call, book or order." },
         "online-shop": { benefit: "Sell to people who find you online, with MB WAY, Multibanco and cards." },
-        "google-review-plates": { benefit: "More Google reviews, so you rank higher when people search." },
+        "google-review-plates": { benefit: "More reviews on Google, Tripadvisor or Booking, so you rank higher when people search." },
       },
     },
     es: {
@@ -430,7 +438,7 @@ const goalList = [
         website: { benefit: "Una web rápida que aparece en Google y convence a quien llega." },
         "landing-page": { benefit: "Una página con un solo objetivo: que llamen, reserven o pidan." },
         "online-shop": { benefit: "Venda a quien le encuentra online, con MB WAY, Multibanco y tarjeta." },
-        "google-review-plates": { benefit: "Más reseñas en Google, para subir cuando le buscan." },
+        "google-review-plates": { benefit: "Más reseñas en Google, Tripadvisor o Booking, para subir cuando le buscan." },
       },
     },
     fr: {
@@ -440,7 +448,7 @@ const goalList = [
         website: { benefit: "Un site rapide, visible sur Google, qui convainc les visiteurs." },
         "landing-page": { benefit: "Une page, un seul objectif : qu'on vous appelle, réserve ou commande." },
         "online-shop": { benefit: "Vendez à ceux qui vous trouvent en ligne, par MB WAY, Multibanco et carte." },
-        "google-review-plates": { benefit: "Plus d'avis Google, pour remonter quand on vous cherche." },
+        "google-review-plates": { benefit: "Plus d'avis sur Google, Tripadvisor ou Booking, pour remonter quand on vous cherche." },
       },
     },
     de: {
@@ -450,7 +458,7 @@ const goalList = [
         website: { benefit: "Eine schnelle Website, die bei Google auftaucht und Besucher überzeugt." },
         "landing-page": { benefit: "Eine Seite mit einem Ziel: dass man anruft, reserviert oder bestellt." },
         "online-shop": { benefit: "Verkaufen Sie an alle, die Sie online finden, mit MB WAY, Multibanco und Karte." },
-        "google-review-plates": { benefit: "Mehr Google-Bewertungen, damit Sie in der Suche weiter oben stehen." },
+        "google-review-plates": { benefit: "Mehr Bewertungen auf Google, Tripadvisor oder Booking, damit Sie in der Suche weiter oben stehen." },
       },
     },
     it: {
@@ -460,7 +468,7 @@ const goalList = [
         website: { benefit: "Un sito veloce che compare su Google e convince chi arriva." },
         "landing-page": { benefit: "Una pagina con un solo obiettivo: che La chiamino, prenotino o ordinino." },
         "online-shop": { benefit: "Venda a chi La trova online, con MB WAY, Multibanco e carta." },
-        "google-review-plates": { benefit: "Più recensioni su Google, per salire quando La cercano." },
+        "google-review-plates": { benefit: "Più recensioni su Google, Tripadvisor o Booking, per salire quando La cercano." },
       },
     },
   }),
@@ -855,7 +863,7 @@ export const loyaltyCopy: Localized<typeof loyaltyPt> = {
   },
 };
 
-/* ---------- Placas de reviews do Google (banner) ---------- */
+/* ---------- Placas para avaliações (banner): Google, Tripadvisor ou Booking.com ---------- */
 
 /**
  * The plates banner. The price is never written here: it is read from products.ts
@@ -863,11 +871,11 @@ export const loyaltyCopy: Localized<typeof loyaltyPt> = {
  * The animation beside it is components/visuals/HeroTapScene (texts in sceneCopy above).
  */
 const platesPt = {
-  eyebrow: "Placas de reviews do Google",
-  titleStart: "Mais reviews no Google,",
+  eyebrow: "Placas para avaliações",
+  titleStart: "Mais avaliações,",
   titleAccent: "com um toque.",
-  body: "O cliente encosta o telemóvel à placa, ou lê o QR, e abre logo o formulário de review do seu negócio no Google. Sem instalar nada, sem procurar.",
-  points: ["No balcão, na mesa, na montra ou na parede", "Com o seu texto e, se quiser, o seu logótipo", "Configurada por nós, pronta a usar"],
+  body: "O cliente encosta o telemóvel à placa, ou lê o QR, e abre logo a avaliação do seu negócio no Google ou no Tripadvisor, ou a página do seu alojamento na Booking.com. Uma placa, um destino, à sua escolha.",
+  points: ["Google, Tripadvisor ou Booking.com, um destino por placa", "No balcão, na mesa, na montra ou na parede", "Com o seu texto e, se quiser, o seu logótipo", "Configurada por nós, pronta a usar"],
   from: "desde",
   perPlate: "por placa",
   /** {price} and {quantity} come from the best pack in products.ts. */
@@ -879,11 +887,11 @@ const platesPt = {
 export const platesCopy: Localized<typeof platesPt> = {
   pt: platesPt,
   en: {
-    eyebrow: "Google review plates",
-    titleStart: "More Google reviews,",
+    eyebrow: "Review plates",
+    titleStart: "More reviews,",
     titleAccent: "with one tap.",
-    body: "Customers hold their phone to the plate, or scan the QR, and your business's Google review form opens straight away. Nothing to install, nothing to search for.",
-    points: ["On the counter, the table, the window or the wall", "With your wording and, if you like, your logo", "Set up by us, ready to use"],
+    body: "Customers hold their phone to the plate, or scan the QR, and your business's review page on Google or Tripadvisor opens straight away, or your property's page on Booking.com. One plate, one destination of your choice.",
+    points: ["Google, Tripadvisor or Booking.com, one destination per plate", "On the counter, the table, the window or the wall", "With your wording and, if you like, your logo", "Set up by us, ready to use"],
     from: "from",
     perPlate: "per plate",
     pack: "{price} per plate for {quantity} or more",
@@ -891,11 +899,11 @@ export const platesCopy: Localized<typeof platesPt> = {
     cta: "Discover the plates",
   },
   es: {
-    eyebrow: "Placas para reseñas en Google",
-    titleStart: "Más reseñas en Google,",
+    eyebrow: "Placas para reseñas",
+    titleStart: "Más reseñas,",
     titleAccent: "con un toque.",
-    body: "El cliente acerca el móvil a la placa, o lee el QR, y se abre al momento el formulario de reseña de su negocio en Google. Sin instalar nada, sin buscar.",
-    points: ["En el mostrador, en la mesa, en el escaparate o en la pared", "Con su texto y, si quiere, su logotipo", "Configurada por nosotros, lista para usar"],
+    body: "El cliente acerca el móvil a la placa, o lee el QR, y se abre al momento la página de reseñas de su negocio en Google o Tripadvisor, o la página de su alojamiento en Booking.com. Una placa, un destino, a su elección.",
+    points: ["Google, Tripadvisor o Booking.com, un destino por placa", "En el mostrador, en la mesa, en el escaparate o en la pared", "Con su texto y, si quiere, su logotipo", "Configurada por nosotros, lista para usar"],
     from: "desde",
     perPlate: "por placa",
     pack: "{price} por placa a partir de {quantity}",
@@ -903,11 +911,11 @@ export const platesCopy: Localized<typeof platesPt> = {
     cta: "Conocer las placas",
   },
   fr: {
-    eyebrow: "Plaques pour avis Google",
-    titleStart: "Plus d'avis Google,",
+    eyebrow: "Plaques pour avis",
+    titleStart: "Plus d'avis,",
     titleAccent: "d'un simple toucher.",
-    body: "Le client approche son téléphone de la plaque, ou scanne le QR code, et le formulaire d'avis Google de votre établissement s'ouvre aussitôt. Rien à installer, rien à chercher.",
-    points: ["Sur le comptoir, la table, la vitrine ou le mur", "Avec votre texte et, si vous le souhaitez, votre logo", "Configurée par nous, prête à l'emploi"],
+    body: "Le client approche son téléphone de la plaque, ou scanne le QR code, et la page d'avis de votre établissement sur Google ou Tripadvisor s'ouvre aussitôt, ou la page de votre hébergement sur Booking.com. Une plaque, une destination, à votre choix.",
+    points: ["Google, Tripadvisor ou Booking.com, une destination par plaque", "Sur le comptoir, la table, la vitrine ou le mur", "Avec votre texte et, si vous le souhaitez, votre logo", "Configurée par nous, prête à l'emploi"],
     from: "à partir de",
     perPlate: "la plaque",
     pack: "{price} la plaque à partir de {quantity}",
@@ -915,11 +923,11 @@ export const platesCopy: Localized<typeof platesPt> = {
     cta: "Découvrir les plaques",
   },
   de: {
-    eyebrow: "Google-Bewertungsschilder",
-    titleStart: "Mehr Google-Bewertungen,",
+    eyebrow: "Bewertungsschilder",
+    titleStart: "Mehr Bewertungen,",
     titleAccent: "mit einem Antippen.",
-    body: "Ihr Gast hält das Handy an das Schild oder scannt den QR-Code, und das Google-Bewertungsformular Ihres Betriebs öffnet sich sofort. Nichts installieren, nichts suchen.",
-    points: ["Auf der Theke, dem Tisch, im Schaufenster oder an der Wand", "Mit Ihrem Text und, wenn Sie möchten, Ihrem Logo", "Von uns eingerichtet, sofort einsatzbereit"],
+    body: "Ihr Gast hält das Handy an das Schild oder scannt den QR-Code, und sofort öffnet sich die Bewertungsseite Ihres Betriebs auf Google oder Tripadvisor oder die Seite Ihrer Unterkunft auf Booking.com. Ein Schild, ein Ziel Ihrer Wahl.",
+    points: ["Google, Tripadvisor oder Booking.com, ein Ziel pro Schild", "Auf der Theke, dem Tisch, im Schaufenster oder an der Wand", "Mit Ihrem Text und, wenn Sie möchten, Ihrem Logo", "Von uns eingerichtet, sofort einsatzbereit"],
     from: "ab",
     perPlate: "pro Schild",
     pack: "{price} pro Schild ab {quantity} Stück",
@@ -927,11 +935,11 @@ export const platesCopy: Localized<typeof platesPt> = {
     cta: "Die Schilder entdecken",
   },
   it: {
-    eyebrow: "Targhe per recensioni Google",
-    titleStart: "Più recensioni su Google,",
+    eyebrow: "Targhe per recensioni",
+    titleStart: "Più recensioni,",
     titleAccent: "con un tocco.",
-    body: "Il cliente avvicina il telefono alla targa, o inquadra il QR, e si apre subito il modulo di recensione Google della Sua attività. Senza installare nulla, senza cercare.",
-    points: ["Sul banco, sul tavolo, in vetrina o a parete", "Con il Suo testo e, se vuole, il Suo logo", "Configurata da noi, pronta all'uso"],
+    body: "Il cliente avvicina il telefono alla targa, o inquadra il QR, e si apre subito la pagina delle recensioni della Sua attività su Google o Tripadvisor, oppure la pagina della Sua struttura su Booking.com. Una targa, una destinazione a Sua scelta.",
+    points: ["Google, Tripadvisor o Booking.com, una destinazione per targa", "Sul banco, sul tavolo, in vetrina o a parete", "Con il Suo testo e, se vuole, il Suo logo", "Configurata da noi, pronta all'uso"],
     from: "da",
     perPlate: "a targa",
     pack: "{price} a targa da {quantity} pezzi",

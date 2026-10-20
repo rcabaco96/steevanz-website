@@ -454,7 +454,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combinar-produtos", text: "Combinar com outros produtos" },
           {
             type: "p",
-            text: "Muitos negócios combinam uma placa de redes sociais com uma [placa Google Reviews](/produtos/placas-google-reviews). Mantenha as duas bem identificadas (\"Siga-nos\" e \"Avalie-nos\") para o cliente saber o que acontece em cada uma.",
+            text: "Muitos negócios combinam uma placa de redes sociais com uma [placa para avaliações](/produtos/placas-google-reviews). Mantenha as duas bem identificadas (\"Siga-nos\" e \"Avalie-nos\") para o cliente saber o que acontece em cada uma.",
           },
         ],
       },
@@ -528,7 +528,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combine-products", text: "Combining with other products" },
           {
             type: "p",
-            text: "Many businesses pair a social media plate with an [Google review plate](/en/products/google-review-plates). Label them clearly (\"Follow us\" and \"Review us\") so customers know what each one does.",
+            text: "Many businesses pair a social media plate with a [review plate](/en/products/google-review-plates). Label them clearly (\"Follow us\" and \"Review us\") so customers know what each one does.",
           },
         ],
       },
@@ -602,7 +602,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combine-products", text: "Combinar con otros productos" },
           {
             type: "p",
-            text: "Muchos negocios combinan una placa para redes sociales con una [placa para reseñas en Google](/es/products/google-review-plates). Identifique bien las dos («Síganos» y «Valórenos») para que el cliente sepa qué hace cada una.",
+            text: "Muchos negocios combinan una placa para redes sociales con una [placa para reseñas](/es/products/google-review-plates). Identifique bien las dos («Síganos» y «Valórenos») para que el cliente sepa qué hace cada una.",
           },
         ],
       },
@@ -676,7 +676,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combine-products", text: "Combiner avec d'autres produits" },
           {
             type: "p",
-            text: "Beaucoup de commerces associent une plaque réseaux sociaux à une [plaque pour avis Google](/fr/products/google-review-plates). Identifiez-les clairement («Suivez-nous» et «Donnez votre avis») pour que le client sache ce que fait chacune.",
+            text: "Beaucoup de commerces associent une plaque réseaux sociaux à une [plaque pour avis](/fr/products/google-review-plates). Identifiez-les clairement («Suivez-nous» et «Donnez votre avis») pour que le client sache ce que fait chacune.",
           },
         ],
       },
@@ -750,7 +750,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combine-products", text: "Mit anderen Produkten kombinieren" },
           {
             type: "p",
-            text: "Viele Geschäfte kombinieren ein Social-Media-Schild mit einem [Schild für Google-Bewertungen](/de/products/google-review-plates). Beschriften Sie beide deutlich («Folgen Sie uns» und «Bewerten Sie uns»), damit der Kunde weiß, was jedes tut.",
+            text: "Viele Geschäfte kombinieren ein Social-Media-Schild mit einem [Schild für Bewertungen](/de/products/google-review-plates). Beschriften Sie beide deutlich («Folgen Sie uns» und «Bewerten Sie uns»), damit der Kunde weiß, was jedes tut.",
           },
         ],
       },
@@ -824,7 +824,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "combine-products", text: "Abbinare ad altri prodotti" },
           {
             type: "p",
-            text: "Molte attività abbinano una targa per i social a una [targa per recensioni Google](/it/products/google-review-plates). Le distingua bene («Ci segua» e «Ci lasci una recensione») perché il cliente sappia cosa fa ciascuna.",
+            text: "Molte attività abbinano una targa per i social a una [targa per recensioni](/it/products/google-review-plates). Le distingua bene («Ci segua» e «Ci lasci una recensione») perché il cliente sappia cosa fa ciascuna.",
           },
         ],
       },

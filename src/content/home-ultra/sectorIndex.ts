@@ -69,11 +69,11 @@ export const sectorIndexRows: readonly SectorIndexRow[] = [
 
 /**
  * Short names for the index lines. The product pages' full names are longer («Sistema de reservas online»,
- * «Placas para reviews no Google»…); anything not listed falls back to getProductCopy(id, "pt").name.
+ * «Placas para avaliações»…); anything not listed falls back to getProductCopy(id, "pt").name.
  */
 export const sectorIndexProductNames: Partial<Record<ProductId, string>> = {
   "digital-menu": "Menu digital",
-  "google-review-plates": "Placas para reviews",
+  "google-review-plates": "Placas para avaliações",
   bookings: "Reservas online",
   waitlist: "Lista de espera",
   "ai-voice": "Receção por voz com IA",

@@ -19,7 +19,7 @@ export const goalsCopy = {
 export const goalChipLabels: Record<ProductId, string> = {
   website: "Website",
   "landing-page": "Landing page",
-  "google-review-plates": "Placas para reviews",
+  "google-review-plates": "Placas para avaliações",
   "ai-reviews": "Gestão de reviews com IA",
   bookings: "Reservas online",
   waitlist: "Lista de espera",

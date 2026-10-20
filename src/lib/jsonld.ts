@@ -11,12 +11,12 @@ const websiteId = `${siteUrl}/#website`;
 
 /** What Steevanz is, with the brand line, in each language (schema.org Organization). */
 const organizationDescription: Localized<string> = {
-  pt: "Websites, Menu digital em vídeo, reservas, reviews no Google e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas. Tecnologia do futuro. Com os bons modos de antigamente.",
-  en: "Websites, video digital menus, bookings, Google reviews and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops. Technology of the future. With good old-fashioned manners.",
-  es: "Webs, Menú digital en vídeo, reservas, reseñas en Google y tarjeta de cliente digital para restaurantes, cafeterías, peluquerías, clínicas, alojamientos y tiendas. Tecnología del futuro. Con los buenos modales de antes.",
-  fr: "Sites web, Menu digital en vidéo, réservations, avis Google et carte de fidélité digitale pour restaurants, cafés, salons de coiffure, cliniques, locations de vacances et boutiques. Technologie du futur. Avec les bonnes manières d'antan.",
-  de: "Websites, Digitale Speisekarte mit Videos, Reservierungen, Google-Bewertungen und digitale Kundenkarte für Restaurants, Cafés, Friseursalons, Praxen, Ferienunterkünfte und Geschäfte. Technologie der Zukunft. Mit den guten Manieren von früher.",
-  it: "Siti web, Menù digitale in video, prenotazioni, recensioni Google e carta fedeltà digitale per ristoranti, bar, parrucchieri, cliniche, case vacanza e negozi. Tecnologia del futuro. Con le buone maniere di una volta.",
+  pt: "Websites, Menu digital em vídeo, reservas, placas para avaliações e cartão de cliente para restaurantes, cafés, cabeleireiros, clínicas, alojamentos e lojas. Tecnologia do futuro. Com os bons modos de antigamente.",
+  en: "Websites, video digital menus, bookings, review plates and digital loyalty cards for restaurants, cafés, salons, clinics, holiday rentals and shops. Technology of the future. With good old-fashioned manners.",
+  es: "Webs, Menú digital en vídeo, reservas, placas para reseñas y tarjeta de cliente digital para restaurantes, cafeterías, peluquerías, clínicas, alojamientos y tiendas. Tecnología del futuro. Con los buenos modales de antes.",
+  fr: "Sites web, Menu digital en vidéo, réservations, plaques pour avis et carte de fidélité digitale pour restaurants, cafés, salons de coiffure, cliniques, locations de vacances et boutiques. Technologie du futur. Avec les bonnes manières d'antan.",
+  de: "Websites, Digitale Speisekarte mit Videos, Reservierungen, Bewertungsschilder und digitale Kundenkarte für Restaurants, Cafés, Friseursalons, Praxen, Ferienunterkünfte und Geschäfte. Technologie der Zukunft. Mit den guten Manieren von früher.",
+  it: "Siti web, Menù digitale in video, prenotazioni, targhe per recensioni e carta fedeltà digitale per ristoranti, bar, parrucchieri, cliniche, case vacanza e negozi. Tecnologia del futuro. Con le buone maniere di una volta.",
 };
 
 export function organizationJsonLd(locale: Locale): JsonLdNode {

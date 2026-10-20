@@ -12,6 +12,8 @@ interface TapPlateProps {
   className?: string;
   title?: string;
   symbol?: PlateSymbol;
+  /** Small plain-text line under line2, e.g. the review platforms «Google · Booking · Tripadvisor» (no logos). */
+  marks?: string;
 }
 
 const finishes = {
@@ -150,7 +152,16 @@ function TapSymbol({ cx, cy, scale, color }: { cx: number; cy: number; scale: nu
   );
 }
 
-export function TapPlate({ variant = "stand", finish = "black", line1, line2, className = "", title, symbol = "stars" }: TapPlateProps) {
+function Marks({ x, y, size, color, text }: { x: number; y: number; size: number; color: string; text?: string }) {
+  if (!text) return null;
+  return (
+    <text x={x} y={y} textAnchor="middle" fontFamily="var(--font-sans)" fontSize={size} fontWeight={600} letterSpacing="0.3" fill={color}>
+      {text}
+    </text>
+  );
+}
+
+export function TapPlate({ variant = "stand", finish = "black", line1, line2, className = "", title, symbol = "stars", marks }: TapPlateProps) {
   const gradientId = useId();
   const shineId = useId();
   const colors = finishes[finish];
@@ -174,6 +185,7 @@ export function TapPlate({ variant = "stand", finish = "black", line1, line2, cl
         <text x="100" y="158" textAnchor="middle" fontFamily="var(--font-sans)" fontSize="11" fill={colors.subtle}>
           {line2}
         </text>
+        <Marks x={100} y={174} size={9} color={colors.accent} text={marks} />
       </svg>
     );
   }
@@ -213,6 +225,8 @@ export function TapPlate({ variant = "stand", finish = "black", line1, line2, cl
   const width = 220;
   const height = isStand ? 300 : variant === "wall" ? 280 : 220;
   const faceHeight = isStand ? 260 : height - 8;
+  // With the platform marks line, the QR moves down a little (stand) or shrinks (square) to make room.
+  const qrShift = marks && isStand ? 8 : 0;
 
   return (
     <svg
@@ -250,10 +264,16 @@ export function TapPlate({ variant = "stand", finish = "black", line1, line2, cl
       <text x="110" y={isStand ? 156 : 138} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="12.5" fill={colors.subtle}>
         {line2}
       </text>
+      <Marks x={110} y={isStand ? 173 : 154} size={10.5} color={colors.accent} text={marks} />
       {variant !== "square" ? (
         <>
-          <rect x="76" y={isStand ? 176 : 170} width="68" height="68" rx="8" fill="#ffffff" />
-          <QrMark x={82} y={isStand ? 182 : 176} size={56} color="#1d1220" />
+          <rect x="76" y={(isStand ? 176 : 170) + qrShift} width="68" height="68" rx="8" fill="#ffffff" />
+          <QrMark x={82} y={(isStand ? 182 : 176) + qrShift} size={56} color="#1d1220" />
+        </>
+      ) : marks ? (
+        <>
+          <rect x="88" y="163" width="44" height="44" rx="6" fill="#ffffff" />
+          <QrMark x={92} y={167} size={36} color="#1d1220" />
         </>
       ) : (
         <>

@@ -105,7 +105,7 @@ export function NovoHome({ locale }: { locale: Locale }) {
       {/* 2. Confiam em nós */}
       <ClientStrip locale={locale} />
 
-      {/* 3. Placas de reviews do Google: the flagship, first after the clients */}
+      {/* 3. Placas para avaliações: the flagship, first after the clients */}
       <PlatesBanner locale={locale} />
 
       {/* 4. Menu digital showcase */}

@@ -20,7 +20,7 @@ import { FloatingBar } from "@/components/home-ultra/sections/FloatingBar";
 export const metadata: Metadata = {
   title: { absolute: "Steevanz | Sites, reservas, menus e reviews para negócios locais" },
   description:
-    "Sites, reservas, Menu digital em vídeo, placas para reviews com um toque, cartão de cliente e assistentes com IA para negócios em Portugal. Tecnologia do futuro. Com os bons modos de antigamente.",
+    "Sites, reservas, Menu digital em vídeo, placas para avaliações com um toque, cartão de cliente e assistentes com IA para negócios em Portugal. Tecnologia do futuro. Com os bons modos de antigamente.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
 

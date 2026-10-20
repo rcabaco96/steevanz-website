@@ -56,7 +56,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
           website: "Início, Menu, Reservas, Eventos e grupos, Galeria e Contactos. Take-away opcional.",
           "online-shop": "Encomendas para levantar, cabazes, bolos por encomenda e vales de oferta, com hora de recolha.",
         },
-        connections: "Menu digital, reservas, lista de espera, cartão de fidelidade e placas de reviews.",
+        connections: "Menu digital, reservas, lista de espera, cartão de fidelidade e placas para avaliações.",
       },
       {
         id: "beleza",
@@ -106,7 +106,7 @@ export const webSharedCopy: Localized<WebSharedCopy> = {
           website: "Início, Coleções ou Marcas, Sobre, Visite-nos e Contactos.",
           "online-shop": "Catálogo, página de produto, carrinho, checkout e página de envios e devoluções.",
         },
-        connections: "Cartão de fidelidade, placas de reviews e chatbot.",
+        connections: "Cartão de fidelidade, placas para avaliações e chatbot.",
       },
     ],
     extrasEyebrow: "Preço e opções",

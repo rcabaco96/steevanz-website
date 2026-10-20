@@ -9,7 +9,7 @@ export function HeroTapScene({ copy }: { copy: TapSceneCopy }) {
       <div className={styles.halo} />
       <div className={styles.ring} />
       <div className={styles.plateWrap}>
-        <TapPlate variant="stand" finish="black" line1={copy.plateLine1} line2={copy.plateLine2} className={styles.plate} />
+        <TapPlate variant="stand" finish="black" line1={copy.plateLine1} line2={copy.plateLine2} marks={copy.plateMarks} className={styles.plate} />
         <span className={styles.pulse} />
         <span className={`${styles.pulse} ${styles.pulseLate}`} />
       </div>
