@@ -253,7 +253,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Erste Schritte mit der Prozessautomatisierung",
+        title: "Erste Schritte mit der Automatisierung von Prozessen",
         description:
           "Erfahren Sie, wie Projekte zur Prozessautomatisierung bei Steevanz ablaufen, welche Aufgaben sich automatisieren lassen und wo Ihr Betrieb am besten anfängt.",
         blocks: [
@@ -637,7 +637,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Start eines Projekts zur Prozessautomatisierung",
+        title: "So startet ein Projekt zur Automatisierung",
         description:
           "Ein Automatisierungsprojekt mit Steevanz Schritt für Schritt: Erstgespräch, Prozessaufnahme, Festpreisangebot, Umsetzung, Tests und Übergabe.",
         blocks: [
@@ -999,7 +999,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Konfiguration und Integrationen der Prozessautomatisierung",
+        title: "Konfiguration und Integrationen der Automatisierung",
         description:
           "Wie wir Integrationen, Regeln, Ausnahmen, Überwachung und Fehlermeldungen Ihrer Automatisierungen einrichten und was Sie nach der Übergabe anpassen lassen können.",
         blocks: [
@@ -1375,7 +1375,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Die Prozessautomatisierung im Alltag",
+        title: "Die Automatisierung im Alltag",
         description:
           "Wie Sie Ihre Automatisierungen im Alltag im Blick behalten: Ergebnisse prüfen, Ausnahmen bearbeiten, die Wartung verstehen und was passiert, wenn sich ein Werkzeug ändert.",
         blocks: [
@@ -1723,7 +1723,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Fehlerbehebung bei der Prozessautomatisierung",
+        title: "Fehlerbehebung bei der Automatisierung",
         description:
           "Was zu tun ist, wenn eine Automatisierung fehlschlägt: abgelaufene Zugänge, geänderte Tabellen, Duplikate, nicht verschickte Nachrichten und Fehler Ihrer Rechnungssoftware.",
         blocks: [
@@ -2011,7 +2011,7 @@ export const docs: ProductDocs = {
         ],
       },
       de: {
-        title: "Häufige Fragen zur Prozessautomatisierung",
+        title: "Häufige Fragen zur Automatisierung",
         description:
           "Antworten auf häufige Fragen zur Prozessautomatisierung: Festpreis, eingesetzte Werkzeuge, zertifizierte Rechnungsstellung, Sicherheit Ihrer Zugänge und laufende Wartung.",
         blocks: [
