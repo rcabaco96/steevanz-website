@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { docPages } from "../src/content/doc-pages.ts";
+import { mockupCopy } from "../src/content/mockups.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
 
 // Group D of the site translation (es, fr, de, it): docs labels, sectors, mockups, cart and legal pages.
@@ -51,3 +52,10 @@ describe("docs labels in every language", () => {
   });
 });
 
+
+describe("product-page illustrations in every language", () => {
+  it("has every mockup text in es, fr, de, it, prices without VAT and no «NFC»", () => {
+    assertFull("mockupCopy", mockupCopy);
+    for (const text of strings(mockupCopy)) assertHouseWords(text);
+  });
+});
