@@ -29,15 +29,15 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "pricing", text: "Prezzi" },
       {
         type: "table",
-        head: ["Quantità", "Prezzo", "Per targa"],
+        head: ["Alloggi", "Targhe (una per alloggio)", "Canone mensile"],
         rows: [
-          ["Da 1 a 9 targhe", "20 € l'una", "20 €"],
-          ["10 targhe o più", "15 € l'una (10 targhe: 150 €)", "15 €"],
+          ["Da 1 a 9 alloggi", "20 € l'una", "30 €/mese per account"],
+          ["10 alloggi o più", "15 € l'una (10 targhe: 150 €)", "30 €/mese per account"],
         ],
       },
       {
         type: "p",
-        text: "La stesura della guida, la traduzione in quattro lingue, l'hosting online e le modifiche costano 30 € al mese. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
+        text: "Le targhe si pagano una volta. La stesura delle guide, la traduzione in quattro lingue, l'hosting online e le modifiche costano 30 € al mese per account, qualunque sia il numero di alloggi. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
       },
       { type: "h2", id: "how-it-works", text: "Come funziona per gli ospiti" },
       {
@@ -244,7 +244,7 @@ export const it: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Quanto costa al mese?",
-            a: "30 € al mese per la guida, con l'hosting online e le modifiche incluse. Le targhe si pagano una volta: 20 € l'una e 15 € l'una da 10 in su. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
+            a: "30 € al mese per account, qualunque sia il numero di alloggi, con l'hosting online e le modifiche incluse. Le targhe si pagano una volta, una per alloggio: 20 € l'una e 15 € l'una da 10 alloggi in su. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
           },
           {
             q: "La guida vale come libro informativo richiesto dalla legge?",

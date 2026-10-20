@@ -29,15 +29,15 @@ export const de: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "pricing", text: "Preise" },
       {
         type: "table",
-        head: ["Menge", "Preis", "Pro Schild"],
+        head: ["Unterkünfte", "Schilder (eins pro Unterkunft)", "Monatsgebühr"],
         rows: [
-          ["1 bis 9 Schilder", "20 € pro Stück", "20 €"],
-          ["Ab 10 Schildern", "15 € pro Stück (10 Schilder: 150 €)", "15 €"],
+          ["1 bis 9 Unterkünfte", "20 € pro Stück", "30 €/Monat pro Konto"],
+          ["Ab 10 Unterkünften", "15 € pro Stück (10 Schilder: 150 €)", "30 €/Monat pro Konto"],
         ],
       },
       {
         type: "p",
-        text: "Texten der Gästemappe, Übersetzung in vier Sprachen, Online-Hosting und Änderungen kosten 30 € im Monat. Weitere Sprachen kosten einen kleinen Aufpreis, der in Ihrem Angebot steht. Preise zzgl. MwSt., als Vorschlag, bestätigt nach der Demo.",
+        text: "Die Schilder zahlen Sie einmal. Texten der Gästemappen, Übersetzung in vier Sprachen, Online-Hosting und Änderungen kosten 30 € im Monat pro Konto, egal wie viele Unterkünfte Sie haben. Zum Beispiel 3 Unterkünfte: 3 Schilder × 20 € + 30 €/Monat, zzgl. MwSt. Weitere Sprachen kosten einen kleinen Aufpreis, der in Ihrem Angebot steht. Preise zzgl. MwSt., als Vorschlag, bestätigt nach der Demo.",
       },
       { type: "h2", id: "how-it-works", text: "So funktioniert es für Gäste" },
       {
@@ -244,7 +244,7 @@ export const de: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Was kostet es im Monat?",
-            a: "30 € im Monat für die Gästemappe, Online-Hosting und Änderungen inklusive. Die Schilder zahlen Sie einmal: je 20 €, ab 10 Schildern je 15 €. Mit dem Paket für Ferienunterkünfte ist die Gästemappe enthalten, solange das Paket aktiv ist.",
+            a: "30 € im Monat pro Konto, egal wie viele Unterkünfte Sie haben, Online-Hosting und Änderungen inklusive. Die Schilder zahlen Sie einmal, eins pro Unterkunft: je 20 €, ab 10 Unterkünften je 15 €. Zum Beispiel 3 Unterkünfte: 3 Schilder × 20 € + 30 €/Monat, zzgl. MwSt. Mit dem Paket für Ferienunterkünfte ist die Gästemappe enthalten, solange das Paket aktiv ist.",
           },
           {
             q: "Gilt die Gästemappe als das gesetzlich vorgeschriebene Informationsbuch?",

@@ -29,15 +29,15 @@ export const fr: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "pricing", text: "Tarifs" },
       {
         type: "table",
-        head: ["Quantité", "Prix", "Par plaque"],
+        head: ["Logements", "Plaques (une par logement)", "Abonnement"],
         rows: [
-          ["De 1 à 9 plaques", "20 € l'unité", "20 €"],
-          ["10 plaques ou plus", "15 € l'unité (10 plaques : 150 €)", "15 €"],
+          ["De 1 à 9 logements", "20 € l'unité", "30 €/mois par compte"],
+          ["10 logements ou plus", "15 € l'unité (10 plaques : 150 €)", "30 €/mois par compte"],
         ],
       },
       {
         type: "p",
-        text: "La rédaction du livret, la traduction en quatre langues, l'hébergement en ligne et les modifications coûtent 30 € par mois. Les langues en plus ont un petit coût, indiqué dans votre devis. Prix + TVA, indicatifs et confirmés après la démonstration.",
+        text: "Les plaques se paient une fois. La rédaction des livrets, la traduction en quatre langues, l'hébergement en ligne et les modifications coûtent 30 € par mois par compte, quel que soit le nombre de logements. Par exemple, 3 logements : 3 plaques × 20 € + 30 €/mois, + TVA. Les langues en plus ont un petit coût, indiqué dans votre devis. Prix + TVA, indicatifs et confirmés après la démonstration.",
       },
       { type: "h2", id: "how-it-works", text: "Comment ça marche pour les voyageurs" },
       {
@@ -244,7 +244,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Combien ça coûte par mois ?",
-            a: "30 € par mois pour le livret, hébergement en ligne et modifications compris. Les plaques se paient une fois : 20 € pièce, et 15 € pièce à partir de 10. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
+            a: "30 € par mois par compte, quel que soit le nombre de logements, hébergement en ligne et modifications compris. Les plaques se paient une fois, une par logement : 20 € pièce, et 15 € pièce à partir de 10 logements. Par exemple, 3 logements : 3 plaques × 20 € + 30 €/mois, + TVA. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
           },
           {
             q: "Le livret vaut-il comme livret d'information exigé par la loi ?",

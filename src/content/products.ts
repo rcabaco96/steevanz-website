@@ -168,9 +168,11 @@ export const products: Product[] = [
     icon: "guide-tap",
     // Owner, 2026-10-20: the same model as the Menu digital: 20 € per plate, 15 € each from 10 plates,
     // plus 30 €/month for the guide (writing, four languages, hosting and changes).
+    // Owner, 2026-10-20: the 30 €/month is per account (one fee for the host or manager, however many properties);
+    // one plate per property.
     priceFrom: 20,
     priceBilling: "one-time",
-    priceQualifier: { pt: "por placa + 30 €/mês pelo guia digital", en: "per plate + €30/month for the digital guide", es: "por placa + 30 €/mes por la guía digital", fr: "par plaque + 30 €/mois pour le livret numérique", de: "pro Schild + 30 €/Monat für die digitale Gästemappe", it: "per targa + 30 €/mese per la guida digitale" },
+    priceQualifier: { pt: "por placa, uma por alojamento, + 30 €/mês por conta", en: "per plate, one per property, + €30/month per account", es: "por placa, una por alojamiento, + 30 €/mes por cuenta", fr: "par plaque, une par logement, + 30 €/mois par compte", de: "pro Schild, eins pro Unterkunft, + 30 €/Monat pro Konto", it: "per targa, una per alloggio, + 30 €/mese per account" },
     priceIsProvisional: true,
     sectors: ["lodging"],
     related: ["ai-chatbot", "automation", "google-review-plates"],

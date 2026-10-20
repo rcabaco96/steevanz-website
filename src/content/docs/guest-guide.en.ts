@@ -29,15 +29,15 @@ export const en: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "pricing", text: "Pricing" },
       {
         type: "table",
-        head: ["Quantity", "Price", "Per plate"],
+        head: ["Properties", "Plates (one per property)", "Monthly fee"],
         rows: [
-          ["1 to 9 plates", "€20 each", "€20"],
-          ["10 plates or more", "€15 each (10 plates: €150)", "€15"],
+          ["1 to 9 properties", "€20 each", "€30/month per account"],
+          ["10 properties or more", "€15 each (10 plates: €150)", "€30/month per account"],
         ],
       },
       {
         type: "p",
-        text: "Writing the guide, translation into four languages, online hosting and changes cost €30 per month. Additional languages have a small cost, shown in your quote. Prices exclude VAT, are proposals and are confirmed after the demo.",
+        text: "Plates are paid once. Writing the guides, translation into four languages, online hosting and changes cost €30 per month per account, however many properties you have. For example, 3 properties: 3 plates × €20 + €30/month, + VAT. Additional languages have a small cost, shown in your quote. Prices exclude VAT, are proposals and are confirmed after the demo.",
       },
       { type: "h2", id: "how-it-works", text: "How it works for guests" },
       {
@@ -244,7 +244,7 @@ export const en: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "What does it cost per month?",
-            a: "€30 per month for the guide, with online hosting and changes included. Plates are paid once: €20 each, or €15 each from 10. With the Holiday-rental pack, the guide is included while the pack is active.",
+            a: "€30 per month per account, however many properties you have, with online hosting and changes included. Plates are paid once, one per property: €20 each, or €15 each from 10 properties. For example, 3 properties: 3 plates × €20 + €30/month, + VAT. With the Holiday-rental pack, the guide is included while the pack is active.",
           },
           {
             q: "Does the guide count as the information book the law requires?",

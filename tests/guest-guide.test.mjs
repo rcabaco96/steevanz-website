@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { getProduct, products } from "../src/content/products.ts";
 import { priceCart, sanitizeOptions } from "../src/lib/cart/pricing.ts";
+import { copy as guestGuideCopy } from "../src/content/product-copy/guest-guide.ts";
 
 const guide = (quantity, logo = false) => ({
   id: `guest-guide-${quantity}`,
@@ -48,6 +49,16 @@ describe("digital guest guide pricing", () => {
     const product = getProduct("guest-guide");
     assert.equal(product.priceIsProvisional, true);
     assert.equal(product.packUnit, undefined);
+  });
+
+  it("says the 30 €/month is per account and there is one plate per property, in every language", () => {
+    const { priceQualifier } = getProduct("guest-guide");
+    const perAccount = { pt: /por conta/, en: /per account/, es: /por cuenta/, fr: /par compte/, de: /pro Konto/, it: /per account/ };
+    for (const [locale, pattern] of Object.entries(perAccount)) {
+      assert.match(priceQualifier[locale], pattern, locale);
+      assert.match(guestGuideCopy[locale].faq[0].a, pattern, locale);
+      assert.match(guestGuideCopy[locale].faq[0].a, /3 .+ × (20 €|€20) \+ (30 €|€30)\//, locale);
+    }
   });
 });
 
