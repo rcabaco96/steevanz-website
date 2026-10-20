@@ -269,13 +269,139 @@ export const copy: ProductCopyByLocale = {
       },
     ],
   },
-  // es, fr, de, it: the card fields only (name, tagline, summary): the rest of the page shows the English text until translated.
   es: {
     name: "Recepcionista de voz con IA",
     shortName: "Voz IA",
     tagline: "Ninguna llamada se queda sin respuesta, aunque tenga las manos ocupadas.",
     summary:
       "Una recepcionista con IA que atiende el teléfono las 24 horas, responde a las preguntas frecuentes, gestiona reservas y pasa las llamadas urgentes a su equipo.",
+    metaTitle: "Recepcionista de Voz con IA para Llamadas | Steevanz",
+    metaDescription:
+      "Recepcionista de voz con IA que atiende las llamadas las 24 horas, resuelve dudas, gestiona reservas y le envía un resumen por WhatsApp o email. Configurada por Steevanz.",
+    heroTitle: "Atienda todas las llamadas, incluso en pleno servicio",
+    heroSubtitle:
+      "Una recepcionista de voz con IA que atiende el teléfono de su negocio a cualquier hora, responde a las preguntas más habituales, gestiona reservas y pasa las llamadas urgentes a su equipo. Después, usted recibe un resumen por WhatsApp o email.",
+    problem: {
+      title: "Cada llamada perdida puede ser un cliente perdido",
+      body:
+        "Cuando está cortando el pelo, sirviendo mesas o con un paciente, no puede coger el teléfono. El cliente llama una vez, quizá dos, y después llama a otro sitio. Fuera de horario, el teléfono suena para nadie. Y contratar a alguien solo para atender llamadas no siempre sale a cuenta.",
+      points: [
+        "Llamadas perdidas justo en las horas de más trabajo",
+        "Preguntas sencillas que interrumpen su trabajo",
+        "Nadie que conteste fuera del horario de apertura",
+      ],
+    },
+    solution: {
+      title: "Una voz amable que nunca está ocupada",
+      body:
+        "La recepcionista de voz con IA contesta en nombre de su negocio, habla con naturalidad, responde con su información y sabe cuándo pasar la llamada a una persona.",
+      points: [
+        "Atiende las 24 horas, también fines de semana y festivos",
+        "Resuelve dudas sobre horarios, servicios y ubicación",
+        "Apunta reservas y citas en su agenda",
+        "Pasa las llamadas urgentes y envía un resumen de cada una",
+      ],
+    },
+    steps: [
+      {
+        title: "Preparamos el guion",
+        body: "Reunimos sus horarios, servicios, preguntas frecuentes y las reglas para pasar una llamada a su equipo.",
+      },
+      {
+        title: "Configuramos la voz",
+        body: "Elegimos la voz y el tono adecuados y probamos con usted una serie de llamadas realistas antes de ponerla en marcha.",
+      },
+      {
+        title: "Activamos el desvío",
+        body: "Las llamadas que no se atienden, o todas si lo prefiere, pasan a la recepcionista con IA.",
+      },
+      {
+        title: "Usted recibe los resúmenes",
+        body: "Después de cada llamada, le llega por WhatsApp o email un resumen de lo que le han preguntado.",
+      },
+    ],
+    features: [
+      {
+        title: "Siempre disponible",
+        body: "Contesta a cualquier hora, aunque todo el equipo esté ocupado o el negocio esté cerrado, para que ninguna llamada se quede sonando sin respuesta.",
+      },
+      {
+        title: "Responde a las preguntas habituales",
+        body: "Horarios, ubicación, aparcamiento, servicios y precios orientativos, con la información que usted nos ha dado.",
+      },
+      {
+        title: "Reservas por teléfono",
+        body: "Apunta reservas de mesa o citas directamente en su agenda y confirma con quien llama el día, la hora y el nombre.",
+      },
+      {
+        title: "Desvío de llamadas urgentes",
+        body: "Si quien llama pide hablar con una persona o el asunto es urgente, la llamada se desvía al número del equipo que usted elija.",
+      },
+      {
+        title: "Resumen de cada llamada",
+        body: "Recibe por WhatsApp o email quién llamó, qué quería y qué se resolvió, para hacer el seguimiento cuando tenga un momento.",
+      },
+      {
+        title: "Habla con naturalidad",
+        body: "Habla portugués de Portugal, además de inglés y otros idiomas, algo muy útil con turistas y clientes internacionales.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurantes",
+        body: "Atiende las peticiones de reserva en pleno servicio de cenas, cuando nadie tiene tiempo de ir al teléfono.",
+      },
+      {
+        sector: "beauty",
+        title: "Peluquerías y estética",
+        body: "Reserva y confirma citas mientras su equipo atiende a los clientes, sin interrumpir un corte ni un tratamiento.",
+      },
+      {
+        sector: "clinics",
+        title: "Clínicas y consultas",
+        body: "Responde a dudas administrativas y da citas, y pasa enseguida a su equipo cualquier urgencia.",
+      },
+      {
+        sector: "lodging",
+        title: "Alojamientos y gestores de pisos turísticos",
+        body: "Atiende las llamadas de los huéspedes en varios idiomas, informa sobre horarios de check-in, cómo llegar y aparcamiento, y le envía por WhatsApp las peticiones que necesitan su atención.",
+      },
+    ],
+    includes: [
+      "Guion y reglas de atención de llamadas",
+      "Configuración de la voz y pruebas con usted",
+      "Conexión a su número actual mediante desvío de llamadas",
+      "Integración con su agenda de reservas",
+      "Resúmenes de llamadas por WhatsApp o email",
+      "Ajustes continuos y soporte por WhatsApp y email",
+    ],
+    faq: [
+      {
+        q: "¿Tengo que cambiar de número de teléfono?",
+        a: "No. Mantiene su número y activamos el desvío de llamadas, por ejemplo solo cuando no contesta o fuera de horario. Le guiamos paso a paso con su operador.",
+      },
+      {
+        q: "¿Sabrán los clientes que hablan con una IA?",
+        a: "Sí, y así debe ser. Por transparencia, la recepcionista se presenta como el asistente automático de su negocio y ofrece siempre la opción de hablar con una persona.",
+      },
+      {
+        q: "¿Y si la IA no sabe la respuesta o se equivoca?",
+        a: "La IA puede equivocarse, por eso limitamos las respuestas a su información y fijamos reglas claras: si no sabe algo, toma nota para que su equipo devuelva la llamada o desvía la llamada.",
+      },
+      {
+        q: "¿Se graban las llamadas?",
+        a: "Solo si usted lo autoriza, y se avisa a quien llama al principio de la llamada. Los datos se tratan conforme al RGPD y solo se usan para prestar el servicio.",
+      },
+      {
+        q: "¿Cuánto tarda la puesta en marcha?",
+        a: "Normalmente una o dos semanas, incluida la preparación del guion y las pruebas con usted antes de conectar las llamadas reales.",
+      },
+      {
+        q: "¿Puedo cancelar cuando quiera?",
+        a: "Sí, el plan es mensual y sin permanencia. Basta con desactivar el desvío de llamadas y su número funciona exactamente como antes.",
+      },
+    ],
   },
   fr: {
     name: "Réceptionniste vocale IA",
@@ -283,6 +409,133 @@ export const copy: ProductCopyByLocale = {
     tagline: "Aucun appel sans réponse, même quand vous avez les mains prises.",
     summary:
       "Une réceptionniste IA qui répond au téléphone 24 h/24, traite les questions fréquentes, prend les réservations et transfère les appels urgents à votre équipe.",
+    metaTitle: "Réceptionniste Vocale IA pour vos Appels | Steevanz",
+    metaDescription:
+      "Réceptionniste vocale IA qui répond aux appels 24 h/24, renseigne vos clients, prend les réservations et vous envoie un résumé par WhatsApp ou par e-mail. Mise en place par Steevanz.",
+    heroTitle: "Répondez à chaque appel, même en plein service",
+    heroSubtitle:
+      "Une réceptionniste vocale IA qui répond au téléphone de votre établissement à toute heure, traite les questions les plus courantes, prend les réservations et transfère les appels urgents à votre équipe. Ensuite, vous recevez un résumé par WhatsApp ou par e-mail.",
+    problem: {
+      title: "Chaque appel manqué peut être un client perdu",
+      body:
+        "Quand vous êtes en train de couper des cheveux, de servir en salle ou avec un patient, vous ne pouvez pas décrocher. Le client appelle une fois, peut-être deux, puis appelle ailleurs. En dehors des heures d'ouverture, le téléphone sonne dans le vide. Et embaucher quelqu'un uniquement pour répondre au téléphone n'est pas toujours rentable.",
+      points: [
+        "Des appels manqués aux heures de pointe",
+        "Des questions simples qui interrompent votre travail",
+        "Personne pour répondre en dehors des heures d'ouverture",
+      ],
+    },
+    solution: {
+      title: "Une voix aimable qui n'est jamais occupée",
+      body:
+        "La réceptionniste vocale IA répond au nom de votre établissement, parle naturellement, s'appuie sur vos informations et sait quand passer l'appel à une personne.",
+      points: [
+        "Répond 24 h/24, week-ends et jours fériés compris",
+        "Renseigne sur les horaires, les services et l'adresse",
+        "Prend les réservations et les rendez-vous dans votre agenda",
+        "Transfère les appels urgents et envoie le résumé de chaque appel",
+      ],
+    },
+    steps: [
+      {
+        title: "Nous écrivons le script",
+        body: "Nous rassemblons vos horaires, vos services, les questions fréquentes et les règles pour passer un appel à votre équipe.",
+      },
+      {
+        title: "Nous réglons la voix",
+        body: "Nous choisissons la voix et le ton qui conviennent et testons avec vous toute une série d'appels réalistes avant la mise en service.",
+      },
+      {
+        title: "Nous activons le renvoi d'appel",
+        body: "Les appels sans réponse, ou tous les appels si vous préférez, sont pris par la réceptionniste IA.",
+      },
+      {
+        title: "Vous recevez les résumés",
+        body: "Après chaque appel, un résumé de la demande vous parvient par WhatsApp ou par e-mail.",
+      },
+    ],
+    features: [
+      {
+        title: "Toujours disponible",
+        body: "Elle répond à toute heure, même quand tout le monde est occupé ou que vous êtes fermé : aucun appel ne sonne dans le vide.",
+      },
+      {
+        title: "Répond aux questions courantes",
+        body: "Horaires, adresse, stationnement, services et prix indicatifs, à partir des informations que vous nous avez données.",
+      },
+      {
+        title: "Réservations par téléphone",
+        body: "Elle enregistre les réservations de table ou les rendez-vous directement dans votre agenda, en confirmant le jour, l'heure et le nom avec l'appelant.",
+      },
+      {
+        title: "Transfert des appels urgents",
+        body: "Si l'appelant demande à parler à quelqu'un ou si c'est urgent, l'appel est transféré vers le numéro de l'équipe que vous choisissez.",
+      },
+      {
+        title: "Résumé de chaque appel",
+        body: "Vous recevez par WhatsApp ou par e-mail qui a appelé, ce qu'il voulait et ce qui a été réglé, pour assurer le suivi dès que vous avez un moment.",
+      },
+      {
+        title: "Une voix naturelle",
+        body: "Elle parle le portugais du Portugal, ainsi que l'anglais et d'autres langues, bien utile avec les touristes et la clientèle internationale.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants",
+        body: "Elle prend les demandes de réservation en plein service du soir, quand personne n'a le temps d'aller au téléphone.",
+      },
+      {
+        sector: "beauty",
+        title: "Coiffure et esthétique",
+        body: "Elle prend et confirme les rendez-vous pendant que votre équipe s'occupe des clients, sans interrompre une coupe ou un soin.",
+      },
+      {
+        sector: "clinics",
+        title: "Cliniques et cabinets",
+        body: "Elle répond aux questions administratives et prend les rendez-vous, en transférant aussitôt toute urgence à votre équipe.",
+      },
+      {
+        sector: "lodging",
+        title: "Maisons d'hôtes et gestionnaires de locations",
+        body: "Elle répond aux appels des voyageurs en plusieurs langues, renseigne sur les heures d'arrivée, l'itinéraire et le stationnement, et vous envoie sur WhatsApp les demandes qui nécessitent votre intervention.",
+      },
+    ],
+    includes: [
+      "Script et règles de traitement des appels",
+      "Réglage de la voix et tests avec vous",
+      "Connexion à votre numéro actuel par renvoi d'appel",
+      "Intégration à votre agenda de réservations",
+      "Résumés d'appels par WhatsApp ou par e-mail",
+      "Ajustements continus et assistance par WhatsApp et par e-mail",
+    ],
+    faq: [
+      {
+        q: "Dois-je changer de numéro de téléphone ?",
+        a: "Non. Vous gardez votre numéro et nous activons le renvoi d'appel, par exemple uniquement quand vous ne répondez pas ou en dehors des heures d'ouverture. Nous vous accompagnons dans la démarche avec votre opérateur.",
+      },
+      {
+        q: "Les appelants sauront-ils qu'ils parlent à une IA ?",
+        a: "Oui, et c'est normal. Par transparence, la réceptionniste se présente comme l'assistant automatique de votre établissement et propose toujours de parler à une personne.",
+      },
+      {
+        q: "Et si l'IA ne connaît pas la réponse ou se trompe ?",
+        a: "L'IA peut se tromper : nous limitons donc ses réponses à vos informations et fixons des règles claires. Si elle ne sait pas, elle prend un message pour que votre équipe rappelle, ou elle transfère l'appel.",
+      },
+      {
+        q: "Les appels sont-ils enregistrés ?",
+        a: "Uniquement si vous l'autorisez, et l'appelant en est informé dès le début de l'appel. Les données sont traitées conformément au RGPD et servent uniquement à fournir le service.",
+      },
+      {
+        q: "Combien de temps prend la mise en place ?",
+        a: "En général une à deux semaines, rédaction du script et tests avec vous compris, avant de brancher les vrais appels.",
+      },
+      {
+        q: "Puis-je résilier quand je veux ?",
+        a: "Oui, l'abonnement est mensuel et sans engagement. Il suffit de désactiver le renvoi d'appel et votre numéro fonctionne exactement comme avant.",
+      },
+    ],
   },
   de: {
     name: "KI-Telefonrezeption",
@@ -290,6 +543,133 @@ export const copy: ProductCopyByLocale = {
     tagline: "Kein Anruf bleibt unbeantwortet, auch wenn Sie gerade alle Hände voll zu tun haben.",
     summary:
       "Eine KI-Rezeptionistin, die rund um die Uhr ans Telefon geht, häufige Fragen beantwortet, Reservierungen aufnimmt und dringende Anrufe an Ihr Team weiterleitet.",
+    metaTitle: "KI-Telefonrezeption für Ihre Anrufe | Steevanz",
+    metaDescription:
+      "KI-Telefonrezeption, die rund um die Uhr Anrufe annimmt, Fragen beantwortet, Reservierungen aufnimmt und Ihnen eine Zusammenfassung per WhatsApp oder E-Mail schickt. Eingerichtet von Steevanz.",
+    heroTitle: "Jeden Anruf annehmen, auch mitten im Betrieb",
+    heroSubtitle:
+      "Eine KI-Telefonrezeption, die zu jeder Uhrzeit das Telefon Ihres Betriebs annimmt, die häufigsten Fragen beantwortet, Reservierungen aufnimmt und dringende Anrufe an Ihr Team weiterleitet. Danach erhalten Sie eine Zusammenfassung per WhatsApp oder E-Mail.",
+    problem: {
+      title: "Jeder verpasste Anruf kann ein verlorener Kunde sein",
+      body:
+        "Wenn Sie gerade Haare schneiden, Gäste bedienen oder bei einem Patienten sind, können Sie nicht rangehen. Der Kunde ruft einmal an, vielleicht zweimal, und dann woanders. Außerhalb der Öffnungszeiten klingelt das Telefon ins Leere. Und jemanden nur fürs Telefon einzustellen, rechnet sich nicht immer.",
+      points: [
+        "Verpasste Anrufe genau dann, wenn am meisten los ist",
+        "Einfache Fragen, die Sie bei der Arbeit unterbrechen",
+        "Niemand am Telefon außerhalb der Öffnungszeiten",
+      ],
+    },
+    solution: {
+      title: "Eine freundliche Stimme, die nie besetzt ist",
+      body:
+        "Die KI-Telefonrezeption meldet sich im Namen Ihres Betriebs, spricht natürlich, antwortet mit Ihren Informationen und weiß, wann ein Anruf an einen Menschen gehört.",
+      points: [
+        "Rund um die Uhr erreichbar, auch am Wochenende und an Feiertagen",
+        "Beantwortet Fragen zu Öffnungszeiten, Leistungen und Anfahrt",
+        "Trägt Reservierungen und Termine in Ihren Kalender ein",
+        "Leitet dringende Anrufe weiter und schickt zu jedem eine Zusammenfassung",
+      ],
+    },
+    steps: [
+      {
+        title: "Wir schreiben das Skript",
+        body: "Wir sammeln Ihre Öffnungszeiten, Leistungen, häufigen Fragen und die Regeln, wann ein Anruf an Ihr Team geht.",
+      },
+      {
+        title: "Wir richten die Stimme ein",
+        body: "Wir wählen die passende Stimme und den richtigen Ton und testen mit Ihnen eine Reihe realistischer Anrufe, bevor es losgeht.",
+      },
+      {
+        title: "Wir aktivieren die Rufumleitung",
+        body: "Unbeantwortete Anrufe, oder auf Wunsch alle Anrufe, übernimmt die KI-Telefonrezeption.",
+      },
+      {
+        title: "Sie erhalten die Zusammenfassungen",
+        body: "Nach jedem Anruf kommt per WhatsApp oder E-Mail eine Zusammenfassung dessen, was gefragt wurde.",
+      },
+    ],
+    features: [
+      {
+        title: "Immer erreichbar",
+        body: "Sie nimmt zu jeder Uhrzeit ab, auch wenn alle beschäftigt sind oder Sie geschlossen haben, damit kein Anruf unbeantwortet bleibt.",
+      },
+      {
+        title: "Beantwortet häufige Fragen",
+        body: "Öffnungszeiten, Anfahrt, Parken, Leistungen und Richtpreise, auf Basis der Informationen, die Sie uns gegeben haben.",
+      },
+      {
+        title: "Reservierungen per Telefon",
+        body: "Sie trägt Tischreservierungen oder Termine direkt in Ihren Kalender ein und bestätigt dem Anrufer Tag, Uhrzeit und Namen.",
+      },
+      {
+        title: "Weiterleitung dringender Anrufe",
+        body: "Möchte der Anrufer mit einem Menschen sprechen oder ist die Sache dringend, wird der Anruf an die Teamnummer Ihrer Wahl weitergeleitet.",
+      },
+      {
+        title: "Zusammenfassung jedes Anrufs",
+        body: "Sie erfahren per WhatsApp oder E-Mail, wer angerufen hat, was gewünscht war und was erledigt wurde, und können sich melden, sobald Sie Zeit haben.",
+      },
+      {
+        title: "Natürliche Sprache",
+        body: "Sie spricht europäisches Portugiesisch sowie Englisch und weitere Sprachen, hilfreich bei Touristen und internationalen Kunden.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Restaurants",
+        body: "Nimmt Reservierungswünsche mitten im Abendgeschäft an, wenn niemand Zeit hat, ans Telefon zu gehen.",
+      },
+      {
+        sector: "beauty",
+        title: "Friseur und Kosmetik",
+        body: "Vergibt und bestätigt Termine, während Ihr Team bei den Kunden ist, ohne einen Haarschnitt oder eine Behandlung zu unterbrechen.",
+      },
+      {
+        sector: "clinics",
+        title: "Kliniken und Praxen",
+        body: "Beantwortet organisatorische Fragen, vergibt Termine und leitet alles Dringende sofort an Ihr Team weiter.",
+      },
+      {
+        sector: "lodging",
+        title: "Pensionen und Vermieter von Ferienwohnungen",
+        body: "Nimmt Anrufe von Gästen in mehreren Sprachen an, informiert über Check-in-Zeiten, Anfahrt und Parken und schickt Ihnen die Anliegen, die Sie brauchen, per WhatsApp.",
+      },
+    ],
+    includes: [
+      "Skript und Regeln für die Anrufannahme",
+      "Einrichtung der Stimme und Tests mit Ihnen",
+      "Anbindung an Ihre bestehende Nummer per Rufumleitung",
+      "Anbindung an Ihren Reservierungskalender",
+      "Anrufzusammenfassungen per WhatsApp oder E-Mail",
+      "Laufende Anpassungen und Support per WhatsApp und E-Mail",
+    ],
+    faq: [
+      {
+        q: "Muss ich meine Telefonnummer ändern?",
+        a: "Nein. Sie behalten Ihre Nummer und wir aktivieren die Rufumleitung, zum Beispiel nur, wenn Sie nicht abnehmen, oder außerhalb der Öffnungszeiten. Wir begleiten Sie dabei Schritt für Schritt mit Ihrem Telefonanbieter.",
+      },
+      {
+        q: "Wissen die Anrufer, dass sie mit einer KI sprechen?",
+        a: "Ja, und so soll es auch sein. Aus Gründen der Transparenz stellt sich die Rezeption als automatischer Assistent Ihres Betriebs vor und bietet immer an, mit einem Menschen zu sprechen.",
+      },
+      {
+        q: "Was, wenn die KI die Antwort nicht weiß oder sich irrt?",
+        a: "KI kann Fehler machen. Deshalb beschränken wir die Antworten auf Ihre Informationen und legen klare Regeln fest: Weiß sie etwas nicht, nimmt sie eine Nachricht für einen Rückruf Ihres Teams auf oder leitet den Anruf weiter.",
+      },
+      {
+        q: "Werden die Anrufe aufgezeichnet?",
+        a: "Nur, wenn Sie es erlauben, und die Anrufer werden zu Beginn des Gesprächs darauf hingewiesen. Die Daten werden gemäß DSGVO verarbeitet und nur zur Erbringung des Dienstes genutzt.",
+      },
+      {
+        q: "Wie lange dauert die Einrichtung?",
+        a: "In der Regel ein bis zwei Wochen, einschließlich Skript und Tests mit Ihnen, bevor echte Anrufe durchgestellt werden.",
+      },
+      {
+        q: "Kann ich jederzeit kündigen?",
+        a: "Ja, der Plan läuft monatlich und ohne Mindestlaufzeit. Sie schalten einfach die Rufumleitung ab und Ihre Nummer funktioniert genau wie vorher.",
+      },
+    ],
   },
   it: {
     name: "Receptionist vocale con IA",
@@ -297,5 +677,132 @@ export const copy: ProductCopyByLocale = {
     tagline: "Nessuna chiamata senza risposta, anche quando avete le mani occupate.",
     summary:
       "Una receptionist con IA che risponde al telefono 24 ore su 24, gestisce le domande frequenti, prende le prenotazioni e passa le chiamate urgenti al vostro staff.",
+    metaTitle: "Receptionist Vocale con IA per le Chiamate | Steevanz",
+    metaDescription:
+      "Receptionist vocale con IA che risponde alle chiamate 24 ore su 24, gestisce le domande, prende le prenotazioni e vi invia un riassunto via WhatsApp o email. Configurata da Steevanz.",
+    heroTitle: "Rispondete a ogni chiamata, anche in pieno servizio",
+    heroSubtitle:
+      "Una receptionist vocale con IA che risponde al telefono della vostra attività a qualsiasi ora, gestisce le domande più comuni, prende le prenotazioni e passa le chiamate urgenti al vostro staff. Poi ricevete un riassunto via WhatsApp o email.",
+    problem: {
+      title: "Ogni chiamata persa può essere un cliente perso",
+      body:
+        "Quando state tagliando i capelli, servendo ai tavoli o siete con un paziente, non potete rispondere. Il cliente chiama una volta, forse due, poi chiama qualcun altro. Fuori orario il telefono squilla a vuoto. E assumere qualcuno solo per rispondere al telefono non sempre conviene.",
+      points: [
+        "Chiamate perse proprio nelle ore di punta",
+        "Domande semplici che interrompono il vostro lavoro",
+        "Nessuno che risponda fuori dall'orario di apertura",
+      ],
+    },
+    solution: {
+      title: "Una voce gentile che non è mai occupata",
+      body:
+        "La receptionist vocale con IA risponde a nome della vostra attività, parla in modo naturale, usa le vostre informazioni e sa quando passare la chiamata a una persona.",
+      points: [
+        "Risponde 24 ore su 24, anche nei weekend e nei giorni festivi",
+        "Gestisce le domande su orari, servizi e indirizzo",
+        "Registra prenotazioni e appuntamenti nella vostra agenda",
+        "Passa le chiamate urgenti e invia un riassunto di ognuna",
+      ],
+    },
+    steps: [
+      {
+        title: "Scriviamo il copione",
+        body: "Raccogliamo orari, servizi, domande frequenti e le regole per passare una chiamata al vostro staff.",
+      },
+      {
+        title: "Impostiamo la voce",
+        body: "Scegliamo la voce e il tono giusti e proviamo con voi una serie di chiamate realistiche prima di partire.",
+      },
+      {
+        title: "Attiviamo la deviazione",
+        body: "Le chiamate senza risposta, o tutte le chiamate se preferite, passano alla receptionist con IA.",
+      },
+      {
+        title: "Ricevete i riassunti",
+        body: "Dopo ogni chiamata vi arriva via WhatsApp o email un riassunto di quanto è stato chiesto.",
+      },
+    ],
+    features: [
+      {
+        title: "Sempre attiva",
+        body: "Risponde a qualsiasi ora, anche quando tutti sono occupati o siete chiusi, così nessuna chiamata resta a squillare senza risposta.",
+      },
+      {
+        title: "Risponde alle domande comuni",
+        body: "Orari, indirizzo, parcheggio, servizi e prezzi indicativi, in base alle informazioni che ci avete dato.",
+      },
+      {
+        title: "Prenotazioni al telefono",
+        body: "Registra prenotazioni di tavoli o appuntamenti direttamente nella vostra agenda, confermando con chi chiama giorno, ora e nome.",
+      },
+      {
+        title: "Deviazione delle chiamate urgenti",
+        body: "Se chi chiama vuole parlare con una persona o la questione è urgente, la chiamata viene deviata al numero dello staff che scegliete voi.",
+      },
+      {
+        title: "Riassunto di ogni chiamata",
+        body: "Ricevete via WhatsApp o email chi ha chiamato, cosa voleva e cosa è stato risolto, così potete richiamare quando avete un momento.",
+      },
+      {
+        title: "Parla in modo naturale",
+        body: "Parla portoghese europeo, oltre a inglese e altre lingue, utile con i turisti e i clienti internazionali.",
+      },
+    ],
+    useCases: [
+      {
+        sector: "restaurants",
+        title: "Ristoranti",
+        body: "Gestisce le richieste di prenotazione in pieno servizio serale, quando nessuno ha tempo di andare al telefono.",
+      },
+      {
+        sector: "beauty",
+        title: "Parrucchieri ed estetica",
+        body: "Fissa e conferma gli appuntamenti mentre il vostro staff è con i clienti, senza interrompere un taglio o un trattamento.",
+      },
+      {
+        sector: "clinics",
+        title: "Cliniche e studi",
+        body: "Risponde alle domande amministrative e fissa gli appuntamenti, passando subito al vostro staff qualsiasi urgenza.",
+      },
+      {
+        sector: "lodging",
+        title: "B&B e gestori di case vacanza",
+        body: "Risponde alle chiamate degli ospiti in più lingue, dà informazioni su orari di check-in, indicazioni e parcheggio, e vi invia su WhatsApp le richieste che hanno bisogno di voi.",
+      },
+    ],
+    includes: [
+      "Copione e regole di gestione delle chiamate",
+      "Impostazione della voce e test con voi",
+      "Collegamento al vostro numero attuale tramite deviazione di chiamata",
+      "Integrazione con la vostra agenda delle prenotazioni",
+      "Riassunti delle chiamate via WhatsApp o email",
+      "Regolazioni continue e assistenza via WhatsApp ed email",
+    ],
+    faq: [
+      {
+        q: "Devo cambiare numero di telefono?",
+        a: "No. Mantenete il vostro numero e attiviamo la deviazione di chiamata, per esempio solo quando non rispondete o fuori orario. Vi guidiamo passo passo con il vostro operatore telefonico.",
+      },
+      {
+        q: "Chi chiama saprà di parlare con un'IA?",
+        a: "Sì, ed è giusto così. Per trasparenza, la receptionist si presenta come l'assistente automatico della vostra attività e offre sempre la possibilità di parlare con una persona.",
+      },
+      {
+        q: "E se l'IA non conosce la risposta o sbaglia?",
+        a: "L'IA può sbagliare, per questo limitiamo le risposte alle vostre informazioni e fissiamo regole chiare: se non sa qualcosa, prende un messaggio perché il vostro staff richiami, oppure devia la chiamata.",
+      },
+      {
+        q: "Le chiamate vengono registrate?",
+        a: "Solo se lo autorizzate, e chi chiama viene avvisato all'inizio della chiamata. I dati sono trattati nel rispetto del GDPR e usati solo per fornire il servizio.",
+      },
+      {
+        q: "Quanto ci vuole per l'attivazione?",
+        a: "Di solito una o due settimane, compresi la stesura del copione e i test con voi prima di collegare le chiamate reali.",
+      },
+      {
+        q: "Posso disdire quando voglio?",
+        a: "Sì, il piano è mensile e senza vincoli. Basta disattivare la deviazione di chiamata e il vostro numero funziona esattamente come prima.",
+      },
+    ],
   },
 };

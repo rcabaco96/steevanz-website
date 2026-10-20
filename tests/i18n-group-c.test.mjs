@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { copy as aiChatbot } from "../src/content/product-copy/ai-chatbot.ts";
+import { copy as aiVoice } from "../src/content/product-copy/ai-voice.ts";
 import { extraLocales } from "../src/lib/i18n.ts";
 
 // Product pages translated in full into es, fr, de, it (group C of the site translation, 2026-10-20).
-const translated = { "ai-chatbot": aiChatbot };
+const translated = { "ai-chatbot": aiChatbot, "ai-voice": aiVoice };
 
 function shape(value) {
   if (Array.isArray(value)) return value.map(shape);
