@@ -1,9 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
-import { dolci } from "@/content/dolci-salati";
-import { clips, goals, monthlyExtra, novoCopy } from "@/content/novo-home";
+import { demoMenuHref, goals, monthlyExtra, novoCopy } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
 import { href } from "@/lib/routes";
@@ -13,7 +11,7 @@ import { Goals, type GoalView } from "./Goals";
 import { MenuShowcase } from "./MenuShowcase";
 import { MobileBar } from "./MobileBar";
 import { HowWeWork, PricesFaq, SectorSolutions } from "./NovoSections";
-import { PhoneVideo } from "./PhoneVideo";
+import { LoyaltyBanner } from "./LoyaltyBanner";
 import { PlatesBanner } from "./PlatesBanner";
 import styles from "./novo.module.css";
 
@@ -27,7 +25,7 @@ function billingSuffix(product: Product): string {
 
 export function NovoHome() {
   const copy = novoCopy;
-  const menuLive = dolci.menu;
+  const menuLive = demoMenuHref;
   const whatsapp = whatsappUrl("Olá! Gostava de saber mais sobre as soluções da Steevanz.");
   const bookHref = href(locale, { key: "book" });
   const menuProductHref = href(locale, { key: "product", productId: "digital-menu" });
@@ -141,48 +139,11 @@ export function NovoHome() {
         </div>
       </section>
 
-      {/* 6. Soluções por setor */}
-      <SectorSolutions />
+      {/* 6. Cartão de cliente digital: after the menu, to make them come back */}
+      <LoyaltyBanner />
 
-      {/* 7. Caso real: Dolci e Salati */}
-      <section aria-labelledby="novo-case" className={`${styles.section} ${styles.case}`}>
-        <div className={`${styles.wrap} ${styles.caseGrid}`}>
-          <div>
-            <Image src={dolci.logo} alt="Dolci e Salati" width={72} height={72} className={styles.caseLogo} data-reveal />
-            <h2 id="novo-case" className={styles.h2} style={{ marginTop: "1.25rem" }} data-reveal>
-              {copy.dolci.title}
-            </h2>
-            <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
-              {copy.dolci.body}
-            </p>
-            <ul className={styles.caseDid} data-reveal style={{ ["--reveal-delay" as string]: "140ms" }}>
-              {copy.dolci.did.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <div className={styles.ctaRow}>
-              <Link href="/dolci-salati" className={`${styles.btn} ${styles.btnInk}`}>
-                {copy.dolci.landing}
-                <ArrowRight size={18} />
-              </Link>
-              <Link href={menuLive} className={`${styles.btn} ${styles.btnGhost}`}>
-                {copy.dolci.menu}
-              </Link>
-            </div>
-          </div>
-          <div className={styles.caseStage}>
-            <div className={`${styles.casePhoto} ${styles.casePhotoLeft}`} data-reveal>
-              <Image src={dolci.terrace} alt="A esplanada da Dolci e Salati em Armação de Pêra." fill sizes="(min-width: 1024px) 260px, 40vw" style={{ objectFit: "cover" }} />
-            </div>
-            <div className={`${styles.casePhoto} ${styles.casePhotoRight}`} data-reveal style={{ ["--reveal-delay" as string]: "120ms" }}>
-              <Image src={dolci.cup} alt="Gelado artesanal da Dolci e Salati." fill sizes="(min-width: 1024px) 260px, 40vw" style={{ objectFit: "cover" }} />
-            </div>
-            <div className={`${styles.phone} ${styles.casePhone}`}>
-              <PhoneVideo clips={[clips.dolciLanding]} sizes="(min-width: 1024px) 256px, 208px" />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 7. Soluções por setor */}
+      <SectorSolutions />
 
       {/* 8. Como trabalhamos */}
       <HowWeWork />

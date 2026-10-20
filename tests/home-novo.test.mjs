@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { howCopy, menuAd, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { productAds } from "../src/content/product-ads.ts";
 
 // The home page («/», pt): route, components and content.
 const dir = "src/components/novo";
@@ -56,9 +57,25 @@ describe("home page («/»)", () => {
   });
 
   it("shows the Menu digital ad (web version and poster in public/) and the old hero's plate scene", () => {
-    for (const file of [menuAd.src, menuAd.poster]) assert.ok(existsSync(join("public", file)), file);
+    for (const ad of Object.values(productAds)) for (const file of [ad.src, ad.poster]) assert.ok(existsSync(join("public", file)), file);
     assert.match(readFileSync(join(dir, "MenuShowcase.tsx"), "utf8"), /<AdVideo/);
-    assert.match(readFileSync(join(dir, "AdVideo.tsx"), "utf8"), /preload="none"/);
+    assert.match(readFileSync(join(dir, "LoyaltyBanner.tsx"), "utf8"), /<AdVideo/);
+    assert.match(readFileSync("src/components/pages/ProductPage.tsx", "utf8"), /<AdVideo/);
+    assert.match(readFileSync("src/components/media/AdVideo.tsx", "utf8"), /preload="none"/);
     assert.match(readFileSync(join(dir, "PlatesBanner.tsx"), "utf8"), /<HeroTapScene/);
+  });
+
+  it("has no Dolci e Salati case section and no «fidelização» in the loyalty band", () => {
+    for (const { path, text } of pageFiles) assert.doesNotMatch(text, /novo-case|copy\.dolci/, path);
+    assert.doesNotMatch(JSON.stringify(loyaltyCopy), /fideliza|\d\s*€/i);
+  });
+
+  it("never shows a rating or a published review in the plate scenes", () => {
+    for (const name of ["HeroTapScene", "ReviewTapScene"]) {
+      const tsx = readFileSync(`src/components/visuals/${name}.tsx`, "utf8");
+      const css = readFileSync(`src/components/visuals/${name}.module.css`, "utf8");
+      assert.doesNotMatch(tsx, /StarFilled|toast/, name);
+      assert.doesNotMatch(css, /e3a21a|starFill|\.toast/, name);
+    }
   });
 });

@@ -163,13 +163,13 @@
 .stars {
   display: flex;
   gap: 1cqw;
-  color: #d9cfc3;
+  color: #9c8f96;
 }
 
 .star {
   width: 5.6cqw;
   height: 5.6cqw;
-  animation: starFill var(--loop) linear infinite;
+  animation: starPulse var(--loop) ease-in-out infinite;
 }
 
 .star:nth-child(2) {
@@ -188,32 +188,12 @@
   animation-delay: 0.48s;
 }
 
-.textLines {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2cqw;
-  padding: 2.2cqw;
+/* The empty comment box: the form is shown open and empty, never filled in. */
+.textBox {
+  height: 12cqw;
   border-radius: 2cqw;
   border: 1px solid #e7ddd0;
   background: #ffffff;
-}
-
-.textLine {
-  height: 1.3cqw;
-  border-radius: 99px;
-  background: #e9e0d4;
-  transform-origin: left;
-  animation: typeLine var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-.textLine:nth-child(2) {
-  width: 82%;
-  animation-delay: 0.15s;
-}
-
-.textLine:nth-child(3) {
-  width: 58%;
-  animation-delay: 0.3s;
 }
 
 .postButton {
@@ -225,32 +205,6 @@
   color: #ffffff;
   font-size: 2.2cqw;
   font-weight: 600;
-}
-
-.toast {
-  position: absolute;
-  left: 50%;
-  bottom: 4cqw;
-  display: flex;
-  align-items: center;
-  gap: 1.2cqw;
-  padding: 1.6cqw 2.8cqw;
-  border-radius: 99px;
-  background: #1d1220;
-  color: #f6efe6;
-  font-size: 2.2cqw;
-  font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translate(-50%, 2cqw);
-  animation: toast var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-.toastDot {
-  width: 1.6cqw;
-  height: 1.6cqw;
-  border-radius: 50%;
-  background: #6fd49e;
 }
 
 .chip {
@@ -350,52 +304,20 @@
   }
 }
 
-@keyframes starFill {
+@keyframes starPulse {
   0%,
   52% {
-    color: #d9cfc3;
     transform: scale(1);
+    opacity: 0.7;
   }
-  55% {
-    color: #e3a21a;
-    transform: scale(1.25);
-  }
-  58%,
-  94% {
-    color: #e3a21a;
-    transform: scale(1);
-  }
-  100% {
-    color: #d9cfc3;
-  }
-}
-
-@keyframes typeLine {
-  0%,
-  62% {
-    transform: scaleX(0);
-  }
-  72%,
-  100% {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes toast {
-  0%,
-  78% {
-    opacity: 0;
-    transform: translate(-50%, 2cqw);
-  }
-  82%,
-  93% {
+  56% {
+    transform: scale(1.15);
     opacity: 1;
-    transform: translate(-50%, 0);
   }
-  97%,
+  62%,
   100% {
-    opacity: 0;
-    transform: translate(-50%, 0);
+    transform: scale(1);
+    opacity: 0.7;
   }
 }
 
@@ -415,8 +337,6 @@
   .idle,
   .review,
   .star,
-  .textLine,
-  .toast,
   .chip {
     animation: none !important;
   }
@@ -431,14 +351,5 @@
 
   .review {
     opacity: 1;
-  }
-
-  .star {
-    color: #e3a21a;
-  }
-
-  .toast {
-    opacity: 1;
-    transform: translate(-50%, 0);
   }
 }

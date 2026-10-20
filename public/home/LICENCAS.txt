@@ -16,3 +16,8 @@ menu-digital-anuncio-720 (.mp4 e .jpg) — secção do Menu digital da home (202
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem de cada clip, dos vídeos dos pratos e da música
   («Feel Good – It Feels So Good», Easy_Eva, Pixabay Content License, sem Content ID) em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Cada prato em vídeo.» (11 s).
+
+cartao-cliente-anuncio-720 (.mp4 e .jpg) — home e página do Cartão de cliente digital (2026-10-20)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Cartao de Cliente.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Carimbo em segundos.» (11 s).

@@ -26,13 +26,8 @@ export const clips = {
   dolciLanding: clip("dolci-landing", "A landing page da Dolci e Salati, feita pela Steevanz."),
 };
 
-/** The approved Menu digital ad, web version (720×1280, H.264 + AAC, with music; licences in public/home/LICENCAS.txt). */
-export const menuAd = {
-  src: "/home/menu-digital-anuncio-720.mp4",
-  poster: "/home/menu-digital-anuncio-720.jpg",
-  label: "Anúncio do Menu digital da Steevanz: os pratos em vídeo no telemóvel e o pedido feito à mesa.",
-  copy: { soundOn: "Ver com som", soundOff: "Tirar o som", play: "Ver o vídeo" },
-};
+/** The live menu the home links to: the Steevanz demo menu the Menu digital ad shows. */
+export const demoMenuHref = "/menu/trattoria-da-nonna";
 
 export const novoCopy = {
   metaTitle: "Steevanz | Os seus clientes encontram, escolhem e voltam",
@@ -71,13 +66,6 @@ export const novoCopy = {
     ],
     cta: "Ver um menu a funcionar",
     product: "Conhecer o Menu digital",
-  },
-  dolci: {
-    title: "Dolci e Salati, em Armação de Pêra",
-    body: "Café, gelataria e pastelaria no Algarve. Fizemos a landing page e o Menu digital em vídeo, com os vídeos da própria casa.",
-    landing: "Ver a landing page",
-    menu: "Ver o menu em vídeo",
-    did: ["Landing page", "Menu digital em vídeo"],
   },
   finalCta: {
     title: "Conte-nos o que quer melhorar.",
@@ -168,6 +156,23 @@ export const howCopy = {
     { title: "Escolha a sua", body: "Só o que precisa. Sem pacotes forçados." },
     { title: "Nós tratamos do resto", body: "Montamos, configuramos e ensinamos. E continuamos por perto." },
   ],
+};
+
+/* ---------- Cartão de cliente digital (banner) ---------- */
+
+/**
+ * The loyalty card band, beside its ad video (content/product-ads.ts). Facts from
+ * content/product-copy/loyalty.ts; the price is read from products.ts and shown «/mês + IVA».
+ */
+export const loyaltyCopy = {
+  eyebrow: "Cartão de cliente digital",
+  titleStart: "Clientes que voltam,",
+  titleAccent: "carimbo a carimbo.",
+  body: "O cartão de carimbos passa a viver no telemóvel do cliente: adere com um toque na placa ou pelo QR, sem app. A equipa carimba em segundos e, por exemplo, ao fim de 9 cafés o 10.º é oferecido, sozinho.",
+  points: ["Sem app e sem cartões de papel para perder", "Carimbo dado pela equipa, lendo o QR do cartão", "Recompensa automática quando o cartão fica completo"],
+  from: "desde",
+  vat: "+ IVA",
+  cta: "Conhecer o cartão",
 };
 
 /* ---------- Placas de reviews do Google (banner) ---------- */

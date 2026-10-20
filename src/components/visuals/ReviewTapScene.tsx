@@ -1,13 +1,13 @@
 import type { HomeCopy } from "@/content/home";
-import { TapWaves, StarFilled } from "@/components/icons";
+import { StarOutline, TapWaves } from "@/components/icons";
 import { TapPlate } from "./TapPlate";
 import styles from "./ReviewTapScene.module.css";
 
 /**
  * The flagship section's moving picture (2026-10-11: replaced a stock video that showed a card
- * payment at a terminal): a phone comes to the counter plate, the tap opens Google's review form,
- * five stars light up one by one, the review is published. CSS only, free, no video to load; with
- * reduced motion it shows the published review, still.
+ * payment at a terminal): a phone comes to the counter plate and the tap opens Google's review
+ * form, empty (never a rating or a published review: brand rule). CSS only, free, no video to load;
+ * with reduced motion it shows the open form, still.
  */
 export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
   return (
@@ -34,18 +34,11 @@ export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
             <div className={styles.prompt}>{copy.screenPrompt}</div>
             <div className={styles.stars}>
               {[0, 1, 2, 3, 4].map((index) => (
-                <StarFilled key={index} className={styles.star} style={{ ["--i" as string]: index }} />
+                <StarOutline key={index} className={styles.star} style={{ ["--i" as string]: index }} />
               ))}
             </div>
-            <div className={styles.textLines}>
-              <span className={styles.textLine} />
-              <span className={styles.textLine} />
-            </div>
+            <div className={styles.textBox} />
             <span className={styles.postButton}>{copy.screenButton}</span>
-            <span className={styles.toast}>
-              <span className={styles.toastDot} />
-              {copy.toast}
-            </span>
           </div>
         </div>
       </div>

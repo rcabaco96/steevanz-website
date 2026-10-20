@@ -1,5 +1,5 @@
 import type { HomeCopy } from "@/content/home";
-import { TapWaves, StarFilled } from "@/components/icons";
+import { Check, StarOutline, TapWaves } from "@/components/icons";
 import { TapPlate } from "./TapPlate";
 import styles from "./HeroTapScene.module.css";
 
@@ -28,19 +28,11 @@ export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
             <div className={styles.prompt}>{copy.screenPrompt}</div>
             <div className={styles.stars}>
               {[0, 1, 2, 3, 4].map((index) => (
-                <StarFilled key={index} className={styles.star} />
+                <StarOutline key={index} className={styles.star} />
               ))}
             </div>
-            <div className={styles.textLines}>
-              <span className={styles.textLine} />
-              <span className={styles.textLine} />
-              <span className={styles.textLine} />
-            </div>
+            <div className={styles.textBox} />
             <span className={styles.postButton}>{copy.screenButton}</span>
-            <span className={styles.toast}>
-              <span className={styles.toastDot} />
-              {copy.toast}
-            </span>
           </div>
         </div>
       </div>
@@ -49,7 +41,7 @@ export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
         {copy.chipNoApp}
       </div>
       <div className={`${styles.chip} ${styles.chipBottomRight}`}>
-        <StarFilled className={`${styles.chipIcon} ${styles.chipStar}`} />
+        <Check className={`${styles.chipIcon} ${styles.chipStar}`} />
         {copy.chipTap}
       </div>
     </div>

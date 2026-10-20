@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { photos } from "@/content/media";
 import { getProductCopy } from "@/content/product-copy";
 import { pageLabels } from "@/content/page-labels";
+import { adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct, type Product } from "@/content/products";
 import { getSector } from "@/content/sectors";
 import type { ProductId } from "@/content/types";
@@ -16,6 +17,7 @@ import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { CtaBand } from "@/components/marketing/CtaBand";
 import { ProductCard } from "@/components/marketing/ProductCard";
 import { WebExtras, WebModelosSection, WebRulesSection } from "@/components/marketing/WebProductSections";
+import { AdVideo } from "@/components/media/AdVideo";
 import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
@@ -53,6 +55,8 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icon.svg";
   const cartHref = href(locale, { key: "cart" });
   const webId = isWebProductId(productId) ? productId : null;
+  // The product's ad video, when there is one, takes the hero picture's place (content/product-ads.ts).
+  const ad = productAds[productId];
   const cartLabels = { add: cartCopy[locale].add, inCart: cartCopy[locale].inCart, added: cartCopy[locale].addedAnnouncement };
 
   return (
@@ -100,7 +104,13 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               </div>
               {product.customization ? <p className="-mt-2 text-sm text-subtle">{cartCopy[locale].customize.productHint}</p> : null}
             </div>
-            <ProductVisual product={product} locale={locale} />
+            {ad ? (
+              <div className="flex justify-center">
+                <AdVideo src={ad.src} poster={ad.poster} label={ad.label[locale]} copy={adVideoLabels[locale]} />
+              </div>
+            ) : (
+              <ProductVisual product={product} locale={locale} />
+            )}
           </div>
         </div>
       </section>

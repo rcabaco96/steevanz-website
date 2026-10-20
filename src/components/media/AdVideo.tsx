@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import styles from "./ad.module.css";
+import styles from "./AdVideo.module.css";
 
 // The Menu digital ad (720×1280, with music) in a phone-shaped frame with a fixed 9:16 ratio (no CLS).
 // Poster first (lazy). The video only gets its source near the viewport (preload="none"), plays muted,

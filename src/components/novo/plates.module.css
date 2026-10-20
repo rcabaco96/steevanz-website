@@ -182,3 +182,34 @@
 .panel[data-paused] *::after {
   animation-play-state: paused !important;
 }
+
+/* ---------- The loyalty card band: same layout, other side, soft rose ---------- */
+
+.bandRose {
+  background: #f4e4ee;
+}
+
+@media (min-width: 1024px) {
+  .gridReverse {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  }
+  .gridReverse .adStage {
+    order: -1;
+  }
+}
+
+.adStage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-block: 0.5rem;
+}
+
+.adDisc {
+  position: absolute;
+  width: min(84vw, 28rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--plum);
+  opacity: 0.14;
+}

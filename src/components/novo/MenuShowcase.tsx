@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
-import { menuAd, novoCopy } from "@/content/novo-home";
-import { AdVideo } from "./AdVideo";
+import { AdVideo } from "@/components/media/AdVideo";
+import { novoCopy } from "@/content/novo-home";
+import { adVideoLabels, productAds } from "@/content/product-ads";
 import styles from "./novo.module.css";
 
 // The Menu digital showcase: the three steps beside the approved Menu digital ad, in a phone frame.
 
 export function MenuShowcase({ head, foot }: { head: ReactNode; foot: ReactNode }) {
   const copy = novoCopy.showcase;
+  const ad = productAds["digital-menu"]!;
   return (
     <div className={styles.showcaseGrid}>
       <div className={styles.showcaseHead}>{head}</div>
@@ -23,7 +25,7 @@ export function MenuShowcase({ head, foot }: { head: ReactNode; foot: ReactNode 
       </ol>
       <div className={styles.showcaseStage}>
         <div className={styles.showcaseRing} aria-hidden="true" />
-        <AdVideo src={menuAd.src} poster={menuAd.poster} label={menuAd.label} copy={menuAd.copy} />
+        <AdVideo src={ad.src} poster={ad.poster} label={ad.label.pt} copy={adVideoLabels.pt} />
       </div>
       <div className={styles.showcaseFoot}>{foot}</div>
     </div>

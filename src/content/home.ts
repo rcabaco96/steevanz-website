@@ -21,7 +21,6 @@ export interface HomeCopy {
     screenTitle: string;
     screenPrompt: string;
     screenButton: string;
-    toast: string;
     chipNoApp: string;
     chipTap: string;
     ariaLabel: string;
@@ -73,12 +72,11 @@ export const homeCopy: Localized<HomeCopy> = {
       plateLine2: "Toque para avaliar",
       screenIdle: "Aproxime o telemóvel",
       screenTitle: "O seu restaurante",
-      screenPrompt: "Partilhe a sua experiência",
+      screenPrompt: "Deixe a sua avaliação",
       screenButton: "Publicar",
-      toast: "Review publicada",
       chipNoApp: "Sem app",
       chipTap: "Abre em segundos",
-      ariaLabel: "Animação: um telemóvel toca numa placa e abre o formulário de review com cinco estrelas.",
+      ariaLabel: "Animação: um telemóvel toca numa placa e abre o formulário de review do Google, pronto a preencher.",
     },
     marquee: [
       "Restaurantes",
@@ -194,12 +192,11 @@ export const homeCopy: Localized<HomeCopy> = {
       plateLine2: "Tap to review",
       screenIdle: "Hold your phone near",
       screenTitle: "Your restaurant",
-      screenPrompt: "Share your experience",
+      screenPrompt: "Leave a review",
       screenButton: "Post",
-      toast: "Review posted",
       chipNoApp: "No app",
       chipTap: "Opens in seconds",
-      ariaLabel: "Animation: a phone taps a plate and opens a review form with five stars.",
+      ariaLabel: "Animation: a phone taps a plate and opens the Google review form, ready to fill in.",
     },
     marquee: [
       "Restaurants",
