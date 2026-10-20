@@ -12,9 +12,9 @@ interface OgInput {
   badge?: string;
 }
 
-/** The «S.» mark (the favicon's source), inlined so the image needs no request. */
+/** The round «S.» mark (as the favicon), inlined so the image needs no request. */
 async function loadMark(): Promise<string> {
-  const png = await readFile(join(process.cwd(), "src/app/icon.png"));
+  const png = await readFile(join(process.cwd(), "src/assets/og/mark-circle.png"));
   return `data:image/png;base64,${png.toString("base64")}`;
 }
 
@@ -50,7 +50,7 @@ export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {/* eslint-disable-next-line @next/next/no-img-element -- next/og renders plain img */}
-            <img src={mark} alt="" width={64} height={64} style={{ borderRadius: 16, border: "2px solid rgba(247,241,232,0.18)" }} />
+            <img src={mark} alt="" width={64} height={64} />
             <div style={{ display: "flex", fontFamily: "Fraunces", fontSize: 36 }}>
               Steevanz<span style={{ color: "#cfa563" }}>.</span>
             </div>
@@ -88,5 +88,19 @@ export async function renderOgImage({ eyebrow, title, subtitle, badge }: OgInput
       </div>
     ),
     { ...ogSize, fonts },
+  );
+}
+
+/** The site's own preview (owner, 2026-10-20): just the round «S.» mark, centred on cream. */
+export async function renderBrandOgImage(): Promise<ImageResponse> {
+  const mark = await loadMark();
+  return new ImageResponse(
+    (
+      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#fbf7f1" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- next/og renders plain img */}
+        <img src={mark} alt="" width={400} height={400} />
+      </div>
+    ),
+    ogSize,
   );
 }
