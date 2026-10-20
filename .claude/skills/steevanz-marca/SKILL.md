@@ -27,6 +27,9 @@ them needs the owner's confirmation.
 - The product is «Menu digital». The loyalty product is «Cartão de cliente digital».
 - No «fidelização» in labels or buttons.
 - pt-PT, warm and clear, «o/a senhor(a)» register in the site («o seu negócio»), short sentences.
+- **Product calls to action** (owner, 2026-10-20): a product's section or card always links to its product page with
+  «Conhecer <nome do produto>» (e.g. «Conhecer o Menu digital», «Conhecer as placas»), never straight to a demo menu or
+  external example. The product page carries the «Agendar demonstração» button.
 - Phone 961 292 679 on the site and proposals, but NOT in ad videos (owner, 2026-10-17).
 
 ## Verdade (regras absolutas)
