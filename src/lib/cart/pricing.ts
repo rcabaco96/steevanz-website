@@ -29,6 +29,9 @@ export interface PricedLine extends CartLine {
   unitCents: number;
   // Charged once for the whole line (logo set up once for a pack), on top of unitCents × quantity.
   lineExtraCents: number;
+  // A per-account price (the guest guide's monthly fee): charged once per order, on the first line of that
+  // product; the units on its lines (the plates) are free, so unitCents is 0.
+  accountCents: number;
   subtotalCents: number;
 }
 
@@ -103,6 +106,8 @@ export function unitPriceFor(product: Pick<Product, "priceFrom" | "packs">, quan
 
 export function unitCentsFor(line: Pick<CartLine, "productId" | "options" | "quantity">): number {
   const product = getProduct(line.productId);
+  // Per-account products charge their price once per order (priceCart): the units themselves are free.
+  if (product.pricePer === "account") return 0;
   const customization = product.customization;
   const extra = line.options?.logo && customization?.logoExtraPer === "unit" ? customization.logoExtra : 0;
   return (unitPriceFor(product, line.quantity) + extra) * 100;
@@ -126,15 +131,23 @@ function totalsFor(lines: PricedLine[]): GroupTotals {
 }
 
 export function priceCart(lines: CartLine[]): Record<CartGroupId, GroupTotals> {
+  const accountCharged = new Set<ProductId>();
   const priced: PricedLine[] = lines.map((line) => {
+    const product = getProduct(line.productId);
     const unitCents = unitCentsFor(line);
     const lineExtraCents = lineExtraCentsFor(line);
+    let accountCents = 0;
+    if (product.pricePer === "account" && !accountCharged.has(line.productId)) {
+      accountCharged.add(line.productId);
+      accountCents = product.priceFrom * 100;
+    }
     return {
       ...line,
-      billing: getProduct(line.productId).priceBilling,
+      billing: product.priceBilling,
       unitCents,
       lineExtraCents,
-      subtotalCents: unitCents * line.quantity + lineExtraCents,
+      accountCents,
+      subtotalCents: unitCents * line.quantity + lineExtraCents + accountCents,
     };
   });
   return {

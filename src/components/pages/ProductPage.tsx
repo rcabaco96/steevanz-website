@@ -242,10 +242,11 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               {labels.priceTitle}
             </h2>
             <Price product={product} locale={locale} size="lg" showQualifier />
-            {/* Format-only products (the keychain) show their formats here: same price for every one. */}
+            {/* Format-only products show their formats here: the keychain (same price for every one) and the
+                guest guide (its plate is offered, whatever the format). */}
             {product.customization?.formatOnly ? (
               <div className="flex flex-col gap-3">
-                <h3 className="text-sm font-semibold text-text">{labels.formatsSamePrice}</h3>
+                <h3 className="text-sm font-semibold text-text">{product.pricePer === "account" ? labels.formatsFreePlate : labels.formatsSamePrice}</h3>
                 <ul className="flex flex-col gap-2">
                   {product.customization.formats.map((format) => (
                     <li key={format.id} className="flex items-start gap-3 rounded-xl border border-line bg-surface-2/50 px-3.5 py-3 text-sm text-text">

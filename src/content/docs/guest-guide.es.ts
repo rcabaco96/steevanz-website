@@ -31,13 +31,14 @@ export const es: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Alojamientos", "Placas (una por alojamiento)", "Cuota mensual"],
         rows: [
-          ["De 1 a 9 alojamientos", "20 € cada una", "30 €/mes por cuenta"],
-          ["10 alojamientos o más", "15 € cada una (10 placas: 150 €)", "30 €/mes por cuenta"],
+          ["1 alojamiento", "1 placa de regalo", "30 €/mes por cuenta"],
+          ["3 alojamientos", "3 placas de regalo", "30 €/mes por cuenta"],
+          ["10 alojamientos", "10 placas de regalo", "30 €/mes por cuenta"],
         ],
       },
       {
         type: "p",
-        text: "Las placas se pagan una vez. La redacción de las guías, la traducción a cuatro idiomas, el alojamiento web y los cambios cuestan 30 € al mes por cuenta, sea cual sea el número de alojamientos. Por ejemplo, 3 alojamientos: 3 placas × 20 € + 30 €/mes, + IVA. Los idiomas adicionales tienen un coste pequeño, indicado en su presupuesto. Precios + IVA, orientativos y confirmados después de la demostración.",
+        text: "La guía cuesta 30 € al mes por cuenta, + IVA, sea cual sea el número de alojamientos, con la redacción de las guías, la traducción a cuatro idiomas, el alojamiento web y los cambios incluidos. La placa es de regalo, una por alojamiento. Por ejemplo, 3 alojamientos: 30 €/mes + IVA, con 3 placas de regalo. Los idiomas adicionales tienen un coste pequeño, indicado en su presupuesto. Precios + IVA, orientativos y confirmados después de la demostración.",
       },
       { type: "h2", id: "how-it-works", text: "Cómo funciona para los huéspedes" },
       {
@@ -244,7 +245,7 @@ export const es: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "¿Cuánto cuesta al mes?",
-            a: "30 € al mes por cuenta, sea cual sea el número de alojamientos, con el alojamiento web y los cambios incluidos. Las placas se pagan una vez, una por alojamiento: 20 € cada una y 15 € cada una a partir de 10 alojamientos. Por ejemplo, 3 alojamientos: 3 placas × 20 € + 30 €/mes, + IVA. Con el pack para alojamientos turísticos, la guía está incluida mientras el pack esté activo.",
+            a: "30 € al mes por cuenta, + IVA, sea cual sea el número de alojamientos, con el alojamiento web y los cambios incluidos. La placa es de regalo, una por alojamiento. Por ejemplo, 3 alojamientos: 30 €/mes + IVA, con 3 placas de regalo. Con el pack para alojamientos turísticos, la guía está incluida mientras el pack esté activo.",
           },
           {
             q: "¿La guía cuenta como el libro de información que exige la ley?",

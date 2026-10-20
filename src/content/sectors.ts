@@ -771,9 +771,10 @@ export const sectors: Sector[] = [
       monthly: 49,
       extraSetup: 49,
       extraMonthly: 9,
-      // For one property: guide plate (20) + «Limpezas e prazos» automation (149); guide 30/month (per account) +
-      // assistant 49/month. Still dearer than the pack for one property (owner clarification 2026-10-20).
-      separatelySetup: 169,
+      // For one property: «Limpezas e prazos» automation (149; the guide's plate is offered since 2026-10-21);
+      // guide 30/month (per account) + assistant 49/month. Still dearer than the pack for one property
+      // (owner clarification 2026-10-20).
+      separatelySetup: 149,
       separatelyMonthly: 79,
       demoProduct: "guest-guide",
       isProvisional: true,
@@ -929,7 +930,7 @@ export const sectors: Sector[] = [
           { q: "Tratam dos boletins do SIBA?", a: "Não enviamos boletins em seu nome. Lembramos os prazos a partir do calendário e, se quiser automatizar o envio, recomendamos ferramentas especializadas como a Chekin ou a Hostkit, que funcionam bem em conjunto com a Steevanz." },
           { q: "Posso pedir avaliações aos hóspedes?", a: "Pode e deve, sempre da mesma forma a todos, sem ofertas nem descontos em troca. A Booking e o Airbnb enviam o seu próprio convite depois da saída, e o guia explica ao hóspede onde o encontra. As placas para o Google são indicadas para hostels, guest houses e casas onde recebe os hóspedes pessoalmente." },
           { q: "O assistente dá o código da porta a quem perguntar?", a: "Não. Os códigos de acesso nunca são partilhados pelo assistente nem ficam no guia. Continua a enviá-los na sua mensagem de check-in. Urgências e reclamações passam logo para si." },
-          { q: "Tenho vários alojamentos. Como funciona?", a: "Cada alojamento tem o seu guia e a sua placa, e o assistente sabe em que casa está cada hóspede. Para gestores com vários alojamentos há preços por volume." },
+          { q: "Tenho vários alojamentos. Como funciona?", a: "Cada alojamento tem o seu guia e a sua placa, e o assistente sabe em que casa está cada hóspede. O guia tem uma só mensalidade por conta, tenha quantos alojamentos tiver, e a placa de cada alojamento é oferecida. Para o resto, gestores com vários alojamentos têm preços por volume." },
         ],
       },
       en: {
@@ -960,7 +961,7 @@ export const sectors: Sector[] = [
           { q: "Do you file the SIBA guest registrations?", a: "We don't file registrations on your behalf. We remind you of the deadlines based on your calendar and, if you want to automate filing, we recommend specialist tools such as Chekin or Hostkit, which work well alongside Steevanz." },
           { q: "Can I ask guests for reviews?", a: "You can and should, the same way for every guest, with no gifts or discounts in return. Booking.com and Airbnb send their own invitation after check-out, and the guide tells guests where to find it. Google plates are meant for hostels, guest houses and homes where you welcome guests in person." },
           { q: "Will the assistant give the door code to anyone who asks?", a: "No. Access codes are never shared by the assistant and never appear in the guide. You keep sending them in your check-in message. Emergencies and complaints go straight to you." },
-          { q: "I run several properties. How does it work?", a: "Each property has its own guide and plate, and the assistant knows which home each guest is staying in. Managers with several properties get volume pricing." },
+          { q: "I run several properties. How does it work?", a: "Each property has its own guide and plate, and the assistant knows which home each guest is staying in. The guide has a single monthly fee per account, however many properties you have, and each property's plate is free. For the rest, managers with several properties get volume pricing." },
         ],
       },
       es: {
@@ -991,7 +992,7 @@ export const sectors: Sector[] = [
           { q: "¿Se encargan de los registros en el SIBA?", a: "No enviamos registros en su nombre. Le recordamos los plazos a partir del calendario y, si quiere automatizar el envío, recomendamos herramientas especializadas como Chekin o Hostkit, que funcionan bien junto con Steevanz." },
           { q: "¿Puedo pedir valoraciones a los huéspedes?", a: "Puede y debe, siempre de la misma forma a todos, sin regalos ni descuentos a cambio. Booking y Airbnb envían su propia invitación después de la salida, y la guía explica al huésped dónde encontrarla. Las placas para Google están pensadas para hostales, casas de huéspedes y casas donde recibe a los huéspedes en persona." },
           { q: "¿El asistente da el código de la puerta a quien lo pregunte?", a: "No. El asistente nunca comparte los códigos de acceso y tampoco figuran en la guía. Usted sigue enviándolos en su mensaje de check-in. Las urgencias y las quejas pasan directamente a usted." },
-          { q: "Tengo varios alojamientos. ¿Cómo funciona?", a: "Cada alojamiento tiene su guía y su placa, y el asistente sabe en qué casa está cada huésped. Para gestores con varios alojamientos hay precios por volumen." },
+          { q: "Tengo varios alojamientos. ¿Cómo funciona?", a: "Cada alojamiento tiene su guía y su placa, y el asistente sabe en qué casa está cada huésped. La guía tiene una sola cuota mensual por cuenta, tenga los alojamientos que tenga, y la placa de cada alojamiento es de regalo. Para lo demás, los gestores con varios alojamientos tienen precios por volumen." },
         ],
       },
       fr: {
@@ -1022,7 +1023,7 @@ export const sectors: Sector[] = [
           { q: "Vous occupez-vous des déclarations au SIBA ?", a: "Nous n'envoyons pas de déclarations en votre nom. Nous vous rappelons les échéances à partir du calendrier et, si vous voulez automatiser l'envoi, nous recommandons des outils spécialisés comme Chekin ou Hostkit, qui fonctionnent très bien avec Steevanz." },
           { q: "Puis-je demander des avis aux voyageurs ?", a: "Vous le pouvez et vous le devez, de la même façon pour tous, sans cadeau ni remise en échange. Booking.com et Airbnb envoient leur propre invitation après le départ, et le livret indique au voyageur où la trouver. Les plaques Google sont prévues pour les auberges, les maisons d'hôtes et les maisons où vous accueillez les voyageurs en personne." },
           { q: "L'assistant donne-t-il le code de la porte à qui le demande ?", a: "Non. L'assistant ne partage jamais les codes d'accès et ils ne figurent pas dans le livret. Vous continuez à les envoyer dans votre message d'arrivée. Les urgences et les réclamations vous sont transmises immédiatement." },
-          { q: "J'ai plusieurs logements. Comment ça marche ?", a: "Chaque logement a son livret et sa plaque, et l'assistant sait dans quel logement séjourne chaque voyageur. Les gestionnaires de plusieurs logements bénéficient de tarifs dégressifs." },
+          { q: "J'ai plusieurs logements. Comment ça marche ?", a: "Chaque logement a son livret et sa plaque, et l'assistant sait dans quel logement séjourne chaque voyageur. Le livret a un seul abonnement mensuel par compte, quel que soit le nombre de logements, et la plaque de chaque logement est offerte. Pour le reste, les gestionnaires de plusieurs logements bénéficient de tarifs dégressifs." },
         ],
       },
       de: {
@@ -1053,7 +1054,7 @@ export const sectors: Sector[] = [
           { q: "Übernehmen Sie die Gästemeldungen an das SIBA?", a: "Wir senden keine Meldungen in Ihrem Namen. Wir erinnern Sie anhand des Kalenders an die Fristen und empfehlen für den automatischen Versand spezialisierte Tools wie Chekin oder Hostkit, die gut mit Steevanz zusammenarbeiten." },
           { q: "Darf ich Gäste um Bewertungen bitten?", a: "Ja, und das sollten Sie auch, bei allen Gästen auf die gleiche Weise und ohne Geschenke oder Rabatte als Gegenleistung. Booking.com und Airbnb schicken nach der Abreise ihre eigene Einladung, und die Gästemappe erklärt, wo man sie findet. Die Google-Schilder sind für Hostels, Gästehäuser und Häuser gedacht, in denen Sie die Gäste persönlich empfangen." },
           { q: "Gibt der Assistent den Türcode an jeden heraus, der fragt?", a: "Nein. Zugangscodes werden vom Assistenten nie weitergegeben und stehen auch nicht in der Gästemappe. Sie schicken sie weiterhin in Ihrer Check-in-Nachricht. Notfälle und Beschwerden gehen sofort an Sie." },
-          { q: "Ich habe mehrere Unterkünfte. Wie funktioniert das?", a: "Jede Unterkunft hat ihre eigene Gästemappe und ihr eigenes Schild, und der Assistent weiß, in welchem Haus jeder Gast wohnt. Für Verwalter mehrerer Unterkünfte gibt es Mengenpreise." },
+          { q: "Ich habe mehrere Unterkünfte. Wie funktioniert das?", a: "Jede Unterkunft hat ihre eigene Gästemappe und ihr eigenes Schild, und der Assistent weiß, in welchem Haus jeder Gast wohnt. Für die Gästemappe zahlen Sie eine einzige Monatsgebühr pro Konto, egal wie viele Unterkünfte Sie haben, und das Schild jeder Unterkunft ist kostenlos. Für alles andere gibt es für Verwalter mehrerer Unterkünfte Mengenpreise." },
         ],
       },
       it: {
@@ -1084,7 +1085,7 @@ export const sectors: Sector[] = [
           { q: "Vi occupate delle comunicazioni al SIBA?", a: "Non inviamo comunicazioni a Suo nome. Le ricordiamo le scadenze in base al calendario e, se vuole automatizzare l'invio, consigliamo strumenti specializzati come Chekin o Hostkit, che funzionano bene insieme a Steevanz." },
           { q: "Posso chiedere recensioni agli ospiti?", a: "Può e deve farlo, sempre allo stesso modo con tutti, senza omaggi né sconti in cambio. Booking.com e Airbnb inviano il proprio invito dopo la partenza, e la guida spiega all'ospite dove trovarlo. Le targhe per Google sono pensate per ostelli, guest house e case in cui accoglie gli ospiti di persona." },
           { q: "L'assistente dà il codice della porta a chiunque lo chieda?", a: "No. I codici di accesso non vengono mai condivisi dall'assistente e non compaiono nella guida. Continui a inviarli nel Suo messaggio di check-in. Urgenze e reclami passano subito a Lei." },
-          { q: "Ho più alloggi. Come funziona?", a: "Ogni alloggio ha la sua guida e la sua targa, e l'assistente sa in quale casa si trova ogni ospite. Per chi gestisce più alloggi ci sono prezzi a volume." },
+          { q: "Ho più alloggi. Come funziona?", a: "Ogni alloggio ha la sua guida e la sua targa, e l'assistente sa in quale casa si trova ogni ospite. La guida ha un solo canone mensile per account, qualunque sia il numero di alloggi, e la targa di ogni alloggio è in omaggio. Per il resto, chi gestisce più alloggi ha prezzi a volume." },
         ],
       },
     },

@@ -31,13 +31,14 @@ export const it: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Alloggi", "Targhe (una per alloggio)", "Canone mensile"],
         rows: [
-          ["Da 1 a 9 alloggi", "20 € l'una", "30 €/mese per account"],
-          ["10 alloggi o più", "15 € l'una (10 targhe: 150 €)", "30 €/mese per account"],
+          ["1 alloggio", "1 targa in omaggio", "30 €/mese per account"],
+          ["3 alloggi", "3 targhe in omaggio", "30 €/mese per account"],
+          ["10 alloggi", "10 targhe in omaggio", "30 €/mese per account"],
         ],
       },
       {
         type: "p",
-        text: "Le targhe si pagano una volta. La stesura delle guide, la traduzione in quattro lingue, l'hosting online e le modifiche costano 30 € al mese per account, qualunque sia il numero di alloggi. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
+        text: "La guida costa 30 € al mese per account, + IVA, qualunque sia il numero di alloggi, con la stesura delle guide, la traduzione in quattro lingue, l'hosting online e le modifiche incluse. La targa è in omaggio, una per alloggio. Ad esempio, 3 alloggi: 30 €/mese + IVA, con 3 targhe in omaggio. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
       },
       { type: "h2", id: "how-it-works", text: "Come funziona per gli ospiti" },
       {
@@ -244,7 +245,7 @@ export const it: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Quanto costa al mese?",
-            a: "30 € al mese per account, qualunque sia il numero di alloggi, con l'hosting online e le modifiche incluse. Le targhe si pagano una volta, una per alloggio: 20 € l'una e 15 € l'una da 10 alloggi in su. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
+            a: "30 € al mese per account, + IVA, qualunque sia il numero di alloggi, con l'hosting online e le modifiche incluse. La targa è in omaggio, una per alloggio. Ad esempio, 3 alloggi: 30 €/mese + IVA, con 3 targhe in omaggio. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
           },
           {
             q: "La guida vale come libro informativo richiesto dalla legge?",

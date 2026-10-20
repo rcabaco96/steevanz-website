@@ -29,6 +29,7 @@ const pt = {
     packsUnitKeychain: "{price} por unidade",
     packsLogoOnce: "Logótipo e cores: +{price} uma só vez por pack, porque o desenho é feito uma vez para todas as placas.",
     formatsSamePrice: "Dois formatos, o mesmo preço",
+    formatsFreePlate: "Placa oferecida, à escolha",
     family: { plates: "Placas e cartões", operations: "Reservas e filas", ai: "Inteligência artificial", web: "Websites e lojas online" },
   },
   products: {
@@ -93,6 +94,7 @@ const en: PageLabels = {
     packsUnitKeychain: "{price} each",
     packsLogoOnce: "Logo and colours: +{price} once per pack, because we design it once for every plate.",
     formatsSamePrice: "Two formats, same price",
+    formatsFreePlate: "Free plate, your choice of",
     family: { plates: "Plates and cards", operations: "Bookings and queues", ai: "Artificial intelligence", web: "Websites and online shops" },
   },
   products: {
@@ -155,6 +157,7 @@ const es: PageLabels = {
     packsUnitKeychain: "{price} la unidad",
     packsLogoOnce: "Logotipo y colores: +{price} una sola vez por pack, porque el diseño se hace una vez para todas las placas.",
     formatsSamePrice: "Dos formatos, mismo precio",
+    formatsFreePlate: "Placa de regalo, a elegir",
     family: { plates: "Placas y tarjetas", operations: "Reservas y colas", ai: "Inteligencia artificial", web: "Webs y tiendas online" },
   },
   products: {
@@ -217,6 +220,7 @@ const fr: PageLabels = {
     packsUnitKeychain: "{price} la pièce",
     packsLogoOnce: "Logo et couleurs : +{price} une seule fois par pack, car le design est réalisé une fois pour toutes les plaques.",
     formatsSamePrice: "Deux formats, même prix",
+    formatsFreePlate: "Plaque offerte, au choix",
     family: { plates: "Plaques et cartes", operations: "Réservations et files d'attente", ai: "Intelligence artificielle", web: "Sites web et boutiques en ligne" },
   },
   products: {
@@ -279,6 +283,7 @@ const de: PageLabels = {
     packsUnitKeychain: "{price} pro Stück",
     packsLogoOnce: "Logo und Farben: +{price} einmalig pro Paket, denn das Design wird einmal für alle Schilder erstellt.",
     formatsSamePrice: "Zwei Formate, gleicher Preis",
+    formatsFreePlate: "Kostenloses Schild, zur Auswahl",
     family: { plates: "Schilder und Karten", operations: "Reservierungen und Warteschlangen", ai: "Künstliche Intelligenz", web: "Websites und Onlineshops" },
   },
   products: {
@@ -341,6 +346,7 @@ const it: PageLabels = {
     packsUnitKeychain: "{price} al pezzo",
     packsLogoOnce: "Logo e colori: +{price} una sola volta per pacchetto, perché il design si fa una volta per tutte le targhe.",
     formatsSamePrice: "Due formati, stesso prezzo",
+    formatsFreePlate: "Targa in omaggio, a scelta",
     family: { plates: "Targhe e card", operations: "Prenotazioni e code", ai: "Intelligenza artificiale", web: "Siti web e negozi online" },
   },
   products: {
