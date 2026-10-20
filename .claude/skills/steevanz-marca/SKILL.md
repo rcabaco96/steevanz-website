@@ -57,5 +57,5 @@ the big brands are still to be supplied; what Steevanz did for each is to be con
 ## Ecrãs
 
 - Mobile first: check 320/360/390 px before desktop; smooth on mid-range Android (animate transform/opacity only).
-- **Mobile order for every section with media** (owner, 2026-10-20, whole site; model: the Menu digital product page):
+- **Mobile order for every section with media** (owner, 2026-10-20, whole site; model: the home's Menu digital section):
   1) heading + short intro text, 2) the image/video, 3) the rest (buttons, lists, prices). Desktop may alternate sides.
