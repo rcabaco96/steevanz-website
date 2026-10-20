@@ -309,11 +309,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Primi passi con l'Automazione dei processi",
         description:
-          "Capite come funzionano i progetti di Automazione dei processi di Steevanz, quali attività si possono automatizzare e come trovare il punto di partenza migliore per la vostra attività.",
+          "Capisca come funzionano i progetti di Automazione dei processi di Steevanz, quali attività si possono automatizzare e come trovare il punto di partenza migliore per la Sua attività.",
         blocks: [
           {
             type: "p",
-            text: "L'**Automazione dei processi** di Steevanz è un servizio su misura: analizziamo le attività ripetitive della vostra attività e costruiamo automazioni che le svolgono al posto vostro, collegando gli strumenti che già usate. Ogni progetto ha un prezzo fisso, concordato prima di iniziare.",
+            text: "L'**Automazione dei processi** di Steevanz è un servizio su misura: analizziamo i compiti ripetitivi della Sua attività e costruiamo automazioni che li svolgono al posto Suo, collegando gli strumenti che usa già. Ogni progetto ha un prezzo fisso, concordato prima di iniziare.",
           },
           { type: "h2", id: "what-to-automate", text: "Cosa si può automatizzare" },
           {
@@ -335,11 +335,11 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "**Chiamata conoscitiva**: conosciamo la vostra attività e i compiti che vi portano via più tempo.",
+              "**Chiamata conoscitiva**: conosciamo la Sua attività e i compiti che Le portano via più tempo.",
               "**Mappatura del processo**: descriviamo il processo passo dopo passo, così come si svolge oggi.",
               "**Proposta a prezzo fisso**: indichiamo cosa costruiremo, i tempi e il costo.",
               "**Sviluppo e test**: sviluppiamo l'automazione e la testiamo con dati reali o di prova.",
-              "**Consegna e manutenzione**: vi spieghiamo come funziona e la teniamo sotto controllo.",
+              "**Consegna e manutenzione**: Le spieghiamo come funziona e la teniamo sotto controllo.",
             ],
           },
           { type: "h2", id: "tools", text: "Gli strumenti che usiamo" },
@@ -350,13 +350,13 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            title: "Iniziate in piccolo",
-            text: "Il miglior primo progetto è un'attività frequente, ben definita e noiosa. I risultati si vedono presto e vi aiutano a decidere cosa automatizzare dopo.",
+            title: "Inizi in piccolo",
+            text: "Il miglior primo progetto è un'attività frequente, ben definita e noiosa. I risultati si vedono presto e La aiutano a decidere cosa automatizzare dopo.",
           },
           { type: "h2", id: "next-steps", text: "Prossimi passi" },
           {
             type: "p",
-            text: "Guardate la [pagina del prodotto](/it/products/process-automation), leggete come [parte un progetto](/it/docs/process-automation/setup) o [prenotate una chiamata conoscitiva](/it/book-a-demo).",
+            text: "Guardi la [pagina del prodotto](/it/products/process-automation), legga come [parte un progetto](/it/docs/process-automation/setup) o [prenoti una chiamata conoscitiva](/it/book-a-demo).",
           },
         ],
       },
@@ -693,19 +693,19 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Nell'automazione non c'è un'installazione unica: ogni progetto segue un percorso strutturato che garantisce di costruire la cosa giusta, a un costo concordato fin dall'inizio. Questa pagina descrive ogni fase e ciò che ci serve da voi.",
+            text: "Nell'automazione non c'è un'installazione unica: ogni progetto segue un percorso strutturato che garantisce di costruire la cosa giusta, a un costo concordato fin dall'inizio. Questa pagina descrive ogni fase e ciò che ci serve da Lei.",
           },
           { type: "h2", id: "phases", text: "Le fasi del progetto" },
           {
             type: "steps",
             items: [
-              { title: "Chiamata conoscitiva", body: "Una chiamata di circa mezz'ora per capire la vostra attività, gli strumenti che usate e i compiti che volete automatizzare. Senza impegno." },
-              { title: "Mappatura del processo", body: "Descriviamo il processo attuale passo dopo passo: chi fa cosa, con quali strumenti, con che frequenza e quali eccezioni ci sono. Può essere una seconda chiamata o una condivisione dello schermo mentre svolgete il compito." },
-              { title: "Proposta a prezzo fisso", body: "Vi inviamo una proposta con perimetro, integrazioni, tempi, prezzo fisso ed eventuale costo di manutenzione. Andiamo avanti solo con la vostra approvazione." },
+              { title: "Chiamata conoscitiva", body: "Una chiamata di circa mezz'ora per capire la Sua attività, gli strumenti che usa e i compiti che vuole automatizzare. Senza impegno." },
+              { title: "Mappatura del processo", body: "Descriviamo il processo attuale passo dopo passo: chi fa cosa, con quali strumenti, con che frequenza e quali eccezioni ci sono. Può essere una seconda chiamata o una condivisione dello schermo mentre svolge il compito." },
+              { title: "Proposta a prezzo fisso", body: "Le inviamo una proposta con perimetro, integrazioni, tempi, prezzo fisso ed eventuale costo di manutenzione. Andiamo avanti solo con la Sua approvazione." },
               { title: "Accessi", body: "Chiediamo solo gli accessi strettamente necessari agli strumenti coinvolti, condivisi in modo sicuro come descritto più sotto." },
-              { title: "Sviluppo", body: "Costruiamo l'automazione e vi teniamo aggiornati sui progressi. Se emerge qualcosa fuori dal perimetro, ne parliamo prima di proseguire." },
+              { title: "Sviluppo", body: "Costruiamo l'automazione e La teniamo aggiornata sui progressi. Se emerge qualcosa fuori dal perimetro, ne parliamo prima di proseguire." },
               { title: "Test", body: "Testiamo con dati di prova e, quando possibile, in parallelo al processo manuale finché non siamo sicuri che i risultati siano corretti." },
-              { title: "Consegna", body: "Attiviamo l'automazione, vi diamo una descrizione semplice di ciò che fa e vi spieghiamo cosa fare se qualcosa va storto." },
+              { title: "Consegna", body: "Attiviamo l'automazione, Le diamo una descrizione semplice di ciò che fa e Le spieghiamo cosa fare se qualcosa va storto." },
             ],
           },
           { type: "h2", id: "what-to-prepare", text: "Cosa preparare" },
@@ -714,25 +714,25 @@ export const docs: ProductDocs = {
             items: [
               "L'elenco degli strumenti coinvolti (per esempio software di fatturazione, e-mail, fogli di calcolo, CRM).",
               "Esempi reali del processo: un'e-mail tipo, una fattura, un foglio di calcolo.",
-              "Le eccezioni che conoscete: clienti con condizioni particolari, pagamenti parziali, rimborsi.",
+              "Le eccezioni che conosce: clienti con condizioni particolari, pagamenti parziali, rimborsi.",
               "Una persona di riferimento che conosca bene il processo.",
             ],
           },
           { type: "h2", id: "secure-access", text: "Condividere gli accessi in modo sicuro" },
           {
             type: "p",
-            text: "Seguiamo il principio del **privilegio minimo**: chiediamo solo i permessi di cui l'automazione ha bisogno per funzionare. Quando lo strumento lo consente, usiamo chiavi API o utenti dedicati invece del vostro account personale.",
+            text: "Seguiamo il principio del **privilegio minimo**: chiediamo solo i permessi di cui l'automazione ha bisogno per funzionare. Quando lo strumento lo consente, usiamo chiavi API o utenti dedicati invece del Suo account personale.",
           },
           {
             type: "callout",
             tone: "warning",
-            title: "Non inviate password via e-mail o WhatsApp",
-            text: "Per scambiare le credenziali usiamo un gestore di password condiviso. Se dovete revocare un accesso, potete farlo in qualsiasi momento nello strumento stesso.",
+            title: "Non invii password via e-mail o WhatsApp",
+            text: "Per scambiare le credenziali usiamo un gestore di password condiviso. Se deve revocare un accesso, può farlo in qualsiasi momento nello strumento stesso.",
           },
           { type: "h2", id: "timelines", text: "Tempi" },
           {
             type: "p",
-            text: "Le automazioni semplici, con due o tre strumenti, di solito sono pronte in poche settimane. I progetti con più integrazioni o codice su misura richiedono più tempo. I tempi esatti sono sempre nella proposta. Dopo la consegna, consultate la pagina [configurazione](/it/docs/process-automation/configuration).",
+            text: "Le automazioni semplici, con due o tre strumenti, di solito sono pronte in poche settimane. I progetti con più integrazioni o codice su misura richiedono più tempo. I tempi esatti sono sempre nella proposta. Dopo la consegna, consulti la pagina [configurazione](/it/docs/process-automation/configuration).",
           },
         ],
       },
@@ -1058,11 +1058,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Configurazione e integrazioni dell'Automazione dei processi",
         description:
-          "Come configuriamo integrazioni, regole, eccezioni, monitoraggio e avvisi di errore delle vostre automazioni, e cosa potete chiederci di modificare dopo la consegna.",
+          "Come configuriamo integrazioni, regole, eccezioni, monitoraggio e avvisi di errore delle Sue automazioni, e cosa può chiederci di modificare dopo la consegna.",
         blocks: [
           {
             type: "p",
-            text: "Ogni automazione è configurata su misura, ma alcune decisioni ricorrono in quasi tutti i progetti. Conoscerle vi aiuta a chiedere modifiche in modo chiaro dopo la consegna.",
+            text: "Ogni automazione è configurata su misura, ma alcune decisioni ricorrono in quasi tutti i progetti. Conoscerle La aiuta a chiedere modifiche in modo chiaro dopo la consegna.",
           },
           { type: "h2", id: "integrations", text: "Integrazioni comuni" },
           {
@@ -1094,21 +1094,21 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "info",
             title: "Fatturazione certificata",
-            text: "L'automazione non sostituisce il vostro software di fatturazione certificato: gli chiede soltanto di emettere i documenti. Le regole fiscali continuano ad essere applicate dal software ed è bene verificarle con il vostro commercialista.",
+            text: "L'automazione non sostituisce il Suo software di fatturazione certificato: gli chiede soltanto di emettere i documenti. Le regole fiscali continuano ad essere applicate dal software ed è bene verificarle con il Suo commercialista.",
           },
           { type: "h2", id: "monitoring", text: "Monitoraggio e avvisi di errore" },
           {
             type: "p",
-            text: "Ogni automazione che manteniamo è monitorata. Quando un'esecuzione fallisce, riceviamo un avviso e, se l'errore tocca la vostra operatività, ve lo comunichiamo anche noi. Potete anche scegliere di ricevere gli avvisi direttamente, via e-mail o WhatsApp.",
+            text: "Ogni automazione che manteniamo è monitorata. Quando un'esecuzione fallisce, riceviamo un avviso e, se l'errore tocca la Sua operatività, La avvisiamo anche noi. Può anche scegliere di ricevere gli avvisi direttamente, via e-mail o WhatsApp.",
           },
           {
             type: "p",
-            text: "Un avviso tipico indica l'automazione coinvolta, il passaggio fallito, il record interessato (per esempio il numero d'ordine) e il messaggio di errore dello strumento. Per i processi critici come la fatturazione, possiamo anche impostare un riepilogo giornaliero delle esecuzioni riuscite, così sapete che l'automazione ha girato anche quando non ci sono errori.",
+            text: "Un avviso tipico indica l'automazione coinvolta, il passaggio fallito, il record interessato (per esempio il numero d'ordine) e il messaggio di errore dello strumento. Per i processi critici come la fatturazione, possiamo anche impostare un riepilogo giornaliero delle esecuzioni riuscite, così sa che l'automazione ha girato anche quando non ci sono errori.",
           },
           { type: "h2", id: "requesting-changes", text: "Chiedere modifiche" },
           {
             type: "p",
-            text: "Le piccole modifiche (il testo di un'e-mail, un destinatario, un orario) di solito rientrano nella manutenzione. I cambiamenti più grandi, come nuove integrazioni o passaggi in più, si preventivano a parte, sempre a prezzo fisso. Vedete come seguire il lavoro di ogni giorno nella pagina [utilizzo](/it/docs/process-automation/usage).",
+            text: "Le piccole modifiche (il testo di un'e-mail, un destinatario, un orario) di solito rientrano nella manutenzione. I cambiamenti più grandi, come nuove integrazioni o passaggi in più, si preventivano a parte, sempre a prezzo fisso. Veda come seguire il lavoro di ogni giorno nella pagina [utilizzo](/it/docs/process-automation/usage).",
           },
         ],
       },
@@ -1432,7 +1432,7 @@ export const docs: ProductDocs = {
       it: {
         title: "L'Automazione dei processi ogni giorno",
         description:
-          "Come seguire le vostre automazioni ogni giorno: verificare i risultati, gestire le eccezioni, capire la manutenzione e cosa succede quando cambia uno strumento.",
+          "Come seguire le Sue automazioni ogni giorno: verificare i risultati, gestire le eccezioni, capire la manutenzione e cosa succede quando cambia uno strumento.",
         blocks: [
           {
             type: "p",
@@ -1442,15 +1442,15 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Nelle prime settimane, controllate a campione alcuni risultati: fatture emesse, messaggi inviati, righe registrate.",
-              "Se l'automazione produce un report giornaliero, usatelo come controllo rapido che tutto abbia girato.",
-              "Annotate semplicemente qualsiasi cosa strana notiate e inviatecela tutta insieme.",
+              "Nelle prime settimane, controlli a campione alcuni risultati: fatture emesse, messaggi inviati, righe registrate.",
+              "Se l'automazione produce un report giornaliero, lo usi come controllo rapido che tutto abbia girato.",
+              "Annoti semplicemente qualsiasi cosa strana noti e ce la invii tutta insieme.",
             ],
           },
           { type: "h2", id: "exceptions", text: "Gestire le eccezioni" },
           {
             type: "p",
-            text: "Quando l'automazione incontra un caso che non sa gestire, segue la regola definita in configurazione: di solito mette in pausa quel caso e vi avvisa. Gestitelo a mano e, se ricapita, ditecelo così aggiungiamo una regola.",
+            text: "Quando l'automazione incontra un caso che non sa gestire, segue la regola definita in configurazione: di solito mette in pausa quel caso e La avvisa. Lo gestisca a mano e, se ricapita, ce lo dica così aggiungiamo una regola.",
           },
           { type: "h2", id: "tool-changes", text: "Quando cambia uno strumento" },
           {
@@ -1460,8 +1460,8 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "warning",
-            title: "Avvisateci prima di cambiare qualcosa",
-            text: "Se cambiate software, modificate la password di un account usato dall'automazione o riorganizzate un foglio di calcolo (rinominando colonne o schede), parlatene prima con noi. Sono le cause di guasto più frequenti.",
+            title: "Ci avvisi prima di cambiare qualcosa",
+            text: "Se cambia software, modifica la password di un account usato dall'automazione o riorganizza un foglio di calcolo (rinominando colonne o schede), ne parli prima con noi. Sono le cause di guasto più frequenti.",
           },
           { type: "h2", id: "maintenance", text: "Cosa copre la manutenzione" },
           {
@@ -1477,10 +1477,10 @@ export const docs: ProductDocs = {
             type: "p",
             text: "Il perimetro esatto dipende dal piano concordato nella proposta.",
           },
-          { type: "h2", id: "team", text: "Coinvolgere il vostro team" },
+          { type: "h2", id: "team", text: "Coinvolgere il Suo team" },
           {
             type: "p",
-            text: "Spiegate al vostro team cosa ora è automatico, perché nessuno continui a fare il compito a mano per abitudine. Chiarite chi riceve gli avvisi e chi gestisce le eccezioni. Quando qualcuno entra o esce, verificate che accessi e destinatari degli avvisi siano ancora giusti e avvisateci se c'è da cambiare qualcosa. Se qualcosa smette di funzionare, consultate la [risoluzione dei problemi](/it/docs/process-automation/troubleshooting).",
+            text: "Spieghi al Suo team cosa ora è automatico, perché nessuno continui a fare il compito a mano per abitudine. Chiarisca chi riceve gli avvisi e chi gestisce le eccezioni. Quando qualcuno entra o esce, verifichi che accessi e destinatari degli avvisi siano ancora giusti e ci avvisi se c'è da cambiare qualcosa. Se qualcosa smette di funzionare, consulti la [risoluzione dei problemi](/it/docs/process-automation/troubleshooting).",
           },
         ],
       },
@@ -1774,41 +1774,41 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Con il monitoraggio attivo, intercettiamo molti guasti prima che ve ne accorgiate. Se incontrate un problema, i punti qui sotto aiutano a individuarne la causa. Nel dubbio, [contattateci](/it/contact) indicando data, ora e un esempio di ciò che non ha funzionato.",
+            text: "Con il monitoraggio attivo, intercettiamo molti guasti prima che Lei se ne accorga. Se incontra un problema, i punti qui sotto aiutano a individuarne la causa. Nel dubbio, [ci contatti](/it/contact) indicando data, ora e un esempio di ciò che non ha funzionato.",
           },
           { type: "h2", id: "stopped", text: "L'automazione ha smesso di funzionare" },
           {
             type: "steps",
             items: [
-              { title: "Pensate a cosa è cambiato", body: "È cambiata una password, è stato modificato il piano di uno strumento, un utente se n'è andato o un foglio di calcolo è stato riorganizzato? Sono le cause più frequenti." },
-              { title: "Verificate gli accessi", body: "Alcune connessioni scadono e vanno autorizzate di nuovo, soprattutto gli account Google e Microsoft. Se avete ricevuto un avviso dallo strumento, inoltratecelo." },
-              { title: "Gestite a mano i casi in sospeso", body: "Mentre sistemiamo, svolgete a mano i compiti urgenti, come emettere una fattura, e annotate cosa avete fatto per evitare duplicati." },
-              { title: "Avvisateci", body: "Mandateci un messaggio con ciò che avete visto. Controlliamo lo storico delle esecuzioni e risolviamo." },
+              { title: "Pensi a cosa è cambiato", body: "È cambiata una password, è stato modificato il piano di uno strumento, un utente se n'è andato o un foglio di calcolo è stato riorganizzato? Sono le cause più frequenti." },
+              { title: "Verifichi gli accessi", body: "Alcune connessioni scadono e vanno autorizzate di nuovo, soprattutto gli account Google e Microsoft. Se ha ricevuto un avviso dallo strumento, ce lo inoltri." },
+              { title: "Gestisca a mano i casi in sospeso", body: "Mentre sistemiamo, svolga a mano i compiti urgenti, come emettere una fattura, e annoti cosa ha fatto per evitare duplicati." },
+              { title: "Ci avvisi", body: "Ci mandi un messaggio con ciò che ha visto. Controlliamo lo storico delle esecuzioni e risolviamo." },
             ],
           },
           { type: "h2", id: "duplicates", text: "Ci sono record o fatture duplicati" },
           {
             type: "p",
-            text: "Può succedere quando lo stesso evento arriva due volte (per esempio un pagamento notificato due volte) o quando qualcuno ha fatto a mano ciò che ha fatto anche l'automazione. Non annullate documenti fiscali senza parlarne con il vostro commercialista; avvisateci così rafforziamo il controllo dei duplicati.",
+            text: "Può succedere quando lo stesso evento arriva due volte (per esempio un pagamento notificato due volte) o quando qualcuno ha fatto a mano ciò che ha fatto anche l'automazione. Non annulli documenti fiscali senza parlarne con il Suo commercialista; ci avvisi così rafforziamo il controllo dei duplicati.",
           },
           { type: "h2", id: "messages", text: "I messaggi non arrivano ai clienti" },
           {
             type: "ul",
             items: [
-              "Verificate che i dati di contatto del cliente siano corretti e completi, compreso il prefisso internazionale per WhatsApp.",
-              "Le e-mail automatiche possono finire nello spam del destinatario; chiedete al cliente di controllare.",
+              "Verifichi che i dati di contatto del cliente siano corretti e completi, compreso il prefisso internazionale per WhatsApp.",
+              "Le e-mail automatiche possono finire nello spam del destinatario; chieda al cliente di controllare.",
               "Su WhatsApp, le regole della piattaforma limitano alcuni messaggi avviati dall'azienda; se serve, adattiamo modelli e orari.",
             ],
           },
           { type: "h2", id: "invoicing-errors", text: "Errori del software di fatturazione" },
           {
             type: "p",
-            text: "Errori come un codice fiscale non valido, una serie di documenti mancante o un'aliquota IVA assente di solito dipendono dai dati di origine o dalle impostazioni del software di fatturazione. Correggete i dati alla fonte quando possibile e ditecelo, così aggiungiamo una verifica.",
+            text: "Errori come un codice fiscale non valido, una serie di documenti mancante o un'aliquota IVA assente di solito dipendono dai dati di origine o dalle impostazioni del software di fatturazione. Corregga i dati alla fonte quando possibile e ce lo dica, così aggiungiamo una verifica.",
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Fate uno screenshot del messaggio di errore. Fa risparmiare molto tempo nella diagnosi.",
+            text: "Faccia uno screenshot del messaggio di errore. Fa risparmiare molto tempo nella diagnosi.",
           },
         ],
       },
@@ -2045,32 +2045,32 @@ export const docs: ProductDocs = {
       it: {
         title: "Domande frequenti sull'Automazione dei processi",
         description:
-          "Risposte alle domande più comuni sull'Automazione dei processi: prezzo fisso, strumenti usati, fatturazione certificata, sicurezza dei vostri accessi e manutenzione continua.",
+          "Risposte alle domande più comuni sull'Automazione dei processi: prezzo fisso, strumenti usati, fatturazione certificata, sicurezza dei Suoi accessi e manutenzione continua.",
         blocks: [
           {
             type: "p",
-            text: "Le domande che sentiamo più spesso prima e durante un progetto di automazione. Se la vostra non c'è, [scriveteci](/it/contact).",
+            text: "Le domande che sentiamo più spesso prima e durante un progetto di automazione. Se la Sua non c'è, [ci scriva](/it/contact).",
           },
           { type: "h2", id: "questions", text: "Domande e risposte" },
           {
             type: "faq",
             items: [
-              { q: "Come si calcola il prezzo?", a: "Dopo la mappatura del processo, inviamo una proposta a prezzo fisso con un perimetro ben definito. Nessuna sorpresa: se volete aggiungere qualcosa, lo preventiviamo a parte prima di procedere." },
-              { q: "Servono competenze tecniche?", a: "No. Basta conoscere bene il vostro processo. Alla parte tecnica pensiamo noi e vi spieghiamo il risultato con parole semplici." },
+              { q: "Come si calcola il prezzo?", a: "Dopo la mappatura del processo, inviamo una proposta a prezzo fisso con un perimetro ben definito. Nessuna sorpresa: se vuole aggiungere qualcosa, lo preventiviamo a parte prima di procedere." },
+              { q: "Servono competenze tecniche?", a: "No. Basta conoscere bene il Suo processo. Alla parte tecnica pensiamo noi e Le spieghiamo il risultato con parole semplici." },
               { q: "Quali strumenti usate?", a: "Piattaforme come Make, n8n o Zapier, oppure codice su misura, a seconda del caso. Colleghiamo Google Sheets, Gmail, Outlook, WhatsApp, CRM e software di fatturazione con API." },
               { q: "Funzionerà con il mio software di fatturazione?", a: "Se il software ha un'API, come InvoiceXpress, Moloni o Vendus, di solito è possibile. I documenti continuano a essere emessi dal software certificato." },
-              { q: "I miei accessi sono al sicuro?", a: "Chiediamo solo i permessi necessari, preferiamo chiavi API e utenti dedicati e condividiamo le credenziali tramite un gestore di password. Potete revocare gli accessi in qualsiasi momento." },
+              { q: "I miei accessi sono al sicuro?", a: "Chiediamo solo i permessi necessari, preferiamo chiavi API e utenti dedicati e condividiamo le credenziali tramite un gestore di password. Può revocare gli accessi in qualsiasi momento." },
               { q: "E se uno strumento cambia la sua API?", a: "Con un piano di manutenzione, seguiamo questi cambiamenti e adattiamo l'automazione. I cambiamenti di fondo, come cambiare strumento, si preventivano a parte." },
-              { q: "Come saprò se qualcosa non funziona?", a: "Le automazioni che manteniamo hanno monitoraggio e avvisi di errore. Veniamo avvisati dei guasti e, se toccano la vostra operatività, ve lo comunichiamo anche noi." },
+              { q: "Come saprò se qualcosa non funziona?", a: "Le automazioni che manteniamo hanno monitoraggio e avvisi di errore. Veniamo avvisati dei guasti e, se toccano la Sua operatività, La avvisiamo anche noi." },
               { q: "Quanto dura un progetto?", a: "Le automazioni semplici di solito sono pronte in poche settimane. I tempi esatti sono sempre nella proposta." },
-              { q: "L'automazione è mia?", a: "Sì. Le automazioni sono costruite per la vostra attività e, quando possibile, nei vostri account. I dettagli su proprietà e trasferimento sono nella proposta." },
+              { q: "L'automazione è mia?", a: "Sì. Le automazioni sono costruite per la Sua attività e, quando possibile, nei Suoi account. I dettagli su proprietà e trasferimento sono nella proposta." },
               { q: "L'automazione può usare l'IA?", a: "Sì, quando porta un valore reale, per esempio per smistare le e-mail in arrivo, estrarre dati dalle fatture dei fornitori o riassumere le richieste. Per i passaggi critici manteniamo regole chiare e, se serve, un'approvazione umana." },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Avete in mente un'attività ripetitiva? [Prenotate una chiamata conoscitiva](/it/book-a-demo) e vi diremo se vale la pena automatizzarla.",
+            text: "Ha in mente un'attività ripetitiva? [Prenoti una chiamata conoscitiva](/it/book-a-demo) e Le diremo se vale la pena automatizzarla.",
           },
         ],
       },

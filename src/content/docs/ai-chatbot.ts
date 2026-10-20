@@ -301,14 +301,14 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Il chatbot con IA risponde alle domande dei vostri clienti sul **sito** e su **WhatsApp**, a qualsiasi ora, in base alle informazioni della vostra attività: menù, prezzi, orari, servizi e regole. Quando la conversazione richiede una prenotazione o una persona, rimanda al link di prenotazione o al vostro team.",
+            text: "Il chatbot con IA risponde alle domande dei Suoi clienti sul **sito** e su **WhatsApp**, a qualsiasi ora, in base alle informazioni della Sua attività: menù, prezzi, orari, servizi e regole. Quando la conversazione richiede una prenotazione o una persona, rimanda al link di prenotazione o al Suo team.",
           },
           { type: "h2", id: "what-it-does", text: "Cosa fa il chatbot" },
           {
             type: "ul",
             items: [
               "Risponde alle domande frequenti: orari, indirizzo, parcheggio, prezzi, servizi, allergeni, metodi di pagamento.",
-              "Rimanda al vostro [sistema di prenotazione](/it/products/online-booking-system) quando il cliente vuole prenotare.",
+              "Rimanda al Suo [sistema di prenotazione](/it/products/online-booking-system) quando il cliente vuole prenotare.",
               "Passa la conversazione a una persona del team quando la richiesta esce dall'ambito stabilito.",
               "Risponde nella lingua del cliente, utile nelle zone turistiche.",
               "Conserva lo storico delle conversazioni per consultarlo e migliorare le risposte.",
@@ -341,14 +341,14 @@ export const docs: ProductDocs = {
               "Il menù o l'elenco dei servizi con i prezzi aggiornati.",
               "Gli orari, compresi festivi e periodi particolari.",
               "Le regole: cancellazioni, gruppi, animali, pagamenti, rimborsi.",
-              "Le domande che il vostro team riceve più spesso e le risposte che dà di solito.",
+              "Le domande che il Suo team riceve più spesso e le risposte che dà di solito.",
               "Cosa deve sempre passare a una persona (reclami, richieste speciali, eventi).",
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Proseguite con l'[installazione](/it/docs/ai-chatbot/setup) oppure [prenotate una demo](/it/book-a-demo) per vedere il chatbot rispondere con i dati di un'attività come la vostra.",
+            text: "Prosegua con l'[installazione](/it/docs/ai-chatbot/setup) oppure [prenoti una demo](/it/book-a-demo) per vedere il chatbot rispondere con i dati di un'attività come la Sua.",
           },
         ],
       },
@@ -776,7 +776,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Dell'installazione si occupa Steevanz. Da voi dipende soprattutto raccogliere le informazioni dell'attività e, per WhatsApp, concedere alcuni accessi e approvazioni.",
+            text: "Dell'installazione si occupa Steevanz. Da Lei dipende soprattutto raccogliere le informazioni dell'attività e, per WhatsApp, concedere alcuni accessi e approvazioni.",
           },
           { type: "h2", id: "steps", text: "Fasi dell'installazione" },
           {
@@ -784,7 +784,7 @@ export const docs: ProductDocs = {
             items: [
               {
                 title: "Raccolta delle informazioni",
-                body: "Riceviamo menù, servizi, prezzi, orari e regole, sotto forma di documenti, foto o link al vostro sito.",
+                body: "Riceviamo menù, servizi, prezzi, orari e regole, sotto forma di documenti, foto o link al Suo sito.",
               },
               {
                 title: "Costruzione della base di conoscenza",
@@ -800,15 +800,15 @@ export const docs: ProductDocs = {
               },
               {
                 title: "Installazione sul sito",
-                body: "Incolliamo il codice del widget nel vostro sito oppure ve lo inviamo da passare a chi lo gestisce.",
+                body: "Incolliamo il codice del widget nel Suo sito oppure Glielo inviamo da passare a chi lo gestisce.",
               },
               {
                 title: "Collegamento a WhatsApp",
-                body: "Colleghiamo il vostro numero a WhatsApp Business Platform e vi guidiamo nella verifica dell'azienda.",
+                body: "Colleghiamo il Suo numero a WhatsApp Business Platform e La guidiamo nella verifica dell'azienda.",
               },
               {
                 title: "Revisione delle prime conversazioni",
-                body: "Nelle prime settimane rivediamo con voi lo storico e aggiorniamo la base di conoscenza.",
+                body: "Nelle prime settimane rivediamo con Lei lo storico e aggiorniamo la base di conoscenza.",
               },
             ],
           },
@@ -820,35 +820,35 @@ export const docs: ProductDocs = {
           {
             type: "code",
             label: "Codice del widget (esempio)",
-            code: "<script\n  src=\"https://chat.steevanz.com/widget.js\"\n  data-business=\"vostra-attivita\"\n  data-lang=\"auto\"\n  defer\n></script>",
+            code: "<script\n  src=\"https://chat.steevanz.com/widget.js\"\n  data-business=\"sua-attivita\"\n  data-lang=\"auto\"\n  defer\n></script>",
           },
           {
             type: "callout",
             tone: "info",
-            text: "L'identificativo dell'attività qui sopra è un esempio. Vi inviamo il codice definitivo già compilato.",
+            text: "L'identificativo dell'attività qui sopra è un esempio. Le inviamo il codice definitivo già compilato.",
           },
           { type: "h2", id: "whatsapp", text: "Collegare WhatsApp" },
           {
             type: "p",
-            text: "Perché il chatbot risponda su WhatsApp, il vostro numero deve essere collegato a **WhatsApp Business Platform**, la soluzione di Meta per le aziende che usano integrazioni. È diversa dalla normale app WhatsApp Business.",
+            text: "Perché il chatbot risponda su WhatsApp, il Suo numero deve essere collegato a **WhatsApp Business Platform**, la soluzione di Meta per le aziende che usano integrazioni. È diversa dalla normale app WhatsApp Business.",
           },
           {
             type: "ul",
             items: [
               "Serve un account aziendale Meta e bisogna completare la **verifica dell'azienda**, con documenti come la visura camerale o una bolletta intestata all'attività.",
-              "Il numero può essere nuovo o quello che avete già. Se lo usate già in un'app WhatsApp, valutiamo con voi il modo migliore per migrarlo o mantenerlo in parallelo.",
+              "Il numero può essere nuovo o quello che ha già. Se lo usa già in un'app WhatsApp, valutiamo con Lei il modo migliore per migrarlo o mantenerlo in parallelo.",
               "Il nome visualizzato dai clienti è soggetto all'approvazione di Meta.",
             ],
           },
           {
             type: "callout",
             tone: "warning",
-            text: "I tempi di verifica e approvazione dipendono da Meta, non da Steevanz. Consigliamo di iniziare presto questa fase; nel frattempo il chatbot può già essere attivo sul vostro sito.",
+            text: "I tempi di verifica e approvazione dipendono da Meta, non da Steevanz. Consigliamo di iniziare presto questa fase; nel frattempo il chatbot può già essere attivo sul Suo sito.",
           },
           { type: "h2", id: "next", text: "Il passo successivo" },
           {
             type: "p",
-            text: "Consultate la [configurazione](/it/docs/ai-chatbot/configuration) per impostare il tono del chatbot, i passaggi al team e le regole di sicurezza.",
+            text: "Consulti la [configurazione](/it/docs/ai-chatbot/configuration) per impostare il tono del chatbot, i passaggi al team e le regole di sicurezza.",
           },
         ],
       },
@@ -1211,7 +1211,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "La qualità delle risposte dipende soprattutto dalla qualità delle informazioni e delle regole che ci date. Queste sono le impostazioni principali, che rivediamo con voi ogni volta che serve.",
+            text: "La qualità delle risposte dipende soprattutto dalla qualità delle informazioni e delle regole che ci dà. Queste sono le impostazioni principali, che rivediamo con Lei ogni volta che serve.",
           },
           { type: "h2", id: "knowledge-base", text: "Base di conoscenza" },
           {
@@ -1232,14 +1232,14 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Quando un'informazione cambia, eliminate la versione vecchia. Due versioni dello stesso prezzo o dello stesso orario sono la causa più frequente di risposte sbagliate.",
+            text: "Quando un'informazione cambia, elimini la versione vecchia. Due versioni dello stesso prezzo o dello stesso orario sono la causa più frequente di risposte sbagliate.",
           },
           { type: "h2", id: "tone-and-languages", text: "Tono e lingue" },
           {
             type: "ul",
             items: [
-              "**Tono**: più formale o più informale, in linea con il vostro marchio.",
-              "**Lingue**: per impostazione predefinita il chatbot risponde nella lingua in cui scrive il cliente. Potete limitarlo a un gruppo di lingue.",
+              "**Tono**: più formale o più informale, in linea con il Suo marchio.",
+              "**Lingue**: per impostazione predefinita il chatbot risponde nella lingua in cui scrive il cliente. Può limitarlo a un gruppo di lingue.",
               "**Risposte brevi**: su WhatsApp e da cellulare funzionano meglio risposte brevi con un link che paragrafi lunghi.",
             ],
           },
@@ -1247,9 +1247,9 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Prenotazione**: quando il cliente vuole prenotare, il chatbot invia il vostro link di prenotazione, idealmente già filtrato sul servizio giusto.",
-              "**Persona**: reclami, richieste speciali, eventi, preventivi o qualsiasi cosa fuori dal suo ambito passano al vostro team, con un riepilogo della conversazione.",
-              "**Fuori orario**: il chatbot indica quando il vostro team potrà rispondere.",
+              "**Prenotazione**: quando il cliente vuole prenotare, il chatbot invia il Suo link di prenotazione, idealmente già filtrato sul servizio giusto.",
+              "**Persona**: reclami, richieste speciali, eventi, preventivi o qualsiasi cosa fuori dal suo ambito passano al Suo team, con un riepilogo della conversazione.",
+              "**Fuori orario**: il chatbot indica quando il Suo team potrà rispondere.",
             ],
           },
           { type: "h2", id: "guardrails", text: "Limiti di sicurezza" },
@@ -1258,19 +1258,19 @@ export const docs: ProductDocs = {
             items: [
               "Non inventa: quando la risposta non è nella base di conoscenza, dice di non saperlo e offre il contatto con una persona.",
               "Non dà consigli medici, legali o finanziari.",
-              "Non promette sconti, rimborsi o eccezioni che non siano previsti dalle vostre regole.",
+              "Non promette sconti, rimborsi o eccezioni che non siano previsti dalle Sue regole.",
               "Non chiede dati sensibili come informazioni sulla salute o numeri di carta.",
             ],
           },
           { type: "h2", id: "whatsapp-rules", text: "Regole di WhatsApp" },
           {
             type: "p",
-            text: "Su WhatsApp Business Platform l'azienda può rispondere liberamente per **24 ore** dopo l'ultimo messaggio del cliente. Fuori da questa finestra, può avviare una conversazione solo con **modelli di messaggio** approvati in anticipo da Meta, come un promemoria o una conferma. Creiamo e inviamo noi questi modelli per voi.",
+            text: "Su WhatsApp Business Platform l'azienda può rispondere liberamente per **24 ore** dopo l'ultimo messaggio del cliente. Fuori da questa finestra, può avviare una conversazione solo con **modelli di messaggio** approvati in anticipo da Meta, come un promemoria o una conferma. Creiamo e inviamo noi questi modelli per Lei.",
           },
           { type: "h2", id: "gdpr", text: "Privacy e GDPR" },
           {
             type: "p",
-            text: "Il widget e WhatsApp mostrano un'informativa sulla privacy all'inizio della conversazione. Lo storico delle conversazioni viene conservato solo per il periodo concordato e serve a fornire il servizio e migliorare le risposte della vostra attività. La vostra attività è il titolare del trattamento e Steevanz agisce come responsabile del trattamento.",
+            text: "Il widget e WhatsApp mostrano un'informativa sulla privacy all'inizio della conversazione. Lo storico delle conversazioni viene conservato solo per il periodo concordato e serve a fornire il servizio e migliorare le risposte della Sua attività. La Sua attività è il titolare del trattamento e Steevanz agisce come responsabile del trattamento.",
           },
         ],
       },
@@ -1648,48 +1648,48 @@ export const docs: ProductDocs = {
           { type: "h2", id: "review-conversations", text: "Rivedere le conversazioni" },
           {
             type: "p",
-            text: "Nella vostra area clienti trovate lo storico delle conversazioni del sito e di WhatsApp. Nelle prime settimane rivedete qualche conversazione ogni giorno; poi di solito basta una revisione settimanale. Cercate soprattutto:",
+            text: "Nella Sua area clienti trova lo storico delle conversazioni del sito e di WhatsApp. Nelle prime settimane riveda qualche conversazione ogni giorno; poi di solito basta una revisione settimanale. Cerchi soprattutto:",
           },
           {
             type: "ul",
             items: [
               "Domande a cui il chatbot ha risposto «non lo so», che segnalano informazioni mancanti.",
               "Risposte corrette ma poco chiare o troppo lunghe.",
-              "Conversazioni passate al vostro team che il chatbot avrebbe potuto risolvere da solo.",
+              "Conversazioni passate al Suo team che il chatbot avrebbe potuto risolvere da solo.",
             ],
           },
           { type: "h2", id: "take-over", text: "Prendere in mano una conversazione" },
           {
             type: "p",
-            text: "Quando il chatbot passa una conversazione al vostro team, ricevete un avviso con un riepilogo. Su WhatsApp risponde direttamente un membro del team e il chatbot resta fuori da quella conversazione finché non gli viene restituita. Ricordate la finestra di **24 ore**: se rispondete dopo, potrebbe essere necessario usare un modello di messaggio.",
+            text: "Quando il chatbot passa una conversazione al Suo team, riceve un avviso con un riepilogo. Su WhatsApp risponde direttamente un membro del team e il chatbot resta fuori da quella conversazione finché non gli viene restituita. Ricordi la finestra di **24 ore**: se risponde dopo, potrebbe essere necessario usare un modello di messaggio.",
           },
           { type: "h2", id: "update-information", text: "Aggiornare le informazioni" },
           {
             type: "steps",
             items: [
               {
-                title: "Individuate il cambiamento",
+                title: "Individui il cambiamento",
                 body: "Un piatto nuovo, un prezzo nuovo, l'orario estivo, una chiusura per ferie o una nuova regola.",
               },
               {
-                title: "Inviateci l'informazione",
-                body: "Via WhatsApp o email, con la data da cui vale. Alcuni aggiornamenti semplici potete farli direttamente nella vostra area clienti.",
+                title: "Ci invii l'informazione",
+                body: "Via WhatsApp o email, con la data da cui vale. Alcuni aggiornamenti semplici può farli direttamente nella Sua area clienti.",
               },
               {
-                title: "Verificate la risposta",
-                body: "Dopo l'aggiornamento, fate la domanda al chatbot sul vostro sito e verificate che risponda con la nuova informazione.",
+                title: "Verifichi la risposta",
+                body: "Dopo l'aggiornamento, faccia la domanda al chatbot sul Suo sito e verifichi che risponda con la nuova informazione.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Avvisateci in anticipo di festivi e chiusure. È una delle domande più frequenti e una delle più frustranti per il cliente se la risposta è sbagliata.",
+            text: "Ci avvisi in anticipo di festivi e chiusure. È una delle domande più frequenti e una delle più frustranti per il cliente se la risposta è sbagliata.",
           },
           { type: "h2", id: "learn-from-questions", text: "Imparare dalle domande" },
           {
             type: "p",
-            text: "Le conversazioni mostrano cosa vogliono davvero sapere i clienti. Domande ripetute sul parcheggio, sulle opzioni vegetariane o sul prezzo di un servizio possono indicare che quell'informazione dovrebbe essere più visibile sul vostro sito, nel menù o nel vostro Profilo dell'attività su Google.",
+            text: "Le conversazioni mostrano cosa vogliono davvero sapere i clienti. Domande ripetute sul parcheggio, sulle opzioni vegetariane o sul prezzo di un servizio possono indicare che quell'informazione dovrebbe essere più visibile sul Suo sito, nel menù o nel Suo Profilo dell'attività su Google.",
           },
           { type: "h2", id: "recommended-routine", text: "Routine consigliata" },
           {
@@ -1697,14 +1697,14 @@ export const docs: ProductDocs = {
             head: ["Frequenza", "Attività"],
             rows: [
               ["Ogni giorno (prime settimane)", "Leggere qualche conversazione e segnalare le risposte da correggere"],
-              ["Ogni settimana", "Rivedere le domande senza risposta e le conversazioni passate al vostro team"],
+              ["Ogni settimana", "Rivedere le domande senza risposta e le conversazioni passate al Suo team"],
               ["Prima di ogni cambiamento", "Inviare nuovo menù, prezzi, orari o chiusure con la data di inizio"],
               ["Ogni mese", "Rivedere con Steevanz il tono, i passaggi al team e le domande più frequenti"],
             ],
           },
           {
             type: "p",
-            text: "Se qualcosa non va, consultate la [risoluzione dei problemi](/it/docs/ai-chatbot/troubleshooting).",
+            text: "Se qualcosa non va, consulti la [risoluzione dei problemi](/it/docs/ai-chatbot/troubleshooting).",
           },
         ],
       },
@@ -1987,39 +1987,39 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Quando ci contattate, indicateci il canale (sito o WhatsApp), la data e l'ora approssimative e, se possibile, uno screenshot della conversazione. Così facciamo molto prima.",
+            text: "Quando ci contatta, ci indichi il canale (sito o WhatsApp), la data e l'ora approssimative e, se possibile, uno screenshot della conversazione. Così facciamo molto prima.",
           },
           { type: "h2", id: "wrong-answer", text: "Il chatbot ha dato una risposta sbagliata" },
           {
             type: "ol",
             items: [
-              "Verificate che l'informazione corretta sia nella base di conoscenza e che non ci sia accanto una versione più vecchia.",
-              "Valutate se la domanda era ambigua; a volte basta aggiungere una risposta esplicita per quel caso.",
-              "Inviateci l'esempio; correggiamo la base di conoscenza e proviamo di nuovo.",
+              "Verifichi che l'informazione corretta sia nella base di conoscenza e che non ci sia accanto una versione più vecchia.",
+              "Valuti se la domanda era ambigua; a volte basta aggiungere una risposta esplicita per quel caso.",
+              "Ci invii l'esempio; correggiamo la base di conoscenza e proviamo di nuovo.",
             ],
           },
           {
             type: "callout",
             tone: "warning",
-            text: "Se la risposta sbagliata può avere conseguenze per il cliente, per esempio su allergeni o prezzi, contattate direttamente il cliente per correggere l'informazione.",
+            text: "Se la risposta sbagliata può avere conseguenze per il cliente, per esempio su allergeni o prezzi, contatti direttamente il cliente per correggere l'informazione.",
           },
           { type: "h2", id: "widget-not-showing", text: "Il widget non compare sul sito" },
           {
             type: "ul",
             items: [
-              "Verificate che il codice sia stato aggiunto a tutte le pagine e non solo alla home page.",
-              "Svuotate la cache del sito e del browser; alcuni sistemi di cache impiegano un po' a mostrare le modifiche.",
-              "Verificate se un blocco pubblicità o lo strumento di consenso ai cookie impedisce il caricamento dello script.",
-              "Se il vostro sito ha una politica di sicurezza dei contenuti rigida, bisogna consentire il dominio del widget.",
+              "Verifichi che il codice sia stato aggiunto a tutte le pagine e non solo alla home page.",
+              "Svuoti la cache del sito e del browser; alcuni sistemi di cache impiegano un po' a mostrare le modifiche.",
+              "Verifichi se un blocco pubblicità o lo strumento di consenso ai cookie impedisce il caricamento dello script.",
+              "Se il Suo sito ha una politica di sicurezza dei contenuti rigida, bisogna consentire il dominio del widget.",
             ],
           },
           { type: "h2", id: "whatsapp-no-reply", text: "Il chatbot non risponde su WhatsApp" },
           {
             type: "ul",
             items: [
-              "Verificate che la verifica dell'azienda e il collegamento del numero siano completati.",
-              "Controllate se un membro del team ha preso in mano la conversazione; in quel caso il chatbot resta in silenzio finché non gli viene restituita.",
-              "Verificate che il numero non sia usato contemporaneamente in un'altra app in modo incompatibile.",
+              "Si accerti che la verifica dell'azienda e il collegamento del numero siano completati.",
+              "Controlli se un membro del team ha preso in mano la conversazione; in quel caso il chatbot resta in silenzio finché non gli viene restituita.",
+              "Verifichi che il numero non sia usato contemporaneamente in un'altra app in modo incompatibile.",
             ],
           },
           { type: "h2", id: "rejected-templates", text: "Modelli di messaggio rifiutati" },
@@ -2030,7 +2030,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "long-answers", text: "Risposte troppo lunghe o troppo formali" },
           {
             type: "p",
-            text: "Regoliamo il tono e la lunghezza delle risposte nella configurazione. Diteci come preferite che risponda il chatbot, idealmente con un esempio reale. Consultate anche le [domande frequenti](/it/docs/ai-chatbot/faq) o [contattateci](/it/contact).",
+            text: "Regoliamo il tono e la lunghezza delle risposte nella configurazione. Ci dica come preferisce che risponda il chatbot, idealmente con un esempio reale. Consulti anche le [domande frequenti](/it/docs/ai-chatbot/faq) o [ci contatti](/it/contact).",
           },
         ],
       },
@@ -2387,15 +2387,15 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Il chatbot può inventare le risposte?",
-                a: "È configurato per rispondere solo con le vostre informazioni e dire che non lo sa quando non ha una risposta. Ciononostante l'IA può sbagliare, per questo consigliamo di rivedere regolarmente le conversazioni.",
+                a: "È configurato per rispondere solo con le Sue informazioni e dire che non lo sa quando non ha una risposta. Ciononostante l'IA può sbagliare, per questo consigliamo di rivedere regolarmente le conversazioni.",
               },
               {
                 q: "In quali lingue risponde?",
-                a: "Per impostazione predefinita risponde nella lingua in cui scrive il cliente. Potete limitarlo a un gruppo di lingue.",
+                a: "Per impostazione predefinita risponde nella lingua in cui scrive il cliente. Può limitarlo a un gruppo di lingue.",
               },
               {
                 q: "Posso usare il mio numero WhatsApp attuale?",
-                a: "In molti casi sì. Valuteremo se è meglio migrare il vostro numero attuale o usarne uno nuovo. Vedete l'[installazione](/it/docs/ai-chatbot/setup).",
+                a: "In molti casi sì. Valuteremo se è meglio migrare il Suo numero attuale o usarne uno nuovo. Veda l'[installazione](/it/docs/ai-chatbot/setup).",
               },
               {
                 q: "Cos'è la finestra di 24 ore di WhatsApp?",
@@ -2403,19 +2403,19 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Il chatbot prende prenotazioni?",
-                a: "Manda il cliente al vostro link di prenotazione, dove sceglie un orario con disponibilità reale. Funziona particolarmente bene con il [sistema di prenotazione online](/it/products/online-booking-system).",
+                a: "Manda il cliente al Suo link di prenotazione, dove sceglie un orario con disponibilità reale. Funziona particolarmente bene con il [sistema di prenotazione online](/it/products/online-booking-system).",
               },
               {
                 q: "Come passa la conversazione a una persona?",
-                a: "Quando una richiesta è fuori dal suo ambito o il cliente chiede di parlare con qualcuno, il vostro team riceve un avviso con un riepilogo e continua la conversazione.",
+                a: "Quando una richiesta è fuori dal suo ambito o il cliente chiede di parlare con qualcuno, il Suo team riceve un avviso con un riepilogo e continua la conversazione.",
               },
               {
                 q: "Posso usarlo in una clinica?",
-                a: "Sì, per informazioni su servizi, prezzi, orari e appuntamenti. Non dà consigli medici e inoltra le questioni cliniche al vostro team.",
+                a: "Sì, per informazioni su servizi, prezzi, orari e appuntamenti. Non dà consigli medici e inoltra le questioni cliniche al Suo team.",
               },
               {
                 q: "Come aggiorno il menù o i prezzi?",
-                a: "Inviateci la modifica via WhatsApp o email. Alcuni aggiornamenti semplici potete farli direttamente nella vostra area clienti.",
+                a: "Ci invii la modifica via WhatsApp o email. Alcuni aggiornamenti semplici può farli direttamente nella Sua area clienti.",
               },
               {
                 q: "Le conversazioni vengono conservate?",
@@ -2423,7 +2423,7 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Come posso vedere il chatbot in azione?",
-                a: "[Prenotate una demo](/it/book-a-demo) e vi mostriamo il chatbot mentre risponde con le informazioni di un'attività come la vostra.",
+                a: "[Prenoti una demo](/it/book-a-demo) e Le mostriamo il chatbot mentre risponde con le informazioni di un'attività come la Sua.",
               },
             ],
           },
@@ -2437,10 +2437,10 @@ export const docs: ProductDocs = {
               "[Utilizzo](/it/docs/ai-chatbot/usage): rivedere le conversazioni, prendere in mano le chat e aggiornare le informazioni.",
             ],
           },
-          { type: "h2", id: "more-help", text: "Avete ancora domande?" },
+          { type: "h2", id: "more-help", text: "Ha ancora domande?" },
           {
             type: "p",
-            text: "Visitate la [pagina del prodotto](/it/products/ai-chatbot), la [risoluzione dei problemi](/it/docs/ai-chatbot/troubleshooting) o [contattateci](/it/contact).",
+            text: "Visiti la [pagina del prodotto](/it/products/ai-chatbot), la [risoluzione dei problemi](/it/docs/ai-chatbot/troubleshooting) o [ci contatti](/it/contact).",
           },
         ],
       },

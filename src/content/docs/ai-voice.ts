@@ -422,24 +422,24 @@ export const docs: ProductDocs = {
       it: {
         title: "Primi passi con la Receptionist vocale con IA",
         description:
-          "Scoprite cosa fa la Receptionist vocale con IA di Steevanz, come risponde alle chiamate 24 ore su 24 in portoghese e inglese e cosa preparare prima di iniziare.",
+          "Scopra cosa fa la Receptionist vocale con IA di Steevanz, come risponde alle chiamate 24 ore su 24 in portoghese e inglese e cosa preparare prima di iniziare.",
         blocks: [
           {
             type: "p",
-            text: "La **Receptionist vocale con IA** è una receptionist virtuale che risponde alle chiamate della vostra attività a qualsiasi ora, in portoghese o in inglese. Risponde alle domande frequenti, registra appuntamenti e prenotazioni, trasferisce le chiamate urgenti al vostro team e vi invia un riepilogo di ogni conversazione. È un servizio gestito: Steevanz configura tutto insieme a voi e ne segue il funzionamento, con assistenza via WhatsApp ed email.",
+            text: "La **Receptionist vocale con IA** è una receptionist virtuale che risponde alle chiamate della Sua attività a qualsiasi ora, in portoghese o in inglese. Risponde alle domande frequenti, registra appuntamenti e prenotazioni, trasferisce le chiamate urgenti al Suo team e Le invia un riepilogo di ogni conversazione. È un servizio gestito: Steevanz configura tutto insieme a Lei e ne segue il funzionamento, con assistenza via WhatsApp ed email.",
           },
           {
             type: "h2",
             id: "what-it-does",
-            text: "Cosa fa la receptionist per voi",
+            text: "Cosa fa la receptionist per Lei",
           },
           {
             type: "ul",
             items: [
               "**Risponde alle chiamate 24 ore su 24, 7 giorni su 7**, anche fuori orario, nei giorni festivi e nei momenti di maggiore lavoro in cui nessuno riesce a rispondere al telefono.",
               "**Risponde alle domande frequenti**: orari, indirizzo, parcheggio, prezzi indicativi, servizi disponibili, condizioni di cancellazione.",
-              "**Registra appuntamenti e prenotazioni** direttamente nel vostro sistema di prenotazione o calendario, quando esiste un'integrazione.",
-              "**Trasferisce le chiamate urgenti** al cellulare di un membro del team, secondo le regole che stabilite voi.",
+              "**Registra appuntamenti e prenotazioni** direttamente nel Suo sistema di prenotazione o calendario, quando esiste un'integrazione.",
+              "**Trasferisce le chiamate urgenti** al cellulare di un membro del team, secondo le regole che stabilisce Lei.",
               "**Invia riepiloghi** di ogni chiamata via WhatsApp o email, con nome, contatto e motivo della chiamata.",
             ],
           },
@@ -450,11 +450,11 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Le chiamate arrivano alla receptionist in due modi: tramite la **deviazione di chiamata** del numero che usate già (per esempio solo quando è occupato, quando non rispondete o fuori orario) oppure tramite un **numero nuovo e dedicato**. In entrambi i casi il cliente chiama, sente un saluto personalizzato con il nome della vostra attività e parla in modo naturale, come farebbe con una persona.",
+            text: "Le chiamate arrivano alla receptionist in due modi: tramite la **deviazione di chiamata** del numero che usa già (per esempio solo quando è occupato, quando non risponde o fuori orario) oppure tramite un **numero nuovo e dedicato**. In entrambi i casi il cliente chiama, sente un saluto personalizzato con il nome della Sua attività e parla in modo naturale, come farebbe con una persona.",
           },
           {
             type: "p",
-            text: "Alla fine della chiamata ricevete un riepilogo. Se la chiamata richiede l'intervento di una persona, la receptionist la trasferisce oppure lascia una richiesta di essere richiamati per il vostro team.",
+            text: "Alla fine della chiamata riceve un riepilogo. Se la chiamata richiede l'intervento di una persona, la receptionist la trasferisce oppure lascia al Suo team una richiesta di essere richiamati.",
           },
           {
             type: "h2",
@@ -479,8 +479,8 @@ export const docs: ProductDocs = {
             type: "ol",
             items: [
               "Un elenco delle domande che i clienti fanno più spesso al telefono, con le relative risposte.",
-              "I vostri orari di apertura, comprese le eccezioni come festivi e ferie.",
-              "L'accesso al vostro sistema di prenotazione o calendario, se volete che la receptionist registri gli appuntamenti.",
+              "I Suoi orari di apertura, comprese le eccezioni come festivi e ferie.",
+              "L'accesso al Suo sistema di prenotazione o calendario, se vuole che la receptionist registri gli appuntamenti.",
               "Il numero di cellulare a cui trasferire le chiamate urgenti.",
               "La scelta tra deviare il numero attuale o usare un numero nuovo.",
             ],
@@ -489,7 +489,7 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "tip",
             title: "Non serve che sia tutto perfetto",
-            text: "Nella riunione iniziale vi aiutiamo a organizzare le informazioni. Potete cominciare con le domande più comuni e aggiungerne altre man mano che analizziamo le chiamate reali.",
+            text: "Nella riunione iniziale La aiutiamo a organizzare le informazioni. Può cominciare con le domande più comuni e aggiungerne altre man mano che analizziamo le chiamate reali.",
           },
           {
             type: "h2",
@@ -498,7 +498,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Leggete la [guida all'installazione](/it/docs/ai-voice-receptionist/setup) per vedere come colleghiamo la receptionist al vostro telefono, oppure [prenotate una demo](/it/book-a-demo) per ascoltare una chiamata di esempio. Potete anche consultare la [pagina del prodotto](/it/products/ai-voice-receptionist) con prezzi e funzionalità.",
+            text: "Legga la [guida all'installazione](/it/docs/ai-voice-receptionist/setup) per vedere come colleghiamo la receptionist al Suo telefono, oppure [prenoti una demo](/it/book-a-demo) per ascoltare una chiamata di esempio. Può anche consultare la [pagina del prodotto](/it/products/ai-voice-receptionist) con prezzi e funzionalità.",
           },
         ],
       },
@@ -987,11 +987,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Installazione della Receptionist vocale con IA",
         description:
-          "Passo dopo passo per collegare la Receptionist vocale con IA al vostro telefono: deviazione del numero attuale o numero dedicato, codici abituali e test finali.",
+          "Passo dopo passo per collegare la Receptionist vocale con IA al Suo telefono: deviazione del numero attuale o numero dedicato, codici abituali e test finali.",
         blocks: [
           {
             type: "p",
-            text: "L'installazione si fa insieme al team Steevanz e di solito si conclude in pochi giorni lavorativi, a seconda soprattutto dell'integrazione con il vostro sistema di prenotazione. Questa pagina spiega i due modi per collegare la receptionist al vostro telefono e l'intero processo.",
+            text: "L'installazione si fa insieme al team Steevanz e di solito si conclude in pochi giorni lavorativi, a seconda soprattutto dell'integrazione con il Suo sistema di prenotazione. Questa pagina spiega i due modi per collegare la receptionist al Suo telefono e l'intero processo.",
           },
           {
             type: "h2",
@@ -1002,8 +1002,8 @@ export const docs: ProductDocs = {
             type: "table",
             head: ["Opzione", "Vantaggi", "Da tenere presente"],
             rows: [
-              ["Deviare il numero attuale", "I clienti continuano a chiamare il numero che già conoscono; potete deviare solo alcune chiamate", "Dipende dal vostro operatore e dal tipo di linea; la deviazione può avere un costo nel vostro piano tariffario"],
-              ["Numero nuovo dedicato", "Configurazione indipendente dal vostro operatore; ideale per campagne o una linea per le prenotazioni", "Bisogna far conoscere il nuovo numero sul sito, su Google e sui social"],
+              ["Deviare il numero attuale", "I clienti continuano a chiamare il numero che già conoscono; può deviare solo alcune chiamate", "Dipende dal Suo operatore e dal tipo di linea; la deviazione può avere un costo nel Suo piano tariffario"],
+              ["Numero nuovo dedicato", "Configurazione indipendente dal Suo operatore; ideale per campagne o una linea per le prenotazioni", "Bisogna far conoscere il nuovo numero sul sito, su Google e sui social"],
             ],
           },
           {
@@ -1016,23 +1016,23 @@ export const docs: ProductDocs = {
             items: [
               {
                 title: "Riunione iniziale",
-                body: "Parliamo della vostra attività, delle chiamate che ricevete, degli orari e delle regole di trasferimento. Decidiamo insieme se deviare il numero attuale o usare un numero dedicato.",
+                body: "Parliamo della Sua attività, delle chiamate che riceve, degli orari e delle regole di trasferimento. Decidiamo insieme se deviare il numero attuale o usare un numero dedicato.",
               },
               {
                 title: "Invio delle informazioni di base",
-                body: "Ci inviate domande frequenti, prezzi indicativi, servizi e condizioni. Va bene un semplice documento, le foto del menù o un elenco su WhatsApp.",
+                body: "Ci invia domande frequenti, prezzi indicativi, servizi e condizioni. Va bene un semplice documento, le foto del menù o un elenco su WhatsApp.",
               },
               {
                 title: "Configurazione della receptionist",
-                body: "Prepariamo il saluto, la voce, le risposte e le regole di inoltro. Se avete un sistema di prenotazione o un calendario compatibile, facciamo l'integrazione.",
+                body: "Prepariamo il saluto, la voce, le risposte e le regole di inoltro. Se ha un sistema di prenotazione o un calendario compatibile, facciamo l'integrazione.",
               },
               {
                 title: "Chiamate di prova",
-                body: "Prima di attivare la linea reale facciamo con voi delle chiamate di prova e regoliamo tono, risposte e trasferimenti finché non siete soddisfatti.",
+                body: "Prima di attivare la linea reale facciamo con Lei delle chiamate di prova e regoliamo tono, risposte e trasferimenti finché il risultato non La soddisfa.",
               },
               {
                 title: "Attivazione della deviazione o del numero",
-                body: "Attivate la deviazione sul vostro telefono (o tramite il vostro operatore), oppure iniziamo a far conoscere il numero dedicato. Verifichiamo insieme che le chiamate arrivino correttamente.",
+                body: "Attiva la deviazione sul Suo telefono (o tramite il Suo operatore), oppure iniziamo a far conoscere il numero dedicato. Verifichiamo insieme che le chiamate arrivino correttamente.",
               },
               {
                 title: "Accompagnamento nelle prime settimane",
@@ -1047,7 +1047,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Su molte linee mobili in Portogallo (MEO, NOS, Vodafone, DIGI e altre) la deviazione si può attivare con i codici GSM standard. Sostituite `NUMERO` con il numero che vi indicheremo:",
+            text: "Su molte linee mobili in Portogallo (MEO, NOS, Vodafone, DIGI e altre) la deviazione si può attivare con i codici GSM standard. Sostituisca `NUMERO` con il numero che Le indicheremo:",
           },
           {
             type: "code",
@@ -1057,8 +1057,8 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "warning",
-            title: "Verificate sempre con il vostro operatore",
-            text: "Questi codici sono comuni, ma non universali. Linee fisse, centralini e alcuni piani aziendali usano metodi diversi, e la deviazione può avere un costo. Verificate con il vostro operatore prima di attivarla; se preferite, vi seguiamo noi passo per passo.",
+            title: "Verifichi sempre con il Suo operatore",
+            text: "Questi codici sono comuni, ma non universali. Linee fisse, centralini e alcuni piani aziendali usano metodi diversi, e la deviazione può avere un costo. Verifichi con il Suo operatore prima di attivarla; se preferisce, La seguiamo noi passo per passo.",
           },
           {
             type: "h3",
@@ -1067,7 +1067,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "I codici GSM non hanno orari. Se volete che la receptionist risponda solo fuori orario, ci sono due strade: attivare e disattivare la deviazione a mano alla chiusura e all'apertura, oppure usare un centralino o un servizio dell'operatore che supporti regole orarie. In alternativa, la receptionist può rispondere sempre e applicare regole diverse a seconda dell'ora.",
+            text: "I codici GSM non hanno orari. Se vuole che la receptionist risponda solo fuori orario, ci sono due strade: attivare e disattivare la deviazione a mano alla chiusura e all'apertura, oppure usare un centralino o un servizio dell'operatore che supporti regole orarie. In alternativa, la receptionist può rispondere sempre e applicare regole diverse a seconda dell'ora.",
           },
           {
             type: "h2",
@@ -1076,7 +1076,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Passate alla pagina di [configurazione](/it/docs/ai-voice-receptionist/configuration) per vedere cosa potete personalizzare. Se qualcosa non funziona come previsto, consultate la [risoluzione dei problemi](/it/docs/ai-voice-receptionist/troubleshooting) o [contattateci](/it/contact).",
+            text: "Passi alla pagina di [configurazione](/it/docs/ai-voice-receptionist/configuration) per vedere cosa può personalizzare. Se qualcosa non funziona come previsto, consulti la [risoluzione dei problemi](/it/docs/ai-voice-receptionist/troubleshooting) o [ci contatti](/it/contact).",
           },
         ],
       },
@@ -1515,11 +1515,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Configurazione della Receptionist vocale con IA",
         description:
-          "Personalizzate saluto, voce, domande frequenti, appuntamenti, trasferimenti e riepiloghi della vostra Receptionist vocale con IA, sempre con il supporto di Steevanz.",
+          "Personalizzi saluto, voce, domande frequenti, appuntamenti, trasferimenti e riepiloghi della Sua Receptionist vocale con IA, sempre con il supporto di Steevanz.",
         blocks: [
           {
             type: "p",
-            text: "Quasi tutto nella receptionist si può adattare alla vostra attività. Trattandosi di un servizio gestito, non dovete toccare impostazioni tecniche: diteci cosa volete cambiare via WhatsApp o email e ce ne occupiamo noi. Questa pagina descrive cosa si può configurare e cosa vi consigliamo.",
+            text: "Quasi tutto nella receptionist si può adattare alla Sua attività. Trattandosi di un servizio gestito, non deve toccare impostazioni tecniche: ci dica cosa vuole cambiare via WhatsApp o email e ce ne occupiamo noi. Questa pagina descrive cosa si può configurare e cosa Le consigliamo.",
           },
           {
             type: "h2",
@@ -1533,13 +1533,13 @@ export const docs: ProductDocs = {
           {
             type: "code",
             label: "Esempio di saluto",
-            code: "Buongiorno, avete chiamato il Ristorante Esempio. Sono l'assistente virtuale e questa chiamata può essere registrata per migliorare il nostro servizio. Come posso aiutarvi?",
+            code: "Buongiorno, ha chiamato il Ristorante Esempio. Sono l'assistente virtuale e questa chiamata può essere registrata per migliorare il nostro servizio. Come posso aiutarLa?",
           },
           {
             type: "callout",
             tone: "info",
             title: "Protezione dei dati",
-            text: "Stabiliamo con voi per quanto tempo conservare registrazioni e trascrizioni. Vi consigliamo di conservare solo il necessario e di indicare nella vostra informativa sulla privacy che usate un assistente vocale per rispondere alle chiamate.",
+            text: "Stabiliamo con Lei per quanto tempo conservare registrazioni e trascrizioni. Le consigliamo di conservare solo il necessario e di indicare nella Sua informativa sulla privacy che usa un assistente vocale per rispondere alle chiamate.",
           },
           {
             type: "h2",
@@ -1549,9 +1549,9 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Voce**: potete scegliere tra voci femminili e maschili, con toni diversi. Nella fase di prova ascoltiamo insieme alcune opzioni.",
+              "**Voce**: può scegliere tra voci femminili e maschili, con toni diversi. Nella fase di prova ascoltiamo insieme alcune opzioni.",
               "**Lingua**: la receptionist parla portoghese europeo e inglese. Può iniziare in portoghese e passare all'inglese quando il cliente parla in inglese.",
-              "**Tono**: più formale per le cliniche, più disinvolto per un caffè o un bar. Adattiamo il linguaggio al vostro stile.",
+              "**Tono**: più formale per le cliniche, più disinvolto per un caffè o un bar. Adattiamo il linguaggio al Suo stile.",
             ],
           },
           {
@@ -1561,12 +1561,12 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "La receptionist risponde in base alle informazioni che ci date. Più sono chiare e aggiornate, migliori sono le risposte. Includete orari, indirizzo e indicazioni stradali, parcheggio, servizi, prezzi indicativi, regole su cancellazioni e ritardi, e cosa fare nei casi particolari (gruppi numerosi, allergie, bambini, animali).",
+            text: "La receptionist risponde in base alle informazioni che ci fornisce. Più sono chiare e aggiornate, migliori sono le risposte. Includa orari, indirizzo e indicazioni stradali, parcheggio, servizi, prezzi indicativi, regole su cancellazioni e ritardi, e cosa fare nei casi particolari (gruppi numerosi, allergie, bambini, animali).",
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Quando cambiano il menù, i prezzi o gli orari, inviateci l'aggiornamento. Le modifiche semplici di solito sono attive entro lo stesso giorno lavorativo.",
+            text: "Quando cambiano il menù, i prezzi o gli orari, ci invii l'aggiornamento. Le modifiche semplici di solito sono attive entro lo stesso giorno lavorativo.",
           },
           {
             type: "h2",
@@ -1575,7 +1575,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Se usate un sistema di prenotazione o un calendario compatibile, come il nostro [sistema di prenotazione online](/it/products/online-booking-system), la receptionist verifica la disponibilità e registra l'appuntamento. Senza integrazione, raccoglie i dati (nome, contatto, data, ora, numero di persone o servizio) e li invia come richiesta che il vostro team confermerà.",
+            text: "Se usa un sistema di prenotazione o un calendario compatibile, come il nostro [sistema di prenotazione online](/it/products/online-booking-system), la receptionist verifica la disponibilità e registra l'appuntamento. Senza integrazione, raccoglie i dati (nome, contatto, data, ora, numero di persone o servizio) e li invia come richiesta che il Suo team confermerà.",
           },
           {
             type: "h2",
@@ -1594,7 +1594,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Per vedere come funziona tutto questo nella quotidianità, consultate la pagina sull'[utilizzo](/it/docs/ai-voice-receptionist/usage).",
+            text: "Per vedere come funziona tutto questo nella quotidianità, consulti la pagina sull'[utilizzo](/it/docs/ai-voice-receptionist/usage).",
           },
         ],
       },
@@ -1972,7 +1972,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Una volta attiva, la receptionist lavora da sola. Il vostro compito diventa leggere i riepiloghi, rispondere alle richieste di essere richiamati e avvisarci quando qualcosa cambia nell'attività. Questa pagina spiega il flusso tipico e le buone pratiche.",
+            text: "Una volta attiva, la receptionist lavora da sola. Il Suo compito diventa leggere i riepiloghi, rispondere alle richieste di essere richiamati e avvisarci quando qualcosa cambia nell'attività. Questa pagina spiega il flusso tipico e le buone pratiche.",
           },
           {
             type: "h2",
@@ -1986,7 +1986,7 @@ export const docs: ProductDocs = {
               "La receptionist capisce il motivo della chiamata e risponde, fa domande per chiarire o raccoglie i dati.",
               "Se si tratta di un appuntamento o di una prenotazione, conferma data, ora e contatto, poi lo registra o lo invia come richiesta.",
               "Se la chiamata rientra nelle regole di trasferimento, chiama il cellulare stabilito.",
-              "Alla fine si congeda e viene generato un riepilogo che ricevete via WhatsApp o email.",
+              "Alla fine si congeda e viene generato un riepilogo che Lei riceve via WhatsApp o email.",
             ],
           },
           {
@@ -2001,8 +2001,8 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            title: "Create una routine",
-            text: "Stabilite un momento fisso, per esempio all'apertura, per rivedere le richieste arrivate durante la notte. Richiamare il giorno stesso fa una grande differenza nell'impressione del cliente.",
+            title: "Crei una routine",
+            text: "Stabilisca un momento fisso, per esempio all'apertura, per rivedere le richieste arrivate durante la notte. Richiamare il giorno stesso fa una grande differenza nell'impressione del cliente.",
           },
           {
             type: "h2",
@@ -2014,8 +2014,8 @@ export const docs: ProductDocs = {
             items: [
               "**Non accetta pagamenti** e non chiede i dati della carta al telefono.",
               "**Non dà consigli medici**, diagnosi o indicazioni cliniche; nelle cliniche inoltra al team e, in caso di emergenza, indica il 112.",
-              "**Non promette** sconti, eccezioni o condizioni che non siano nelle informazioni che ci avete dato.",
-              "**Non sostituisce** il vostro team nelle conversazioni delicate, come i reclami gravi; in questi casi trasferisce la chiamata o lascia una richiesta di essere richiamati.",
+              "**Non promette** sconti, eccezioni o condizioni che non siano nelle informazioni che ci ha fornito.",
+              "**Non sostituisce** il Suo team nelle conversazioni delicate, come i reclami gravi; in questi casi trasferisce la chiamata o lascia una richiesta di essere richiamati.",
             ],
           },
           {
@@ -2034,7 +2034,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Se notate una domanda a cui la receptionist ha risposto male o non ha saputo rispondere, inviateci il riepilogo di quella chiamata. Aggiungiamo la risposta e aggiorniamo le regole. Per le questioni tecniche, consultate la [risoluzione dei problemi](/it/docs/ai-voice-receptionist/troubleshooting).",
+            text: "Se nota una domanda a cui la receptionist ha risposto male o non ha saputo rispondere, ci invii il riepilogo di quella chiamata. Aggiungiamo la risposta e aggiorniamo le regole. Per le questioni tecniche, consulti la [risoluzione dei problemi](/it/docs/ai-voice-receptionist/troubleshooting).",
           },
         ],
       },
@@ -2462,7 +2462,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "La maggior parte dei problemi nasce dalla deviazione dell'operatore o da informazioni non aggiornate. Prima di contattarci, controllate i punti qui sotto. Se il problema continua, mandateci un messaggio con l'ora approssimativa della chiamata e il numero da cui avete chiamato.",
+            text: "La maggior parte dei problemi nasce dalla deviazione dell'operatore o da informazioni non aggiornate. Prima di contattarci, controlli i punti qui sotto. Se il problema continua, ci mandi un messaggio con l'ora approssimativa della chiamata e il numero da cui ha chiamato.",
           },
           {
             type: "h2",
@@ -2473,20 +2473,20 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               {
-                title: "Controllate lo stato della deviazione",
+                title: "Controlli lo stato della deviazione",
                 body: "Su molte linee mobili, digitando `*#21#`, `*#61#` o `*#67#` si vede se la deviazione corrispondente è attiva e verso quale numero.",
               },
               {
-                title: "Verificate il numero di destinazione",
-                body: "Assicuratevi che il numero impostato sia esattamente quello che vi abbiamo indicato, con il prefisso corretto.",
+                title: "Verifichi il numero di destinazione",
+                body: "Si assicuri che il numero impostato sia esattamente quello che Le abbiamo indicato, con il prefisso corretto.",
               },
               {
-                title: "Fate una chiamata di prova",
-                body: "Chiamate il vostro numero da un altro telefono, non rispondete e aspettate. Se sentite il saluto, la deviazione funziona.",
+                title: "Faccia una chiamata di prova",
+                body: "Chiami il Suo numero da un altro telefono, non risponda e aspetti. Se sente il saluto, la deviazione funziona.",
               },
               {
-                title: "Contattate l'operatore",
-                body: "Se i codici non funzionano, il vostro piano potrebbe avere la deviazione bloccata o richiedere l'attivazione tramite il servizio clienti dell'operatore.",
+                title: "Contatti l'operatore",
+                body: "Se i codici non funzionano, il Suo piano potrebbe avere la deviazione bloccata o richiedere l'attivazione tramite il servizio clienti dell'operatore.",
               },
             ],
           },
@@ -2497,7 +2497,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Nella deviazione per mancata risposta, il tempo prima che la chiamata passi alla receptionist è stabilito dall'operatore. Su molte reti si può regolare con un codice come `**61*NUMERO**TEMPO#`, dove il tempo di solito è un multiplo di 5 secondi fino a 30. Verificate con il vostro operatore se il vostro piano lo prevede.",
+            text: "Nella deviazione per mancata risposta, il tempo prima che la chiamata passi alla receptionist è stabilito dall'operatore. Su molte reti si può regolare con un codice come `**61*NUMERO**TEMPO#`, dove il tempo di solito è un multiplo di 5 secondi fino a 30. Verifichi con il Suo operatore se il Suo piano lo prevede.",
           },
           {
             type: "h2",
@@ -2507,9 +2507,9 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Verificate che il cellulare di destinazione abbia campo e non sia in modalità non disturbare.",
-              "Controllate che quel cellulare non devii a sua volta troppo presto alla segreteria.",
-              "Se è cambiata la persona di turno o il suo numero, avvisateci per aggiornare le regole.",
+              "Verifichi che il cellulare di destinazione abbia campo e non sia in modalità non disturbare.",
+              "Controlli che quel cellulare non devii a sua volta troppo presto alla segreteria.",
+              "Se è cambiata la persona di turno o il suo numero, ci avvisi per aggiornare le regole.",
             ],
           },
           {
@@ -2519,7 +2519,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Controllate la cartella spam o promozioni della posta e aggiungete il mittente ai contatti. Su WhatsApp, verificate di non aver bloccato o archiviato la chat. Se avete cambiato numero o email, ditecelo per aggiornare la destinazione.",
+            text: "Controlli la cartella spam o promozioni della posta e aggiunga il mittente ai contatti. Su WhatsApp, verifichi di non aver bloccato o archiviato la chat. Se ha cambiato numero o email, ce lo dica per aggiornare la destinazione.",
           },
           {
             type: "h2",
@@ -2528,13 +2528,13 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Di solito succede quando un'informazione è cambiata (orari, prezzi, menù) e non è stata aggiornata, oppure quando la domanda non era prevista. Inviateci il riepilogo della chiamata e la risposta corretta; correggiamo rapidamente.",
+            text: "Di solito succede quando un'informazione è cambiata (orari, prezzi, menù) e non è stata aggiornata, oppure quando la domanda non era prevista. Ci invii il riepilogo della chiamata e la risposta corretta; correggiamo rapidamente.",
           },
           {
             type: "callout",
             tone: "warning",
             title: "Disattivare in caso di emergenza",
-            text: "Se dovete disattivare subito la receptionist, disattivate la deviazione (per esempio con `##002#`, se il vostro operatore lo supporta) e avvisateci tramite la [pagina dei contatti](/it/contact) o WhatsApp.",
+            text: "Se deve disattivare subito la receptionist, disattivi la deviazione (per esempio con `##002#`, se il Suo operatore lo supporta) e ci avvisi tramite la [pagina dei contatti](/it/contact) o WhatsApp.",
           },
         ],
       },
@@ -2877,7 +2877,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Abbiamo raccolto qui le domande che i clienti ci fanno più spesso. Se non trovate la vostra, [scriveteci](/it/contact).",
+            text: "Abbiamo raccolto qui le domande che i clienti ci fanno più spesso. Se non trova la Sua, [ci scriva](/it/contact).",
           },
           {
             type: "h2",
@@ -2889,7 +2889,7 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Devo cambiare numero di telefono?",
-                a: "No. Potete mantenere il vostro numero e deviare le chiamate alla receptionist, solo quando è occupato, non rispondete o fuori orario. Potete anche scegliere un numero nuovo dedicato.",
+                a: "No. Può mantenere il Suo numero e deviare le chiamate alla receptionist, solo quando è occupato, quando non risponde o fuori orario. Può anche scegliere un numero nuovo dedicato.",
               },
               {
                 q: "I clienti capiscono che stanno parlando con un'IA?",
@@ -2901,38 +2901,38 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Le chiamate vengono registrate? E il GDPR?",
-                a: "Potete scegliere se registrare o solo trascrivere. In ogni caso il cliente viene informato all'inizio della chiamata. Stabiliamo con voi il periodo di conservazione e vi consigliamo di aggiornare la vostra informativa sulla privacy.",
+                a: "Può scegliere se registrare o solo trascrivere. In ogni caso il cliente viene informato all'inizio della chiamata. Stabiliamo con Lei il periodo di conservazione e Le consigliamo di aggiornare la Sua informativa sulla privacy.",
               },
               {
                 q: "Può registrare appuntamenti nel mio sistema?",
-                a: "Sì, quando il sistema di prenotazione o il calendario permette l'integrazione. Altrimenti la receptionist raccoglie i dati e li invia come richiesta che il vostro team confermerà.",
+                a: "Sì, quando il sistema di prenotazione o il calendario permette l'integrazione. Altrimenti la receptionist raccoglie i dati e li invia come richiesta che il Suo team confermerà.",
               },
               {
                 q: "E se qualcuno ha davvero bisogno di parlare con una persona?",
-                a: "La receptionist trasferisce la chiamata al cellulare che stabilite voi. Se nessuno risponde, lascia una richiesta di essere richiamati e vi avvisa via WhatsApp o email.",
+                a: "La receptionist trasferisce la chiamata al cellulare che stabilisce Lei. Se nessuno risponde, lascia una richiesta di essere richiamati e La avvisa via WhatsApp o email.",
               },
               {
                 q: "Può accettare pagamenti o dare indicazioni mediche?",
-                a: "No. La receptionist non accetta pagamenti né dati della carta e non dà consigli medici. In questi casi inoltra al vostro team.",
+                a: "No. La receptionist non accetta pagamenti né dati della carta e non dà consigli medici. In questi casi inoltra al Suo team.",
               },
               {
                 q: "La deviazione di chiamata ha un costo?",
-                a: "Dipende dal vostro operatore e dal piano tariffario. Alcune chiamate deviate vengono addebitate come chiamate fatte da voi. Verificate con il vostro operatore prima di attivarla.",
+                a: "Dipende dal Suo operatore e dal piano tariffario. Alcune chiamate deviate vengono addebitate come chiamate fatte da Lei. Verifichi con il Suo operatore prima di attivarla.",
               },
               {
                 q: "Quanto tempo richiede l'installazione?",
-                a: "Di solito pochi giorni lavorativi. I tempi dipendono soprattutto dalle informazioni che ci inviate e dall'integrazione con il sistema di prenotazione.",
+                a: "Di solito pochi giorni lavorativi. I tempi dipendono soprattutto dalle informazioni che ci invia e dall'integrazione con il sistema di prenotazione.",
               },
               {
                 q: "Posso disdire il servizio?",
-                a: "Sì. Basta disattivare la deviazione e avvisarci. Le condizioni di disdetta sono indicate nella proposta che ricevete prima di iniziare.",
+                a: "Sì. Basta disattivare la deviazione e avvisarci. Le condizioni di disdetta sono indicate nella proposta che riceve prima di iniziare.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Volete sentire come suona? [Prenotate una demo](/it/book-a-demo) e facciamo una chiamata di esempio con le informazioni della vostra attività.",
+            text: "Vuole sentire come suona? [Prenoti una demo](/it/book-a-demo) e facciamo una chiamata di esempio con le informazioni della Sua attività.",
           },
         ],
       },

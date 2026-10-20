@@ -352,11 +352,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Primi passi con la Gestione delle recensioni con IA",
         description:
-          "Scoprite come la Gestione delle recensioni con IA di Steevanz controlla le recensioni del vostro Profilo dell'attività su Google, prepara risposte con il vostro tono e vi avvisa subito delle recensioni negative.",
+          "Scopra come la Gestione delle recensioni con IA di Steevanz controlla le recensioni del Suo Profilo dell'attività su Google, prepara risposte con il Suo tono e La avvisa subito delle recensioni negative.",
         blocks: [
           {
             type: "p",
-            text: "La **Gestione delle recensioni con IA** vi aiuta a rispondere a ogni recensione del vostro Profilo dell'attività su Google senza passare ore a scrivere. Steevanz collega il servizio al vostro profilo, controlla le nuove recensioni e prepara risposte con il tono del vostro marchio, che approvate prima che vengano pubblicate.",
+            text: "La **Gestione delle recensioni con IA** La aiuta a rispondere a ogni recensione del Suo Profilo dell'attività su Google senza passare ore a scrivere. Steevanz collega il servizio al Suo profilo, controlla le nuove recensioni e prepara risposte con il tono del Suo marchio, che Lei approva prima che vengano pubblicate.",
           },
           {
             type: "h2",
@@ -366,9 +366,9 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "**Monitoraggio continuo** delle nuove recensioni sul vostro Profilo dell'attività su Google.",
-              "**Bozze di risposta** scritte con il tono della vostra attività, inviate via WhatsApp o email per l'approvazione.",
-              "**Avvisi immediati** quando ricevete una recensione da 1 a 3 stelle.",
+              "**Monitoraggio continuo** delle nuove recensioni sul Suo Profilo dell'attività su Google.",
+              "**Bozze di risposta** scritte con il tono della Sua attività, inviate via WhatsApp o email per l'approvazione.",
+              "**Avvisi immediati** quando riceve una recensione da 1 a 3 stelle.",
               "**Report mensile** con l'andamento della valutazione, il numero di recensioni e gli argomenti più citati.",
               "**Supporto umano** del team Steevanz per i casi delicati.",
             ],
@@ -380,11 +380,11 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Chi cerca un ristorante, un salone o una clinica legge le recensioni, e anche le risposte. Una risposta curata a una critica dimostra che prendete sul serio i commenti; un ringraziamento personale a una recensione positiva rafforza il rapporto. La parte difficile è essere costanti quando la giornata è piena, ed è qui che il servizio vi aiuta.",
+            text: "Chi cerca un ristorante, un salone o una clinica legge le recensioni, e anche le risposte. Una risposta curata a una critica dimostra che Lei prende sul serio i commenti; un ringraziamento personale a una recensione positiva rafforza il rapporto. La parte difficile è essere costanti quando la giornata è piena, ed è qui che il servizio La aiuta.",
           },
           {
             type: "p",
-            text: "Le risposte vi insegnano anche qualcosa. Leggere le recensioni con regolarità, e non solo quando qualcosa va storto, fa emergere degli schemi: un piatto che tutti lodano, un tempo di attesa che torna spesso, un membro del team che i clienti citano per nome. Il report mensile riunisce questi schemi perché possiate intervenire.",
+            text: "Le risposte Le insegnano anche qualcosa. Leggere le recensioni con regolarità, e non solo quando qualcosa va storto, fa emergere degli schemi: un piatto che tutti lodano, un tempo di attesa che torna spesso, un membro del team che i clienti citano per nome. Il report mensile riunisce questi schemi perché Lei possa intervenire.",
           },
           {
             type: "h2",
@@ -394,11 +394,11 @@ export const docs: ProductDocs = {
           {
             type: "ol",
             items: [
-              "Date a Steevanz l'accesso come gestore al vostro Profilo dell'attività su Google.",
+              "Lei dà a Steevanz l'accesso come gestore al Suo Profilo dell'attività su Google.",
               "Concordiamo il tono, le regole e i casi che richiedono un'attenzione particolare.",
               "Quando arriva una nuova recensione, viene preparata una bozza di risposta.",
-              "Ricevete la bozza, la approvate o chiedete modifiche, e la risposta viene pubblicata.",
-              "Ogni mese ricevete un report con i risultati.",
+              "Lei riceve la bozza, la approva o chiede modifiche, e la risposta viene pubblicata.",
+              "Ogni mese riceve un report con i risultati.",
             ],
           },
           {
@@ -414,7 +414,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Il servizio funziona particolarmente bene insieme alle [targhe per recensioni Google](/it/products/google-review-plates): le targhe vi aiutano a raccogliere più recensioni e la gestione con IA fa sì che ognuna riceva una risposta. Per iniziare, consultate l'[installazione](/it/docs/ai-review-management/setup) oppure [prenotate una demo](/it/book-a-demo).",
+            text: "Il servizio funziona particolarmente bene insieme alle [targhe per recensioni Google](/it/products/google-review-plates): le targhe La aiutano a raccogliere più recensioni e la gestione con IA fa sì che ognuna riceva una risposta. Per iniziare, consulti l'[installazione](/it/docs/ai-review-management/setup) oppure [prenoti una demo](/it/book-a-demo).",
           },
         ],
       },
@@ -863,11 +863,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Installazione della Gestione delle recensioni con IA",
         description:
-          "Come dare a Steevanz l'accesso come gestore al vostro Profilo dell'attività su Google, concordare il tono delle risposte e attivare gli avvisi della Gestione delle recensioni con IA.",
+          "Come dare a Steevanz l'accesso come gestore al Suo Profilo dell'attività su Google, concordare il tono delle risposte e attivare gli avvisi della Gestione delle recensioni con IA.",
         blocks: [
           {
             type: "p",
-            text: "L'installazione è semplice e non richiede conoscenze tecniche. Il passaggio chiave è dare accesso al vostro Profilo dell'attività su Google, senza mai condividere la password del vostro account.",
+            text: "L'installazione è semplice e non richiede conoscenze tecniche. Il passaggio chiave è dare accesso al Suo Profilo dell'attività su Google, senza mai condividere la password del Suo account.",
           },
           {
             type: "h2",
@@ -877,16 +877,16 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Il vostro Profilo dell'attività su Google deve essere **verificato**.",
+              "Il Suo Profilo dell'attività su Google deve essere **verificato**.",
               "Serve l'accesso come **proprietario** del profilo per invitare nuovi gestori.",
-              "Tenete a portata di mano qualche esempio di risposte che avete scritto e che vi piacciono, se ne avete.",
+              "Tenga a portata di mano qualche esempio di risposte che ha scritto e che Le piacciono, se ne ha.",
             ],
           },
           {
             type: "callout",
             tone: "warning",
-            title: "Non condividete mai la password",
-            text: "Non ci serve la password del vostro account Google. L'accesso si concede con un invito come gestore, che potete revocare in qualsiasi momento.",
+            title: "Non condivida mai la password",
+            text: "Non ci serve la password del Suo account Google. L'accesso si concede con un invito come gestore, che può revocare in qualsiasi momento.",
           },
           {
             type: "h2",
@@ -898,23 +898,23 @@ export const docs: ProductDocs = {
             items: [
               {
                 title: "Riunione iniziale",
-                body: "Parliamo della vostra attività, dei vostri clienti, del tipo di recensioni che ricevete e del tono che volete trasmettere.",
+                body: "Parliamo della Sua attività, dei Suoi clienti, del tipo di recensioni che riceve e del tono che vuole trasmettere.",
               },
               {
                 title: "Invitare Steevanz come gestore",
-                body: "Nelle impostazioni di persone e accesso del vostro Profilo dell'attività su Google, aggiungete l'indirizzo email che vi indichiamo con il ruolo di gestore. Se avete dubbi, vi guidiamo durante una chiamata.",
+                body: "Nelle impostazioni di persone e accesso del Suo Profilo dell'attività su Google, aggiunga l'indirizzo email che Le indichiamo con il ruolo di gestore. Se ha dubbi, La guidiamo durante una chiamata.",
               },
               {
                 title: "Invito accettato",
-                body: "Accettiamo l'invito e verifichiamo con voi che l'accesso sia attivo e che vediamo le recensioni esistenti.",
+                body: "Accettiamo l'invito e verifichiamo con Lei che l'accesso sia attivo e che vediamo le recensioni esistenti.",
               },
               {
                 title: "Concordare tono e regole",
-                body: "Prepariamo una breve guida di stile: come rivolgersi ai clienti, la firma, le parole da evitare, come gestire le critiche e quando avvisarvi.",
+                body: "Prepariamo una breve guida di stile: come rivolgersi ai clienti, la firma, le parole da evitare, come gestire le critiche e quando avvisarLa.",
               },
               {
                 title: "Canale di approvazione",
-                body: "Scegliete se ricevere le bozze via WhatsApp, via email o entrambi, e chi del vostro team le approva.",
+                body: "Scelga se ricevere le bozze via WhatsApp, via email o entrambi, e chi del Suo team le approva.",
               },
               {
                 title: "Avvio",
@@ -929,13 +929,13 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Se avete più di una sede, di solito ognuna ha il proprio profilo Google. Ripetiamo l'invito per ogni profilo e potete stabilire regole diverse per sede, per esempio un tono più formale in una clinica e uno più disinvolto in un caffè.",
+            text: "Se ha più di una sede, di solito ognuna ha il proprio profilo Google. Ripetiamo l'invito per ogni profilo e può stabilire regole diverse per sede, per esempio un tono più formale in una clinica e uno più disinvolto in un caffè.",
           },
           {
             type: "callout",
             tone: "info",
-            title: "Potete revocare l'accesso quando volete",
-            text: "L'accesso come gestore è visibile nelle impostazioni del vostro profilo e il proprietario può revocarlo in qualsiasi momento. Restate sempre proprietari del profilo e di tutte le sue recensioni.",
+            title: "Può revocare l'accesso quando vuole",
+            text: "L'accesso come gestore è visibile nelle impostazioni del Suo profilo e il proprietario può revocarlo in qualsiasi momento. Il profilo e tutte le sue recensioni restano sempre Suoi.",
           },
           {
             type: "h2",
@@ -944,7 +944,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Consultate la pagina di [configurazione](/it/docs/ai-review-management/configuration) per perfezionare tono e avvisi. Se l'invito non funziona, consultate la [risoluzione dei problemi](/it/docs/ai-review-management/troubleshooting).",
+            text: "Consulti la pagina di [configurazione](/it/docs/ai-review-management/configuration) per perfezionare tono e avvisi. Se l'invito non funziona, consulti la [risoluzione dei problemi](/it/docs/ai-review-management/troubleshooting).",
           },
         ],
       },
@@ -1398,11 +1398,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Configurazione della Gestione delle recensioni con IA",
         description:
-          "Impostate il tono delle risposte, le regole per le recensioni negative, gli avvisi e la modalità di approvazione della Gestione delle recensioni con IA per il vostro Profilo dell'attività su Google.",
+          "Imposti il tono delle risposte, le regole per le recensioni negative, gli avvisi e la modalità di approvazione della Gestione delle recensioni con IA per il Suo Profilo dell'attività su Google.",
         blocks: [
           {
             type: "p",
-            text: "La configurazione stabilisce come suonano le risposte e quando vi viene chiesto di intervenire. Potete cambiare qualsiasi impostazione in qualsiasi momento; basta inviarci un messaggio.",
+            text: "La configurazione stabilisce come suonano le risposte e quando Le viene chiesto di intervenire. Può cambiare qualsiasi impostazione in qualsiasi momento; Le basta inviarci un messaggio.",
           },
           {
             type: "h2",
@@ -1422,7 +1422,7 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Vi chiederemo tre o quattro risposte che avete scritto e che vi piacciono. Sono il miglior riferimento per mantenere la voce della vostra attività.",
+            text: "Le chiederemo tre o quattro risposte che ha scritto e che Le piacciono. Sono il miglior riferimento per mantenere la voce della Sua attività.",
           },
           {
             type: "h2",
@@ -1431,7 +1431,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Le recensioni da 1 a 3 stelle non ricevono mai risposta senza la vostra approvazione. Le linee guida che seguiamo di default sono:",
+            text: "Le recensioni da 1 a 3 stelle non ricevono mai risposta senza la Sua approvazione. Le linee guida che seguiamo di default sono:",
           },
           {
             type: "ul",
@@ -1450,11 +1450,11 @@ export const docs: ProductDocs = {
           {
             type: "code",
             label: "Recensione da 2 stelle sul tempo di attesa",
-            code: "Buongiorno Anna, grazie per aver dedicato del tempo a lasciare una recensione, e ci dispiace che l'attesa sia stata così lunga. Non è l'esperienza che vogliamo offrire. Vorremmo capire cosa è successo: se potete, scriveteci all'indirizzo email del ristorante. Il team del Ristorante Esempio",
+            code: "Buongiorno Anna, grazie per aver dedicato del tempo a lasciare una recensione, e ci dispiace che l'attesa sia stata così lunga. Non è l'esperienza che vogliamo offrire. Vorremmo capire cosa è successo: se può, ci scriva all'indirizzo email del ristorante. Il team del Ristorante Esempio",
           },
           {
             type: "p",
-            text: "Notate che la risposta non polemizza, non rivela dettagli della visita e offre un canale privato. Per le recensioni positive, le risposte devono essere brevi, ringraziare e, quando possibile, citare qualcosa di specifico scritto dal cliente, come un piatto o il nome di chi lo ha servito.",
+            text: "Noti che la risposta non polemizza, non rivela dettagli della visita e offre un canale privato. Per le recensioni positive, le risposte devono essere brevi, ringraziare e, quando possibile, citare qualcosa di specifico scritto dal cliente, come un piatto o il nome di chi lo ha servito.",
           },
           {
             type: "h2",
@@ -1463,7 +1463,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Di default ricevete un avviso immediato per ogni recensione da 1 a 3 stelle, con il testo della recensione e una risposta suggerita. Potete cambiare la soglia (per esempio solo 1 e 2 stelle), scegliere chi riceve gli avvisi e chiedere di essere avvisati delle recensioni con parole chiave specifiche, come il nome di un membro del team.",
+            text: "Di default riceve un avviso immediato per ogni recensione da 1 a 3 stelle, con il testo della recensione e una risposta suggerita. Può cambiare la soglia (per esempio solo 1 e 2 stelle), scegliere chi riceve gli avvisi e chiedere un avviso per le recensioni con parole chiave specifiche, come il nome di un membro del team.",
           },
           {
             type: "h2",
@@ -1474,13 +1474,13 @@ export const docs: ProductDocs = {
             type: "table",
             head: ["Modalità", "Come funziona"],
             rows: [
-              ["Approvare tutto", "Ogni bozza richiede la vostra approvazione prima di essere pubblicata"],
-              ["Approvare solo le critiche", "Le recensioni da 4 e 5 stelle ricevono risposta secondo la guida di stile; le altre attendono la vostra approvazione"],
+              ["Approvare tutto", "Ogni bozza richiede la Sua approvazione prima di essere pubblicata"],
+              ["Approvare solo le critiche", "Le recensioni da 4 e 5 stelle ricevono risposta secondo la guida di stile; le altre attendono la Sua approvazione"],
             ],
           },
           {
             type: "p",
-            text: "Consigliamo di iniziare con **approvare tutto** nelle prime settimane. Quando vi fidate del tono, potete passare alla seconda modalità. Vedete come funziona tutto nella quotidianità alla pagina sull'[utilizzo](/it/docs/ai-review-management/usage).",
+            text: "Consigliamo di iniziare con **approvare tutto** nelle prime settimane. Quando si fida del tono, può passare alla seconda modalità. Veda come funziona tutto nella quotidianità alla pagina sull'[utilizzo](/it/docs/ai-review-management/usage).",
           },
         ],
       },
@@ -1888,7 +1888,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Nella quotidianità il vostro compito si riduce ad approvare le bozze e intervenire quando arriva una critica. Questa pagina spiega cosa fare in ogni situazione e cosa Google consente o vieta.",
+            text: "Nella quotidianità il Suo compito si riduce ad approvare le bozze e intervenire quando arriva una critica. Questa pagina spiega cosa fare in ogni situazione e cosa Google consente o vieta.",
           },
           {
             type: "h2",
@@ -1897,7 +1897,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Ogni bozza arriva con il testo della recensione, le stelle e la risposta proposta. Potete rispondere con una semplice approvazione, chiedere modifiche per iscritto (per esempio citare un piatto o correggere un nome) oppure dire che preferite rispondere di persona.",
+            text: "Ogni bozza arriva con il testo della recensione, le stelle e la risposta proposta. Può rispondere con una semplice approvazione, chiedere modifiche per iscritto (per esempio citare un piatto o correggere un nome) oppure dire che preferisce rispondere di persona.",
           },
           {
             type: "h2",
@@ -1908,16 +1908,16 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               {
-                title: "Leggetela con calma",
-                body: "Evitate di rispondere a caldo. Verificate con il vostro team cosa è successo, se la situazione è identificabile.",
+                title: "La legga con calma",
+                body: "Eviti di rispondere a caldo. Verifichi con il Suo team cosa è successo, se la situazione è identificabile.",
               },
               {
-                title: "Rivedete la risposta suggerita",
-                body: "La bozza ringrazia, riconosce l'esperienza del cliente e lo invita a proseguire in privato. Modificatela se c'è qualcosa di specifico da aggiungere.",
+                title: "Riveda la risposta suggerita",
+                body: "La bozza ringrazia, riconosce l'esperienza del cliente e lo invita a proseguire in privato. La modifichi se c'è qualcosa di specifico da aggiungere.",
               },
               {
-                title: "Approvate e seguite il caso",
-                body: "Una volta pubblicata la risposta, se il cliente vi contatta, risolvete la situazione in privato. Alcuni clienti aggiornano la recensione di loro iniziativa.",
+                title: "Approvi e segua il caso",
+                body: "Una volta pubblicata la risposta, se il cliente La contatta, risolva la situazione in privato. Alcuni clienti aggiornano la recensione di loro iniziativa.",
               },
             ],
           },
@@ -1938,7 +1938,7 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "warning",
-            text: "Queste pratiche possono portare alla rimozione delle recensioni o a limitazioni del vostro profilo. Steevanz non le usa e non le consiglia.",
+            text: "Queste pratiche possono portare alla rimozione delle recensioni o a limitazioni del Suo profilo. Steevanz non le usa e non le consiglia.",
           },
           {
             type: "h2",
@@ -1947,7 +1947,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Se una recensione contiene insulti, contenuti offensivi, dati personali o spam, o proviene chiaramente da qualcuno che non è mai stato cliente, potete segnalarla a Google direttamente dal profilo. Vi aiutiamo a preparare la segnalazione, ma la decisione spetta sempre a Google: **segnalare non garantisce la rimozione**. Le critiche legittime, anche se vi sembrano ingiuste, di solito non vengono rimosse; in quel caso una buona risposta è la vostra difesa migliore.",
+            text: "Se una recensione contiene insulti, contenuti offensivi, dati personali o spam, o proviene chiaramente da qualcuno che non è mai stato cliente, può segnalarla a Google direttamente dal profilo. La aiutiamo a preparare la segnalazione, ma la decisione spetta sempre a Google: **segnalare non garantisce la rimozione**. Le critiche legittime, anche se Le sembrano ingiuste, di solito non vengono rimosse; in quel caso una buona risposta è la Sua difesa migliore.",
           },
           {
             type: "h2",
@@ -1956,7 +1956,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Ogni mese ricevete un report con l'andamento della valutazione media, il numero di nuove recensioni, la percentuale di risposta e gli argomenti più citati, positivi e negativi. Usatelo per decidere dove migliorare, per esempio i tempi di attesa o il servizio. Avete domande? Consultate le [domande frequenti](/it/docs/ai-review-management/faq).",
+            text: "Ogni mese riceve un report con l'andamento della valutazione media, il numero di nuove recensioni, la percentuale di risposta e gli argomenti più citati, positivi e negativi. Lo usi per decidere dove migliorare, per esempio i tempi di attesa o il servizio. Ha domande? Consulti le [domande frequenti](/it/docs/ai-review-management/faq).",
           },
         ],
       },
@@ -2369,7 +2369,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Questi sono i problemi più frequenti e come risolverli. Se nessuno fa al caso vostro, [contattateci](/it/contact) indicando il nome del profilo e cosa è successo.",
+            text: "Questi sono i problemi più frequenti e come risolverli. Se nessuno fa al caso Suo, [ci contatti](/it/contact) indicando il nome del profilo e cosa è successo.",
           },
           {
             type: "h2",
@@ -2379,8 +2379,8 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "Assicuratevi di usare l'account Google **proprietario** del profilo; i gestori non possono invitare altre persone.",
-              "Verificate di aver scritto correttamente l'indirizzo email che vi abbiamo indicato.",
+              "Si assicuri di usare l'account Google **proprietario** del profilo; i gestori non possono invitare altre persone.",
+              "Verifichi di aver scritto correttamente l'indirizzo email che Le abbiamo indicato.",
               "Se il profilo non è ancora verificato, bisogna prima completare la verifica.",
               "Se l'invito è scaduto, basta inviarlo di nuovo.",
             ],
@@ -2392,7 +2392,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Le risposte possono impiegare un po' a diventare visibili pubblicamente, e Google può esaminarle prima di mostrarle. Se dopo 24 ore una risposta non è ancora visibile, avvisateci; verificheremo se è stata trattenuta da un filtro e modificheremo il testo.",
+            text: "Le risposte possono impiegare un po' a diventare visibili pubblicamente, e Google può esaminarle prima di mostrarle. Se dopo 24 ore una risposta non è ancora visibile, ci avvisi; verificheremo se è stata trattenuta da un filtro e modificheremo il testo.",
           },
           {
             type: "h2",
@@ -2403,16 +2403,16 @@ export const docs: ProductDocs = {
             type: "steps",
             items: [
               {
-                title: "Controllate il canale",
-                body: "Guardate nella cartella spam della posta e verificate che la chat di WhatsApp non sia archiviata o silenziata.",
+                title: "Controlli il canale",
+                body: "Guardi nella cartella spam della posta e verifichi che la chat di WhatsApp non sia archiviata o silenziata.",
               },
               {
-                title: "Controllate la soglia degli avvisi",
-                body: "Se avete impostato gli avvisi solo per 1 e 2 stelle, una recensione da 3 stelle non genera un avviso immediato.",
+                title: "Controlli la soglia degli avvisi",
+                body: "Se ha impostato gli avvisi solo per 1 e 2 stelle, una recensione da 3 stelle non genera un avviso immediato.",
               },
               {
-                title: "Controllate l'accesso",
-                body: "Se qualcuno ha revocato l'accesso come gestore di Steevanz, non vediamo più le nuove recensioni. Controllate le impostazioni di persone e accesso del profilo.",
+                title: "Controlli l'accesso",
+                body: "Se qualcuno ha revocato l'accesso come gestore di Steevanz, non vediamo più le nuove recensioni. Controlli le impostazioni di persone e accesso del profilo.",
               },
             ],
           },
@@ -2423,7 +2423,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "A volte Google rimuove recensioni che i suoi filtri automatici considerano sospette, e gli autori possono cancellare le proprie recensioni. Né Steevanz né il proprietario del profilo controllano questi casi. Se notate un calo forte e improvviso, parlatecene e lo analizziamo.",
+            text: "A volte Google rimuove recensioni che i suoi filtri automatici considerano sospette, e gli autori possono cancellare le proprie recensioni. Né Steevanz né il proprietario del profilo controllano questi casi. Se nota un calo forte e improvviso, ce ne parli e lo analizziamo.",
           },
           {
             type: "callout",
@@ -2438,7 +2438,7 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Qualche aggiustamento nelle prime settimane è normale. Quando chiedete una modifica, spiegate il motivo (per esempio troppo formale, troppo lunga, non firmiamo così). Usiamo questi commenti per aggiornare la guida di stile, e le bozze successive ne tengono conto. Se preferite, possiamo fissare una breve chiamata per rivedere più esempi insieme.",
+            text: "Qualche aggiustamento nelle prime settimane è normale. Quando chiede una modifica, ci spieghi il motivo (per esempio troppo formale, troppo lunga, non firmiamo così). Usiamo questi commenti per aggiornare la guida di stile, e le bozze successive ne tengono conto. Se preferisce, possiamo fissare una breve chiamata per rivedere più esempi insieme.",
           },
         ],
       },
@@ -2781,7 +2781,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Le domande che ci fanno più spesso sul servizio. Se vi servono più dettagli, [scriveteci](/it/contact).",
+            text: "Le domande che ci fanno più spesso sul servizio. Se Le servono più dettagli, [ci scriva](/it/contact).",
           },
           {
             type: "h2",
@@ -2793,19 +2793,19 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Vi serve la password del mio account Google?",
-                a: "No. Basta invitare Steevanz come gestore del vostro Profilo dell'attività su Google. Potete revocare questo accesso in qualsiasi momento.",
+                a: "No. Basta invitare Steevanz come gestore del Suo Profilo dell'attività su Google. Può revocare questo accesso in qualsiasi momento.",
               },
               {
                 q: "Vengono pubblicate risposte senza che io le veda?",
-                a: "Solo se scegliete questa modalità per le recensioni da 4 e 5 stelle. Le recensioni da 1 a 3 stelle vi vengono sempre inviate per l'approvazione.",
+                a: "Solo se sceglie questa modalità per le recensioni da 4 e 5 stelle. Le recensioni da 1 a 3 stelle Le vengono sempre inviate per l'approvazione.",
               },
               {
                 q: "Le risposte sembreranno scritte da una macchina?",
-                a: "Non dovrebbero. Concordiamo con voi una guida di stile, usiamo i vostri esempi ed evitiamo di ripetere risposte generiche. Ogni risposta fa riferimento a ciò che il cliente ha scritto davvero.",
+                a: "Non dovrebbero. Concordiamo con Lei una guida di stile, usiamo i Suoi esempi ed evitiamo di ripetere risposte generiche. Ogni risposta fa riferimento a ciò che il cliente ha scritto davvero.",
               },
               {
                 q: "Potete cancellare le recensioni negative?",
-                a: "No. Solo Google può rimuovere le recensioni, e solo quando violano le sue norme. Vi aiutiamo a segnalarle, ma la rimozione non è garantita.",
+                a: "No. Solo Google può rimuovere le recensioni, e solo quando violano le sue norme. La aiutiamo a segnalarle, ma la rimozione non è garantita.",
               },
               {
                 q: "Potete aiutarmi a ottenere più recensioni?",
@@ -2817,11 +2817,11 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Rispondete ai turisti in inglese?",
-                a: "Sì. Di default rispondiamo nella lingua in cui è scritta la recensione, tra le lingue concordate con voi.",
+                a: "Sì. Di default rispondiamo nella lingua in cui è scritta la recensione, tra le lingue concordate con Lei.",
               },
               {
                 q: "Funziona con piattaforme diverse da Google?",
-                a: "Il servizio è pensato per il Profilo dell'attività su Google. Se usate altre piattaforme, parlatecene e valutiamo il vostro caso.",
+                a: "Il servizio è pensato per il Profilo dell'attività su Google. Se usa altre piattaforme, ce ne parli e valutiamo il Suo caso.",
               },
               {
                 q: "Cosa contiene il report mensile?",
@@ -2829,14 +2829,14 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Posso disdire?",
-                a: "Sì. Avvisateci e revocate l'accesso come gestore di Steevanz. Le condizioni sono indicate nella proposta che ricevete prima di iniziare.",
+                a: "Sì. Ci avvisi e revochi l'accesso come gestore di Steevanz. Le condizioni sono indicate nella proposta che riceve prima di iniziare.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Consultate la [pagina del prodotto](/it/products/ai-review-management) per i prezzi oppure [prenotate una demo](/it/book-a-demo) per vedere esempi di risposte.",
+            text: "Consulti la [pagina del prodotto](/it/products/ai-review-management) per i prezzi oppure [prenoti una demo](/it/book-a-demo) per vedere esempi di risposte.",
           },
         ],
       },

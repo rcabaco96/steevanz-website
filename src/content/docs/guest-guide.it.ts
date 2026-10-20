@@ -8,7 +8,7 @@ export const it: Record<DocPageId, DocPageContent> = {
     blocks: [
       {
         type: "p",
-        text: "La guida digitale dell'alloggio è una pagina per il telefono con tutto ciò che gli ospiti devono sapere durante il soggiorno: Wi-Fi, check-in e check-out, regole della casa, elettrodomestici, rifiuti, emergenze e i vostri consigli. È in portoghese, inglese e altre due lingue, e si apre con un tocco su una targa posizionata all'interno dell'alloggio, oppure con il codice QR stampato sulla stessa targa.",
+        text: "La guida digitale dell'alloggio è una pagina per il telefono con tutto ciò che gli ospiti devono sapere durante il soggiorno: Wi-Fi, check-in e check-out, regole della casa, elettrodomestici, rifiuti, emergenze e i Suoi consigli. È in portoghese, inglese e altre due lingue, e si apre con un tocco su una targa posizionata all'interno dell'alloggio, oppure con il codice QR stampato sulla stessa targa.",
       },
       {
         type: "p",
@@ -19,7 +19,7 @@ export const it: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Elemento", "Dettagli"],
         rows: [
-          ["Scrittura della guida", "Trasformiamo i vostri appunti, le foto o la guida attuale in una pagina chiara, organizzata per argomento"],
+          ["Scrittura della guida", "Trasformiamo i Suoi appunti, le foto o la guida attuale in una pagina chiara, organizzata per argomento"],
           ["Quattro lingue", "Portoghese, inglese e altre due a scelta (francese, spagnolo, tedesco o italiano), controllate da noi"],
           ["Targa da toccare", "Targa da parete, espositore o adesivo, con codice QR, da posizionare all'interno dell'alloggio"],
           ["Versione stampabile", "Un PDF con lo stesso contenuto, per lasciare una copia cartacea nell'alloggio"],
@@ -39,7 +39,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Dal 13° mese, mantenere la guida online con le modifiche incluse costa 3 € al mese per alloggio. Le targhe aggiuntive per lo stesso alloggio e le lingue in più hanno un piccolo costo, indicato nel vostro preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
+        text: "Dal 13° mese, mantenere la guida online con le modifiche incluse costa 3 € al mese per alloggio. Le targhe aggiuntive per lo stesso alloggio e le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
       },
       { type: "h2", id: "how-it-works", text: "Come funziona per gli ospiti" },
       {
@@ -47,14 +47,14 @@ export const it: Record<DocPageId, DocPageContent> = {
         items: [
           "L'ospite entra e avvicina il telefono alla targa (o inquadra il codice QR).",
           "La guida si apre nella lingua del telefono, con un pulsante per cambiare lingua.",
-          "Trova il Wi-Fi (con un pulsante per copiare la password), le regole della casa e i vostri consigli senza dovervi scrivere.",
+          "Trova il Wi-Fi (con un pulsante per copiare la password), le regole della casa e i Suoi consigli senza doverLe scrivere.",
         ],
       },
       {
         type: "callout",
         tone: "info",
         title: "Cosa la guida non contiene mai",
-        text: "I codici della porta, della cassetta delle chiavi o dell'allarme. Quelli continuano a partire nel vostro messaggio di check-in.",
+        text: "I codici della porta, della cassetta delle chiavi o dell'allarme. Quelli continuano a partire nel Suo messaggio di check-in.",
       },
       { type: "h2", id: "next-steps", text: "Prossimi passi" },
       {
@@ -69,12 +69,12 @@ export const it: Record<DocPageId, DocPageContent> = {
   },
   setup: {
     title: "Installare la guida digitale dell'alloggio",
-    description: "Le informazioni che ci servono per scrivere la guida, come approvate la bozza e dove mettere la targa all'interno dell'alloggio.",
+    description: "Le informazioni che ci servono per scrivere la guida, come approva la bozza e dove mettere la targa all'interno dell'alloggio.",
     blocks: [
-      { type: "h2", id: "send-information", text: "1. Inviateci le informazioni" },
+      { type: "h2", id: "send-information", text: "1. Ci invii le informazioni" },
       {
         type: "p",
-        text: "Inviatecele come vi è più comodo: un documento, delle foto, la guida cartacea che avete già o un vocale su WhatsApp. Le organizziamo noi.",
+        text: "Ce le invii come Le è più comodo: un documento, delle foto, la guida cartacea che ha già o un vocale su WhatsApp. Pensiamo noi a organizzarle.",
       },
       {
         type: "table",
@@ -86,26 +86,26 @@ export const it: Record<DocPageId, DocPageContent> = {
           ["Regole", "Regole della casa e del condominio, orari di silenzio, fumo, animali, feste"],
           ["Rifiuti e raccolta differenziata", "Dove sono i cassonetti e come differenziare i rifiuti"],
           ["Come arrivare e parcheggiare", "Dall'aeroporto e dalla stazione, parcheggio e trasporti pubblici"],
-          ["Emergenze", "Il vostro contatto, la farmacia, l'ospedale e il centro sanitario più vicini"],
-          ["Consigli", "Ristoranti, spiagge, passeggiate e negozi che consigliate"],
+          ["Emergenze", "Il Suo contatto, la farmacia, l'ospedale e il centro sanitario più vicini"],
+          ["Consigli", "Ristoranti, spiagge, passeggiate e negozi che consiglia"],
           ["Dati legali", "Numero di registrazione (RNAL)"],
         ],
       },
       {
         type: "callout",
         tone: "warning",
-        title: "Non inviateci codici di accesso",
+        title: "Non ci invii codici di accesso",
         text: "I codici della porta, della cassetta delle chiavi e dell'allarme non entrano mai nella guida. Se per errore ce ne arriva uno, non lo pubblichiamo.",
       },
-      { type: "h2", id: "approve", text: "2. Approvate la bozza" },
+      { type: "h2", id: "approve", text: "2. Approvi la bozza" },
       {
         type: "p",
-        text: "Entro circa tre giorni lavorativi vi inviamo un link alla bozza in portoghese e nelle altre lingue. Chiedete tutte le correzioni che volete. Pubblichiamo solo dopo la vostra approvazione.",
+        text: "Entro circa tre giorni lavorativi Le inviamo un link alla bozza in portoghese e nelle altre lingue. Chieda tutte le correzioni che desidera. Pubblichiamo solo dopo la Sua approvazione.",
       },
-      { type: "h2", id: "place-plate", text: "3. Posizionate la targa" },
+      { type: "h2", id: "place-plate", text: "3. Posizioni la targa" },
       {
         type: "p",
-        text: "La targa arriva programmata e provata entro due-quattro giorni lavorativi. Posizionatela all'interno dell'alloggio, in un punto che gli ospiti vedono appena entrano.",
+        text: "La targa arriva programmata e provata entro due-quattro giorni lavorativi. Poi la posizioni all'interno dell'alloggio, in un punto che gli ospiti vedono appena entrano.",
       },
       {
         type: "table",
@@ -119,18 +119,18 @@ export const it: Record<DocPageId, DocPageContent> = {
       {
         type: "callout",
         tone: "tip",
-        text: "Evitate la porta esterna: la guida contiene la password del Wi-Fi e deve essere alla portata solo di chi soggiorna lì.",
+        text: "Eviti la porta esterna: la guida contiene la password del Wi-Fi e deve essere alla portata solo di chi soggiorna lì.",
       },
     ],
   },
   configuration: {
     title: "Configurare la guida digitale dell'alloggio",
-    description: "Lingue, sezioni della guida, la sezione «Valuta il tuo soggiorno», il link al vostro sito e come chiedere modifiche.",
+    description: "Lingue, sezioni della guida, la sezione «Valuti il Suo soggiorno», il link al Suo sito e come chiedere modifiche.",
     blocks: [
       { type: "h2", id: "languages", text: "Lingue" },
       {
         type: "p",
-        text: "La guida include portoghese, inglese e altre due lingue a vostra scelta tra francese, spagnolo, tedesco e italiano. Si apre automaticamente nella lingua del telefono dell'ospite e ha un selettore. Se vi servono più lingue, includiamo il costo nel vostro preventivo.",
+        text: "La guida include portoghese, inglese e altre due lingue a Sua scelta tra francese, spagnolo, tedesco e italiano. Si apre automaticamente nella lingua del telefono dell'ospite e ha un selettore. Se Le servono più lingue, includiamo il costo nel Suo preventivo.",
       },
       { type: "h2", id: "sections", text: "Sezioni" },
       {
@@ -143,11 +143,11 @@ export const it: Record<DocPageId, DocPageContent> = {
           "Regole della casa e del condominio",
           "Rifiuti e raccolta differenziata",
           "Rumore e vicini",
-          "Emergenze: 112, il vostro contatto, farmacia, ospedale e centro sanitario",
+          "Emergenze: 112, il Suo contatto, farmacia, ospedale e centro sanitario",
           "Come arrivare e parcheggiare",
           "Consigli dell'host",
           "Tassa di soggiorno: cos'è e perché si paga",
-          "Valuta il tuo soggiorno",
+          "Valuti il Suo soggiorno",
           "Libro dei reclami e numero di registrazione",
         ],
       },
@@ -155,20 +155,20 @@ export const it: Record<DocPageId, DocPageContent> = {
         type: "p",
         text: "Insieme, queste sezioni includono i contenuti che la legge portoghese richiede nel libro informativo di una casa vacanza (alojamento local): funzionamento dell'alloggio, regole, rifiuti, elettrodomestici, rumore, regole del condominio e contatto del responsabile, in portoghese, inglese e altre due lingue.",
       },
-      { type: "h2", id: "review-your-stay", text: "La sezione «Valuta il tuo soggiorno»" },
+      { type: "h2", id: "review-your-stay", text: "La sezione «Valuti il Suo soggiorno»" },
       {
         type: "p",
-        text: "È uguale per tutti gli ospiti: spiega che Booking.com invia la richiesta di recensione via e-mail e Airbnb nell'app (in Viaggi), dopo il check-out, e che la loro opinione aiuta altri viaggiatori. Non offre sconti né regali e non chiede un punteggio preciso, perché le piattaforme lo vietano. Se il vostro alloggio ha un profilo Google, possiamo aggiungere il link di Google.",
+        text: "È uguale per tutti gli ospiti: spiega che Booking.com invia la richiesta di recensione via e-mail e Airbnb nell'app (in Viaggi), dopo il check-out, e che la loro opinione aiuta altri viaggiatori. Non offre sconti né regali e non chiede un punteggio preciso, perché le piattaforme lo vietano. Se il Suo alloggio ha un profilo Google, possiamo aggiungere il link di Google.",
       },
-      { type: "h2", id: "website", text: "Link al vostro sito" },
+      { type: "h2", id: "website", text: "Link al Suo sito" },
       {
         type: "p",
-        text: "Se avete un sito vostro, possiamo mostrare un discreto link «Sito ufficiale». È disattivato per impostazione predefinita: Airbnb vieta di incoraggiare gli ospiti a prenotare fuori dalla piattaforma, quindi non usiamo mai frasi come «prenota direttamente e risparmia».",
+        text: "Se ha un sito Suo, possiamo mostrare un discreto link «Sito ufficiale». È disattivato per impostazione predefinita: Airbnb vieta di incoraggiare gli ospiti a prenotare fuori dalla piattaforma, quindi non usiamo mai frasi come «prenoti direttamente e risparmi».",
       },
       { type: "h2", id: "changes", text: "Chiedere modifiche" },
       {
         type: "p",
-        text: "Inviateci cosa è cambiato via WhatsApp o e-mail. Aggiorniamo la guida e il PDF entro due giorni lavorativi, in tutte le lingue. La targa non va mai sostituita.",
+        text: "Ci invii cosa è cambiato via WhatsApp o e-mail. Aggiorniamo la guida e il PDF entro due giorni lavorativi, in tutte le lingue. La targa non va mai sostituita.",
       },
     ],
   },
@@ -176,13 +176,13 @@ export const it: Record<DocPageId, DocPageContent> = {
     title: "Usare la guida digitale dell'alloggio",
     description: "Buone pratiche perché gli ospiti trovino e usino la guida, e come funziona insieme all'assistente WhatsApp.",
     blocks: [
-      { type: "h2", id: "let-guests-know", text: "Fate conoscere la guida agli ospiti" },
+      { type: "h2", id: "let-guests-know", text: "Faccia conoscere la guida agli ospiti" },
       {
         type: "ul",
         items: [
-          "Citatela nel vostro messaggio di check-in: «Quando arrivate, toccate la targa accanto alla porta per il Wi-Fi e tutto sulla casa».",
-          "Posizionate la targa dove si vede subito.",
-          "Lasciate la versione stampata in un cassetto o sul tavolo del soggiorno per gli ospiti che preferiscono la carta.",
+          "Citi la guida nel Suo messaggio di check-in: «Quando arriva, tocchi la targa accanto alla porta per il Wi-Fi e tutto sulla casa».",
+          "Posizioni la targa dove si vede subito.",
+          "Lasci la versione stampata in un cassetto o sul tavolo del soggiorno per gli ospiti che preferiscono la carta.",
         ],
       },
       { type: "h2", id: "recommendations", text: "Consigli che fanno la differenza" },
@@ -193,7 +193,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "assistant", text: "Con l'assistente WhatsApp" },
       {
         type: "p",
-        text: "Se avete anche l'assistente IA, il contenuto della guida è la sua base di conoscenza. Quando un ospite chiede su WhatsApp, riceve la stessa risposta che c'è nella guida, nella sua lingua. Nemmeno l'assistente condivide mai i codici di accesso.",
+        text: "Se ha anche l'assistente IA, il contenuto della guida è la sua base di conoscenza. Quando un ospite chiede su WhatsApp, riceve la stessa risposta che c'è nella guida, nella sua lingua. Nemmeno l'assistente condivide mai i codici di accesso.",
       },
       { type: "h2", id: "several-properties", text: "Più alloggi" },
       {
@@ -223,17 +223,17 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "outdated-information", text: "Un'informazione non è aggiornata" },
       {
         type: "p",
-        text: "Inviateci la correzione via WhatsApp o e-mail. La aggiorniamo entro due giorni lavorativi. Nei casi urgenti, come una password del Wi-Fi sbagliata, avvisateci e le diamo la precedenza.",
+        text: "Ci invii la correzione via WhatsApp o e-mail. Aggiorniamo la guida entro due giorni lavorativi. Nei casi urgenti, come una password del Wi-Fi sbagliata, ci avvisi e diamo la precedenza alla correzione.",
       },
       { type: "h2", id: "damaged-plate", text: "La targa si è rotta o è sparita" },
       {
         type: "p",
-        text: "Ve ne inviamo una nuova con lo stesso indirizzo, quindi la guida resta la stessa. Una targa aggiuntiva per lo stesso alloggio ha un piccolo costo, indicato nel vostro preventivo.",
+        text: "Le inviamo una nuova targa con lo stesso indirizzo, quindi la guida resta la stessa. Una targa aggiuntiva per lo stesso alloggio ha un piccolo costo, indicato nel Suo preventivo.",
       },
       { type: "h2", id: "shared-link", text: "Il link è stato condiviso fuori dall'alloggio" },
       {
         type: "p",
-        text: "L'indirizzo della guida è privato e impossibile da indovinare, ma un ospite potrebbe salvarlo. Se cambiate la password del Wi-Fi o volete un nuovo indirizzo, ditecelo: ne creiamo uno e riprogrammiamo la targa.",
+        text: "L'indirizzo della guida è privato e impossibile da indovinare, ma un ospite potrebbe salvarlo. Se cambia la password del Wi-Fi o vuole un nuovo indirizzo, ce lo dica: ne creiamo uno e riprogrammiamo la targa.",
       },
     ],
   },
@@ -250,11 +250,11 @@ export const it: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "La guida vale come libro informativo richiesto dalla legge?",
-            a: "La guida include i contenuti che la legge chiede nel libro informativo, in portoghese, inglese e altre due lingue, e vi consegniamo una versione stampabile che consigliamo di tenere nell'alloggio.",
+            a: "La guida include i contenuti che la legge chiede nel libro informativo, in portoghese, inglese e altre due lingue, e Le consegniamo una versione stampabile che consigliamo di tenere nell'alloggio.",
           },
           {
             q: "La guida sostituisce la targa obbligatoria delle case vacanza?",
-            a: "No. La targa identificativa con il vostro numero di registrazione segue un modello ufficiale stabilito dalla legge. La guida mostra il vostro numero di registrazione, ma non sostituisce quella targa.",
+            a: "No. La targa identificativa con il Suo numero di registrazione segue un modello ufficiale stabilito dalla legge. La guida mostra il Suo numero di registrazione, ma non sostituisce quella targa.",
           },
           {
             q: "La guida raccoglie dati degli ospiti?",
@@ -266,7 +266,7 @@ export const it: Record<DocPageId, DocPageContent> = {
           },
           {
             q: "Vi occupate delle comunicazioni degli ospiti al SIBA?",
-            a: "No. Se volete promemoria delle scadenze, se ne occupa l'automazione «Pulizie e scadenze». Per l'invio automatico, consigliamo strumenti specializzati come Chekin o Hostkit.",
+            a: "No. Se desidera promemoria delle scadenze, se ne occupa l'automazione «Pulizie e scadenze». Per l'invio automatico, consigliamo strumenti specializzati come Chekin o Hostkit.",
           },
         ],
       },

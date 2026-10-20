@@ -322,15 +322,15 @@ export const docs: ProductDocs = {
       it: {
         title: "Primi passi con le targhe per social e sito web",
         description:
-          "Scoprite come le targhe, gli adesivi e i biglietti Steevanz portano i clienti al vostro Instagram, Facebook, TikTok, sito web o biglietto da visita digitale con un tocco.",
+          "Scopra come le targhe, gli adesivi e i biglietti Steevanz portano i clienti al Suo Instagram, Facebook, TikTok, sito web o biglietto da visita digitale con un tocco.",
         blocks: [
           {
             type: "p",
-            text: "I prodotti per social e sito web trasformano un semplice tocco con il telefono in una nuova visita al vostro Instagram, alla vostra pagina Facebook, al vostro TikTok o al vostro sito. Funzionano anche come biglietto da visita digitale: un tocco e il vostro contatto resta salvato sul telefono del cliente.",
+            text: "I prodotti per social e sito web trasformano un semplice tocco con il telefono in una nuova visita al Suo Instagram, alla Sua pagina Facebook, al Suo TikTok o al Suo sito. Funzionano anche come biglietto da visita digitale: un tocco e il Suo contatto resta salvato sul telefono del cliente.",
           },
           {
             type: "p",
-            text: "Come tutti i prodotti Steevanz, è un servizio gestito. Configuriamo tutto noi; questa documentazione vi aiuta a scegliere bene e a sfruttare al meglio ciò che avete.",
+            text: "Come tutti i prodotti Steevanz, è un servizio gestito. Configuriamo tutto noi; questa documentazione La aiuta a scegliere bene e a sfruttare al meglio ciò che ha.",
           },
           { type: "h2", id: "whats-included", text: "Cosa include" },
           {
@@ -339,21 +339,21 @@ export const docs: ProductDocs = {
             rows: [
               ["Targa o supporto da banco", "Portare i clienti a seguire l'attività su un social o ad aprire una pagina di link"],
               ["Adesivo", "Vetrine, menù, confezioni, specchi"],
-              ["Biglietto da visita", "Condividere il vostro contatto o quello del vostro team con un tocco"],
-              ["Pagina di link (link-in-bio)", "Una pagina ospitata da Steevanz con tutti i vostri link in un unico posto"],
+              ["Biglietto da visita", "Condividere il Suo contatto o quello del Suo team con un tocco"],
+              ["Pagina di link (link-in-bio)", "Una pagina ospitata da Steevanz con tutti i Suoi link in un unico posto"],
             ],
           },
           { type: "h2", id: "how-it-works", text: "Come funziona" },
           {
             type: "p",
-            text: "Ogni targa o biglietto ha un chip e, nella maggior parte dei formati, un QR code stampato. Entrambi puntano a un link breve gestito da Steevanz, che porta il cliente alla destinazione che avete scelto. Poiché la destinazione è gestita da noi, potete cambiarla quando volete senza ristampare nulla.",
+            text: "Ogni targa o biglietto ha un chip e, nella maggior parte dei formati, un QR code stampato. Entrambi puntano a un link breve gestito da Steevanz, che porta il cliente alla destinazione che ha scelto. Poiché la destinazione è gestita da noi, può cambiarla quando vuole senza ristampare nulla.",
           },
           {
             type: "ol",
             items: [
               "Il cliente avvicina il telefono o inquadra il QR.",
               "Il telefono apre il link: nell'app del social, se è installata, altrimenti nel browser.",
-              "Il cliente segue la vostra pagina, vede i vostri link o salva il vostro contatto.",
+              "Il cliente segue la Sua pagina, vede i Suoi link o salva il Suo contatto.",
             ],
           },
           { type: "h2", id: "who-its-for", text: "Per chi è" },
@@ -378,7 +378,7 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "info",
-            text: "Steevanz è indipendente e non ha alcuna affiliazione con Meta, TikTok, Google o Apple. Le targhe aprono semplicemente i link pubblici delle vostre pagine.",
+            text: "Steevanz è indipendente e non ha alcuna affiliazione con Meta, TikTok, Google o Apple. Le targhe aprono semplicemente i link pubblici delle Sue pagine.",
           },
         ],
       },
@@ -761,15 +761,15 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "L'installazione comincia da una decisione: dove deve arrivare il cliente quando tocca la targa? Definita la destinazione, Steevanz programma, blocca e testa i chip, e a voi resta solo da metterli nel posto giusto.",
+            text: "L'installazione comincia da una decisione: dove deve arrivare il cliente quando tocca la targa? Definita la destinazione, Steevanz programma, blocca e testa i chip, e a Lei resta solo da metterli nel posto giusto.",
           },
           { type: "h2", id: "choose-destination", text: "Scegliere la destinazione" },
           {
             type: "table",
             head: ["Destinazione", "Quando sceglierla"],
             rows: [
-              ["Un singolo profilo (Instagram, TikTok, Facebook)", "Quando avete un social principale e volete crescere lì"],
-              ["Pagina di link Steevanz", "Quando avete più social, un sito, un menù o un negozio online"],
+              ["Un singolo profilo (Instagram, TikTok, Facebook)", "Quando ha un social principale e vuole crescere lì"],
+              ["Pagina di link Steevanz", "Quando ha più social, un sito, un menù o un negozio online"],
               ["Sito o pagina specifica", "Per promozioni, un menù digitale o un negozio online"],
               ["Scheda contatto", "Per biglietti da visita personali o del team"],
             ],
@@ -777,7 +777,7 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Nel dubbio, scegliete la pagina di link. Offre al cliente tutte le opzioni con un solo tocco e potete cambiarne il contenuto in qualsiasi momento.",
+            text: "Nel dubbio, scelga la pagina di link. Offre al cliente tutte le opzioni con un solo tocco e può cambiarne il contenuto in qualsiasi momento.",
           },
           { type: "h2", id: "setup-steps", text: "Passi dell'installazione" },
           {
@@ -785,23 +785,23 @@ export const docs: ProductDocs = {
             items: [
               {
                 title: "Raccogliere i link",
-                body: "Copiate l'indirizzo completo di ogni profilo, per esempio `https://www.instagram.com/ilnomedellavostraattivita`. Verificate che i profili siano pubblici.",
+                body: "Copi l'indirizzo completo di ogni profilo, per esempio `https://www.instagram.com/ilnomedellasuaattivita`. Verifichi che i profili siano pubblici.",
               },
               {
                 title: "Inviarli a Steevanz",
-                body: "Inviate i link, il logo e, per i biglietti da visita, i dati di contatto (nome, ruolo, cellulare, email, indirizzo). Via WhatsApp o email.",
+                body: "Invii i link, il logo e, per i biglietti da visita, i dati di contatto (nome, ruolo, cellulare, email, indirizzo). Via WhatsApp o email.",
               },
               {
                 title: "Approvare l'anteprima",
-                body: "Vi inviamo un'anteprima della pagina di link o del biglietto digitale. Chiedete tutte le modifiche che volete prima della programmazione.",
+                body: "Le inviamo un'anteprima della pagina di link o del biglietto digitale. Chieda tutte le modifiche che vuole prima della programmazione.",
               },
               {
                 title: "Ricevere e posizionare",
-                body: "Le targhe arrivano programmate, bloccate e testate. Posizionatele nei punti scelti.",
+                body: "Le targhe arrivano programmate, bloccate e testate. Le posizioni nei punti scelti.",
               },
               {
                 title: "Testare sul posto",
-                body: "Toccate ogni targa con un iPhone e un Android e inquadrate il QR con la fotocamera per confermare la destinazione.",
+                body: "Tocchi ogni targa con un iPhone e un Android e inquadri il QR con la fotocamera per confermare la destinazione.",
               },
             ],
           },
@@ -811,20 +811,20 @@ export const docs: ProductDocs = {
             items: [
               "Vicino alla cassa, dove il cliente aspetta con il telefono in mano.",
               "Sui tavoli, accanto al menù o al supporto per le recensioni Google.",
-              "In vetrina, sul lato interno del vetro: il segnale del chip attraversa il vetro sottile, ma testate sempre.",
+              "In vetrina, sul lato interno del vetro: il segnale del chip attraversa il vetro sottile, ma testi sempre.",
               "Sugli specchi dei centri estetici, dove i clienti scattano spesso foto.",
             ],
           },
           {
             type: "callout",
             tone: "warning",
-            title: "Evitate il metallo",
-            text: "Le superfici metalliche e i terminali di pagamento (che emettono un proprio campo contactless) disturbano il segnale del chip. Per il metallo, chiedete la versione anti-metallo.",
+            title: "Eviti il metallo",
+            text: "Le superfici metalliche e i terminali di pagamento (che emettono un proprio campo contactless) disturbano il segnale del chip. Per il metallo, chieda la versione anti-metallo.",
           },
           { type: "h2", id: "combine-products", text: "Abbinare ad altri prodotti" },
           {
             type: "p",
-            text: "Molte attività abbinano una targa per i social a una [targa per recensioni Google](/it/products/google-review-plates). Distinguetele bene («Seguiteci» e «Lasciateci una recensione») perché il cliente sappia cosa fa ciascuna.",
+            text: "Molte attività abbinano una targa per i social a una [targa per recensioni Google](/it/products/google-review-plates). Le distingua bene («Ci segua» e «Ci lasci una recensione») perché il cliente sappia cosa fa ciascuna.",
           },
         ],
       },
@@ -1207,12 +1207,12 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "In questa pagina spieghiamo i tre elementi che potete configurare: la destinazione di ogni targa, la pagina di link e il biglietto da visita digitale.",
+            text: "In questa pagina spieghiamo i tre elementi che può configurare: la destinazione di ogni targa, la pagina di link e il biglietto da visita digitale.",
           },
           { type: "h2", id: "dynamic-redirect", text: "Reindirizzamento dinamico" },
           {
             type: "p",
-            text: "I chip vengono programmati con un link breve Steevanz e poi **bloccati**, perché nessuno possa riscriverli. La destinazione reale è salvata da noi. Questo significa che potete:",
+            text: "I chip vengono programmati con un link breve Steevanz e poi **bloccati**, perché nessuno possa riscriverli. La destinazione reale è salvata da noi. Questo significa che può:",
           },
           {
             type: "ul",
@@ -1224,12 +1224,12 @@ export const docs: ProductDocs = {
           },
           {
             type: "p",
-            text: "Per cambiare la destinazione, basta inviarci il nuovo link via WhatsApp o email, indicando quali targhe devono cambiare. Vi confermiamo quando è attivo.",
+            text: "Per cambiare la destinazione, basta inviarci il nuovo link via WhatsApp o email, indicando quali targhe devono cambiare. Le confermiamo quando è attivo.",
           },
           { type: "h2", id: "links-page", text: "Pagina di link" },
           {
             type: "p",
-            text: "La pagina di link è una pagina semplice e veloce, ospitata da Steevanz, con il vostro logo, i vostri colori e un elenco di pulsanti. Può includere:",
+            text: "La pagina di link è una pagina semplice e veloce, ospitata da Steevanz, con il Suo logo, i Suoi colori e un elenco di pulsanti. Può includere:",
           },
           {
             type: "ul",
@@ -1237,18 +1237,18 @@ export const docs: ProductDocs = {
               "Social (Instagram, Facebook, TikTok, YouTube, LinkedIn).",
               "Sito, negozio online o menù digitale.",
               "Pulsanti per WhatsApp, chiamata e indicazioni sulla mappa.",
-              "Link alle recensioni e alle prenotazioni, se usate questi servizi.",
+              "Link alle recensioni e alle prenotazioni, se usa questi servizi.",
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Meno è meglio. Una pagina con 4-6 pulsanti ben scelti funziona meglio di un lungo elenco. Mettete per prima l'azione più importante.",
+            text: "Meno è meglio. Una pagina con 4-6 pulsanti ben scelti funziona meglio di un lungo elenco. Metta per prima l'azione più importante.",
           },
           { type: "h2", id: "digital-business-card", text: "Biglietto da visita digitale" },
           {
             type: "p",
-            text: "Il biglietto apre una pagina di contatto con la vostra foto, nome, ruolo e pulsanti d'azione. Il pulsante **Salva contatto** scarica un file `.vcf` (vCard), che il telefono riconosce e propone di aggiungere ai contatti.",
+            text: "Il biglietto apre una pagina di contatto con la Sua foto, nome, ruolo e pulsanti d'azione. Il pulsante **Salva contatto** scarica un file `.vcf` (vCard), che il telefono riconosce e propone di aggiungere ai contatti.",
           },
           {
             type: "table",
@@ -1669,7 +1669,7 @@ export const docs: ProductDocs = {
       it: {
         title: "Uso: idee di posizionamento e statistiche",
         description:
-          "Come i clienti aprono i vostri social con un tocco su iPhone e Android, idee pratiche per posizionare le targhe e come leggere le statistiche dei tocchi di ogni targa.",
+          "Come i clienti aprono i Suoi social con un tocco su iPhone e Android, idee pratiche per posizionare le targhe e come leggere le statistiche dei tocchi di ogni targa.",
         blocks: [
           {
             type: "p",
@@ -1696,7 +1696,7 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "**Bar**: adesivo sul banco di ritiro, dove si aspetta il caffè.",
-              "**Ristorante**: supporto da tavolo con «Seguiteci e scoprite i piatti del giorno».",
+              "**Ristorante**: supporto da tavolo con «Ci segua e scopra i piatti del giorno».",
               "**Parrucchiere**: adesivo sullo specchio, nel momento della foto finale.",
               "**Negozio**: adesivo nel camerino o sulle confezioni.",
               "**Eventi e fiere**: biglietti da visita per il team commerciale.",
@@ -1710,19 +1710,19 @@ export const docs: ProductDocs = {
           {
             type: "ul",
             items: [
-              "«Seguiteci su Instagram: novità ogni settimana.»",
-              "«Avvicinate il telefono per vedere il menù e i nostri social.»",
-              "«Salvate il mio contatto con un tocco.»",
+              "«Ci segua su Instagram: novità ogni settimana.»",
+              "«Avvicini il telefono per vedere il menù e i nostri social.»",
+              "«Salvi il mio contatto con un tocco.»",
             ],
           },
           {
             type: "p",
-            text: "Non promettete omaggi in cambio di un follow senza prima verificare le regole sulle promozioni del social in questione.",
+            text: "Non prometta omaggi in cambio di un follow senza prima verificare le regole sulle promozioni del social in questione.",
           },
           { type: "h2", id: "tap-statistics", text: "Statistiche dei tocchi" },
           {
             type: "p",
-            text: "Poiché ogni tocco passa dal reindirizzamento Steevanz, possiamo contare le aperture per targa senza raccogliere dati personali dei clienti. Potete chiederci il riepilogo o consultarlo nella vostra area cliente, se disponibile nel vostro piano.",
+            text: "Poiché ogni tocco passa dal reindirizzamento Steevanz, possiamo contare le aperture per targa senza raccogliere dati personali dei clienti. Può chiederci il riepilogo o consultarlo nella Sua area cliente, se disponibile nel Suo piano.",
           },
           {
             type: "ul",
@@ -1735,12 +1735,12 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Lasciate decidere ai numeri. Se la targa in vetrina è poco usata e quella sul banco riceve molti tocchi, spostate quella della vetrina.",
+            text: "Lasci decidere ai numeri. Se la targa in vetrina è poco usata e quella sul banco riceve molti tocchi, sposti quella della vetrina.",
           },
           { type: "h2", id: "care", text: "Manutenzione" },
           {
             type: "p",
-            text: "Pulite le targhe con un panno morbido e detergente neutro, senza alcol né prodotti abrasivi. Tenete i biglietti da visita lontano da magneti potenti ed evitate di piegarli.",
+            text: "Pulisca le targhe con un panno morbido e detergente neutro, senza alcol né prodotti abrasivi. Tenga i biglietti da visita lontano da magneti potenti ed eviti di piegarli.",
           },
         ],
       },
@@ -2028,17 +2028,17 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "La maggior parte dei casi si risolve in pochi minuti. Se nulla di tutto questo aiuta, [contattateci](/it/contact) o scriveteci su WhatsApp.",
+            text: "La maggior parte dei casi si risolve in pochi minuti. Se nulla di tutto questo aiuta, [ci contatti](/it/contact) o ci scriva su WhatsApp.",
           },
           { type: "h2", id: "wont-read", text: "Il telefono non legge la targa" },
           {
             type: "ol",
             items: [
-              "Sbloccate lo schermo. I telefoni leggono la targa solo con lo schermo acceso.",
-              "Su Android, verificate che la lettura di prossimità (con un tocco) sia attiva nelle impostazioni delle connessioni.",
-              "Su iPhone 7, 8 o X, usate il lettore di tag del Centro di Controllo. Dall'iPhone XS in poi la lettura è automatica.",
-              "Togliete cover metalliche, cover a portafoglio o popsocket e avvicinate la parte alta (iPhone) o centrale (molti Android) del retro del telefono.",
-              "Se nulla funziona, usate il QR code.",
+              "Sblocchi lo schermo. I telefoni leggono la targa solo con lo schermo acceso.",
+              "Su Android, verifichi che la lettura di prossimità (con un tocco) sia attiva nelle impostazioni delle connessioni.",
+              "Su iPhone 7, 8 o X, usi il lettore di tag del Centro di Controllo. Dall'iPhone XS in poi la lettura è automatica.",
+              "Tolga cover metalliche, cover a portafoglio o popsocket e avvicini la parte alta (iPhone) o centrale (molti Android) del retro del telefono.",
+              "Se nulla funziona, usi il QR code.",
             ],
           },
           { type: "h2", id: "opens-in-browser", text: "Si apre nel browser invece che nell'app" },
@@ -2049,30 +2049,30 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "tip",
-            text: "Se succede spesso con il vostro pubblico, una pagina di link può dare risultati migliori: si apre sempre velocemente nel browser e ogni pulsante porta al social giusto.",
+            text: "Se succede spesso con il Suo pubblico, una pagina di link può dare risultati migliori: si apre sempre velocemente nel browser e ogni pulsante porta al social giusto.",
           },
           { type: "h2", id: "profile-not-found", text: "Profilo non trovato" },
           {
             type: "ul",
             items: [
-              "Avete cambiato nome utente? Il vecchio link smette di funzionare. Inviateci il nuovo link e aggiorniamo la destinazione.",
+              "Ha cambiato nome utente? Il vecchio link smette di funzionare. Ci invii il nuovo link e aggiorniamo la destinazione.",
               "Il profilo è privato? I visitatori vedono solo il nome e il pulsante per seguire.",
-              "L'account è stato sospeso o limitato? Risolvete prima con il social; nel frattempo possiamo far puntare le targhe al vostro sito.",
+              "L'account è stato sospeso o limitato? Risolva prima con il social; nel frattempo possiamo far puntare le targhe al Suo sito.",
             ],
           },
           { type: "h2", id: "contact-not-saving", text: "Il contatto non si salva" },
           {
             type: "ul",
             items: [
-              "Verificate di aver toccato **Salva contatto** e poi «Crea nuovo contatto» (iPhone) o salva (Android).",
-              "Alcuni browser interni alle app (per esempio quello di un social) bloccano i download. Aprite la pagina in Safari o Chrome.",
-              "Se i dati non sono aggiornati, inviateci la correzione: la modifica si fa da noi, senza cambiare il biglietto.",
+              "Verifichi di aver toccato **Salva contatto** e poi «Crea nuovo contatto» (iPhone) o salva (Android).",
+              "Alcuni browser interni alle app (per esempio quello di un social) bloccano i download. Apra la pagina in Safari o Chrome.",
+              "Se i dati non sono aggiornati, ci invii la correzione: la modifica si fa da noi, senza cambiare il biglietto.",
             ],
           },
           { type: "h2", id: "damage", text: "Targa o biglietto danneggiato" },
           {
             type: "p",
-            text: "Biglietti piegati o targhe rotte possono avere il chip danneggiato. Inviateci una foto e ci occupiamo della sostituzione.",
+            text: "Biglietti piegati o targhe rotte possono avere il chip danneggiato. Ci invii una foto e ci occupiamo della sostituzione.",
           },
         ],
       },
@@ -2359,11 +2359,11 @@ export const docs: ProductDocs = {
             items: [
               {
                 q: "Posso collegare una targa a più di un social?",
-                a: "Ogni targa apre una sola destinazione. Per più social, usate la pagina di link Steevanz, che riunisce tutti i vostri profili in un unico posto.",
+                a: "Ogni targa apre una sola destinazione. Per più social, usi la pagina di link Steevanz, che riunisce tutti i Suoi profili in un unico posto.",
               },
               {
                 q: "Posso cambiare la destinazione dopo aver ricevuto le targhe?",
-                a: "Sì. I chip puntano a un reindirizzamento gestito da Steevanz. Inviateci il nuovo link e lo aggiorniamo, senza ristampare.",
+                a: "Sì. I chip puntano a un reindirizzamento gestito da Steevanz. Ci invii il nuovo link e lo aggiorniamo, senza ristampare.",
               },
               {
                 q: "Il cliente deve avere l'app installata?",
@@ -2387,18 +2387,18 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Steevanz è partner di Meta o di TikTok?",
-                a: "No. Steevanz è indipendente. Le targhe aprono i link pubblici delle vostre pagine.",
+                a: "No. Steevanz è indipendente. Le targhe aprono i link pubblici delle Sue pagine.",
               },
               {
                 q: "La targa funziona attraverso il vetro della vetrina?",
-                a: "Di solito sì, con vetro semplice e sottile. Doppi vetri o pellicole metallizzate possono impedire la lettura; testate prima di fissarla.",
+                a: "Di solito sì, con vetro semplice e sottile. Doppi vetri o pellicole metallizzate possono impedire la lettura; la testi prima di fissarla.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Avete un'altra domanda? [Scriveteci](/it/contact) o scoprite le [targhe per social e sito web](/it/products/social-media-plates).",
+            text: "Ha un'altra domanda? [Ci scriva](/it/contact) o scopra le [targhe per social e sito web](/it/products/social-media-plates).",
           },
         ],
       },

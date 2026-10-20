@@ -377,11 +377,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Primi passi con le targhe per recensioni Google",
         description:
-          "Scoprite come funzionano le targhe per recensioni Google, cosa ricevete da Steevanz e cosa preparare prima di iniziare a raccogliere più recensioni su Google.",
+          "Scopra come funzionano le targhe per recensioni Google, cosa riceve da Steevanz e cosa preparare prima di iniziare a raccogliere più recensioni su Google.",
         blocks: [
           {
             type: "p",
-            text: "Le targhe per recensioni Google permettono ai vostri clienti di lasciare una recensione su Google in pochi secondi: basta avvicinare il telefono alla targa, o inquadrare il QR code stampato, e il modulo di recensione della vostra attività si apre subito. Senza ricerche, senza cercare il locale su Google Maps, senza passaggi intermedi.",
+            text: "Le targhe per recensioni Google permettono ai Suoi clienti di lasciare una recensione su Google in pochi secondi: basta avvicinare il telefono alla targa, o inquadrare il QR code stampato, e il modulo di recensione della Sua attività si apre subito. Senza ricerche, senza cercare il locale su Google Maps, senza passaggi intermedi.",
           },
           {
             type: "p",
@@ -390,14 +390,14 @@ export const docs: ProductDocs = {
           { type: "h2", id: "how-it-works", text: "Come funziona" },
           {
             type: "p",
-            text: "Ogni targa ha un chip (**NTAG213** o **NTAG215**) nascosto all'interno e un QR code stampato sul fronte. Il chip e il QR puntano a un indirizzo breve gestito da Steevanz, che reindirizza il cliente al modulo di recensione del vostro Profilo dell'attività su Google.",
+            text: "Ogni targa ha un chip (**NTAG213** o **NTAG215**) nascosto all'interno e un QR code stampato sul fronte. Il chip e il QR puntano a un indirizzo breve gestito da Steevanz, che reindirizza il cliente al modulo di recensione del Suo Profilo dell'attività su Google.",
           },
           {
             type: "ol",
             items: [
               "Il cliente avvicina il telefono alla targa o inquadra il QR code.",
               "Il telefono apre il link nel browser o nell'app Google Maps.",
-              "Compare la finestra di recensione della vostra attività, con le stelle pronte da compilare.",
+              "Compare la finestra di recensione della Sua attività, con le stelle pronte da compilare.",
               "Il cliente sceglie le stelle, scrive un commento (facoltativo) e pubblica.",
             ],
           },
@@ -423,28 +423,28 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "Un **Profilo dell'attività su Google** (ex Google My Business) attivo e verificato.",
-              "Accesso a quel profilo come proprietari o gestori, oppure la possibilità di inviarci il link per le recensioni.",
-              "Un'idea di dove volete posizionare le targhe, per scegliere i formati giusti.",
+              "Accesso a quel profilo come proprietario o gestore, oppure la possibilità di inviarci il link per le recensioni.",
+              "Un'idea di dove vuole posizionare le targhe, per scegliere i formati giusti.",
             ],
           },
           {
             type: "p",
-            text: "Se il profilo non è ancora verificato, occupatevene prima: senza un profilo attivo, Google non mostra il modulo di recensione. Possiamo guidarvi durante la [demo gratuita](/it/book-a-demo).",
+            text: "Se il profilo non è ancora verificato, se ne occupi prima: senza un profilo attivo, Google non mostra il modulo di recensione. Possiamo guidarLa durante la [demo gratuita](/it/book-a-demo).",
           },
           { type: "h2", id: "next-steps", text: "Prossimi passi" },
           {
             type: "ul",
             items: [
-              "[Installazione](/it/docs/google-review-plates/setup): come otteniamo il vostro link per le recensioni e dove posizionare ogni targa.",
+              "[Installazione](/it/docs/google-review-plates/setup): come otteniamo il Suo link per le recensioni e dove posizionare ogni targa.",
               "[Configurazione](/it/docs/google-review-plates/configuration): blocco dei chip, reindirizzamento e cambio di destinazione.",
-              "[Uso](/it/docs/google-review-plates/usage): come il vostro staff deve chiedere recensioni senza violare le regole di Google.",
+              "[Uso](/it/docs/google-review-plates/usage): come il Suo staff deve chiedere recensioni senza violare le regole di Google.",
               "[Risoluzione dei problemi](/it/docs/google-review-plates/troubleshooting): cosa fare se una targa non risponde.",
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Steevanz non è Google e non ha alcuna affiliazione con Google. Le targhe portano semplicemente i vostri clienti al modulo pubblico di recensione del vostro profilo.",
+            text: "Steevanz non è Google e non ha alcuna affiliazione con Google. Le targhe portano semplicemente i Suoi clienti al modulo pubblico di recensione del Suo profilo.",
           },
         ],
       },
@@ -868,35 +868,35 @@ export const docs: ProductDocs = {
       it: {
         title: "Installazione delle targhe per recensioni Google",
         description:
-          "Come ottenere il link per le recensioni del vostro Profilo dell'attività su Google, verificare il Place ID e scegliere il posto migliore per ogni targa nel vostro locale.",
+          "Come ottenere il link per le recensioni del Suo Profilo dell'attività su Google, verificare il Place ID e scegliere il posto migliore per ogni targa nel Suo locale.",
         blocks: [
           {
             type: "p",
-            text: "L'installazione ha due parti: ottenere il link per le recensioni corretto dal vostro profilo Google e mettere le targhe nei posti giusti. Steevanz programma e testa i chip; da parte vostra, basta confermare i dati e scegliere i punti.",
+            text: "L'installazione ha due parti: ottenere il link per le recensioni corretto dal Suo profilo Google e mettere le targhe nei posti giusti. Steevanz programma e testa i chip; da parte Sua, basta confermare i dati e scegliere i punti.",
           },
           { type: "h2", id: "get-review-link", text: "Ottenere il link per le recensioni" },
           {
             type: "p",
-            text: "Ci sono due modi affidabili per ottenere il link. Potete inviarci l'uno o l'altro, oppure darci semplicemente l'accesso da gestore al vostro profilo e pensiamo noi al resto.",
+            text: "Ci sono due modi affidabili per ottenere il link. Può inviarci l'uno o l'altro, oppure darci semplicemente l'accesso da gestore al Suo profilo e pensiamo noi al resto.",
           },
           {
             type: "steps",
             items: [
               {
                 title: "Aprire il Profilo dell'attività",
-                body: "Accedete con l'account Google che gestisce l'attività e cercate il nome dell'attività su Google o Google Maps. Il pannello di gestione del profilo compare in cima ai risultati.",
+                body: "Acceda con l'account Google che gestisce l'attività e cerchi il nome dell'attività su Google o Google Maps. Il pannello di gestione del profilo compare in cima ai risultati.",
               },
               {
                 title: "Scegliere «Chiedi recensioni»",
-                body: "Nel pannello del profilo, fate clic su **Chiedi recensioni**. Google mostra una finestra con un link breve da condividere.",
+                body: "Nel pannello del profilo, faccia clic su **Chiedi recensioni**. Google mostra una finestra con un link breve da condividere.",
               },
               {
                 title: "Copiare il link",
-                body: "Copiate il link mostrato. Di solito ha la forma `g.page/r/.../review`. Inviatelo a Steevanz via WhatsApp o email.",
+                body: "Copi il link mostrato. Di solito ha la forma `g.page/r/.../review`. Lo invii a Steevanz via WhatsApp o email.",
               },
               {
                 title: "Verificarlo con un test",
-                body: "Aprite il link su un telefono collegato a un account Google personale. Deve aprire direttamente la finestra di recensione della vostra attività.",
+                body: "Apra il link su un telefono collegato a un account Google personale. Deve aprire direttamente la finestra di recensione della Sua attività.",
               },
             ],
           },
@@ -908,7 +908,7 @@ export const docs: ProductDocs = {
           { type: "h3", id: "place-id-alternative", text: "Alternativa: link con Place ID" },
           {
             type: "p",
-            text: "Ogni attività su Google Maps ha un identificatore unico chiamato **Place ID**. Potete trovarlo con lo strumento pubblico Place ID Finder di Google, cercando il nome e l'indirizzo della vostra attività. Con quell'identificatore, il link per le recensioni è così:",
+            text: "Ogni attività su Google Maps ha un identificatore unico chiamato **Place ID**. Può trovarlo con lo strumento pubblico Place ID Finder di Google, cercando il nome e l'indirizzo della Sua attività. Con quell'identificatore, il link per le recensioni è così:",
           },
           {
             type: "code",
@@ -918,13 +918,13 @@ export const docs: ProductDocs = {
           {
             type: "callout",
             tone: "warning",
-            title: "Verificate che sia l'attività giusta",
-            text: "Se ci sono schede duplicate o un locale con un nome simile nella stessa via, è facile copiare il Place ID sbagliato. Verificate sempre che la finestra di recensione mostri il nome e l'indirizzo corretti.",
+            title: "Verifichi che sia l'attività giusta",
+            text: "Se ci sono schede duplicate o un locale con un nome simile nella stessa via, è facile copiare il Place ID sbagliato. Verifichi sempre che la finestra di recensione mostri il nome e l'indirizzo corretti.",
           },
           { type: "h2", id: "choose-placement", text: "Scegliere dove va ogni targa" },
           {
             type: "p",
-            text: "La regola d'oro è semplice: mettete la targa dove il cliente ha già il telefono in mano e qualche secondo libero.",
+            text: "La regola d'oro è semplice: metta la targa dove il cliente ha già il telefono in mano e qualche secondo libero.",
           },
           {
             type: "ul",
@@ -939,12 +939,12 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "warning",
             title: "Superfici metalliche",
-            text: "Il metallo blocca il segnale del chip. Se dovete applicare una targa o un adesivo su metallo (un banco in acciaio inox, un frigorifero, una porta metallica), chiedeteci la versione con **chip anti-metallo**, che ha uno strato isolante in ferrite.",
+            text: "Il metallo blocca il segnale del chip. Se deve applicare una targa o un adesivo su metallo (un banco in acciaio inox, un frigorifero, una porta metallica), ci chieda la versione con **chip anti-metallo**, che ha uno strato isolante in ferrite.",
           },
           { type: "h2", id: "test-installation", text: "Testare dopo l'installazione" },
           {
             type: "p",
-            text: "Quando ogni targa è nella sua posizione definitiva, testatela con almeno un iPhone e un Android. Avvicinate il telefono lentamente, con lo schermo sbloccato, e verificate che si apra la finestra di recensione giusta. Testate anche il QR code con la fotocamera. Se qualcosa non va, consultate la pagina [risoluzione dei problemi](/it/docs/google-review-plates/troubleshooting).",
+            text: "Quando ogni targa è nella sua posizione definitiva, la testi con almeno un iPhone e un Android. Avvicini il telefono lentamente, con lo schermo sbloccato, e verifichi che si apra la finestra di recensione giusta. Testi anche il QR code con la fotocamera. Se qualcosa non va, consulti la pagina [risoluzione dei problemi](/it/docs/google-review-plates/troubleshooting).",
           },
         ],
       },
@@ -1308,11 +1308,11 @@ export const docs: ProductDocs = {
       it: {
         title: "Configurazione: chip, reindirizzamento e destinazione",
         description:
-          "Come Steevanz programma e blocca i vostri chip, perché usiamo un link di reindirizzamento e come cambiare la destinazione delle targhe senza doverle ristampare.",
+          "Come Steevanz programma e blocca i Suoi chip, perché usiamo un link di reindirizzamento e come cambiare la destinazione delle targhe senza doverle ristampare.",
         blocks: [
           {
             type: "p",
-            text: "Ogni targa esce da noi completamente configurata. Questa pagina spiega cosa facciamo dietro le quinte e cosa potete chiederci di cambiare in seguito.",
+            text: "Ogni targa esce da noi completamente configurata. Questa pagina spiega cosa facciamo dietro le quinte e cosa può chiederci di cambiare in seguito.",
           },
           { type: "h2", id: "writing-locking", text: "Programmazione e blocco dei chip" },
           {
@@ -1331,48 +1331,48 @@ export const docs: ProductDocs = {
             type: "callout",
             tone: "info",
             title: "Perché è importante",
-            text: "Un chip non bloccato in un luogo pubblico può essere riprogrammato da chiunque con un telefono Android e un'app gratuita, mandando i vostri clienti altrove. Per questo non consegniamo mai targhe non bloccate.",
+            text: "Un chip non bloccato in un luogo pubblico può essere riprogrammato da chiunque con un telefono Android e un'app gratuita, mandando i Suoi clienti altrove. Per questo non consegniamo mai targhe non bloccate.",
           },
           { type: "h2", id: "dynamic-redirect", text: "Reindirizzamento dinamico" },
           {
             type: "p",
-            text: "Il chip e il QR code puntano a un link breve Steevanz. Quando qualcuno tocca la targa, il nostro server lo porta subito al link per le recensioni del vostro profilo. Il cliente non se ne accorge: il reindirizzamento dura una frazione di secondo.",
+            text: "Il chip e il QR code puntano a un link breve Steevanz. Quando qualcuno tocca la targa, il nostro server lo porta subito al link per le recensioni del Suo profilo. Il cliente non se ne accorge: il reindirizzamento dura una frazione di secondo.",
           },
           {
             type: "p",
-            text: "Questo sistema ha tre vantaggi pratici: potete cambiare la destinazione senza sostituire le targhe, possiamo risolvere i problemi rapidamente e possiamo contare quante volte è stata usata ogni targa.",
+            text: "Questo sistema ha tre vantaggi pratici: può cambiare la destinazione senza sostituire le targhe, possiamo risolvere i problemi rapidamente e possiamo contare quante volte è stata usata ogni targa.",
           },
           { type: "h2", id: "change-destination", text: "Cambiare la destinazione delle targhe" },
           {
             type: "p",
-            text: "A volte il vostro link per le recensioni cambia: un trasferimento a un nuovo indirizzo, l'unione di schede duplicate, un nuovo profilo dopo una sospensione, o semplicemente la scelta di far puntare una targa a un'altra sede.",
+            text: "A volte il Suo link per le recensioni cambia: un trasferimento a un nuovo indirizzo, l'unione di schede duplicate, un nuovo profilo dopo una sospensione, o semplicemente la scelta di far puntare una targa a un'altra sede.",
           },
           {
             type: "steps",
             items: [
               {
                 title: "Ottenere il nuovo link",
-                body: "Seguite i passi della pagina [installazione](/it/docs/google-review-plates/setup) per ottenere il nuovo link per le recensioni.",
+                body: "Segua i passi della pagina [installazione](/it/docs/google-review-plates/setup) per ottenere il nuovo link per le recensioni.",
               },
               {
                 title: "Inviarci la richiesta",
-                body: "Inviate il nuovo link via WhatsApp o email, indicando quali targhe vanno aggiornate (tutte, o solo quelle di una certa sede).",
+                body: "Invii il nuovo link via WhatsApp o email, indicando quali targhe vanno aggiornate (tutte, o solo quelle di una certa sede).",
               },
               {
                 title: "Confermare con un test",
-                body: "Aggiorniamo il reindirizzamento e vi avvisiamo quando è attivo. Toccate una targa per verificarlo.",
+                body: "Aggiorniamo il reindirizzamento e La avvisiamo quando è attivo. Tocchi una targa per verificarlo.",
               },
             ],
           },
           { type: "h2", id: "multiple-locations", text: "Più sedi o profili" },
           {
             type: "p",
-            text: "Se avete più di una sede, ognuna ha il proprio profilo Google e quindi il proprio link. Identifichiamo le targhe per sede perché nulla si confonda: le recensioni del negozio di Porto non finiscono mai sul profilo di Lisbona.",
+            text: "Se ha più di una sede, ognuna ha il proprio profilo Google e quindi il proprio link. Identifichiamo le targhe per sede perché nulla si confonda: le recensioni del negozio di Porto non finiscono mai sul profilo di Lisbona.",
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Se spostate targhe da una sede all'altra, avvisateci prima. Basta un breve messaggio perché aggiorniamo la destinazione.",
+            text: "Se sposta targhe da una sede all'altra, ci avvisi prima. Basta un breve messaggio perché aggiorniamo la destinazione.",
           },
         ],
       },
@@ -1756,13 +1756,13 @@ export const docs: ProductDocs = {
       it: {
         title: "Uso: chiedere recensioni ogni giorno",
         description:
-          "Una guida pratica perché il vostro staff chieda recensioni Google con le targhe rispettando le regole di Google, e per mantenere le targhe pulite e funzionanti.",
+          "Una guida pratica perché il Suo staff chieda recensioni Google con le targhe rispettando le regole di Google, e per mantenere le targhe pulite e funzionanti.",
         blocks: [
           {
             type: "p",
             text: "Una targa sul banco aiuta, ma ciò che fa davvero crescere il numero di recensioni è uno staff che lo chiede a ogni cliente, con naturalezza. Questa pagina raccoglie semplici buone pratiche per tutti i giorni.",
           },
-          { type: "h2", id: "staff-script", text: "Una traccia per il vostro staff" },
+          { type: "h2", id: "staff-script", text: "Una traccia per il Suo staff" },
           {
             type: "p",
             text: "Non c'è nulla da imparare a memoria. Conta chiedere al momento giusto (a fine servizio, al pagamento o all'uscita) e indicare la targa.",
@@ -1771,60 +1771,60 @@ export const docs: ProductDocs = {
             type: "ul",
             items: [
               "«Se ha un minuto, una recensione su Google ci aiuterebbe molto. Basta avvicinare il telefono a questa targa.»",
-              "«La sua opinione conta. Avvicini il telefono qui, oppure inquadri il codice con la fotocamera.»",
+              "«La Sua opinione conta. Avvicini il telefono qui, oppure inquadri il codice con la fotocamera.»",
               "«Se il tocco non funziona, inquadri il QR code e si apre subito.»",
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Mostrate come si fa. Molte persone non hanno mai avvicinato il telefono a una targa; se lo staff lo dimostra con il proprio telefono nella prima settimana, l'uso aumenta in modo evidente.",
+            text: "Mostri come si fa. Molte persone non hanno mai avvicinato il telefono a una targa; se lo staff lo dimostra con il proprio telefono nella prima settimana, l'uso aumenta in modo evidente.",
           },
           { type: "h2", id: "google-rules", text: "Regole di Google da rispettare" },
           {
             type: "p",
-            text: "Google ha norme chiare sui contenuti delle recensioni. Ignorarle può portare alla rimozione delle recensioni o a limitazioni sul vostro profilo.",
+            text: "Google ha norme chiare sui contenuti delle recensioni. Ignorarle può portare alla rimozione delle recensioni o a limitazioni sul Suo profilo.",
           },
           {
             type: "ul",
             items: [
-              "**Non offrite incentivi**: sconti, omaggi, estrazioni o regali in cambio di recensioni sono vietati, anche se chiedete una recensione «sincera».",
-              "**Non filtrate le recensioni**: chiedetela a tutti i clienti, non solo a quelli che sembrano soddisfatti.",
-              "**Non scrivete recensioni** al posto dei clienti e non chiedete a dipendenti o familiari di recensirvi.",
-              "**Non fate pressione**: la richiesta deve essere cordiale e facoltativa.",
+              "**Non offra incentivi**: sconti, omaggi, estrazioni o regali in cambio di recensioni sono vietati, anche se chiede una recensione «sincera».",
+              "**Non filtri le recensioni**: la chieda a tutti i clienti, non solo a quelli che sembrano soddisfatti.",
+              "**Non scriva recensioni** al posto dei clienti e non chieda a dipendenti o familiari di recensire la Sua attività.",
+              "**Non faccia pressione**: la richiesta deve essere cordiale e facoltativa.",
             ],
           },
           {
             type: "callout",
             tone: "warning",
             title: "Le recensioni negative fanno parte del gioco",
-            text: "Chiedere a tutti significa ricevere anche qualche critica. È normale e dà credibilità. Rispondete con calma e professionalità; un profilo con risposte curate ispira più fiducia di uno perfetto.",
+            text: "Chiedere a tutti significa ricevere anche qualche critica. È normale e dà credibilità. Risponda con calma e professionalità; un profilo con risposte curate ispira più fiducia di uno perfetto.",
           },
           { type: "h2", id: "best-moments", text: "I momenti migliori per chiedere" },
           {
             type: "table",
             head: ["Tipo di attività", "Momento suggerito"],
             rows: [
-              ["Ristorante o bar", "Quando portate il conto o al pagamento"],
+              ["Ristorante o bar", "Quando si porta il conto o al pagamento"],
               ["Parrucchiere o centro estetico", "Alla fine, quando il cliente vede il risultato allo specchio"],
               ["Clinica", "In reception, prenotando il prossimo appuntamento"],
-              ["Negozio", "Mentre imbustate l'acquisto alla cassa"],
+              ["Negozio", "Mentre si imbusta l'acquisto alla cassa"],
             ],
           },
           { type: "h2", id: "cleaning-care", text: "Pulizia e manutenzione" },
           {
             type: "ul",
             items: [
-              "Pulite l'acrilico con un panno morbido in microfibra e acqua con un po' di detergente neutro.",
-              "Evitate alcol, candeggina, acetone e prodotti abrasivi: graffiano e opacizzano l'acrilico.",
-              "Non immergete le targhe in acqua e non mettetele in lavastoviglie.",
-              "Controllate ogni tanto che il QR code sia ancora nitido e senza graffi.",
+              "Pulisca l'acrilico con un panno morbido in microfibra e acqua con un po' di detergente neutro.",
+              "Eviti alcol, candeggina, acetone e prodotti abrasivi: graffiano e opacizzano l'acrilico.",
+              "Non immerga le targhe in acqua e non le metta in lavastoviglie.",
+              "Controlli ogni tanto che il QR code sia ancora nitido e senza graffi.",
             ],
           },
           { type: "h2", id: "track-results", text: "Seguire i risultati" },
           {
             type: "p",
-            text: "Confrontate il numero di recensioni del vostro profilo Google mese per mese. Se usate anche il nostro servizio di [gestione delle recensioni con IA](/it/products/ai-review-management), le risposte alle nuove recensioni sono gestite automaticamente, con la vostra approvazione.",
+            text: "Confronti il numero di recensioni del Suo profilo Google mese per mese. Se usa anche il nostro servizio di [gestione delle recensioni con IA](/it/products/ai-review-management), le risposte alle nuove recensioni sono gestite automaticamente, con la Sua approvazione.",
           },
         ],
       },
@@ -2242,7 +2242,7 @@ export const docs: ProductDocs = {
         blocks: [
           {
             type: "p",
-            text: "Quasi ogni problema delle targhe ha una causa semplice. Seguite questa pagina in ordine prima di contattarci; se il problema persiste, [contattateci](/it/contact) o scriveteci su WhatsApp.",
+            text: "Quasi ogni problema delle targhe ha una causa semplice. Segua questa pagina in ordine prima di contattarci; se il problema persiste, [ci contatti](/it/contact) o ci scriva su WhatsApp.",
           },
           { type: "h2", id: "phone-compatibility", text: "Compatibilità dei telefoni" },
           {
@@ -2250,69 +2250,69 @@ export const docs: ProductDocs = {
             head: ["Telefono", "Come leggere la targa"],
             rows: [
               ["iPhone XS e successivi", "Legge automaticamente in background, con lo schermo acceso e sbloccato"],
-              ["iPhone 7, 8 e X", "Aprite il Centro di Controllo e toccate il pulsante del lettore di tag (potrebbe essere necessario aggiungerlo prima in Impostazioni)"],
-              ["iPhone 6 o precedenti", "Nessuna lettura con un tocco: usate il QR code"],
-              ["Android con lettura con un tocco", "Attivate la lettura di prossimità (con un tocco) nelle impostazioni delle connessioni; avvicinate la parte alta o centrale del retro del telefono alla targa"],
-              ["Android senza lettura con un tocco", "Usate il QR code con la fotocamera"],
+              ["iPhone 7, 8 e X", "Apra il Centro di Controllo e tocchi il pulsante del lettore di tag (potrebbe essere necessario aggiungerlo prima in Impostazioni)"],
+              ["iPhone 6 o precedenti", "Nessuna lettura con un tocco: usi il QR code"],
+              ["Android con lettura con un tocco", "Attivi la lettura di prossimità (con un tocco) nelle impostazioni delle connessioni; avvicini la parte alta o centrale del retro del telefono alla targa"],
+              ["Android senza lettura con un tocco", "Usi il QR code con la fotocamera"],
             ],
           },
           {
             type: "callout",
             tone: "info",
-            text: "La posizione dell'antenna di lettura varia da modello a modello. Sulla maggior parte degli iPhone è in alto; su molti Android è al centro del retro. Se non succede nulla, fate scorrere lentamente il telefono sulla targa.",
+            text: "La posizione dell'antenna di lettura varia da modello a modello. Sulla maggior parte degli iPhone è in alto; su molti Android è al centro del retro. Se non succede nulla, faccia scorrere lentamente il telefono sulla targa.",
           },
           { type: "h2", id: "plate-not-responding", text: "La targa non risponde" },
           {
             type: "ol",
             items: [
-              "Verificate che lo schermo sia acceso e sbloccato.",
-              "Su Android, verificate che la lettura di prossimità (con un tocco) sia attiva nelle impostazioni (di solito in «Connessioni» o «Dispositivi connessi»).",
-              "Togliete gli accessori ingombranti: cover metalliche, cover a portafoglio con carte e popsocket disturbano il segnale. Le normali cover sottili di solito non creano problemi.",
-              "Tenete il telefono contro la targa per 1-2 secondi senza muoverlo.",
-              "Provate con un altro telefono. Se lì funziona, il problema è nel primo dispositivo.",
+              "Verifichi che lo schermo sia acceso e sbloccato.",
+              "Su Android, verifichi che la lettura di prossimità (con un tocco) sia attiva nelle impostazioni (di solito in «Connessioni» o «Dispositivi connessi»).",
+              "Tolga gli accessori ingombranti: cover metalliche, cover a portafoglio con carte e popsocket disturbano il segnale. Le normali cover sottili di solito non creano problemi.",
+              "Tenga il telefono contro la targa per 1-2 secondi senza muoverlo.",
+              "Provi con un altro telefono. Se lì funziona, il problema è nel primo dispositivo.",
             ],
           },
           { type: "h3", id: "local-interference", text: "Interferenze sul posto" },
           {
             type: "p",
-            text: "Se la targa ha smesso di funzionare dopo essere stata spostata, verificate se poggia su metallo o è attaccata al POS. Allontanatela di qualche centimetro e testate di nuovo. Sulle superfici metalliche serve la versione anti-metallo.",
+            text: "Se la targa ha smesso di funzionare dopo essere stata spostata, verifichi se poggia su metallo o è attaccata al POS. La allontani di qualche centimetro e la testi di nuovo. Sulle superfici metalliche serve la versione anti-metallo.",
           },
           { type: "h2", id: "wrong-page", text: "Apre la pagina sbagliata o un errore" },
           {
             type: "ul",
             items: [
-              "**Apre la scheda ma non la finestra di recensione**: alcuni browser mostrano prima la scheda dell'attività. Il cliente può toccare «Scrivi una recensione». Se succede sempre, avvisateci per verificare il link.",
+              "**Apre la scheda ma non la finestra di recensione**: alcuni browser mostrano prima la scheda dell'attività. Il cliente può toccare «Scrivi una recensione». Se succede sempre, ci avvisi per verificare il link.",
               "**Chiede di accedere**: Google richiede un account per pubblicare recensioni. È normale.",
-              "**Mostra un'altra attività**: il link o il Place ID è sbagliato. Contattateci e correggiamo il reindirizzamento.",
-              "**Pagina di errore**: può essere un problema temporaneo di rete. Se persiste, contattateci.",
+              "**Mostra un'altra attività**: il link o il Place ID è sbagliato. Ci contatti e correggiamo il reindirizzamento.",
+              "**Pagina di errore**: può essere un problema temporaneo di rete. Se persiste, ci contatti.",
             ],
           },
           { type: "h2", id: "suspended-profile", text: "Profilo sospeso o link cambiato" },
           {
             type: "p",
-            text: "Se Google sospende il vostro Profilo dell'attività, il modulo di recensione non è più disponibile e le targhe smettono di funzionare come previsto. In quel caso:",
+            text: "Se Google sospende il Suo Profilo dell'attività, il modulo di recensione non è più disponibile e le targhe smettono di funzionare come previsto. In quel caso:",
           },
           {
             type: "steps",
             items: [
               {
                 title: "Risolvere la sospensione con Google",
-                body: "Seguite le istruzioni di Google per chiedere il ripristino. Steevanz non può intervenire in questa procedura.",
+                body: "Segua le istruzioni di Google per chiedere il ripristino. Steevanz non può intervenire in questa procedura.",
               },
               {
                 title: "Avvisare Steevanz",
-                body: "Mentre il profilo è sospeso, possiamo far puntare temporaneamente le targhe a un'altra pagina, come il vostro sito o il vostro Instagram.",
+                body: "Mentre il profilo è sospeso, possiamo far puntare temporaneamente le targhe a un'altra pagina, come il Suo sito o il Suo Instagram.",
               },
               {
                 title: "Aggiornare la destinazione",
-                body: "Quando il profilo torna attivo (o ne viene creato uno nuovo), inviateci il link per le recensioni e aggiorniamo tutte le targhe, senza ristampare.",
+                body: "Quando il profilo torna attivo (o ne viene creato uno nuovo), ci invii il link per le recensioni e aggiorniamo tutte le targhe, senza ristampare.",
               },
             ],
           },
           { type: "h2", id: "physical-damage", text: "Danni fisici" },
           {
             type: "p",
-            text: "Una targa rotta o piegata, o con il QR code illeggibile, può avere il chip danneggiato. Inviateci una foto e ci occupiamo della sostituzione.",
+            text: "Una targa rotta o piegata, o con il QR code illeggibile, può avere il chip danneggiato. Ci invii una foto e ci occupiamo della sostituzione.",
           },
         ],
       },
@@ -2623,19 +2623,19 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Funziona su tutti gli iPhone?",
-                a: "Dall'iPhone XS in poi la lettura è automatica con lo schermo sbloccato. Su iPhone 7, 8 e X serve il pulsante del lettore di tag nel Centro di Controllo. Sui modelli più vecchi, usate il QR code.",
+                a: "Dall'iPhone XS in poi la lettura è automatica con lo schermo sbloccato. Su iPhone 7, 8 e X serve il pulsante del lettore di tag nel Centro di Controllo. Sui modelli più vecchi, si usa il QR code.",
               },
               {
                 q: "Steevanz è collegata a Google?",
-                a: "No. Steevanz è un'azienda indipendente. Le targhe portano semplicemente i clienti al modulo pubblico di recensione del vostro Profilo dell'attività su Google.",
+                a: "No. Steevanz è un'azienda indipendente. Le targhe portano semplicemente i clienti al modulo pubblico di recensione del Suo Profilo dell'attività su Google.",
               },
               {
                 q: "Posso offrire uno sconto ai clienti che lasciano una recensione?",
-                a: "No. Le norme di Google vietano gli incentivi in cambio di recensioni, anche sincere. Chiedetela a tutti i clienti, senza nulla in cambio.",
+                a: "No. Le norme di Google vietano gli incentivi in cambio di recensioni, anche sincere. La chieda a tutti i clienti, senza nulla in cambio.",
               },
               {
                 q: "Posso chiederla solo ai clienti soddisfatti?",
-                a: "Non dovreste. Chiedere in modo selettivo (review gating) viola le regole di Google. Chiedete a tutti; qualche critica occasionale rende il vostro profilo più credibile.",
+                a: "Non dovrebbe. Chiedere in modo selettivo (review gating) viola le regole di Google. Chieda a tutti; qualche critica occasionale rende il Suo profilo più credibile.",
               },
               {
                 q: "Qualcuno può riprogrammare la mia targa?",
@@ -2643,26 +2643,26 @@ export const docs: ProductDocs = {
               },
               {
                 q: "Se mi trasferisco o cambio profilo, servono targhe nuove?",
-                a: "No. Il chip punta a un reindirizzamento gestito da Steevanz. Basta inviarci il nuovo link e aggiorniamo tutte le targhe. Vedete la pagina [configurazione](/it/docs/google-review-plates/configuration).",
+                a: "No. Il chip punta a un reindirizzamento gestito da Steevanz. Basta inviarci il nuovo link e aggiorniamo tutte le targhe. Veda la pagina [configurazione](/it/docs/google-review-plates/configuration).",
               },
               {
                 q: "Posso mettere una targa su una superficie metallica?",
-                a: "Sì, ma serve la versione con chip anti-metallo. Una targa normale su metallo potrebbe non essere letta. Diteci dove andrà quando ordinate.",
+                a: "Sì, ma serve la versione con chip anti-metallo. Una targa normale su metallo potrebbe non essere letta. Ci dica dove andrà quando ordina.",
               },
               {
                 q: "Come pulisco le targhe?",
-                a: "Con un panno in microfibra e acqua con detergente neutro. Evitate alcol, candeggina e prodotti abrasivi, che graffiano l'acrilico.",
+                a: "Con un panno in microfibra e acqua con detergente neutro. Eviti alcol, candeggina e prodotti abrasivi, che graffiano l'acrilico.",
               },
               {
                 q: "E se una targa si rompe?",
-                a: "Inviateci una foto dalla nostra [pagina contatti](/it/contact) o su WhatsApp e ci occupiamo della sostituzione.",
+                a: "Ci invii una foto dalla nostra [pagina contatti](/it/contact) o su WhatsApp e ci occupiamo della sostituzione.",
               },
             ],
           },
           {
             type: "callout",
             tone: "tip",
-            text: "Non avete trovato la risposta? [Prenotate una demo](/it/book-a-demo) e ne parliamo insieme.",
+            text: "Non ha trovato la risposta? [Prenoti una demo](/it/book-a-demo) e ne parliamo insieme.",
           },
         ],
       },

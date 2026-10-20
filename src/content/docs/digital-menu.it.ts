@@ -4,23 +4,23 @@ export const it: Record<DocPageId, DocPageContent> = {
   "getting-started": {
     title: "Primi passi con il menù digitale",
     description:
-      "Come funziona il menù in video di Steevanz: un video per piatto, con il suo prezzo, aperto con un tocco o con il codice QR della targa sul tavolo, con gli ordini al tavolo se li volete.",
+      "Come funziona il menù in video di Steevanz: un video per piatto, con il suo prezzo, aperto con un tocco o con il codice QR della targa sul tavolo, con gli ordini al tavolo se li desidera.",
     blocks: [
       {
         type: "p",
-        text: "Il menù digitale è il menù del vostro locale in video. Ogni piatto ha il suo video verticale, con nome, prezzo e descrizione, su una pagina tutta del vostro locale. I clienti lo aprono con un tocco o con il codice QR della targa rotonda su ogni tavolo, senza installare nulla.",
+        text: "Il menù digitale è il menù del Suo locale in video. Ogni piatto ha il suo video verticale, con nome, prezzo e descrizione, su una pagina tutta del Suo locale. I clienti lo aprono con un tocco o con il codice QR della targa rotonda su ogni tavolo, senza installare nulla.",
       },
       {
         type: "p",
-        text: "Come tutti i prodotti Steevanz, è un servizio gestito: prepariamo il menù, ospitiamo i video e programmiamo e proviamo le targhe. Questa documentazione vi aiuta a preparare i video e a sfruttare al massimo il menù.",
+        text: "Come tutti i prodotti Steevanz, è un servizio gestito: prepariamo il menù, ospitiamo i video e programmiamo e proviamo le targhe. Questa documentazione La aiuta a preparare i video e a sfruttare al massimo il menù.",
       },
       { type: "h2", id: "whats-included", text: "Cosa include" },
       {
         type: "table",
         head: ["Elemento", "Dettagli"],
         rows: [
-          ["Menù in video", "La pagina del vostro locale con il vostro logo, le collezioni e un video verticale per piatto, con nome, prezzo e descrizione"],
-          ["Ordini al tavolo (opzionale)", "Il tavolo ordina dal telefono e il vostro staff conferma inquadrando un codice QR"],
+          ["Menù in video", "La pagina del Suo locale con il Suo logo, le collezioni e un video verticale per piatto, con nome, prezzo e descrizione"],
+          ["Ordini al tavolo (opzionale)", "Il tavolo ordina dal telefono e il Suo staff conferma inquadrando un codice QR"],
           ["Sei lingue", "Portoghese, inglese, spagnolo, francese, tedesco e italiano: ogni cliente sceglie la sua con il pulsante della bandiera"],
           ["Targa rotonda", "Adesivo rotondo da tavolo o base rotonda da tavolo, una per tavolo"],
           ["Codice QR stampato", "Per i telefoni che non leggono con un tocco o che hanno questa opzione disattivata"],
@@ -39,16 +39,16 @@ export const it: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Il logo e i colori del vostro marchio si pagano una sola volta per ordine (il design si fa una volta per tutte le targhe), non per targa. La preparazione del menù e l'hosting del menù e dei video costano 30 € al mese + IVA.",
+        text: "Il logo e i colori del Suo marchio si pagano una sola volta per ordine (il design si fa una volta per tutte le targhe), non per targa. La preparazione del menù e l'hosting del menù e dei video costano 30 € al mese + IVA.",
       },
       { type: "h2", id: "how-it-works", text: "Come funziona" },
       {
         type: "ol",
         items: [
           "Il cliente si siede e tocca la targa con il telefono (o inquadra il codice QR).",
-          "Il menù si apre con un'animazione del vostro logo, in cima alla pagina.",
+          "Il menù si apre con un'animazione del Suo logo, in cima alla pagina.",
           "I piatti scorrono in una griglia. Un tocco li apre a schermo intero, come nei Reels, e si scorre su e giù per vedere gli altri.",
-          "Con gli ordini al tavolo attivi, il cliente tocca «Aggiungi» sui piatti e ordina direttamente da lì.",
+          "Con gli ordini al tavolo attivi, il cliente tocca «Aggiunga» sui piatti e ordina direttamente da lì.",
         ],
       },
       { type: "h2", id: "next-steps", text: "Prossimi passi" },
@@ -64,12 +64,12 @@ export const it: Record<DocPageId, DocPageContent> = {
   },
   setup: {
     title: "Installare il menù digitale",
-    description: "Girate i video dei vostri piatti, inviateci il menù e posizionate le targhe sui tavoli.",
+    description: "Giri i video dei Suoi piatti, ci invii il menù e posizioni le targhe sui tavoli.",
     blocks: [
       { type: "h2", id: "film-videos", text: "1. Girare i video" },
       {
         type: "p",
-        text: "Ogni piatto ha il suo video. Girateli con il telefono, in verticale: vi diamo una guida per girare i video.",
+        text: "Ogni piatto ha il suo video. Li giri con il telefono, in verticale: Le diamo una guida per girare i video.",
       },
       {
         type: "steps",
@@ -82,34 +82,34 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "send-menu", text: "2. Inviarci il menù" },
       {
         type: "p",
-        text: "Inviateci i video e, per ogni piatto, il nome, il prezzo e una breve descrizione, ordinati nelle collezioni che volete (per esempio Brunch e Bevande). Inviateci anche il vostro logo. Prepariamo il menù e ve lo mostriamo prima di metterlo sui tavoli.",
+        text: "Ci invii i video e, per ogni piatto, il nome, il prezzo e una breve descrizione, ordinati nelle collezioni che desidera (per esempio Brunch e Bevande). Ci invii anche il Suo logo. Prepariamo il menù e, prima di metterlo sui tavoli, Le mostriamo il risultato.",
       },
       {
         type: "callout",
         tone: "tip",
         title: "Ordini al tavolo",
-        text: "Se volete che i tavoli ordinino dal telefono, diteci quanti tavoli avete. Ogni tavolo riceve la sua targa, con il suo link e il suo codice QR.",
+        text: "Se desidera che i tavoli ordinino dal telefono, ci dica quanti tavoli ha. Ogni tavolo riceve la sua targa, con il suo link e il suo codice QR.",
       },
       { type: "h2", id: "place-plates", text: "3. Posizionare le targhe" },
       {
         type: "ul",
         items: [
           "Una targa per tavolo, in un punto visibile e a portata di mano (al centro del tavolo o accanto al portatovaglioli).",
-          "Con gli ordini al tavolo, ogni targa appartiene a un tavolo: mettete ciascuna sul suo tavolo.",
-          "Pulite la superficie prima di applicare l'adesivo e premete per qualche secondo.",
-          "Evitate le superfici metalliche: il metallo blocca il segnale della targa. In quel caso usate la base rotonda da tavolo.",
+          "Con gli ordini al tavolo, ogni targa appartiene a un tavolo: metta ciascuna sul suo tavolo.",
+          "Pulisca la superficie prima di applicare l'adesivo e prema per qualche secondo.",
+          "Eviti le superfici metalliche: il metallo blocca il segnale della targa. In quel caso usi la base rotonda da tavolo.",
         ],
       },
     ],
   },
   configuration: {
     title: "Configurare il menù digitale",
-    description: "Cambiate piatti, prezzi e collezioni, e attivate o disattivate gli ordini al tavolo.",
+    description: "Cambi piatti, prezzi e collezioni, e attivi o disattivi gli ordini al tavolo.",
     blocks: [
       { type: "h2", id: "dishes-prices", text: "Cambiare piatti e prezzi" },
       {
         type: "p",
-        text: "Il menù è gestito da Steevanz. Per cambiare un prezzo, aggiungere o togliere un piatto, sostituire un video o riorganizzare le collezioni, mandateci un messaggio: aggiorniamo il menù e le targhe restano le stesse.",
+        text: "Il menù è gestito da Steevanz. Per cambiare un prezzo, aggiungere o togliere un piatto, sostituire un video o riorganizzare le collezioni, ci mandi un messaggio: aggiorniamo il menù e le targhe restano le stesse.",
       },
       { type: "h2", id: "collections", text: "Collezioni" },
       {
@@ -124,7 +124,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "table-ordering", text: "Ordini al tavolo" },
       {
         type: "p",
-        text: "Gli ordini al tavolo si attivano o disattivano menù per menù. Senza di essi, la targa apre il menù solo per consultarlo. Ogni tavolo ha la sua targa, con il suo link e il suo codice QR; se vi servono più tavoli, basta chiedercelo.",
+        text: "Gli ordini al tavolo si attivano o disattivano menù per menù. Senza di essi, la targa apre il menù solo per consultarlo. Ogni tavolo ha la sua targa, con il suo link e il suo codice QR; se Le servono più tavoli, basta chiedercelo.",
       },
       {
         type: "callout",
@@ -134,7 +134,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       { type: "h2", id: "customisation", text: "Personalizzazione" },
       {
         type: "p",
-        text: "Il menù porta il vostro logo. Le targhe possono portare il vostro logo, i colori del vostro marchio e un breve testo, per esempio «Tocca per vedere il menù». Il design delle targhe si fa una volta per ordine.",
+        text: "Il menù porta il Suo logo. Le targhe possono portare il Suo logo, i colori del Suo marchio e un breve testo, per esempio «Tocchi per vedere il menù». Il design delle targhe si fa una volta per ordine.",
       },
     ],
   },
@@ -146,20 +146,20 @@ export const it: Record<DocPageId, DocPageContent> = {
       {
         type: "ul",
         items: [
-          "Mostrate il piatto esattamente come arriva in tavola, con una buona luce.",
-          "Girate sempre in verticale: è così che il menù mostra i video.",
+          "Mostri il piatto esattamente come arriva in tavola, con una buona luce.",
+          "Giri sempre in verticale: è così che il menù mostra i video.",
           "I video brevi catturano l'attenzione meglio di quelli lunghi.",
-          "Mettete per primi i piatti più ordinati, o quelli che volete vendere di più.",
+          "Metta per primi i piatti più ordinati, o quelli che vuole vendere di più.",
         ],
       },
       { type: "h2", id: "ordering-day-to-day", text: "Gli ordini al tavolo ogni giorno" },
       {
         type: "ol",
         items: [
-          "Tutti i telefoni del tavolo vedono lo stesso ordine in tempo reale. Ognuno tocca «Aggiungi» sui piatti e può aggiungere una nota, come «senza cipolla».",
-          "Con «Ordina», il telefono mostra un codice QR e il numero dell'ordine.",
-          "Il vostro staff inquadra il codice QR con la fotocamera del telefono, senza app né login, e vede il tavolo, l'ora, i piatti con le loro note e il totale. Questa pagina è sempre in portoghese e indica la lingua in cui il cliente ha ordinato.",
-          "Tocca «Confirmar pedido» (conferma ordine) e il tavolo vede subito «Ordine confermato ✓».",
+          "Tutti i telefoni del tavolo vedono lo stesso ordine in tempo reale. Ognuno tocca «Aggiunga» sui piatti e può aggiungere una nota, come «senza cipolla».",
+          "Con «Ordini», il telefono mostra un codice QR e il numero dell'ordine.",
+          "Il Suo staff inquadra il codice QR con la fotocamera del telefono, senza app né login, e vede il tavolo, l'ora, i piatti con le loro note e il totale. Questa pagina è sempre in portoghese e indica la lingua in cui il cliente ha ordinato.",
+          "Lo staff tocca «Confirmar pedido» (conferma ordine) e il tavolo vede subito «Ordine confermato ✓».",
         ],
       },
       {
@@ -167,15 +167,15 @@ export const it: Record<DocPageId, DocPageContent> = {
         tone: "info",
         text: "I numeri degli ordini ripartono ogni giorno.",
       },
-      { type: "h2", id: "team", text: "Il vostro staff" },
+      { type: "h2", id: "team", text: "Il Suo staff" },
       {
         type: "p",
-        text: "Dite ai clienti, quando si siedono, che possono vedere i piatti sul telefono. Un invito dello staff aumenta molto il numero di tocchi.",
+        text: "Dica ai clienti, quando si siedono, che possono vedere i piatti sul telefono. Un invito dello staff aumenta molto il numero di tocchi.",
       },
-      { type: "h2", id: "pair-with-reviews", text: "Abbinatelo alle recensioni Google" },
+      { type: "h2", id: "pair-with-reviews", text: "Lo abbini alle recensioni Google" },
       {
         type: "p",
-        text: "Sullo stesso tavolo, la targa delle recensioni Google chiede una recensione a fine pasto. Il menù aiuta a scegliere all'inizio; le recensioni aiutano nuovi clienti a trovarvi.",
+        text: "Sullo stesso tavolo, la targa delle recensioni Google chiede una recensione a fine pasto. Il menù aiuta a scegliere all'inizio; le recensioni aiutano nuovi clienti a trovare il Suo locale.",
       },
     ],
   },
@@ -187,18 +187,18 @@ export const it: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Problema", "Cosa fare"],
         rows: [
-          ["Il telefono non reagisce al tocco", "Verificate che la lettura contactless (un tocco) sia attiva nelle impostazioni di connessione (Android) e avvicinate la parte alta del telefono al centro della targa. Oppure inquadrate il codice QR."],
-          ["La targa apre una pagina che non esiste", "Il codice del tavolo potrebbe essere stato cambiato o il menù disattivato. Contattateci."],
-          ["I video tardano a partire", "Verificate la connessione internet del telefono (Wi-Fi o dati mobili). Se succede sempre, fatecelo sapere."],
-          ["Lo staff non riesce a inquadrare il QR dell'ordine", "Chiedete al cliente di alzare la luminosità dello schermo e avvicinate la fotocamera al codice."],
-          ["La targa non funziona sul metallo", "Sostituite l'adesivo con la base rotonda da tavolo."],
-          ["I prezzi non sono aggiornati", "Inviateci i nuovi prezzi: aggiorniamo il menù e le targhe restano le stesse."],
+          ["Il telefono non reagisce al tocco", "Verifichi che la lettura contactless (un tocco) sia attiva nelle impostazioni di connessione (Android) e avvicini la parte alta del telefono al centro della targa. Oppure inquadri il codice QR."],
+          ["La targa apre una pagina che non esiste", "Il codice del tavolo potrebbe essere stato cambiato o il menù disattivato. Ci contatti."],
+          ["I video tardano a partire", "Verifichi la connessione internet del telefono (Wi-Fi o dati mobili). Se succede sempre, ce lo faccia sapere."],
+          ["Lo staff non riesce a inquadrare il QR dell'ordine", "Chieda al cliente di alzare la luminosità dello schermo e avvicini la fotocamera al codice."],
+          ["La targa non funziona sul metallo", "Sostituisca l'adesivo con la base rotonda da tavolo."],
+          ["I prezzi non sono aggiornati", "Ci invii i nuovi prezzi: aggiorniamo il menù e le targhe restano le stesse."],
         ],
       },
       {
         type: "callout",
         tone: "info",
-        text: "Se una targa si rompe, contattateci: la sostituiamo.",
+        text: "Se una targa si rompe, ci contatti: la sostituiamo.",
       },
     ],
   },
@@ -209,15 +209,15 @@ export const it: Record<DocPageId, DocPageContent> = {
       {
         type: "faq",
         items: [
-          { q: "I clienti devono installare un'app?", a: "No. Il menù si apre nel browser del telefono. Né i clienti né il vostro staff hanno bisogno di un'app." },
+          { q: "I clienti devono installare un'app?", a: "No. Il menù si apre nel browser del telefono. Né i clienti né il Suo staff hanno bisogno di un'app." },
           { q: "Mi servono Instagram o YouTube?", a: "No. Il menù ha la sua pagina su Steevanz e i video li ospitiamo noi." },
           { q: "Funziona su iPhone e Android?", a: "Sì. Gli iPhone recenti leggono la targa senza attivare nulla; su Android, l'opzione di lettura contactless (un tocco) deve essere attiva. C'è sempre il codice QR stampato." },
           { q: "Sostituisce il menù cartaceo?", a: "Lo completa. Vedere i piatti in video aiuta a scegliere, ma il menù cartaceo resta utile per chi lo preferisce." },
           { q: "Quanto costa?", a: "20 € per targa, o 15 € per targa a partire da 10 targhe. Il logo si paga una volta per ordine. La preparazione e l'hosting del menù costano 30 € al mese + IVA." },
-          { q: "Chi gira i video?", a: "Di solito il locale stesso, con il telefono: vi diamo una guida per girare i video. Noi prepariamo il menù e ospitiamo i video." },
+          { q: "Chi gira i video?", a: "Di solito il locale stesso, con il telefono: Le diamo una guida per girare i video. Noi prepariamo il menù e ospitiamo i video." },
           { q: "In quali lingue è il menù?", a: "In sei: portoghese, inglese, spagnolo, francese, tedesco e italiano. Il menù si apre nella lingua del telefono e il cliente la cambia con il pulsante della bandiera. Ciò che non è ancora tradotto appare in portoghese." },
           { q: "Gli ordini al tavolo sono obbligatori?", a: "No. Si attivano o disattivano menù per menù. Senza di essi, la targa apre il menù solo per consultarlo." },
-          { q: "Posso cambiare il menù più avanti?", a: "Sì, senza cambiare le targhe. Inviateci i nuovi piatti, prezzi o video e aggiorniamo il menù." },
+          { q: "Posso cambiare il menù più avanti?", a: "Sì, senza cambiare le targhe. Ci invii i nuovi piatti, prezzi o video e aggiorniamo il menù." },
         ],
       },
     ],
