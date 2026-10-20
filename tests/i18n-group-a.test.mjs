@@ -38,7 +38,7 @@ describe("group A product pages in es, fr, de, it", () => {
         const en = new Set(strings(record.en).filter((text) => text.length > 30));
         for (const text of strings(copy)) {
           assert.ok(!en.has(text), `${id}.${locale} still has English: ${text}`);
-          assert.doesNotMatch(text, /\bNFC\b|de siempre|de toujours|di sempre/, `${id}.${locale}: ${text}`);
+          assert.doesNotMatch(text, /\bNFC\b|\bde siempre\b|\bde toujours\b|\bdi sempre\b/, `${id}.${locale}: ${text}`);
           assert.doesNotMatch(text, /€\s*\d|IVA incluido|IVA inclusa|TVA comprise|TTC|inkl\.? MwSt/, `${id}.${locale}: ${text}`);
         }
       }
