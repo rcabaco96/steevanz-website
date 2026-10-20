@@ -864,15 +864,15 @@ export const copy: ProductCopyByLocale = {
   it: {
     name: "Negozio online",
     shortName: "Negozio online",
-    tagline: "Vendete online con MB WAY, Multibanco e carta, senza complicazioni.",
+    tagline: "Venda online con MB WAY, Multibanco e carta, senza complicazioni.",
     summary:
       "Un negozio online pronto a vendere: fino a 50 prodotti caricati, pagamenti con MB WAY, Multibanco e carta, spedizioni configurate e adempimenti legali sistemati. Prezzo fisso.",
     metaTitle: "Negozio online con MB WAY e Multibanco | Steevanz",
     metaDescription:
       "Negozi online per piccole attività in Portogallo: MB WAY, Multibanco e carta, spedizioni con CTT, fatturazione con Moloni o InvoiceXpress. Prezzo fisso.",
-    heroTitle: "Il vostro negozio aperto 24 ore su 24, con i pagamenti che usano i portoghesi",
+    heroTitle: "Il Suo negozio aperto 24 ore su 24, con i pagamenti che usano i portoghesi",
     heroSubtitle:
-      "Allestiamo il negozio, carichiamo i vostri prodotti, colleghiamo MB WAY, Multibanco e carta, configuriamo le spedizioni e vi spieghiamo come gestire gli ordini. Iniziate a vendere a prezzo fisso, senza sorprese.",
+      "Allestiamo il negozio, carichiamo i Suoi prodotti, colleghiamo MB WAY, Multibanco e carta, configuriamo le spedizioni e Le spieghiamo come gestire gli ordini. Inizi a vendere a prezzo fisso, senza sorprese.",
     problem: {
       title: "Vendere online sembra complicato, e spesso lo è",
       body:
@@ -886,10 +886,10 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Un negozio pronto a vendere, configurato da noi",
       body:
-        "Ci occupiamo della parte tecnica e delle impostazioni: prodotti, pagamenti, spedizioni, fatturazione e pagine legali. Avrete un negozio semplice da gestire e qualcuno con cui parlare quando serve.",
+        "Ci occupiamo della parte tecnica e delle impostazioni: prodotti, pagamenti, spedizioni, fatturazione e pagine legali. Avrà un negozio semplice da gestire e qualcuno con cui parlare quando serve.",
       points: [
         "Fino a 50 prodotti caricati, con varianti e magazzino",
-        "MB WAY, Multibanco e carta sul vostro conto",
+        "MB WAY, Multibanco e carta sul Suo conto",
         "Spedizioni per zona, ritiro in negozio e tracciamento dell'ordine",
         "Condizioni di vendita, resi e accessibilità sistemati",
       ],
@@ -897,25 +897,25 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Ordine e brief",
-        body: "Fate l'ordine sul sito e rispondete ad alcune domande sulla vostra attività e sui prodotti. Se serve, fissiamo una chiamata di 20 minuti.",
+        body: "Faccia l'ordine sul sito e risponda ad alcune domande sulla Sua attività e sui prodotti. Se serve, fissiamo una chiamata di 20 minuti.",
       },
       {
         title: "Proposta a prezzo fisso",
-        body: "Confermiamo per iscritto piattaforma, pagamenti, spedizioni, tempi e prezzo finale. Con l'accettazione (acconto del 50%), vi inviamo il foglio dei prodotti e l'elenco di ciò che ci serve.",
+        body: "Confermiamo per iscritto piattaforma, pagamenti, spedizioni, tempi e prezzo finale. Con l'accettazione (acconto del 50%), Le inviamo il foglio dei prodotti e l'elenco di ciò che ci serve.",
       },
       {
         title: "Design e sviluppo",
-        body: "Partiamo dal modello del vostro settore, carichiamo i prodotti e vi mostriamo il negozio su un link privato, con pagamenti di prova. Sono inclusi 2 giri di modifiche.",
+        body: "Partiamo dal modello del Suo settore, carichiamo i prodotti e Le mostriamo il negozio su un link privato, con pagamenti di prova. Sono inclusi 2 giri di modifiche.",
       },
       {
         title: "Apertura e assistenza",
-        body: "Colleghiamo il dominio, facciamo un vero ordine di prova, teniamo la formazione e restiamo al vostro fianco con il piano mensile.",
+        body: "Colleghiamo il dominio, facciamo un vero ordine di prova, teniamo la formazione e restiamo al Suo fianco con il piano mensile.",
       },
     ],
     features: [
       {
         title: "Pagamenti portoghesi",
-        body: "MB WAY, riferimento Multibanco e carta, con il fornitore che preferite: ifthenpay, Eupago, Easypay o Stripe. I soldi arrivano sul vostro conto.",
+        body: "MB WAY, riferimento Multibanco e carta, con il fornitore che preferisce: ifthenpay, Eupago, Easypay o Stripe. I soldi arrivano sul Suo conto.",
       },
       {
         title: "Spedizioni semplici",
@@ -947,7 +947,7 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "beauty",
         title: "Parrucchieri ed estetica",
-        body: "Vendita dei prodotti che usate in salone e carte regalo per i trattamenti.",
+        body: "Vendita dei prodotti che usa in salone e carte regalo per i trattamenti.",
       },
       {
         sector: "clinics",
@@ -957,7 +957,7 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "retail",
         title: "Negozi",
-        body: "Il vostro catalogo online, con magazzino, spedizioni e pagamenti sistemati, per vendere in tutto il Paese.",
+        body: "Il Suo catalogo online, con magazzino, spedizioni e pagamenti sistemati, per vendere in tutto il Paese.",
       },
     ],
     includes: [
@@ -972,11 +972,11 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto costa in tutto?",
-        a: "Da 900 € + IVA, una tantum, con fino a 50 prodotti caricati. Poi 19 € + IVA al mese e il 3% di ogni vendita fatta nel negozio, senza vincoli: guadagniamo di più solo quando il vostro negozio vende. A parte restano le commissioni del fornitore dei pagamenti (per esempio, circa l'1-1,5% su MB WAY e circa 0,30-0,50 € per riferimento Multibanco con i fornitori portoghesi) e, se usate Shopify, il canone mensile della piattaforma.",
+        a: "Da 900 € + IVA, una tantum, con fino a 50 prodotti caricati. Poi 19 € + IVA al mese e il 3% di ogni vendita fatta nel negozio, senza vincoli: guadagniamo di più solo quando il Suo negozio vende. A parte restano le commissioni del fornitore dei pagamenti (per esempio, circa l'1-1,5% su MB WAY e circa 0,30-0,50 € per riferimento Multibanco con i fornitori portoghesi) e, se usa Shopify, il canone mensile della piattaforma.",
       },
       {
         q: "Che piattaforma usate?",
-        a: "Nella maggior parte dei casi Shopify: è stabile e vi permette di gestire i prodotti da soli. Per cataloghi piccoli possiamo realizzare il negozio sulla nostra piattaforma, senza canoni di terzi. Se usate già WordPress, lavoriamo con WooCommerce. Lo decidiamo insieme nella proposta.",
+        a: "Nella maggior parte dei casi Shopify: è stabile e Le permette di gestire i prodotti in autonomia. Per cataloghi piccoli possiamo realizzare il negozio sulla nostra piattaforma, senza canoni di terzi. Se usa già WordPress, lavoriamo con WooCommerce. Lo decidiamo insieme nella proposta.",
       },
       {
         q: "Devo fatturare ogni vendita?",
@@ -984,15 +984,15 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come funzionano le spedizioni?",
-        a: "Configuriamo le tariffe per zona e peso, la spedizione gratuita sopra un certo importo e il ritiro in negozio. Spedite con CTT o con il corriere che preferite. Come opzione, le etichette si possono generare in automatico.",
+        a: "Configuriamo le tariffe per zona e peso, la spedizione gratuita sopra un certo importo e il ritiro in negozio. Può spedire con CTT o con il corriere che preferisce. Come opzione, le etichette si possono generare in automatico.",
       },
       {
         q: "Quali regole di legge devo rispettare?",
-        a: "Dati dell'azienda, prezzi presentati come richiesto dalla legge, informazioni precontrattuali, diritto di recesso di 14 giorni, indicazione dell'organismo di risoluzione alternativa delle controversie, Libro dei reclami elettronico, cookie e privacy. Prepariamo la struttura e i modelli. Il contenuto finale va verificato da voi, dal vostro commercialista o dal vostro avvocato.",
+        a: "Dati dell'azienda, prezzi presentati come richiesto dalla legge, informazioni precontrattuali, diritto di recesso di 14 giorni, indicazione dell'organismo di risoluzione alternativa delle controversie, Libro dei reclami elettronico, cookie e privacy. Prepariamo la struttura e i modelli. Il contenuto finale va verificato da Lei, dal Suo commercialista o dal Suo avvocato.",
       },
       {
         q: "E se ho più di 50 prodotti?",
-        a: "Carichiamo altri 25 prodotti per 50 € + IVA, partendo dal foglio di calcolo che vi inviamo. Potete anche caricarli da soli dopo la formazione.",
+        a: "Carichiamo altri 25 prodotti per 50 € + IVA, partendo dal foglio di calcolo che Le inviamo. Può anche caricarli in autonomia dopo la formazione.",
       },
       {
         q: "Quanto tempo ci vuole?",
@@ -1000,7 +1000,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come si paga?",
-        a: "In due parti: 50% all'accettazione della proposta e 50% prima dell'apertura del negozio. L'ordine sul sito non prevede pagamenti: prima vi inviamo la proposta con il prezzo finale.",
+        a: "In due parti: 50% all'accettazione della proposta e 50% prima dell'apertura del negozio. L'ordine sul sito non prevede pagamenti: prima Le inviamo la proposta con il prezzo finale.",
       },
     ],
     web: {
@@ -1011,7 +1011,7 @@ export const copy: ProductCopyByLocale = {
         "Costi di spedizione, pubblicità, marketplace e integrazioni con l'ERP",
       ],
       addOns: [
-        { name: "Altri 25 prodotti caricati (con i vostri dati e le vostre foto)", price: "50 €" },
+        { name: "Altri 25 prodotti caricati (con i Suoi dati e le Sue foto)", price: "50 €" },
         { name: "Descrizioni dei prodotti scritte da noi", price: "4 €/prodotto (min. 25)" },
         { name: "Fatturazione automatica su Moloni o InvoiceXpress", price: "120 €" },
         { name: "Corriere con etichette automatiche (CTT Expresso, DPD…)", price: "120 €" },

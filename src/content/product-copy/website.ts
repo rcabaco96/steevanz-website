@@ -897,19 +897,19 @@ export const copy: ProductCopyByLocale = {
     },
   },
   it: {
-    name: "Sito web per la vostra attività",
+    name: "Sito web per la Sua attività",
     shortName: "Sito web",
-    tagline: "La vostra attività ben presentata, sullo smartphone e su Google.",
+    tagline: "La Sua attività ben presentata, sullo smartphone e su Google.",
     summary:
       "Un sito completo fino a 5 pagine, veloce e facile da gestire, con servizi, prezzi, galleria, contatti e gli strumenti Steevanz collegati. Prezzo fisso, pronto in 10 giorni lavorativi.",
     metaTitle: "Siti web per piccole attività | Steevanz",
     metaDescription:
       "Siti web per ristoranti, parrucchieri, cliniche, palestre, case vacanza e negozi in Portogallo. Prezzo fisso, SEO locale e consegna in 10 giorni lavorativi.",
-    heroTitle: "Un sito che risponde a ciò che cercano i vostri clienti",
+    heroTitle: "Un sito che risponde a ciò che cercano i Suoi clienti",
     heroSubtitle:
-      "Servizi, prezzi, foto, orari, posizione e un modo semplice per prenotare o contattarvi. Realizziamo il sito partendo da un modello pensato per il vostro settore, a prezzo fisso e collegato ai vostri strumenti Steevanz.",
+      "Servizi, prezzi, foto, orari, posizione e un modo semplice per prenotare o contattarLa. Realizziamo il sito partendo da un modello pensato per il Suo settore, a prezzo fisso e collegato ai Suoi strumenti Steevanz.",
     problem: {
-      title: "Un sito vecchio, o nessun sito, vi fa perdere clienti",
+      title: "Un sito vecchio, o nessun sito, Le fa perdere clienti",
       body:
         "Prima di visitare un'attività, la maggior parte delle persone cerca sullo smartphone. Un sito lento, non aggiornato o difficile da leggere sul telefono dà una cattiva immagine e manda i clienti dalla concorrenza.",
       points: [
@@ -921,7 +921,7 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Un sito professionale, senza un progetto infinito",
       body:
-        "Partiamo da un modello collaudato per il vostro settore, lo adattiamo al vostro marchio e consegniamo un sito veloce, accessibile e pronto per Google, che teniamo aggiornato per voi.",
+        "Partiamo da un modello collaudato per il Suo settore, lo adattiamo al Suo marchio e consegniamo un sito veloce, accessibile e pronto per Google, che teniamo aggiornato per Lei.",
       points: [
         "Fino a 5 pagine con design personalizzato",
         "SEO locale e dati dell'attività per Google",
@@ -932,29 +932,29 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Ordine e brief",
-        body: "Fate l'ordine sul sito e rispondete ad alcune domande sulla vostra attività. Se serve, fissiamo una chiamata di 20 minuti.",
+        body: "Faccia l'ordine sul sito e risponda ad alcune domande sulla Sua attività. Se serve, fissiamo una chiamata di 20 minuti.",
       },
       {
         title: "Proposta a prezzo fisso",
-        body: "Confermiamo per iscritto pagine, opzioni, tempi e prezzo finale. Con l'accettazione (acconto del 50%), vi inviamo l'elenco di ciò che ci serve da voi.",
+        body: "Confermiamo per iscritto pagine, opzioni, tempi e prezzo finale. Con l'accettazione (acconto del 50%), Le inviamo l'elenco di ciò che ci serve da Lei.",
       },
       {
         title: "Design e sviluppo",
-        body: "Partiamo dal modello del vostro settore e vi mostriamo la prima versione su un link privato. Sono inclusi 2 giri di modifiche.",
+        body: "Partiamo dal modello del Suo settore e Le mostriamo la prima versione su un link privato. Sono inclusi 2 giri di modifiche.",
       },
       {
         title: "Pubblicazione e assistenza",
-        body: "Colleghiamo il dominio, registriamo il sito su Google, vi spieghiamo come chiedere modifiche e restiamo al vostro fianco con il piano mensile.",
+        body: "Colleghiamo il dominio, registriamo il sito su Google, Le spieghiamo come chiedere modifiche e restiamo al Suo fianco con il piano mensile.",
       },
     ],
     features: [
       {
         title: "Modelli per settore",
-        body: "Ristorante, barbiere, clinica, palestra, casa vacanza o negozio: partiamo da una struttura pensata per il vostro tipo di attività.",
+        body: "Ristorante, barbiere, clinica, palestra, casa vacanza o negozio: partiamo da una struttura pensata per il Suo tipo di attività.",
       },
       {
         title: "SEO locale",
-        body: "Titoli, descrizioni e dati strutturati per ogni pagina, Search Console configurata e informazioni coerenti con il vostro profilo Google.",
+        body: "Titoli, descrizioni e dati strutturati per ogni pagina, Search Console configurata e informazioni coerenti con il Suo profilo Google.",
       },
       {
         title: "Veloce e accessibile",
@@ -997,7 +997,7 @@ export const copy: ProductCopyByLocale = {
       {
         sector: "lodging",
         title: "Case vacanza",
-        body: "Un sito tutto vostro, con prenotazioni e pagamento online, per chi torna e per chi vi trova su Google o su Instagram, senza commissioni di piattaforma.",
+        body: "Un sito tutto Suo, con prenotazioni e pagamento online, per chi torna e per chi La trova su Google o su Instagram, senza commissioni di piattaforma.",
       },
     ],
     includes: [
@@ -1005,9 +1005,9 @@ export const copy: ProductCopyByLocale = {
       "Pagine legali: privacy, cookie e condizioni",
       "SEO locale e Google Search Console",
       "Modulo di contatto, WhatsApp, mappa e orari",
-      "Collegamento agli strumenti Steevanz che già usate",
+      "Collegamento agli strumenti Steevanz che già usa",
       "2 giri di modifiche e una formazione di 30 minuti",
-      "Pubblicazione sul vostro dominio, con certificato di sicurezza",
+      "Pubblicazione sul Suo dominio, con certificato di sicurezza",
     ],
     faq: [
       {
@@ -1016,7 +1016,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Cosa devo inviarvi?",
-        a: "Logo, foto, testi (oppure scegliete l'opzione copywriting), dati dell'azienda, orari e l'accesso al dominio, se ne avete già uno. Dopo l'accettazione vi inviamo un elenco semplice.",
+        a: "Logo, foto, testi (oppure scelga l'opzione copywriting), dati dell'azienda, orari e l'accesso al dominio, se ne ha già uno. Dopo l'accettazione Le inviamo un elenco semplice.",
       },
       {
         q: "In quanto tempo è pronto?",
@@ -1024,11 +1024,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Posso avere il sito in italiano, in inglese o in altre lingue?",
-        a: "Sì. Ogni lingua in più costa 190 € + IVA per tutto il sito. Traduciamo noi e voi approvate; consigliamo una revisione da parte di un madrelingua.",
+        a: "Sì. Ogni lingua in più costa 190 € + IVA per tutto il sito. Traduciamo noi e Lei approva; consigliamo una revisione da parte di un madrelingua.",
       },
       {
         q: "Posso modificare il sito da solo?",
-        a: "Le piccole modifiche sono incluse nel piano mensile: mandateci un messaggio e ci pensiamo noi. Se volete pubblicare notizie o articoli in autonomia, c'è l'opzione blog con editor.",
+        a: "Le piccole modifiche sono incluse nel piano mensile: ci mandi un messaggio e ci pensiamo noi. Se vuole pubblicare notizie o articoli in autonomia, c'è l'opzione blog con editor.",
       },
       {
         q: "Il sito compare su Google?",
@@ -1036,36 +1036,36 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come si paga?",
-        a: "In due parti: 50% all'accettazione della proposta e 50% prima della pubblicazione. L'ordine sul sito non prevede pagamenti: prima vi inviamo la proposta con il prezzo finale.",
+        a: "In due parti: 50% all'accettazione della proposta e 50% prima della pubblicazione. L'ordine sul sito non prevede pagamenti: prima Le inviamo la proposta con il prezzo finale.",
       },
       {
         q: "E se lascio Steevanz?",
-        a: "Il dominio è vostro e vi consegniamo i file del sito, così potete ospitarlo altrove.",
+        a: "Il dominio è Suo e Le consegniamo i file del sito, così può ospitarlo altrove.",
       },
     ],
     web: {
       notIncluded: [
-        "Testi (vedi l'opzione copywriting), fotografie e logo",
-        "Pagamenti online o negozio (vedi il Negozio online)",
-        "Blog modificabile da voi (opzione)",
+        "Testi (veda l'opzione copywriting), fotografie e logo",
+        "Pagamenti online o negozio (veda il Negozio online)",
+        "Blog modificabile da Lei (opzione)",
         "Pubblicità, SEO mensile (articoli, link) e gestione dei social",
       ],
       addOns: [
         { name: "Pagina in più", price: "90 €" },
         { name: "Copywriting (fino a 5 pagine)", price: "190 €" },
         { name: "Copywriting, per ogni pagina in più", price: "35 €" },
-        { name: "Lingua in più (tutto il sito, tradotto da noi e approvato da voi)", price: "190 €" },
+        { name: "Lingua in più (tutto il sito, tradotto da noi e approvato da Lei)", price: "190 €" },
         { name: "Blog o notizie con editor, per pubblicare in autonomia", price: "190 €" },
         { name: "Modulo avanzato (preventivi, iscrizioni, invio di file)", price: "60 €" },
         { name: "Profilo dell'attività su Google: creazione o ottimizzazione", price: "79 €" },
         { name: "Email professionale (fino a 5 caselle)", price: "40 €" },
-        { name: "Dominio gestito da noi, registrato a vostro nome", price: "20 €/anno" },
+        { name: "Dominio gestito da noi, registrato a Suo nome", price: "20 €/anno" },
         { name: "Migrazione da un vecchio sito, con reindirizzamenti per non perdere il traffico da Google", price: "da 120 €" },
         { name: "Prenotazione diretta per case vacanza (disponibilità, richiesta e pagamento)", price: "da 390 €" },
       ],
       monthlyPlan: {
         price: "25 €/mese + IVA",
-        body: "Hosting e manutenzione senza vincoli: disdetta con 30 giorni di preavviso e vi consegniamo i file.",
+        body: "Hosting e manutenzione senza vincoli: disdetta con 30 giorni di preavviso e Le consegniamo i file.",
         points: [
           "Hosting, certificato di sicurezza, monitoraggio e backup",
           "Aggiornamenti di sicurezza",

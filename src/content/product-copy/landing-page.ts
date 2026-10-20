@@ -850,11 +850,11 @@ export const copy: ProductCopyByLocale = {
       "Landing page veloce e pensata per lo smartphone per piccole attività: contatti, prenotazioni e ordini. Prezzo fisso, consegna in 5 giorni lavorativi.",
     heroTitle: "Una pagina chiara che trasforma le visite in clienti",
     heroSubtitle:
-      "Per chi non ha ancora un sito, per una campagna o per il link nella bio di Instagram. Una sola pagina, con tutto ciò che serve ai clienti per contattarvi, collegata agli strumenti Steevanz che già usate.",
+      "Per chi non ha ancora un sito, per una campagna o per il link nella bio di Instagram. Una sola pagina, con tutto ciò che serve ai clienti per contattarLa, collegata agli strumenti Steevanz che già usa.",
     problem: {
-      title: "I clienti vi cercano, ma non trovano l'essenziale",
+      title: "I clienti La cercano, ma non trovano l'essenziale",
       body:
-        "Senza un sito, le informazioni restano sparse tra social, Google e messaggi. Chi arriva dallo smartphone vuole sapere cosa fate, dove siete, a che ora aprite e come prenotare, e rinuncia se non lo trova in fretta.",
+        "Senza un sito, le informazioni restano sparse tra social, Google e messaggi. Chi arriva dallo smartphone vuole sapere cosa fa la Sua attività, dove si trova, a che ora apre e come prenotare, e rinuncia se non lo trova in fretta.",
       points: [
         "Orari, indirizzo e contatti difficili da trovare",
         "Campagne e annunci che non portano da nessuna parte",
@@ -864,9 +864,9 @@ export const copy: ProductCopyByLocale = {
     solution: {
       title: "Tutto in una pagina, con un pulsante chiaro",
       body:
-        "Realizziamo una pagina veloce, con il vostro logo e i vostri colori, che spiega cosa fate e porta a un'unica azione: chiamare, scrivere, prenotare o ordinare.",
+        "Realizziamo una pagina veloce, con il Suo logo e i Suoi colori, che spiega cosa fa e porta a un'unica azione: chiamare, scrivere, prenotare o ordinare.",
       points: [
-        "Design a partire da un modello del vostro settore",
+        "Design a partire da un modello del Suo settore",
         "Pulsanti per WhatsApp, telefono, mappa e prenotazioni",
         "In regola dal primo giorno: cookie, privacy e Libro dei reclami",
         "Prezzo fisso e consegna in 5 giorni lavorativi",
@@ -875,25 +875,25 @@ export const copy: ProductCopyByLocale = {
     steps: [
       {
         title: "Ordine e brief",
-        body: "Fate l'ordine sul sito e rispondete ad alcune domande sulla vostra attività. Se serve, fissiamo una chiamata di 20 minuti.",
+        body: "Faccia l'ordine sul sito e risponda ad alcune domande sulla Sua attività. Se serve, fissiamo una chiamata di 20 minuti.",
       },
       {
         title: "Proposta a prezzo fisso",
-        body: "Confermiamo per iscritto sezioni, opzioni, tempi e prezzo finale. Con l'accettazione (acconto del 50%), vi inviamo l'elenco di ciò che ci serve da voi.",
+        body: "Confermiamo per iscritto sezioni, opzioni, tempi e prezzo finale. Con l'accettazione (acconto del 50%), Le inviamo l'elenco di ciò che ci serve da Lei.",
       },
       {
         title: "Design e sviluppo",
-        body: "Partiamo dal modello del vostro settore e vi mostriamo la prima versione su un link privato. Sono inclusi 2 giri di modifiche.",
+        body: "Partiamo dal modello del Suo settore e Le mostriamo la prima versione su un link privato. Sono inclusi 2 giri di modifiche.",
       },
       {
         title: "Pubblicazione e assistenza",
-        body: "Colleghiamo il dominio, registriamo la pagina su Google, vi spieghiamo come chiedere modifiche e restiamo al vostro fianco con il piano mensile.",
+        body: "Colleghiamo il dominio, registriamo la pagina su Google, Le spieghiamo come chiedere modifiche e restiamo al Suo fianco con il piano mensile.",
       },
     ],
     features: [
       {
         title: "Pensata per lo smartphone",
-        body: "Progettata prima per lo schermo piccolo, da cui arriva la maggior parte dei vostri clienti, e veloce anche con poca rete.",
+        body: "Progettata prima per lo schermo piccolo, da cui arriva la maggior parte dei Suoi clienti, e veloce anche con poca rete.",
       },
       {
         title: "Un obiettivo chiaro",
@@ -901,11 +901,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Collegata a Steevanz",
-        body: "Se usate già prenotazioni, menù digitale, carta fedeltà o chatbot Steevanz, li colleghiamo alla pagina senza costi aggiuntivi.",
+        body: "Se usa già prenotazioni, menù digitale, carta fedeltà o chatbot Steevanz, li colleghiamo alla pagina senza costi aggiuntivi.",
       },
       {
         title: "Trovata su Google",
-        body: "Titoli, descrizione e dati strutturati dell'attività configurati, con il collegamento al vostro Profilo dell'attività su Google.",
+        body: "Titoli, descrizione e dati strutturati dell'attività configurati, con il collegamento al Suo Profilo dell'attività su Google.",
       },
       {
         title: "In regola",
@@ -942,10 +942,10 @@ export const copy: ProductCopyByLocale = {
       "Una pagina con fino a 8 sezioni",
       "Design personalizzato a partire da un modello di settore",
       "Modulo di contatto, WhatsApp e mappa",
-      "SEO di base e collegamento al vostro profilo Google",
+      "SEO di base e collegamento al Suo profilo Google",
       "Cookie, privacy e Libro dei reclami",
       "2 giri di modifiche",
-      "Pubblicazione sul vostro dominio, con certificato di sicurezza",
+      "Pubblicazione sul Suo dominio, con certificato di sicurezza",
     ],
     faq: [
       {
@@ -954,11 +954,11 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Devo avere già testi e foto?",
-        a: "Aiuta, ma non è obbligatorio. Se non avete testi, li scriviamo noi dopo una chiacchierata di 20 minuti (opzione da 90 €). Le foto devono essere vostre o provenire da archivi di immagini con licenza.",
+        a: "Aiuta, ma non è obbligatorio. Se non ha testi, li scriviamo noi dopo una chiacchierata di 20 minuti (opzione da 90 €). Le foto devono essere Sue o provenire da archivi di immagini con licenza.",
       },
       {
         q: "In quanto tempo è pronta?",
-        a: "In 5 giorni lavorativi da quando riceviamo i contenuti. Prima di pubblicarla vi mostriamo la prima versione su un link privato.",
+        a: "In 5 giorni lavorativi da quando riceviamo i contenuti. Prima di pubblicarla Le mostriamo la prima versione su un link privato.",
       },
       {
         q: "Posso fare modifiche in seguito?",
@@ -966,38 +966,38 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Il dominio è intestato a me?",
-        a: "Sì, sempre. Se non avete ancora un dominio, vi aiutiamo a sceglierlo e a registrarlo a vostro nome.",
+        a: "Sì, sempre. Se non ha ancora un dominio, La aiutiamo a sceglierlo e a registrarlo a Suo nome.",
       },
       {
         q: "Come si paga?",
-        a: "In due parti: 50% all'accettazione della proposta e 50% prima della pubblicazione. L'ordine sul sito non prevede pagamenti: prima vi inviamo la proposta con il prezzo finale.",
+        a: "In due parti: 50% all'accettazione della proposta e 50% prima della pubblicazione. L'ordine sul sito non prevede pagamenti: prima Le inviamo la proposta con il prezzo finale.",
       },
       {
         q: "E se più avanti volessi un sito completo?",
-        a: "Se passate al Sito web entro 6 mesi, scaliamo quanto avete pagato per la landing page.",
+        a: "Se passa al Sito web entro 6 mesi, scaliamo quanto ha pagato per la landing page.",
       },
     ],
     web: {
       notIncluded: [
-        "Testi (vedi l'opzione copywriting)",
+        "Testi (veda l'opzione copywriting)",
         "Fotografie, servizio fotografico o creazione del logo",
         "Dominio e licenze email",
         "Pubblicità a pagamento (Google o Meta)",
-        "Pagine in più (vedi il Sito web)",
+        "Pagine in più (veda il Sito web)",
       ],
       addOns: [
         { name: "Copywriting: scriviamo i testi dopo una chiamata di 20 minuti", price: "90 €" },
-        { name: "Lingua in più, tradotta da noi e approvata da voi", price: "90 €" },
+        { name: "Lingua in più, tradotta da noi e approvata da Lei", price: "90 €" },
         { name: "Sezione in più (oltre le 8)", price: "40 €" },
         { name: "Profilo dell'attività su Google: creazione o ottimizzazione (categorie, orari, foto, servizi)", price: "79 €" },
         { name: "Email professionale: fino a 5 caselle, DNS e firma", price: "40 €" },
-        { name: "Dominio gestito da noi, registrato a vostro nome", price: "20 €/anno" },
+        { name: "Dominio gestito da noi, registrato a Suo nome", price: "20 €/anno" },
         { name: "Misurazione delle conversioni per gli annunci, con consenso", price: "60 €" },
         { name: "Passaggio al Sito web entro 6 mesi", price: "scaliamo i 350 €" },
       ],
       monthlyPlan: {
         price: "15 €/mese + IVA",
-        body: "Hosting e manutenzione senza vincoli: disdetta con 30 giorni di preavviso e vi consegniamo i file.",
+        body: "Hosting e manutenzione senza vincoli: disdetta con 30 giorni di preavviso e Le consegniamo i file.",
         points: [
           "Hosting, certificato di sicurezza, monitoraggio e backup",
           "Aggiornamenti di sicurezza",
