@@ -9,8 +9,7 @@ import { whatsappUrl } from "@/lib/site";
 import { ClientStrip } from "./ClientStrip";
 import { Goals, type GoalView } from "./Goals";
 import { MenuShowcase } from "./MenuShowcase";
-import { MobileBar } from "./MobileBar";
-import { HowWeWork, PricesFaq, SectorSolutions } from "./NovoSections";
+import { HowWeWork, SectorSolutions } from "./NovoSections";
 import { LoyaltyBanner } from "./LoyaltyBanner";
 import { PlatesBanner } from "./PlatesBanner";
 import styles from "./novo.module.css";
@@ -37,6 +36,7 @@ export function NovoHome() {
         <ArrowRight size={18} />
       </Link>
       <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={`${styles.btn} ${styles.btnGhost}`}>
+        <WhatsAppIcon size={18} />
         {copy.hero.secondary}
       </a>
     </div>
@@ -84,7 +84,8 @@ export function NovoHome() {
               </div>
             </div>
             <p className={styles.brandLine}>
-              <span>{copy.brandLine[0]}</span> <span>{copy.brandLine[1]}</span>
+              <span>{copy.brandLine[0]}</span>
+              <span>{copy.brandLine[1]}</span>
             </p>
           </div>
         </div>
@@ -93,23 +94,10 @@ export function NovoHome() {
       {/* 2. Confiam em nós */}
       <ClientStrip />
 
-      {/* 3. O que quer melhorar? */}
-      <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
-        <div className={styles.wrap}>
-          <h2 id="novo-goals" className={styles.h2} data-reveal>
-            {copy.goals.title}
-          </h2>
-          <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
-            {copy.goals.lead}
-          </p>
-          <Goals goals={goalViews} custom={{ href: href(locale, { key: "product", productId: "automation" }), price: formatEuro(automation.priceFrom, locale) }} />
-        </div>
-      </section>
-
-      {/* 4. Placas de reviews do Google: the flagship, after the goals */}
+      {/* 3. Placas de reviews do Google: the flagship, first after the clients */}
       <PlatesBanner />
 
-      {/* 5. Menu digital showcase */}
+      {/* 4. Menu digital showcase */}
       <section aria-labelledby="novo-menu" className={styles.showcase}>
         <div className={styles.wrap}>
           <MenuShowcase
@@ -139,8 +127,21 @@ export function NovoHome() {
         </div>
       </section>
 
-      {/* 6. Cartão de cliente digital: after the menu, to make them come back */}
+      {/* 5. Cartão de cliente digital: after the menu, to make them come back */}
       <LoyaltyBanner />
+
+      {/* 6. O que quer melhorar? (the goals with live demos, after the three product bands) */}
+      <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
+        <div className={styles.wrap}>
+          <h2 id="novo-goals" className={styles.h2} data-reveal>
+            {copy.goals.title}
+          </h2>
+          <p className={styles.lead} data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
+            {copy.goals.lead}
+          </p>
+          <Goals goals={goalViews} custom={{ href: href(locale, { key: "product", productId: "automation" }), price: formatEuro(automation.priceFrom, locale) }} />
+        </div>
+      </section>
 
       {/* 7. Soluções por setor */}
       <SectorSolutions />
@@ -148,10 +149,7 @@ export function NovoHome() {
       {/* 8. Como trabalhamos */}
       <HowWeWork />
 
-      {/* 9. Preços à vista e perguntas */}
-      <PricesFaq />
-
-      {/* 10. Final CTA and close */}
+      {/* 9. Final CTA and close */}
       <section aria-labelledby="novo-final" className={styles.final}>
         <div className={styles.wrap}>
           <h2 id="novo-final" className={styles.h2} data-reveal>
@@ -176,8 +174,6 @@ export function NovoHome() {
           </p>
         </div>
       </section>
-
-      <MobileBar heroId="novo-hero" bookHref={bookHref} whatsappHref={whatsapp} />
     </div>
   );
 }

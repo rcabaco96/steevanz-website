@@ -70,12 +70,23 @@ describe("home page («/»)", () => {
     assert.doesNotMatch(JSON.stringify(loyaltyCopy), /fideliza|\d\s*€/i);
   });
 
-  it("never shows a rating or a published review in the plate scenes", () => {
+  it("never shows a «published» toast in the plate scenes (the stars on the form fill: owner, 2026-10-20)", () => {
     for (const name of ["HeroTapScene", "ReviewTapScene"]) {
       const tsx = readFileSync(`src/components/visuals/${name}.tsx`, "utf8");
       const css = readFileSync(`src/components/visuals/${name}.module.css`, "utf8");
-      assert.doesNotMatch(tsx, /StarFilled|toast/, name);
-      assert.doesNotMatch(css, /e3a21a|starFill|\.toast/, name);
+      assert.doesNotMatch(tsx, /toast/, name);
+      assert.doesNotMatch(css, /\.toast/, name);
     }
+  });
+
+  it("has no prices or FAQ section, and no FAQ structured data", () => {
+    const home = readFileSync(join(dir, "NovoHome.tsx"), "utf8");
+    assert.doesNotMatch(home, /PricesFaq|novo-prices/);
+    assert.doesNotMatch(readFileSync("src/app/(pt)/page.tsx", "utf8"), /faqJsonLd/);
+    // Section order: clients, plates, Menu digital, loyalty card, goals, sectors, how we work, final call.
+    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
+    const positions = order.map((needle) => home.indexOf(needle));
+    assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
+    assert.deepEqual([...positions].sort((a, b) => a - b), positions);
   });
 });

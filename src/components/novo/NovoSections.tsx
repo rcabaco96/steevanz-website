@@ -1,11 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
-import { Faq } from "@/components/ui/Faq";
 import { formatEuro } from "@/components/ui/Price";
-import { homeCopy } from "@/content/home";
 import { photos } from "@/content/media";
-import { howCopy, keyPrices, monthlyExtra, pricesCopy, sectorsCopy } from "@/content/novo-home";
+import { howCopy, monthlyExtra, sectorsCopy } from "@/content/novo-home";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct } from "@/content/products";
 import { sectors } from "@/content/sectors";
@@ -101,53 +99,6 @@ export function HowWeWork() {
             </li>
           ))}
         </ol>
-      </div>
-    </section>
-  );
-}
-
-export function PricesFaq() {
-  const faq = homeCopy[locale].faq.items;
-  return (
-    <section aria-labelledby="novo-prices" className={`${base.section} ${base.case}`}>
-      <div className={`${base.wrap} ${styles.pricesGrid}`}>
-        <div>
-          <h2 id="novo-prices" className={base.h2} data-reveal>
-            {pricesCopy.title}
-          </h2>
-          <p className={base.lead}>{pricesCopy.lead}</p>
-          <ul className={styles.priceList}>
-            {keyPrices.map((id) => {
-              const product = getProduct(id);
-              const extra = monthlyExtra(product);
-              return (
-                <li key={id}>
-                  <Link href={href(locale, { key: "product", productId: id })} className={styles.priceRow}>
-                    <span className={styles.priceName}>{getProductCopy(id, locale).name}</span>
-                    <span className={styles.priceFill} />
-                    <span className={styles.priceValue}>
-                      <small>desde </small>
-                      {formatEuro(product.priceFrom, locale)}
-                      <small>
-                        {product.priceBilling === "monthly" ? "/mês" : ""}
-                        {extra ? ` + ${formatEuro(extra, locale)}/mês` : ""}
-                      </small>
-                    </span>
-                    <span className={styles.priceQualifier}>{product.priceQualifier[locale].replace(/, sem fidelização$/, "")}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-          <Link href={href(locale, { key: "products" })} className={styles.allLink}>
-            {pricesCopy.all}
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-        <div>
-          <h2 className={styles.faqTitle}>{pricesCopy.faqTitle}</h2>
-          <Faq items={faq} />
-        </div>
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 import type { HomeCopy } from "@/content/home";
-import { Check, StarOutline, TapWaves } from "@/components/icons";
+import { Check, StarFilled, TapWaves } from "@/components/icons";
 import { TapPlate } from "./TapPlate";
 import styles from "./HeroTapScene.module.css";
 
@@ -28,7 +28,7 @@ export function HeroTapScene({ copy }: { copy: HomeCopy["scene"] }) {
             <div className={styles.prompt}>{copy.screenPrompt}</div>
             <div className={styles.stars}>
               {[0, 1, 2, 3, 4].map((index) => (
-                <StarOutline key={index} className={styles.star} />
+                <StarFilled key={index} className={styles.star} />
               ))}
             </div>
             <div className={styles.textBox} />

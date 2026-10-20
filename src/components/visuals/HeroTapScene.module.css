@@ -163,13 +163,13 @@
 .stars {
   display: flex;
   gap: 1cqw;
-  color: #9c8f96;
+  color: #d9cfc3;
 }
 
 .star {
   width: 5.6cqw;
   height: 5.6cqw;
-  animation: starPulse var(--loop) ease-in-out infinite;
+  animation: starFill var(--loop) linear infinite;
 }
 
 .star:nth-child(2) {
@@ -205,6 +205,18 @@
   color: #ffffff;
   font-size: 2.2cqw;
   font-weight: 600;
+  position: relative;
+  animation: postPress var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.postButton::after {
+  content: "";
+  position: absolute;
+  inset: -0.6cqw;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0.6cqw rgb(207 165 99 / 0.75);
+  opacity: 0;
+  animation: postGlow var(--loop) cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .chip {
@@ -304,20 +316,57 @@
   }
 }
 
-@keyframes starPulse {
+@keyframes starFill {
   0%,
   52% {
+    color: #d9cfc3;
     transform: scale(1);
-    opacity: 0.7;
   }
-  56% {
-    transform: scale(1.15);
-    opacity: 1;
+  55% {
+    color: #e3a21a;
+    transform: scale(1.25);
   }
-  62%,
+  58%,
+  94% {
+    color: #e3a21a;
+    transform: scale(1);
+  }
+  100% {
+    color: #d9cfc3;
+  }
+}
+
+/* «Publicar» is pressed once the stars are in, then stays highlighted until the loop restarts. */
+@keyframes postPress {
+  0%,
+  70% {
+    transform: scale(1);
+  }
+  73% {
+    transform: scale(0.88);
+  }
+  77%,
+  94% {
+    transform: scale(1.06);
+  }
   100% {
     transform: scale(1);
-    opacity: 0.7;
+  }
+}
+
+@keyframes postGlow {
+  0%,
+  72% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  77%,
+  94% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -337,6 +386,8 @@
   .idle,
   .review,
   .star,
+  .postButton,
+  .postButton::after,
   .chip {
     animation: none !important;
   }
@@ -350,6 +401,14 @@
   }
 
   .review {
+    opacity: 1;
+  }
+
+  .star {
+    color: #e3a21a;
+  }
+
+  .postButton::after {
     opacity: 1;
   }
 }

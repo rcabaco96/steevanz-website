@@ -75,10 +75,6 @@ export const novoCopy = {
   },
   /** The two-line brand line (owner, 2026-10-18): always both sentences, in this order. */
   brandLine: ["Tecnologia do futuro.", "Com os bons modos de antigamente."] as const,
-  bar: {
-    book: "Agendar demo",
-    talk: "Falar connosco",
-  },
 };
 
 export type GoalId = "found" | "full" | "sell" | "return";
@@ -194,7 +190,7 @@ export const platesCopy = {
   cta: "Conhecer as placas",
 };
 
-/* ---------- Setores, preços e perguntas ---------- */
+/* ---------- Setores ---------- */
 
 export const sectorsCopy = {
   title: "Soluções por setor",
@@ -202,16 +198,6 @@ export const sectorsCopy = {
   together: "Juntos, desde",
   see: "Ver a solução para",
 };
-
-export const pricesCopy = {
-  title: "Preços à vista",
-  lead: "Sem surpresas: os valores de partida de cada produto. Valores sem IVA, confirmados na proposta.",
-  all: "Ver todos os produtos",
-  faqTitle: "Perguntas frequentes",
-};
-
-/** The key prices, in the order shown. */
-export const keyPrices: ProductId[] = ["google-review-plates", "digital-menu", "loyalty", "bookings", "ai-chatbot", "landing-page", "website", "online-shop"];
 
 /**
  * The monthly part of a one-off product's price, read from its priceQualifier in products.ts

@@ -1,13 +1,13 @@
 import type { HomeCopy } from "@/content/home";
-import { StarOutline, TapWaves } from "@/components/icons";
+import { StarFilled, TapWaves } from "@/components/icons";
 import { TapPlate } from "./TapPlate";
 import styles from "./ReviewTapScene.module.css";
 
 /**
  * The flagship section's moving picture (2026-10-11: replaced a stock video that showed a card
- * payment at a terminal): a phone comes to the counter plate and the tap opens Google's review
- * form, empty (never a rating or a published review: brand rule). CSS only, free, no video to load;
- * with reduced motion it shows the open form, still.
+ * payment at a terminal): a phone comes to the counter plate, the tap opens Google's review form,
+ * the customer taps the five stars and presses «Publicar» (owner, 2026-10-20; no «published» notice).
+ * CSS only, free, no video to load; with reduced motion it shows the form with the stars, still.
  */
 export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
   return (
@@ -34,7 +34,7 @@ export function ReviewTapScene({ copy }: { copy: HomeCopy["scene"] }) {
             <div className={styles.prompt}>{copy.screenPrompt}</div>
             <div className={styles.stars}>
               {[0, 1, 2, 3, 4].map((index) => (
-                <StarOutline key={index} className={styles.star} style={{ ["--i" as string]: index }} />
+                <StarFilled key={index} className={styles.star} style={{ ["--i" as string]: index }} />
               ))}
             </div>
             <div className={styles.textBox} />

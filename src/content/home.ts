@@ -76,7 +76,7 @@ export const homeCopy: Localized<HomeCopy> = {
       screenButton: "Publicar",
       chipNoApp: "Sem app",
       chipTap: "Abre em segundos",
-      ariaLabel: "Animação: um telemóvel toca numa placa e abre o formulário de review do Google, pronto a preencher.",
+      ariaLabel: "Animação: um telemóvel toca numa placa e abre o formulário de review do Google, onde o cliente toca nas estrelas.",
     },
     marquee: [
       "Restaurantes",
@@ -196,7 +196,7 @@ export const homeCopy: Localized<HomeCopy> = {
       screenButton: "Post",
       chipNoApp: "No app",
       chipTap: "Opens in seconds",
-      ariaLabel: "Animation: a phone taps a plate and opens the Google review form, ready to fill in.",
+      ariaLabel: "Animation: a phone taps a plate and opens the Google review form, where the customer taps the stars.",
     },
     marquee: [
       "Restaurants",

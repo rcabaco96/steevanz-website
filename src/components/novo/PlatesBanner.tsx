@@ -12,7 +12,7 @@ import styles from "./plates.module.css";
 
 const locale = "pt";
 
-// The Google review plates, as a promo band right after «O que quer melhorar?». Prices come from
+// The Google review plates, as the first band after the clients strip. Prices come from
 // products.ts, without VAT and with «+ IVA». The animation is the old home hero's plate scene
 // (owner, 2026-10-20), on a dark panel, paused while off screen.
 

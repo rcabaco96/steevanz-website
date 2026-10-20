@@ -197,16 +197,15 @@
 }
 
 .brandLine {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   font-family: var(--font-display);
   font-weight: 500;
   font-size: clamp(1rem, 5.2vw, 1.1875rem);
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: var(--text);
-}
-
-.brandLine span {
-  display: block;
 }
 
 .brandLine span + span {
@@ -216,9 +215,19 @@
 }
 
 @media (min-width: 1024px) {
+  /* Mark, disc and the two lines on one vertical axis. */
+  .heroBrand {
+    justify-self: center;
+    align-items: center;
+  }
+  .markWrap {
+    /* The disc sits down and to the right of the tile: shift the pair so its middle is the axis. */
+    translate: calc(var(--mark) * -0.18) 0;
+  }
   .brandLine {
-    font-size: 1.625rem;
+    align-items: center;
     text-align: center;
+    font-size: 1.625rem;
   }
 }
 
@@ -523,10 +532,11 @@
 }
 
 .clientsHead {
+  /* The pause button sits next to the title, clear of the floating WhatsApp button's corner. */
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 0.75rem;
 }
 
 .clientsTitle {
@@ -1288,12 +1298,6 @@
   align-items: center;
 }
 
-/* Soft field (prices and FAQ). */
-
-.case {
-  background: var(--bg-soft);
-}
-
 /* ---------- Final CTA + close ---------- */
 
 .final {
@@ -1356,43 +1360,3 @@
   color: var(--ink);
 }
 
-/* ---------- Mobile bottom bar ---------- */
-
-.bar {
-  position: fixed;
-  inset: auto 0 0;
-  z-index: 45;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  padding: 0.625rem var(--gutter) calc(0.625rem + env(safe-area-inset-bottom));
-  background: var(--bg);
-  box-shadow: 0 -12px 28px -18px rgb(60 30 50 / 0.45);
-  transform: translate3d(0, 110%, 0);
-  transition: transform 0.45s var(--ease);
-}
-
-.bar[data-show] {
-  transform: none;
-}
-
-.bar .btn {
-  min-height: 2.875rem;
-  padding-inline: 0.75rem;
-  font-size: 0.9375rem;
-}
-
-@media (min-width: 1024px) {
-  .bar {
-    display: none;
-  }
-}
-
-.whatsapp {
-  background: #25d366;
-  color: #0b2e17;
-}
-
-.whatsapp:hover {
-  background: #2fe073;
-}
