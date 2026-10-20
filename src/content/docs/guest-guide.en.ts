@@ -21,25 +21,23 @@ export const en: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Writing the guide", "We turn your notes, photos or current guide into a clear page organised by topic"],
           ["Four languages", "Portuguese, English and two more of your choice (French, Spanish, German or Italian), checked by us"],
-          ["One tap plate", "Wall plate, stand or sticker, with a QR code, to place inside the property"],
+          ["Tap plates", "Wall plate, stand or sticker, with a QR code, to place inside the property"],
           ["Printable version", "A PDF with the same content, so a paper copy can stay in the property"],
-          ["12 months online", "Hosting of the page and changes made by us within two working days"],
+          ["Online hosting and changes", "Hosting of the page and changes made by us within two working days"],
         ],
       },
       { type: "h2", id: "pricing", text: "Pricing" },
       {
         type: "table",
-        head: ["Quantity", "Price per property", "Total"],
+        head: ["Quantity", "Price", "Per plate"],
         rows: [
-          ["1 property", "€69", "€69"],
-          ["From 3", "€59", "€177 (3)"],
-          ["From 5", "€55", "€275 (5)"],
-          ["From 10", "€49", "€490 (10)"],
+          ["1 to 9 plates", "€20 each", "€20"],
+          ["10 plates or more", "€15 each (10 plates: €150)", "€15"],
         ],
       },
       {
         type: "p",
-        text: "From month 13, keeping the guide online with changes included costs €3 per month per property. Extra plates for the same property and additional languages have a small cost, shown in your quote. Prices exclude VAT, are proposals and are confirmed after the demo.",
+        text: "Writing the guide, translation into four languages, online hosting and changes cost €30 per month. Additional languages have a small cost, shown in your quote. Prices exclude VAT, are proposals and are confirmed after the demo.",
       },
       { type: "h2", id: "how-it-works", text: "How it works for guests" },
       {
@@ -245,8 +243,8 @@ export const en: Record<DocPageId, DocPageContent> = {
         type: "faq",
         items: [
           {
-            q: "What does it cost after the first year?",
-            a: "€3 per month per property, to keep the guide online with changes included. With the Holiday-rental pack, the guide is included while the pack is active.",
+            q: "What does it cost per month?",
+            a: "€30 per month for the guide, with online hosting and changes included. Plates are paid once: €20 each, or €15 each from 10. With the Holiday-rental pack, the guide is included while the pack is active.",
           },
           {
             q: "Does the guide count as the information book the law requires?",

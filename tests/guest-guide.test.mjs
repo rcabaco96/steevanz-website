@@ -11,25 +11,32 @@ const guide = (quantity, logo = false) => ({
 });
 
 describe("digital guest guide pricing", () => {
-  it("is a one-time product at 69 € per property", () => {
+  it("costs 20 € per plate, like the Menu digital", () => {
     const { oneTime, monthly } = priceCart([guide(1)]);
     assert.equal(oneTime.lines[0].billing, "one-time");
-    assert.equal(oneTime.subtotalCents, 6900);
+    assert.equal(oneTime.subtotalCents, 2000);
     assert.equal(monthly.lines.length, 0);
   });
 
-  it("gives managers 59 € from 3, 55 € from 5 and 49 € from 10 properties", () => {
-    assert.equal(priceCart([guide(2)]).oneTime.subtotalCents, 2 * 6900);
-    assert.equal(priceCart([guide(3)]).oneTime.subtotalCents, 3 * 5900);
-    assert.equal(priceCart([guide(5)]).oneTime.subtotalCents, 5 * 5500);
-    assert.equal(priceCart([guide(10)]).oneTime.subtotalCents, 10 * 4900);
-    assert.equal(priceCart([guide(14)]).oneTime.subtotalCents, 14 * 4900);
+  it("charges 15 € per plate from 10 plates", () => {
+    assert.equal(priceCart([guide(9)]).oneTime.subtotalCents, 9 * 2000);
+    assert.equal(priceCart([guide(10)]).oneTime.subtotalCents, 10 * 1500);
+    assert.equal(priceCart([guide(14)]).oneTime.subtotalCents, 14 * 1500);
+  });
+
+  it("has the same plate prices and monthly fee as the Menu digital", () => {
+    const product = getProduct("guest-guide");
+    const menu = getProduct("digital-menu");
+    assert.equal(product.priceFrom, menu.priceFrom);
+    assert.deepEqual(product.packs, menu.packs);
+    assert.match(product.priceQualifier.pt, /30 €\/mês/);
+    assert.match(menu.priceQualifier.pt, /30 €\/mês/);
   });
 
   it("charges the logo once per line", () => {
     const { oneTime } = priceCart([guide(5, true)]);
     assert.equal(oneTime.lines[0].lineExtraCents, 1000);
-    assert.equal(oneTime.subtotalCents, 5 * 5500 + 1000);
+    assert.equal(oneTime.subtotalCents, 5 * 2000 + 1000);
   });
 
   it("only accepts its own plate formats", () => {
@@ -37,10 +44,10 @@ describe("digital guest guide pricing", () => {
     assert.equal(sanitizeOptions("guest-guide", { format: "round-base" }).format, "wall-plate");
   });
 
-  it("is marked as a provisional price, counted per property", () => {
+  it("is marked as a provisional price, counted per plate", () => {
     const product = getProduct("guest-guide");
     assert.equal(product.priceIsProvisional, true);
-    assert.equal(product.packUnit, "property");
+    assert.equal(product.packUnit, undefined);
   });
 });
 

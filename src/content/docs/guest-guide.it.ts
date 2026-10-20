@@ -21,25 +21,23 @@ export const it: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Scrittura della guida", "Trasformiamo i Suoi appunti, le foto o la guida attuale in una pagina chiara, organizzata per argomento"],
           ["Quattro lingue", "Portoghese, inglese e altre due a scelta (francese, spagnolo, tedesco o italiano), controllate da noi"],
-          ["Targa da toccare", "Targa da parete, espositore o adesivo, con codice QR, da posizionare all'interno dell'alloggio"],
+          ["Targhe da toccare", "Targa da parete, espositore o adesivo, con codice QR, da posizionare all'interno dell'alloggio"],
           ["Versione stampabile", "Un PDF con lo stesso contenuto, per lasciare una copia cartacea nell'alloggio"],
-          ["12 mesi online", "Hosting della pagina e modifiche fatte da noi entro due giorni lavorativi"],
+          ["Hosting online e modifiche", "Hosting della pagina e modifiche fatte da noi entro due giorni lavorativi"],
         ],
       },
       { type: "h2", id: "pricing", text: "Prezzi" },
       {
         type: "table",
-        head: ["Quantità", "Prezzo per alloggio", "Totale"],
+        head: ["Quantità", "Prezzo", "Per targa"],
         rows: [
-          ["1 alloggio", "69 €", "69 €"],
-          ["Da 3", "59 €", "177 € (3)"],
-          ["Da 5", "55 €", "275 € (5)"],
-          ["Da 10", "49 €", "490 € (10)"],
+          ["Da 1 a 9 targhe", "20 € l'una", "20 €"],
+          ["10 targhe o più", "15 € l'una (10 targhe: 150 €)", "15 €"],
         ],
       },
       {
         type: "p",
-        text: "Dal 13° mese, mantenere la guida online con le modifiche incluse costa 3 € al mese per alloggio. Le targhe aggiuntive per lo stesso alloggio e le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
+        text: "La stesura della guida, la traduzione in quattro lingue, l'hosting online e le modifiche costano 30 € al mese. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
       },
       { type: "h2", id: "how-it-works", text: "Come funziona per gli ospiti" },
       {
@@ -245,8 +243,8 @@ export const it: Record<DocPageId, DocPageContent> = {
         type: "faq",
         items: [
           {
-            q: "Quanto costa dopo il primo anno?",
-            a: "3 € al mese per alloggio, per mantenere la guida online con le modifiche incluse. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
+            q: "Quanto costa al mese?",
+            a: "30 € al mese per la guida, con l'hosting online e le modifiche incluse. Le targhe si pagano una volta: 20 € l'una e 15 € l'una da 10 in su. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
           },
           {
             q: "La guida vale come libro informativo richiesto dalla legge?",

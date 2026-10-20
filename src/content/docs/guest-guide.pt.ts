@@ -21,25 +21,23 @@ export const pt: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Escrita do guia", "Transformamos as suas notas, fotografias ou o guia atual numa página clara, organizada por temas"],
           ["Quatro línguas", "Português, inglês e mais duas à escolha (francês, espanhol, alemão ou italiano), revistas por nós"],
-          ["Uma placa de toque", "Placa de parede, expositor ou autocolante, com QR code, para colocar dentro do alojamento"],
+          ["Placas de toque", "Placa de parede, expositor ou autocolante, com QR code, para colocar dentro do alojamento"],
           ["Versão para imprimir", "PDF com o mesmo conteúdo, para deixar uma cópia em papel no alojamento"],
-          ["12 meses online", "Alojamento da página e alterações feitas por nós em até dois dias úteis"],
+          ["Alojamento online e alterações", "Alojamento da página e alterações feitas por nós em até dois dias úteis"],
         ],
       },
       { type: "h2", id: "precos", text: "Preços" },
       {
         type: "table",
-        head: ["Quantidade", "Preço por alojamento", "Total"],
+        head: ["Quantidade", "Preço", "Por placa"],
         rows: [
-          ["1 alojamento", "69 €", "69 €"],
-          ["A partir de 3", "59 €", "177 € (3)"],
-          ["A partir de 5", "55 €", "275 € (5)"],
-          ["A partir de 10", "49 €", "490 € (10)"],
+          ["1 a 9 placas", "20 € cada", "20 €"],
+          ["10 placas ou mais", "15 € cada (10 placas: 150 €)", "15 €"],
         ],
       },
       {
         type: "p",
-        text: "A partir do 13.º mês, manter o guia online com alterações incluídas custa 3 € por mês por alojamento. Placas extra para o mesmo alojamento e línguas adicionais têm um custo pequeno, indicado no orçamento. Valores sem IVA e de proposta, confirmados depois da demonstração.",
+        text: "A escrita do guia, a tradução para quatro línguas, o alojamento online e as alterações custam 30 € por mês. Línguas adicionais têm um custo pequeno, indicado no orçamento. Valores sem IVA e de proposta, confirmados depois da demonstração.",
       },
       { type: "h2", id: "como-funciona", text: "Como funciona para o hóspede" },
       {
@@ -245,8 +243,8 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "faq",
         items: [
           {
-            q: "Quanto custa depois do primeiro ano?",
-            a: "3 € por mês por alojamento, para manter o guia online e as alterações incluídas. Se tiver o Pack Alojamento Local, o guia está incluído enquanto o pack estiver ativo.",
+            q: "Quanto custa por mês?",
+            a: "30 € por mês pelo guia, com o alojamento online e as alterações incluídos. As placas pagam-se uma vez: 20 € cada, 15 € cada a partir de 10. Se tiver o Pack Alojamento Local, o guia está incluído enquanto o pack estiver ativo.",
           },
           {
             q: "O guia serve como o livro de informações que a lei exige?",

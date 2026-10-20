@@ -21,25 +21,23 @@ export const fr: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Rédaction du livret", "Nous transformons vos notes, vos photos ou votre livret actuel en une page claire, organisée par thème"],
           ["Quatre langues", "Portugais, anglais et deux autres au choix (français, espagnol, allemand ou italien), relues par nous"],
-          ["Plaque à toucher", "Plaque murale, chevalet ou autocollant, avec QR code, à placer à l'intérieur du logement"],
+          ["Plaques à toucher", "Plaque murale, chevalet ou autocollant, avec QR code, à placer à l'intérieur du logement"],
           ["Version imprimable", "Un PDF au même contenu, pour laisser un exemplaire papier dans le logement"],
-          ["12 mois en ligne", "Hébergement de la page et modifications faites par nous sous deux jours ouvrés"],
+          ["Hébergement et modifications", "Hébergement de la page et modifications faites par nous sous deux jours ouvrés"],
         ],
       },
       { type: "h2", id: "pricing", text: "Tarifs" },
       {
         type: "table",
-        head: ["Quantité", "Prix par logement", "Total"],
+        head: ["Quantité", "Prix", "Par plaque"],
         rows: [
-          ["1 logement", "69 €", "69 €"],
-          ["À partir de 3", "59 €", "177 € (3)"],
-          ["À partir de 5", "55 €", "275 € (5)"],
-          ["À partir de 10", "49 €", "490 € (10)"],
+          ["De 1 à 9 plaques", "20 € l'unité", "20 €"],
+          ["10 plaques ou plus", "15 € l'unité (10 plaques : 150 €)", "15 €"],
         ],
       },
       {
         type: "p",
-        text: "À partir du 13e mois, garder le livret en ligne, modifications comprises, coûte 3 € par mois et par logement. Les plaques supplémentaires pour le même logement et les langues en plus ont un petit coût, indiqué dans votre devis. Prix + TVA, indicatifs et confirmés après la démonstration.",
+        text: "La rédaction du livret, la traduction en quatre langues, l'hébergement en ligne et les modifications coûtent 30 € par mois. Les langues en plus ont un petit coût, indiqué dans votre devis. Prix + TVA, indicatifs et confirmés après la démonstration.",
       },
       { type: "h2", id: "how-it-works", text: "Comment ça marche pour les voyageurs" },
       {
@@ -245,8 +243,8 @@ export const fr: Record<DocPageId, DocPageContent> = {
         type: "faq",
         items: [
           {
-            q: "Combien ça coûte après la première année ?",
-            a: "3 € par mois et par logement, pour garder le livret en ligne, modifications comprises. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
+            q: "Combien ça coûte par mois ?",
+            a: "30 € par mois pour le livret, hébergement en ligne et modifications compris. Les plaques se paient une fois : 20 € pièce, et 15 € pièce à partir de 10. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
           },
           {
             q: "Le livret vaut-il comme livret d'information exigé par la loi ?",

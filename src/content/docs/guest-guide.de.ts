@@ -21,25 +21,23 @@ export const de: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Erstellung der Gästemappe", "Wir machen aus Ihren Notizen, Fotos oder Ihrer bisherigen Mappe eine klare, nach Themen geordnete Seite"],
           ["Vier Sprachen", "Portugiesisch, Englisch und zwei weitere nach Wahl (Französisch, Spanisch, Deutsch oder Italienisch), von uns geprüft"],
-          ["Schild zum Antippen", "Wandschild, Aufsteller oder Aufkleber, mit QR-Code, für das Innere der Unterkunft"],
+          ["Schilder zum Antippen", "Wandschild, Aufsteller oder Aufkleber, mit QR-Code, für das Innere der Unterkunft"],
           ["Druckversion", "Ein PDF mit demselben Inhalt, damit ein Exemplar auf Papier in der Unterkunft bleiben kann"],
-          ["12 Monate online", "Hosting der Seite und Änderungen durch uns innerhalb von zwei Werktagen"],
+          ["Online-Hosting und Änderungen", "Hosting der Seite und Änderungen durch uns innerhalb von zwei Werktagen"],
         ],
       },
       { type: "h2", id: "pricing", text: "Preise" },
       {
         type: "table",
-        head: ["Menge", "Preis pro Unterkunft", "Gesamt"],
+        head: ["Menge", "Preis", "Pro Schild"],
         rows: [
-          ["1 Unterkunft", "69 €", "69 €"],
-          ["Ab 3", "59 €", "177 € (3)"],
-          ["Ab 5", "55 €", "275 € (5)"],
-          ["Ab 10", "49 €", "490 € (10)"],
+          ["1 bis 9 Schilder", "20 € pro Stück", "20 €"],
+          ["Ab 10 Schildern", "15 € pro Stück (10 Schilder: 150 €)", "15 €"],
         ],
       },
       {
         type: "p",
-        text: "Ab dem 13. Monat kostet es 3 € pro Monat und Unterkunft, die Gästemappe online zu halten, Änderungen inklusive. Zusätzliche Schilder für dieselbe Unterkunft und weitere Sprachen kosten einen kleinen Aufpreis, der in Ihrem Angebot steht. Preise zzgl. MwSt., als Vorschlag, bestätigt nach der Demo.",
+        text: "Texten der Gästemappe, Übersetzung in vier Sprachen, Online-Hosting und Änderungen kosten 30 € im Monat. Weitere Sprachen kosten einen kleinen Aufpreis, der in Ihrem Angebot steht. Preise zzgl. MwSt., als Vorschlag, bestätigt nach der Demo.",
       },
       { type: "h2", id: "how-it-works", text: "So funktioniert es für Gäste" },
       {
@@ -245,8 +243,8 @@ export const de: Record<DocPageId, DocPageContent> = {
         type: "faq",
         items: [
           {
-            q: "Was kostet es nach dem ersten Jahr?",
-            a: "3 € pro Monat und Unterkunft, um die Gästemappe online zu halten, Änderungen inklusive. Mit dem Paket für Ferienunterkünfte ist die Gästemappe enthalten, solange das Paket aktiv ist.",
+            q: "Was kostet es im Monat?",
+            a: "30 € im Monat für die Gästemappe, Online-Hosting und Änderungen inklusive. Die Schilder zahlen Sie einmal: je 20 €, ab 10 Schildern je 15 €. Mit dem Paket für Ferienunterkünfte ist die Gästemappe enthalten, solange das Paket aktiv ist.",
           },
           {
             q: "Gilt die Gästemappe als das gesetzlich vorgeschriebene Informationsbuch?",

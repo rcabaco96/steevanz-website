@@ -21,25 +21,23 @@ export const es: Record<DocPageId, DocPageContent> = {
         rows: [
           ["Redacción de la guía", "Convertimos sus notas, fotos o su guía actual en una página clara, organizada por temas"],
           ["Cuatro idiomas", "Portugués, inglés y dos más a su elección (francés, español, alemán o italiano), revisados por nosotros"],
-          ["Placa de un toque", "Placa de pared, expositor o pegatina, con código QR, para colocar dentro del alojamiento"],
+          ["Placas de un toque", "Placa de pared, expositor o pegatina, con código QR, para colocar dentro del alojamiento"],
           ["Versión imprimible", "Un PDF con el mismo contenido, para dejar una copia en papel en el alojamiento"],
-          ["12 meses en línea", "Alojamiento de la página y cambios hechos por nosotros en un plazo de dos días laborables"],
+          ["Alojamiento web y cambios", "Alojamiento de la página y cambios hechos por nosotros en un plazo de dos días laborables"],
         ],
       },
       { type: "h2", id: "pricing", text: "Precios" },
       {
         type: "table",
-        head: ["Cantidad", "Precio por alojamiento", "Total"],
+        head: ["Cantidad", "Precio", "Por placa"],
         rows: [
-          ["1 alojamiento", "69 €", "69 €"],
-          ["Desde 3", "59 €", "177 € (3)"],
-          ["Desde 5", "55 €", "275 € (5)"],
-          ["Desde 10", "49 €", "490 € (10)"],
+          ["De 1 a 9 placas", "20 € cada una", "20 €"],
+          ["10 placas o más", "15 € cada una (10 placas: 150 €)", "15 €"],
         ],
       },
       {
         type: "p",
-        text: "A partir del mes 13, mantener la guía en línea con los cambios incluidos cuesta 3 € al mes por alojamiento. Las placas adicionales para el mismo alojamiento y los idiomas adicionales tienen un coste pequeño, indicado en su presupuesto. Precios + IVA, orientativos y confirmados después de la demostración.",
+        text: "La redacción de la guía, la traducción a cuatro idiomas, el alojamiento web y los cambios cuestan 30 € al mes. Los idiomas adicionales tienen un coste pequeño, indicado en su presupuesto. Precios + IVA, orientativos y confirmados después de la demostración.",
       },
       { type: "h2", id: "how-it-works", text: "Cómo funciona para los huéspedes" },
       {
@@ -245,8 +243,8 @@ export const es: Record<DocPageId, DocPageContent> = {
         type: "faq",
         items: [
           {
-            q: "¿Cuánto cuesta después del primer año?",
-            a: "3 € al mes por alojamiento, para mantener la guía en línea con los cambios incluidos. Con el pack para alojamientos turísticos, la guía está incluida mientras el pack esté activo.",
+            q: "¿Cuánto cuesta al mes?",
+            a: "30 € al mes por la guía, con el alojamiento web y los cambios incluidos. Las placas se pagan una vez: 20 € cada una y 15 € cada una a partir de 10. Con el pack para alojamientos turísticos, la guía está incluida mientras el pack esté activo.",
           },
           {
             q: "¿La guía cuenta como el libro de información que exige la ley?",

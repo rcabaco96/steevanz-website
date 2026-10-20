@@ -166,12 +166,11 @@ export const products: Product[] = [
     slug: { pt: "guia-digital-alojamento", en: "digital-guest-guide" },
     family: "plates",
     icon: "guide-tap",
-    priceFrom: 69,
+    // Owner, 2026-10-20: the same model as the Menu digital: 20 € per plate, 15 € each from 10 plates,
+    // plus 30 €/month for the guide (writing, four languages, hosting and changes).
+    priceFrom: 20,
     priceBilling: "one-time",
-    priceQualifier: {
-      pt: "por alojamento, placa e 4 línguas incluídas; depois 3 €/mês",
-      en: "per property, plate and 4 languages included; then €3/month", es: "por alojamiento, placa y 4 idiomas incluidos; después 3 €/mes", fr: "par logement, plaque et 4 langues incluses ; ensuite 3 €/mois", de: "pro Unterkunft, Schild und 4 Sprachen inklusive; danach 3 €/Monat", it: "per alloggio, targa e 4 lingue incluse; poi 3 €/mese",
-    },
+    priceQualifier: { pt: "por placa + 30 €/mês pelo guia digital", en: "per plate + €30/month for the digital guide", es: "por placa + 30 €/mes por la guía digital", fr: "par plaque + 30 €/mois pour le livret numérique", de: "pro Schild + 30 €/Monat für die digitale Gästemappe", it: "per targa + 30 €/mese per la guida digitale" },
     priceIsProvisional: true,
     sectors: ["lodging"],
     related: ["ai-chatbot", "automation", "google-review-plates"],
@@ -187,13 +186,7 @@ export const products: Product[] = [
       logoExtraIsProvisional: true,
       textMaxLength: plateTextMaxLength,
     },
-    packUnit: "property",
-    // Owner proposal 2026-10-11: volume prices for property managers (per property, plate and guide included).
-    packs: [
-      { quantity: 3, unitPrice: 59 },
-      { quantity: 5, unitPrice: 55 },
-      { quantity: 10, unitPrice: 49 },
-    ],
+    packs: [{ quantity: 10, unitPrice: 15 }],
   },
   {
     id: "loyalty",

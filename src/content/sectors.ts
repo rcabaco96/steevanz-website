@@ -771,9 +771,9 @@ export const sectors: Sector[] = [
       monthly: 49,
       extraSetup: 49,
       extraMonthly: 9,
-      // Guide (69) + «Limpezas e prazos» automation (149); assistant 49/month.
-      separatelySetup: 218,
-      separatelyMonthly: 49,
+      // Guide plate (20) + «Limpezas e prazos» automation (149); guide 30/month + assistant 49/month.
+      separatelySetup: 169,
+      separatelyMonthly: 79,
       demoProduct: "guest-guide",
       isProvisional: true,
       copy: {
