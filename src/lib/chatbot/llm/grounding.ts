@@ -19,6 +19,7 @@ import { askedDay, dayAhead, formatDay, hoursOn, localClock, type AskedDay } fro
 import { buildIndex, minimumScore, passageCoverage, passageMatches, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
 import { answerAfter, blockAfter, type Passage } from "../passages.ts";
 import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
+import type { ChatMessage } from "../types.ts";
 import type { AnswerRequest, AnswerSource } from "./types.ts";
 
 export const noAnswer = "NO_ANSWER";
@@ -340,19 +341,114 @@ const linkWords = /\b(?:link|links|site|website|enlace|lien|sito|webseite)\b/i;
 const addressPattern = /https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,}(?:\/|\b)/i;
 
 /**
+ * Sentences (and lines) with the spaces or line breaks after them, so a list keeps its lines and a
+ * sentence dropped after a list doesn't take the list with it. A dot inside an address
+ * («reservas.fiodenavalha.example», «www.x.pt») does not end a sentence: only punctuation followed by a
+ * space or the end does (check, 2026-10-21: «Pode marcar no nosso site reservas.fiodenavalha.example.» was
+ * cut at «reservas.» and the sentence with the link dropped, leaving «fiodenavalha.example.»).
+ */
+export function sentences(text: string): string[] {
+  return text.match(/(?:[^.!?…\n]|[.!?…]+(?!\s|$))+(?:[.!?…]+)?\s*/g) ?? [text];
+}
+
+/**
  * Sentences that send the customer to «o nosso link» / «o nosso site» without writing any address
  * (live test, 2026-10-21: «Pode marcar através do nosso link…» after a price) are dropped; the rest of
  * the answer stays. Nothing is dropped when that would leave nothing.
  */
 export function withoutEmptyLinks(text: string): string {
-  // Sentences with the spaces or line breaks after them, so a list keeps its lines.
-  const parts = text.match(/[^.!?…]+(?:[.!?…]+|$)\s*/g) ?? [text];
+  const parts = sentences(text);
   const kept = parts.filter((part) => !(linkWords.test(part) && !addressPattern.test(part)));
   return kept.length && kept.length < parts.length ? kept.join("").trim() : text;
 }
 
+/**
+ * A list written on one line («Depende do tipo de corte: • Corte clássico 16 € • Degradê / fade 18 €. Qual
+ * prefere?», gpt-oss live test 2026-10-21) → the lead, one option per line, and the question after it.
+ */
+export function bulletsOnLines(text: string): string {
+  return text
+    .split("\n")
+    .flatMap((line) => {
+      if ((line.match(/•/g) ?? []).length < 2) return [line];
+      const [lead, ...items] = line.split(/\s*•\s*/);
+      const lines = lead.trim() ? [lead.trim()] : [];
+      const last = items.pop() ?? "";
+      const tail = last.match(/^(.*?[.!?…])\s+(\p{Lu}.*|[¿¡].*)$/u);
+      for (const item of [...items, tail ? tail[1] : last]) if (item.trim()) lines.push(`• ${item.trim()}`);
+      if (tail) lines.push(tail[2].trim());
+      return lines;
+    })
+    .join("\n");
+}
+
+const wordsOf = (text: string) => new Set(normalize(text).split(/[^a-z0-9]+/).filter(Boolean));
+
+/**
+ * A sentence the assistant already wrote earlier in the chat (live test, 2026-10-21: «Pode marcar online em
+ * … ou vir sem marcação» after every answer, also after «E ao sábado?» and «E para crianças?»): dropped
+ * when it is not the first sentence of the answer (that one is the answer itself) and it says nearly the
+ * same as an earlier one (≥ 80 % of the shorter sentence's words, at least 5 words). Any language.
+ */
+export function withoutRepeats(text: string, history: readonly ChatMessage[]): string {
+  const earlier = recentTurns(history)
+    .filter((message) => message.author === "bot")
+    .flatMap((message) => sentences(message.body))
+    .map(wordsOf)
+    .filter((words) => words.size >= 5);
+  if (!earlier.length) return text;
+  const parts = sentences(text);
+  const kept = parts.filter((part, index) => {
+    if (index === 0) return true;
+    const words = wordsOf(part);
+    if (words.size < 5) return true;
+    return !earlier.some((before) => {
+      let shared = 0;
+      for (const word of words) if (before.has(word)) shared++;
+      return shared / Math.min(words.size, before.size) >= 0.8;
+    });
+  });
+  return kept.length < parts.length ? kept.join("").trim() : text;
+}
+
+/** Everything a model was given, as one text (to tell its own links from invented ones). */
+export function seenText(messages: readonly { content: string }[]): string {
+  return messages.map((message) => message.content).join("\n");
+}
+
+/** Web addresses, bare domains and e-mail domains in a text («https://x.pt/marcar», «reservas.fio.example»). */
+const addressToken = /(?:https?:\/\/)?(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s)»"']*)?/gi;
+const plainAddress = (address: string) =>
+  address
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .replace(/[.,;:!?…]+$/, "")
+    .replace(/\/+$/, "");
+
+/**
+ * A web address the model was never given is invented (live test with Groq, 2026-10-21: «Pode marcar em
+ * https://barbearia-fiodenavalha.pt/marcar» when the document says reservas.fiodenavalha.example): the
+ * sentence with it is dropped. `seen` is everything the model received (prompt, history, excerpts); an
+ * address counts as known when it appears there as written (without http(s):// and www.).
+ */
+export function withoutUnknownLinks(text: string, seen: string): string {
+  if (!seen) return text;
+  const known = seen.toLowerCase().replace(/https?:\/\//g, "").replace(/\bwww\./g, "");
+  const invented = (part: string) => [...part.matchAll(addressToken)].some((match) => !known.includes(plainAddress(match[0])));
+  const parts = sentences(text);
+  const kept = parts.filter((part) => !invented(part));
+  return kept.length < parts.length ? kept.join("").trim() : text;
+}
+
 /** The model's text → the answer, its sources (from the [S1]/[E1] references) and no references left. */
-export function parseGroundedAnswer(raw: string, items: readonly ContextItem[]): { text: string | null; sources: AnswerSource[]; entryIds: string[] } {
+export function parseGroundedAnswer(
+  raw: string,
+  items: readonly ContextItem[],
+  history: readonly ChatMessage[] = [],
+  /** Everything the model was given (to drop invented links); empty: not checked. */
+  seen = "",
+): { text: string | null; sources: AnswerSource[]; entryIds: string[] } {
   // gpt-oss writes «quinta-feira» with a non-breaking hyphen, «16 €» with narrow no-break spaces and ends some answers with a zero-width space: plain characters.
   const trimmed = raw.replace(/[\u2010\u2011]/g, "-").replace(/[\u00A0\u202F]/g, " ").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
   // Small models sometimes write a sentence and then NO_ANSWER: anywhere in the reply, it means «I don't know».
@@ -363,9 +459,12 @@ export function parseGroundedAnswer(raw: string, items: readonly ContextItem[]):
   const used = items.filter((item) => cited.has(item.ref));
   const cleaned = trimmed
     .replace(new RegExp(String.raw`\s*${ref}(?:\s*${ref})*`, "g"), "")
+    // References the model made up in the same style («[A12][A16]», live test 2026-10-21).
+    .replace(/\s*[\[【]\s*[A-Z]{1,2}\d+(?:\s*[,;–-]\s*[A-Z]{0,2}\d+)*\s*[\]】]/g, "")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
-  const text = withoutEmptyLinks(cleaned);
+  // An answer that was only an invented link becomes no answer (the engine says it doesn't know).
+  const text = withoutRepeats(withoutUnknownLinks(withoutEmptyLinks(bulletsOnLines(cleaned)), seen), history);
   const sources: AnswerSource[] = [];
   for (const item of used) if (item.source && !sources.some((source) => source.chunkId === item.source!.chunkId)) sources.push(item.source);
   return {

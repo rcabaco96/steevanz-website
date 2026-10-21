@@ -8,7 +8,7 @@ import { detectIntents } from "../src/lib/chatbot/intents.ts";
 import { buildIndex, findProperty, minimumScore, search } from "../src/lib/chatbot/knowledge.ts";
 import { guessLanguage, replyLanguage } from "../src/lib/chatbot/language.ts";
 import { buildSystemPrompt } from "../src/lib/chatbot/llm/prompt.ts";
-import { chooseProvider, realProviderPlaceholder } from "../src/lib/chatbot/llm/providers.ts";
+import { chooseProvider, paidNotAllowedProvider } from "../src/lib/chatbot/llm/providers.ts";
 import { Pacer, isFresh, typingDelay, withinReplyWindow, defaultPacing } from "../src/lib/chatbot/pacing.ts";
 import { hasKeyword, normalize } from "../src/lib/chatbot/text.ts";
 import { newConversationState } from "../src/lib/chatbot/types.ts";
@@ -457,17 +457,19 @@ describe("chatbot engine", () => {
 
 describe("chatbot answer providers", () => {
   it("uses the free mock unless the owner allowed a paid model", () => {
-    assert.equal(chooseProvider({ choice: "real", paidAllowed: false }).id, "mock");
+    assert.equal(chooseProvider({ choice: "real", paidAllowed: false }).id, "mistral-not-allowed");
+    assert.equal(chooseProvider({ choice: "real", paidAllowed: true, env: {} }).id, "mistral");
     assert.equal(chooseProvider({ choice: "mock", paidAllowed: true }).id, "mock");
   });
 
-  it("the paid placeholder never runs: the engine falls back to the mock", async () => {
+  it("'real' without the owner's authorisation never runs: the engine falls back to the mock and says why", async () => {
     const result = await respond(
       { bot: demoRestaurant, conversation: greeted(), history: [], message: { body: "Têm estacionamento?", at: tuesdayLunch.getTime() }, now: tuesdayLunch },
-      realProviderPlaceholder,
+      paidNotAllowedProvider,
     );
     assert.equal(result.provider, "mock");
     assert.match(result.replies[0], /Rua Nova/);
+    assert.match(result.providerNote, /falta o dono autorizar a IA paga/);
   });
 
   it("writes the safety rules into the (unsent) system prompt", () => {

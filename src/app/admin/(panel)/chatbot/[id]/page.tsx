@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BackLink } from "@/components/admin/RecordDetail";
-import { BotSettingsForm, EnableForm } from "@/components/admin/chatbot/BotSettingsForm";
+import { BotSettingsForm, EnableForm, PaidAnswersForm } from "@/components/admin/chatbot/BotSettingsForm";
 import { ChatbotNotReady, EnabledBadge, effectiveSessionState, kindLabels, SessionBadge } from "@/components/admin/chatbot/ChatbotBits";
 import { DocumentsEditor } from "@/components/admin/chatbot/DocumentsEditor";
 import { Inbox } from "@/components/admin/chatbot/Inbox";
@@ -15,6 +15,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { ChatbotNotReadyError, getAdminBot, getConversationMessages, listConversations, type AdminBot } from "@/lib/chatbot/admin-store";
 import { formatWeek } from "@/lib/chatbot/hours";
 import { groqEnabled, groqKeyPresent } from "@/lib/chatbot/llm/groq";
+import { mistralKeyPresent } from "@/lib/chatbot/llm/mistral";
 import { ollamaAvailable } from "@/lib/chatbot/llm/ollama";
 import { itemSummary } from "@/lib/chatbot/rows";
 import { siteUrl } from "@/lib/site";
@@ -209,7 +210,11 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
             ollamaAvailableHere={ollamaAvailable(process.env)}
             groqEnabledHere={groqEnabled(process.env)}
             groqKeyHere={groqKeyPresent(process.env)}
+            mistralKeyHere={mistralKeyPresent(process.env)}
           />
+          <div className="mt-6">
+            <PaidAnswersForm bot={row} mistralKeyHere={mistralKeyPresent(process.env)} />
+          </div>
         </Panel>
       ) : null}
 

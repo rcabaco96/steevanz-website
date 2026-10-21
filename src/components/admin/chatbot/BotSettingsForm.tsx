@@ -2,7 +2,7 @@
 
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
 import { adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
-import { setBotEnabled, updateBot } from "@/lib/chatbot/actions";
+import { setBotEnabled, setPaidAnswers, updateBot } from "@/lib/chatbot/actions";
 import type { BotRow } from "@/lib/chatbot/rows";
 import { chatbotBusinessKinds, chatbotLanguages } from "@/lib/chatbot/types";
 import { kindLabels, languageLabels } from "./ChatbotBits";
@@ -34,6 +34,46 @@ export function EnableForm({ bot }: { bot: Pick<BotRow, "id" | "enabled"> }) {
   );
 }
 
+/**
+ * The owner's switch for paid answers (paid_answers_allowed): only here in the admin, never in the client
+ * panel. Off: no request ever goes to Mistral, even with «IA para clientes» chosen.
+ */
+export function PaidAnswersForm({ bot, mistralKeyHere }: { bot: Pick<BotRow, "id" | "paid_answers_allowed" | "answer_provider">; mistralKeyHere: boolean }) {
+  const allowed = bot.paid_answers_allowed;
+  return (
+    <ActionForm
+      action={setPaidAnswers}
+      confirmMessage={
+        allowed
+          ? "Desligar a IA paga? Este assistente passa a responder sem IA paga."
+          : "Autorizar a IA paga neste assistente? Com «IA para clientes (Mistral, UE)» escolhida, as mensagens dos clientes e os excertos passam a ser enviados à Mistral para escrever as respostas."
+      }
+      className="flex flex-col gap-3 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted"
+    >
+      <input type="hidden" name="id" value={bot.id} />
+      <input type="hidden" name="paid_answers_allowed" value={allowed ? "0" : "1"} />
+      <p className="font-semibold text-text">IA paga (só o dono)</p>
+      <p>
+        Autoriza este assistente a usar a IA para clientes (Mistral). Enquanto não estiver autorizada, nunca é feito nenhum pedido à Mistral, mesmo com essa opção
+        escolhida nas definições acima: responde sem IA. Este interruptor só existe aqui no admin; os clientes não o veem.
+      </p>
+      <p>
+        Estado:{" "}
+        <span className="font-semibold text-text">{allowed ? "autorizada" : "não autorizada"}</span>
+        {allowed && bot.answer_provider !== "real" ? " (mas as respostas não estão em «IA para clientes (Mistral, UE)», por isso a Mistral não é usada)" : ""}.
+      </p>
+      {allowed && !mistralKeyHere ? (
+        <p className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">Falta a chave MISTRAL_API_KEY neste servidor: até ser posta, responde sem IA.</p>
+      ) : null}
+      <div>
+        <SubmitButton variant={allowed ? "secondary" : "primary"} size="sm" pendingLabel="A guardar…">
+          {allowed ? "Desligar IA paga" : "Autorizar IA paga"}
+        </SubmitButton>
+      </div>
+    </ActionForm>
+  );
+}
+
 export function BotSettingsForm({
   bot,
   establishments,
@@ -42,18 +82,19 @@ export function BotSettingsForm({
   ollamaAvailableHere,
   groqEnabledHere,
   groqKeyHere,
+  mistralKeyHere,
 }: {
   bot: BotRow;
   ollamaAvailableHere: boolean;
   /** CHATBOT_GROQ_ENABLED=1 on this server (the database allows 'groq'). */
   groqEnabledHere: boolean;
   groqKeyHere: boolean;
+  mistralKeyHere: boolean;
   establishments: { id: string; name: string }[];
   menus: { id: string; name: string }[];
   bookingSuggestion: string | null;
 }) {
-  // A paid choice ('real') is not offered here: it shows as the free answers.
-  const current = bot.answer_provider === "ollama" || bot.answer_provider === "groq" ? bot.answer_provider : "mock";
+  const current = bot.answer_provider === "ollama" || bot.answer_provider === "groq" || bot.answer_provider === "real" ? bot.answer_provider : "mock";
   return (
     <ActionForm action={updateBot} resetKey={bot.updated_at} className="flex flex-col gap-6">
       <input type="hidden" name="id" value={bot.id} />
@@ -204,6 +245,33 @@ export function BotSettingsForm({
             <input type="radio" name="answer_provider" value="mock" defaultChecked={current === "mock"} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent)]" />
             <span>
               <span className="font-semibold text-text">Respostas gratuitas, sem IA</span> — só com a informação e os documentos deste assistente.
+            </span>
+          </label>
+          <label className="flex items-start gap-2">
+            <input type="radio" name="answer_provider" value="real" defaultChecked={current === "real"} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent)]" />
+            <span className="flex flex-col gap-1">
+              <span>
+                <span className="font-semibold text-text">IA para clientes (Mistral, UE)</span> — a IA prevista para responder aos clientes; funciona também em
+                «Experimentar».
+              </span>
+              <span>
+                A Mistral AI é uma empresa francesa e trata os dados na UE. A mensagem do cliente, as últimas mensagens da conversa e os excertos dos documentos são
+                enviados à Mistral para escrever a resposta. Agora a conta está no plano grátis de testes: nesse plano a Mistral pode usar os pedidos para melhorar os
+                seus modelos, por isso só com dados de teste. Para clientes reais passa-se ao plano pago, com um limite de gastos definido na conta da Mistral.
+              </span>
+              <span>
+                Só responde depois de o dono autorizar a IA paga (em baixo). Se a Mistral falhar, demorar mais de 15 segundos ou se atingir um limite, volta às respostas
+                gratuitas e «Experimentar» diz porquê.
+              </span>
+              {current === "real" && !bot.paid_answers_allowed ? (
+                <span className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+                  A IA paga ainda não está autorizada neste assistente: até o dono a autorizar (em baixo), responde sem IA.
+                </span>
+              ) : current === "real" && !mistralKeyHere ? (
+                <span className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+                  Falta a chave MISTRAL_API_KEY neste servidor: até ser posta, responde sem IA.
+                </span>
+              ) : null}
             </span>
           </label>
           {groqEnabledHere || current === "groq" ? (

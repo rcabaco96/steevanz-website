@@ -33,8 +33,17 @@ Never fix a client's case with a client-specific rule: generalise it and add it 
 | `mock` | Free rule-based answers (search + quotes) | Everywhere; the fallback for every error |
 | `groq` | Groq free tier, `openai/gpt-oss-120b` (the account has no llama-3.3-70b) | Site + runner; needs `GROQ_API_KEY` + `CHATBOT_GROQ_ENABLED=1` on Vercel |
 | `ollama` | Local `qwen2.5:7b` on the owner's PC | Only on that PC (runner or local dev) — never on Vercel |
-| `real` | Paid AI for clients (Mistral EU recommended, or Groq paid) | Not built yet; needs the owner's switch |
+| `real` | **AI for clients: Mistral (EU)**, `mistral-small-latest` (= mistral-small-2603, sent with `reasoning_effort: "none"`), `llm/mistral.ts` | Site + runner, only with `answer_provider = 'real'` **and** `paid_answers_allowed` (admin-only «Autorizar IA paga» button in Definições); needs `MISTRAL_API_KEY` |
 
+- Mistral account: free «Experiment» plan now (no card; Mistral may use requests to improve its models → test data
+  only); paid «Scale» with a spending limit in Mistral's console when the first client arrives — the owner's
+  decision, never ours. Caps by default inside the free plan: ≥ 1,1 s between requests (a turn waits ≤ 3 s, else
+  free answers), 30/min, 500/day, per bot 15/min and 300/day, 1 M tokens/day (`CHATBOT_MISTRAL_*`).
+  429 → pause (retry-after); 402/billing or 401 → off until restart; timeout 15 s; never a retry loop.
+- 'real' without the owner's switch never reads the key nor calls anything (`paidNotAllowedProvider`): free
+  answers + «falta o dono autorizar a IA paga» in «Experimentar». The runner re-chooses the provider when the
+  switch changes (≤ 15 s).
+- Groq and Ollama stay as test AIs. Comparison and costs: `docs/chatbot/COMPARACAO-IA.md`.
 - The admin «Experimentar» runs on Vercel: say so when the owner tests Ollama there.
 - gpt-oss: `reasoning_effort: "low"`, `include_reasoning: false`, room in `max_tokens`; it writes references as
   `【S5】` / `[S1, S3]` — `parseGroundedAnswer` must strip every form.
@@ -63,6 +72,10 @@ Never fix a client's case with a client-specific rule: generalise it and add it 
 | Admin «Fonte:» | «B A R B E A R I A · …› A equipa tem quatro barbeiros» twice | «Documento: <título> — <secção>»: nearest real section title, no decorations, sentences or table captions, deduplicated |
 | «Fazem degradê?» | Quoted the student discount line | Short question naming the start of price lines → those lines |
 | Groq live test (2026-10-21) | «Sim, o degradê custa 18 €», booking sentence repeated every turn, «através do nosso link» with no link, «a partir da data de compra» invented | «Sim/Não» only for yes/no questions; answer only what was asked; never repeat a sentence; no details not written; `withoutEmptyLinks` drops link sentences without an address |
+| Groq comparison (2026-10-21) | «Pode marcar em https://barbearia-fiodenavalha.pt/marcar» (invented; the document has reservas.fiodenavalha.example) | `withoutUnknownLinks`: an address the model was not given (prompt + history + excerpts, `seenText`) drops its sentence; only that → «não tenho essa informação». Prompt: addresses only as written |
+| Groq comparison | «… remarcamos. [A12][A16]»; lists on one line («• A 16 € • B 18 €»); the booking sentence after every answer | Made-up references stripped; `bulletsOnLines`; `withoutRepeats` (a non-first sentence ≥ 80 % like one already sent goes) |
+| `withoutEmptyLinks` check | Split «reservas.fiodenavalha.example.» at the dot and dropped the real link; a list before «veja o nosso site» vanished | `sentences()`: a sentence ends only at punctuation + space/end, and every line is its own sentence |
+| «E para crianças?» (Groq) | Also offered the «pai e filho» combo | Prompt: never suggest a service, package or product not asked about |
 | «Onde ficam?» | Free answers: «não sei» (phrase keyword «onde fica*» left «ficam» as a subject) | `intentWords` explains the message's own words for phrase keywords with «*»; the AI gets the address lines |
 
 Fixtures: `tests/fixtures/barbearia-fio-de-navalha*.txt` in several layouts (structured, flat, messy, WhatsApp).

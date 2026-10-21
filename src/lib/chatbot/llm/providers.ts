@@ -6,29 +6,31 @@
 // - "groq": test-only AI on Groq's FREE tier (llm/groq.ts), turned on per bot in the admin; works on
 //   the site too, only while CHATBOT_GROQ_ENABLED=1 and GROQ_API_KEY are set; capped well inside the
 //   free limits, never a paid plan, and falls back to the mock on any limit, error or timeout.
-// - "real": the paid provider for clients (Anthropic or another, phase 2): a placeholder that refuses
-//   to run (no key read, no request made) until the owner chooses, accepts the price and switches it on.
+// - "real": the AI for clients, Mistral (EU; llm/mistral.ts), only when the owner also authorised paid
+//   answers for that bot (paid_answers_allowed, an admin-only switch). Without that authorisation it
+//   never calls anything: the free answers reply and «Experimentar» says why.
 import { groqFromEnv } from "./groq.ts";
+import { mistralFromEnv } from "./mistral.ts";
 import { ollamaFromEnv, type FetchLike } from "./ollama.ts";
 import { mockProvider } from "./mock.ts";
 import { ProviderDisabledError, type AnswerProvider } from "./types.ts";
 
 export type ProviderChoice = "mock" | "ollama" | "groq" | "real";
 
-/** The placeholder for a paid model (e.g. Anthropic): calling it throws, the engine uses the mock. */
-export const realProviderPlaceholder: AnswerProvider = {
-  id: "anthropic-disabled",
+/** 'real' without the owner's authorisation: calling it throws (no key read, no request), the engine uses the mock. */
+export const paidNotAllowedProvider: AnswerProvider = {
+  id: "mistral-not-allowed",
   paid: true,
   answer: async () => {
-    throw new ProviderDisabledError("anthropic-disabled");
+    throw new ProviderDisabledError("mistral (falta o dono autorizar a IA paga deste assistente em Definições)");
   },
 };
 
 export interface ProviderConfig {
   choice: ProviderChoice | string;
-  /** The owner's switch for paid answers (a bot setting). False until he turns it on. */
+  /** The owner's switch for paid answers (paid_answers_allowed). False until he turns it on. */
   paidAllowed: boolean;
-  /** Environment with OLLAMA_URL, CHATBOT_OLLAMA_MODEL, GROQ_API_KEY, CHATBOT_GROQ_*, the caps and VERCEL (process.env in production). */
+  /** Environment with OLLAMA_URL, CHATBOT_OLLAMA_MODEL, GROQ_API_KEY, CHATBOT_GROQ_*, MISTRAL_API_KEY, CHATBOT_MISTRAL_*, the caps and VERCEL (process.env in production). */
   env?: Record<string, string | undefined>;
   fetch?: FetchLike;
 }
@@ -36,6 +38,6 @@ export interface ProviderConfig {
 export function chooseProvider(config: ProviderConfig): AnswerProvider {
   if (config.choice === "ollama") return ollamaFromEnv(config.env ?? {}, config.fetch);
   if (config.choice === "groq") return groqFromEnv(config.env ?? {}, config.fetch);
-  if (config.choice === "real" && config.paidAllowed) return realProviderPlaceholder;
+  if (config.choice === "real") return config.paidAllowed ? mistralFromEnv(config.env ?? {}, config.fetch) : paidNotAllowedProvider;
   return mockProvider;
 }

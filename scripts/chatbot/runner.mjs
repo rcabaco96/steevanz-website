@@ -113,8 +113,12 @@ log(
   row.answer_provider === "ollama"
     ? `Respostas: IA de teste local (Ollama em ${process.env.OLLAMA_URL?.trim() || "http://127.0.0.1:11434"}, modelo ${process.env.CHATBOT_OLLAMA_MODEL?.trim() || "qwen2.5:7b"}); se falhar, respostas gratuitas.`
     : row.answer_provider === "groq"
-      ? `Respostas: IA de teste (Groq, grátis, modelo ${process.env.CHATBOT_GROQ_MODEL?.trim() || "llama-3.3-70b-versatile"})${process.env.CHATBOT_GROQ_ENABLED?.trim() === "1" && process.env.GROQ_API_KEY?.trim() ? "" : " — DESLIGADA aqui (falta CHATBOT_GROQ_ENABLED=1 ou GROQ_API_KEY)"}; se falhar ou atingir o limite, respostas gratuitas.`
-      : "Respostas: gratuitas, só com a informação do negócio (sem IA).",
+      ? `Respostas: IA de teste (Groq, grátis, modelo ${process.env.CHATBOT_GROQ_MODEL?.trim() || "openai/gpt-oss-120b"})${process.env.CHATBOT_GROQ_ENABLED?.trim() === "1" && process.env.GROQ_API_KEY?.trim() ? "" : " — DESLIGADA aqui (falta CHATBOT_GROQ_ENABLED=1 ou GROQ_API_KEY)"}; se falhar ou atingir o limite, respostas gratuitas.`
+      : row.answer_provider === "real"
+        ? row.paid_answers_allowed
+          ? `Respostas: IA para clientes (Mistral, UE, modelo ${process.env.CHATBOT_MISTRAL_MODEL?.trim() || "mistral-small-latest"})${process.env.MISTRAL_API_KEY?.trim() ? "" : " — DESLIGADA aqui (falta MISTRAL_API_KEY)"}; se falhar ou atingir o limite, respostas gratuitas.`
+          : "Respostas: IA para clientes escolhida, mas a IA paga não está autorizada pelo dono — respostas gratuitas (sem IA)."
+        : "Respostas: gratuitas, só com a informação do negócio (sem IA).",
 );
 log(listenOnly ? "Modo: SÓ A OUVIR (não envia nada a ninguém)." : `Modo: responde só a ${allowlist.length} número(s) da lista; máx. 10 respostas/hora e 50/dia.`);
 
@@ -158,12 +162,10 @@ const runtime = createRuntime({
   // Only the owner's list is answered or stored, also while listening.
   allowlist,
   canSend,
-  // The free mock unless the owner chose a real model AND allowed paid answers on the site; even
-  // then the real provider is a placeholder that refuses (phase 2) and the mock answers.
-  // «IA de teste local (Ollama)» only when turned on for this bot in the admin, answered by Ollama on
-  // this computer (ollama serve); «IA de teste (Groq, grátis)» likewise, on Groq's free tier, capped.
-  // The paid provider is a placeholder that refuses. Any problem, limit, timeout or Ollama not running
-  // → the free answers.
+  // The free mock unless chosen otherwise in the admin. «IA para clientes (Mistral, UE)» only when the
+  // owner also authorised paid answers for this bot (paid_answers_allowed); «IA de teste local (Ollama)»
+  // answered by Ollama on this computer (ollama serve); «IA de teste (Groq, grátis)» on Groq's free
+  // tier, capped. Any problem, limit, timeout or Ollama not running → the free answers.
   provider: chooseProvider({ choice: row.answer_provider, paidAllowed: row.paid_answers_allowed, env: process.env }),
   log,
   // Pilot: no WhatsApp alerts (that would be the bot writing first); the hand-off shows in the admin.
@@ -195,7 +197,8 @@ const refresh = setInterval(async () => {
   try {
     const next = await loadBotProfile(supabase, botId, siteUrl);
     if (next) {
-      const providerChanged = next.row.answer_provider !== loaded.row.answer_provider;
+      // The owner's paid-answers switch counts too: turning it off stops Mistral within 15 s.
+      const providerChanged = next.row.answer_provider !== loaded.row.answer_provider || next.row.paid_answers_allowed !== loaded.row.paid_answers_allowed;
       loaded = next;
       runtime.updateBot(next.profile, providerChanged ? chooseProvider({ choice: next.row.answer_provider, paidAllowed: next.row.paid_answers_allowed, env: process.env }) : undefined);
     }

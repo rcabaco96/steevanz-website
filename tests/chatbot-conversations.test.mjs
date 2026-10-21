@@ -17,7 +17,7 @@ import { buildIndex } from "../src/lib/chatbot/knowledge.ts";
 import { createGroqProvider } from "../src/lib/chatbot/llm/groq.ts";
 import { CallLimiter, TokenBudget } from "../src/lib/chatbot/llm/limiter.ts";
 import { replyLanguage } from "../src/lib/chatbot/language.ts";
-import { parseGroundedAnswer, withoutEmptyLinks } from "../src/lib/chatbot/llm/grounding.ts";
+import { bulletsOnLines, parseGroundedAnswer, withoutEmptyLinks, withoutRepeats, withoutUnknownLinks } from "../src/lib/chatbot/llm/grounding.ts";
 import { mockProvider } from "../src/lib/chatbot/llm/mock.ts";
 import { buildSystemPrompt } from "../src/lib/chatbot/llm/prompt.ts";
 import { normalize } from "../src/lib/chatbot/text.ts";
@@ -323,5 +323,51 @@ describe("chatbot AI answers never point to a link they don't write", () => {
     const real = "Sim, amanhã estamos abertos das 10:00 às 13:00. Pode marcar em reservas.fiodenavalha.example.";
     assert.equal(withoutEmptyLinks(real), real);
     assert.equal(withoutEmptyLinks("Veja o link."), "Veja o link.");
+  });
+
+  it("a dot inside an address doesn't end the sentence; a list survives a link sentence after it", () => {
+    for (const real of [
+      "O corte custa 16 €. Pode marcar no nosso site reservas.fiodenavalha.example.",
+      "Pode marcar no link https://reservas.fiodenavalha.example/marcar ou ligar.",
+      "Marque pelo site www.fio.pt. Obrigado.",
+    ])
+      assert.equal(withoutEmptyLinks(real), real);
+    assert.equal(withoutEmptyLinks("Temos:\n• Corte 16 €\n• Barba 15 €\nPode marcar pelo nosso site... Até já!"), "Temos:\n• Corte 16 €\n• Barba 15 €\nAté já!");
+    assert.equal(
+      parseGroundedAnswer("Depende do tipo de corte: • Corte clássico 16 € • Degradê / fade 18 € • Cabelo comprido 22 €. Qual prefere? [S1]", [{ ref: "S1", text: "x" }]).text,
+      "Depende do tipo de corte:\n• Corte clássico 16 €\n• Degradê / fade 18 €\n• Cabelo comprido 22 €.\nQual prefere?",
+    );
+    assert.equal(bulletsOnLines("Temos:\n• Corte 16 €\n• Barba 15 €"), "Temos:\n• Corte 16 €\n• Barba 15 €");
+    // A link the model was never given is invented: its sentence goes (Groq live test, 2026-10-21).
+    const seen = "Relevant information:\n[S1] Online: em reservas.fiodenavalha.example, 24 horas por dia.\n[S2] Email: ola@fiodenavalha.example";
+    assert.equal(
+      withoutUnknownLinks("Sim, o degradê custa 18 € − 2 € = 16 € para estudantes na quarta-feira. Pode marcar em https://barbearia-fiodenavalha.pt/marcar ou vir sem marcação.", seen),
+      "Sim, o degradê custa 18 € − 2 € = 16 € para estudantes na quarta-feira.",
+    );
+    for (const known of ["Pode marcar em https://reservas.fiodenavalha.example.", "Pode marcar em www.reservas.fiodenavalha.example/ ou por email para ola@fiodenavalha.example."])
+      assert.equal(withoutUnknownLinks(known, seen), known);
+    assert.equal(withoutUnknownLinks("Pode marcar em reservas.fiodenavalha.example/promo.", seen), "", "a made-up page on a real site is invented too");
+    assert.equal(withoutUnknownLinks("Pode marcar em https://x.pt.", ""), "Pode marcar em https://x.pt.", "nothing to compare with: unchanged");
+    assert.equal(parseGroundedAnswer("Veja https://inventado.pt/marcar. [S1]", [{ ref: "S1", text: "x" }], [], seen).text, null);
+    // References the model made up in the same style are removed too.
+    assert.equal(parseGroundedAnswer("Até 10 minutos de atraso atendemos. [A12][A16]", [{ ref: "S1", text: "x" }]).text, "Até 10 minutos de atraso atendemos.");
+    // A sentence already written earlier in the chat is not repeated (never the first one: that is the answer).
+    const said = [
+      { author: "customer", body: "A que horas abrem amanhã?", at: 1 },
+      { author: "bot", body: "Abrimos amanhã (quinta-feira) das 10:00 às 13:00 e das 14:30 às 20:00. Pode marcar online em reservas.fiodenavalha.example ou vir sem marcação se houver vaga.", at: 2 },
+    ];
+    assert.equal(
+      withoutRepeats("Abrimos sábado das 09:00 às 18:00. Pode marcar online em reservas.fiodenavalha.example ou vir sem marcação, se houver vaga.", said),
+      "Abrimos sábado das 09:00 às 18:00.",
+    );
+    assert.equal(withoutRepeats("Pode marcar online em reservas.fiodenavalha.example ou vir sem marcação se houver vaga.", said), "Pode marcar online em reservas.fiodenavalha.example ou vir sem marcação se houver vaga.");
+    assert.equal(withoutRepeats("Abrimos sábado das 09:00 às 18:00. Também pode marcar por telefone.", said), "Abrimos sábado das 09:00 às 18:00. Também pode marcar por telefone.");
+    assert.equal(withoutRepeats("Abrimos sábado das 09:00 às 18:00. Pode marcar online em reservas.fiodenavalha.example.", []), "Abrimos sábado das 09:00 às 18:00. Pode marcar online em reservas.fiodenavalha.example.");
+    assert.equal(
+      parseGroundedAnswer("Abrimos sábado das 09:00 às 18:00. [S1] Pode marcar online em reservas.fiodenavalha.example ou vir sem marcação, se houver vaga. [S2]", [{ ref: "S1", text: "x" }], said).text,
+      "Abrimos sábado das 09:00 às 18:00.",
+    );
+    assert.equal(bulletsOnLines("• Corte 16 € • Barba 15 €"), "• Corte 16 €\n• Barba 15 €");
+    assert.equal(parseGroundedAnswer("O corte custa 16 €. [S1] Pode marcar no nosso site reservas.fiodenavalha.example. [S2]", [{ ref: "S1", text: "x" }, { ref: "S2", text: "y" }]).text, "O corte custa 16 €. Pode marcar no nosso site reservas.fiodenavalha.example.");
   });
 });

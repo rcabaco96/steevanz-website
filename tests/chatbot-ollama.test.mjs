@@ -39,7 +39,7 @@ describe("chatbot test AI (local Ollama, mocked)", () => {
     assert.equal(chooseProvider({ choice: "mock", paidAllowed: false, env: {} }).id, "mock");
     assert.equal(chooseProvider({ choice: "ollama", paidAllowed: false, env: {} }).id, "ollama");
     assert.equal(chooseProvider({ choice: "gemini", paidAllowed: false, env: {} }).id, "mock");
-    assert.equal(chooseProvider({ choice: "real", paidAllowed: false }).id, "mock");
+    assert.equal(chooseProvider({ choice: "real", paidAllowed: false }).id, "mistral-not-allowed");
   });
 
   it("sends only the bot's information and retrieved sections to /api/chat, short and not streamed", async () => {

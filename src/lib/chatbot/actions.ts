@@ -16,8 +16,9 @@ import { conversationStateFrom } from "./rows";
 import { ChatbotNotReadyError, failOn, loadBotProfile } from "./supabase-store";
 import { chatbotLanguages, isChatbotBusinessKind, isChatbotLanguage, newConversationState, type BotProfile, type ChatMessage, type ConversationState } from "./types";
 
-// Admin: the WhatsApp assistants, their knowledge and their conversations. Nothing here costs money:
-// the «Experimentar» box runs the free mock; no language model and no WhatsApp message is involved.
+// Admin: the WhatsApp assistants, their knowledge and their conversations. No WhatsApp message is sent
+// from here. «Experimentar» answers with the bot's chosen writer: the free answers, a test AI (Ollama,
+// Groq's free tier) or, only with the owner's paid-answers switch on, the AI for clients (Mistral).
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const notReadyMessage = "A base de dados ainda não tem as tabelas do assistente (falta aprovar e aplicar a migração 20261020200000_chatbot.sql).";
@@ -87,12 +88,14 @@ export async function createBot(_state: ActionState, formData: FormData): Promis
 }
 
 /**
- * The answer writer chosen in Definições: free answers (default), the local Ollama, or Groq's free
- * tier — Groq only while CHATBOT_GROQ_ENABLED=1 (set once the migration that allows 'groq' is applied).
+ * The answer writer chosen in Definições: free answers (default), the local Ollama, Groq's free tier
+ * (only while CHATBOT_GROQ_ENABLED=1) or the AI for clients, Mistral ('real'). Choosing 'real' does not
+ * authorise it: Mistral answers only once the owner also turns on paid answers (setPaidAnswers).
  */
-function answerProviderFrom(formData: FormData): "mock" | "ollama" | "groq" {
+function answerProviderFrom(formData: FormData): "mock" | "ollama" | "groq" | "real" {
   const choice = value(formData, "answer_provider");
   if (choice === "ollama") return "ollama";
+  if (choice === "real") return "real";
   if (choice === "groq") {
     if (!groqEnabled(process.env)) throw new ChatbotMessage("A IA de teste Groq ainda não está ativa neste servidor (falta CHATBOT_GROQ_ENABLED=1).");
     return "groq";
@@ -147,7 +150,7 @@ export async function updateBot(_state: ActionState, formData: FormData): Promis
       auto_resume_minutes: autoResume,
       alert_number: optional(formData, "alert_number", 40),
       retention_days: retention,
-      // Test AI: off («mock») unless chosen. Never touches the paid switch.
+      // AI: off («mock») unless chosen. Never touches the paid switch (setPaidAnswers).
       answer_provider: answerProviderFrom(formData),
     };
     const { error } = await createServiceClient().from("chatbot_bots").update(update).eq("id", botId);
@@ -157,6 +160,28 @@ export async function updateBot(_state: ActionState, formData: FormData): Promis
     failOn(error, "updateBot");
     refresh(botId);
     return { ok: true, message: "Definições guardadas." };
+  });
+}
+
+/**
+ * The owner's switch for paid answers (paid_answers_allowed), separate from the settings form and only
+ * in the admin (ADMIN_EMAILS; clients never see it): with it on and «IA para clientes (Mistral, UE)»
+ * chosen, Mistral writes the answers; off, the free answers reply. Mistral's own spending limit is set
+ * in its console when the account moves to the paid plan.
+ */
+export async function setPaidAnswers(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData);
+    const allowed = value(formData, "paid_answers_allowed") === "1";
+    const { error } = await createServiceClient().from("chatbot_bots").update({ paid_answers_allowed: allowed }).eq("id", botId);
+    failOn(error, "setPaidAnswers");
+    refresh(botId);
+    return {
+      ok: true,
+      message: allowed
+        ? "IA paga autorizada: com «IA para clientes (Mistral, UE)» escolhida, a Mistral escreve as respostas."
+        : "IA paga desligada: este assistente responde sem IA paga.",
+    };
   });
 }
 
@@ -272,6 +297,7 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
   }
   let bot: BotProfile | null = null;
   let answerProvider = "mock";
+  let paidAllowed = false;
   const demo = value(formData, "demo");
   if (demo && demo in demoBots) {
     bot = demoBots[demo as DemoBotKey];
@@ -282,6 +308,7 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
       const loaded = await loadBotProfile(createServiceClient(), botId, siteUrl);
       bot = loaded?.profile ?? null;
       answerProvider = loaded?.row.answer_provider ?? "mock";
+      paidAllowed = loaded?.row.paid_answers_allowed === true;
     } catch (error) {
       if (error instanceof ChatbotNotReadyError) return { ...state, error: notReadyMessage };
       console.error("[chatbot] test load failed:", error instanceof Error ? error.message : error);
@@ -298,8 +325,9 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
   const history: ChatMessage[] = state.turns.slice(-20).map((turn, index) => ({ author: turn.author === "system" ? "system" : turn.author, body: turn.body, at: now - (state.turns.length - index) * 1000 }));
   // The test AI only when turned on for this bot: Ollama where it runs on this computer (not on
   // Vercel: there the free answers reply), Groq's free tier also here on the site (capped; any limit,
-  // error or timeout → the free answers, with the reason in the note). The paid provider never runs here.
-  const provider = chooseProvider({ choice: answerProvider, paidAllowed: false, env: process.env });
+  // error or timeout → the free answers, with the reason in the note). The AI for clients (Mistral) only
+  // with the owner's authorisation for this bot, the same as in the WhatsApp runner.
+  const provider = chooseProvider({ choice: answerProvider, paidAllowed, env: process.env });
   // One answer at a time per bot here (the test AI's «one in flight per conversation»).
   const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now), conversationKey: `experimentar:${tried.id}` }, provider);
   const sources: { title: string; section: string | null }[] = [];
@@ -311,9 +339,11 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
     ? "IA de teste local (Ollama)"
     : result.provider?.startsWith("groq")
       ? "IA de teste (Groq, grátis)"
-      : result.provider
-        ? "Respostas gratuitas"
-        : null;
+      : result.provider?.startsWith("mistral")
+        ? "IA para clientes (Mistral, UE)"
+        : result.provider
+          ? "Respostas gratuitas"
+          : null;
   const replies: TestTurn[] = result.replies.map((body, index) =>
     index === result.replies.length - 1 ? { author: "bot" as const, body, ...(sources.length ? { sources } : {}), ...(by ? { by } : {}), ...(result.providerNote ? { note: result.providerNote } : {}) } : { author: "bot" as const, body },
   );

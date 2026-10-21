@@ -7,7 +7,7 @@
 // Grounded (llm/grounding.ts, shared with Groq): the model sees only the bot's own information and
 // the retrieved entries/document passages, must answer NO_ANSWER otherwise, and the engine's safety rules run before (emergency,
 // codes, medical, hand-off) and after (sanitizeReply). Any error, timeout or busy model → the mock.
-import { contextItems, groundedMessages, parseGroundedAnswer, type ContextItem, type FetchLike } from "./grounding.ts";
+import { contextItems, groundedMessages, parseGroundedAnswer, seenText, type ContextItem, type FetchLike } from "./grounding.ts";
 import { CallLimiter, limitFromEnv } from "./limiter.ts";
 import { buildSystemPrompt, languageNames } from "./prompt.ts";
 import { ProviderDisabledError, type AnswerProvider, type AnswerRequest, type AnswerResult } from "./types.ts";
@@ -69,12 +69,13 @@ export function createOllamaProvider(config: OllamaConfig): AnswerProvider {
       busy = true;
       try {
         const items = contextItems(request);
+        const body = ollamaRequestBody(request, items, model);
         let response;
         try {
           response = await doFetch(`${config.url.replace(/\/+$/, "")}/api/chat`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(ollamaRequestBody(request, items, model)),
+            body: JSON.stringify(body),
             signal: AbortSignal.timeout(config.timeoutMs ?? defaultOllamaTimeoutMs),
           });
         } catch (error) {
@@ -87,7 +88,7 @@ export function createOllamaProvider(config: OllamaConfig): AnswerProvider {
         let raw = data.message?.content ?? "";
         if (data.done_reason === "length") raw = completeSentences(raw);
         if (!raw.trim()) throw new OllamaError("Ollama sem resposta utilizável");
-        const parsed = parseGroundedAnswer(raw, items);
+        const parsed = parseGroundedAnswer(raw, items, request.history, seenText(body.messages));
         return { text: parsed.text, provider: `ollama:${model}`, usedEntryIds: parsed.entryIds, sources: parsed.sources };
       } finally {
         busy = false;

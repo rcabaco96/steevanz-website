@@ -1,8 +1,10 @@
 # Assistente de IA no WhatsApp: arquitetura (fase 1)
 
-Estado em 2026-10-21. Ramo `chatbot`. Nada disto gasta dinheiro: não há chamadas a modelos de IA
-pagos, nem à API paga do WhatsApp (as IAs de teste são grátis: o Ollama no próprio computador e o
-plano grátis da Groq). As migrações do assistente foram aplicadas a 2026-10-21, com autorização do dono.
+Estado em 2026-10-21. Ramo `chatbot`. Hoje nada disto gasta dinheiro: não há chamadas à API paga do
+WhatsApp; as IAs de teste são grátis (o Ollama no próprio computador e o plano grátis da Groq) e a IA
+para clientes (Mistral, UE) está no plano grátis «Experiment», sem cartão, e só responde com o
+interruptor «IA paga» do dono ligado. As migrações do assistente foram aplicadas a 2026-10-21, com
+autorização do dono.
 
 ## 1. O que o site promete (e o sistema tem de cumprir, nem mais nem menos)
 
@@ -42,7 +44,7 @@ src/lib/chatbot/runtime.ts  ── fila por conversa, duplicados, eco das própr
 src/lib/chatbot/engine.ts   ── língua → intenções → regras fixas de segurança → resposta → filtro final
    │        ├─ knowledge.ts  pesquisa grátis (palavras + «conceitos» nas 6 línguas)
    │        ├─ hours.ts      aberto agora / próxima abertura / semana por extenso
-   │        └─ llm/          AnswerProvider: mock (hoje) | ollama (teste local) | groq (teste, grátis) | real (desligado)
+   │        └─ llm/          AnswerProvider: mock | ollama (teste local) | groq (teste, grátis) | real = Mistral (clientes, UE, com o interruptor do dono)
    ▼
 src/lib/chatbot/supabase-store.ts ── conversas, mensagens, estado da sessão (QR) no Supabase
    ▲
@@ -248,8 +250,8 @@ para testar IA também no site usa-se o **plano grátis da Groq** (API compatív
   depois de aplicada a migração que aceita `groq`); tirar a variável também desliga a Groq na hora
   (responde o mock e «Experimentar» diz porquê).
 - Pedido: `POST https://api.groq.com/openai/v1/chat/completions`, `Authorization: Bearer
-  $GROQ_API_KEY`, modelo `CHATBOT_GROQ_MODEL` (por omissão `llama-3.3-70b-versatile`, modelo de
-  produção da Groq), `stream: false`, temperatura 0,2, no máximo 220 tokens por resposta, limite de
+  $GROQ_API_KEY`, modelo `CHATBOT_GROQ_MODEL` (por omissão `openai/gpt-oss-120b`: a conta não tem o
+  `llama-3.3-70b-versatile`), `stream: false`, temperatura 0,2, raciocínio «low» escondido e até 900 tokens, limite de
   **15 s** (`CHATBOT_GROQ_TIMEOUT_MS`, máx. 30 s). Sem novas tentativas.
 - **Limites.** O plano grátis da Groq tem limites por organização (para o `llama-3.3-70b-versatile`,
   cerca de 30 pedidos/min, 1000/dia, 12 000 tokens/min e 100 000 tokens/dia; os valores exatos da
@@ -277,7 +279,44 @@ para testar IA também no site usa-se o **plano grátis da Groq** (API compatív
   `answer_provider` para incluir `groq`. Rollback em `supabase/rollbacks/` (assistentes na Groq voltam
   a `mock`).
 
-### O que a IA recebe (`llm/grounding.ts`, Ollama e Groq)
+### IA para clientes: Mistral, UE (`llm/mistral.ts`, valor `real`)
+
+Escolha do dono (2026-10-21): a IA que vai responder aos clientes é a **Mistral AI** (empresa francesa,
+dados na UE). Conta criada no plano grátis «Experiment» (sem cartão); com o primeiro cliente passa ao
+plano pago «Scale» com limite de gastos definido na consola da Mistral (decisão e ação do dono).
+
+- **Dois passos, os dois do dono.** Definições › «Quem escreve as respostas» › «IA para clientes
+  (Mistral, UE)» grava `answer_provider = 'real'` (o valor já existia; sem migração). Isso sozinho não
+  chega: a Mistral só responde depois de o dono carregar em «Autorizar IA paga» (bloco «IA paga (só o
+  dono)», ação `setPaidAnswers`, grava `paid_answers_allowed`). Este interruptor só existe no admin
+  (contas `ADMIN_EMAILS`), nunca no painel do cliente, e é separado do formulário das definições
+  (com confirmação). Sem ele, `chooseProvider` devolve `paidNotAllowedProvider`: não lê a chave, não
+  faz pedidos, respondem as respostas gratuitas e «Experimentar» diz «falta o dono autorizar a IA
+  paga». O programa do assistente volta a escolher o fornecedor quando o interruptor muda (≤ 15 s).
+- Pedido: `POST https://api.mistral.ai/v1/chat/completions`, `Authorization: Bearer
+  $MISTRAL_API_KEY`, modelo `CHATBOT_MISTRAL_MODEL` (por omissão `mistral-small-latest`, hoje
+  `mistral-small-2603` = Mistral Small 4), `reasoning_effort: "none"` (sem raciocínio: mais barato e
+  rápido; só nos modelos Small/Magistral), temperatura 0,2, no máximo 300 tokens, limite de **15 s**
+  (`CHATBOT_MISTRAL_TIMEOUT_MS`, máx. 30 s). A resposta pode vir em texto ou em lista de pedaços: só
+  contam os pedaços `text`. Mesma ancoragem, prompt, contexto e regras de segurança das IAs de teste.
+- **Limites por omissão dentro do plano grátis** (≈ 1 pedido/segundo): pelo menos 1,1 s entre pedidos
+  (`CHATBOT_MISTRAL_MIN_INTERVAL_MS`; um pedido espera no máximo 3 s pela vez, senão respostas
+  gratuitas — nunca fila), 30/min e 500/dia por processo (`CHATBOT_MISTRAL_MAX_PER_MINUTE`,
+  `…_MAX_PER_DAY`), por assistente 15/min e 300/dia (`…_BOT_MAX_PER_MINUTE`, `…_BOT_MAX_PER_DAY`),
+  100 000 tokens/min e 1 000 000/dia (`…_MAX_TOKENS_PER_MINUTE`, `…_MAX_TOKENS_PER_DAY`). No plano
+  pago estes tetos também limitam a fatura.
+- **Nunca em ciclo.** HTTP 429 → respostas gratuitas e pausa pelo `retry-after` (por omissão 60 s, máx.
+  1 h). HTTP 402 ou resposta a falar de pagamento/plano → desligada até reiniciar; chave recusada
+  (401) também. Outro erro, falta de ligação, mais de 15 s ou falta de chave → respostas gratuitas
+  com a razão. Uma resposta de cada vez por conversa.
+- **Privacidade:** a mensagem do cliente, as últimas 6 mensagens da conversa, a informação do negócio
+  e os excertos dos documentos vão para a Mistral. **No plano grátis a Mistral pode usar os pedidos
+  para melhorar os modelos: só dados de teste.** Para clientes reais, plano pago e a Mistral como
+  subcontratante na política de privacidade e no acordo com o cliente (fase E).
+- **Chave:** `MISTRAL_API_KEY` no `.env.local` e na Vercel (cifrada); nunca no código nem nos registos.
+- Comparação com a Groq e custos: `docs/chatbot/COMPARACAO-IA.md`.
+
+### O que a IA recebe (`llm/grounding.ts`, Ollama, Groq e Mistral)
 
 - Só a informação do assistente (prompt de sistema), a data de hoje e excertos numerados: até 5
   entradas do conhecimento [E1] e as melhores passagens dos documentos [S1] (`passages.ts`), de **todo
@@ -323,15 +362,15 @@ para testar IA também no site usa-se o **plano grátis da Groq** (API compatív
 
 ### Camada de IA (LLM)
 
-- Interface `AnswerProvider` (`llm/types.ts`). Hoje: `mockProvider` (determinístico, grátis) e, para
-  testes, `ollama` (modelo local, grátis) e `groq` (plano grátis da Groq), ver acima.
-- `realProviderPlaceholder`: tem a interface mas **não tem implementação** — lança
-  `ProviderDisabledError`, o motor regista e responde com o mock. Não lê chaves, não faz pedidos.
-- `chooseProvider` só devolve o marcador se `answer_provider = 'real'` **e**
-  `paid_answers_allowed = true` (interruptor do dono no site, a criar na fase 2).
+- Interface `AnswerProvider` (`llm/types.ts`): `mockProvider` (determinístico, grátis), para
+  testes `ollama` (modelo local, grátis) e `groq` (plano grátis da Groq), e para clientes `mistral`
+  (`real`), ver acima.
+- `chooseProvider`: `real` + `paid_answers_allowed = true` → Mistral; `real` sem o interruptor →
+  `paidNotAllowedProvider` (lança `ProviderDisabledError`, o motor responde com o mock e diz porquê;
+  não lê chaves, não faz pedidos).
 - `llm/prompt.ts`: o prompt de sistema (regras, tom, informação do negócio, entradas encontradas).
-  Hoje só é enviado às IAs de teste: o modelo local (`llm/ollama.ts`, no próprio computador) e, quando
-  escolhida, a Groq (`llm/groq.ts`, plano grátis, empresa dos EUA). As regras de segurança
+  É enviado à IA escolhida: o modelo local (`llm/ollama.ts`), a Groq (`llm/groq.ts`, plano grátis,
+  empresa dos EUA) ou a Mistral (`llm/mistral.ts`, UE). As regras de segurança
   continuam no código antes e depois do modelo, por isso um modelo que ignore o prompt continua sem
   conseguir enviar um código da porta nem saltar a passagem para pessoa.
 
@@ -420,9 +459,9 @@ MIT, sem Chrome, mesmo risco que o open-wa) não toca no motor, no conhecimento 
    `--listen-only` primeiro.
 3. Se for a API oficial: app na Meta, verificação, webhook `/api/chatbot/whatsapp`, adaptador
    `cloud-api.mjs` (hoje desligado).
-4. Escolher um modelo de IA, ver preços atuais, ligar o interruptor «IA paga» no site e implementar
-   `realProvider` (o prompt e as regras já estão escritos). Sem isto o assistente continua grátis e
-   só responde com o que está no conhecimento.
+4. ~~Escolher um modelo de IA e implementar o fornecedor pago~~ (feito a 2026-10-21: Mistral, UE,
+   `llm/mistral.ts`, com o interruptor «IA paga» do dono). Falta, com o primeiro cliente: o dono passa a
+   conta Mistral ao plano pago com limite de gastos.
 5. Widget do site (adaptador `web`) e caixa do cliente no painel (`/painel`), alertas por email/push.
 6. Guia do alojamento como dados → fonte automática do conhecimento.
 

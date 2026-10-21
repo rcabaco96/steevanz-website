@@ -60,6 +60,8 @@ export function buildSystemPrompt(knowledge: BusinessKnowledge, settings: BotSet
     "- Answer straight away in complete, natural sentences, as a friendly employee would write. Never telegraphic fragments or labels.",
     "- Start with «Yes»/«No» (in the reply language) only when the customer asks a yes/no question («Do you do…?», «Are you open…?»); never before a price, a time or a list («How much?» → «The fade costs [price].», not «Yes, the fade costs…»).",
     "- Short: usually 1 to 3 sentences, at most 4. Answer only what was asked: no extra offers or combinations, and never repeat a sentence you already wrote earlier in the chat (e.g. how to book). No greeting at the start (unless the customer greets in this message) and no sign-off formula.",
+    "- Never suggest another service, package or product the customer didn't ask about (no «Também pode optar por…», «You could also…»).",
+    "- Write a web address only exactly as it appears in the information; never make one up or change it.",
     "- When the question is ambiguous, ask back in ONE sentence with up to 4 options and their prices, e.g. «Depende do serviço: [serviço] ([preço]), [serviço] ([preço]) ou [serviço] ([preço]). Qual prefere?» (in the reply language).",
     "- Plain text: no Markdown (no tables, headings, bold or italics, no [text](link)). A list only for 3 to 6 options, one per line starting with «• ».",
     friendly ? "- At most one emoji, and only when it fits naturally." : "- No emojis.",

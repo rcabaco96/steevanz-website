@@ -10,7 +10,7 @@
 // why; a 429 also pauses Groq for the time it asks (retry-after); a billing/upgrade answer turns Groq
 // off for the rest of the process. Grounded with the same rules as Ollama (llm/grounding.ts); the
 // engine's safety rules run before (emergency, codes, medical, hand-off) and after (sanitizeReply).
-import { contextItems, groundedMessages, parseGroundedAnswer, type ContextItem, type FetchLike } from "./grounding.ts";
+import { contextItems, groundedMessages, parseGroundedAnswer, seenText, type ContextItem, type FetchLike } from "./grounding.ts";
 import { CallLimiter, limitFromEnv, TokenBudget, type CallLimits } from "./limiter.ts";
 import { completeSentences } from "./ollama.ts";
 import { buildSystemPrompt, languageNames } from "./prompt.ts";
@@ -174,7 +174,7 @@ export function createGroqProvider(config: GroqConfig): AnswerProvider {
         let raw = choice?.message?.content ?? "";
         if (choice?.finish_reason === "length") raw = completeSentences(raw);
         if (!raw.trim()) throw new GroqError("Groq sem resposta utilizável");
-        const parsed = parseGroundedAnswer(raw, items);
+        const parsed = parseGroundedAnswer(raw, items, request.history, seenText(body.messages));
         return { text: parsed.text, provider: `groq:${model}`, usedEntryIds: parsed.entryIds, sources: parsed.sources };
       } finally {
         inFlight.delete(key);
