@@ -151,15 +151,18 @@ export function documentLines(chunks: readonly KnowledgeChunk[]): { text: string
 export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
   if (!chunks.length) return [];
   const groups: { text: string; chunk: KnowledgeChunk }[] = [];
-  let open: { text: string; chunk: KnowledgeChunk; last: string } | null = null;
+  let open: { text: string; chunk: KnowledgeChunk; last: string; bullet: boolean } | null = null;
   const close = () => {
     if (open) groups.push({ text: open.text, chunk: open.chunk });
     open = null;
   };
+  // A blank line or a list marker ends a passage, except in the middle of a sentence («… com pelo menos uma»
+  // + blank or «- » + «semana de antecedência.»: a PDF or a pasted text broke it there).
+  let blank = false;
   for (const raw of documentLines(chunks)) {
     const trimmed = collapseLetterSpacing(raw.text.replace(/\s+/g, " ").trim());
     if (!trimmed) {
-      close();
+      blank = true;
       continue;
     }
     const bullet = bulletStart.test(trimmed);
@@ -171,13 +174,16 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
       .replace(/(?<=\S)[*_~]+(?=\s|$|[.,;:!?)])/g, "")
       .trim();
     if (!line) continue;
-    const current: { text: string; chunk: KnowledgeChunk; last: string } | null = open;
-    if (current && !startsNewPassage(current.last, line, bullet)) {
+    const current: { text: string; chunk: KnowledgeChunk; last: string; bullet: boolean } | null = open;
+    const midSentence = current !== null && /^\p{Ll}/u.test(line) && /\p{Ll}$/u.test(current.last) && !(bullet && current.bullet);
+    const joins = current !== null && (midSentence || (!blank && !startsNewPassage(current.last, line, bullet)));
+    blank = false;
+    if (current && joins) {
       current.text = `${current.text} ${line}`;
       current.last = line;
     } else {
       close();
-      open = { text: line, chunk: raw.chunk, last: line };
+      open = { text: line, chunk: raw.chunk, last: line, bullet };
     }
   }
   close();

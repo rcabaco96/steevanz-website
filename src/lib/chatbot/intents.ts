@@ -8,6 +8,7 @@ import type { ChatbotBusinessKind } from "./types.ts";
 export const intents = [
   "greeting",
   "thanks",
+  "bye",
   "yes",
   "hours",
   "location",
@@ -35,6 +36,11 @@ const keywords: Record<Intent, readonly string[]> = {
     "guten abend", "servus", "moin", "ciao", "buongiorno", "buonasera", "salve",
   ],
   thanks: ["obrigad*", "obg", "thank*", "thx", "gracias", "merci", "danke", "grazie", "muito obrigad*"],
+  bye: [
+    "adeus", "ate logo", "ate ja", "ate amanha", "ate breve", "ate a proxima", "tchau", "xau", "bye", "goodbye", "good bye", "see you", "adios",
+    "hasta luego", "hasta pronto", "hasta manana", "au revoir", "a bientot", "a demain", "tschuss", "tschuess", "auf wiedersehen", "bis bald", "bis morgen",
+    "arrivederci", "a presto", "a domani",
+  ],
   yes: ["sim", "yes", "yeah", "yep", "ok", "okay", "si", "oui", "ja", "claro", "por favor", "please", "s il vous plait", "bitte", "certo", "va bene"],
   hours: [
     "horario*", "a que horas", "que horas", "abre*", "abert*", "fecha*", "estao abertos", "open*", "close*", "closing", "what time",
@@ -57,7 +63,7 @@ const keywords: Record<Intent, readonly string[]> = {
     "tratamento*", "treatment*", "tratamiento*", "soin*", "behandlung*", "trattament*",
   ],
   price: [
-    "preco*", "quanto custa*", "quanto e", "quanto fica", "quanto pago", "quanto se paga", "quanto pagam", "valor", "price*", "cost*", "how much", "precio*", "cuanto cuesta*",
+    "preco*", "custo", "custos", "desconto*", "promocao", "promocoes", "discount*", "descuento*", "rabatt*", "sconto", "sconti", "quanto custa*", "quanto e", "quanto fica", "quanto pago", "quanto se paga", "quanto pagam", "valor", "price*", "cost*", "how much", "precio*", "cuanto cuesta*",
     "cuanto vale", "cuanto es", "prix", "combien", "tarif*", "preis*", "kostet", "wie viel", "wieviel", "prezz*", "quanto costa*",
   ],
   human: [
@@ -121,7 +127,7 @@ const keywords: Record<Intent, readonly string[]> = {
  * question about the opening hours of that day and how to book (never about a free slot: the assistant
  * doesn't see the calendar). Alone it is too vague («Dá para pagar com MB WAY?», «Posso ir com o cão?»).
  */
-const availabilityPhrases = [
+export const availabilityPhrases = [
   "da para", "dava para", "daria para", "tem vaga*", "tens vaga*", "ha vaga*", "tem lugar", "ha lugar", "posso ir", "podemos ir", "posso passar",
   "podemos passar", "posso aparecer", "posso vir", "podemos vir", "estao abertos", "estao abertas", "vao estar abertos", "funcionam", "atendem",
   "trabalham", "can i come", "can we come", "can i drop", "can i walk in", "can i stop by", "are you open", "will you be open", "do you have space",
@@ -133,7 +139,7 @@ const availabilityPhrases = [
 ];
 
 /** Intents that say nothing about what the customer wants to know (a day with only these is about the hours of that day). */
-const smallTalk: readonly Intent[] = ["greeting", "thanks", "yes"];
+const smallTalk: readonly Intent[] = ["greeting", "thanks", "bye", "yes"];
 
 /** Intents that only mean something for some kinds of business. */
 const onlyFor: Partial<Record<Intent, readonly ChatbotBusinessKind[]>> = {
@@ -169,7 +175,8 @@ export function detectIntents(text: string, kind: ChatbotBusinessKind): Intent[]
  * «Cortam cabelo no sábado?») is about the opening hours of that day and how to book.
  */
 function withDayQuestion(normalized: string, found: Intent[]): Intent[] {
-  if (!dayMention(normalized)) return found;
+  // «Obrigado, até amanhã!» says goodbye, it doesn't ask about tomorrow.
+  if (found.includes("bye") || !dayMention(normalized)) return found;
   const about = found.filter((intent) => !smallTalk.includes(intent));
   const phrased = hasAnyKeyword(normalized, availabilityPhrases);
   // «Dá para fazer um tratamento no sábado?» (a service named) still asks whether one can come that day.
@@ -183,7 +190,7 @@ function withDayQuestion(normalized: string, found: Intent[]): Intent[] {
 
 /** Only small talk (hello, thanks, yes): nothing to look up. */
 export function isSmallTalk(found: readonly Intent[]): boolean {
-  return found.length > 0 && found.every((intent) => intent === "greeting" || intent === "thanks" || intent === "yes");
+  return found.length > 0 && found.every((intent) => smallTalk.includes(intent));
 }
 
 /** The keywords of each intent (normalized; "*" = word beginning), for answers that need them. */

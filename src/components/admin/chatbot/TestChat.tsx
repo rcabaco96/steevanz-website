@@ -8,6 +8,17 @@ import { testChat, type TestChatState } from "@/lib/chatbot/actions";
 
 const empty: TestChatState = { turns: [], conversation: null, error: null };
 
+/** «Documento: Guia da barbearia — Cabelo · Combinados», one line per document (sections cleaned and deduplicated by the engine). */
+function sourceLines(sources: { title: string; section?: string | null }[]): string[] {
+  const byTitle = new Map<string, string[]>();
+  for (const source of sources) {
+    const sections = byTitle.get(source.title) ?? [];
+    if (source.section && !sections.includes(source.section)) sections.push(source.section);
+    byTitle.set(source.title, sections);
+  }
+  return [...byTitle].map(([title, sections]) => `Documento: ${title}${sections.length ? ` — ${sections.join(" · ")}` : ""}`);
+}
+
 function SendButton() {
   const { pending } = useFormStatus();
   return (
@@ -50,7 +61,13 @@ export function TestChat({ botId, demo, hint }: { botId?: string; demo?: string;
             {turn.sources?.length || turn.by || turn.note ? (
               <span className="mt-1.5 block border-t border-line pt-1 text-[0.7rem] text-subtle">
                 {turn.by ? <span className="block">{turn.by}</span> : null}
-                {turn.sources?.length ? <span className="block">Fonte: {turn.sources.map((source) => source.heading || source.title).join(" · ")}</span> : null}
+                {turn.sources?.length
+                  ? sourceLines(turn.sources).map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))
+                  : null}
                 {turn.note ? <span className="block">{turn.note}</span> : null}
               </span>
             ) : null}

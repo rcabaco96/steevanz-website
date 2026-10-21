@@ -2,12 +2,16 @@
 // business's own information (frequent questions, hours, address, menu or services, booking link).
 // It never invents: when nothing matches it returns null and the engine says «I don't know».
 import { askedDay, dayLabel, formatNextOpening, formatWeek, hoursOn, type AskedDay, type OpeningState } from "../hours.ts";
-import { documentAnswer, documentBooking, documentCatalog, documentHours, documentLocation, type DocumentAnswer } from "../doc-answers.ts";
-import { buildIndex, minimumCoverage, minimumScore, type SearchHit } from "../knowledge.ts";
+import { subjectWords } from "../context.ts";
+import { asksPriceOfNothing, documentNamedItem, documentAnswer, documentBooking, documentCatalog, documentHours, documentLocation, documentPriceExamples, generalSubjectExamples, uniqueSources, type DocumentAnswer } from "../doc-answers.ts";
+import { buildIndex, minimumCoverage, minimumScore, type KnowledgeIndex, type SearchHit } from "../knowledge.ts";
 import { fixedMessages } from "../messages.ts";
 import { formatPrice } from "../text.ts";
 import type { BusinessKnowledge, CatalogItem, ChatbotLanguage } from "../types.ts";
 import type { AnswerProvider, AnswerRequest, AnswerResult, AnswerSource } from "./types.ts";
+
+/** The kinds of question with an answer of their own (hours, address, booking, services, prices). */
+const answerIntents: readonly string[] = ["hours", "location", "booking", "menu", "price"];
 
 /** An entry this strong answers the question better than the generic hours/address answers. */
 const strongScore = 4.5;
@@ -105,7 +109,24 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
     else if (hasDocuments) fromDocument(documentLocation(request, index()));
   }
   const wantsCatalog = has("menu") || has("price");
-  if (itemHits.length && (wantsCatalog || !topEntry)) {
+  // «Quanto custa?» with nothing named (now or earlier in the chat): ask which one, with examples from
+  // the business's own list («Depende do que procura. Por exemplo: corte clássico (16 €), …»).
+  // The same when the subject came from the previous turn and is too general for one line («Dá para
+  // cortar o cabelo amanhã?» → «Quanto custa?»): the examples of that kind of service.
+  const carriedSubject = Boolean(request.customerMessage) && request.customerMessage !== request.message && !subjectWords(request.customerMessage!).length;
+  const clarify =
+    itemHits.length || topEntry
+      ? null
+      : asksPriceOfNothing(request)
+        ? priceExamples(request, hasDocuments ? index() : null)
+        : has("price") && carriedSubject && hasDocuments
+          ? withLanguage(request, index(), generalSubjectExamples(request, index()))
+          : null;
+  if (clarify) {
+    parts.push(fixedMessages[language].whichOption(clarify.examples));
+    sources = [...sources, ...clarify.sources];
+    if (clarify.otherLanguage) parts.push(fixedMessages[language].answerInOtherLanguage);
+  } else if (itemHits.length && (wantsCatalog || !topEntry)) {
     parts.push(itemsAnswer(itemHits.map((hit) => hit.doc.item!), knowledge, language));
   } else if (wantsCatalog && !topEntry) {
     // No matching item: the services and prices the documents list.
@@ -113,6 +134,8 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
     if (knowledge.menuUrl) parts.push(fixedMessages[language].menuLink(knowledge.menuUrl));
   }
   if (!parts.length && topEntry) parts.push(entryText(topEntry));
+  // «Fazem degradê?»: the lines of the price list that name it.
+  if (!parts.length && hasDocuments && !intents.some((intent) => answerIntents.includes(intent))) fromDocument(documentNamedItem(request, index()));
   if (!parts.length && hasDocuments) fromDocument(documentAnswer(request, index()));
   if (has("booking")) {
     // The booking link set in the admin; otherwise what the documents say (online link, «sem marcação»), then the phone.
@@ -120,7 +143,8 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
     if (fromDocs) {
       // Not twice when the answer above already quotes these lines.
       const said = parts.join("\n");
-      if (!fromDocs.text.split("\n").every((line) => said.includes(line))) fromDocument(fromDocs);
+      const fresh = fromDocs.text.split("\n").filter((line) => !said.includes(line));
+      if (fresh.length) fromDocument({ ...fromDocs, text: fresh.join("\n") });
     } else {
       const booking = bookingAnswer(knowledge, language);
       if (booking) parts.push(booking);
@@ -128,8 +152,27 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   }
   // «(This information is only available in another language…)» once, at the end.
   const note = fixedMessages[language].answerInOtherLanguage;
-  const noted = parts.filter((part) => part.endsWith(note)).length > 1 ? [...parts.map((part) => (part.endsWith(note) ? part.slice(0, -note.length).trimEnd() : part)), note] : parts;
-  return { text: noted.length ? noted.join("\n\n") : null, provider: "mock", usedEntryIds: used, sources };
+  const noted = parts.some((part) => part.endsWith(note)) ? [...parts.map((part) => (part.endsWith(note) ? part.slice(0, -note.length).trimEnd() : part)).filter(Boolean), note] : parts;
+  return { text: noted.length ? noted.join("\n\n") : null, provider: "mock", usedEntryIds: used, sources: uniqueSources(sources) };
+}
+
+/** A few priced examples for a question back: the structured services or dishes, else the documents' price list. */
+function priceExamples(request: AnswerRequest, index: KnowledgeIndex | null): { examples: string[]; sources: AnswerSource[]; otherLanguage: boolean } | null {
+  const items = request.knowledge.items.filter((item) => item.priceCents !== null).slice(0, 4);
+  if (items.length >= 2) {
+    const lower = (name: string) => (/^\p{Lu}\p{Ll}/u.test(name) ? name.charAt(0).toLowerCase() + name.slice(1) : name);
+    return { examples: items.map((item) => `${lower(item.name)} (${formatPrice(item.priceCents!, request.language)})`), sources: [], otherLanguage: false };
+  }
+  if (!index) return null;
+  return withLanguage(request, index, documentPriceExamples(request, index));
+}
+
+/** Examples quoted from a document, noting when it is written in another language than the customer's. */
+function withLanguage(request: AnswerRequest, index: KnowledgeIndex, found: { examples: string[]; sources: AnswerSource[] } | null) {
+  if (!found) return null;
+  const chunk = index.passages.find((passage) => passage.chunk.id === found.sources[0]?.chunkId)?.chunk;
+  const written = chunk?.language ?? request.settings.defaultLanguage;
+  return { ...found, otherLanguage: written !== request.language };
 }
 
 export const mockProvider: AnswerProvider = {

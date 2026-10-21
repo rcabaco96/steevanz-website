@@ -13,9 +13,10 @@
 // hours when they are set in the admin). A test with the barbershop fixture showed why:
 // with three big sections the model missed «Corte clássico … 16 €» and never saw the student discount
 // together with the price it applies to.
-import { allowed, bookingPassages, hoursSignal, intentWords, isAnchor, longestPriceRun, timetable } from "../doc-answers.ts";
+import { recentTurns } from "../context.ts";
+import { addressPassages, allowed, asksPriceOfNothing, bookingPassages, hoursSignal, intentWords, isAnchor, longestPriceRun, sectionTitleOf, sourceOf, timetable } from "../doc-answers.ts";
 import { askedDay, dayAhead, formatDay, hoursOn, localClock, type AskedDay } from "../hours.ts";
-import { buildIndex, minimumScore, passageCoverage, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
+import { buildIndex, minimumScore, passageCoverage, passageMatches, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
 import { answerAfter, blockAfter, type Passage } from "../passages.ts";
 import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
 import type { AnswerRequest, AnswerSource } from "./types.ts";
@@ -31,11 +32,12 @@ export const contextLimits = {
   entries: 5,
   entryChars: 600,
   passages: 14,
-  pricePassages: 6,
+  pricePassages: 8,
   priceList: 12,
   hoursPassages: 10,
   bookingPassages: 4,
   discountPassages: 3,
+  followUpPassages: 4,
   passageChars: 320,
   maxPassages: 26,
   totalChars: 3800,
@@ -63,17 +65,10 @@ const cut = (text: string, max: number) => (text.length > max ? `${text.slice(0,
 /** Discount words in the six languages (normalized; "*" = word beginning). */
 const discountWords = ["desconto*", "promoca*", "discount*", "descuento*", "promocion*", "remise*", "reduction*", "rabatt*", "ermassig*", "sconto*", "sconti"];
 
-/** A short title that names a part of the document («Cabelo», «Combinados», «5. Descontos»), not a line of a list or timetable. */
-function isSectionTitle(passage: Passage): boolean {
-  return passage.titleLike && !passage.question && !passage.price && !passage.time && hoursSignal(passage) < 2;
-}
-
 /** The nearest section title before a passage: tells the model what a line belongs to. */
 function sectionOf(passage: Passage): string | null {
-  for (let at = passage.position - 1; at >= 0 && at >= passage.position - 25; at--) {
-    if (isSectionTitle(passage.siblings[at])) return passage.siblings[at].text;
-  }
-  return null;
+  const previous = passage.siblings[passage.position - 1];
+  return previous ? sectionTitleOf(previous) : null;
 }
 
 /** The passages cut from the same line or paragraph as this one, in order. */
@@ -89,7 +84,7 @@ function groupOf(passage: Passage): Passage[] {
  * The document passages the model gets for a message, in order of priority (deduplicated, at most
  * contextLimits.maxPassages). Exported for the tests.
  */
-export function groundingPassages(request: Pick<AnswerRequest, "message" | "intents" | "property">, index: KnowledgeIndex): Passage[] {
+export function groundingPassages(request: Pick<AnswerRequest, "message" | "intents" | "property" | "followUpOf">, index: KnowledgeIndex): Passage[] {
   const passages = index.passages.filter((passage) => allowed(passage, request));
   if (!passages.length) return [];
   const chosen: Passage[] = [];
@@ -146,7 +141,11 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
     const priced = passages.filter((passage) => passage.price);
     const matching = priceQuery.words.length ? ranked(priced, priceQuery, true).slice(0, contextLimits.pricePassages) : [];
     matching.forEach(add);
-    if (matching.length < 2) {
+    // Fewer than two lines name what was asked (another language, a generic «cortar o cabelo» carried from
+    // the previous turn), or nothing was named («Quanto custa?»): the price list itself too, so the model
+    // can answer or ask which one with real examples.
+    const direct = matching.filter((passage) => passageMatches(passage, priceQuery.words).length === priceQuery.words.length);
+    if (direct.length < 2 || asksPriceOfNothing(request)) {
       const list = longestPriceRun(passages).filter((passage) => passage.price);
       list.slice(0, contextLimits.priceList).forEach(add);
     }
@@ -168,11 +167,18 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
       .forEach((item) => add(item.passage));
   }
 
+  // Address questions («Onde ficam?»): the address lines, wherever they are.
+  if (has("location")) addressPassages(passages).forEach(add);
+
   // Booking questions: how to book (the online link, by phone) and the «sem marcação» rule.
   if (has("booking")) bookingPassages(passages).slice(0, contextLimits.bookingPassages).forEach(addWithContext);
 
   // The best passages for the message across the whole document.
   for (const passage of ranked(passages, query).slice(0, contextLimits.passages)) addWithContext(passage);
+
+  // A follow-up («E são válidos quanto tempo?» after «Vendem vales-oferta?»): a few passages about the
+  // earlier question too, so the model sees what «it» is.
+  if (request.followUpOf) for (const passage of ranked(passages, passageQuery(request.followUpOf)).slice(0, contextLimits.followUpPassages)) addWithContext(passage);
 
   // Within the ceilings, in priority order.
   const kept: Passage[] = [];
@@ -224,7 +230,7 @@ export function contextItems(request: AnswerRequest): ContextItem[] {
     items.push({
       ref: `S${items.filter((item) => item.ref.startsWith("S")).length + 1}`,
       text,
-      source: { documentId: first.chunk.documentId, documentTitle: first.chunk.documentTitle, heading: first.chunk.heading, chunkId: first.chunk.id },
+      source: sourceOf(first),
     });
   }
   return items;
@@ -242,7 +248,9 @@ export function contextBlock(items: readonly ContextItem[]): string {
  */
 export function groundingRules(): string[] {
   return [
-    `If the information below does not answer the customer's message, reply exactly ${noAnswer} and nothing else. Never guess prices, hours, availability or any other fact.`,
+    `If the information below does not answer the customer's message and there is nothing in it to ask back about, reply exactly ${noAnswer} and nothing else. Never guess prices, hours, availability or any other fact.`,
+    "The chat so far comes before the customer's message. Use it to understand short follow-ups («Quanto custa?», «E ao sábado?», «E para crianças?», «And the beard?»): they are about the service, product or day of the previous messages, unless they name another one.",
+    `If the message is still ambiguous (e.g. «Quanto custa?» and no service was named), don't reply ${noAnswer}: ask which one in one short sentence, naming up to 4 options from the information with their prices exactly as written.`,
     "After each fact you use, cite its reference in square brackets, e.g. [S1] or [E2]. Never cite anything else.",
     "Prices: quote them exactly as written. Only when the question needs it (e.g. a discount on a listed price), do simple arithmetic using only numbers written in the information, and show it briefly, e.g. «18 € − 2 € = 16 €». Check that the conditions of a discount (days, who, which service) match the question; if they don't, don't apply it.",
     "Never calculate VAT and never add VAT to any price: if a price says «+ IVA» / «+ VAT», keep it that way.",
@@ -292,36 +300,72 @@ export function askedDayLine(request: Pick<AnswerRequest, "now" | "knowledge" | 
   return `${line} Opening hours that day: ${slots.length ? slots.map((slot) => `${slot.opens}–${slot.closes}`).join(" and ") : "closed"}.`;
 }
 
-/** The chat messages for any chat-completion API: system prompt, the last turns, then the excerpts and the message. */
+/**
+ * The chat messages for any chat-completion API: system prompt, the last turns of the chat (customer,
+ * assistant and team, within context.ts historyLimits), then the excerpts, the day asked, which earlier
+ * question a follow-up continues, and the customer's message as written.
+ */
 export function groundedMessages(request: AnswerRequest, items: readonly ContextItem[], system: string, languageName: string) {
-  const history = request.history.slice(-6).map((message) => ({
+  const history = recentTurns(request.history).map((message) => ({
     role: message.author === "customer" ? "user" : "assistant",
     content: message.body,
   }));
   const dayLine = askedDayLine(request);
+  const followUp = request.followUpOf
+    ? `This message follows the customer's earlier question «${request.followUpOf}»: answer it in that context (same service, product or day, unless the message names another one).`
+    : null;
+  const picked = request.picked ? `The customer picks this option from your previous message: «${request.picked}».` : null;
   return [
     { role: "system", content: [system, todayLine(request), "", ...groundingRules()].join("\n") },
     ...history,
     {
       role: "user",
-      content: `Relevant information:\n${contextBlock(items)}\n\n${dayLine ? `${dayLine}\n\n` : ""}Customer message:\n${request.message}\n\nReply in ${languageName}, in at most 4 short sentences, or ${noAnswer}.`,
+      content: [
+        `Relevant information:\n${contextBlock(items)}`,
+        dayLine,
+        followUp,
+        picked,
+        `Customer message:\n${request.customerMessage ?? request.message}`,
+        `Reply in ${languageName}: a short, natural WhatsApp message (at most 4 short sentences), or a short question back if it is ambiguous, or ${noAnswer}.`,
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
     },
   ];
 }
 
+/** «link», «site», «website», «enlace», «lien», «sito»: a sentence pointing to an address. */
+const linkWords = /\b(?:link|links|site|website|enlace|lien|sito|webseite)\b/i;
+/** A web address or a bare domain («reservas.fiodenavalha.example»). */
+const addressPattern = /https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,}(?:\/|\b)/i;
+
+/**
+ * Sentences that send the customer to «o nosso link» / «o nosso site» without writing any address
+ * (live test, 2026-10-21: «Pode marcar através do nosso link…» after a price) are dropped; the rest of
+ * the answer stays. Nothing is dropped when that would leave nothing.
+ */
+export function withoutEmptyLinks(text: string): string {
+  // Sentences with the spaces or line breaks after them, so a list keeps its lines.
+  const parts = text.match(/[^.!?…]+(?:[.!?…]+|$)\s*/g) ?? [text];
+  const kept = parts.filter((part) => !(linkWords.test(part) && !addressPattern.test(part)));
+  return kept.length && kept.length < parts.length ? kept.join("").trim() : text;
+}
+
 /** The model's text → the answer, its sources (from the [S1]/[E1] references) and no references left. */
 export function parseGroundedAnswer(raw: string, items: readonly ContextItem[]): { text: string | null; sources: AnswerSource[]; entryIds: string[] } {
-  const trimmed = raw.trim();
+  // gpt-oss writes «quinta-feira» with a non-breaking hyphen, «16 €» with narrow no-break spaces and ends some answers with a zero-width space: plain characters.
+  const trimmed = raw.replace(/[\u2010\u2011]/g, "-").replace(/[\u00A0\u202F]/g, " ").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
   // Small models sometimes write a sentence and then NO_ANSWER: anywhere in the reply, it means «I don't know».
   if (!trimmed || /NO[_ ]ANSWER/i.test(trimmed)) return { text: null, sources: [], entryIds: [] };
   // gpt-oss writes the references in CJK brackets (【S5】), sometimes several in one («[S1, S3]»).
   const ref = String.raw`[\[【]\s*[ES]\d+(?:\s*[,;]\s*[ES]\d+)*\s*[\]】]`;
   const cited = new Set([...trimmed.matchAll(new RegExp(ref, "g"))].flatMap((match) => match[0].match(/[ES]\d+/g) ?? []));
   const used = items.filter((item) => cited.has(item.ref));
-  const text = trimmed
+  const cleaned = trimmed
     .replace(new RegExp(String.raw`\s*${ref}(?:\s*${ref})*`, "g"), "")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
+  const text = withoutEmptyLinks(cleaned);
   const sources: AnswerSource[] = [];
   for (const item of used) if (item.source && !sources.some((source) => source.chunkId === item.source!.chunkId)) sources.push(item.source);
   return {

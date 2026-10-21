@@ -21,6 +21,8 @@ Never fix a client's case with a client-specific rule: generalise it and add it 
 - **Answers in the customer's language** (pt, en, es, fr, de, it); the business's text may be in another one.
 - **Prices never with VAT calculated** (owner's absolute rule); the assistant does arithmetic only with the
   numbers in the excerpts and shows it (18 € − 2 € = 16 €).
+- **Basics a client expects** (2026-10-21, «Estas coisas básicas têm de estar feitas»): follow-ups in context,
+  a question back instead of «não sei» when the question is ambiguous, natural pt-PT, Portuguese on doubt.
 - **Test number** 937 967 281: open-wa only for internal tests, listen-only first, allowlist, never initiate,
   never «crazy tests» that could get it banned. Clients use the official WhatsApp Cloud API.
 
@@ -52,11 +54,22 @@ Never fix a client's case with a client-specific rule: generalise it and add it 
 | «Fazem tranças?» | Dumped a price table | Quote the one sentence that answers («Não fazemos: … tranças») |
 | Student discount on a fade | AI said 15 € | Pass the discount line together with the price line; arithmetic only from excerpts |
 | «Abrem no dia 8 de dezembro?» | AI contradicted itself | A date the excerpts don't name → «não tenho essa informação» |
-| «How much is a haircut?» | Nothing found (free answers) | AI path gets the price table when no line matches; free answers stay limited |
+| «How much is a haircut?» | Nothing found (free answers) | AI path gets the price table when no line matches; free answers ask back with examples |
+| «Dá para cortar amanhã?» → «Quanto custa?» | «Não tenho essa informação»: every message read alone | `context.ts`: running topic of the customer's last messages; elliptic follow-ups borrow its subject/intent/day; the AI gets the history (6 msgs / 1 500 chars) and «follows the earlier question «…»» |
+| «Quanto custa?» as first message | «Não sei» | Ask back with 3–4 real examples from the business's list («Depende do que procura. Por exemplo: …»); also when the AI says NO_ANSWER |
+| «Abertura amanhã das 10:00…» (Groq) | Telegraphic, robotic | `prompt.ts` style rules: speak as the business, full sentences, «Sim/Não» first, 1–3 sentences, no Markdown, pt-PT (not Brazilian), no English words; good/bad examples with [placeholders] only |
+| «Queria reservar uma mesa para segunda» | Detected as Spanish | New conversation: the default language wins unless another leads by 2 (or the message has nothing of it: «Hello», «Hola») |
+| «Quero a segunda opção», «a segunda vez» | Read as Monday | Ordinal context words (opção, vez, terceira…) → not a weekday; right after a list, the option picked |
+| Admin «Fonte:» | «B A R B E A R I A · …› A equipa tem quatro barbeiros» twice | «Documento: <título> — <secção>»: nearest real section title, no decorations, sentences or table captions, deduplicated |
+| «Fazem degradê?» | Quoted the student discount line | Short question naming the start of price lines → those lines |
+| Groq live test (2026-10-21) | «Sim, o degradê custa 18 €», booking sentence repeated every turn, «através do nosso link» with no link, «a partir da data de compra» invented | «Sim/Não» only for yes/no questions; answer only what was asked; never repeat a sentence; no details not written; `withoutEmptyLinks` drops link sentences without an address |
+| «Onde ficam?» | Free answers: «não sei» (phrase keyword «onde fica*» left «ficam» as a subject) | `intentWords` explains the message's own words for phrase keywords with «*»; the AI gets the address lines |
 
 Fixtures: `tests/fixtures/barbearia-fio-de-navalha*.txt` in several layouts (structured, flat, messy, WhatsApp).
-When a new failure shows up with any client, add the question to these tests (or a new sector fixture) before
-fixing it, and make it pass in every layout.
+Conversations: `tests/fixtures/dialogues/<sector>.json`, played by `tests/chatbot-conversations.test.mjs` (free
+answers + what a fake AI receives) in every layout — the quality gate. When a new failure shows up with any
+client, add the dialogue there (or a new sector file) before fixing it, and make it pass in every layout.
+Live check with Groq's free tier: at most a few dozen calls, ~25 s apart (our 9 000 tokens/min ceiling), key never printed.
 
 ## Before publishing a chatbot change
 

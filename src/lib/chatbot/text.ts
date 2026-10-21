@@ -31,7 +31,9 @@ const stopwords = new Set(
     "el la los las un una unos unas del al en y o es son lo le mi tu su con por para " +
     "le la les un une des du de et ou est sont ce cette mon ton son je tu il elle nous vous au aux " +
     "der die das ein eine einen dem den des und oder ist sind ich du er sie es wir ihr mit fur von zu im am " +
-    "il lo la gli le un uno una di del della e o sono io tu lui lei noi voi con per al alla nel"
+    "il lo la gli le un uno una di del della e o sono io tu lui lei noi voi con per al alla nel " +
+    // Portuguese contractions («num degradê», «duma vez»).
+    "num numa nuns numas dum duma duns dumas"
   ).split(" "),
 );
 

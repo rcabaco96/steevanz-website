@@ -18,6 +18,9 @@ export interface FixedMessages {
   hello: string;
   howCanIHelp: string;
   thanks: string;
+  /** «Adeus», «Até logo» (and with thanks: «Obrigado, até amanhã!»). */
+  bye: string;
+  thanksBye: string;
   /** The chat goes to a person. */
   handoff: string;
   /** …and the business is closed now. */
@@ -44,6 +47,8 @@ export interface FixedMessages {
   bookingByPhone: (phone: string) => string;
   menuIntro: string;
   menuLink: (url: string) => string;
+  /** «Quanto custa?» with nothing named: a question back with a few examples from the business's list. */
+  whichOption: (examples: readonly string[]) => string;
   /** After the first lines of a long list quoted from a document. */
   moreInList: string;
   minutes: (count: number) => string;
@@ -56,7 +61,9 @@ export interface FixedMessages {
 const pt: FixedMessages = {
   hello: "Olá! Em que posso ajudar?",
   howCanIHelp: "Em que posso ajudar?",
-  thanks: "De nada! Se precisar de mais alguma coisa, estou por aqui.",
+  thanks: "De nada! Se precisar de mais alguma coisa, estamos por aqui.",
+  bye: "Até breve! Se precisar de alguma coisa, estamos por aqui.",
+  thanksBye: "De nada! Até breve.",
   handoff: "Vou passar a sua mensagem à equipa, que lhe responde aqui assim que possível.",
   handoffClosed: (when) => `Vou passar a sua mensagem à equipa. Neste momento estamos fechados: respondemos ${when}.`,
   emergency: "Se é uma emergência, ligue já para o 112. Já avisei a equipa, que o contacta assim que possível.",
@@ -75,14 +82,15 @@ const pt: FixedMessages = {
     if (!slots.length) return `${capitalize(when)} estamos fechados${reason ? ` (${reason})` : ""}.`;
     return `${capitalize(when)} estamos abertos ${list(slots.map((slot) => `das ${slot.opens} às ${slot.closes}`), "e")}.`;
   },
-  dayIs: (day) => (day.kind === "today" ? `Hoje é ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Amanhã é ${day.weekday}, ${day.date}.` : `${capitalize(day.weekday)}: ${day.date}.`),
+  dayIs: (day) => `${day.kind === "today" ? `Hoje é ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Amanhã é ${day.weekday}, ${day.date}.` : `${capitalize(day.weekday)} é dia ${day.date}.`} O nosso horário:`,
   noHours: "Não tenho o horário atualizado. A equipa confirma-lho em breve.",
   address: (address) => `Estamos em ${address}.`,
   mapsLink: (url) => `Mapa: ${url}`,
-  booking: (url) => `Pode reservar aqui, com a disponibilidade em tempo real: ${url}`,
+  booking: (url) => `Pode reservar aqui e ver logo a disponibilidade: ${url}`,
   bookingByPhone: (phone) => `Para reservar, ligue para ${phone}.`,
-  menuIntro: "Encontrei isto:",
+  menuIntro: "Temos estas opções:",
   menuLink: (url) => `Veja tudo aqui: ${url}`,
+  whichOption: (examples) => `Depende do que procura. Por exemplo: ${list([...examples], "ou")}. Qual lhe interessa?`,
   moreInList: "(Há mais opções. Diga-me qual procura e eu digo-lhe o preço.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Por agora, esta informação só está disponível noutra língua.)",
@@ -93,7 +101,9 @@ const pt: FixedMessages = {
 const en: FixedMessages = {
   hello: "Hello! How can I help you?",
   howCanIHelp: "How can I help you?",
-  thanks: "You're welcome! If you need anything else, I'm here.",
+  thanks: "You're welcome! If you need anything else, we're here.",
+  bye: "Goodbye! If you need anything, we're here.",
+  thanksBye: "You're welcome! See you soon.",
   handoff: "I'll pass your message to the team, who will reply here as soon as possible.",
   handoffClosed: (when) => `I'll pass your message to the team. We're closed right now: we'll reply ${when}.`,
   emergency: "If this is an emergency, please call 112 now. I have already alerted the team, who will contact you as soon as possible.",
@@ -112,14 +122,15 @@ const en: FixedMessages = {
     if (!slots.length) return `${when} we're closed${reason ? ` (${reason})` : ""}.`;
     return `${when} we're open ${list(slots.map((slot) => `from ${slot.opens} to ${slot.closes}`), "and")}.`;
   },
-  dayIs: (day) => (day.kind === "today" ? `Today is ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Tomorrow is ${day.weekday}, ${day.date}.` : `${day.weekday}: ${day.date}.`),
+  dayIs: (day) => `${day.kind === "today" ? `Today is ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Tomorrow is ${day.weekday}, ${day.date}.` : `${day.weekday} is ${day.date}.`} Our opening hours:`,
   noHours: "I don't have the current opening hours. The team will confirm them shortly.",
   address: (address) => `We're at ${address}.`,
   mapsLink: (url) => `Map: ${url}`,
-  booking: (url) => `You can book here, with real-time availability: ${url}`,
+  booking: (url) => `You can book here and see the availability straight away: ${url}`,
   bookingByPhone: (phone) => `To book, please call ${phone}.`,
-  menuIntro: "Here's what I found:",
+  menuIntro: "Here are our options:",
   menuLink: (url) => `See everything here: ${url}`,
+  whichOption: (examples) => `It depends on what you're looking for. For example: ${list([...examples], "or")}. Which one are you interested in?`,
   moreInList: "(There's more. Tell me which one you're looking for and I'll tell you the price.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(This information is only available in another language for now.)",
@@ -130,7 +141,9 @@ const en: FixedMessages = {
 const es: FixedMessages = {
   hello: "¡Hola! ¿En qué puedo ayudarle?",
   howCanIHelp: "¿En qué puedo ayudarle?",
-  thanks: "¡De nada! Si necesita algo más, aquí estoy.",
+  thanks: "¡De nada! Si necesita algo más, aquí estamos.",
+  bye: "¡Hasta pronto! Si necesita algo, aquí estamos.",
+  thanksBye: "¡De nada! Hasta pronto.",
   handoff: "Paso su mensaje al equipo, que le responderá aquí lo antes posible.",
   handoffClosed: (when) => `Paso su mensaje al equipo. Ahora mismo estamos cerrados: le responderemos ${when}.`,
   emergency: "Si es una emergencia, llame ahora al 112. Ya he avisado al equipo, que se pondrá en contacto con usted lo antes posible.",
@@ -149,14 +162,15 @@ const es: FixedMessages = {
     if (!slots.length) return `${when} estamos cerrados${reason ? ` (${reason})` : ""}.`;
     return `${when} estamos abiertos ${list(slots.map((slot) => `de ${slot.opens} a ${slot.closes}`), "y")}.`;
   },
-  dayIs: (day) => (day.kind === "today" ? `Hoy es ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Mañana es ${day.weekday}, ${day.date}.` : `${capitalize(day.weekday)}: ${day.date}.`),
+  dayIs: (day) => `${day.kind === "today" ? `Hoy es ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Mañana es ${day.weekday}, ${day.date}.` : `El ${day.weekday} es ${day.date}.`} Nuestro horario:`,
   noHours: "No tengo el horario actualizado. El equipo se lo confirmará en breve.",
   address: (address) => `Estamos en ${address}.`,
   mapsLink: (url) => `Mapa: ${url}`,
-  booking: (url) => `Puede reservar aquí, con disponibilidad en tiempo real: ${url}`,
+  booking: (url) => `Puede reservar aquí y ver la disponibilidad al momento: ${url}`,
   bookingByPhone: (phone) => `Para reservar, llame al ${phone}.`,
-  menuIntro: "Esto es lo que he encontrado:",
+  menuIntro: "Tenemos estas opciones:",
   menuLink: (url) => `Véalo todo aquí: ${url}`,
+  whichOption: (examples) => `Depende de lo que busque. Por ejemplo: ${list([...examples], "o")}. ¿Cuál le interesa?`,
   moreInList: "(Hay más opciones. Dígame cuál busca y le digo el precio.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Por ahora esta información solo está disponible en otro idioma.)",
@@ -167,7 +181,9 @@ const es: FixedMessages = {
 const fr: FixedMessages = {
   hello: "Bonjour ! Comment puis-je vous aider ?",
   howCanIHelp: "Comment puis-je vous aider ?",
-  thanks: "Je vous en prie ! Si vous avez besoin d'autre chose, je suis là.",
+  thanks: "Je vous en prie ! Si vous avez besoin d'autre chose, nous sommes là.",
+  bye: "À bientôt ! Si vous avez besoin de quoi que ce soit, nous sommes là.",
+  thanksBye: "Je vous en prie ! À bientôt.",
   handoff: "Je transmets votre message à l'équipe, qui vous répondra ici dès que possible.",
   handoffClosed: (when) => `Je transmets votre message à l'équipe. Nous sommes fermés en ce moment : nous vous répondrons ${when}.`,
   emergency: "S'il s'agit d'une urgence, appelez immédiatement le 112. J'ai déjà prévenu l'équipe, qui vous contactera dès que possible.",
@@ -186,14 +202,15 @@ const fr: FixedMessages = {
     if (!slots.length) return `${when}, nous sommes fermés${reason ? ` (${reason})` : ""}.`;
     return `${when}, nous sommes ouverts ${list(slots.map((slot) => `de ${slot.opens} à ${slot.closes}`), "et")}.`;
   },
-  dayIs: (day) => (day.kind === "today" ? `Nous sommes ${day.weekday} ${day.date}.` : day.kind === "tomorrow" ? `Demain, c'est ${day.weekday} ${day.date}.` : `${capitalize(day.weekday)} : ${day.date}.`),
+  dayIs: (day) => `${day.kind === "today" ? `Nous sommes ${day.weekday} ${day.date}.` : day.kind === "tomorrow" ? `Demain, c'est ${day.weekday} ${day.date}.` : `${capitalize(day.weekday)}, c'est le ${day.date}.`} Nos horaires :`,
   noHours: "Je n'ai pas les horaires à jour. L'équipe vous les confirmera rapidement.",
   address: (address) => `Nous sommes au ${address}.`,
   mapsLink: (url) => `Plan : ${url}`,
-  booking: (url) => `Vous pouvez réserver ici, avec les disponibilités en temps réel : ${url}`,
+  booking: (url) => `Vous pouvez réserver ici et voir tout de suite les disponibilités : ${url}`,
   bookingByPhone: (phone) => `Pour réserver, appelez le ${phone}.`,
-  menuIntro: "Voici ce que j'ai trouvé :",
+  menuIntro: "Voici nos options :",
   menuLink: (url) => `Tout voir ici : ${url}`,
+  whichOption: (examples) => `Cela dépend de ce que vous cherchez. Par exemple : ${list([...examples], "ou")}. Lequel vous intéresse ?`,
   moreInList: "(Il y a d'autres options. Dites-moi laquelle vous cherchez et je vous donne le prix.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Pour l'instant, cette information n'est disponible que dans une autre langue.)",
@@ -204,7 +221,9 @@ const fr: FixedMessages = {
 const de: FixedMessages = {
   hello: "Guten Tag! Wie kann ich Ihnen helfen?",
   howCanIHelp: "Wie kann ich Ihnen helfen?",
-  thanks: "Gern geschehen! Wenn Sie noch etwas brauchen, bin ich für Sie da.",
+  thanks: "Gern geschehen! Wenn Sie noch etwas brauchen, sind wir für Sie da.",
+  bye: "Bis bald! Wenn Sie etwas brauchen, sind wir für Sie da.",
+  thanksBye: "Gern geschehen! Bis bald.",
   handoff: "Ich gebe Ihre Nachricht an das Team weiter, das Ihnen hier so bald wie möglich antwortet.",
   handoffClosed: (when) => `Ich gebe Ihre Nachricht an das Team weiter. Wir haben gerade geschlossen: Wir antworten ${when}.`,
   emergency: "Wenn es sich um einen Notfall handelt, rufen Sie bitte sofort die 112 an. Ich habe das Team bereits informiert, das sich so bald wie möglich bei Ihnen meldet.",
@@ -223,14 +242,15 @@ const de: FixedMessages = {
     if (!slots.length) return `${when} haben wir geschlossen${reason ? ` (${reason})` : ""}.`;
     return `${when} haben wir ${list(slots.map((slot) => `von ${slot.opens} bis ${slot.closes} Uhr`), "und")} geöffnet.`;
   },
-  dayIs: (day) => (day.kind === "today" ? `Heute ist ${day.weekday}, der ${day.date}.` : day.kind === "tomorrow" ? `Morgen ist ${day.weekday}, der ${day.date}.` : `${day.weekday}: ${day.date}.`),
+  dayIs: (day) => `${day.kind === "today" ? `Heute ist ${day.weekday}, der ${day.date}` : day.kind === "tomorrow" ? `Morgen ist ${day.weekday}, der ${day.date}` : `${day.weekday} ist der ${day.date}`} Unsere Öffnungszeiten:`,
   noHours: "Ich habe die aktuellen Öffnungszeiten nicht. Das Team bestätigt sie Ihnen in Kürze.",
   address: (address) => `Sie finden uns hier: ${address}.`,
   mapsLink: (url) => `Karte: ${url}`,
-  booking: (url) => `Hier können Sie mit Echtzeit-Verfügbarkeit reservieren: ${url}`,
+  booking: (url) => `Hier können Sie reservieren und sehen gleich, was frei ist: ${url}`,
   bookingByPhone: (phone) => `Für eine Reservierung rufen Sie bitte ${phone} an.`,
-  menuIntro: "Das habe ich gefunden:",
+  menuIntro: "Das bieten wir an:",
   menuLink: (url) => `Alles finden Sie hier: ${url}`,
+  whichOption: (examples) => `Das hängt davon ab, was Sie suchen. Zum Beispiel: ${list([...examples], "oder")}. Was davon interessiert Sie?`,
   moreInList: "(Es gibt noch mehr. Sagen Sie mir, was Sie suchen, und ich nenne Ihnen den Preis.)",
   minutes: (count) => `${count} Min.`,
   answerInOtherLanguage: "(Diese Information gibt es vorerst nur in einer anderen Sprache.)",
@@ -241,7 +261,9 @@ const de: FixedMessages = {
 const it: FixedMessages = {
   hello: "Buongiorno! Come posso aiutarLa?",
   howCanIHelp: "Come posso aiutarLa?",
-  thanks: "Prego! Se ha bisogno di altro, sono qui.",
+  thanks: "Prego! Se ha bisogno di altro, siamo qui.",
+  bye: "A presto! Se ha bisogno di qualcosa, siamo qui.",
+  thanksBye: "Prego! A presto.",
   handoff: "Passo il Suo messaggio al team, che Le risponderà qui il prima possibile.",
   handoffClosed: (when) => `Passo il Suo messaggio al team. In questo momento siamo chiusi: Le risponderemo ${when}.`,
   emergency: "Se si tratta di un'emergenza, chiami subito il 112. Ho già avvisato il team, che La contatterà il prima possibile.",
@@ -260,14 +282,15 @@ const it: FixedMessages = {
     if (!slots.length) return `${when} siamo chiusi${reason ? ` (${reason})` : ""}.`;
     return `${when} siamo aperti ${list(slots.map((slot) => `dalle ${slot.opens} alle ${slot.closes}`), "e")}.`;
   },
-  dayIs: (day) => (day.kind === "today" ? `Oggi è ${day.weekday} ${day.date}.` : day.kind === "tomorrow" ? `Domani è ${day.weekday} ${day.date}.` : `${capitalize(day.weekday)}: ${day.date}.`),
+  dayIs: (day) => `${day.kind === "today" ? `Oggi è ${day.weekday} ${day.date}.` : day.kind === "tomorrow" ? `Domani è ${day.weekday} ${day.date}.` : `${capitalize(day.weekday)} è il ${day.date}.`} I nostri orari:`,
   noHours: "Non ho gli orari aggiornati. Il team glieli confermerà a breve.",
   address: (address) => `Ci trova in ${address}.`,
   mapsLink: (url) => `Mappa: ${url}`,
-  booking: (url) => `Può prenotare qui, con la disponibilità in tempo reale: ${url}`,
+  booking: (url) => `Può prenotare qui e vedere subito la disponibilità: ${url}`,
   bookingByPhone: (phone) => `Per prenotare, chiami il ${phone}.`,
-  menuIntro: "Ecco cosa ho trovato:",
+  menuIntro: "Ecco le nostre opzioni:",
   menuLink: (url) => `Veda tutto qui: ${url}`,
+  whichOption: (examples) => `Dipende da cosa cerca. Per esempio: ${list([...examples], "o")}. Quale Le interessa?`,
   moreInList: "(Ci sono altre opzioni. Mi dica quale cerca e Le dico il prezzo.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Per ora questa informazione è disponibile solo in un'altra lingua.)",

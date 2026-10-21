@@ -344,7 +344,7 @@ describe("chatbot engine", () => {
     // Tuesday 20/10/2026, 13:30 in Lisbon.
     const tomorrow = await ask(demoRestaurant, "Dá para jantar amanhã?", { state: greeted() });
     assert.deepEqual(tomorrow.replies, [
-      "Amanhã (quarta-feira, 21/10) estamos abertos das 12:00 às 15:00 e das 19:00 às 23:00.\n\nPode reservar aqui, com a disponibilidade em tempo real: https://www.steevanz.com/reservar/tasca-exemplo",
+      "Amanhã (quarta-feira, 21/10) estamos abertos das 12:00 às 15:00 e das 19:00 às 23:00.\n\nPode reservar aqui e ver logo a disponibilidade: https://www.steevanz.com/reservar/tasca-exemplo",
     ]);
     const today = await ask(demoRestaurant, "Abrem hoje?", { state: greeted(), now: tuesdayAfternoon });
     assert.match(today.replies[0], /^Hoje \(terça-feira, 20\/10\) estamos abertos das 12:00 às 15:00 e das 19:00 às 23:00\. Neste momento estamos fechados\. Abrimos hoje às 19:00\./);

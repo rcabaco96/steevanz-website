@@ -5,18 +5,18 @@
 // (tests/chatbot-passages.test.mjs).
 import { dayLabel, mentionsWeekday, type AskedDay } from "./hours.ts";
 import { intentKeywords, type Intent } from "./intents.ts";
-import { minimumChunkScore, minimumCoverage, passageCoverage, passageQuery, scorePassage, type KnowledgeIndex, type PassageQuery } from "./knowledge.ts";
+import { conceptsOfPassage, minimumChunkScore, minimumCoverage, passageCoverage, passageQuery, scorePassage, wordsExplainedBy, type KnowledgeIndex, type PassageQuery, type SearchHit } from "./knowledge.ts";
 import type { AnswerRequest, AnswerSource } from "./llm/types.ts";
 import { fixedMessages } from "./messages.ts";
-import { answerAfter, blockAfter, timePattern, type Passage } from "./passages.ts";
-import { hasAnyKeyword, hasKeyword, normalize, searchWords } from "./text.ts";
+import { answerAfter, blockAfter, pricePattern, timePattern, type Passage } from "./passages.ts";
+import { hasAnyKeyword, hasKeyword, normalize, sameWord, searchWords } from "./text.ts";
 
 export interface DocumentAnswer {
   text: string;
   sources: AnswerSource[];
 }
 
-type DocumentRequest = Pick<AnswerRequest, "message" | "language" | "settings" | "property" | "chunkHits" | "intents">;
+type DocumentRequest = Pick<AnswerRequest, "message" | "language" | "settings" | "property" | "chunkHits" | "topicChunkHits" | "intents">;
 
 /** Days, holidays and open/closed words in the six languages (normalized; "*" = word beginning). */
 const dayWords = [
@@ -60,7 +60,13 @@ export function intentWords(message: string, intents: readonly Intent[], extra: 
   const explained = new Set<string>();
   for (const keyword of [...intents.flatMap((intent) => intentKeywords[intent]), ...extra]) {
     if (keyword.includes(" ")) {
-      if (hasKeyword(normalized, keyword)) for (const part of keyword.split(" ")) explained.add(part);
+      // The message's own words where the phrase matches («onde fica*» explains «onde» and «ficam»).
+      const parts = keyword.split(" ");
+      const tokens = normalized.split(" ");
+      for (let start = 0; start + parts.length <= tokens.length; start++) {
+        const matches = parts.every((part, offset) => (part.endsWith("*") ? tokens[start + offset].startsWith(part.slice(0, -1)) : tokens[start + offset] === part));
+        if (matches) for (let offset = 0; offset < parts.length; offset++) explained.add(tokens[start + offset]);
+      }
     } else {
       for (const word of words) if (hasKeyword(word, keyword)) explained.add(word);
     }
@@ -108,9 +114,12 @@ function pick(
     if (share >= (options.minShare ?? 0) || !passage.question) return share;
     return Math.max(share, ...answerAfter(passage).map((next) => passageCoverage(next, query)));
   };
+  // A passage that covers everything asked beats one that only shares a frequent word («E são válidos quanto
+  // tempo?»: «Válidos durante 12 meses» over «Quanto tempo demora um corte?»).
   const scored = [...new Set(candidates)]
-    .map((passage) => ({ passage, score: scorePassage(index, passage, query, { startBonus: options.startBonus }) }))
-    .filter((item) => item.score > 0 && covers(item.passage) >= (options.minShare ?? 0))
+    .map((passage) => ({ passage, share: covers(passage), score: scorePassage(index, passage, query, { startBonus: options.startBonus }) }))
+    .filter((item) => item.score > 0 && item.share >= (options.minShare ?? 0))
+    .map((item) => ({ ...item, score: item.score * (0.6 + 0.4 * item.share) }))
     .sort((a, b) => b.score - a.score);
   if (!scored.length) return null;
   const best = scored[0].passage;
@@ -133,13 +142,97 @@ function pick(
   return { passages: inOrder(index, chosen), joiner: "\n" };
 }
 
-function finish(request: DocumentRequest, picked: Picked, prefix: (passage: Passage) => string = () => "", note: string | null = null): DocumentAnswer {
-  const { passages } = picked;
-  const sources: AnswerSource[] = [];
-  for (const passage of passages) {
-    if (sources.some((source) => source.chunkId === passage.chunk.id)) continue;
-    sources.push({ documentId: passage.chunk.documentId, documentTitle: passage.chunk.documentTitle, heading: passage.chunk.heading, chunkId: passage.chunk.id });
+/** A short title that names a part of the document («Cabelo», «Combinados», «5. Descontos»), not a line of a list or timetable. */
+export function isSectionTitle(passage: Passage): boolean {
+  return passage.titleLike && !passage.question && !passage.price && !passage.time && hoursSignal(passage) < 2 && !looksLikeSentence(passage.text) && !isCaption(passage);
+}
+
+/** Column titles of a table («Dia Horário», «Serviço Duração Preço», «Produto Preço»), in the six languages (normalized). */
+const captionWords = new Set(
+  (
+    "dia dias horario horarios hora servico servicos duracao preco precos produto produtos valor descricao tempo " +
+    "day days hours time service services duration price prices product products description item " +
+    "servicio duracion precio producto descripcion jour horaire prix produit duree tag zeit preis produkt dauer giorno orario prezzo prodotto durata"
+  ).split(" "),
+);
+
+/** A table's column titles, not a section of the document. */
+function isCaption(passage: Passage): boolean {
+  return passage.words.length >= 2 && passage.words.every((word) => captionWords.has(word));
+}
+
+/** The nearest section title before a passage (or the passage itself when it is one): what a line belongs to. */
+export function sectionTitleOf(passage: Passage): string | null {
+  for (let at = passage.position; at >= 0 && at >= passage.position - 25; at--) {
+    if (isSectionTitle(passage.siblings[at])) return passage.siblings[at].text;
   }
+  return null;
+}
+
+/** Verbs that make a short line a sentence («A equipa tem quatro barbeiros»), not a title, in the six languages (normalized). */
+const sentenceVerbs = new Set(
+  "tem temos sao somos esta estao fica ficam fazemos abrimos fechamos atendemos aceitamos has have is are was were we tiene tienen son estan hay somos avons sont sommes hat haben ist sind gibt hanno sono siamo".split(" "),
+);
+
+/** A line written as a sentence (four words or more with a verb), e.g. a sentence an older cutter took for a title. */
+export function looksLikeSentence(text: string): boolean {
+  const words = normalize(text).split(" ");
+  return words.length >= 4 && words.some((word) => sentenceVerbs.has(word));
+}
+
+/** Letter-spaced decoration («B A R B E A R I A · P O R T O · D E S D E 2 0 1 4», «BARBEARIA · PORTO · DESDE 2014»). */
+function isDecoration(part: string): boolean {
+  const tokens = part.trim().split(/\s+/);
+  if (tokens.length >= 4 && tokens.filter((token) => token.length === 1).length / tokens.length >= 0.6) return true;
+  return /[·•|]/.test(part) && part === part.toUpperCase() && /\p{Lu}/u.test(part);
+}
+
+/**
+ * A clean section name for the admin: the nearest section title in the text, else the last part of the
+ * stored heading that is a real title (no letter-spaced decoration, no sentence, not the document's
+ * own title). null: the document has no usable section name.
+ */
+export function sectionName(passage: Passage): string | null {
+  const title = normalize(passage.chunk.documentTitle);
+  const usable = (part: string | null | undefined): part is string => {
+    const value = part?.trim();
+    if (!value || isDecoration(value) || looksLikeSentence(value) || /[:;,]$/.test(value) || value.split(/\s+/).length > 8) return false;
+    const normalized = normalize(value);
+    return Boolean(normalized) && !title.includes(normalized) && !normalized.includes(title);
+  };
+  const near = sectionTitleOf(passage);
+  if (usable(near)) return near.trim();
+  const parts = passage.chunk.heading.split(" › ").slice(1).reverse();
+  return parts.find(usable)?.trim() ?? null;
+}
+
+/** Where a quoted passage comes from (shown in the admin, never to customers). */
+export function sourceOf(passage: Passage): AnswerSource {
+  return {
+    documentId: passage.chunk.documentId,
+    documentTitle: passage.chunk.documentTitle,
+    heading: passage.chunk.heading,
+    chunkId: passage.chunk.id,
+    section: sectionName(passage),
+  };
+}
+
+/** Sources without repeats: one per document and section. */
+export function uniqueSources(sources: readonly AnswerSource[]): AnswerSource[] {
+  const seen = new Set<string>();
+  return sources.filter((source) => {
+    const key = `${source.documentId}|${source.section ?? ""}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function finish(request: DocumentRequest, picked: Picked, prefix: (passage: Passage) => string = () => "", note: string | null = null): DocumentAnswer {
+  // The same sentence twice («Válidos durante 12 meses.» and, in the FAQ, «São válidos durante 12 meses.»): once.
+  const keys = picked.passages.map((passage) => normalize(passage.text));
+  const passages = picked.passages.filter((_, at) => !keys.some((other, index) => index !== at && other.includes(keys[at]) && (other !== keys[at] || index < at)));
+  const sources = uniqueSources(passages.map(sourceOf));
   const written = passages[0].chunk.language ?? request.settings.defaultLanguage;
   const text = [passages.map((passage) => `${prefix(passage)}${passage.text}`).join(picked.joiner), note].filter(Boolean).join("\n");
   return { text: written === request.language ? text : `${text}\n${fixedMessages[request.language].answerInOtherLanguage}`, sources };
@@ -147,11 +240,18 @@ function finish(request: DocumentRequest, picked: Picked, prefix: (passage: Pass
 
 /** The best passages of the best document windows for the question (null: the documents don't say it). */
 export function documentAnswer(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
-  const hits = (request.chunkHits ?? []).filter((hit) => hit.doc.kind === "chunk" && hit.score >= minimumChunkScore && hit.coverage >= minimumCoverage);
-  if (!hits.length) return null;
-  const candidates = hits.slice(0, 2).flatMap((hit) => hit.doc.passages ?? []).filter((passage) => allowed(passage, request));
-  const picked = pick(index, candidates, passageQuery(request.message), { minShare: minimumCoverage });
-  return picked ? finish(request, picked) : null;
+  const usable = (hits: readonly SearchHit[] | undefined, coverage: boolean) =>
+    (hits ?? []).filter((hit) => hit.doc.kind === "chunk" && hit.score >= minimumChunkScore && (!coverage || hit.coverage >= minimumCoverage));
+  const query = passageQuery(request.message);
+  // A follow-up («E são válidos quanto tempo?» after «Vendem vales-oferta?»): first the windows around the
+  // conversation's topic, then the message's own; the passage quoted always has to match the message.
+  for (const hits of [usable(request.topicChunkHits, false), usable(request.chunkHits, true)]) {
+    if (!hits.length) continue;
+    const candidates = hits.slice(0, 2).flatMap((hit) => hit.doc.passages ?? []).filter((passage) => allowed(passage, request));
+    const picked = pick(index, candidates, query, { minShare: minimumCoverage });
+    if (picked) return finish(request, picked);
+  }
+  return null;
 }
 
 /** The timetable: the passage with the most days and times and the timetable lines around it (empty: none). */
@@ -198,7 +298,7 @@ export function documentHours(request: DocumentRequest, index: KnowledgeIndex, d
       const answer = finish(request, { passages: lines, joiner: "\n" });
       const first = lines[0].text;
       const text = answer.text.replace(first, withoutTitlePrefix(first));
-      const intro = day.mention === "weekday" || day.mention === "weekend" ? null : fixedMessages[request.language].dayIs(dayLabel(day, request.language));
+      const intro = day.mention === "weekend" ? null : fixedMessages[request.language].dayIs(dayLabel(day, request.language));
       return { ...answer, text: intro ? `${intro}\n${text}` : text };
     }
   }
@@ -227,22 +327,27 @@ const postalPattern = /\b\d{4}-\d{3}\b|\b\d{5}\b|\b[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[
  * looks most like one (a street word, a number, a postal code). With other words in the question
  * («onde fica o parque mais perto?») the general search answers instead.
  */
-export function documentLocation(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
-  const query = passageQuery(request.message, intentWords(request.message, ["location"]));
-  if (query.words.length) return documentAnswer(request, index);
+/** The passage that looks most like an address (a street word, a number, a postal code), with the postal code line after it («4050-032 Porto»); empty: none. */
+export function addressPassages(passages: readonly Passage[]): Passage[] {
   let best: Passage | null = null;
   let bestScore = 0;
-  for (const passage of index.passages) {
-    if (!allowed(passage, request) || passage.question) continue;
-    const normalized = normalize(passage.text);
-    if (!streetPattern.test(normalized)) continue;
+  for (const passage of passages) {
+    if (passage.question) continue;
+    if (!streetPattern.test(normalize(passage.text))) continue;
     const score = 1 + (postalPattern.test(passage.text) ? 2 : 0) + (/\d/.test(passage.text) ? 1 : 0);
     if (score > bestScore) [best, bestScore] = [passage, score];
   }
-  if (!best || bestScore < 2) return null;
-  // «Rua do Almada 210» + «4050-032 Porto» on the next line.
+  if (!best || bestScore < 2) return [];
   const next = best.siblings[best.position + 1];
-  const lines = !postalPattern.test(best.text) && next && postalPattern.test(next.text) && next.text.length <= 60 ? [best, next] : [best];
+  return !postalPattern.test(best.text) && next && postalPattern.test(next.text) && next.text.length <= 60 ? [best, next] : [best];
+}
+
+export function documentLocation(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
+  const query = passageQuery(request.message, intentWords(request.message, ["location"]));
+  if (query.words.length) return documentAnswer(request, index);
+  const lines = addressPassages(index.passages.filter((passage) => allowed(passage, request)));
+  if (!lines.length) return null;
+  const best = lines[0];
   const answer = finish(request, { passages: lines, joiner: "\n" });
   // A long passage (a flattened page): only the address itself, from the street to the postal code and town.
   const street = best.text.match(/(?:^|[\s,;:(])((?:Rua|R\.|Avenida|Av\.|Praça|Largo|Travessa|Estrada|Alameda|Calçada|Street|Road|Avenue|Calle|Avda\.|Plaza|Paseo|Rue|Boulevard|Place|Via|Viale|Piazza|Corso)\b[^.!?]{0,90}?(?:\b\d{4}-\d{3}\b|\b\d{5}\b)(?:\s+\p{Lu}[\p{L}-]+)?)/u);
@@ -285,6 +390,10 @@ export function documentCatalog(request: DocumentRequest, index: KnowledgeIndex)
   if (!priced.length) return null;
   const query = passageQuery(request.message, intentWords(request.message, ["menu", "price"]));
   if (query.words.length) {
+    // «E a barba?» on a list with a «Barba» part: the lines of that part.
+    const title = passages.find((passage) => isSectionTitle(passage) && sameWords(passage.words, query.words));
+    const part = title ? blockAfter(title, 6, 500).filter((passage) => passage.price) : [];
+    if (part.length >= 2) return finish(request, { passages: part, joiner: "\n" });
     const picked = pick(index, priced, query, { max: 4, maxChars: 450, startBonus: true, minShare: 0.5, ratio: 0.85 });
     return picked ? finish(request, picked) : null;
   }
@@ -348,4 +457,110 @@ export function documentBooking(request: DocumentRequest, index: KnowledgeIndex)
   const chosen = [...new Set([link, walkIn].filter((passage): passage is Passage => Boolean(passage)))];
   if (!chosen.length) chosen.push(ranked[0]);
   return finish(request, { passages: inOrder(index, chosen), joiner: "\n" });
+}
+
+/** The same words, in any order (light stemming: «Barbas» = «barba»). */
+function sameWords(a: readonly string[], b: readonly string[]): boolean {
+  return a.length > 0 && b.length > 0 && a.every((word) => b.some((other) => sameWord(word, other))) && b.every((word) => a.some((other) => sameWord(word, other)));
+}
+
+/**
+ * «Fazem degradê?», «Têm pomada?», «Fazem barba?»: a short question that names something lines of the
+ * price list start with → those lines (at most 3), not a sentence that only mentions it (a discount).
+ */
+export function documentNamedItem(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
+  const words = passageQuery(request.message).words.filter((word) => !/^\d+$/.test(word));
+  if (!words.length || words.length > 2) return null;
+  const lines = index.passages.filter(
+    (passage) => passage.price && !passage.question && allowed(passage, request) && words.every((word) => passage.words.slice(0, 3).some((candidate) => sameWord(word, candidate))),
+  );
+  return lines.length ? finish(request, { passages: lines.slice(0, 3), joiner: "\n" }) : null;
+}
+
+/** Words that ask for the whole list («preços», «tabela», «quanto custam os serviços?»), in the six languages (normalized). */
+const listWords = [
+  "precos", "prices", "precios", "preise", "prezzi", "tarifa*", "tabela*", "lista*", "list", "custam", "cuestan", "kosten", "costano", "coutent",
+  "servicos", "services", "servicios", "dienstleistungen", "servizi", "tratamentos", "treatments", "pratos", "dishes", "todos", "todas", "tudo", "all",
+];
+
+/**
+ * «Quanto custa?», «How much?», «Qual é o preço?» with nothing named (neither in the message nor, for a
+ * follow-up, in the conversation's topic) and not asking for the whole list: the answer is a question
+ * back («Depende do que procura. Por exemplo: …»), never «I don't know».
+ */
+export function asksPriceOfNothing(request: Pick<AnswerRequest, "message" | "intents">): boolean {
+  if (!request.intents.includes("price")) return false;
+  if (hasAnyKeyword(normalize(request.message), listWords)) return false;
+  return !passageQuery(request.message, intentWords(request.message, ["menu", "price"])).words.length;
+}
+
+/**
+ * One line of a price list as a short example: «Corte clássico (tesoura e máquina…) 30 min 16 €» →
+ * «corte clássico (16 €)»; «Desenho ou risco … +4 €» → «desenho ou risco (+4 €)». null: no price.
+ */
+export function shortPriceLine(text: string): string | null {
+  const match = new RegExp(pricePattern.source, "i").exec(text);
+  if (!match) return null;
+  const price = `${text[match.index - 1] === "+" ? "+" : ""}${match[0].trim()}`;
+  let name = text.slice(0, match.index).split(/\s[(—–·|]|\s\d+\s?min\b|:\s|\s-\s/)[0];
+  name = name.replace(/[\s:;,.\-–—·|+]+$/u, "").trim();
+  if (!name) return null;
+  const words = name.split(/\s+/);
+  if (words.length > 7) name = words.slice(0, 7).join(" ");
+  // A flattened table keeps its part title in front: «Cabelo Corte clássico» → «Corte clássico».
+  if (/^\p{Lu}\p{Ll}+\s+\p{Lu}\p{Ll}/u.test(name) && name.split(/\s+/).length >= 3) name = name.replace(/^\S+\s+/, "");
+  // «Corte clássico» → «corte clássico» inside a sentence (not «IVA», not ««O Fio de Navalha»»).
+  if (/^\p{Lu}\p{Ll}/u.test(name)) name = name.charAt(0).toLowerCase() + name.slice(1);
+  return `${name} (${price})`;
+}
+
+/**
+ * A few examples from the documents' price list for a question back («Depende do que procura. Por
+ * exemplo: corte clássico (16 €), degradê / fade (18 €), …»): the first lines, then the first line of
+ * each part of the list (after a title), at most `max`. null: fewer than two priced lines.
+ */
+export function documentPriceExamples(request: Pick<DocumentRequest, "property">, index: KnowledgeIndex, max = 4): { examples: string[]; sources: AnswerSource[] } | null {
+  const run = longestPriceRun(index.passages.filter((passage) => allowed(passage, request)));
+  const priced = run.filter((passage) => passage.price);
+  if (priced.length < 2) return null;
+  const chosen: Passage[] = priced.slice(0, 2);
+  run.forEach((passage, position) => {
+    if (!passage.titleLike || chosen.length >= max) return;
+    const next = run.slice(position + 1).find((item) => item.price);
+    if (next && !chosen.includes(next)) chosen.push(next);
+  });
+  for (const passage of priced) if (chosen.length < max && !chosen.includes(passage)) chosen.push(passage);
+  const ordered = priced.filter((passage) => chosen.includes(passage));
+  const examples = [...new Set(ordered.map((passage) => shortPriceLine(passage.text)).filter((line): line is string => Boolean(line)))];
+  return examples.length >= 2 ? { examples, sources: uniqueSources(ordered.map(sourceOf)) } : null;
+}
+
+/**
+ * A subject carried from the previous turn that is too general for one price line («Dá para cortar o
+ * cabelo amanhã?» → «Quanto custa?»): every word of it that the price list has is a word of one broad
+ * idea (shared by at least 4 priced lines) and appears in 3 lines or more. Then the examples of that
+ * idea, in the list's order, for a question back. null: the subject is specific («degradê», «crianças»).
+ */
+export function generalSubjectExamples(request: Pick<DocumentRequest, "message" | "property">, index: KnowledgeIndex, max = 4): { examples: string[]; sources: AnswerSource[] } | null {
+  const query = passageQuery(request.message, intentWords(request.message, ["menu", "price"]));
+  if (!query.words.length || !query.concepts.size) return null;
+  const priced = index.passages.filter((passage) => passage.price && allowed(passage, request));
+  const broad = [...query.concepts].filter((concept) => priced.filter((passage) => conceptsOfPassage(passage).has(concept)).length >= 4);
+  if (!broad.length) return null;
+  const explained = new Set(broad.flatMap((concept) => wordsExplainedBy(concept, query.normalized, query.words)));
+  // Lines that name it first («Cabelo comprido…», «Coloração de cabelo…»), not a discount that mentions it.
+  const names = (passage: Passage, word: string) => passage.words.slice(0, 3).some((candidate) => sameWord(word, candidate));
+  const counts = query.words.map((word) => ({ word, lines: priced.filter((passage) => names(passage, word)).length }));
+  if (!counts.every(({ word, lines }) => !lines || (explained.has(word) && lines >= 3))) return null;
+  const lines = priced.filter((passage) => broad.some((concept) => conceptsOfPassage(passage).has(concept)));
+  const examples: string[] = [];
+  const used: Passage[] = [];
+  for (const passage of lines) {
+    const line = shortPriceLine(passage.text);
+    if (!line || examples.includes(line)) continue;
+    examples.push(line);
+    used.push(passage);
+    if (examples.length >= max) break;
+  }
+  return examples.length >= 2 ? { examples, sources: uniqueSources(used.map(sourceOf)) } : null;
 }

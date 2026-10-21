@@ -2,7 +2,8 @@
 // (emergency, access codes, medical, hand-off), then the business's own answer, then a last check.
 // No I/O: the runner gives it the conversation and sends/stores what it returns. Pure module
 // (tests/chatbot.test.mjs).
-import { intentWords } from "./doc-answers.ts";
+import { resolveFollowUp } from "./context.ts";
+import { asksPriceOfNothing, intentWords } from "./doc-answers.ts";
 import { handoffSummary, sanitizeReply } from "./guardrails.ts";
 import { formatNextOpening, openingState } from "./hours.ts";
 import { detectIntents, isSmallTalk, type Intent } from "./intents.ts";
@@ -161,22 +162,32 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
   if (named) state = { ...state, property: named };
 
   const index = input.index ?? buildIndex(knowledge);
-  let query = message.body;
+  // A follow-up («Quanto custa?», «E ao sábado?», «E para crianças?») is searched with the topic of the
+  // customer's previous questions and keeps their kind of question (context.ts).
+  const followUp = resolveFollowUp({ message: message.body, at: message.at, history, kind: knowledge.kind });
+  let query = followUp.query;
+  let answerIntents = followUp.intents;
+  let followUpOf = followUp.previous;
   let hits = search(index, query, { property: state.property, language });
   let chunkHits = searchChunks(index, query, { property: state.property, language });
+  // «E são válidos quanto tempo?» after «Vendem vales-oferta?»: the windows around the topic are tried first.
+  const topicChunkHits = followUp.windowQuery ? searchChunks(index, followUp.windowQuery, { property: state.property, language }) : undefined;
   // The guest only named the property («Moinho Velho»): answer the question asked just before.
   if (named && !hits.some((hit) => hit.score >= minimumScore) && !chunkHits.some((hit) => hit.score >= minimumChunkScore)) {
     const previous = [...history].reverse().find((entry) => entry.author === "customer");
     if (previous) {
       query = previous.body;
+      answerIntents = detectIntents(query, knowledge.kind);
+      followUpOf = previous.body;
       hits = search(index, query, { property: state.property, language });
       chunkHits = searchChunks(index, query, { property: state.property, language });
     }
   }
 
   // «Olá», «obrigado», «ok» with nothing to look up: a short polite answer («Olá! Em que posso ajudar?»).
-  if (bareSmallTalk(message.body, found) || ((isSmallTalk(found) || (named && !found.length)) && !hits.some((hit) => hit.score >= minimumScore) && !chunkHits.some((hit) => hit.score >= minimumChunkScore))) {
-    if (found.includes("thanks")) replies.push(text.thanks);
+  if (bareSmallTalk(message.body, found) || ((isSmallTalk(found) || (named && !found.length)) && !followUp.previous && !hits.some((hit) => hit.score >= minimumScore) && !chunkHits.some((hit) => hit.score >= minimumChunkScore))) {
+    if (found.includes("bye")) replies.push(found.includes("thanks") ? text.thanksBye : text.bye);
+    else if (found.includes("thanks")) replies.push(text.thanks);
     else if (found.includes("greeting") || firstReply) replies.push(text.hello);
     else replies.push(text.howCanIHelp);
     return finish({ ...base, intents: found, language, replies, conversation: { ...state, offeredHandoff: false }, handoff: null, silent: null });
@@ -192,8 +203,26 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
     }
   }
 
-  const answerIntents = query === message.body ? found : detectIntents(query, knowledge.kind);
-  const request = { language, message: query, intents: answerIntents, hits, chunkHits, index, knowledge, settings, opening, history, property: state.property, now, botId: input.bot.id, conversationKey: input.conversationKey };
+  const request = {
+    language,
+    message: query,
+    customerMessage: message.body,
+    followUpOf,
+    picked: followUp.picked ?? null,
+    intents: answerIntents,
+    hits,
+    chunkHits,
+    topicChunkHits,
+    index,
+    knowledge,
+    settings,
+    opening,
+    history,
+    property: state.property,
+    now,
+    botId: input.bot.id,
+    conversationKey: input.conversationKey,
+  };
   let answer;
   let providerNote: string | null = null;
   try {
@@ -203,6 +232,12 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
     if (provider === mockProvider) throw error;
     providerNote = error instanceof ProviderDisabledError ? error.message.replace(/^answer provider (.*) is disabled$/, "IA não usada: $1") : `IA não usada: ${provider.id} (${error instanceof Error ? error.message : "erro"})`;
     answer = await mockProvider.answer(request);
+  }
+  // «Quanto custa?» with nothing named, now or before: never «I don't know» when the business lists
+  // prices; the free answers ask which one, with examples from the business's own list.
+  if (!answer.text && provider !== mockProvider && asksPriceOfNothing(request)) {
+    const clarifying = await mockProvider.answer(request);
+    if (clarifying.text) answer = clarifying;
   }
 
   if (!answer.text) {

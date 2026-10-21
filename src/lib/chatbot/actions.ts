@@ -248,8 +248,8 @@ export async function resolveConversation(_state: ActionState, formData: FormDat
 export interface TestTurn {
   author: "customer" | "bot" | "system";
   body: string;
-  /** Where a bot answer came from (documents), shown only here in the admin. */
-  sources?: { title: string; heading: string }[];
+  /** Where a bot answer came from (document and clean section name, once each), shown only here in the admin. */
+  sources?: { title: string; section: string | null }[];
   /** Who wrote it (free answers or the test AI) and why the test AI was not used, if so. */
   by?: string;
   note?: string;
@@ -302,7 +302,11 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
   const provider = chooseProvider({ choice: answerProvider, paidAllowed: false, env: process.env });
   // One answer at a time per bot here (the test AI's «one in flight per conversation»).
   const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now), conversationKey: `experimentar:${tried.id}` }, provider);
-  const sources = result.sources.map((source) => ({ title: source.documentTitle, heading: source.heading }));
+  const sources: { title: string; section: string | null }[] = [];
+  for (const source of result.sources) {
+    const item = { title: source.documentTitle, section: source.section ?? null };
+    if (!sources.some((seen) => seen.title === item.title && seen.section === item.section)) sources.push(item);
+  }
   const by = result.provider?.startsWith("ollama")
     ? "IA de teste local (Ollama)"
     : result.provider?.startsWith("groq")

@@ -9,7 +9,7 @@ import type { BusinessKnowledge, CatalogItem, ChatbotLanguage, KnowledgeChunk, K
 const concepts: Record<string, readonly string[]> = {
   wifi: ["wifi", "wi fi", "internet", "password", "senha", "palavra passe", "rede", "network", "contrasena", "mot de passe", "reseau", "passwort", "kennwort", "netz", "rete"],
   parking: ["estacionamento", "estacionar", "parque", "garagem", "parking", "park", "car park", "garage", "aparcamiento", "aparcar", "parqueo", "stationnement", "garer", "parkplatz", "parken", "parcheggio", "parcheggiare"],
-  checkin: ["check in", "checkin", "entrada", "chegada", "chegar", "arrival", "arrive", "llegada", "llegar", "arrivee", "arriver", "ankunft", "anreise", "einchecken", "arrivo", "arrivare"],
+  checkin: ["check in", "checkin", "entrada", "chegada", "chegar", "chego", "cheguei", "chegamos", "chegarei", "arrival", "arrive", "llegada", "llegar", "arrivee", "arriver", "ankunft", "anreise", "einchecken", "arrivo", "arrivare"],
   checkout: ["check out", "checkout", "saida", "sair", "departure", "leave", "salida", "salir", "depart", "partir", "abreise", "auschecken", "partenza", "partire"],
   payment: ["pagamento", "pagar", "multibanco", "mbway", "mb way", "cartao", "dinheiro", "card", "pay", "payment", "cash", "tarjeta", "efectivo", "paiement", "payer", "carte bancaire", "carte de credit", "especes", "zahlung", "zahlen", "kreditkarte", "ec karte", "bargeld", "pagamento", "contanti", "bancomat"],
   allergens: ["alergen*", "alergia*", "gluten", "celiac*", "lactose", "allergen*", "allergy", "allergies", "glutine", "lattosio", "allergie*", "laktose", "sans gluten", "sem gluten", "sin gluten", "senza glutine", "glutenfrei"],
@@ -26,10 +26,14 @@ const concepts: Record<string, readonly string[]> = {
   beach: ["praia*", "beach*", "playa*", "plage*", "strand", "spiaggia*"],
   groups: ["grupo*", "group*", "evento*", "event*", "festa", "party", "aniversario", "birthday", "groupe*", "veranstaltung", "gruppe*", "gruppo*", "compleanno", "cumpleanos"],
   cancel: ["cancelar", "cancelamento", "desmarcar", "cancel*", "anular", "annuler", "annulation", "stornieren", "absagen", "annullare", "disdire"],
-  delivery: ["entrega*", "take away", "takeaway", "levar", "delivery", "domicilio", "para llevar", "livraison", "a emporter", "lieferung", "mitnehmen", "consegna", "asporto"],
+  delivery: ["entrega*", "take away", "takeaway", "para levar", "delivery", "domicilio", "para llevar", "livraison", "a emporter", "lieferung", "mitnehmen", "consegna", "asporto"],
   accessibility: ["acessibilidade", "cadeira de rodas", "mobilidade reduzida", "wheelchair", "accessible", "accessibility", "silla de ruedas", "accesible", "fauteuil roulant", "rollstuhl", "barrierefrei", "sedia a rotelle", "accessibile"],
+  haircut: [
+    "corte", "cortes", "cabelo", "cabelos", "degrade", "degrades", "fade", "haircut*", "hair cut", "hair",
+    "corte de pelo", "cortar el pelo", "cortarme el pelo", "coupe de cheveux", "couper", "cheveux", "haarschnitt*", "haare", "taglio", "tagliare", "capelli",
+  ],
   beard: ["barba*", "barbear", "beard*", "shave", "shaving", "afeitad*", "barbe", "rasage", "bart", "rasur", "rasatura"],
-  duration: ["min", "minuto*", "minute*", "minuti", "minuten", "quanto tempo", "demora", "duracao", "how long", "duration", "cuanto tiempo", "duracion", "combien de temps", "duree", "wie lange", "dauer", "quanto dura", "durata"],
+  duration: ["min", "minuto*", "minute*", "minuti", "minuten", "quanto tempo", "demora", "duracao", "how long", "duration", "cuanto tiempo", "duracion", "combien de temps", "duree", "wie lange", "dauer", "quanto dura", "durata", "mes", "meses", "month", "months", "mois", "monat", "monate", "mesi"],
 };
 
 export function conceptsOf(normalizedText: string): Set<string> {
@@ -77,9 +81,9 @@ export interface KnowledgeIndex {
 /** Target size of a search window and how far the next one starts (half: windows overlap). */
 export const windowSize = { chars: 450, step: 225 };
 
-/** The key a word is counted under in chunks: its stem, cut to 6 letters (estacionar = estacionamento). */
+/** The key a word is counted under in chunks: its stem, cut to 5 letters like sameWord (estacionar = estacionamento, atraso = atrasado). */
 export function termKey(word: string): string {
-  return stem(word).slice(0, 6);
+  return stem(word).slice(0, 5);
 }
 
 export function buildIndex(knowledge: Pick<BusinessKnowledge, "entries" | "items"> & { chunks?: KnowledgeChunk[] }): KnowledgeIndex {
@@ -181,9 +185,9 @@ export interface SearchHit {
 }
 
 /** Question words: they don't say what the question is about, so coverage ignores them. */
-const questionWords = new Set(
+export const questionWords = new Set(
   (
-    "que qual quais como onde quando quanto quanta quantos ha tem teem fazem pode podem existe posso podemos ir vir trazer aceitam aceita " +
+    "que qual quais como onde quando quanto quanta quantos ha tem teem fazem pode podem existe posso podemos ir vir trazer levar aceitam aceita " +
     "can may bring accept accepted puedo podemos traer aceptan peux puis pouvons apporter acceptez darf durfen mitbringen akzeptieren portare accettate " +
     "what which how where when who there have has any can could " +
     "cual cuales donde cuando cuanto cuanta hay tiene tienen puede " +
@@ -192,12 +196,14 @@ const questionWords = new Set(
     "cosa quale quali dove quando quanto avete puo ce " +
     // Greetings and courtesy: not what the question is about either.
     "ola oi bom boa dia tarde noite hello hi hey good morning evening please thanks hola buenos buenas dias tardes " +
+    // «Vou chegar…», «É a segunda vez que pergunto: …»: how the question is put, not what it is about.
+    "vou vamos pergunto perguntei perguntar novamente vez again ask asked pregunto demande frage chiedo ainda sao ser sera atendem atende " +
     "bonjour bonsoir salut plait merci hallo guten tag bitte danke ciao buongiorno buonasera favore grazie favor obrigado obrigada"
   ).split(" "),
 );
 
 /** The query's words a concept explains: single-word keywords ("*" = beginning) and whole phrases found in the query. */
-function wordsExplainedBy(concept: string, normalizedQuery: string, queryWords: readonly string[]): string[] {
+export function wordsExplainedBy(concept: string, normalizedQuery: string, queryWords: readonly string[]): string[] {
   const explained: string[] = [];
   for (const keyword of concepts[concept] ?? []) {
     if (keyword.includes(" ")) {
@@ -349,12 +355,17 @@ export function passageQuery(text: string, ignore: readonly string[] = []): Pass
 
 /** Share of the message's words a passage covers (directly or through a shared concept), 0..1. */
 export function passageCoverage(passage: Passage, query: PassageQuery): number {
-  if (!query.words.length) return 1;
-  const covered = new Set(passageMatches(passage, query.words));
+  // Numbers next to words («15 minutos atrasado», «somos 5») say how much, not what about: they don't count
+  // (a price line with «15 min» is not about being late).
+  const words = query.words.some((word) => !isNumber(word)) ? query.words.filter((word) => !isNumber(word)) : query.words;
+  if (!words.length) return 1;
+  const covered = new Set(passageMatches(passage, words));
   const own = conceptsOfPassage(passage);
-  for (const concept of query.concepts) if (own.has(concept)) for (const word of wordsExplainedBy(concept, query.normalized, query.words)) covered.add(word);
-  return query.words.filter((word) => covered.has(word)).length / query.words.length;
+  for (const concept of query.concepts) if (own.has(concept)) for (const word of wordsExplainedBy(concept, query.normalized, words)) covered.add(word);
+  return words.filter((word) => covered.has(word)).length / words.length;
 }
+
+const isNumber = (word: string) => /^\d+$/.test(word);
 
 /** The message words a passage contains. */
 export function passageMatches(passage: Passage, words: readonly string[]): string[] {

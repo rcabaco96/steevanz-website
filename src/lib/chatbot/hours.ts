@@ -138,10 +138,31 @@ const ptShortDays = new Set(["segunda", "terca", "quarta", "quinta", "sexta"]);
 /** What may follow «na segunda» when it is a day («na quinta à tarde», «na sexta de manhã», «na segunda ou terça»), not «a segunda via». */
 const ptDayFollow = new Set(["a", "as", "de", "do", "da", "ao", "e", "ou", "dia", "pela", "por", "que", "para", "sem", "com", "estao", "abrem", "abre", "ate", "depois", "antes", "mas", "entre", "agora", "proxima", "seguinte", "tarde", "manha", "noite"]);
 
+/**
+ * Words that make «segunda»…«sexta» an ordinal («a segunda opção», «a segunda e a terceira opção», «é a
+ * segunda vez», «a primeira ou a segunda?»), not a weekday, anywhere in the message.
+ */
+const ptOrdinalContext = [
+  "opcao", "opcoes", "hipotese", "hipoteses", "alternativa", "alternativas", "escolha", "via", "vez", "vezes", "metade", "mao", "classe",
+  "foto", "fotografia", "imagem", "pergunta", "proposta", "sugestao", "posicao", "item", "primeiro", "primeira", "terceiro", "terceira",
+  "penultimo", "penultima",
+];
+
 function ptWeekday(tokens: readonly string[], at: number): boolean {
   const next = tokens[at + 1];
   if (next === "feira") return true;
+  if (tokens.some((token) => ptOrdinalContext.includes(token))) return false;
   return ptDayLead.has(tokens[at - 1] ?? "") && (next === undefined || ptDayFollow.has(next));
+}
+
+/** A day mention written back as Portuguese words that dayMention reads again («amanha», «sabado», «segunda feira»): carries the day of a previous question. */
+export function dayPhrase(mention: DayMention): string {
+  if (mention.kind === "today") return "hoje";
+  if (mention.kind === "tomorrow") return "amanha";
+  if (mention.kind === "after_tomorrow") return "depois de amanha";
+  if (mention.kind === "weekend") return "fim de semana";
+  if (mention.kind !== "weekday") return "";
+  return `${mention.next ? "proximo " : ""}${weekdayWords[mention.weekday][0]}`;
 }
 
 function phraseAt(tokens: readonly string[], phrase: string): number {
@@ -229,7 +250,37 @@ export function formatDay(day: Pick<AskedDay, "date" | "weekday">, language: Cha
 /** Whether a normalized text names this weekday in any of the six languages («Sábado 09:00–18:00», «Segunda: fechados»). */
 export function mentionsWeekday(normalized: string, weekday: number): boolean {
   const tokens = normalized ? normalized.split(" ") : [];
-  return weekdayWords[weekday].some((name) => phraseAt(tokens, name) >= 0);
+  return weekdayWords[weekday].some((name) => phraseAt(tokens, name) >= 0) || inWeekdayRange(tokens, weekday);
+}
+
+/** Words between two weekdays that make a range: «terça a sexta», «de segunda até sábado», «Monday to Friday», «lunes a viernes», «du lundi au vendredi», «Montag bis Freitag». */
+const rangeWords = new Set(["a", "ate", "to", "till", "until", "through", "al", "au", "bis", "alla"]);
+
+/** Whether a range of weekdays in the text («Terça a sexta-feira 10:00–20:00») includes this weekday (Monday first). */
+function inWeekdayRange(tokens: readonly string[], weekday: number): boolean {
+  const dayAt = (at: number): { weekday: number; length: number } | null => {
+    for (const [day, names] of weekdayWords.entries()) {
+      for (const name of names) {
+        const parts = name.split(" ");
+        if (parts.every((part, offset) => tokens[at + offset] === part)) return { weekday: day, length: parts.length };
+      }
+    }
+    return null;
+  };
+  for (let at = 0; at < tokens.length; at++) {
+    const first = dayAt(at);
+    if (!first) continue;
+    let next = at + first.length;
+    if (tokens[next] === "feira") next++;
+    if (!rangeWords.has(tokens[next] ?? "")) continue;
+    const second = dayAt(next + 1);
+    if (!second) continue;
+    // Monday = 1 … Sunday = 7, so «sexta a domingo» works too.
+    const order = (day: number) => (day === 0 ? 7 : day);
+    const [from, to, asked] = [order(first.weekday), order(second.weekday), order(weekday)];
+    if (from <= to ? asked >= from && asked <= to : asked >= from || asked <= to) return true;
+  }
+  return false;
 }
 
 /** The asked day for a sentence in the customer's language: today / tomorrow / another day, «quinta-feira», «22/10» («22.10.» in German). */

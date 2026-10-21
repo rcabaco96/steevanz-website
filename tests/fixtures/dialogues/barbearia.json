@@ -1,0 +1,284 @@
+{
+  "sector": "beauty",
+  "business": "Barbearia Fio de Navalha",
+  "about": "Multi-turn dialogues for the assistant's quality gate (tests/chatbot-conversations.test.mjs). Each turn: what the customer writes, what the free answers must (not) say, and what an AI must receive (excerpts, the earlier question a follow-up continues, the day asked). Patterns are regular expressions (case-insensitive). «layouts» limits an expectation to some document layouts.",
+  "documentTitle": "Barbearia Fio de Navalha - informacao para clientes",
+  "documents": { "structured": "barbearia-fio-de-navalha.txt", "whatsapp": "barbearia-fio-de-navalha-whatsapp.txt" },
+  "layouts": ["structured", "flat", "messy", "whatsapp"],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "hours tomorrow, then «Quanto custa?» (the owner's test)",
+      "turns": [
+        {
+          "customer": "Dá para cortar o cabelo amanhã?",
+          "free": { "includes": ["10:00", "reservas\\.fiodenavalha"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["10:00", "reservas\\.fiodenavalha"], "dayAsked": "tomorrow, Thursday" }
+        },
+        {
+          "customer": "Quanto custa?",
+          "free": { "includes": ["16 ?€"], "excludes": ["Não tenho", "fechad"] },
+          "ai": { "excerpts": ["Corte clássico[^\\n]*16 ?€"], "followUpOf": "cortar o cabelo amanhã", "noDay": true }
+        }
+      ]
+    },
+    {
+      "name": "«Quanto custa?» as the first message: a question back with real examples",
+      "turns": [
+        {
+          "customer": "Quanto custa?",
+          "free": { "includes": ["^Depende do que procura", "16 ?€", "Qual lhe interessa\\?"], "excludes": ["Não tenho"] },
+          "ai": {
+            "excerpts": ["Corte clássico[^\\n]*16 ?€", "Degradê[^\\n]*18 ?€"],
+            "followUpOf": null,
+            "reply": "Depende do que procura. Por exemplo: corte clássico (16 €), degradê / fade (18 €) ou barba à navalha (15 €). Qual lhe interessa? [S1]"
+          }
+        },
+        {
+          "customer": "Quero a segunda opção",
+          "free": { "includes": ["18 ?€"], "excludes": ["Não tenho", "[Ss]egunda-feira", "fechad"] },
+          "ai": { "excerpts": ["Degradê[^\\n]*18 ?€"], "noDay": true, "picked": "degradê" }
+        }
+      ]
+    },
+    {
+      "name": "a service, then its price, then how long it takes",
+      "turns": [
+        { "customer": "Fazem degradê?", "free": { "includes": ["Degradê"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Degradê"] } },
+        {
+          "customer": "Quanto custa?",
+          "free": { "includes": ["18 ?€"], "excludes": ["Não tenho", "^Depende"] },
+          "ai": { "excerpts": ["Degradê[^\\n]*18 ?€"], "followUpOf": "Fazem degradê" }
+        },
+        {
+          "customer": "E quanto tempo demora?",
+          "free": { "includes": ["40 min"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["40 min"], "followUpOf": "Quanto custa" }
+        }
+      ]
+    },
+    {
+      "name": "price of a cut, then «e para crianças?», then «e a barba?»",
+      "turns": [
+        { "customer": "Quanto custa um corte?", "free": { "includes": ["16 ?€"] }, "ai": { "excerpts": ["Corte clássico[^\\n]*16 ?€"] } },
+        {
+          "customer": "E para crianças?",
+          "free": { "includes": ["12 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Cc]orte de criança[^\\n]*12 ?€"], "followUpOf": "Quanto custa um corte" }
+        },
+        {
+          "customer": "E a barba?",
+          "free": { "includes": ["[Bb]arba[^\\n]*1[05] ?€"], "excludes": ["Não tenho", "[Cc]orte de criança"] },
+          "ai": { "excerpts": ["[Bb]arba à navalha[^\\n]*15 ?€"], "followUpOf": "E para crianças" }
+        }
+      ]
+    },
+    {
+      "name": "hours tomorrow, then «E ao sábado?»",
+      "turns": [
+        { "customer": "A que horas abrem amanhã?", "free": { "includes": ["10:00"] }, "ai": { "excerpts": ["10:00"], "dayAsked": "tomorrow, Thursday" } },
+        {
+          "customer": "E ao sábado?",
+          "free": { "includes": ["09:00"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["09:00[–-]18:00"], "dayAsked": "Saturday, 24/10/2026" }
+        }
+      ]
+    },
+    {
+      "name": "open today, then «E no domingo?»",
+      "turns": [
+        { "customer": "Estão abertos hoje?", "free": { "includes": ["20:00"] }, "ai": { "dayAsked": "today, Wednesday" } },
+        { "customer": "E no domingo?", "free": { "includes": ["[Ff]echad"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Dd]omingo"], "dayAsked": "Sunday, 25/10/2026" } }
+      ]
+    },
+    {
+      "name": "greeting only",
+      "turns": [
+        { "customer": "Olá", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Bom dia!", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null }
+      ]
+    },
+    {
+      "name": "greeting, then a question",
+      "turns": [
+        { "customer": "Boa tarde", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Têm estacionamento?", "free": { "includes": ["Parque Trindade"] }, "ai": { "excerpts": ["Parque Trindade"], "history": ["Boa tarde"] } }
+      ]
+    },
+    {
+      "name": "a question, thanks and goodbye",
+      "turns": [
+        { "customer": "Têm Wi-Fi?", "free": { "includes": ["grátis"] }, "ai": { "excerpts": ["Wi-Fi"] } },
+        { "customer": "Obrigado!", "free": { "includes": ["^De nada"] }, "ai": null },
+        { "customer": "Adeus", "free": { "includes": ["^Até breve"] }, "ai": null },
+        { "customer": "Obrigada, até amanhã!", "free": { "equals": "De nada! Até breve." }, "ai": null }
+      ]
+    },
+    {
+      "name": "asks for a person",
+      "turns": [
+        { "customer": "Quanto custa a barba à navalha?", "free": { "includes": ["15 ?€"] }, "ai": { "excerpts": ["15 ?€"] } },
+        { "customer": "Quero falar com alguém", "free": { "includes": ["equipa"] }, "handoff": "customer_asked", "ai": null }
+      ]
+    },
+    {
+      "name": "complaint",
+      "turns": [
+        { "customer": "O corte de ontem ficou péssimo, quero fazer uma reclamação", "free": { "includes": ["equipa"] }, "handoff": "complaint", "ai": null }
+      ]
+    },
+    {
+      "name": "something the document doesn't say, then a follow-up on it",
+      "turns": [
+        {
+          "customer": "Fazem tatuagens?",
+          "free": { "includes": ["^Não tenho essa informação"], "excludes": ["€"] },
+          "ai": { "reply": "NO_ANSWER" }
+        },
+        { "customer": "E piercings?", "free": { "includes": ["^Não tenho essa informação"], "excludes": ["€"] }, "ai": { "reply": "NO_ANSWER" } }
+      ]
+    },
+    {
+      "name": "what they don't do",
+      "turns": [
+        { "customer": "Fazem tranças?", "free": { "includes": ["Não fazemos"], "excludes": ["\\d ?€"] }, "ai": { "excerpts": ["Não fazemos"] } },
+        { "customer": "E manicure?", "free": { "includes": ["manicure"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["manicure"] } }
+      ]
+    },
+    {
+      "name": "language switch mid-conversation (Portuguese → English)",
+      "turns": [
+        { "customer": "Quanto custa um degradê?", "language": "pt", "free": { "includes": ["18 ?€"] }, "ai": { "excerpts": ["18 ?€"] } },
+        {
+          "customer": "And how much is it for kids?",
+          "language": "en",
+          "free": { "includes": ["12 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Cc]orte de criança[^\\n]*12 ?€"], "language": "English" }
+        }
+      ]
+    },
+    {
+      "name": "English from the start",
+      "turns": [
+        { "customer": "Hello, are you open on Saturday?", "language": "en", "free": { "includes": ["09:00"] }, "ai": { "excerpts": ["09:00"], "dayAsked": "Saturday" } },
+        { "customer": "How much?", "language": "en", "free": { "includes": ["€"], "excludes": ["don't have"] }, "ai": { "excerpts": ["€"] } }
+      ]
+    },
+    {
+      "name": "Portuguese with Spanish-looking words stays Portuguese; «segunda» is Monday here",
+      "turns": [
+        {
+          "customer": "Queria reservar uma mesa para segunda",
+          "language": "pt",
+          "free": { "includes": ["[Ff]echad"] },
+          "ai": { "dayAsked": "Monday", "language": "European Portuguese" }
+        }
+      ]
+    },
+    {
+      "name": "«a segunda vez» and «a segunda opção» are not Monday",
+      "turns": [
+        { "customer": "É a segunda vez que pergunto: aceitam MB WAY?", "language": "pt", "free": { "includes": ["MB WAY|Multibanco"], "excludes": ["fechad"] }, "ai": { "noDay": true } }
+      ]
+    },
+    {
+      "name": "how to book, then without booking",
+      "turns": [
+        { "customer": "Como faço uma marcação?", "free": { "includes": ["reservas\\.fiodenavalha"] }, "ai": { "excerpts": ["reservas\\.fiodenavalha"] } },
+        { "customer": "E sem marcação?", "free": { "includes": ["vaga"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["vaga"] } }
+      ]
+    },
+    {
+      "name": "payment, then «e cartão?»",
+      "turns": [
+        { "customer": "Aceitam MB WAY?", "free": { "includes": ["Multibanco|MB WAY"] }, "ai": { "excerpts": ["MB WAY"] } },
+        { "customer": "E cartão?", "free": { "includes": ["Visa"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Visa"] } }
+      ]
+    },
+    {
+      "name": "address, then how to get there by metro",
+      "turns": [
+        { "customer": "Onde ficam?", "free": { "includes": ["Rua do Almada"] }, "ai": { "excerpts": ["Rua do Almada"] } },
+        { "customer": "E de metro?", "free": { "includes": ["Aliados"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Aliados"] } }
+      ]
+    },
+    {
+      "name": "switching topic: price, then address (no carry-over)",
+      "turns": [
+        { "customer": "Quanto custa um corte?", "free": { "includes": ["16 ?€"] }, "ai": { "excerpts": ["16 ?€"] } },
+        { "customer": "Onde ficam?", "free": { "includes": ["Rua do Almada"], "excludes": ["€"] }, "ai": { "excerpts": ["Rua do Almada"], "followUpOf": null } }
+      ]
+    },
+    {
+      "name": "products",
+      "turns": [
+        { "customer": "Vendem óleo de barba?", "free": { "includes": ["14 ?€"] }, "ai": { "excerpts": ["14 ?€"] } },
+        { "customer": "E pomada?", "free": { "includes": ["16 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Pp]omada[^\\n]*16 ?€"] } }
+      ]
+    },
+    {
+      "name": "student discount, then on a fade on Wednesday",
+      "turns": [
+        { "customer": "Sou estudante, há desconto?", "free": { "includes": ["2 ?€"] }, "ai": { "excerpts": ["[Ee]studantes:? 2 ?€"] } },
+        {
+          "customer": "E num degradê à quarta?",
+          "free": { "includes": ["18 ?€|2 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["Degradê[^\\n]*18 ?€", "[Ee]studantes:? 2 ?€"] }
+        }
+      ]
+    },
+    {
+      "name": "children, then «E quanto custa?»",
+      "turns": [
+        { "customer": "Cortam cabelo a crianças?", "free": { "includes": ["3 (anos|aos)"] }, "ai": { "excerpts": ["3 (anos|aos)"] } },
+        {
+          "customer": "E quanto custa?",
+          "free": { "includes": ["12 ?€"], "excludes": ["Não tenho", "^Depende"] },
+          "ai": { "excerpts": ["[Cc]orte de criança[^\\n]*12 ?€"], "followUpOf": "Cortam cabelo a crianças" }
+        }
+      ]
+    },
+    {
+      "name": "a group booking, then Saturday",
+      "turns": [
+        { "customer": "Somos 5 para uma despedida de solteiro, como fazemos?", "free": { "includes": ["semana de antecedência"] }, "ai": { "excerpts": ["semana de antecedência"] } },
+        { "customer": "E ao sábado?", "free": { "includes": ["09:00"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "Saturday" } }
+      ]
+    },
+    {
+      "name": "pets, then thanks",
+      "turns": [
+        { "customer": "Posso levar o meu cão?", "free": { "includes": ["[Cc]ães pequenos"] }, "ai": { "excerpts": ["[Cc]ães pequenos"] } },
+        { "customer": "Ótimo, obrigado", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "hours today, thanks, then «E amanhã?» (the topic survives small talk)",
+      "turns": [
+        { "customer": "A que horas fecham hoje?", "free": { "includes": ["20:00"] }, "ai": { "dayAsked": "today" } },
+        { "customer": "Obrigada", "free": { "includes": ["^De nada"] }, "ai": null },
+        { "customer": "E amanhã?", "free": { "includes": ["10:00"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "tomorrow, Thursday" } }
+      ]
+    },
+    {
+      "name": "«How much?» in English as the first message",
+      "turns": [
+        { "customer": "How much?", "language": "en", "free": { "includes": ["^It depends", "16 ?€"] }, "ai": { "excerpts": ["Corte clássico[^\\n]*16 ?€"] } }
+      ]
+    },
+    {
+      "name": "late, then missing an appointment",
+      "turns": [
+        { "customer": "Vou chegar 15 minutos atrasado, ainda me atendem?", "free": { "includes": ["10 minutos"] }, "ai": { "excerpts": ["10 minutos"] } },
+        { "customer": "E se faltar?", "free": { "includes": ["5 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["faltar"] } }
+      ]
+    },
+    {
+      "name": "gift vouchers, then how long they last",
+      "turns": [
+        { "customer": "Vendem vales-oferta?", "free": { "includes": ["20 ?€"] }, "ai": { "excerpts": ["[Vv]ales"] } },
+        { "customer": "E são válidos quanto tempo?", "free": { "includes": ["12 meses"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["12 meses"] } }
+      ]
+    }
+  ]
+}

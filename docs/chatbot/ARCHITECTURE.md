@@ -103,14 +103,51 @@ dia) não contam; uma pergunta de preço num dia continua de preço. `hours.ts �
 no fuso do assistente. Respostas grátis: com horário estruturado, o horário desse dia («Amanhã
 (quinta-feira, 22/10) estamos abertos das 10:00 às 13:00 e das 14:30 às 20:00.»; num dia de fecho,
 «estamos fechados (Natal)»; hoje, também se está aberto agora) + link de reserva; só com documentos,
-«Amanhã é quinta-feira, 22/10.» + as linhas do horário desse dia (ou o horário todo, quando o dia só
-aparece num intervalo «Terça a sexta-feira») + as linhas de marcação do documento (link online e regra
-«sem marcação»). **Nunca «há vaga»**: o assistente não vê a agenda; diz o horário e como marcar.
+«Amanhã é quinta-feira, 22/10.» + a linha do horário desse dia (também quando o dia só aparece num
+intervalo, «Terça a sexta-feira 10:00–13:00 e 14:30–20:00» para quinta) + as linhas de marcação do
+documento (link online e regra «sem marcação»). **Nunca «há vaga»**: o assistente não vê a agenda; diz
+o horário e como marcar.
+
+### Conversa: seguimentos e contexto (`context.ts`, 2026-10-21)
+
+O dono testou «Dá para cortar o cabelo amanhã?» → «Quanto custa?» e a resposta foi «Não tenho essa
+informação»: cada mensagem era tratada sozinha. Agora:
+
+- **Tema da conversa.** As últimas 4 mensagens do cliente (até 6 h de intervalo) formam um tema: do
+  que se fala (palavras sem perguntas, dias, cortesias), que tipo de pergunta (preço, horário, morada,
+  marcação, serviços) e que dia. Cumprimentos e agradecimentos não mudam o tema; um pedido de pessoa,
+  reclamação ou emergência recomeça-o.
+- **Seguimentos** (mensagem curta ou elíptica: sem assunto próprio, a começar por «E…»/«and…»/«y…»,
+  ou com «isso»/«that»): «Quanto custa?» depois de «Fazem degradê?» pesquisa «degradê» com intenção de
+  preço; «E para crianças?» / «E a barba?» depois de um preço mantêm o preço e trocam o assunto;
+  «E ao sábado?» depois de um horário é o horário de sábado; «E num degradê à quarta?» depois de um
+  desconto continua a ser preço (o dia só diz quando); «E são válidos quanto tempo?» depois de «Vendem
+  vales-oferta?» procura primeiro nas janelas do documento à volta dos vales. Nunca passa o assunto
+  para uma pergunta de horário ou morada («Onde ficam?» depois de um preço responde só a morada).
+- **Escolha numa lista**: «Quero a segunda opção» / «a última» / «the second one» logo depois de uma
+  lista do assistente é essa opção (nunca segunda-feira).
+- **Pergunta de volta em vez de «não sei»**: «Quanto custa?» sem nada nomeado (nem antes) → «Depende do
+  que procura. Por exemplo: corte clássico (16 €), degradê / fade (18 €), … Qual lhe interessa?», com
+  exemplos da própria lista do negócio (serviços do espaço ou linhas de preço do documento); o mesmo
+  quando o assunto vem da mensagem anterior e é geral demais («cortar o cabelo»). Se a IA responder
+  `NO_ANSWER` a um «Quanto custa?» sem assunto, o motor usa esta pergunta de volta.
+- **«Fazem degradê?»** (pergunta curta que nomeia o início de linhas da tabela) → essas linhas, não uma
+  frase que só o menciona (um desconto). **«E a barba?»** numa tabela com a parte «Barba» → as linhas
+  dessa parte.
+- O motor passa à IA: o histórico (`recentTurns`: até 6 mensagens / 1 500 caracteres, cliente,
+  assistente e equipa, sem notas do sistema), a pergunta anterior que o seguimento continua
+  («This message follows the customer's earlier question «…»»), a opção escolhida, e a pesquisa já
+  expandida (excertos do assunto anterior). O admin «Experimentar» manda a conversa visível (o estado
+  volta do browser em cada pedido; `testChat` → `history`), e o runner manda as últimas 20 mensagens
+  guardadas (`openConversation`).
 
 ### Línguas
 
 Deteção grátis por palavras e letras típicas (`language.ts`); mensagem ambígua («ok», «menu») mantém a
-língua da conversa. Frases fixas nas 6 línguas no registo do site (usted, vous, Sie, Lei). O mock não
+língua da conversa. Numa conversa nova, na dúvida ganha a língua por omissão do assistente (português):
+outra língua só ganha com vantagem clara (2 pontos sobre o português, ou qualquer vantagem quando a
+mensagem não tem nada de português: «Hello», «Hola»). «Queria reservar uma mesa para segunda» ficava em
+espanhol; agora fica em português. A meio da conversa, mudar de língua pede a mesma vantagem de 2. Frases fixas nas 6 línguas no registo do site (usted, vous, Sie, Lei). O mock não
 traduz: uma resposta escrita pelo negócio em português vai em português com uma nota na língua do
 cliente; o negócio pode escrever a mesma resposta noutras línguas (campo «Escrita em»). Traduzir
 automaticamente é trabalho do modelo real (fase 2).
@@ -154,6 +191,14 @@ Admin › assistente › Conhecimento › **Documentos**: enviar PDF, Word (.doc
   estruturado, o horário vem das passagens com dias e horas, onde quer que estejam; sem serviços
   estruturados, os preços vêm das linhas com €; sem morada, a passagem com rua e código postal. Se o
   documento não diz, «Não tenho essa informação». Em «Experimentar» aparece a fonte; ao cliente nunca.
+- **Fonte em «Experimentar»** (2026-10-21): «Documento: <título> — <secção>», uma linha por documento,
+  secções sem repetições. A secção é o título mais próximo no texto («4. Serviços e preços», «Cabelo»),
+  nunca títulos de colunas («Dia Horário», «Produto Preço»), letras espaçadas decorativas («B A R B E A R I A
+  · P O R T O · …») nem frases tomadas por título pelo cortador antigo («A equipa tem quatro barbeiros»)
+  (`doc-answers.ts → sectionName`, `uniqueSources`).
+- Uma linha em branco ou um «- » a meio de uma frase (texto colado, PDF) não a parte: «… com pelo menos
+  uma» + «semana de antecedência.» é uma só passagem. Números soltos («15 minutos atrasado») não contam
+  para a cobertura (uma linha de preço com «15 min» não é sobre atrasos).
 - Documentos guardados antes desta versão (linhas juntas em parágrafos) funcionam sem voltar a
   enviar; voltar a enviar só melhora as quebras de linha.
 - Preparado para embeddings mais tarde (uma coluna nova nas secções) sem mudar o resto.
@@ -249,6 +294,23 @@ para testar IA também no site usa-se o **plano grátis da Groq** (API compatív
   desse dia quando está no admin). (Um teste com o documento da barbearia
   mostrou porquê: com 3 secções grandes a IA não via «Corte clássico … 16 €» nem juntava o desconto de
   estudante ao preço do degradê.)
+- Também vai o histórico da conversa (`context.ts → recentTurns`) e, num seguimento, a pergunta
+  anterior e a opção escolhida (ver «Conversa: seguimentos e contexto»). Perguntas de morada levam as
+  linhas da morada; um seguimento leva também algumas passagens da pergunta anterior.
+- Estilo (`prompt.ts`, reescrito a 2026-10-21 depois de «Abertura amanhã…»): fala como o negócio
+  («estamos abertos», «pode marcar»), frases completas e naturais, «Sim»/«Não» só quando é pergunta de
+  sim/não (nunca «Sim, o degradê custa…»), 1 a 3 frases (máx. 4), só o que foi perguntado (sem ofertas
+  extra, sem repetir frases já ditas como «pode marcar…»), pergunta de volta numa só frase com até 4
+  opções e preços, responde à parte que a informação cobre (dia fechado), nunca acrescenta condições ou
+  passos que não estão escritos («a partir da data de compra»), sem Markdown (lista só de 3 a 6 opções com «• »), sem
+  emojis no tom formal, sem «a informação»/excertos, dias como «amanhã (quinta-feira)», sem cumprimento
+  no início nem fórmula de despedida; pt-PT e não brasileiro («telemóvel», «marcação», «estar a» +
+  infinitivo, sem «você»), sem palavras inglesas em português; exemplos bons e maus com factos entre
+  parênteses retos, para a IA nunca copiar horas ou preços do prompt. Mencionar marcação só quando se
+  pergunta por marcação, um dia ou uma visita, e então escrever o link/contacto (nunca «o nosso link»).
+  `parseGroundedAnswer` troca o hífen inseparável, os espaços finos e os espaços de largura zero do
+  gpt-oss por caracteres normais, e tira frases que mandam para «o nosso link/site» sem escrever o
+  endereço (`withoutEmptyLinks`).
 - Regras: responder `NO_ANSWER` quando os excertos não chegam (→ «não tenho essa informação» e oferta
   de passar à equipa); citar [S1]/[E1] (viram as fontes de «Experimentar»); preços como estão
   escritos; contas simples só com números dos excertos e mostradas («18 € − 2 € = 16 €»), verificando
@@ -298,6 +360,19 @@ RLS ligado e sem acesso para anon/authenticated (só service role, como os menus
   (ficheiro de bloqueio), modo `--listen-only` para testar a ligação sem responder.
 - Com open-wa recomenda-se ainda: número com histórico (não acabado de criar), começar com poucas
   conversas, não mandar links encurtados, e responder sempre a um cliente que escreveu primeiro.
+
+### Controlo de qualidade: conversas de teste (`tests/chatbot-conversations.test.mjs`)
+
+O portão de qualidade de cada mudança. `tests/fixtures/dialogues/*.json` (um ficheiro por setor; hoje
+`barbearia.json`, 30 diálogos de 1 a 4 turnos: seguimentos de preço, de dia, «e para crianças?», «e a
+barba?», troca de tema, troca de língua, obrigado/adeus, só cumprimento, «quero falar com alguém»,
+reclamação, algo que o documento não diz, «a segunda opção»…). Cada diálogo corre turno a turno sobre o
+documento em 4 formatos (texto do PDF, bloco sem quebras, cópia baralhada com quebras e marcas ao acaso,
+texto estilo WhatsApp), duas vezes: com as respostas grátis (o que têm de dizer e não dizer) e com uma IA
+de teste atrás de um `fetch` falso (o que a IA recebe: excertos, histórico, pergunta anterior, dia
+perguntado, opção escolhida, língua). Para um setor novo: um JSON com os ficheiros do documento e os
+diálogos; o teste não tem nada da barbearia. Verificação real com a Groq grátis: no máximo umas dezenas
+de chamadas, com a chave lida do `.env.local` e nunca mostrada.
 
 ## 3. Onde corre
 
