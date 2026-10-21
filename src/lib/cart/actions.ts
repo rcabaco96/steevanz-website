@@ -17,7 +17,7 @@ import { localize, type Locale, type Localized } from "@/lib/i18n";
 import { tryCreateServiceClient } from "@/lib/supabase/service";
 import { briefDetails, briefRows, cartNeedsBrief, parseBrief, type WebBrief } from "./brief";
 import { alreadyActive, type OwnedProduct } from "./ownership";
-import { formatCents, priceCart, sanitizeLines, type CartGroupId, type CartLine, type GroupTotals } from "./pricing";
+import { formatCents, priceCart, sanitizeLines, type CartGroupId, type CartLine, type GroupTotals, type PricedLine } from "./pricing";
 
 export type OrderActionState =
   | { status: "idle" }
@@ -39,6 +39,7 @@ const emailText = {
     perUnit: "/un.",
     text: "Texto",
     noText: "sem texto",
+    signupOffer: "1.ª placa oferecida na adesão",
   },
   en: {
     groups: { oneTime: "One-off payment", monthly: "Monthly plans" } as Record<CartGroupId, string>,
@@ -54,6 +55,7 @@ const emailText = {
     perUnit: "/unit",
     text: "Text",
     noText: "no text",
+    signupOffer: "1st plate free on sign-up",
   },
 } satisfies Localized<unknown>;
 
@@ -115,6 +117,11 @@ function customizationLines({ productId, options }: CartLine, locale: Locale = "
   ];
 }
 
+/** The sign-up offer on a line (the guest guide's 1st plate), as a detail line: «1.ª placa oferecida na adesão: −20,00 €». */
+function offerLines(line: PricedLine, locale: Locale = "pt"): string[] {
+  return line.offerCents ? [`${localize(emailText, locale).signupOffer}: −${formatCents(line.offerCents, locale)}`] : [];
+}
+
 /** The order as stored: the web brief goes with the first website product of the order. */
 function orderItems(totals: Record<CartGroupId, GroupTotals>, brief: WebBrief | null): OrderItem[] {
   const items = (["oneTime", "monthly"] as const).flatMap((billing) =>
@@ -124,7 +131,7 @@ function orderItems(totals: Record<CartGroupId, GroupTotals>, brief: WebBrief | 
       unitCents: line.unitCents,
       subtotalCents: line.subtotalCents,
       billing,
-      details: customizationLines(line),
+      details: [...customizationLines(line), ...offerLines(line)],
     })),
   );
   const webItem = brief ? items.find((item) => isWebProduct(item.productId)) : undefined;
@@ -142,7 +149,7 @@ function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "p
     rows: totals.lines.map((line) => {
       const product = getProduct(line.productId);
       const name = `${productLabel(line.productId, locale)} (${localize(ui, locale).billing[product.priceBilling]})`;
-      return [[name, ...customizationLines(line, locale)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
+      return [[name, ...customizationLines(line, locale), ...offerLines(line, locale)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
     }),
     // Without VAT, «+ IVA»: VAT-inclusive amounts are never shown (owner, 2026-10-18).
     foot: [[t.total, `${money(totals.subtotalCents)} ${t.plusVat}`]],
@@ -194,7 +201,8 @@ export async function submitOrder(_previous: OrderActionState, formData: FormDat
   const client = tryCreateServiceClient();
   if (client && (await isRateLimited(client, "order"))) return { status: "error", code: "rate_limited", fields: [] };
 
-  const totals = priceCart(lines);
+  // The guide's 1st plate is offered on the order that starts it, never to a client who already has it.
+  const totals = priceCart(lines, owned.map((item) => item.productId));
   const groups = (["oneTime", "monthly"] as const).filter((group) => totals[group].lines.length);
   const summary = [
     totals.oneTime.lines.length ? `${formatCents(totals.oneTime.subtotalCents, "pt")} único + IVA` : null,

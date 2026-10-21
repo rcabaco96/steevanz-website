@@ -37,7 +37,7 @@ export const it: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Le targhe si pagano una volta. La stesura delle guide, la traduzione in quattro lingue, l'hosting online e le modifiche costano 30 € al mese per account, qualunque sia il numero di alloggi. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
+        text: "Le targhe si pagano una volta e, all'adesione, la 1ª targa è in omaggio. La stesura delle guide, la traduzione in quattro lingue, l'hosting online e le modifiche costano 30 € al mese per account, qualunque sia il numero di alloggi. Ad esempio, 3 alloggi: 2 targhe × 20 € (la 1ª è in omaggio) + 30 €/mese, + IVA. Le lingue in più hanno un piccolo costo, indicato nel Suo preventivo. Prezzi + IVA, indicativi e confermati dopo la demo.",
       },
       { type: "h2", id: "how-it-works", text: "Come funziona per gli ospiti" },
       {
@@ -244,7 +244,7 @@ export const it: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Quanto costa al mese?",
-            a: "30 € al mese per account, qualunque sia il numero di alloggi, con l'hosting online e le modifiche incluse. Le targhe si pagano una volta, una per alloggio: 20 € l'una e 15 € l'una da 10 alloggi in su. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
+            a: "30 € al mese per account, qualunque sia il numero di alloggi, con l'hosting online e le modifiche incluse. Le targhe si pagano una volta, una per alloggio: 20 € l'una e 15 € l'una da 10 alloggi in su. All'adesione, la 1ª targa è in omaggio. Ad esempio, 3 alloggi: 2 targhe × 20 € (la 1ª è in omaggio) + 30 €/mese, + IVA. Con il pacchetto per case vacanza, la guida è inclusa finché il pacchetto è attivo.",
           },
           {
             q: "La guida vale come libro informativo richiesto dalla legge?",

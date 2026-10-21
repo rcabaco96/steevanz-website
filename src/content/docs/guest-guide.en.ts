@@ -37,7 +37,7 @@ export const en: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Plates are paid once. Writing the guides, translation into four languages, online hosting and changes cost €30 per month per account, however many properties you have. For example, 3 properties: 3 plates × €20 + €30/month, + VAT. Additional languages have a small cost, shown in your quote. Prices exclude VAT, are proposals and are confirmed after the demo.",
+        text: "Plates are paid once, and the 1st plate is free when you sign up. Writing the guides, translation into four languages, online hosting and changes cost €30 per month per account, however many properties you have. For example, 3 properties: 2 plates × €20 (the 1st is free) + €30/month, + VAT. Additional languages have a small cost, shown in your quote. Prices exclude VAT, are proposals and are confirmed after the demo.",
       },
       { type: "h2", id: "how-it-works", text: "How it works for guests" },
       {
@@ -244,7 +244,7 @@ export const en: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "What does it cost per month?",
-            a: "€30 per month per account, however many properties you have, with online hosting and changes included. Plates are paid once, one per property: €20 each, or €15 each from 10 properties. For example, 3 properties: 3 plates × €20 + €30/month, + VAT. With the Holiday-rental pack, the guide is included while the pack is active.",
+            a: "€30 per month per account, however many properties you have, with online hosting and changes included. Plates are paid once, one per property: €20 each, or €15 each from 10 properties. The 1st plate is free when you sign up. For example, 3 properties: 2 plates × €20 (the 1st is free) + €30/month, + VAT. With the Holiday-rental pack, the guide is included while the pack is active.",
           },
           {
             q: "Does the guide count as the information book the law requires?",

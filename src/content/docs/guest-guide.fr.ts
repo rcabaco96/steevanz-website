@@ -37,7 +37,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "Les plaques se paient une fois. La rédaction des livrets, la traduction en quatre langues, l'hébergement en ligne et les modifications coûtent 30 € par mois par compte, quel que soit le nombre de logements. Par exemple, 3 logements : 3 plaques × 20 € + 30 €/mois, + TVA. Les langues en plus ont un petit coût, indiqué dans votre devis. Prix + TVA, indicatifs et confirmés après la démonstration.",
+        text: "Les plaques se paient une fois et, à l'inscription, la 1re plaque est offerte. La rédaction des livrets, la traduction en quatre langues, l'hébergement en ligne et les modifications coûtent 30 € par mois par compte, quel que soit le nombre de logements. Par exemple, 3 logements : 2 plaques × 20 € (la 1re est offerte) + 30 €/mois, + TVA. Les langues en plus ont un petit coût, indiqué dans votre devis. Prix + TVA, indicatifs et confirmés après la démonstration.",
       },
       { type: "h2", id: "how-it-works", text: "Comment ça marche pour les voyageurs" },
       {
@@ -244,7 +244,7 @@ export const fr: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Combien ça coûte par mois ?",
-            a: "30 € par mois par compte, quel que soit le nombre de logements, hébergement en ligne et modifications compris. Les plaques se paient une fois, une par logement : 20 € pièce, et 15 € pièce à partir de 10 logements. Par exemple, 3 logements : 3 plaques × 20 € + 30 €/mois, + TVA. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
+            a: "30 € par mois par compte, quel que soit le nombre de logements, hébergement en ligne et modifications compris. Les plaques se paient une fois, une par logement : 20 € pièce, et 15 € pièce à partir de 10 logements. À l'inscription, la 1re plaque est offerte. Par exemple, 3 logements : 2 plaques × 20 € (la 1re est offerte) + 30 €/mois, + TVA. Avec la formule locations de vacances, le livret est inclus tant que la formule est active.",
           },
           {
             q: "Le livret vaut-il comme livret d'information exigé par la loi ?",

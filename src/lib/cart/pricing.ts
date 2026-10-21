@@ -29,6 +29,8 @@ export interface PricedLine extends CartLine {
   unitCents: number;
   // Charged once for the whole line (logo set up once for a pack), on top of unitCents × quantity.
   lineExtraCents: number;
+  // Taken off the line: the units offered on sign-up (the guest guide's 1st plate), at the line's plate price.
+  offerCents: number;
   subtotalCents: number;
 }
 
@@ -125,16 +127,30 @@ function totalsFor(lines: PricedLine[]): GroupTotals {
   };
 }
 
-export function priceCart(lines: CartLine[]): Record<CartGroupId, GroupTotals> {
+/**
+ * `activeProductIds`: the products already active on the signed-in client's account. A product with
+ * `signupFreeUnits` (the guest guide) offers them on the first line of the order that starts it, once per
+ * account: a client who already has it active pays every plate. The offer covers the plate at the line's
+ * price (20 € or the 15 € pack price), not the logo, which is the design work.
+ */
+export function priceCart(lines: CartLine[], activeProductIds: readonly string[] = []): Record<CartGroupId, GroupTotals> {
+  const offered = new Set<ProductId>();
   const priced: PricedLine[] = lines.map((line) => {
+    const product = getProduct(line.productId);
     const unitCents = unitCentsFor(line);
     const lineExtraCents = lineExtraCentsFor(line);
+    let offerCents = 0;
+    if (product.signupFreeUnits && !offered.has(line.productId) && !activeProductIds.includes(line.productId)) {
+      offered.add(line.productId);
+      offerCents = Math.min(product.signupFreeUnits, line.quantity) * unitPriceFor(product, line.quantity) * 100;
+    }
     return {
       ...line,
-      billing: getProduct(line.productId).priceBilling,
+      billing: product.priceBilling,
       unitCents,
       lineExtraCents,
-      subtotalCents: unitCents * line.quantity + lineExtraCents,
+      offerCents,
+      subtotalCents: unitCents * line.quantity + lineExtraCents - offerCents,
     };
   });
   return {

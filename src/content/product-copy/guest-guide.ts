@@ -9,7 +9,7 @@ export const copy: ProductCopyByLocale = {
       "Uma página para o telemóvel com tudo o que o hóspede precisa de saber: WiFi, check-out, regras, eletrodomésticos, lixo, emergências e as suas recomendações. Abre com um toque numa placa dentro do alojamento e está em português, inglês e mais duas línguas.",
     metaTitle: "Guia digital para alojamento local em 4 línguas | Steevanz",
     metaDescription:
-      "Guia da casa para alojamento local em português, inglês e mais duas línguas, aberto com um toque ou QR code. Inclui o conteúdo do livro de informações exigido por lei. 20 € por placa, uma por alojamento, + 30 €/mês por conta.",
+      "Guia da casa para alojamento local em português, inglês e mais duas línguas, aberto com um toque ou QR code. Inclui o conteúdo do livro de informações exigido por lei. 20 € por placa, uma por alojamento, + 30 €/mês por conta, + IVA. A 1.ª placa é oferecida na adesão.",
     heroTitle: "Menos perguntas, hóspedes mais felizes",
     heroSubtitle:
       "Escrevemos o guia da sua casa, traduzimo-lo para quatro línguas e entregamos uma placa que o abre com um toque. O hóspede encontra o WiFi, as regras e as suas recomendações sem lhe enviar uma mensagem.",
@@ -75,7 +75,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Para vários alojamentos",
-        body: "Um guia e uma placa por casa, tudo numa só conta. Paga 20 € por placa (15 € a partir de 10 alojamentos) e uma única mensalidade de 30 € por conta, tenha quantos alojamentos tiver.",
+        body: "Um guia e uma placa por casa, tudo numa só conta. Paga 20 € por placa (15 € a partir de 10 alojamentos) e uma única mensalidade de 30 € por conta, tenha quantos alojamentos tiver, + IVA. A 1.ª placa é oferecida na adesão.",
       },
     ],
     useCases: [
@@ -111,7 +111,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa?",
-        a: "Uma placa por alojamento, a 20 € cada (15 € cada a partir de 10 alojamentos), paga uma vez. A escrita dos guias, a tradução para quatro línguas, a versão para imprimir, o alojamento online e as alterações custam 30 € por mês por conta, seja qual for o número de alojamentos. Por exemplo, 3 alojamentos: 3 placas × 20 € + 30 €/mês, + IVA. Valores confirmados na proposta.",
+        a: "Uma placa por alojamento, a 20 € cada (15 € cada a partir de 10 alojamentos), paga uma vez; na adesão, a 1.ª placa é oferecida. A escrita dos guias, a tradução para quatro línguas, a versão para imprimir, o alojamento online e as alterações custam 30 € por mês por conta, seja qual for o número de alojamentos. Por exemplo, 3 alojamentos: 2 placas × 20 € (a 1.ª é oferecida) + 30 €/mês, + IVA. Valores confirmados na proposta.",
       },
       {
         q: "Posso ter mais de duas línguas extra?",
@@ -147,7 +147,7 @@ export const copy: ProductCopyByLocale = {
       "A mobile page with everything guests need to know: WiFi, check-out, house rules, appliances, bins, emergencies and your recommendations. It opens with one tap on a plate inside the property, in Portuguese, English and two more languages.",
     metaTitle: "Digital guest guide for holiday rentals in 4 languages | Steevanz",
     metaDescription:
-      "A guest guide for holiday rentals in Portuguese, English and two more languages, opened with one tap or a QR code. Includes the information book Portuguese law requires. €20 per plate, one per property, + €30/month per account.",
+      "A guest guide for holiday rentals in Portuguese, English and two more languages, opened with one tap or a QR code. Includes the information book Portuguese law requires. €20 per plate, one per property, + €30/month per account, + VAT. The 1st plate is free when you sign up.",
     heroTitle: "Fewer questions, happier guests",
     heroSubtitle:
       "We write your house guide, translate it into four languages and deliver a plate that opens it with one tap. Guests find the WiFi, the house rules and your recommendations without messaging you.",
@@ -213,7 +213,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "For several properties",
-        body: "One guide and one plate per home, all in one account. You pay €20 per plate (€15 from 10 properties) and a single €30 monthly fee per account, however many properties you have.",
+        body: "One guide and one plate per home, all in one account. You pay €20 per plate (€15 from 10 properties) and a single €30 monthly fee per account, however many properties you have, + VAT. The 1st plate is free when you sign up.",
       },
     ],
     useCases: [
@@ -249,7 +249,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost?",
-        a: "One plate per property, at €20 each (€15 each from 10 properties), paid once. Writing the guides, translation into four languages, the printable version, online hosting and changes cost €30 per month per account, however many properties you have. For example, 3 properties: 3 plates × €20 + €30/month, + VAT. Prices are confirmed in your proposal.",
+        a: "One plate per property, at €20 each (€15 each from 10 properties), paid once; when you sign up, the 1st plate is free. Writing the guides, translation into four languages, the printable version, online hosting and changes cost €30 per month per account, however many properties you have. For example, 3 properties: 2 plates × €20 (the 1st is free) + €30/month, + VAT. Prices are confirmed in your proposal.",
       },
       {
         q: "Can I have more than two extra languages?",
@@ -285,7 +285,7 @@ export const copy: ProductCopyByLocale = {
       "Una página para el móvil con todo lo que el huésped necesita saber: wifi, check-out, normas, electrodomésticos, basura, emergencias y sus recomendaciones. Se abre con un toque en una placa dentro del alojamiento y está en portugués, inglés y dos idiomas más.",
     metaTitle: "Guía digital para alojamientos turísticos en 4 idiomas | Steevanz",
     metaDescription:
-      "Una guía para alojamientos turísticos en portugués, inglés y dos idiomas más, que se abre con un toque o con un código QR. Incluye el libro de información que exige la ley portuguesa. 20 € por placa, una por alojamiento, + 30 €/mes por cuenta.",
+      "Una guía para alojamientos turísticos en portugués, inglés y dos idiomas más, que se abre con un toque o con un código QR. Incluye el libro de información que exige la ley portuguesa. 20 € por placa, una por alojamiento, + 30 €/mes por cuenta, + IVA. La 1.ª placa es de regalo al darse de alta.",
     heroTitle: "Menos preguntas, huéspedes más contentos",
     heroSubtitle:
       "Redactamos la guía de su casa, la traducimos a cuatro idiomas y le entregamos una placa que la abre con un toque. Los huéspedes encuentran el wifi, las normas de la casa y sus recomendaciones sin tener que escribirle.",
@@ -351,7 +351,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Para varios alojamientos",
-        body: "Una guía y una placa por vivienda, todo en una sola cuenta. Paga 20 € por placa (15 € a partir de 10 alojamientos) y una única cuota de 30 € al mes por cuenta, tenga los alojamientos que tenga.",
+        body: "Una guía y una placa por vivienda, todo en una sola cuenta. Paga 20 € por placa (15 € a partir de 10 alojamientos) y una única cuota de 30 € al mes por cuenta, tenga los alojamientos que tenga, + IVA. La 1.ª placa es de regalo al darse de alta.",
       },
     ],
     useCases: [
@@ -387,7 +387,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "¿Cuánto cuesta?",
-        a: "Una placa por alojamiento, a 20 € cada una (15 € cada una a partir de 10 alojamientos), de pago único. La redacción de las guías, la traducción a cuatro idiomas, la versión para imprimir, el alojamiento web y los cambios cuestan 30 € al mes por cuenta, sea cual sea el número de alojamientos. Por ejemplo, 3 alojamientos: 3 placas × 20 € + 30 €/mes, + IVA. Precios confirmados en su propuesta.",
+        a: "Una placa por alojamiento, a 20 € cada una (15 € cada una a partir de 10 alojamientos), de pago único; al darse de alta, la 1.ª placa es de regalo. La redacción de las guías, la traducción a cuatro idiomas, la versión para imprimir, el alojamiento web y los cambios cuestan 30 € al mes por cuenta, sea cual sea el número de alojamientos. Por ejemplo, 3 alojamientos: 2 placas × 20 € (la 1.ª es de regalo) + 30 €/mes, + IVA. Precios confirmados en su propuesta.",
       },
       {
         q: "¿Puedo tener más de dos idiomas adicionales?",
@@ -423,7 +423,7 @@ export const copy: ProductCopyByLocale = {
       "Une page pour téléphone avec tout ce que vos voyageurs doivent savoir : wifi, départ, règles, appareils, poubelles, urgences et vos recommandations. Elle s'ouvre d'un toucher sur une plaque dans le logement, en portugais, en anglais et dans deux autres langues.",
     metaTitle: "Livret d'accueil digital pour locations de vacances en 4 langues | Steevanz",
     metaDescription:
-      "Un livret d'accueil pour locations de vacances en portugais, en anglais et dans deux autres langues, qui s'ouvre d'un toucher ou avec un QR code. Comprend le livret d'information exigé par la loi portugaise. 20 € par plaque, une par logement, + 30 €/mois par compte.",
+      "Un livret d'accueil pour locations de vacances en portugais, en anglais et dans deux autres langues, qui s'ouvre d'un toucher ou avec un QR code. Comprend le livret d'information exigé par la loi portugaise. 20 € par plaque, une par logement, + 30 €/mois par compte, + TVA. La 1re plaque est offerte à l'inscription.",
     heroTitle: "Moins de questions, des voyageurs plus heureux",
     heroSubtitle:
       "Nous rédigeons le livret de votre logement, le traduisons en quatre langues et vous livrons une plaque qui l'ouvre d'un toucher. Vos voyageurs trouvent le wifi, le règlement intérieur et vos recommandations sans avoir à vous écrire.",
@@ -489,7 +489,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Pour plusieurs logements",
-        body: "Un livret et une plaque par logement, le tout dans un seul compte. Vous payez 20 € par plaque (15 € à partir de 10 logements) et un seul abonnement de 30 € par mois par compte, quel que soit le nombre de logements.",
+        body: "Un livret et une plaque par logement, le tout dans un seul compte. Vous payez 20 € par plaque (15 € à partir de 10 logements) et un seul abonnement de 30 € par mois par compte, quel que soit le nombre de logements, + TVA. La 1re plaque est offerte à l'inscription.",
       },
     ],
     useCases: [
@@ -525,7 +525,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Combien ça coûte ?",
-        a: "Une plaque par logement, à 20 € pièce (15 € pièce à partir de 10 logements), payée une seule fois. La rédaction des livrets, la traduction en quatre langues, la version imprimable, l'hébergement en ligne et les modifications coûtent 30 € par mois par compte, quel que soit le nombre de logements. Par exemple, 3 logements : 3 plaques × 20 € + 30 €/mois, + TVA. Prix confirmés dans votre proposition.",
+        a: "Une plaque par logement, à 20 € pièce (15 € pièce à partir de 10 logements), payée une seule fois ; à l'inscription, la 1re plaque est offerte. La rédaction des livrets, la traduction en quatre langues, la version imprimable, l'hébergement en ligne et les modifications coûtent 30 € par mois par compte, quel que soit le nombre de logements. Par exemple, 3 logements : 2 plaques × 20 € (la 1re est offerte) + 30 €/mois, + TVA. Prix confirmés dans votre proposition.",
       },
       {
         q: "Puis-je avoir plus de deux langues supplémentaires ?",
@@ -561,7 +561,7 @@ export const copy: ProductCopyByLocale = {
       "Eine Seite fürs Handy mit allem, was Gäste wissen müssen: WLAN, Check-out, Hausregeln, Geräte, Müll, Notfälle und Ihre Empfehlungen. Sie öffnet sich mit einem Antippen auf einem Schild in der Unterkunft, auf Portugiesisch, Englisch und in zwei weiteren Sprachen.",
     metaTitle: "Digitale Gästemappe für Ferienunterkünfte in 4 Sprachen | Steevanz",
     metaDescription:
-      "Eine Gästemappe für Ferienunterkünfte auf Portugiesisch, Englisch und in zwei weiteren Sprachen, die sich mit einem Antippen oder per QR-Code öffnet. Mit dem Informationsbuch, das das portugiesische Gesetz vorschreibt. 20 € pro Schild, eins pro Unterkunft, plus 30 €/Monat pro Konto.",
+      "Eine Gästemappe für Ferienunterkünfte auf Portugiesisch, Englisch und in zwei weiteren Sprachen, die sich mit einem Antippen oder per QR-Code öffnet. Mit dem Informationsbuch, das das portugiesische Gesetz vorschreibt. 20 € pro Schild, eins pro Unterkunft, plus 30 €/Monat pro Konto, zzgl. MwSt. Das 1. Schild ist bei Vertragsbeginn kostenlos.",
     heroTitle: "Weniger Fragen, zufriedenere Gäste",
     heroSubtitle:
       "Wir schreiben Ihre Gästemappe, übersetzen sie in vier Sprachen und liefern ein Schild, das sie mit einem Antippen öffnet. Ihre Gäste finden WLAN, Hausregeln und Ihre Empfehlungen, ohne Ihnen schreiben zu müssen.",
@@ -627,7 +627,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Für mehrere Unterkünfte",
-        body: "Eine Mappe und ein Schild pro Unterkunft, alles in einem Konto. Sie zahlen 20 € pro Schild (ab 10 Unterkünften 15 €) und eine einzige Monatsgebühr von 30 € pro Konto, egal wie viele Unterkünfte Sie haben.",
+        body: "Eine Mappe und ein Schild pro Unterkunft, alles in einem Konto. Sie zahlen 20 € pro Schild (ab 10 Unterkünften 15 €) und eine einzige Monatsgebühr von 30 € pro Konto, egal wie viele Unterkünfte Sie haben, zzgl. MwSt. Das 1. Schild ist bei Vertragsbeginn kostenlos.",
       },
     ],
     useCases: [
@@ -663,7 +663,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Was kostet das?",
-        a: "Ein Schild pro Unterkunft, je 20 € (ab 10 Unterkünften je 15 €), einmalig bezahlt. Texten der Mappen, Übersetzung in vier Sprachen, Druckversion, Online-Hosting und Änderungen kosten 30 € im Monat pro Konto, egal wie viele Unterkünfte Sie haben. Zum Beispiel 3 Unterkünfte: 3 Schilder × 20 € + 30 €/Monat, zzgl. MwSt. Preise bestätigt in Ihrem Angebot.",
+        a: "Ein Schild pro Unterkunft, je 20 € (ab 10 Unterkünften je 15 €), einmalig bezahlt; bei Vertragsbeginn ist das 1. Schild kostenlos. Texten der Mappen, Übersetzung in vier Sprachen, Druckversion, Online-Hosting und Änderungen kosten 30 € im Monat pro Konto, egal wie viele Unterkünfte Sie haben. Zum Beispiel 3 Unterkünfte: 2 Schilder × 20 € (das 1. ist kostenlos) + 30 €/Monat, zzgl. MwSt. Preise bestätigt in Ihrem Angebot.",
       },
       {
         q: "Kann ich mehr als zwei zusätzliche Sprachen haben?",
@@ -699,7 +699,7 @@ export const copy: ProductCopyByLocale = {
       "Una pagina per smartphone con tutto quello che l'ospite deve sapere: wifi, check-out, regole, elettrodomestici, rifiuti, emergenze e i Suoi consigli. Si apre con un tocco su una targa all'interno dell'alloggio, in portoghese, inglese e altre due lingue.",
     metaTitle: "Guida digitale per case vacanza in 4 lingue | Steevanz",
     metaDescription:
-      "Una guida per case vacanza in portoghese, inglese e altre due lingue, che si apre con un tocco o con un codice QR. Include il libretto informativo richiesto dalla legge portoghese. 20 € per targa, una per alloggio, + 30 €/mese per account.",
+      "Una guida per case vacanza in portoghese, inglese e altre due lingue, che si apre con un tocco o con un codice QR. Include il libretto informativo richiesto dalla legge portoghese. 20 € per targa, una per alloggio, + 30 €/mese per account, + IVA. La 1ª targa è in omaggio all'adesione.",
     heroTitle: "Meno domande, ospiti più contenti",
     heroSubtitle:
       "Scriviamo la guida della Sua casa, la traduciamo in quattro lingue e Le consegniamo una targa che la apre con un tocco. Gli ospiti trovano il wifi, le regole della casa e i Suoi consigli senza doverLe scrivere.",
@@ -765,7 +765,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         title: "Per più alloggi",
-        body: "Una guida e una targa per ogni casa, tutto in un unico account. Paga 20 € per targa (15 € da 10 alloggi in su) e un unico canone di 30 € al mese per account, qualunque sia il numero di alloggi.",
+        body: "Una guida e una targa per ogni casa, tutto in un unico account. Paga 20 € per targa (15 € da 10 alloggi in su) e un unico canone di 30 € al mese per account, qualunque sia il numero di alloggi, + IVA. La 1ª targa è in omaggio all'adesione.",
       },
     ],
     useCases: [
@@ -801,7 +801,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto costa?",
-        a: "Una targa per alloggio, a 20 € l'una (15 € l'una da 10 alloggi in su), pagata una sola volta. La stesura delle guide, la traduzione in quattro lingue, la versione stampabile, l'hosting online e le modifiche costano 30 € al mese per account, qualunque sia il numero di alloggi. Ad esempio, 3 alloggi: 3 targhe × 20 € + 30 €/mese, + IVA. Prezzi confermati nella Sua proposta.",
+        a: "Una targa per alloggio, a 20 € l'una (15 € l'una da 10 alloggi in su), pagata una sola volta; all'adesione, la 1ª targa è in omaggio. La stesura delle guide, la traduzione in quattro lingue, la versione stampabile, l'hosting online e le modifiche costano 30 € al mese per account, qualunque sia il numero di alloggi. Ad esempio, 3 alloggi: 2 targhe × 20 € (la 1ª è in omaggio) + 30 €/mese, + IVA. Prezzi confermati nella Sua proposta.",
       },
       {
         q: "Posso avere più di due lingue aggiuntive?",

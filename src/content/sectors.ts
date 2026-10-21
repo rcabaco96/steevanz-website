@@ -771,9 +771,10 @@ export const sectors: Sector[] = [
       monthly: 49,
       extraSetup: 49,
       extraMonthly: 9,
-      // For one property: guide plate (20) + «Limpezas e prazos» automation (149); guide 30/month (per account) +
-      // assistant 49/month. Still dearer than the pack for one property (owner clarification 2026-10-20).
-      separatelySetup: 169,
+      // For one property: «Limpezas e prazos» automation (149) + the guide's plate, offered on sign-up since
+      // 2026-10-21 (it was 20); guide 30/month (per account) + assistant 49/month. Still dearer than the pack for
+      // one property (owner clarification 2026-10-20).
+      separatelySetup: 149,
       separatelyMonthly: 79,
       demoProduct: "guest-guide",
       isProvisional: true,

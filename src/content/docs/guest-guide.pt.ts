@@ -37,7 +37,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
       },
       {
         type: "p",
-        text: "As placas pagam-se uma vez. A escrita dos guias, a tradução para quatro línguas, o alojamento online e as alterações custam 30 € por mês por conta, seja qual for o número de alojamentos. Por exemplo, 3 alojamentos: 3 placas × 20 € + 30 €/mês, + IVA. Línguas adicionais têm um custo pequeno, indicado no orçamento. Valores sem IVA e de proposta, confirmados depois da demonstração.",
+        text: "As placas pagam-se uma vez e, na adesão, a 1.ª placa é oferecida. A escrita dos guias, a tradução para quatro línguas, o alojamento online e as alterações custam 30 € por mês por conta, seja qual for o número de alojamentos. Por exemplo, 3 alojamentos: 2 placas × 20 € (a 1.ª é oferecida) + 30 €/mês, + IVA. Línguas adicionais têm um custo pequeno, indicado no orçamento. Valores sem IVA e de proposta, confirmados depois da demonstração.",
       },
       { type: "h2", id: "como-funciona", text: "Como funciona para o hóspede" },
       {
@@ -244,7 +244,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Quanto custa por mês?",
-            a: "30 € por mês por conta, seja qual for o número de alojamentos, com o alojamento online e as alterações incluídos. As placas pagam-se uma vez, uma por alojamento: 20 € cada, 15 € cada a partir de 10 alojamentos. Por exemplo, 3 alojamentos: 3 placas × 20 € + 30 €/mês, + IVA. Se tiver o Pack Alojamento Local, o guia está incluído enquanto o pack estiver ativo.",
+            a: "30 € por mês por conta, seja qual for o número de alojamentos, com o alojamento online e as alterações incluídos. As placas pagam-se uma vez, uma por alojamento: 20 € cada, 15 € cada a partir de 10 alojamentos. Na adesão, a 1.ª placa é oferecida. Por exemplo, 3 alojamentos: 2 placas × 20 € (a 1.ª é oferecida) + 30 €/mês, + IVA. Se tiver o Pack Alojamento Local, o guia está incluído enquanto o pack estiver ativo.",
           },
           {
             q: "O guia serve como o livro de informações que a lei exige?",

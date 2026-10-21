@@ -28,6 +28,8 @@ export interface CartCopy {
   projectFrom: string;
   oneProject: string;
   perMonth: string;
+  /** The units offered when the service starts (the guest guide's 1st plate), taken off the line. */
+  signupOffer: string;
   addMore: string;
   /** Signed-in clients: products already active on the account. */
   owned: { notice: string; removeAll: string };
@@ -105,6 +107,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "desde {price} + IVA",
     oneProject: "1 projeto",
     perMonth: "/mês",
+    signupOffer: "1.ª placa oferecida na adesão: −{price}",
     addMore: "Adicionar outros produtos",
     owned: {
       notice: "Já tem ativo na sua conta: {names}. Não entra nesta encomenda.",
@@ -186,6 +189,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "from {price} + VAT",
     oneProject: "1 project",
     perMonth: "/month",
+    signupOffer: "1st plate free when you sign up: −{price}",
     addMore: "Add other products",
     owned: {
       notice: "Already active on your account: {names}. It is left out of this order.",
@@ -267,6 +271,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "desde {price} + IVA",
     oneProject: "1 proyecto",
     perMonth: "/mes",
+    signupOffer: "1.ª placa de regalo al darse de alta: −{price}",
     addMore: "Añadir otros productos",
     owned: {
       notice: "Ya tiene activo en su cuenta: {names}. No se incluye en este pedido.",
@@ -348,6 +353,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "à partir de {price} + TVA",
     oneProject: "1 projet",
     perMonth: "/mois",
+    signupOffer: "1re plaque offerte à l'inscription : −{price}",
     addMore: "Ajouter d'autres produits",
     owned: {
       notice: "Déjà actif sur votre compte : {names}. Ce produit n'entre pas dans cette commande.",
@@ -429,6 +435,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "ab {price} zzgl. MwSt.",
     oneProject: "1 Projekt",
     perMonth: "/Monat",
+    signupOffer: "1. Schild bei Vertragsbeginn kostenlos: −{price}",
     addMore: "Weitere Produkte hinzufügen",
     owned: {
       notice: "Bereits in Ihrem Konto aktiv: {names}. Nicht Teil dieser Bestellung.",
@@ -510,6 +517,7 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "da {price} + IVA",
     oneProject: "1 progetto",
     perMonth: "/mese",
+    signupOffer: "1ª targa in omaggio all'adesione: −{price}",
     addMore: "Aggiunga altri prodotti",
     owned: {
       notice: "Già attivo sul Suo account: {names}. Non rientra in questo ordine.",

@@ -72,7 +72,8 @@ export function CartView({ locale, copy, formCopy, briefCopy, catalog, sectors, 
   const [pending, startTransition] = useTransition();
   const summaryRef = useRef<HTMLElement>(null);
   const summaryBelowFold = useBelowFold(summaryRef, step === "cart" && lines.length > 0);
-  const totals = priceCart(lines);
+  // The guide's 1st plate is offered unless the signed-in client already has the guide active.
+  const totals = priceCart(lines, owned.map((item) => item.productId));
   const catalogById = new Map(catalog.map((item) => [item.id, item]));
   const available = catalog.filter((item) => !allLines.some((line) => line.productId === item.id) && !alreadyActive(item.id, owned));
   const ownedNotice = blocked.length ? (
@@ -465,6 +466,7 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
           {line.lineExtraCents ? (
             <p className="tabular text-sm text-muted">{copy.customize.lineExtra.replace("{price}", money(line.lineExtraCents))}</p>
           ) : null}
+          {line.offerCents ? <p className="tabular text-sm font-semibold text-success">{copy.signupOffer.replace("{price}", money(line.offerCents))}</p> : null}
         </div>
         <button
           type="button"

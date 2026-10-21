@@ -65,6 +65,11 @@ export interface Product {
   priceFrom: number;
   priceBilling: PriceBilling;
   priceQualifier: Localized<string>;
+  /**
+   * Units offered on the order that starts the service, once per account (the guest guide's 1st plate): the cart
+   * takes them off the first line of the product unless the signed-in client already has it active.
+   */
+  signupFreeUnits?: number;
   priceIsProvisional: boolean;
   flagship?: boolean;
   sectors: SectorId[];
@@ -172,9 +177,12 @@ export const products: Product[] = [
     // plus 30 €/month for the guide (writing, four languages, hosting and changes).
     // Owner, 2026-10-20: the 30 €/month is per account (one fee for the host or manager, however many properties);
     // one plate per property.
+    // Owner, 2026-10-21: the 1st plate is offered when the client joins the service (one free plate per account,
+    // on the order that starts the guide); every other plate costs 20 € / 15 € as before. See `signupFreeUnits`.
     priceFrom: 20,
     priceBilling: "one-time",
-    priceQualifier: { pt: "por placa, uma por alojamento, + 30 €/mês por conta", en: "per plate, one per property, + €30/month per account", es: "por placa, una por alojamiento, + 30 €/mes por cuenta", fr: "par plaque, une par logement, + 30 €/mois par compte", de: "pro Schild, eins pro Unterkunft, + 30 €/Monat pro Konto", it: "per targa, una per alloggio, + 30 €/mese per account" },
+    priceQualifier: { pt: "por placa, uma por alojamento, + 30 €/mês por conta · 1.ª placa oferecida na adesão", en: "per plate, one per property, + €30/month per account · 1st plate free when you sign up", es: "por placa, una por alojamiento, + 30 €/mes por cuenta · 1.ª placa de regalo al darse de alta", fr: "par plaque, une par logement, + 30 €/mois par compte · 1re plaque offerte à l'inscription", de: "pro Schild, eins pro Unterkunft, + 30 €/Monat pro Konto · 1. Schild bei Vertragsbeginn kostenlos", it: "per targa, una per alloggio, + 30 €/mese per account · 1ª targa in omaggio all'adesione" },
+    signupFreeUnits: 1,
     priceIsProvisional: true,
     sectors: ["lodging"],
     related: ["ai-chatbot", "automation", "google-review-plates"],
