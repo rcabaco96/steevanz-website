@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, WhatsAppIcon } from "@/components/icons";
 import { formatEuro } from "@/components/ui/Price";
-import { businessCardBandCopy, goalCtas, goals, guideBandCopy, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
+import { goalCtas, goals, homeAdBands, monthlyExtra, novoCopy, perMonth } from "@/content/novo-home";
+import { productAds } from "@/content/product-ads";
 import { getProductCopy } from "@/content/product-copy";
 import { getProduct, type Product } from "@/content/products";
 import { localize, type Locale } from "@/lib/i18n";
@@ -141,12 +142,24 @@ export function NovoHome({ locale }: { locale: Locale }) {
       {/* 5. Cartão de cliente digital: after the menu, to make them come back */}
       <LoyaltyBanner locale={locale} />
 
-      {/* 6. Guia digital do alojamento and 7. Cartão de visita digital, each with its ad (owner, 2026-10-20): all the
-          bands with a video come first; the video sides alternate. */}
-      <AdBand locale={locale} productId="guest-guide" copy={guideBandCopy} headingId="novo-guide" tone="gold" media="left" />
-      <AdBand locale={locale} productId="business-card" copy={businessCardBandCopy} headingId="novo-business-card" tone="rose" media="right" />
+      {/* 6. The bands with a product ad (content/novo-home.ts, homeAdBands: guest guide, business card, keychain, waitlist,
+          bookings, …), each shown once its ad is in content/product-ads.ts. All the bands with a video come before the
+          goals; the tones and the video sides alternate (owner, 2026-10-20). */}
+      {homeAdBands
+        .filter((band) => productAds[band.productId])
+        .map((band, index) => (
+          <AdBand
+            key={band.productId}
+            locale={locale}
+            productId={band.productId}
+            copy={band.copy}
+            headingId={band.headingId}
+            tone={index % 2 === 0 ? "gold" : "rose"}
+            media={index % 2 === 0 ? "left" : "right"}
+          />
+        ))}
 
-      {/* 8. O que quer melhorar? Always below every band with a video (owner, 2026-10-20). */}
+      {/* 7. O que quer melhorar? Always below every band with a video (owner, 2026-10-20). */}
       <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
         <div className={styles.wrap}>
           <h2 id="novo-goals" className={styles.h2} data-reveal>
@@ -159,13 +172,13 @@ export function NovoHome({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* 9. Soluções por setor */}
+      {/* 8. Soluções por setor */}
       <SectorSolutions locale={locale} />
 
-      {/* 10. Como trabalhamos */}
+      {/* 9. Como trabalhamos */}
       <HowWeWork locale={locale} />
 
-      {/* 11. Final CTA and close */}
+      {/* 10. Final CTA and close */}
       <section aria-labelledby="novo-final" className={styles.final}>
         <div className={styles.wrap}>
           <h2 id="novo-final" className={styles.h2} data-reveal>

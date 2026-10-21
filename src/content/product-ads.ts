@@ -72,6 +72,42 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
       it: "Spot del portachiavi digitale di Steevanz: invece di dire il numero ad alta voce o scriverlo su un foglio, un tocco sul portachiavi apre la chat di WhatsApp e il contatto viene condiviso in privato.",
     },
   },
+  waitlist: {
+    src: "/home/lista-espera-anuncio-720.mp4",
+    poster: "/home/lista-espera-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio da Lista de espera digital da Steevanz: numa barbearia, sábado de manhã, a espera é longa; o cliente lê o QR à entrada, vê no telemóvel quanto falta e, quando chega a vez, o telemóvel avisa «É a sua vez».",
+      en: "Steevanz digital waitlist ad: at a barbershop on a Saturday morning the wait is long; the customer scans the QR at the entrance, sees on the phone how long is left and, when it's their turn, the phone says «It's your turn».",
+      es: "Anuncio de la Lista de espera digital de Steevanz: en una barbería, un sábado por la mañana, la espera es larga; el cliente lee el QR en la entrada, ve en el móvil cuánto falta y, cuando llega su turno, el móvil avisa «Es su turno».",
+      fr: "Publicité de la liste d'attente digitale Steevanz : dans un salon de barbier, un samedi matin, l'attente est longue ; le client scanne le QR code à l'entrée, voit sur son téléphone combien de temps il reste et, quand c'est son tour, le téléphone affiche «C'est votre tour».",
+      de: "Werbespot der digitalen Warteliste von Steevanz: In einem Barbershop ist die Wartezeit an einem Samstagmorgen lang; der Kunde scannt den QR-Code am Eingang, sieht auf dem Handy, wie lange es noch dauert, und wenn er dran ist, meldet das Handy „Sie sind dran“.",
+      it: "Spot della lista d'attesa digitale di Steevanz: in un barbiere, il sabato mattina, l'attesa è lunga; il cliente inquadra il QR all'ingresso, vede sul telefono quanto manca e, quando arriva il suo turno, il telefono avvisa «Tocca a Lei».",
+    },
+  },
+  bookings: {
+    src: "/home/reservas-anuncio-720.mp4",
+    poster: "/home/reservas-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio do Sistema de reservas online da Steevanz: num restaurante cheio numa sexta à noite, o telefone não para de tocar; às 23h uma cliente reserva em 30 segundos pelo link do Instagram, recebe a confirmação, guarda a reserva no calendário e recebe o lembrete por email.",
+      en: "Steevanz online booking system ad: at a full restaurant on a Friday night the phone keeps ringing; at 11 pm a customer books in 30 seconds from the Instagram link, gets the confirmation, adds the booking to her calendar and receives the reminder by email.",
+      es: "Anuncio del Sistema de reservas online de Steevanz: en un restaurante lleno un viernes por la noche, el teléfono no para de sonar; a las 23 h una clienta reserva en 30 segundos desde el enlace de Instagram, recibe la confirmación, guarda la reserva en el calendario y recibe el recordatorio por email.",
+      fr: "Publicité du système de réservation en ligne Steevanz : dans un restaurant plein un vendredi soir, le téléphone n'arrête pas de sonner ; à 23 h, une cliente réserve en 30 secondes depuis le lien Instagram, reçoit la confirmation, ajoute la réservation à son calendrier et reçoit le rappel par e-mail.",
+      de: "Werbespot des Online-Reservierungssystems von Steevanz: In einem vollen Restaurant klingelt an einem Freitagabend ununterbrochen das Telefon; um 23 Uhr reserviert eine Kundin in 30 Sekunden über den Instagram-Link, erhält die Bestätigung, trägt die Reservierung in ihren Kalender ein und bekommt die Erinnerung per E-Mail.",
+      it: "Spot del sistema di prenotazione online di Steevanz: in un ristorante pieno il venerdì sera il telefono non smette di squillare; alle 23 una cliente prenota in 30 secondi dal link di Instagram, riceve la conferma, salva la prenotazione nel calendario e riceve il promemoria via email.",
+    },
+  },
+  "ai-chatbot": {
+    src: "/home/chatbot-anuncio-720.mp4",
+    poster: "/home/chatbot-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio do Chatbot com IA da Steevanz: num alojamento local, à noite, o anfitrião dorme e os hóspedes chegam; perguntam a password do WiFi em inglês e onde estacionar em francês, e o assistente responde em segundos na língua de cada um; um chuveiro avariado passa para a equipa, com um resumo.",
+      en: "Steevanz AI chatbot ad: at a holiday rental at night the host is asleep and the guests arrive; they ask for the WiFi password in English and where to park in French, and the assistant answers in seconds in each one's language; a broken shower is passed on to the team, with a summary.",
+      es: "Anuncio del Chatbot con IA de Steevanz: en un alojamiento turístico, de noche, el anfitrión duerme y llegan los huéspedes; preguntan la contraseña del wifi en inglés y dónde aparcar en francés, y el asistente responde en segundos en el idioma de cada uno; una ducha averiada pasa al equipo, con un resumen.",
+      fr: "Publicité du chatbot IA Steevanz : dans une location de vacances, la nuit, l'hôte dort et les voyageurs arrivent ; ils demandent le mot de passe du wifi en anglais et où se garer en français, et l'assistant répond en quelques secondes dans la langue de chacun ; une douche en panne est transmise à l'équipe, avec un résumé.",
+      de: "Werbespot des KI-Chatbots von Steevanz: In einer Ferienwohnung schläft nachts der Gastgeber, und die Gäste kommen an; sie fragen auf Englisch nach dem WLAN-Passwort und auf Französisch nach einem Parkplatz, und der Assistent antwortet in Sekunden in der Sprache jedes Gastes; eine kaputte Dusche geht mit einer Zusammenfassung an das Team.",
+      it: "Spot del chatbot con IA di Steevanz: in una casa vacanze, di notte, l'host dorme e arrivano gli ospiti; chiedono la password del wifi in inglese e dove parcheggiare in francese, e l'assistente risponde in pochi secondi nella lingua di ciascuno; una doccia rotta passa al personale, con un riepilogo.",
+    },
+  },
 };
 
 /** The video's buttons. */

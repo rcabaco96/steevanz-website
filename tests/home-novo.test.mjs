@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { businessCardBandCopy, goals, guideBandCopy, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { businessCardBandCopy, goals, guideBandCopy, homeAdBands, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
 import { productAds } from "../src/content/product-ads.ts";
+import { getProduct } from "../src/content/products.ts";
 
 // The home page, «/» (pt) and «/en» (en): routes, components and content.
 const dir = "src/components/novo";
@@ -67,16 +68,22 @@ describe("home page («/» and «/en»)", () => {
     assert.match(readFileSync(join(dir, "MenuShowcase.tsx"), "utf8"), /<AdVideo/);
     assert.match(readFileSync(join(dir, "LoyaltyBanner.tsx"), "utf8"), /<AdVideo/);
     assert.match(readFileSync(join(dir, "AdBand.tsx"), "utf8"), /<AdVideo/);
-    for (const id of ["digital-menu", "loyalty", "guest-guide", "business-card"]) assert.ok(productAds[id], id);
+    for (const id of ["digital-menu", "loyalty", "guest-guide", "business-card", "keychain", "waitlist", "bookings", "ai-chatbot"]) assert.ok(productAds[id], id);
     assert.match(readFileSync("src/components/pages/ProductPage.tsx", "utf8"), /<AdVideo/);
     assert.match(readFileSync("src/components/media/AdVideo.tsx", "utf8"), /preload="none"/);
     assert.match(readFileSync(join(dir, "PlatesBanner.tsx"), "utf8"), /<HeroTapScene/);
   });
 
+  it("shows the waitlist and bookings prices as final, no longer «Preço indicativo» (owner, 2026-10-21)", () => {
+    for (const id of ["waitlist", "bookings"]) assert.equal(getProduct(id).priceIsProvisional, false, id);
+    assert.equal(getProduct("waitlist").priceFrom, 19);
+    assert.equal(getProduct("bookings").priceFrom, 29);
+  });
+
   it("has no Dolci e Salati case section and no «fidelização» in the loyalty band", () => {
     for (const { path, text } of pageFiles) assert.doesNotMatch(text, /novo-case|copy\.dolci/, path);
     assert.doesNotMatch(JSON.stringify(loyaltyCopy), /fideliza|\d\s*€|€\s*\d/i);
-    for (const copy of [guideBandCopy, businessCardBandCopy]) assert.doesNotMatch(JSON.stringify(copy), /fideliza|\d\s*€|€\s*\d/i);
+    for (const { copy } of homeAdBands) assert.doesNotMatch(JSON.stringify(copy), /fideliza|\d\s*€|€\s*\d/i);
   });
 
   it("never shows a «published» toast in the plate scenes (the stars on the form fill: owner, 2026-10-20)", () => {
@@ -92,12 +99,23 @@ describe("home page («/» and «/en»)", () => {
     const home = readFileSync(join(dir, "NovoHome.tsx"), "utf8");
     assert.doesNotMatch(home, /PricesFaq|novo-prices/);
     for (const page of ["src/app/(pt)/page.tsx", "src/app/(intl)/[lang]/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
-    // Section order: clients, plates, Menu digital, loyalty card, goals (right below the loyalty card: owner rule),
-    // guest guide, business card, sectors, how we work, final call.
-    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", 'productId="guest-guide"', 'productId="business-card"', 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
+    // Section order: clients, plates, Menu digital, loyalty card, the bands with an ad video (homeAdBands), then the
+    // goals, below every band with a video (owner rule), sectors, how we work, final call.
+    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", "{homeAdBands", "<AdBand", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
     const positions = order.map((needle) => home.indexOf(needle));
     assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
     assert.deepEqual([...positions].sort((a, b) => a - b), positions);
+    assert.equal((home.match(/<AdBand\b/g) ?? []).length, 1, "every ad band comes from homeAdBands");
+    // The bands with an ad, in order (a band shows only when its product has an ad in product-ads.ts).
+    assert.deepEqual(
+      homeAdBands.map((band) => band.productId),
+      ["guest-guide", "business-card", "keychain", "waitlist", "bookings", "ai-chatbot"],
+    );
+    const shown = homeAdBands.filter((band) => productAds[band.productId]).map((band) => band.productId);
+    assert.deepEqual(shown, ["guest-guide", "business-card", "keychain", "waitlist", "bookings", "ai-chatbot"]);
+    assert.equal(new Set(homeAdBands.map((band) => band.headingId)).size, homeAdBands.length, "unique heading ids");
+    assert.match(home, /tone=\{index % 2 === 0 \? "gold" : "rose"\}/);
+    assert.match(home, /media=\{index % 2 === 0 \? "left" : "right"\}/);
   });
 
   it("is the same page at «/en», «/es», «/fr», «/de» and «/it», and the old home is gone (owner, 2026-10-20)", () => {
@@ -136,7 +154,8 @@ describe("home page («/» and «/en»)", () => {
     assert.match(loyaltyCopy.pt.cta, /^Conhecer /);
     assert.equal(guideBandCopy.pt.cta, "Conhecer o guia");
     assert.equal(businessCardBandCopy.pt.cta, "Conhecer os cartões");
-    for (const copy of [guideBandCopy, businessCardBandCopy]) {
+    for (const { copy } of homeAdBands) {
+      assert.match(copy.pt.cta, /^Conhecer /);
       assert.match(copy.en.cta, /^Discover /);
       assert.match(copy.it.cta, /^Scopra /);
       assert.equal(copy.en.vat, "+ VAT");

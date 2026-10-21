@@ -273,7 +273,8 @@ export const products: Product[] = [
     priceFrom: 29,
     priceBilling: "monthly",
     priceQualifier: { pt: "por mês, por estabelecimento", en: "per month, per venue", es: "al mes, por establecimiento", fr: "par mois, par établissement", de: "pro Monat, pro Betrieb", it: "al mese, per locale" },
-    priceIsProvisional: true,
+    // Accepted by the owner (2026-10-21): no longer «Preço indicativo».
+    priceIsProvisional: false,
     sectors: ["restaurants", "beauty", "clinics"],
     related: ["waitlist", "ai-voice", "ai-chatbot"],
     contextPhoto: "salon-chair",
@@ -286,7 +287,8 @@ export const products: Product[] = [
     priceFrom: 19,
     priceBilling: "monthly",
     priceQualifier: { pt: "por mês, por estabelecimento", en: "per month, per venue", es: "al mes, por establecimiento", fr: "par mois, par établissement", de: "pro Monat, pro Betrieb", it: "al mese, per locale" },
-    priceIsProvisional: true,
+    // Accepted by the owner (2026-10-21): no longer «Preço indicativo».
+    priceIsProvisional: false,
     sectors: ["restaurants", "clinics", "beauty"],
     related: ["bookings", "google-review-plates", "ai-voice"],
     contextPhoto: "restaurant-busy",

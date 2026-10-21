@@ -28,7 +28,22 @@ cartao-visita-anuncio-720 (.mp4 e .jpg) — home e página do Cartão de visita 
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Fica guardado.» (12 s).
 
-porta-chaves-anuncio-720 (.mp4 e .jpg) — página do Porta-chaves digital (2026-10-21)
+porta-chaves-anuncio-720 (.mp4 e .jpg) — home e página do Porta-chaves digital (2026-10-21, versão 4)
   Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Porta-chaves Digital.mp4»
-  (C:\code\steevanz-ads\saidanuncios-C). Licenças e origem dos clips e da música em
-  C:\code\steevanz-ads\saidanuncios-C\LICENCAS.txt. O poster é o momento do toque (notificação «Abrir no WhatsApp»).
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Um toque.» (notificação «Abrir no WhatsApp»).
+
+lista-espera-anuncio-720 (.mp4 e .jpg) — home e página da Lista de espera digital (2026-10-21)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Lista de Espera Barbearia.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «O cliente vê quanto falta.».
+
+reservas-anuncio-720 (.mp4 e .jpg) — home e página do Sistema de reservas online (2026-10-21)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Reservas Online.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips, dos sons e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Reserva em 30 segundos.».
+
+chatbot-anuncio-720 (.mp4 e .jpg) — home e página do Chatbot com IA (2026-10-21)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Chatbot IA.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Responde em segundos.».

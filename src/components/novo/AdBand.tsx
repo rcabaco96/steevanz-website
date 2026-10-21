@@ -13,8 +13,8 @@ import styles from "./plates.module.css";
 
 // A product band with its ad video (content/product-ads.ts), in the plates and loyalty bands' layout: on a
 // phone the title and lead, then the video, then the points, the price and the button; on a computer the
-// video on one side (`media`) and the text on the other. Used for the «Guia digital do alojamento» and
-// «Cartão de visita digital» bands. Prices come from products.ts, without VAT and with «+ IVA».
+// video on one side (`media`) and the text on the other. Used for every band in content/novo-home.ts (homeAdBands).
+// Prices come from products.ts, without VAT and with «+ IVA».
 
 export function AdBand({
   locale,
