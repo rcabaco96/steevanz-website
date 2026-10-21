@@ -60,6 +60,18 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
       it: "Spot del biglietto da visita digitale di Steevanz: un tocco sul biglietto apre la pagina di contatto e il contatto viene salvato nel telefono.",
     },
   },
+  keychain: {
+    src: "/home/porta-chaves-anuncio-720.mp4",
+    poster: "/home/porta-chaves-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio do Porta-chaves digital da Steevanz: em vez de dizer o número em voz alta ou escrevê-lo num papel, um toque no porta-chaves abre a conversa no WhatsApp e o contacto fica partilhado em privado.",
+      en: "Steevanz digital keychain ad: instead of saying your number out loud or writing it on paper, one tap on the keychain opens the WhatsApp chat and the contact is shared privately.",
+      es: "Anuncio del Llavero digital de Steevanz: en vez de decir el número en voz alta o escribirlo en un papel, un toque en el llavero abre la conversación de WhatsApp y el contacto se comparte en privado.",
+      fr: "Publicité du porte-clés digital Steevanz : au lieu de dire son numéro à voix haute ou de l'écrire sur un papier, un toucher sur le porte-clés ouvre la conversation WhatsApp et le contact est partagé en privé.",
+      de: "Werbespot des digitalen Schlüsselanhängers von Steevanz: statt die Nummer laut zu sagen oder auf einen Zettel zu schreiben, öffnet ein Antippen des Anhängers den WhatsApp-Chat und der Kontakt wird privat geteilt.",
+      it: "Spot del portachiavi digitale di Steevanz: invece di dire il numero ad alta voce o scriverlo su un foglio, un tocco sul portachiavi apre la chat di WhatsApp e il contatto viene condiviso in privato.",
+    },
+  },
 };
 
 /** The video's buttons. */

@@ -27,3 +27,8 @@ cartao-visita-anuncio-720 (.mp4 e .jpg) — home e página do Cartão de visita 
   Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Cartao de Visita.mp4»
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Fica guardado.» (12 s).
+
+porta-chaves-anuncio-720 (.mp4 e .jpg) — página do Porta-chaves digital (2026-10-21)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Porta-chaves Digital.mp4»
+  (C:\code\steevanz-ads\saidanuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saidanuncios-C\LICENCAS.txt. O poster é o momento do toque (notificação «Abrir no WhatsApp»).
