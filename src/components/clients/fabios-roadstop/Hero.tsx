@@ -19,8 +19,9 @@ export function Hero({ copy, links }: HeroProps) {
   const { hero } = copy;
   return (
     <section aria-labelledby="fr-hero-title" className="relative isolate flex min-h-[620px] flex-col overflow-hidden bg-night text-cream [height:100svh]">
-      {/* The film, under a 1950s TV treatment that hides its 720p: duotone, scanlines, grain, vignette. The poster
-          below is the same file as the video's poster (unoptimized: one download, the first frame). */}
+      {/* The film as it is (owner, 2026-10-21: no grain, no scanlines, less darkening), with a light duotone and only
+          the shade the text needs. The poster below is the same file as the video's poster (unoptimized: one
+          download, the first frame). */}
       <div className="absolute inset-0 -z-10">
         <Image
           src={fabios.media.poster}
@@ -31,16 +32,12 @@ export function Hero({ copy, links }: HeroProps) {
           priority
           fetchPriority="high"
           unoptimized
-          className="absolute inset-0 h-full w-full scale-[1.04] object-cover lg:blur-[1.2px]"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <HeroVideo label={hero.videoLabel} pauseLabel={hero.pause} playLabel={hero.play} />
-        <div className="absolute inset-0 bg-[linear-gradient(115deg,#1f9bd7_0%,transparent_42%,transparent_60%,#e2312b_100%)] opacity-45 mix-blend-soft-light" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(13_23_38/0.72)_0%,rgb(13_23_38/0.15)_30%,rgb(13_23_38/0.35)_55%,rgb(13_23_38/0.96)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_40%,transparent_45%,rgb(0_0_0/0.55)_100%)]" />
-        <div className="fr-scanlines" />
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="fr-grain" />
-        </div>
+        <HeroVideo label={hero.videoLabel} />
+        <div className="absolute inset-0 bg-[linear-gradient(115deg,#1f9bd7_0%,transparent_42%,transparent_60%,#e2312b_100%)] opacity-25 mix-blend-soft-light" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(13_23_38/0.5)_0%,rgb(13_23_38/0.05)_28%,rgb(13_23_38/0.2)_55%,rgb(13_23_38/0.88)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_40%,transparent_45%,rgb(0_0_0/0.3)_100%)]" />
       </div>
 
       <HeroParallax className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end px-4 pt-24 pb-28 sm:px-8 sm:pb-32 lg:pb-36">

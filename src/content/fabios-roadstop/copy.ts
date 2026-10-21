@@ -30,8 +30,6 @@ export interface FabiosCopy {
     badge: string;
     craving: string;
     videoLabel: string;
-    pause: string;
-    play: string;
   };
   marquee: string[];
   dishes: { eyebrow: string; title: string; titleScript: string; intro: string; items: FabiosDish[]; cta: string };
@@ -140,8 +138,6 @@ const pt: FabiosCopy = {
     badge: "Cozinha aberta todo o dia ✦ All day kitchen ✦ ",
     craving: "Hoje apetecem-me",
     videoLabel: "Vídeo do restaurante: amigos à mesa, hambúrgueres no cesto e um brinde com batidos",
-    pause: "Pausar o vídeo",
-    play: "Continuar o vídeo",
   },
   marquee: ["Panquecas", "Hambúrgueres", "Batidos", "Cocktails", "Hot dogs", "Cozinha aberta todo o dia"],
   dishes: {
@@ -335,8 +331,6 @@ const en: FabiosCopy = {
     badge: "All day kitchen ✦ Cozinha aberta todo o dia ✦ ",
     craving: "Today I'm craving",
     videoLabel: "Video of the restaurant: friends at a table, burgers in baskets and a toast with milkshakes",
-    pause: "Pause the video",
-    play: "Play the video",
   },
   marquee: ["Pancakes", "Burgers", "Milkshakes", "Cocktails", "Hot dogs", "All-day kitchen"],
   dishes: {
