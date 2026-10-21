@@ -57,6 +57,9 @@ Learned over the Menu digital, Sites and Cartão de cliente ads (2026-10-16/17).
   (3D/graphic on the brand background), or flat on a real surface with nothing touching it. Hands only when the
   footage is real and untouched (or real footage of our real product).
 - Product variants that add nothing to the story (the «com argola / em tag» shot).
+- Phones sitting low with a big empty gap under the title («os telemóveis estão muito para baixo», 2026-10-21). In
+  graphic phone shots the title and the phone are one centred group: title ~22–26 % from the top, phone starting
+  ~6–8 % of the frame height below it, the group centred in the safe area (Instagram's bottom UI respected).
 
 ## Cartão final
 
