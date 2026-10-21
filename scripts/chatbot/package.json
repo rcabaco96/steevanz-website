@@ -1,0 +1,9 @@
+{
+  "name": "steevanz-chatbot-runner",
+  "private": true,
+  "description": "Only for the computer that runs the WhatsApp assistant (not the site, not Vercel). See README.md.",
+  "dependencies": {
+    "@open-wa/driver-puppeteer": "5.6.6",
+    "@open-wa/wa-automate": "5.6.6"
+  }
+}
