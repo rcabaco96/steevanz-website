@@ -21,6 +21,10 @@ export interface AnswerRequest {
   history: readonly ChatMessage[];
   property: string | null;
   now: Date;
+  /** The bot answering (per-bot ceilings of an outside AI). */
+  botId?: string;
+  /** One conversation (one answer in flight per conversation with an outside AI). */
+  conversationKey?: string;
 }
 
 export interface AnswerResult {

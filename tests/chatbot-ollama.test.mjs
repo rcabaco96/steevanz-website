@@ -57,7 +57,9 @@ describe("chatbot test AI (local Ollama, mocked)", () => {
     assert.match(system.content, /Use ONLY the business information below/);
     assert.match(system.content, /NEVER share door, keybox, alarm or safe codes/);
     assert.match(system.content, /NO_ANSWER/);
-    assert.match(system.content, /never calculate totals, discounts or VAT/);
+    assert.match(system.content, /Never calculate VAT/);
+    assert.match(system.content, /simple arithmetic using only numbers written in the information/);
+    assert.match(system.content, /specific date or holiday that the information does not name/);
     const user = body.messages.at(-1);
     assert.equal(user.role, "user");
     assert.match(user.content, /\[S1\]/);

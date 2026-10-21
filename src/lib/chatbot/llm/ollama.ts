@@ -4,10 +4,10 @@
 // (Ollama, grátis)» is turned on in the admin. It only works where Ollama is reachable (the local
 // runner in scripts/chatbot and `npm run dev`); on Vercel it is disabled and the free mock answers.
 //
-// Grounded: the model sees only the bot's own information and the retrieved entries/document
-// sections, must answer NO_ANSWER otherwise, and the engine's safety rules run before (emergency,
+// Grounded (llm/grounding.ts, shared with Groq): the model sees only the bot's own information and
+// the retrieved entries/document passages, must answer NO_ANSWER otherwise, and the engine's safety rules run before (emergency,
 // codes, medical, hand-off) and after (sanitizeReply). Any error, timeout or busy model → the mock.
-import { contextBlock, contextItems, noAnswer, parseGroundedAnswer, type ContextItem, type FetchLike } from "./grounding.ts";
+import { contextItems, groundedMessages, parseGroundedAnswer, type ContextItem, type FetchLike } from "./grounding.ts";
 import { CallLimiter, limitFromEnv } from "./limiter.ts";
 import { buildSystemPrompt, languageNames } from "./prompt.ts";
 import { ProviderDisabledError, type AnswerProvider, type AnswerRequest, type AnswerResult } from "./types.ts";
@@ -36,28 +36,13 @@ export function ollamaAvailable(env: Record<string, string | undefined>): boolea
 
 /** The request body for POST /api/chat (exported for the tests). */
 export function ollamaRequestBody(request: AnswerRequest, items: readonly ContextItem[], model: string) {
-  const language = languageNames[request.language];
-  const system = [
-    buildSystemPrompt(request.knowledge, request.settings, request.language),
-    "",
-    `If the information below does not answer the customer's message, reply exactly ${noAnswer} and nothing else. Never guess prices, hours, availability or any other fact.`,
-    "After each fact you use, cite its reference in square brackets, e.g. [S1] or [E2]. Never cite anything else.",
-    "Quote prices exactly as written in the information; never calculate totals, discounts or VAT.",
-  ].join("\n");
-  const history = request.history.slice(-6).map((message) => ({
-    role: message.author === "customer" ? "user" : "assistant",
-    content: message.body,
-  }));
+  const system = buildSystemPrompt(request.knowledge, request.settings, request.language);
   return {
     model,
     stream: false,
     keep_alive: "30m",
     options: ollamaOptions,
-    messages: [
-      { role: "system", content: system },
-      ...history,
-      { role: "user", content: `Relevant information:\n${contextBlock(items)}\n\nCustomer message:\n${request.message}\n\nReply in ${language}, in at most 4 short sentences, or ${noAnswer}.` },
-    ],
+    messages: groundedMessages(request, items, system, languageNames[request.language]),
   };
 }
 

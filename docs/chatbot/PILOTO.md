@@ -86,6 +86,35 @@ outra resposta, o assistente responde sem IA e o terminal diz porquê. A IA só 
 assistente; quando não sabe, diz que não tem essa informação e oferece passar à equipa. As regras de
 segurança (112, códigos, passagem para pessoa, limites de 10/hora e 50/dia) continuam iguais.
 
+## IA de teste no site: Groq (opcional, grátis)
+
+O «Experimentar» do site online não tem Ollama. Para testar respostas escritas por IA também aí (e
+no programa do assistente), usa-se o **plano grátis da Groq**:
+
+1. Criar a chave: console.groq.com › entrar › API Keys › Create API Key. **Não pôr cartão nem mudar
+   de plano** (assim nunca há custos).
+2. Pôr nas variáveis de ambiente, nunca no código: na Vercel (Settings › Environment Variables,
+   cifradas) e no `.env.local` do computador:
+   ```
+   GROQ_API_KEY=<a chave>
+   CHATBOT_GROQ_ENABLED=1
+   ```
+   Opcionais: `CHATBOT_GROQ_MODEL` (por omissão `llama-3.3-70b-versatile`), `CHATBOT_GROQ_TIMEOUT_MS`
+   (15000) e os tetos `CHATBOT_GROQ_MAX_PER_MINUTE` (20), `CHATBOT_GROQ_MAX_PER_DAY` (300),
+   `CHATBOT_GROQ_BOT_MAX_PER_MINUTE` (10), `CHATBOT_GROQ_BOT_MAX_PER_DAY` (150),
+   `CHATBOT_GROQ_MAX_TOKENS_PER_MINUTE` (9000) e `CHATBOT_GROQ_MAX_TOKENS_PER_DAY` (80000). Depois de
+   mudar variáveis na Vercel é preciso um novo deploy.
+3. No admin › assistente › Definições, escolher «IA de teste (Groq, grátis)» e guardar. Experimentar
+   em «Experimentar»: por baixo da resposta aparece «IA de teste (Groq, grátis)» ou, se não foi usada,
+   a razão (limite atingido, sem chave, erro, mais de 15 s).
+
+O plano grátis tem limites por minuto e por dia; os nossos tetos ficam bem abaixo (na prática umas
+40–80 respostas de teste por dia). Quando se atingem, ou se a Groq falhar, o assistente responde sem
+IA. **Privacidade:** com a Groq ligada, as mensagens da conversa e os excertos dos documentos são
+enviados à Groq, uma empresa dos EUA: usar só com as suas próprias mensagens de teste, não com
+clientes. As regras de segurança (112, códigos, passagem para pessoa, limites de 10/hora e 50/dia)
+continuam iguais.
+
 ## O que não fazer
 
 - Não ligar o número principal nem números de clientes.

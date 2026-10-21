@@ -40,13 +40,20 @@ export function BotSettingsForm({
   menus,
   bookingSuggestion,
   ollamaAvailableHere,
+  groqEnabledHere,
+  groqKeyHere,
 }: {
   bot: BotRow;
   ollamaAvailableHere: boolean;
+  /** CHATBOT_GROQ_ENABLED=1 on this server (the database allows 'groq'). */
+  groqEnabledHere: boolean;
+  groqKeyHere: boolean;
   establishments: { id: string; name: string }[];
   menus: { id: string; name: string }[];
   bookingSuggestion: string | null;
 }) {
+  // A paid choice ('real') is not offered here: it shows as the free answers.
+  const current = bot.answer_provider === "ollama" || bot.answer_provider === "groq" ? bot.answer_provider : "mock";
   return (
     <ActionForm action={updateBot} resetKey={bot.updated_at} className="flex flex-col gap-6">
       <input type="hidden" name="id" value={bot.id} />
@@ -190,24 +197,60 @@ export function BotSettingsForm({
           Avisar o dono neste WhatsApp quando uma conversa passa para a equipa <span className="font-normal text-subtle">(não usado nos testes com open-wa)</span>
           <input name="alert_number" maxLength={40} inputMode="tel" placeholder="Opcional" defaultValue={bot.alert_number ?? ""} className={input} />
         </label>
-        <div className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted sm:col-span-2">
-          <label className="inline-flex items-center gap-2 font-semibold text-text">
-            <input type="checkbox" name="test_ai" value="1" defaultChecked={bot.answer_provider === "ollama"} className="h-4 w-4 accent-[var(--color-accent)]" />
-            IA de teste local (Ollama, grátis) — só funciona no computador onde corre o assistente
+        <fieldset className="flex flex-col gap-3 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-muted sm:col-span-2">
+          <legend className="sr-only">Quem escreve as respostas</legend>
+          <p className="font-semibold text-text">Quem escreve as respostas</p>
+          <label className="flex items-start gap-2">
+            <input type="radio" name="answer_provider" value="mock" defaultChecked={current === "mock"} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent)]" />
+            <span>
+              <span className="font-semibold text-text">Respostas gratuitas, sem IA</span> — só com a informação e os documentos deste assistente.
+            </span>
           </label>
-          <p>
-            Desligada: o assistente responde só com a informação do negócio, sem IA. Ligada: usa um modelo de IA instalado no próprio computador (Ollama), só com o
-            conhecimento e os documentos deste assistente; nada sai do computador e não tem custos. Se o Ollama não estiver ligado, demorar mais de um minuto ou falhar,
-            volta às respostas gratuitas.
-          </p>
-          {ollamaAvailableHere ? null : (
-            <p className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
-              Este servidor (o site online) não tem o Ollama: aqui, também em «Experimentar», responde sem IA. Para experimentar a IA, use o site no computador (npm run dev)
-              ou o programa do assistente nesse computador.
-            </p>
-          )}
-          <p>Num portátil sem placa gráfica cada resposta pode demorar até um minuto: serve para testes com as suas próprias mensagens, ainda não para clientes.</p>
-        </div>
+          {groqEnabledHere || current === "groq" ? (
+            <label className="flex items-start gap-2">
+              <input type="radio" name="answer_provider" value="groq" defaultChecked={current === "groq"} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent)]" />
+              <span className="flex flex-col gap-1">
+                <span>
+                  <span className="font-semibold text-text">IA de teste (Groq, grátis)</span> — funciona também aqui no site, em «Experimentar».
+                </span>
+                <span>
+                  Usa o plano grátis da Groq, que tem limites por minuto e por dia; quando se atingem, ou se a Groq falhar ou demorar mais de 15 segundos, volta às
+                  respostas gratuitas e «Experimentar» diz porquê. Nunca usa um plano pago. A mensagem do cliente, as últimas mensagens da conversa e os excertos dos
+                  documentos são enviados à Groq, uma empresa dos EUA, para escrever a resposta: serve para testes com as suas próprias mensagens, ainda não para
+                  clientes.
+                </span>
+                {!groqEnabledHere ? (
+                  <span className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+                    A IA de teste Groq está desligada neste servidor (falta CHATBOT_GROQ_ENABLED=1): responde sem IA.
+                  </span>
+                ) : !groqKeyHere ? (
+                  <span className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+                    Falta a chave GROQ_API_KEY neste servidor: até ser posta, responde sem IA.
+                  </span>
+                ) : null}
+              </span>
+            </label>
+          ) : null}
+          <label className="flex items-start gap-2">
+            <input type="radio" name="answer_provider" value="ollama" defaultChecked={current === "ollama"} className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent)]" />
+            <span className="flex flex-col gap-1">
+              <span>
+                <span className="font-semibold text-text">IA de teste local (Ollama)</span> — só funciona no computador onde corre o assistente.
+              </span>
+              <span>
+                Usa um modelo de IA instalado no próprio computador, só com o conhecimento e os documentos deste assistente; nada sai do computador e não tem custos.
+                Se o Ollama não estiver ligado, demorar mais de um minuto ou falhar, volta às respostas gratuitas. Num portátil sem placa gráfica cada resposta pode
+                demorar até um minuto.
+              </span>
+              {ollamaAvailableHere ? null : (
+                <span className="rounded-lg border border-gold/40 bg-gold-soft px-3 py-2 text-gold-text">
+                  Este servidor (o site online) não tem o Ollama: aqui, também em «Experimentar», responde sem IA. Para experimentar com o Ollama, use o site no
+                  computador (npm run dev) ou o programa do assistente nesse computador.
+                </span>
+              )}
+            </span>
+          </label>
+        </fieldset>
       </fieldset>
 
       <div>

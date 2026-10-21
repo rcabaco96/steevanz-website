@@ -10,6 +10,7 @@ import { demoBots, type DemoBotKey } from "./demo";
 import { documentLimits, htmlToText, splitIntoChunks, type DocumentKind } from "./documents";
 import { extractDocument, ExtractError, isPrivateHost } from "./extract";
 import { respond } from "./engine";
+import { groqEnabled } from "./llm/groq";
 import { chooseProvider } from "./llm/providers";
 import { conversationStateFrom } from "./rows";
 import { ChatbotNotReadyError, failOn, loadBotProfile } from "./supabase-store";
@@ -85,6 +86,20 @@ export async function createBot(_state: ActionState, formData: FormData): Promis
   return result;
 }
 
+/**
+ * The answer writer chosen in Definições: free answers (default), the local Ollama, or Groq's free
+ * tier — Groq only while CHATBOT_GROQ_ENABLED=1 (set once the migration that allows 'groq' is applied).
+ */
+function answerProviderFrom(formData: FormData): "mock" | "ollama" | "groq" {
+  const choice = value(formData, "answer_provider");
+  if (choice === "ollama") return "ollama";
+  if (choice === "groq") {
+    if (!groqEnabled(process.env)) throw new ChatbotMessage("A IA de teste Groq ainda não está ativa neste servidor (falta CHATBOT_GROQ_ENABLED=1).");
+    return "groq";
+  }
+  return "mock";
+}
+
 export async function updateBot(_state: ActionState, formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const botId = id(formData);
@@ -132,12 +147,13 @@ export async function updateBot(_state: ActionState, formData: FormData): Promis
       auto_resume_minutes: autoResume,
       alert_number: optional(formData, "alert_number", 40),
       retention_days: retention,
-      // «IA de teste local (Ollama, grátis)»: off unless ticked. Never touches the paid switch.
-      answer_provider: value(formData, "test_ai") === "1" ? "ollama" : "mock",
+      // Test AI: off («mock») unless chosen. Never touches the paid switch.
+      answer_provider: answerProviderFrom(formData),
     };
     const { error } = await createServiceClient().from("chatbot_bots").update(update).eq("id", botId);
     if (error?.code === "23505") throw new ChatbotMessage("Esse número de WhatsApp já está noutro assistente.");
     if (error?.code === "23514" && update.answer_provider === "ollama") throw new ChatbotMessage("Para ligar a IA de teste falta aprovar e aplicar a migração 20261021130000_chatbot_test_ai.sql.");
+    if (error?.code === "23514" && update.answer_provider === "groq") throw new ChatbotMessage("Para ligar a IA de teste Groq falta aprovar e aplicar a migração 20261021150000_chatbot_groq.sql.");
     failOn(error, "updateBot");
     refresh(botId);
     return { ok: true, message: "Definições guardadas." };
@@ -280,12 +296,20 @@ export async function testChat(state: TestChatState, formData: FormData): Promis
   const conversation = previous ? conversationStateFrom({ state: previous, mode: previous.mode === "human" ? "human" : "bot" }) : newConversationState();
   const now = Date.now();
   const history: ChatMessage[] = state.turns.slice(-20).map((turn, index) => ({ author: turn.author === "system" ? "system" : turn.author, body: turn.body, at: now - (state.turns.length - index) * 1000 }));
-  // The local test AI (Ollama) only when turned on for this bot and Ollama runs on this computer (not
-  // on Vercel: there it falls back to the free answers); the paid provider never runs here.
+  // The test AI only when turned on for this bot: Ollama where it runs on this computer (not on
+  // Vercel: there the free answers reply), Groq's free tier also here on the site (capped; any limit,
+  // error or timeout → the free answers, with the reason in the note). The paid provider never runs here.
   const provider = chooseProvider({ choice: answerProvider, paidAllowed: false, env: process.env });
-  const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now) }, provider);
+  // One answer at a time per bot here (the test AI's «one in flight per conversation»).
+  const result = await respond({ bot: tried, conversation, history, message: { body: message, at: now }, now: new Date(now), conversationKey: `experimentar:${tried.id}` }, provider);
   const sources = result.sources.map((source) => ({ title: source.documentTitle, heading: source.heading }));
-  const by = result.provider?.startsWith("ollama") ? "IA de teste local (Ollama)" : result.provider ? "Respostas gratuitas" : null;
+  const by = result.provider?.startsWith("ollama")
+    ? "IA de teste local (Ollama)"
+    : result.provider?.startsWith("groq")
+      ? "IA de teste (Groq, grátis)"
+      : result.provider
+        ? "Respostas gratuitas"
+        : null;
   const replies: TestTurn[] = result.replies.map((body, index) =>
     index === result.replies.length - 1 ? { author: "bot" as const, body, ...(sources.length ? { sources } : {}), ...(by ? { by } : {}), ...(result.providerNote ? { note: result.providerNote } : {}) } : { author: "bot" as const, body },
   );

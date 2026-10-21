@@ -53,7 +53,7 @@ function withoutTitlePrefix(text: string): string {
 }
 
 /** The message's words that only say which kind of question it is («quanto custa», «horário»). */
-function intentWords(message: string, intents: readonly Intent[], extra: readonly string[] = []): string[] {
+export function intentWords(message: string, intents: readonly Intent[], extra: readonly string[] = []): string[] {
   const normalized = normalize(message);
   const words = searchWords(message);
   const explained = new Set<string>();
@@ -67,13 +67,13 @@ function intentWords(message: string, intents: readonly Intent[], extra: readonl
   return [...explained];
 }
 
-function allowed(passage: Passage, request: DocumentRequest): boolean {
+export function allowed(passage: Passage, request: Pick<DocumentRequest, "property">): boolean {
   const property = passage.chunk.property?.trim();
   return !request.property || !property || property === request.property;
 }
 
 /** A title or label that introduces what follows («Morada»), not a line of a list («Domingo Fechado» after «Sábado 9:00–18:00»). */
-function isAnchor(passage: Passage): boolean {
+export function isAnchor(passage: Passage): boolean {
   if (!passage.titleLike) return false;
   const previous = passage.siblings[passage.position - 1];
   return !(previous && (previous.price || previous.time));
@@ -153,6 +153,31 @@ export function documentAnswer(request: DocumentRequest, index: KnowledgeIndex):
   return picked ? finish(request, picked) : null;
 }
 
+/** The timetable: the passage with the most days and times and the timetable lines around it (empty: none). */
+export function timetable(passages: readonly Passage[]): Passage[] {
+  let best: Passage | null = null;
+  let bestSignal = 0;
+  for (const passage of passages) {
+    if (passage.question) continue;
+    const signal = hoursSignal(passage);
+    if (signal > bestSignal) [best, bestSignal] = [passage, signal];
+  }
+  if (!best || bestSignal < 2) return [];
+  const chosen = [best];
+  let size = best.text.length;
+  const fits = (passage: Passage | undefined): passage is Passage =>
+    Boolean(passage) && !passage!.question && daysAndTimes(passage!) > 0 && passage!.text.length <= 120 && chosen.length < 7 && size + passage!.text.length <= 450;
+  for (let at = best.position - 1; fits(best.siblings[at]); at--) {
+    chosen.unshift(best.siblings[at]);
+    size += best.siblings[at].text.length + 1;
+  }
+  for (let at = best.position + 1; fits(best.siblings[at]); at++) {
+    chosen.push(best.siblings[at]);
+    size += best.siblings[at].text.length + 1;
+  }
+  return chosen;
+}
+
 /**
  * Opening hours from the documents, for a business without structured hours: the passages about
  * the day or date asked, or the timetable (the passages around the one with the most days and times).
@@ -169,21 +194,8 @@ export function documentHours(request: DocumentRequest, index: KnowledgeIndex): 
     const general = documentAnswer(request, index);
     if (general) return general;
   }
-  let best: Passage | null = null;
-  for (const passage of passages) if (!passage.question && (!best || (signal.get(passage) ?? 0) > (signal.get(best) ?? 0))) best = passage;
-  if (!best || (signal.get(best) ?? 0) < 2) return null;
-  const chosen = [best];
-  let size = best.text.length;
-  const fits = (passage: Passage | undefined): passage is Passage =>
-    Boolean(passage) && !passage!.question && daysAndTimes(passage!) > 0 && passage!.text.length <= 120 && chosen.length < 7 && size + passage!.text.length <= 450;
-  for (let at = best.position - 1; fits(best.siblings[at]); at--) {
-    chosen.unshift(best.siblings[at]);
-    size += best.siblings[at].text.length + 1;
-  }
-  for (let at = best.position + 1; fits(best.siblings[at]); at++) {
-    chosen.push(best.siblings[at]);
-    size += best.siblings[at].text.length + 1;
-  }
+  const chosen = timetable(passages);
+  if (!chosen.length) return null;
   const answer = finish(request, { passages: chosen, joiner: "\n" });
   const first = chosen[0].text;
   return { ...answer, text: answer.text.replace(first, withoutTitlePrefix(first)) };
@@ -221,24 +233,8 @@ export function documentLocation(request: DocumentRequest, index: KnowledgeIndex
   return street && best.text.length > 120 ? { ...answer, text: answer.text.replace(best.text, street[1].trim()) } : answer;
 }
 
-/** At most this many lines of a price list in an overview, and characters. */
-const overviewLimits = { lines: 8, chars: 650 };
-
-/**
- * Services and prices from the documents, for a business without a structured list: the price lines
- * of what was asked («quanto custa a barba à navalha?»), or the first lines of the longest price list
- * («que serviços tem?»). null: nothing priced matches (the general search may still answer).
- */
-export function documentCatalog(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
-  const passages = index.passages.filter((passage) => allowed(passage, request));
-  const priced = passages.filter((passage) => passage.price);
-  if (!priced.length) return null;
-  const query = passageQuery(request.message, intentWords(request.message, ["menu", "price"]));
-  if (query.words.length) {
-    const picked = pick(index, priced, query, { max: 4, maxChars: 450, startBonus: true, minShare: 0.5, ratio: 0.85 });
-    return picked ? finish(request, picked) : null;
-  }
-  // The longest run of price lines (a few other lines in between are allowed: titles, notes).
+/** The longest run of price lines in the passages (a few other lines in between are allowed: titles, notes). */
+export function longestPriceRun(passages: readonly Passage[]): Passage[] {
   let best: Passage[] = [];
   let run: Passage[] = [];
   let gap = 0;
@@ -256,6 +252,27 @@ export function documentCatalog(request: DocumentRequest, index: KnowledgeIndex)
       [run, gap] = [[], 0];
     }
   }
+  return best;
+}
+
+/** At most this many lines of a price list in an overview, and characters. */
+const overviewLimits = { lines: 8, chars: 650 };
+
+/**
+ * Services and prices from the documents, for a business without a structured list: the price lines
+ * of what was asked («quanto custa a barba à navalha?»), or the first lines of the longest price list
+ * («que serviços tem?»). null: nothing priced matches (the general search may still answer).
+ */
+export function documentCatalog(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
+  const passages = index.passages.filter((passage) => allowed(passage, request));
+  const priced = passages.filter((passage) => passage.price);
+  if (!priced.length) return null;
+  const query = passageQuery(request.message, intentWords(request.message, ["menu", "price"]));
+  if (query.words.length) {
+    const picked = pick(index, priced, query, { max: 4, maxChars: 450, startBonus: true, minShare: 0.5, ratio: 0.85 });
+    return picked ? finish(request, picked) : null;
+  }
+  const best = longestPriceRun(passages);
   if (!best.length) return null;
   const first = best[0];
   const before = first.siblings[first.position - 1];

@@ -14,6 +14,7 @@ import { QrCode } from "@/components/modules/shared/QrCode";
 import { requireAdmin } from "@/lib/admin/auth";
 import { ChatbotNotReadyError, getAdminBot, getConversationMessages, listConversations, type AdminBot } from "@/lib/chatbot/admin-store";
 import { formatWeek } from "@/lib/chatbot/hours";
+import { groqEnabled, groqKeyPresent } from "@/lib/chatbot/llm/groq";
 import { ollamaAvailable } from "@/lib/chatbot/llm/ollama";
 import { itemSummary } from "@/lib/chatbot/rows";
 import { siteUrl } from "@/lib/site";
@@ -206,6 +207,8 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
             menus={data.menus}
             bookingSuggestion={establishment ? `${siteUrl}/reservar/${establishment.slug}` : null}
             ollamaAvailableHere={ollamaAvailable(process.env)}
+            groqEnabledHere={groqEnabled(process.env)}
+            groqKeyHere={groqKeyPresent(process.env)}
           />
         </Panel>
       ) : null}

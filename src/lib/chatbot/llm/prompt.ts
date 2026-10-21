@@ -1,6 +1,6 @@
-// The instructions a language model gets: today only the free local test model (llm/ollama.ts, on
-// the owner's own computer, off by default); a paid model only when the owner chooses and pays for
-// one from the site (phase 2). The safety rules are also enforced in code before and after the model
+// The instructions a language model gets: today only the free test models (llm/ollama.ts on the
+// owner's own computer, llm/groq.ts on Groq's free tier; both off by default); a paid model only when
+// the owner chooses and pays for one from the site (phase 2). The safety rules are also enforced in code before and after the model
 // (engine.ts, guardrails.ts), so a model that ignores the prompt still can't leak a door code or skip
 // the hand-off.
 import { formatWeek } from "../hours.ts";

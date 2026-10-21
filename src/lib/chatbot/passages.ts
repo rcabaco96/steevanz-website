@@ -28,6 +28,8 @@ export interface Passage {
   /** All passages of the same document, in order, and this one's place among them. */
   siblings: Passage[];
   position: number;
+  /** Passages cut from the same line or paragraph share this number (a sentence like «Atende de terça a sábado.» belongs with the name before it). */
+  group: number;
   /** Ends with «?»: a question, usually followed by its answer. */
   question: boolean;
   /** Short line without a sentence ending, price or time: a title or a label. */
@@ -180,8 +182,10 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
   }
   close();
 
-  const pieces: { text: string; chunk: KnowledgeChunk }[] = [];
-  for (const group of groups) for (const text of splitPassage(group.text)) pieces.push({ text, chunk: group.chunk });
+  const pieces: { text: string; chunk: KnowledgeChunk; group: number }[] = [];
+  groups.forEach((group, number) => {
+    for (const text of splitPassage(group.text)) pieces.push({ text, chunk: group.chunk, group: number });
+  });
   const cleaned = dropRepeatedCaptions(pieces.map((piece) => piece.text));
   const siblings: Passage[] = [];
   cleaned.forEach((text, index) => {
@@ -194,6 +198,7 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
       chunk: pieces[index].chunk,
       siblings,
       position: siblings.length,
+      group: pieces[index].group,
       question: /\?["»”')\]]*$/.test(text) && words.length >= 2,
       titleLike: isTitleLike(text),
       price: pricePattern.test(text),

@@ -41,7 +41,7 @@ export interface BotRow {
   time_zone: string;
   properties: string[];
   auto_resume_minutes: number | null;
-  answer_provider: "mock" | "ollama" | "real";
+  answer_provider: "mock" | "ollama" | "groq" | "real";
   paid_answers_allowed: boolean;
   alert_number: string | null;
   retention_days: number;

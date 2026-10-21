@@ -121,7 +121,7 @@ export function createRuntime(deps: RuntimeDeps) {
     }
 
     const result = await respond(
-      { bot, conversation: conversation.state, history: conversation.history, message: { body: message.body, at: message.at, kind: message.kind === "text" ? "text" : "media" }, now: new Date(now), index },
+      { bot, conversation: conversation.state, history: conversation.history, message: { body: message.body, at: message.at, kind: message.kind === "text" ? "text" : "media" }, now: new Date(now), index, conversationKey: conversation.id },
       provider,
     );
     // The test AI was skipped (Ollama not running, too slow, busy…): the free answers replied instead.

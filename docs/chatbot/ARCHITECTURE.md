@@ -1,8 +1,8 @@
 # Assistente de IA no WhatsApp: arquitetura (fase 1)
 
 Estado em 2026-10-21. Ramo `chatbot`. Nada disto gasta dinheiro: não há chamadas a modelos de IA
-pagos, nem à API paga do WhatsApp (a IA de teste corre grátis no próprio computador, com o Ollama). As
-três migrações do assistente foram aplicadas a 2026-10-21, com autorização do dono.
+pagos, nem à API paga do WhatsApp (as IAs de teste são grátis: o Ollama no próprio computador e o
+plano grátis da Groq). As migrações do assistente foram aplicadas a 2026-10-21, com autorização do dono.
 
 ## 1. O que o site promete (e o sistema tem de cumprir, nem mais nem menos)
 
@@ -41,7 +41,7 @@ src/lib/chatbot/runtime.ts  ── fila por conversa, duplicados, eco das própr
 src/lib/chatbot/engine.ts   ── língua → intenções → regras fixas de segurança → resposta → filtro final
    │        ├─ knowledge.ts  pesquisa grátis (palavras + «conceitos» nas 6 línguas)
    │        ├─ hours.ts      aberto agora / próxima abertura / semana por extenso
-   │        └─ llm/          AnswerProvider: mock (hoje) | ollama (teste local) | real (desligado)
+   │        └─ llm/          AnswerProvider: mock (hoje) | ollama (teste local) | groq (teste, grátis) | real (desligado)
    ▼
 src/lib/chatbot/supabase-store.ts ── conversas, mensagens, estado da sessão (QR) no Supabase
    ▲
@@ -166,12 +166,8 @@ computador).
   de cada vez por processo: se já estiver a escrever outra, essa mensagem leva a resposta gratuita.
   Tetos para não prender o computador: 10 pedidos/min e 500/dia (`CHATBOT_OLLAMA_MAX_PER_MINUTE`,
   `CHATBOT_OLLAMA_MAX_PER_DAY`). Uma resposta cortada pelo limite de tokens perde a frase incompleta.
-- **Ancorada** (`llm/grounding.ts`): o modelo só vê a informação do assistente e as entradas/secções
-  encontradas pela pesquisa BM25 (até 5 entradas de ≤ 800 caracteres e 3 secções de ≤ 1200),
-  numeradas [E1]/[S1]; tem de responder `NO_ANSWER` quando não estiver lá (→ «não tenho essa
-  informação» e oferta de passar à equipa); nunca adivinha preços, horários nem factos; cita os
-  preços como estão escritos, sem calcular IVA. As referências viram a fonte mostrada em
-  «Experimentar». Responde na língua do cliente (pt, en, es, fr, de, it).
+- **Ancorada** (`llm/grounding.ts`, igual para o Ollama e para a Groq — ver «O que a IA recebe»
+  abaixo).
 - As regras fixas correm antes (emergência → 112, códigos, médico, passagem para pessoa: o modelo nem
   é chamado) e depois (`sanitizeReply`). Ollama desligado, modelo em falta, mais de 60 s, ocupado ou
   teto atingido → respostas gratuitas, com a razão visível em «Experimentar» e no registo do programa.
@@ -182,17 +178,75 @@ computador).
   senão `ollama serve`). Confirmar com `curl http://127.0.0.1:11434/api/tags`.
 - O fornecedor pago para clientes (Anthropic ou outro) continua um marcador desligado.
 
+### IA de teste no site: Groq, plano grátis (`llm/groq.ts`)
+
+Escolha do dono (2026-10-21): o «Experimentar» do admin corre na Vercel, onde o Ollama não existe;
+para testar IA também no site usa-se o **plano grátis da Groq** (API compatível com a da OpenAI).
+
+- **Desligada por omissão.** Liga-se por assistente no admin (Definições › «IA de teste (Groq,
+  grátis)»). O admin só mostra e só grava esta opção com `CHATBOT_GROQ_ENABLED=1` no servidor (posto
+  depois de aplicada a migração que aceita `groq`); tirar a variável também desliga a Groq na hora
+  (responde o mock e «Experimentar» diz porquê).
+- Pedido: `POST https://api.groq.com/openai/v1/chat/completions`, `Authorization: Bearer
+  $GROQ_API_KEY`, modelo `CHATBOT_GROQ_MODEL` (por omissão `llama-3.3-70b-versatile`, modelo de
+  produção da Groq), `stream: false`, temperatura 0,2, no máximo 220 tokens por resposta, limite de
+  **15 s** (`CHATBOT_GROQ_TIMEOUT_MS`, máx. 30 s). Sem novas tentativas.
+- **Limites.** O plano grátis da Groq tem limites por organização (para o `llama-3.3-70b-versatile`,
+  cerca de 30 pedidos/min, 1000/dia, 12 000 tokens/min e 100 000 tokens/dia; os valores exatos da
+  conta estão em console.groq.com/settings/limits). Os nossos tetos ficam bem abaixo, por processo
+  (o programa do assistente, ou cada instância do site na Vercel): 20 pedidos/min e 300/dia
+  (`CHATBOT_GROQ_MAX_PER_MINUTE`, `CHATBOT_GROQ_MAX_PER_DAY`), por assistente 10/min e 150/dia
+  (`CHATBOT_GROQ_BOT_MAX_PER_MINUTE`, `CHATBOT_GROQ_BOT_MAX_PER_DAY`) e 9000 tokens/min e 80 000/dia
+  (`CHATBOT_GROQ_MAX_TOKENS_PER_MINUTE`, `CHATBOT_GROQ_MAX_TOKENS_PER_DAY`; cada pedido gasta
+  ~1000–2000 tokens, por isso na prática são umas 40–80 respostas de teste por dia). Uma resposta de
+  cada vez por conversa (em «Experimentar», por assistente).
+- **Nunca pago e nunca em ciclo.** HTTP 429 → respostas gratuitas e a Groq fica em pausa o tempo que
+  pedir (`retry-after`, por omissão 60 s, máx. 1 h). Uma resposta a falar de pagamento/plano pago
+  (ou HTTP 402) desliga a Groq até ao próximo arranque; uma chave recusada (401) também. Qualquer
+  outro erro, falta de ligação, mais de 15 s ou falta de `GROQ_API_KEY` → respostas gratuitas, com a
+  razão em «Experimentar» e no registo do programa. Não pôr cartão na conta da Groq nem mudar de
+  plano: assim não há forma de haver custos.
+- **Privacidade:** com a Groq ligada, a mensagem do cliente, as últimas 6 mensagens da conversa, a
+  informação do negócio e os excertos dos documentos são enviados à Groq, Inc., uma empresa dos EUA,
+  para escrever a resposta. Por isso serve para testes com as mensagens do próprio dono, ainda não
+  para conversas de clientes. As mensagens de emergência, de códigos de acesso e de saúde nem lhe
+  são enviadas (regras fixas antes do modelo), e um código numa resposta é sempre filtrado.
+- **Chave:** console.groq.com › API Keys › Create API Key. Fica só em variáveis de ambiente
+  (`GROQ_API_KEY` na Vercel, cifrada, e no `.env.local`, que não vai para o git); nunca no código.
+- Migração `20261021150000_chatbot_groq.sql` (aplicada a 2026-10-21): só alarga os valores de
+  `answer_provider` para incluir `groq`. Rollback em `supabase/rollbacks/` (assistentes na Groq voltam
+  a `mock`).
+
+### O que a IA recebe (`llm/grounding.ts`, Ollama e Groq)
+
+- Só a informação do assistente (prompt de sistema), a data de hoje e excertos numerados: até 5
+  entradas do conhecimento [E1] e as melhores passagens dos documentos [S1] (`passages.ts`), de **todo
+  o documento**, em ordem de leitura, cada uma com o título da secção entre parênteses («(Combinados)
+  Degradê + barba à navalha 70 min 30 €») e as frases da mesma linha juntas («Rafael Pinto — … Atende
+  de terça a sábado.»). No máximo ~26 passagens e 3800 caracteres.
+- Perguntas de preço: as linhas de preço do que foi perguntado e, se nenhuma corresponder (pergunta
+  noutra língua, «How much is a haircut?»), a própria tabela de preços; mais as linhas de descontos.
+  Perguntas de horário: o horário, os feriados e os fechos. (Um teste com o documento da barbearia
+  mostrou porquê: com 3 secções grandes a IA não via «Corte clássico … 16 €» nem juntava o desconto de
+  estudante ao preço do degradê.)
+- Regras: responder `NO_ANSWER` quando os excertos não chegam (→ «não tenho essa informação» e oferta
+  de passar à equipa); citar [S1]/[E1] (viram as fontes de «Experimentar»); preços como estão
+  escritos; contas simples só com números dos excertos e mostradas («18 € − 2 € = 16 €»), verificando
+  as condições do desconto; **nunca calcular IVA** nem dar valores com IVA; uma data ou feriado que os
+  excertos não nomeiam → «não tenho essa informação para esse dia», sem deduzir pelo dia da semana;
+  responder na língua do cliente (pt, en, es, fr, de, it).
+
 ### Camada de IA (LLM)
 
 - Interface `AnswerProvider` (`llm/types.ts`). Hoje: `mockProvider` (determinístico, grátis) e, para
-  testes, `ollama` (modelo local, grátis, ver acima).
+  testes, `ollama` (modelo local, grátis) e `groq` (plano grátis da Groq), ver acima.
 - `realProviderPlaceholder`: tem a interface mas **não tem implementação** — lança
   `ProviderDisabledError`, o motor regista e responde com o mock. Não lê chaves, não faz pedidos.
 - `chooseProvider` só devolve o marcador se `answer_provider = 'real'` **e**
   `paid_answers_allowed = true` (interruptor do dono no site, a criar na fase 2).
 - `llm/prompt.ts`: o prompt de sistema (regras, tom, informação do negócio, entradas encontradas).
-  Hoje só é enviado ao modelo local de teste (`llm/ollama.ts`, no próprio computador); a nenhum
-  serviço externo. As regras de segurança
+  Hoje só é enviado às IAs de teste: o modelo local (`llm/ollama.ts`, no próprio computador) e, quando
+  escolhida, a Groq (`llm/groq.ts`, plano grátis, empresa dos EUA). As regras de segurança
   continuam no código antes e depois do modelo, por isso um modelo que ignore o prompt continua sem
   conseguir enviar um código da porta nem saltar a passagem para pessoa.
 

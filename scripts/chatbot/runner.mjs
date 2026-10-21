@@ -112,7 +112,9 @@ log(`Assistente «${row.name}» (${row.kind}) · canal ${row.channel_provider} �
 log(
   row.answer_provider === "ollama"
     ? `Respostas: IA de teste local (Ollama em ${process.env.OLLAMA_URL?.trim() || "http://127.0.0.1:11434"}, modelo ${process.env.CHATBOT_OLLAMA_MODEL?.trim() || "qwen2.5:7b"}); se falhar, respostas gratuitas.`
-    : "Respostas: gratuitas, só com a informação do negócio (sem IA).",
+    : row.answer_provider === "groq"
+      ? `Respostas: IA de teste (Groq, grátis, modelo ${process.env.CHATBOT_GROQ_MODEL?.trim() || "llama-3.3-70b-versatile"})${process.env.CHATBOT_GROQ_ENABLED?.trim() === "1" && process.env.GROQ_API_KEY?.trim() ? "" : " — DESLIGADA aqui (falta CHATBOT_GROQ_ENABLED=1 ou GROQ_API_KEY)"}; se falhar ou atingir o limite, respostas gratuitas.`
+      : "Respostas: gratuitas, só com a informação do negócio (sem IA).",
 );
 log(listenOnly ? "Modo: SÓ A OUVIR (não envia nada a ninguém)." : `Modo: responde só a ${allowlist.length} número(s) da lista; máx. 10 respostas/hora e 50/dia.`);
 
@@ -159,8 +161,9 @@ const runtime = createRuntime({
   // The free mock unless the owner chose a real model AND allowed paid answers on the site; even
   // then the real provider is a placeholder that refuses (phase 2) and the mock answers.
   // «IA de teste local (Ollama)» only when turned on for this bot in the admin, answered by Ollama on
-  // this computer (ollama serve); the paid provider is a placeholder that refuses. Any problem, timeout
-  // or Ollama not running → the free answers.
+  // this computer (ollama serve); «IA de teste (Groq, grátis)» likewise, on Groq's free tier, capped.
+  // The paid provider is a placeholder that refuses. Any problem, limit, timeout or Ollama not running
+  // → the free answers.
   provider: chooseProvider({ choice: row.answer_provider, paidAllowed: row.paid_answers_allowed, env: process.env }),
   log,
   // Pilot: no WhatsApp alerts (that would be the bot writing first); the hand-off shows in the admin.
