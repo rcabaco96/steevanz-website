@@ -38,7 +38,7 @@ lista-espera-anuncio-720 (.mp4 e .jpg) — home e página da Lista de espera dig
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «O cliente vê quanto falta.».
 
-reservas-anuncio-720 (.mp4 e .jpg) — home e página do Sistema de reservas online (2026-10-21)
+reservas-anuncio-720 (.mp4 e .jpg) — página do Sistema de reservas online, separador «Restaurante» (2026-10-21; na home até 2026-10-22)
   Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Reservas Online.mp4»
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips, dos sons e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Reserva em 30 segundos.».
@@ -50,5 +50,10 @@ chatbot-anuncio-720 (.mp4 e .jpg) — home e página do Chatbot com IA (2026-10-
 
 placas-avaliacoes-anuncio-720 (.mp4 e .jpg) — página das Placas para avaliações (2026-10-22)
   Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Placas Avaliacoes.mp4»
-  (C:\code\steevanz-ads\saidanuncios-C). Licenças e origem dos clips e da música em
-  C:\code\steevanz-ads\saidanuncios-C\LICENCAS.txt. O poster é o fotograma das 5 estrelas.
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma das 5 estrelas.
+
+reservas-cabeleireiro-anuncio-720 (.mp4 e .jpg) — home e página do Sistema de reservas online, separador «Cabeleireiro» (2026-10-22)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Reservas Online Cabeleireiro.mp4»
+  (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips, dos sons e da música em
+  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Marcação em 30 segundos.».

@@ -3,7 +3,7 @@ import { ArrowRight } from "@/components/icons";
 import { AdVideo } from "@/components/media/AdVideo";
 import { formatEuro } from "@/components/ui/Price";
 import { monthlyExtra, perMonth, type AdBandCopy } from "@/content/novo-home";
-import { adVideoLabels, productAds } from "@/content/product-ads";
+import { adVideoLabels, homeAdVideo, productAds } from "@/content/product-ads";
 import { getProduct } from "@/content/products";
 import type { ProductId } from "@/content/types";
 import { localize, type Locale, type Localized } from "@/lib/i18n";
@@ -33,7 +33,8 @@ export function AdBand({
 }) {
   const copy = localize(localizedCopy, locale);
   const product = getProduct(productId);
-  const ad = productAds[productId]!;
+  // The ad's home video: for a product with more than one, its `homeVariant` (bookings: the hair salon).
+  const ad = homeAdVideo(productAds[productId]!);
   const productHref = href(locale, { key: "product", productId });
   const monthly = monthlyExtra(product);
   const bestPack = product.packs?.reduce((best, pack) => (pack.unitPrice < best.unitPrice ? pack : best));

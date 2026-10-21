@@ -4,7 +4,7 @@ import { photos } from "@/content/media";
 import { getProductCopy } from "@/content/product-copy";
 import { pageLabels, type PageLabels } from "@/content/page-labels";
 import { productExamples, type ProductExamples } from "@/content/product-examples";
-import { adVideoLabels, productAds } from "@/content/product-ads";
+import { adTabsLabel, adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct, type Product } from "@/content/products";
 import { getSector } from "@/content/sectors";
 import type { ProductId } from "@/content/types";
@@ -19,6 +19,7 @@ import { CtaBand } from "@/components/marketing/CtaBand";
 import { ProductCard } from "@/components/marketing/ProductCard";
 import { WebExtras, WebModelosSection, WebRulesSection } from "@/components/marketing/WebProductSections";
 import { AdVideo } from "@/components/media/AdVideo";
+import { AdVideoTabs } from "@/components/media/AdVideoTabs";
 import { Photo } from "@/components/media/Photo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Faq } from "@/components/ui/Faq";
@@ -64,8 +65,10 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   const schemaImage = product.contextPhoto ? photos[product.contextPhoto].src : "/icons/icon-512.png";
   const cartHref = href(locale, { key: "cart" });
   const webId = isWebProductId(productId) ? productId : null;
-  // The product's ad video, when there is one, takes the hero picture's place (content/product-ads.ts).
+  // The product's ad video, when there is one, takes the hero picture's place (content/product-ads.ts); with
+  // more than one (e.g. the bookings: restaurant and hair salon), tabs above the video.
   const ad = productAds[productId];
+  const adTabs = ad?.variants && ad.variants.length > 1 ? ad.variants : null;
   const cartLabels = { add: localizePartial(cartCopy, locale).add, inCart: localizePartial(cartCopy, locale).inCart, added: localizePartial(cartCopy, locale).addedAnnouncement };
 
   return (
@@ -105,7 +108,13 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
               <p className="max-w-xl text-lg leading-relaxed text-muted">{copy.heroSubtitle}</p>
             </div>
             <div className="flex justify-center lg:col-start-2 lg:row-span-4 lg:row-start-1">
-              {ad ? (
+              {adTabs ? (
+                <AdVideoTabs
+                  variants={adTabs.map((variant) => ({ id: variant.id, tab: localize(variant.tab, locale), src: variant.src, poster: variant.poster, label: localize(variant.label, locale) }))}
+                  label={localize(adTabsLabel, locale)}
+                  copy={localize(adVideoLabels, locale)}
+                />
+              ) : ad ? (
                 <AdVideo src={ad.src} poster={ad.poster} label={localize(ad.label, locale)} copy={localize(adVideoLabels, locale)} />
               ) : (
                 <ProductVisual product={product} locale={locale} />

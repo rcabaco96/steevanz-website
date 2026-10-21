@@ -11,7 +11,57 @@ export interface ProductAd {
   /** The length, rounded to whole seconds (shown on the «Ver o vídeo (27 s)» buttons; tests/home-novo checks it against the file). */
   seconds: number;
   label: Localized<string>;
+  /**
+   * When a product has more than one ad (e.g. the bookings: a restaurant and a hair salon), every video, in tab
+   * order. The ad's own src/poster/label are the first one's (they stay for everything that shows a single video),
+   * so the product page shows tabs (components/media/AdVideoTabs) and only the active tab's video is loaded.
+   */
+  variants?: ProductAdVariant[];
+  /** The variant the home band shows (content/novo-home.ts, homeAdBands); without it, the first one. */
+  homeVariant?: string;
 }
+
+/** One of a product's ads, with the label of its tab on the product page. */
+export type ProductAdVariant = Omit<ProductAd, "variants" | "homeVariant"> & { id: string; tab: Localized<string> };
+
+/** The video the home band shows: the `homeVariant`, or the ad itself (its first video). */
+export function homeAdVideo(ad: ProductAd): Omit<ProductAd, "variants" | "homeVariant"> {
+  return ad.variants?.find((variant) => variant.id === ad.homeVariant) ?? ad;
+}
+
+/** The online bookings ad in a restaurant (first tab on the product page). */
+const bookingsRestaurant: ProductAdVariant = {
+  id: "restaurant",
+  tab: { pt: "Restaurante", en: "Restaurant", es: "Restaurante", fr: "Restaurant", de: "Restaurant", it: "Ristorante" },
+  src: "/home/reservas-anuncio-720.mp4",
+  poster: "/home/reservas-anuncio-720.jpg",
+  seconds: 27,
+  label: {
+    pt: "Anúncio do Sistema de reservas online da Steevanz: num restaurante cheio numa sexta à noite, o telefone não para de tocar; às 23h uma cliente reserva em 30 segundos pelo link do Instagram, recebe a confirmação, guarda a reserva no calendário e recebe o lembrete por email.",
+    en: "Steevanz online booking system ad: at a full restaurant on a Friday night the phone keeps ringing; at 11 pm a customer books in 30 seconds from the Instagram link, gets the confirmation, adds the booking to her calendar and receives the reminder by email.",
+    es: "Anuncio del Sistema de reservas online de Steevanz: en un restaurante lleno un viernes por la noche, el teléfono no para de sonar; a las 23 h una clienta reserva en 30 segundos desde el enlace de Instagram, recibe la confirmación, guarda la reserva en el calendario y recibe el recordatorio por email.",
+    fr: "Publicité du système de réservation en ligne Steevanz : dans un restaurant plein un vendredi soir, le téléphone n'arrête pas de sonner ; à 23 h, une cliente réserve en 30 secondes depuis le lien Instagram, reçoit la confirmation, ajoute la réservation à son calendrier et reçoit le rappel par e-mail.",
+    de: "Werbespot des Online-Reservierungssystems von Steevanz: In einem vollen Restaurant klingelt an einem Freitagabend ununterbrochen das Telefon; um 23 Uhr reserviert eine Kundin in 30 Sekunden über den Instagram-Link, erhält die Bestätigung, trägt die Reservierung in ihren Kalender ein und bekommt die Erinnerung per E-Mail.",
+    it: "Spot del sistema di prenotazione online di Steevanz: in un ristorante pieno il venerdì sera il telefono non smette di squillare; alle 23 una cliente prenota in 30 secondi dal link di Instagram, riceve la conferma, salva la prenotazione nel calendario e riceve il promemoria via email.",
+  },
+};
+
+/** The online bookings ad in a hair salon (owner, 2026-10-22: second tab on the product page, the one on the home). */
+const bookingsSalon: ProductAdVariant = {
+  id: "salon",
+  tab: { pt: "Cabeleireiro", en: "Hair salon", es: "Peluquería", fr: "Salon de coiffure", de: "Friseursalon", it: "Parrucchiere" },
+  src: "/home/reservas-cabeleireiro-anuncio-720.mp4",
+  poster: "/home/reservas-cabeleireiro-anuncio-720.jpg",
+  seconds: 27,
+  label: {
+    pt: "Anúncio do Sistema de reservas online da Steevanz num cabeleireiro: sábado, o salão cheio e o telefone a tocar enquanto a cabeleireira trabalha; às 23h uma cliente marca pelo link do Instagram «Corte + brushing» com a Ana, terça às 11:00, recebe a confirmação, guarda a marcação no calendário e recebe o lembrete por email.",
+    en: "Steevanz online booking system ad at a hair salon: on a Saturday the salon is full and the phone rings while the hairdresser works; at 11 pm a client books «Cut + blow-dry» with Ana, Tuesday at 11:00, from the Instagram link, gets the confirmation, adds the appointment to her calendar and receives the reminder by email.",
+    es: "Anuncio del Sistema de reservas online de Steevanz en una peluquería: un sábado, el salón lleno y el teléfono sonando mientras la peluquera trabaja; a las 23 h una clienta reserva desde el enlace de Instagram «Corte + brushing» con Ana, el martes a las 11:00, recibe la confirmación, guarda la cita en el calendario y recibe el recordatorio por email.",
+    fr: "Publicité du système de réservation en ligne Steevanz dans un salon de coiffure : un samedi, le salon est plein et le téléphone sonne pendant que la coiffeuse travaille ; à 23 h, une cliente réserve depuis le lien Instagram «Coupe + brushing» avec Ana, mardi à 11:00, reçoit la confirmation, ajoute le rendez-vous à son calendrier et reçoit le rappel par e-mail.",
+    de: "Werbespot des Online-Reservierungssystems von Steevanz in einem Friseursalon: An einem Samstag ist der Salon voll und das Telefon klingelt, während die Friseurin arbeitet; um 23 Uhr bucht eine Kundin über den Instagram-Link „Schneiden + Föhnen“ bei Ana, Dienstag um 11:00 Uhr, erhält die Bestätigung, trägt den Termin in ihren Kalender ein und bekommt die Erinnerung per E-Mail.",
+    it: "Spot del sistema di prenotazione online di Steevanz in un parrucchiere: il sabato il salone è pieno e il telefono squilla mentre la parrucchiera lavora; alle 23 una cliente prenota dal link di Instagram «Taglio + piega» con Ana, martedì alle 11:00, riceve la conferma, salva l'appuntamento nel calendario e riceve il promemoria via email.",
+  },
+};
 
 export const productAds: Partial<Record<ProductId, ProductAd>> = {
   "digital-menu": {
@@ -92,19 +142,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
       it: "Spot della lista d'attesa digitale di Steevanz: in un barbiere, il sabato mattina, l'attesa è lunga; il cliente inquadra il QR all'ingresso, vede sul telefono quanto manca e, quando arriva il suo turno, il telefono avvisa «Tocca a Lei».",
     },
   },
-  bookings: {
-    src: "/home/reservas-anuncio-720.mp4",
-    poster: "/home/reservas-anuncio-720.jpg",
-    seconds: 27,
-    label: {
-      pt: "Anúncio do Sistema de reservas online da Steevanz: num restaurante cheio numa sexta à noite, o telefone não para de tocar; às 23h uma cliente reserva em 30 segundos pelo link do Instagram, recebe a confirmação, guarda a reserva no calendário e recebe o lembrete por email.",
-      en: "Steevanz online booking system ad: at a full restaurant on a Friday night the phone keeps ringing; at 11 pm a customer books in 30 seconds from the Instagram link, gets the confirmation, adds the booking to her calendar and receives the reminder by email.",
-      es: "Anuncio del Sistema de reservas online de Steevanz: en un restaurante lleno un viernes por la noche, el teléfono no para de sonar; a las 23 h una clienta reserva en 30 segundos desde el enlace de Instagram, recibe la confirmación, guarda la reserva en el calendario y recibe el recordatorio por email.",
-      fr: "Publicité du système de réservation en ligne Steevanz : dans un restaurant plein un vendredi soir, le téléphone n'arrête pas de sonner ; à 23 h, une cliente réserve en 30 secondes depuis le lien Instagram, reçoit la confirmation, ajoute la réservation à son calendrier et reçoit le rappel par e-mail.",
-      de: "Werbespot des Online-Reservierungssystems von Steevanz: In einem vollen Restaurant klingelt an einem Freitagabend ununterbrochen das Telefon; um 23 Uhr reserviert eine Kundin in 30 Sekunden über den Instagram-Link, erhält die Bestätigung, trägt die Reservierung in ihren Kalender ein und bekommt die Erinnerung per E-Mail.",
-      it: "Spot del sistema di prenotazione online di Steevanz: in un ristorante pieno il venerdì sera il telefono non smette di squillare; alle 23 una cliente prenota in 30 secondi dal link di Instagram, riceve la conferma, salva la prenotazione nel calendario e riceve il promemoria via email.",
-    },
-  },
+  bookings: { ...bookingsRestaurant, variants: [bookingsRestaurant, bookingsSalon], homeVariant: "salon" },
   "ai-chatbot": {
     src: "/home/chatbot-anuncio-720.mp4",
     poster: "/home/chatbot-anuncio-720.jpg",
@@ -141,4 +179,14 @@ export const adVideoLabels: Localized<{ soundOn: string; soundOff: string; play:
   fr: { soundOn: "Regarder avec le son", soundOff: "Couper le son", play: "Lire la vidéo", close: "Fermer la vidéo" },
   de: { soundOn: "Mit Ton ansehen", soundOff: "Ton aus", play: "Video abspielen", close: "Video schließen" },
   it: { soundOn: "Guardi con l'audio", soundOff: "Disattivi l'audio", play: "Guardi il video", close: "Chiuda il video" },
+};
+
+/** The accessible name of the tabs above a product's videos (components/media/AdVideoTabs). */
+export const adTabsLabel: Localized<string> = {
+  pt: "Escolha o exemplo do anúncio",
+  en: "Choose the ad example",
+  es: "Elija el ejemplo del anuncio",
+  fr: "Choisissez l'exemple de publicité",
+  de: "Wählen Sie das Beispiel des Werbespots",
+  it: "Scelga l'esempio dello spot",
 };
