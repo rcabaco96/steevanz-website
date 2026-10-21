@@ -49,7 +49,7 @@ describe("client sites: host → path (src/lib/client-sites.ts)", () => {
   it("leaves the client's media and the framework's files alone on its domain", () => {
     const host = "www.fabiosroadstop.pt";
     assert.equal(routeClientSite(host, "/_next/static/chunks/a.js").kind, "pass");
-    assert.equal(routeClientSite(host, "/media/clients/fabios-roadstop/hero-loop.mp4").kind, "pass");
+    assert.equal(routeClientSite(host, "/media/clients/fabios-roadstop/hero-loop-hd.mp4").kind, "pass");
   });
 
   it("never shows Steevanz pages on the client's domain", () => {

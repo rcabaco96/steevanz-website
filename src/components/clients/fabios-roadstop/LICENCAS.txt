@@ -21,3 +21,7 @@ Bibliotecas
   CountUp, Magnet, ScrollVelocity, RotatingText e CircularText adaptados em react-bits/, e a ideia do ShinyText
   em CSS (.fr-chrome). A licença permite usá-los num site, também comercial; não permite vender os componentes.
 - country-flag-icons (MIT) para as bandeiras PT/EN.
+
+hero-loop-hd.mp4 / hero-loop-hd-poster.webp (2026-10-21): os mesmos 710 fotogramas de hero-loop.mp4, ampliados 2×
+  um a um com Real-ESRGAN general-x4v3 (BSD-3, local) a partir do video.mp4 original do cliente; 1440×812, H.264,
+  faststart, sem som, 2,9 MB. Nada foi acrescentado nem cortado. O poster é o primeiro fotograma.

@@ -32,10 +32,13 @@ export const fabios = {
   closes: "23:00",
   openDays: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
   media: {
-    /** The client's film, trimmed to 2 s – 30.4 s (no white end card), re-encoded small with faststart. */
-    video: `${media}/hero-loop.mp4`,
+    /**
+     * The client's film, trimmed to 2 s – 30.4 s (no white end card) and upscaled 2× frame by frame (Real-ESRGAN
+     * general-x4v3, same frames and timing; owner approved 2026-10-21): 1440×812, 2.9 MB, faststart.
+     */
+    video: `${media}/hero-loop-hd.mp4`,
     /** The first frame of the hero video. */
-    poster: `${media}/hero-loop-poster.webp`,
+    poster: `${media}/hero-loop-hd-poster.webp`,
     logo: `${media}/logo.webp`,
     logoPng: `${media}/logo.png`,
     sign: `${media}/placa-poste.webp`,
@@ -58,7 +61,7 @@ export const fabios = {
 
 /** The image sizes (px), for next/image and layout without shifts. */
 export const fabiosImageSize = {
-  poster: { width: 720, height: 406 },
+  poster: { width: 1440, height: 812 },
   still: { width: 720, height: 328 },
   logo: { width: 900, height: 593 },
   sign: { width: 900, height: 900 },

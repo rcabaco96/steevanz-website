@@ -28,7 +28,7 @@ export function Hero({ copy, links }: HeroProps) {
           alt=""
           width={fabiosImageSize.poster.width}
           height={fabiosImageSize.poster.height}
-          sizes="720px"
+          sizes="100vw"
           priority
           fetchPriority="high"
           unoptimized
