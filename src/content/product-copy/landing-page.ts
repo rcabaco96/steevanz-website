@@ -112,7 +112,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa no total?",
-        a: "A página custa desde 350 € + IVA, uma vez. Depois, o alojamento e a manutenção custam 15 € + IVA por mês, sem fidelização. O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor.",
+        a: "A página custa desde 500 € + IVA, uma vez. Depois, o alojamento e a manutenção custam 15 € + IVA por mês, sem fidelização. O domínio e o email profissional pagam-se à parte, diretamente ao fornecedor.",
       },
       {
         q: "Preciso de ter os textos e as fotos?",
@@ -155,7 +155,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Email profissional: até 5 caixas, DNS e assinatura", price: "40 €" },
         { name: "Domínio gerido por nós, registado em seu nome", price: "20 €/ano" },
         { name: "Medição de conversões para anúncios, com consentimento", price: "60 €" },
-        { name: "Passar para Website nos 6 meses seguintes", price: "descontamos os 350 €" },
+        { name: "Passar para Website nos 6 meses seguintes", price: "descontamos os 500 €" },
       ],
       monthlyPlan: {
         price: "15 €/mês + IVA",
@@ -278,7 +278,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost in total?",
-        a: "The page costs from €350 + VAT, once. After that, hosting and maintenance cost €15 + VAT a month, with no lock-in. The domain and professional email are paid separately, straight to the provider.",
+        a: "The page costs from €500 + VAT, once. After that, hosting and maintenance cost €15 + VAT a month, with no lock-in. The domain and professional email are paid separately, straight to the provider.",
       },
       {
         q: "Do I need to have the texts and photos?",
@@ -321,7 +321,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Professional email: up to 5 mailboxes, DNS and signature", price: "€40" },
         { name: "Domain managed by us, registered in your name", price: "€20/year" },
         { name: "Conversion tracking for ads, with consent", price: "€60" },
-        { name: "Upgrade to a Website within 6 months", price: "we deduct the €350" },
+        { name: "Upgrade to a Website within 6 months", price: "we deduct the €500" },
       ],
       monthlyPlan: {
         price: "€15/month + VAT",
@@ -446,7 +446,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "¿Cuánto cuesta en total?",
-        a: "La página cuesta desde 350 € + IVA, en un único pago. Después, el hosting y el mantenimiento cuestan 15 € + IVA al mes, sin permanencia. El dominio y el correo profesional se pagan aparte, directamente al proveedor.",
+        a: "La página cuesta desde 500 € + IVA, en un único pago. Después, el hosting y el mantenimiento cuestan 15 € + IVA al mes, sin permanencia. El dominio y el correo profesional se pagan aparte, directamente al proveedor.",
       },
       {
         q: "¿Necesito tener los textos y las fotos?",
@@ -489,7 +489,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Correo profesional: hasta 5 buzones, DNS y firma", price: "40 €" },
         { name: "Dominio gestionado por nosotros, registrado a su nombre", price: "20 €/año" },
         { name: "Medición de conversiones para anuncios, con consentimiento", price: "60 €" },
-        { name: "Pasar a la Web en los 6 meses siguientes", price: "le descontamos los 350 €" },
+        { name: "Pasar a la Web en los 6 meses siguientes", price: "le descontamos los 500 €" },
       ],
       monthlyPlan: {
         price: "15 €/mes + IVA",
@@ -614,7 +614,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Combien cela coûte-t-il au total ?",
-        a: "La page coûte à partir de 350 € + TVA, en une fois. Ensuite, l'hébergement et la maintenance coûtent 15 € + TVA par mois, sans engagement. Le nom de domaine et l'e-mail professionnel sont payés à part, directement au fournisseur.",
+        a: "La page coûte à partir de 500 € + TVA, en une fois. Ensuite, l'hébergement et la maintenance coûtent 15 € + TVA par mois, sans engagement. Le nom de domaine et l'e-mail professionnel sont payés à part, directement au fournisseur.",
       },
       {
         q: "Dois-je avoir les textes et les photos ?",
@@ -657,7 +657,7 @@ export const copy: ProductCopyByLocale = {
         { name: "E-mail professionnel : jusqu'à 5 boîtes, DNS et signature", price: "40 €" },
         { name: "Nom de domaine géré par nous, enregistré à votre nom", price: "20 €/an" },
         { name: "Mesure des conversions pour la publicité, avec consentement", price: "60 €" },
-        { name: "Passage au Site web dans les 6 mois", price: "nous déduisons les 350 €" },
+        { name: "Passage au Site web dans les 6 mois", price: "nous déduisons les 500 €" },
       ],
       monthlyPlan: {
         price: "15 €/mois + TVA",
@@ -782,7 +782,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Was kostet das insgesamt?",
-        a: "Die Seite kostet ab 350 € zzgl. MwSt., einmalig. Danach kosten Hosting und Wartung 15 € zzgl. MwSt. pro Monat, ohne Mindestlaufzeit. Domain und professionelle E-Mail bezahlen Sie separat, direkt beim Anbieter.",
+        a: "Die Seite kostet ab 500 € zzgl. MwSt., einmalig. Danach kosten Hosting und Wartung 15 € zzgl. MwSt. pro Monat, ohne Mindestlaufzeit. Domain und professionelle E-Mail bezahlen Sie separat, direkt beim Anbieter.",
       },
       {
         q: "Muss ich Texte und Fotos haben?",
@@ -825,7 +825,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Professionelle E-Mail: bis zu 5 Postfächer, DNS und Signatur", price: "40 €" },
         { name: "Domain von uns verwaltet, auf Ihren Namen registriert", price: "20 €/Jahr" },
         { name: "Conversion-Messung für Anzeigen, mit Einwilligung", price: "60 €" },
-        { name: "Wechsel zur Website innerhalb von 6 Monaten", price: "wir rechnen die 350 € an" },
+        { name: "Wechsel zur Website innerhalb von 6 Monaten", price: "wir rechnen die 500 € an" },
       ],
       monthlyPlan: {
         price: "15 €/Monat zzgl. MwSt.",
@@ -950,7 +950,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto costa in tutto?",
-        a: "La pagina costa da 350 € + IVA, una tantum. Poi hosting e manutenzione costano 15 € + IVA al mese, senza vincoli. Dominio ed email professionale si pagano a parte, direttamente al fornitore.",
+        a: "La pagina costa da 500 € + IVA, una tantum. Poi hosting e manutenzione costano 15 € + IVA al mese, senza vincoli. Dominio ed email professionale si pagano a parte, direttamente al fornitore.",
       },
       {
         q: "Devo avere già testi e foto?",
@@ -993,7 +993,7 @@ export const copy: ProductCopyByLocale = {
         { name: "Email professionale: fino a 5 caselle, DNS e firma", price: "40 €" },
         { name: "Dominio gestito da noi, registrato a Suo nome", price: "20 €/anno" },
         { name: "Misurazione delle conversioni per gli annunci, con consenso", price: "60 €" },
-        { name: "Passaggio al Sito web entro 6 mesi", price: "scaliamo i 350 €" },
+        { name: "Passaggio al Sito web entro 6 mesi", price: "scaliamo i 500 €" },
       ],
       monthlyPlan: {
         price: "15 €/mese + IVA",

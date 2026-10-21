@@ -349,7 +349,7 @@ export const products: Product[] = [
     slug: { pt: "landing-page", en: "landing-page" },
     family: "web",
     icon: "page",
-    priceFrom: 350,
+    priceFrom: 500,
     priceBilling: "project",
     priceQualifier: { pt: "por projeto, + 15 €/mês de alojamento, sem fidelização", en: "per project, + €15/month hosting, no lock-in", es: "por proyecto, + 15 €/mes de alojamiento web, sin permanencia", fr: "par projet, + 15 €/mois d'hébergement, sans engagement", de: "pro Projekt, + 15 €/Monat Hosting, ohne Mindestlaufzeit", it: "per progetto, + 15 €/mese di hosting, senza vincoli" },
     priceIsProvisional: true,
