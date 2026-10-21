@@ -28,8 +28,6 @@ export interface CartCopy {
   projectFrom: string;
   oneProject: string;
   perMonth: string;
-  /** Per-account products (the guest guide): the fee, charged once per order, and the free plates on its lines. */
-  perAccount: { fee: string; included: string; freeUnits: string };
   addMore: string;
   /** Signed-in clients: products already active on the account. */
   owned: { notice: string; removeAll: string };
@@ -107,7 +105,6 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "desde {price} + IVA",
     oneProject: "1 projeto",
     perMonth: "/mês",
-    perAccount: { fee: "{price} por conta, seja qual for o número de alojamentos", included: "Mensalidade já contada na primeira linha do guia", freeUnits: "Placas oferecidas, uma por alojamento" },
     addMore: "Adicionar outros produtos",
     owned: {
       notice: "Já tem ativo na sua conta: {names}. Não entra nesta encomenda.",
@@ -189,7 +186,6 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "from {price} + VAT",
     oneProject: "1 project",
     perMonth: "/month",
-    perAccount: { fee: "{price} per account, however many properties", included: "Monthly fee already counted on the guide's first line", freeUnits: "Free plates, one per property" },
     addMore: "Add other products",
     owned: {
       notice: "Already active on your account: {names}. It is left out of this order.",
@@ -271,7 +267,6 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "desde {price} + IVA",
     oneProject: "1 proyecto",
     perMonth: "/mes",
-    perAccount: { fee: "{price} por cuenta, sea cual sea el número de alojamientos", included: "Cuota mensual ya contada en la primera línea de la guía", freeUnits: "Placas de regalo, una por alojamiento" },
     addMore: "Añadir otros productos",
     owned: {
       notice: "Ya tiene activo en su cuenta: {names}. No se incluye en este pedido.",
@@ -353,7 +348,6 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "à partir de {price} + TVA",
     oneProject: "1 projet",
     perMonth: "/mois",
-    perAccount: { fee: "{price} par compte, quel que soit le nombre de logements", included: "Abonnement déjà compté sur la première ligne du livret", freeUnits: "Plaques offertes, une par logement" },
     addMore: "Ajouter d'autres produits",
     owned: {
       notice: "Déjà actif sur votre compte : {names}. Ce produit n'entre pas dans cette commande.",
@@ -435,7 +429,6 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "ab {price} zzgl. MwSt.",
     oneProject: "1 Projekt",
     perMonth: "/Monat",
-    perAccount: { fee: "{price} pro Konto, egal wie viele Unterkünfte", included: "Monatsgebühr bereits in der ersten Zeile der Gästemappe enthalten", freeUnits: "Kostenlose Schilder, eins pro Unterkunft" },
     addMore: "Weitere Produkte hinzufügen",
     owned: {
       notice: "Bereits in Ihrem Konto aktiv: {names}. Nicht Teil dieser Bestellung.",
@@ -517,7 +510,6 @@ export const cartCopy: LocalizedPartial<CartCopy> = {
     projectFrom: "da {price} + IVA",
     oneProject: "1 progetto",
     perMonth: "/mese",
-    perAccount: { fee: "{price} per account, qualunque sia il numero di alloggi", included: "Canone mensile già conteggiato nella prima riga della guida", freeUnits: "Targhe in omaggio, una per alloggio" },
     addMore: "Aggiunga altri prodotti",
     owned: {
       notice: "Già attivo sul Suo account: {names}. Non rientra in questo ordine.",

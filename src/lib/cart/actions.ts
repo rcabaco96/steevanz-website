@@ -39,9 +39,6 @@ const emailText = {
     perUnit: "/un.",
     text: "Texto",
     noText: "sem texto",
-    perAccount: "por conta",
-    accountIncluded: "já contada acima",
-    freeUnits: "Placas oferecidas (uma por alojamento): {count}",
   },
   en: {
     groups: { oneTime: "One-off payment", monthly: "Monthly plans" } as Record<CartGroupId, string>,
@@ -57,9 +54,6 @@ const emailText = {
     perUnit: "/unit",
     text: "Text",
     noText: "no text",
-    perAccount: "per account",
-    accountIncluded: "already counted above",
-    freeUnits: "Free plates (one per property): {count}",
   },
 } satisfies Localized<unknown>;
 
@@ -104,15 +98,7 @@ function parseItems(raw: string) {
   }
 }
 
-function customizationLines({ productId, options, quantity }: CartLine, locale: Locale = "pt"): string[] {
-  const product = getProduct(productId);
-  const t = localize(emailText, locale);
-  // Per-account products (the guest guide): the quantity is the number of free plates, never charged.
-  const free = product.pricePer === "account" ? [t.freeUnits.replace("{count}", String(quantity))] : [];
-  return [...free, ...optionLines(productId, options, locale)];
-}
-
-function optionLines(productId: CartLine["productId"], options: CartLine["options"], locale: Locale): string[] {
+function customizationLines({ productId, options }: CartLine, locale: Locale = "pt"): string[] {
   const customization = getProduct(productId).customization;
   if (!customization || !options) return [];
   const t = localize(emailText, locale);
@@ -156,9 +142,7 @@ function groupTable(group: CartGroupId, totals: GroupTotals, locale: Locale = "p
     rows: totals.lines.map((line) => {
       const product = getProduct(line.productId);
       const name = `${productLabel(line.productId, locale)} (${localize(ui, locale).billing[product.priceBilling]})`;
-      // A per-account fee is shown once, on its first line; the plates on the line are free.
-      const unit = product.pricePer === "account" ? (line.accountCents ? `${money(line.accountCents)} ${t.perAccount}` : t.accountIncluded) : money(line.unitCents);
-      return [[name, ...customizationLines(line, locale)].join("\n"), unit, String(line.quantity), money(line.subtotalCents)];
+      return [[name, ...customizationLines(line, locale)].join("\n"), money(line.unitCents), String(line.quantity), money(line.subtotalCents)];
     }),
     // Without VAT, «+ IVA»: VAT-inclusive amounts are never shown (owner, 2026-10-18).
     foot: [[t.total, `${money(totals.subtotalCents)} ${t.plusVat}`]],

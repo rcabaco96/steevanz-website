@@ -25,8 +25,6 @@ export interface CartCatalogItem {
   billingLabel: string;
   href: string;
   icon: ProductIcon;
-  /** Charged once per order whatever the quantity (the guest guide): the quantity counts free plates. */
-  perAccount: boolean;
   customization?: {
     formats: SelectOption[];
     logoExtraCents: number;
@@ -461,18 +459,9 @@ function CartLineRow({ locale, line, item, copy, money, showAddVariant }: CartLi
             {item.name}
           </Link>
           <p className="text-sm text-subtle">{item.qualifier}</p>
-          {item.perAccount ? (
-            <>
-              <p className="tabular text-sm text-muted">
-                {line.accountCents ? copy.perAccount.fee.replace("{price}", money(line.accountCents)) : copy.perAccount.included}
-              </p>
-              <p className="text-sm text-muted">{copy.perAccount.freeUnits}</p>
-            </>
-          ) : (
-            <p className="tabular text-sm text-muted">
-              {line.billing === "project" ? copy.projectFrom.replace("{price}", money(line.unitCents)) : `${money(line.unitCents)} ${copy.unitPrice}`}
-            </p>
-          )}
+          <p className="tabular text-sm text-muted">
+            {line.billing === "project" ? copy.projectFrom.replace("{price}", money(line.unitCents)) : `${money(line.unitCents)} ${copy.unitPrice}`}
+          </p>
           {line.lineExtraCents ? (
             <p className="tabular text-sm text-muted">{copy.customize.lineExtra.replace("{price}", money(line.lineExtraCents))}</p>
           ) : null}

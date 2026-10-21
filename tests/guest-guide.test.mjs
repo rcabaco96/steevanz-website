@@ -4,51 +4,40 @@ import { getProduct, products } from "../src/content/products.ts";
 import { priceCart, sanitizeOptions } from "../src/lib/cart/pricing.ts";
 import { copy as guestGuideCopy } from "../src/content/product-copy/guest-guide.ts";
 
-const guide = (quantity, format = "wall-plate", id = `guest-guide-${quantity}-${format}`) => ({
-  id,
+const guide = (quantity, logo = false) => ({
+  id: `guest-guide-${quantity}`,
   productId: "guest-guide",
   quantity,
-  options: { format, logo: false, text: "" },
+  options: { format: "wall-plate", logo, text: "" },
 });
 
-// Owner, 2026-10-21: only 30 €/month per account and the plate is offered (one per property). No plate prices, no packs.
 describe("digital guest guide pricing", () => {
-  it("costs 30 € a month and nothing once", () => {
+  it("costs 20 € per plate, like the Menu digital", () => {
     const { oneTime, monthly } = priceCart([guide(1)]);
+    assert.equal(oneTime.lines[0].billing, "one-time");
+    assert.equal(oneTime.subtotalCents, 2000);
+    assert.equal(monthly.lines.length, 0);
+  });
+
+  it("charges 15 € per plate from 10 plates", () => {
+    assert.equal(priceCart([guide(9)]).oneTime.subtotalCents, 9 * 2000);
+    assert.equal(priceCart([guide(10)]).oneTime.subtotalCents, 10 * 1500);
+    assert.equal(priceCart([guide(14)]).oneTime.subtotalCents, 14 * 1500);
+  });
+
+  it("has the same plate prices and monthly fee as the Menu digital", () => {
     const product = getProduct("guest-guide");
-    assert.equal(product.priceFrom, 30);
-    assert.equal(product.priceBilling, "monthly");
-    assert.equal(monthly.lines[0].billing, "monthly");
-    assert.equal(monthly.subtotalCents, 3000);
-    assert.equal(oneTime.lines.length, 0);
+    const menu = getProduct("digital-menu");
+    assert.equal(product.priceFrom, menu.priceFrom);
+    assert.deepEqual(product.packs, menu.packs);
+    assert.match(product.priceQualifier.pt, /30 €\/mês/);
+    assert.match(menu.priceQualifier.pt, /30 €\/mês/);
   });
 
-  it("charges one fee per account, however many plates (one per property, all free)", () => {
-    for (const quantity of [1, 3, 10, 25]) {
-      const { monthly } = priceCart([guide(quantity)]);
-      assert.equal(monthly.lines[0].unitCents, 0, `${quantity} plates`);
-      assert.equal(monthly.lines[0].accountCents, 3000, `${quantity} plates`);
-      assert.equal(monthly.subtotalCents, 3000, `${quantity} plates`);
-      assert.equal(monthly.quantity, quantity);
-    }
-  });
-
-  it("charges the fee once even with several plate formats in the cart", () => {
-    const { monthly } = priceCart([guide(2, "wall-plate"), guide(1, "sticker"), { id: "l", productId: "loyalty", quantity: 1 }]);
-    assert.deepEqual(monthly.lines.map((line) => line.accountCents), [3000, 0, 0]);
-    assert.equal(monthly.subtotalCents, 3000 + 1900);
-  });
-
-  it("has no packs and never charges a logo or anything else for the plate", () => {
-    const product = getProduct("guest-guide");
-    assert.equal(product.packs, undefined);
-    assert.equal(product.pricePer, "account");
-    assert.equal(product.customization.formatOnly, true);
-    const options = sanitizeOptions("guest-guide", { format: "sticker", logo: true, text: "Casa Azul" });
-    assert.deepEqual(options, { format: "sticker", logo: false, text: "" });
-    const { monthly } = priceCart([{ id: "x", productId: "guest-guide", quantity: 5, options: { format: "sticker", logo: true, text: "x" } }]);
-    assert.equal(monthly.lines[0].lineExtraCents, 0);
-    assert.equal(monthly.subtotalCents, 3000);
+  it("charges the logo once per line", () => {
+    const { oneTime } = priceCart([guide(5, true)]);
+    assert.equal(oneTime.lines[0].lineExtraCents, 1000);
+    assert.equal(oneTime.subtotalCents, 5 * 2000 + 1000);
   });
 
   it("only accepts its own plate formats", () => {
@@ -62,20 +51,13 @@ describe("digital guest guide pricing", () => {
     assert.equal(product.packUnit, undefined);
   });
 
-  it("says the 30 €/month is per account and the plate is free, one per property, in every language", () => {
+  it("says the 30 €/month is per account and there is one plate per property, in every language", () => {
     const { priceQualifier } = getProduct("guest-guide");
     const perAccount = { pt: /por conta/, en: /per account/, es: /por cuenta/, fr: /par compte/, de: /pro Konto/, it: /per account/ };
-    const free = { pt: /oferecida/, en: /free/, es: /de regalo/, fr: /offerte/, de: /kostenlos/, it: /in omaggio/ };
-    const vat = { pt: /\+ IVA/, en: /\+ VAT/, es: /\+ IVA/, fr: /\+ TVA/, de: /zzgl\. MwSt\./, it: /\+ IVA/ };
     for (const [locale, pattern] of Object.entries(perAccount)) {
-      const answer = guestGuideCopy[locale].faq[0].a;
       assert.match(priceQualifier[locale], pattern, locale);
-      assert.match(priceQualifier[locale], free[locale], locale);
-      assert.match(answer, pattern, locale);
-      assert.match(answer, free[locale], locale);
-      assert.match(answer, vat[locale], locale);
-      assert.match(answer, /3 .+: (30 €|€30)\//, locale);
-      assert.doesNotMatch(JSON.stringify(guestGuideCopy[locale]), /20 €|€20|15 €|€15/, locale);
+      assert.match(guestGuideCopy[locale].faq[0].a, pattern, locale);
+      assert.match(guestGuideCopy[locale].faq[0].a, /3 .+ × (20 €|€20) \+ (30 €|€30)\//, locale);
     }
   });
 });

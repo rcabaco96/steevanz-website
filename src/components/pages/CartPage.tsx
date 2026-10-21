@@ -32,7 +32,6 @@ export function CartPage({ locale }: { locale: Locale }) {
       billingLabel: `${priceLabel(product, locale)} · ${localize(ui, locale).billing[product.priceBilling]}`,
       href: href(locale, { key: "product", productId: product.id }),
       icon: product.icon,
-      perAccount: product.pricePer === "account",
       customization: product.customization
         ? {
             formats: product.customization.formats.map((format) => ({ value: format.id, label: localize(format.label, locale) })),

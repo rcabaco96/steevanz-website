@@ -31,14 +31,13 @@ export const pt: Record<DocPageId, DocPageContent> = {
         type: "table",
         head: ["Alojamentos", "Placas (uma por alojamento)", "Mensalidade"],
         rows: [
-          ["1 alojamento", "1 placa oferecida", "30 €/mês por conta"],
-          ["3 alojamentos", "3 placas oferecidas", "30 €/mês por conta"],
-          ["10 alojamentos", "10 placas oferecidas", "30 €/mês por conta"],
+          ["1 a 9 alojamentos", "20 € cada", "30 €/mês por conta"],
+          ["10 alojamentos ou mais", "15 € cada (10 placas: 150 €)", "30 €/mês por conta"],
         ],
       },
       {
         type: "p",
-        text: "O guia custa 30 € por mês por conta, + IVA, seja qual for o número de alojamentos, com a escrita dos guias, a tradução para quatro línguas, o alojamento online e as alterações incluídos. A placa é oferecida, uma por alojamento. Por exemplo, 3 alojamentos: 30 €/mês + IVA, com 3 placas oferecidas. Línguas adicionais têm um custo pequeno, indicado no orçamento. Valores sem IVA e de proposta, confirmados depois da demonstração.",
+        text: "As placas pagam-se uma vez. A escrita dos guias, a tradução para quatro línguas, o alojamento online e as alterações custam 30 € por mês por conta, seja qual for o número de alojamentos. Por exemplo, 3 alojamentos: 3 placas × 20 € + 30 €/mês, + IVA. Línguas adicionais têm um custo pequeno, indicado no orçamento. Valores sem IVA e de proposta, confirmados depois da demonstração.",
       },
       { type: "h2", id: "como-funciona", text: "Como funciona para o hóspede" },
       {
@@ -245,7 +244,7 @@ export const pt: Record<DocPageId, DocPageContent> = {
         items: [
           {
             q: "Quanto custa por mês?",
-            a: "30 € por mês por conta, + IVA, seja qual for o número de alojamentos, com o alojamento online e as alterações incluídos. A placa é oferecida, uma por alojamento. Por exemplo, 3 alojamentos: 30 €/mês + IVA, com 3 placas oferecidas. Se tiver o Pack Alojamento Local, o guia está incluído enquanto o pack estiver ativo.",
+            a: "30 € por mês por conta, seja qual for o número de alojamentos, com o alojamento online e as alterações incluídos. As placas pagam-se uma vez, uma por alojamento: 20 € cada, 15 € cada a partir de 10 alojamentos. Por exemplo, 3 alojamentos: 3 placas × 20 € + 30 €/mês, + IVA. Se tiver o Pack Alojamento Local, o guia está incluído enquanto o pack estiver ativo.",
           },
           {
             q: "O guia serve como o livro de informações que a lei exige?",

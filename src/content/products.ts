@@ -65,11 +65,6 @@ export interface Product {
   priceFrom: number;
   priceBilling: PriceBilling;
   priceQualifier: Localized<string>;
-  /**
-   * "account": the price is charged once per order, whatever the quantity (the guest guide's monthly fee is per
-   * account). The quantity then counts the free plates that come with it, one per property.
-   */
-  pricePer?: "account";
   priceIsProvisional: boolean;
   flagship?: boolean;
   sectors: SectorId[];
@@ -173,15 +168,13 @@ export const products: Product[] = [
     slug: { pt: "guia-digital-alojamento", en: "digital-guest-guide" },
     family: "plates",
     icon: "guide-tap",
-    // Owner, 2026-10-21: only 30 €/month (writing, four languages, hosting and changes) and the plate is offered.
-    // The 30 €/month is per account (one fee for the host or manager, however many properties, owner 2026-10-20);
-    // one plate per property, free. No plate prices and no packs any more. In the cart the quantity counts the
-    // free plates (one per property) and the fee is charged once per order (`pricePer: "account"`); only the plate
-    // format is chosen, with no logo extra, so nothing is ever charged for the plates.
-    priceFrom: 30,
-    priceBilling: "monthly",
-    pricePer: "account",
-    priceQualifier: { pt: "por mês, por conta, placa oferecida (uma por alojamento)", en: "per month, per account, plate free (one per property)", es: "al mes, por cuenta, placa de regalo (una por alojamiento)", fr: "par mois, par compte, plaque offerte (une par logement)", de: "pro Monat, pro Konto, Schild kostenlos (eins pro Unterkunft)", it: "al mese, per account, targa in omaggio (una per alloggio)" },
+    // Owner, 2026-10-20: the same model as the Menu digital: 20 € per plate, 15 € each from 10 plates,
+    // plus 30 €/month for the guide (writing, four languages, hosting and changes).
+    // Owner, 2026-10-20: the 30 €/month is per account (one fee for the host or manager, however many properties);
+    // one plate per property.
+    priceFrom: 20,
+    priceBilling: "one-time",
+    priceQualifier: { pt: "por placa, uma por alojamento, + 30 €/mês por conta", en: "per plate, one per property, + €30/month per account", es: "por placa, una por alojamiento, + 30 €/mes por cuenta", fr: "par plaque, une par logement, + 30 €/mois par compte", de: "pro Schild, eins pro Unterkunft, + 30 €/Monat pro Konto", it: "per targa, una per alloggio, + 30 €/mese per account" },
     priceIsProvisional: true,
     sectors: ["lodging"],
     related: ["ai-chatbot", "automation", "google-review-plates"],
@@ -192,14 +185,12 @@ export const products: Product[] = [
         { id: "table-stand", label: { pt: "Expositor (sala ou receção)", en: "Stand (living room or reception)", es: "Expositor (salón o recepción)", fr: "Chevalet (salon ou réception)", de: "Aufsteller (Wohnzimmer oder Rezeption)", it: "Espositore (soggiorno o reception)" } },
         { id: "sticker", label: { pt: "Autocolante (frigorífico ou espelho)", en: "Sticker (fridge or mirror)", es: "Pegatina (nevera o espejo)", fr: "Autocollant (frigo ou miroir)", de: "Aufkleber (Kühlschrank oder Spiegel)", it: "Adesivo (frigo o specchio)" } },
       ],
-      // The plate is offered (owner, 2026-10-21): only the format is chosen in the cart, no paid logo option.
-      // What goes on each plate is arranged with the host while we write the guides.
-      logoExtra: 0,
+      logoExtra: plateLogoExtra,
       logoExtraPer: "line",
-      logoExtraIsProvisional: false,
-      textMaxLength: 0,
-      formatOnly: true,
+      logoExtraIsProvisional: true,
+      textMaxLength: plateTextMaxLength,
     },
+    packs: [{ quantity: 10, unitPrice: 15 }],
   },
   {
     id: "loyalty",

@@ -37,15 +37,12 @@ export function AdBand({
   const productHref = href(locale, { key: "product", productId });
   const monthly = monthlyExtra(product);
   const bestPack = product.packs?.reduce((best, pack) => (pack.unitPrice < best.unitPrice ? pack : best));
-  // A note with {price}/{quantity}/{quantities} needs packs; one without them (the guide's) is shown as is.
   const note = bestPack
     ? copy.note
         .replace("{price}", formatEuro(bestPack.unitPrice, locale))
         .replace("{quantity}", String(bestPack.quantity))
         .replace("{quantities}", new Intl.ListFormat(locale, { type: "disjunction" }).format((product.packs ?? []).map((pack) => String(pack.quantity))))
-    : copy.note && !copy.note.includes("{")
-      ? copy.note
-      : null;
+    : null;
 
   return (
     <section aria-labelledby={headingId} className={`${styles.band} ${tone === "rose" ? styles.bandRose : ""}`}>
