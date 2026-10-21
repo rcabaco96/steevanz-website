@@ -13,7 +13,7 @@ export default function Loading() {
         <Skeleton className="h-4 w-48 max-w-full" />
       </div>
       <div className="flex gap-3 border-b border-line pb-2.5">
-        {Array.from({ length: 5 }, (_, index) => (
+        {Array.from({ length: 6 }, (_, index) => (
           <Skeleton key={index} className="h-5 w-20 shrink-0" />
         ))}
       </div>

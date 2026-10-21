@@ -64,7 +64,7 @@ const keywords: Record<Intent, readonly string[]> = {
     "tratamento*", "treatment*", "tratamiento*", "soin*", "behandlung*", "trattament*",
   ],
   price: [
-    "preco*", "custo", "custos", "desconto*", "promocao", "promocoes", "discount*", "descuento*", "rabatt*", "sconto", "sconti", "quanto custa*", "quanto e", "quanto fica", "quanto pago", "quanto se paga", "quanto pagam", "valor", "price*", "cost*", "how much", "precio*", "cuanto cuesta*",
+    "preco*", "precario*", "tabela de precos", "lista de precos", "custo", "custos", "desconto*", "promocao", "promocoes", "discount*", "descuento*", "rabatt*", "sconto", "sconti", "quanto custa*", "quanto e", "quanto fica", "quanto pago", "quanto se paga", "quanto pagam", "valor", "price*", "cost*", "how much", "precio*", "cuanto cuesta*",
     "cuanto vale", "cuanto es", "prix", "combien", "tarif*", "preis*", "kostet", "wie viel", "wieviel", "prezz*", "quanto costa*",
   ],
   human: [

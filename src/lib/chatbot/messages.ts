@@ -52,6 +52,8 @@ export interface FixedMessages {
   /** After the first lines of a long list quoted from a document. */
   moreInList: string;
   minutes: (count: number) => string;
+  /** A price that starts at this amount («desde 35 €»). */
+  priceFrom: (price: string) => string;
   /** An answer written in another language than the customer's (the mock can't translate). */
   answerInOtherLanguage: string;
   whichProperty: (list: string) => string;
@@ -93,6 +95,7 @@ const pt: FixedMessages = {
   whichOption: (examples) => `Depende do que procura. Por exemplo: ${list([...examples], "ou")}. Qual lhe interessa?`,
   moreInList: "(Há mais opções. Diga-me qual procura e eu digo-lhe o preço.)",
   minutes: (count) => `${count} min`,
+  priceFrom: (price) => `desde ${price}`,
   answerInOtherLanguage: "(Por agora, esta informação só está disponível noutra língua.)",
   whichProperty: (list) => `Em qual dos alojamentos está hospedado? ${list}`,
   textOnly: "De momento só consigo ler mensagens de texto. Pode escrever a sua pergunta?",
@@ -133,6 +136,7 @@ const en: FixedMessages = {
   whichOption: (examples) => `It depends on what you're looking for. For example: ${list([...examples], "or")}. Which one are you interested in?`,
   moreInList: "(There's more. Tell me which one you're looking for and I'll tell you the price.)",
   minutes: (count) => `${count} min`,
+  priceFrom: (price) => `from ${price}`,
   answerInOtherLanguage: "(This information is only available in another language for now.)",
   whichProperty: (list) => `Which of our properties are you staying at? ${list}`,
   textOnly: "For now I can only read text messages. Could you type your question?",
@@ -173,6 +177,7 @@ const es: FixedMessages = {
   whichOption: (examples) => `Depende de lo que busque. Por ejemplo: ${list([...examples], "o")}. ¿Cuál le interesa?`,
   moreInList: "(Hay más opciones. Dígame cuál busca y le digo el precio.)",
   minutes: (count) => `${count} min`,
+  priceFrom: (price) => `desde ${price}`,
   answerInOtherLanguage: "(Por ahora esta información solo está disponible en otro idioma.)",
   whichProperty: (list) => `¿En cuál de nuestros alojamientos se hospeda? ${list}`,
   textOnly: "Por ahora solo puedo leer mensajes de texto. ¿Puede escribir su pregunta?",
@@ -213,6 +218,7 @@ const fr: FixedMessages = {
   whichOption: (examples) => `Cela dépend de ce que vous cherchez. Par exemple : ${list([...examples], "ou")}. Lequel vous intéresse ?`,
   moreInList: "(Il y a d'autres options. Dites-moi laquelle vous cherchez et je vous donne le prix.)",
   minutes: (count) => `${count} min`,
+  priceFrom: (price) => `à partir de ${price}`,
   answerInOtherLanguage: "(Pour l'instant, cette information n'est disponible que dans une autre langue.)",
   whichProperty: (list) => `Dans lequel de nos logements séjournez-vous ? ${list}`,
   textOnly: "Pour l'instant, je ne peux lire que les messages texte. Pouvez-vous écrire votre question ?",
@@ -253,6 +259,7 @@ const de: FixedMessages = {
   whichOption: (examples) => `Das hängt davon ab, was Sie suchen. Zum Beispiel: ${list([...examples], "oder")}. Was davon interessiert Sie?`,
   moreInList: "(Es gibt noch mehr. Sagen Sie mir, was Sie suchen, und ich nenne Ihnen den Preis.)",
   minutes: (count) => `${count} Min.`,
+  priceFrom: (price) => `ab ${price}`,
   answerInOtherLanguage: "(Diese Information gibt es vorerst nur in einer anderen Sprache.)",
   whichProperty: (list) => `In welcher unserer Unterkünfte wohnen Sie? ${list}`,
   textOnly: "Im Moment kann ich nur Textnachrichten lesen. Könnten Sie Ihre Frage schreiben?",
@@ -293,6 +300,7 @@ const it: FixedMessages = {
   whichOption: (examples) => `Dipende da cosa cerca. Per esempio: ${list([...examples], "o")}. Quale Le interessa?`,
   moreInList: "(Ci sono altre opzioni. Mi dica quale cerca e Le dico il prezzo.)",
   minutes: (count) => `${count} min`,
+  priceFrom: (price) => `da ${price}`,
   answerInOtherLanguage: "(Per ora questa informazione è disponibile solo in un'altra lingua.)",
   whichProperty: (list) => `In quale dei nostri alloggi soggiorna? ${list}`,
   textOnly: "Per ora posso leggere solo messaggi di testo. Può scrivere la Sua domanda?",

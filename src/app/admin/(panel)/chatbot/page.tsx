@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChatbotNotReady, EnabledBadge, effectiveSessionState, kindLabels, SessionBadge } from "@/components/admin/chatbot/ChatbotBits";
+import { ChatbotNotReady, EnabledBadge, effectiveSessionState, kindLabels, SessionBadge, SetupScoreBadge } from "@/components/admin/chatbot/ChatbotBits";
 import { NewBotForm } from "@/components/admin/chatbot/NewBotForm";
 import { TestChat } from "@/components/admin/chatbot/TestChat";
 import { AdminPageHeader, EmptyState, Panel } from "@/components/backoffice/ui";
@@ -46,6 +46,7 @@ export default async function AdminChatbotPage() {
                       {bot.waiting} para a equipa
                     </span>
                   ) : null}
+                  <SetupScoreBadge score={bot.setupScore} />
                   <EnabledBadge enabled={bot.enabled} />
                   <SessionBadge state={effectiveSessionState(bot.session)} />
                 </span>

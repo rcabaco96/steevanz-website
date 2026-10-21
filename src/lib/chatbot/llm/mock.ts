@@ -1,13 +1,13 @@
 // The free answer writer used everywhere today: deterministic answers put together from the
 // business's own information (frequent questions, hours, address, menu or services, booking link).
 // It never invents: when nothing matches it returns null and the engine says «I don't know».
-import { askedDay, dayLabel, formatNextOpening, formatWeek, hoursOn, type AskedDay, type OpeningState } from "../hours.ts";
+import { askedDate, askedDay, dayLabel, formatNextOpening, formatWeek, hoursOn, type AskedDay, type OpeningState } from "../hours.ts";
 import { subjectWords } from "../context.ts";
 import { asksPriceOfNothing, documentNamedItem, documentAnswer, documentBooking, documentCatalog, documentHours, documentLocation, documentPriceExamples, generalSubjectExamples, uniqueSources, type DocumentAnswer } from "../doc-answers.ts";
-import { buildIndex, minimumCoverage, minimumScore, type KnowledgeIndex, type SearchHit } from "../knowledge.ts";
+import { buildIndex, minimumCoverage, minimumScore, questionWords, type KnowledgeIndex, type SearchHit } from "../knowledge.ts";
 import { fixedMessages } from "../messages.ts";
 import { intentKeywords } from "../intents.ts";
-import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
+import { formatPrice, hasAnyKeyword, normalize, sameWord, searchWords } from "../text.ts";
 import type { BusinessKnowledge, CatalogItem, ChatbotLanguage } from "../types.ts";
 import type { AnswerProvider, AnswerRequest, AnswerResult, AnswerSource } from "./types.ts";
 
@@ -55,9 +55,16 @@ export function bookingAnswer(knowledge: BusinessKnowledge, language: ChatbotLan
   return null;
 }
 
+/** An item's price as the customer reads it («16 €», «desde 35 €»), or null without a price. */
+export function itemPrice(item: CatalogItem, language: ChatbotLanguage): string | null {
+  if (item.priceCents === null) return null;
+  const price = formatPrice(item.priceCents, language);
+  return item.priceFrom ? fixedMessages[language].priceFrom(price) : price;
+}
+
 function itemLine(item: CatalogItem, language: ChatbotLanguage): string {
   const details = [
-    item.priceCents !== null ? formatPrice(item.priceCents, language) : null,
+    itemPrice(item, language),
     item.durationMinutes ? fixedMessages[language].minutes(item.durationMinutes) : null,
   ].filter(Boolean);
   return `• ${item.name}${details.length ? ` — ${details.join(" · ")}` : ""}`;
@@ -72,7 +79,7 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   const { intents, hits, knowledge, language, opening } = request;
   const has = (intent: string) => intents.includes(intent as never);
   const entryHits = hits.filter((hit): hit is SearchHit & { doc: { entry: NonNullable<SearchHit["doc"]["entry"]> } } => hit.doc.kind === "entry" && hit.score >= minimumScore && hit.coverage >= minimumCoverage);
-  const itemHits = hits.filter((hit) => hit.doc.kind === "item" && hit.score >= minimumScore).slice(0, 5);
+  const itemHits = preferNamed(hits.filter((hit) => hit.doc.kind === "item" && hit.score >= minimumScore), request.message).slice(0, 5);
   const topEntry = entryHits[0] ?? null;
   const strongEntry = topEntry && topEntry.score >= strongScore ? topEntry : null;
   const parts: string[] = [];
@@ -97,9 +104,14 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   const hasDocuments = Boolean(knowledge.chunks?.length);
 
   if (strongEntry) parts.push(entryText(strongEntry));
+  // «Fecham nos feriados?», «Abrem nas férias?»: an entry that covers what the message is about beats the weekly
+  // timetable (the subject is the holidays, not the hours).
+  const subjectEntry =
+    !strongEntry && topEntry && topEntry.coverage >= 1 && subjectWords(request.customerMessage ?? request.message).length > 0 ? topEntry : null;
   // «Abrem amanhã?», «Dá para ir no sábado?»: the hours of that day.
-  const day = has("hours") ? askedDay(request.message, knowledge.timeZone, request.now) : null;
-  if (has("hours") && !strongEntry) {
+  // «Abrem no dia 25 de dezembro?», «no Natal?»: a date, only with the business's own hours and closures.
+  const day = has("hours") ? (askedDay(request.message, knowledge.timeZone, request.now) ?? (opening.known ? askedDate(request.message, knowledge.timeZone, request.now) : null)) : null;
+  if (has("hours") && !strongEntry && !subjectEntry) {
     // No structured hours: the documents' hours, wherever they are in the text, before «I don't know».
     if (opening.known && day) parts.push(dayHoursAnswer(knowledge, opening, day, language));
     else if (opening.known || !hasDocuments) parts.push(hoursAnswer(knowledge, opening, language));
@@ -125,18 +137,22 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
       ? null
       : asksPriceOfNothing(request)
         ? priceExamples(request, hasDocuments ? index() : null)
-        : has("price") && carriedSubject && hasDocuments
-          ? withLanguage(request, index(), generalSubjectExamples(request, index()))
+        : has("price") && carriedSubject
+          ? hasDocuments
+            ? withLanguage(request, index(), generalSubjectExamples(request, index()))
+            : priceExamples(request, null)
           : null;
   if (clarify) {
     parts.push(fixedMessages[language].whichOption(clarify.examples));
     sources = [...sources, ...clarify.sources];
     if (clarify.otherLanguage) parts.push(fixedMessages[language].answerInOtherLanguage);
-  } else if (itemHits.length && (wantsCatalog || !topEntry)) {
+  } else if (itemHits.length && (wantsCatalog || (!topEntry && !intents.some((intent) => answerIntents.includes(intent))))) {
     parts.push(itemsAnswer(itemHits.map((hit) => hit.doc.item!), knowledge, language));
   } else if (wantsCatalog && !topEntry) {
-    // No matching item: the services and prices the documents list.
+    // No matching item: the services and prices the documents list, or the whole list set in the admin
+    // when nothing in particular was asked («Que serviços têm?», «Têm preçário?»).
     if (hasDocuments) fromDocument(documentCatalog(request, index()));
+    else if (knowledge.items.length && !subjectWords(request.customerMessage ?? request.message).length) parts.push(wholeList(knowledge, language));
     if (knowledge.menuUrl) parts.push(fixedMessages[language].menuLink(knowledge.menuUrl));
   }
   if (!parts.length && topEntry) parts.push(entryText(topEntry));
@@ -162,12 +178,31 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   return { text: noted.length ? noted.join("\n\n") : null, provider: "mock", usedEntryIds: used, sources: uniqueSources(sources) };
 }
 
+/**
+ * Items whose own name has a word of the message («Quanto custa um corte?» → the «Corte …» lines) beat items
+ * found only through a shared idea (every haircut for «corte»); without such a name, all of them.
+ */
+function preferNamed(hits: SearchHit[], message: string): SearchHit[] {
+  const asked = searchWords(message).filter((word) => !questionWords.has(word));
+  const named = hits.filter((hit) => hit.doc.titleWords.some((title) => asked.some((word) => sameWord(word, title))));
+  return named.length ? named : hits;
+}
+
+const wholeListMax = 12;
+
+/** The services or dishes set in the admin, the first dozen, with «there are more» after. */
+function wholeList(knowledge: BusinessKnowledge, language: ChatbotLanguage): string {
+  const shown = itemsAnswer(knowledge.items.slice(0, wholeListMax), knowledge, language);
+  return knowledge.items.length > wholeListMax ? `${shown}
+${fixedMessages[language].moreInList}` : shown;
+}
+
 /** A few priced examples for a question back: the structured services or dishes, else the documents' price list. */
 function priceExamples(request: AnswerRequest, index: KnowledgeIndex | null): { examples: string[]; sources: AnswerSource[]; otherLanguage: boolean } | null {
   const items = request.knowledge.items.filter((item) => item.priceCents !== null).slice(0, 4);
   if (items.length >= 2) {
     const lower = (name: string) => (/^\p{Lu}\p{Ll}/u.test(name) ? name.charAt(0).toLowerCase() + name.slice(1) : name);
-    return { examples: items.map((item) => `${lower(item.name)} (${formatPrice(item.priceCents!, request.language)})`), sources: [], otherLanguage: false };
+    return { examples: items.map((item) => `${lower(item.name)} (${itemPrice(item, request.language)})`), sources: [], otherLanguage: false };
   }
   if (!index) return null;
   return withLanguage(request, index, documentPriceExamples(request, index));

@@ -23,7 +23,18 @@ const date = new Intl.DateTimeFormat("pt-PT", { timeZone: "Europe/Lisbon", day: 
  * The business's documents (house guide, menu, price list, policies…): the assistant searches their
  * sections and quotes the best one. Free: text extracted on the server, no AI service involved.
  */
-export function DocumentsEditor({ botId, documents, properties }: { botId: string; documents: DocumentRow[]; properties: string[] }) {
+export function DocumentsEditor({
+  botId,
+  documents,
+  properties,
+  outdated = [],
+}: {
+  botId: string;
+  documents: DocumentRow[];
+  properties: string[];
+  /** Documents stored by the older cutter (documents.ts → cutByOldVersion): a hint to send them again. */
+  outdated?: string[];
+}) {
   const [source, setSource] = useState<(typeof sources)[number][0]>("upload");
   return (
     <div className="flex flex-col gap-4">
@@ -38,6 +49,9 @@ export function DocumentsEditor({ botId, documents, properties }: { botId: strin
                   {document.property ? ` · ${document.property}` : ""}
                   {document.language ? ` · ${languageLabels[document.language as keyof typeof languageLabels] ?? document.language}` : ""}
                 </span>
+                {outdated.includes(document.id) ? (
+                  <span className="mt-1 text-xs text-gold-text">Lido por uma versão antiga. Para melhores resultados, volte a enviar o documento (e apague este).</span>
+                ) : null}
               </span>
               <ActionForm action={deleteDocument} confirmMessage={`Apagar «${document.title}»? O assistente deixa de o usar.`}>
                 <input type="hidden" name="bot_id" value={botId} />

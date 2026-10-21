@@ -33,14 +33,38 @@ function SendButton() {
  * Talk to the assistant as a customer would, right here: the free mock answers with the bot's (or
  * the example's) information. Nothing is stored and nothing goes to WhatsApp.
  */
-export function TestChat({ botId, demo, hint }: { botId?: string; demo?: string; hint?: string }) {
+export function TestChat({
+  botId,
+  demo,
+  hint,
+  suggestions,
+  onAnswered,
+}: {
+  botId?: string;
+  demo?: string;
+  hint?: string;
+  /** Questions sent with one tap (the sector's usual questions). */
+  suggestions?: string[];
+  /** Called once the assistant has answered a test message. */
+  onAnswered?: () => void;
+}) {
   const [state, action] = useActionState(testChat, empty);
   const list = useRef<HTMLOListElement>(null);
   const form = useRef<HTMLFormElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
     list.current?.lastElementChild?.scrollIntoView({ block: "nearest" });
     form.current?.reset();
   }, [state.turns.length]);
+  const answered = state.turns.some((turn) => turn.author === "bot");
+  useEffect(() => {
+    if (answered) onAnswered?.();
+  }, [answered, onAnswered]);
+  const send = (message: string) => {
+    if (!input.current || !form.current) return;
+    input.current.value = message;
+    form.current.requestSubmit();
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -74,13 +98,27 @@ export function TestChat({ botId, demo, hint }: { botId?: string; demo?: string;
           </li>
         ))}
       </ol>
+      {suggestions?.length ? (
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Perguntas sugeridas">
+          {suggestions.map((question) => (
+            <button
+              key={question}
+              type="button"
+              onClick={() => send(question)}
+              className="shrink-0 rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-text transition-colors hover:border-accent hover:text-accent-text"
+            >
+              {question}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <form ref={form} action={action} className="flex gap-2">
         {botId ? <input type="hidden" name="bot_id" value={botId} /> : null}
         {demo ? <input type="hidden" name="demo" value={demo} /> : null}
         <label className="sr-only" htmlFor={`test-message-${botId ?? demo}`}>
           Mensagem do cliente
         </label>
-        <input id={`test-message-${botId ?? demo}`} name="message" required maxLength={1000} autoComplete="off" placeholder="Mensagem do cliente…" className={`${adminInputClasses} h-11 min-w-0 flex-1`} />
+        <input ref={input} id={`test-message-${botId ?? demo}`} name="message" required maxLength={1000} autoComplete="off" placeholder="Mensagem do cliente…" className={`${adminInputClasses} h-11 min-w-0 flex-1`} />
         <SendButton />
       </form>
       <div className="flex flex-wrap items-center justify-between gap-2">

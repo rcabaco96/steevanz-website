@@ -12,9 +12,21 @@ import { extractDocument, ExtractError, isPrivateHost } from "./extract";
 import { respond } from "./engine";
 import { groqEnabled } from "./llm/groq";
 import { chooseProvider } from "./llm/providers";
-import { conversationStateFrom } from "./rows";
+import { conversationStateFrom, type KnowledgeRow } from "./rows";
+import { entryFor, findSuggestedFaq, serializeHours, serializePriceList, setupKeywords, setupLimits, setupQuestions, type PriceItem } from "./setup";
 import { ChatbotNotReadyError, failOn, loadBotProfile } from "./supabase-store";
-import { chatbotLanguages, isChatbotBusinessKind, isChatbotLanguage, newConversationState, type BotProfile, type ChatMessage, type ConversationState } from "./types";
+import {
+  chatbotLanguages,
+  isChatbotBusinessKind,
+  isChatbotLanguage,
+  newConversationState,
+  type BotProfile,
+  type ChatMessage,
+  type Closure,
+  type ConversationState,
+  type KnowledgeKind,
+  type WeeklyHours,
+} from "./types";
 
 // Admin: the WhatsApp assistants, their knowledge and their conversations. No WhatsApp message is sent
 // from here. «Experimentar» answers with the bot's chosen writer: the free answers, a test AI (Ollama,
@@ -83,7 +95,7 @@ export async function createBot(_state: ActionState, formData: FormData): Promis
     refresh();
     return { ok: true, message: "Assistente criado." };
   });
-  if (created) redirect(`/admin/chatbot/${created}?tab=definicoes`);
+  if (created) redirect(`/admin/chatbot/${created}?tab=configurar`);
   return result;
 }
 
@@ -479,5 +491,165 @@ export async function deleteDocument(_state: ActionState, formData: FormData): P
     failOn(error, "deleteDocument");
     refresh(botId);
     return { ok: true, message: "Documento apagado." };
+  });
+}
+
+// «Configurar em 5 passos»: each step saves on its own. Hours and the price list are knowledge entries with a
+// fixed question in a canonical text (setup.ts), read back into structured hours and items by the engine. ---
+
+function jsonField(formData: FormData, key: string): unknown {
+  try {
+    return JSON.parse(value(formData, key) || "null");
+  } catch {
+    throw new ChatbotMessage("Não consegui ler o formulário. Recarregue a página e tente novamente.");
+  }
+}
+
+/** Writes (or removes, with an empty answer) the bot's entry with this question. */
+async function upsertSetupEntry(botId: string, question: string, answer: string, kind: KnowledgeKind, keywords: string | null): Promise<void> {
+  const client = createServiceClient();
+  const { data, error } = await client.from("chatbot_knowledge").select("id, question").eq("bot_id", botId);
+  failOn(error, "upsertSetupEntry read");
+  const rows = (data ?? []) as Pick<KnowledgeRow, "id" | "question">[];
+  const existing = entryFor(rows, question);
+  if (!answer.trim()) {
+    if (existing) {
+      const { error: deleteError } = await client.from("chatbot_knowledge").delete().eq("id", existing.id).eq("bot_id", botId);
+      failOn(deleteError, "upsertSetupEntry delete");
+    }
+    return;
+  }
+  const row = { kind, question, answer, keywords, active: true };
+  if (existing) {
+    const { error: updateError } = await client.from("chatbot_knowledge").update(row).eq("id", existing.id).eq("bot_id", botId);
+    failOn(updateError, "upsertSetupEntry update");
+  } else {
+    const { error: insertError } = await client.from("chatbot_knowledge").insert({ ...row, bot_id: botId, position: rows.length, property: null, language: null });
+    failOn(insertError, "upsertSetupEntry insert");
+  }
+}
+
+/** Step 1: the business (name, type, address, phone, booking and map links, languages, tone). */
+export async function saveSetupBusiness(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData);
+    const name = value(formData, "name");
+    const kind = value(formData, "kind");
+    if (!name || name.length > 120) throw new ChatbotMessage("Escreva o nome do negócio (até 120 caracteres).");
+    if (!isChatbotBusinessKind(kind)) throw new ChatbotMessage("Escolha o tipo de negócio.");
+    const languages = formData.getAll("languages").filter((entry): entry is string => typeof entry === "string" && isChatbotLanguage(entry));
+    if (!languages.length) throw new ChatbotMessage("Escolha pelo menos uma língua.");
+    const defaultLanguage = value(formData, "default_language");
+    if (!isChatbotLanguage(defaultLanguage) || !languages.includes(defaultLanguage)) throw new ChatbotMessage("A língua principal tem de estar entre as línguas escolhidas.");
+    const update = {
+      name,
+      kind,
+      address: optional(formData, "address", 200),
+      phone: optional(formData, "phone", 40),
+      booking_url: httpsUrl(formData, "booking_url", "Link de marcação"),
+      maps_url: httpsUrl(formData, "maps_url", "Link do Google Maps"),
+      languages: chatbotLanguages.filter((language) => languages.includes(language)),
+      default_language: defaultLanguage,
+      tone: value(formData, "tone") === "friendly" ? "friendly" : "formal",
+    };
+    const { error } = await createServiceClient().from("chatbot_bots").update(update).eq("id", botId);
+    failOn(error, "saveSetupBusiness");
+    refresh(botId);
+    return { ok: true, message: "Dados do negócio guardados." };
+  });
+}
+
+const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+function hoursFrom(raw: unknown): WeeklyHours[] {
+  if (!Array.isArray(raw) || raw.length > 7 * 3) throw new ChatbotMessage("Horário inválido.");
+  return raw.map((slot) => {
+    const { weekday, opens, closes } = (slot ?? {}) as Record<string, unknown>;
+    if (typeof weekday !== "number" || !Number.isInteger(weekday) || weekday < 0 || weekday > 6) throw new ChatbotMessage("Horário inválido.");
+    if (typeof opens !== "string" || typeof closes !== "string" || !timePattern.test(opens) || !timePattern.test(closes)) throw new ChatbotMessage("Escreva as horas como 09:00.");
+    if (closes <= opens) throw new ChatbotMessage("Em cada dia, a hora de fecho tem de ser depois da de abertura.");
+    return { weekday, opens, closes };
+  });
+}
+
+function closuresFrom(raw: unknown): Closure[] {
+  if (!Array.isArray(raw) || raw.length > setupLimits.closures) throw new ChatbotMessage(`No máximo ${setupLimits.closures} dias fechados.`);
+  return raw.map((item) => {
+    const { day, reason } = (item ?? {}) as Record<string, unknown>;
+    if (typeof day !== "string" || !datePattern.test(day) || Number.isNaN(Date.parse(day))) throw new ChatbotMessage("Escolha a data de cada dia fechado.");
+    const text = typeof reason === "string" ? reason.replace(/[()\n]/g, " ").trim().slice(0, 80) : "";
+    return { day, reason: text || null };
+  });
+}
+
+/**
+ * Step 2: the weekly hours and closed days (or the linked Espaço's, without copying them) and a free note
+ * about holidays and vacations.
+ */
+export async function saveSetupHours(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData);
+    const useEstablishment = value(formData, "mode") === "establishment";
+    const notes = value(formData, "notes");
+    if (notes.length > setupLimits.notes) throw new ChatbotMessage(`A nota sobre feriados e férias tem no máximo ${setupLimits.notes} caracteres.`);
+    if (useEstablishment) {
+      await upsertSetupEntry(botId, setupQuestions.hours, "", "info", null);
+    } else {
+      const hours = hoursFrom(jsonField(formData, "hours"));
+      if (!hours.length) throw new ChatbotMessage("Marque pelo menos um dia aberto, com as horas.");
+      const closures = closuresFrom(jsonField(formData, "closures") ?? []);
+      await upsertSetupEntry(botId, setupQuestions.hours, serializeHours(hours, closures), "info", setupKeywords.hours);
+    }
+    await upsertSetupEntry(botId, setupQuestions.holidays, notes, "policy", setupKeywords.holidays);
+    refresh(botId);
+    return { ok: true, message: useEstablishment ? "O assistente usa o horário do Espaço." : "Horário guardado." };
+  });
+}
+
+/** Step 3: the services and prices (a simple list; a pasted list is read in the browser first, with a preview). */
+export async function saveSetupServices(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData);
+    const raw = jsonField(formData, "items");
+    if (!Array.isArray(raw) || raw.length > setupLimits.items) throw new ChatbotMessage(`No máximo ${setupLimits.items} serviços.`);
+    const items: PriceItem[] = [];
+    for (const entry of raw) {
+      const { name, priceCents, priceFrom, durationMinutes } = (entry ?? {}) as Record<string, unknown>;
+      const label = typeof name === "string" ? name.replace(/\s+/g, " ").trim() : "";
+      if (!label) continue;
+      if (label.length > setupLimits.itemName) throw new ChatbotMessage(`O nome «${label.slice(0, 30)}…» é demasiado longo.`);
+      const price = priceCents === null || priceCents === undefined ? null : Number(priceCents);
+      if (price !== null && !(Number.isInteger(price) && price >= 0 && price <= 10_000_000)) throw new ChatbotMessage(`Preço inválido em «${label}».`);
+      const minutes = durationMinutes === null || durationMinutes === undefined ? null : Number(durationMinutes);
+      if (minutes !== null && !(Number.isInteger(minutes) && minutes > 0 && minutes <= 24 * 60)) throw new ChatbotMessage(`Duração inválida em «${label}».`);
+      items.push({ name: label, priceCents: price, priceFrom: priceFrom === true && price !== null, durationMinutes: minutes });
+    }
+    await upsertSetupEntry(botId, setupQuestions.services, serializePriceList(items), "info", setupKeywords.services);
+    refresh(botId);
+    return { ok: true, message: items.length ? `${items.length} ${items.length === 1 ? "serviço guardado" : "serviços guardados"}.` : "Lista vazia: o assistente não diz preços." };
+  });
+}
+
+/** Step 4: the suggested questions for the sector; only the answered ones are kept (an emptied answer is removed). */
+export async function saveSetupFaqs(_state: ActionState, formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const botId = id(formData);
+    const kind = value(formData, "kind");
+    if (!isChatbotBusinessKind(kind)) throw new ChatbotMessage("Escolha primeiro o tipo de negócio.");
+    const raw = jsonField(formData, "answers");
+    if (!Array.isArray(raw) || raw.length > 20) throw new ChatbotMessage("Respostas inválidas.");
+    let saved = 0;
+    for (const entry of raw) {
+      const { id: faqId, answer } = (entry ?? {}) as Record<string, unknown>;
+      const faq = typeof faqId === "string" ? findSuggestedFaq(kind, faqId) : null;
+      if (!faq) continue;
+      const text = typeof answer === "string" ? answer.trim() : "";
+      if (text.length > setupLimits.faqAnswer) throw new ChatbotMessage(`A resposta a «${faq.question}» tem no máximo ${setupLimits.faqAnswer} caracteres.`);
+      await upsertSetupEntry(botId, faq.question, text, faq.kind, faq.keywords);
+      if (text) saved++;
+    }
+    refresh(botId);
+    return { ok: true, message: saved ? `${saved} ${saved === 1 ? "resposta guardada" : "respostas guardadas"}.` : "Nenhuma resposta escrita: nada guardado." };
   });
 }

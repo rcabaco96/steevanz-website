@@ -58,6 +58,8 @@ export interface CatalogItem {
   name: string;
   description?: string | null;
   priceCents: number | null;
+  /** The price is where it starts («desde 35 €»). */
+  priceFrom?: boolean;
   /** Services: how long it takes. */
   durationMinutes?: number | null;
 }

@@ -105,6 +105,21 @@ inventions (a price/time not in the document, an answer where it has none, a sec
 prints the table per sector; `CHATBOT_GATE_ONLY=<file>` plays one file.
 Live check with Groq's free tier: at most a few dozen calls, ~25 s apart (our 9 000 tokens/min ceiling), key never printed.
 
+## «Configurar em 5 passos» (phase C, `setup.ts`, admin tab «Configurar»)
+
+- No migrations: hours and the price list are knowledge entries with a fixed question («Qual é o horário?»,
+  «Serviços e preços») in a canonical text that `setupKnowledge` reads back in `botProfileFrom` into structured hours,
+  closures and items (and drops those entries from the searched ones). The setup's hours win over the linked Espaço's;
+  «Usar o horário do Espaço» deletes the entry. Never half-read: an entry that doesn't read back entirely stays an entry.
+- Pasted lists are read in the browser with a preview before saving (`parsePriceList`, `parseHours`); a price is never
+  guessed (lines without one are shown as left out). Keep every new messy format in `tests/chatbot-setup.test.mjs`.
+- Suggested questions per sector: 8–12, ids stable (the server takes question and keywords from `setup.ts`, never
+  from the browser), never a question that trips a safety rule, never the setup's own questions.
+- Lessons: keywords made entries harder to find (title length counted them) → only the question's words count for
+  length; «Fecham nos feriados?» got the weekly timetable → an entry covering the message's subject beats it; «Fazem
+  degradê?» listed every haircut (shared concept) → items named by the message's words win; prices use a no-break
+  space («16 €»): normalise it in tests. Bots configured only through the setup must keep 100 % in that test file.
+
 ## Before publishing a chatbot change
 
 eslint on changed files, `npx tsc --noEmit -p .`, `npm test`; migrations only with the owner's direct

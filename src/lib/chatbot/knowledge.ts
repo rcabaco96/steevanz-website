@@ -207,6 +207,11 @@ export interface KnowledgeDoc {
   length?: number;
   /** Words of the question/title and keywords (they count more). */
   titleWords: string[];
+  /**
+   * How long the title is for the «shorter titles are more specific» rule: the question's own words only.
+   * Keywords are other words for the same thing and must not make an entry harder to find.
+   */
+  titleLength?: number;
   bodyWords: string[];
   concepts: Set<string>;
   property: string | null;
@@ -248,6 +253,7 @@ export function buildIndex(knowledge: Pick<BusinessKnowledge, "entries" | "items
       kind: "entry",
       entry,
       titleWords: searchWords(title),
+      titleLength: searchWords(entry.question).length,
       bodyWords: searchWords(entry.answer),
       concepts: conceptsOf(normalize(title)),
       property: entry.property?.trim() || null,
@@ -472,7 +478,7 @@ export function search(index: KnowledgeIndex, query: string, options: SearchOpti
     const meaningful = queryWords.filter((word) => !questionWords.has(word));
     const coverage = meaningful.length ? meaningful.filter((word) => matched.has(word)).length / meaningful.length : 1;
     // Shorter titles that match are more specific; entries in the customer's language win ties.
-    score = score / Math.sqrt(1 + doc.titleWords.length / 6) + (options.language && doc.language === options.language ? 0.25 : 0);
+    score = score / Math.sqrt(1 + (doc.titleLength ?? doc.titleWords.length) / 6) + (options.language && doc.language === options.language ? 0.25 : 0);
     hits.push({ doc, score, coverage });
   }
   return hits.sort((a, b) => b.score - a.score).slice(0, options.limit ?? 5);

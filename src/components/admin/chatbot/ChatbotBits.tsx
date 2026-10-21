@@ -51,6 +51,12 @@ export function SessionBadge({ state }: { state: SessionState }) {
   return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${tone}`}>{label}</span>;
 }
 
+/** «Configuração 60 %»: how much of «Configurar em 5 passos» is done. */
+export function SetupScoreBadge({ score }: { score: number }) {
+  const tone = score >= 100 ? "bg-success-soft text-success border-success/30" : score >= 60 ? "bg-gold-soft text-gold-text border-gold/40" : "bg-surface-2 text-muted border-line";
+  return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${tone}`}>Configuração {score} %</span>;
+}
+
 export function EnabledBadge({ enabled }: { enabled: boolean }) {
   return (
     <span

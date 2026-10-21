@@ -5,8 +5,8 @@
 // the hand-off.
 import { formatWeek } from "../hours.ts";
 import type { SearchHit } from "../knowledge.ts";
-import { formatPrice } from "../text.ts";
 import type { BotSettings, BusinessKnowledge, ChatbotLanguage } from "../types.ts";
+import { itemPrice } from "./mock.ts";
 
 export const languageNames: Record<ChatbotLanguage, string> = {
   pt: "European Portuguese (pt-PT)",
@@ -101,7 +101,7 @@ export function buildContext(hits: readonly SearchHit[], language: ChatbotLangua
       return `- Q: ${entry.question}${entry.property ? ` [${entry.property}]` : ""}\n  A: ${entry.answer}`;
     }
     const item = hit.doc.item!;
-    return `- ${item.name}${item.priceCents !== null ? ` — ${formatPrice(item.priceCents, language)}` : ""}${item.description ? `: ${item.description}` : ""}`;
+    return `- ${item.name}${item.priceCents !== null ? ` — ${itemPrice(item, language)}` : ""}${item.description ? `: ${item.description}` : ""}`;
   });
   return `Relevant information:\n${lines.join("\n")}`;
 }

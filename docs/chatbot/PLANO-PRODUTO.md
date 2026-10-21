@@ -74,6 +74,33 @@ resposta errada, inventada ou com português estranho.
 
 **Aceitação:** um negócio novo fica a responder bem em menos de 15 minutos, sem a Steevanz.
 
+**Estado (2026-10-22): feito no admin, sem migrações; falta «Perguntas sem resposta» (precisa de migração, o dono
+disse «agora não») e levar o assistente ao painel do cliente.**
+
+- Separador «Configurar» (abre por omissão enquanto a configuração não está a 100 %), em 5 passos que se guardam
+  um a um: (1) negócio — nome, tipo, morada, telefone, link de marcação, link do Maps, línguas, tom; (2) horário —
+  semana com pausa ao almoço, dias fechados, nota sobre feriados/férias, «colar o horário de um texto» com
+  pré-visualização na grelha; com Espaço ligado, «Usar o horário do Espaço» sem duplicar; (3) serviços e preços —
+  lista simples (nome, preço, duração, «desde») e «colar o preçário» de WhatsApp/Word com pré-visualização das linhas
+  lidas e das deixadas de fora; (4) 8–12 perguntas frequentes sugeridas por setor (só as respondidas ficam
+  guardadas); (5) documentos + «Experimentar» com perguntas sugeridas de um toque + lista do que falta (o «testado» fica
+  só neste navegador).
+- Pontuação 0–100 (negócio, horário, preços, 5+ perguntas, documento; 20 cada) na lista de assistentes e na página.
+- Guardado em entradas de conhecimento com pergunta fixa («Qual é o horário?», «Serviços e preços») num texto
+  canónico que o motor relê como horário, dias fechados e serviços estruturados (`setup.ts` → `rows.ts`): as respostas
+  calculadas do dia («Amanhã estamos abertos das 10:00 às 20:00», «25/12 estamos fechados (Natal)») e as perguntas de
+  volta com exemplos funcionam sem documento. Uma entrada escrita à mão que não se lê toda fica entrada normal.
+- Motor: datas escritas («dia 25 de dezembro», «25/12», «no Natal») com horário próprio; «Que serviços têm?» lista os
+  serviços; serviços com o nome pedido ganham aos que só partilham a ideia; a IA recebe a lista de serviços quando
+  nada bate pelo nome; as palavras-chave de uma entrada já não a tornam mais difícil de encontrar.
+- Documentos do cortador antigo: o texto original não é guardado e as secções antigas perderam as quebras de
+  linha, por isso «Voltar a processar» não melhoraria nada; mostram «Para melhores resultados, volte a enviar o
+  documento».
+- Testes (`tests/chatbot-setup.test.mjs`): 29 preçários colados desarrumados, 8 formatos de horário, sugestões por setor
+  (cada uma encontrada pela própria pergunta), pontuação, e 40 conversas com assistentes configurados só pelos passos
+  (barbearia, restaurante, alojamento): 100 % certas nas respostas grátis, 0 invenções, a IA recebe preços, horário e
+  respostas.
+
 ## Fase D — Canais a sério
 
 - **WhatsApp oficial (Cloud API da Meta)** para clientes: verificação da empresa, número de cada negócio,

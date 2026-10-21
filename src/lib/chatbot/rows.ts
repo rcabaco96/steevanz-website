@@ -1,5 +1,6 @@
 // Database rows of the assistant (supabase/migrations/20261020200000_chatbot.sql) and how they turn
 // into what the engine uses. Pure module: shared by the admin, the runner and the tests.
+import { setupKnowledge } from "./setup.ts";
 import { formatPrice } from "./text.ts";
 import {
   isChatbotBusinessKind,
@@ -188,15 +189,19 @@ export function languagesOf(row: Pick<BotRow, "languages">): ChatbotLanguage[] {
 export function botProfileFrom(row: BotRow, entries: readonly KnowledgeRow[], sources: KnowledgeSources): BotProfile {
   const languages = languagesOf(row);
   const defaultLanguage = isChatbotLanguage(row.default_language) ? row.default_language : "pt";
-  const hours: WeeklyHours[] = (sources.hours ?? []).map((slot) => ({ weekday: slot.weekday, opens: slot.opens.slice(0, 5), closes: slot.closes.slice(0, 5) }));
-  const closures: Closure[] = (sources.closures ?? []).map((closure) => ({ day: closure.day, reason: closure.reason }));
+  // The hours and price list written in «Configurar em 5 passos» (entries with a fixed question): the setup's
+  // hours win over the linked Espaço's (choosing «Usar o horário do Espaço» removes them).
+  const setup = setupKnowledge(entries);
+  const hours: WeeklyHours[] = setup.hours ?? (sources.hours ?? []).map((slot) => ({ weekday: slot.weekday, opens: slot.opens.slice(0, 5), closes: slot.closes.slice(0, 5) }));
+  const closures: Closure[] = setup.hours ? setup.closures : (sources.closures ?? []).map((closure) => ({ day: closure.day, reason: closure.reason }));
   const establishment = sources.establishment ?? null;
   const menu = sources.menu && sources.menu.active ? sources.menu : null;
   const items = [
     ...(menu?.dishes ?? []).map((dish) => ({ name: dish.name, description: dish.description || null, priceCents: dish.price_cents })),
     ...(sources.services ?? []).filter((service) => service.active).map((service) => ({ name: service.name, priceCents: service.price_cents, durationMinutes: service.duration_minutes })),
+    ...setup.items,
   ];
-  const knowledgeEntries: KnowledgeEntry[] = entries.map((entry) => ({
+  const knowledgeEntries: KnowledgeEntry[] = entries.filter((entry) => !setup.consumed.has(entry.id)).map((entry) => ({
     id: entry.id,
     kind: entry.kind,
     question: entry.question,
@@ -253,6 +258,6 @@ export function conversationStateFrom(row: Pick<ConversationRow, "state" | "mode
 }
 
 /** One line per dish or service, for the admin's «what the assistant knows» panel. */
-export function itemSummary(item: { name: string; priceCents: number | null; durationMinutes?: number | null }): string {
-  return [item.name, item.priceCents !== null ? formatPrice(item.priceCents, "pt") : null, item.durationMinutes ? `${item.durationMinutes} min` : null].filter(Boolean).join(" · ");
+export function itemSummary(item: { name: string; priceCents: number | null; priceFrom?: boolean; durationMinutes?: number | null }): string {
+  return [item.name, item.priceCents !== null ? `${item.priceFrom ? "desde " : ""}${formatPrice(item.priceCents, "pt")}` : null, item.durationMinutes ? `${item.durationMinutes} min` : null].filter(Boolean).join(" · ");
 }

@@ -19,8 +19,9 @@ import { addressPassages, allowed, asksPriceOfNothing, bookingPassages, discount
 import { askedDay, dayAhead, formatDay, hoursOn, localClock, type AskedDay } from "../hours.ts";
 import { buildIndex, coveredWords, minimumScore, passageCoverage, passageMatches, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
 import { answerAfter, blockAfter, type Passage } from "../passages.ts";
-import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
+import { hasAnyKeyword, normalize } from "../text.ts";
 import type { ChatMessage } from "../types.ts";
+import { itemPrice } from "./mock.ts";
 import type { AnswerRequest, AnswerSource } from "./types.ts";
 
 export const noAnswer = "NO_ANSWER";
@@ -241,10 +242,20 @@ function allContextItems(request: AnswerRequest): ContextItem[] {
       items.push({ ref: `E${index + 1}`, text: cut(`Q: ${hit.doc.entry.question}\nA: ${hit.doc.entry.answer}`, contextLimits.entryChars), entryId: hit.doc.entry.id });
     } else if (hit.doc.item) {
       const item = hit.doc.item;
-      const line = `${item.name}${item.priceCents !== null ? ` — ${formatPrice(item.priceCents, request.language)}` : ""}${item.description ? `: ${item.description}` : ""}`;
+      const line = `${item.name}${item.priceCents !== null ? ` — ${itemPrice(item, request.language)}` : ""}${item.durationMinutes ? ` (${item.durationMinutes} min)` : ""}${item.description ? `: ${item.description}` : ""}`;
       items.push({ ref: `E${index + 1}`, text: cut(line, contextLimits.entryChars) });
     }
   });
+  // «Quanto custa?», «How much is a haircut?», «Que serviços têm?» with nothing matching by name: the services or
+  // dishes set in the admin (setup, Espaço, video menu), so the model can ask back with real examples.
+  const wantsCatalog = request.intents.includes("price") || request.intents.includes("menu");
+  const itemFound = entries.slice(0, contextLimits.entries).some((hit) => hit.doc.kind === "item");
+  if (wantsCatalog && !itemFound && request.knowledge.items.length) {
+    for (const item of request.knowledge.items.slice(0, contextLimits.priceList)) {
+      const line = `${item.name}${item.priceCents !== null ? ` — ${itemPrice(item, request.language)}` : ""}${item.durationMinutes ? ` (${item.durationMinutes} min)` : ""}`;
+      items.push({ ref: `E${items.length + 1}`, text: cut(line, contextLimits.entryChars) });
+    }
+  }
   if (!request.knowledge.chunks?.length) return items;
   const index = request.index ?? buildIndex(request.knowledge);
   // Reading order (the model follows a list better as it is written), the pieces of one line joined,

@@ -2,27 +2,31 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BackLink } from "@/components/admin/RecordDetail";
 import { BotSettingsForm, EnableForm, PaidAnswersForm } from "@/components/admin/chatbot/BotSettingsForm";
-import { ChatbotNotReady, EnabledBadge, effectiveSessionState, kindLabels, SessionBadge } from "@/components/admin/chatbot/ChatbotBits";
+import { ChatbotNotReady, EnabledBadge, effectiveSessionState, kindLabels, SessionBadge, SetupScoreBadge } from "@/components/admin/chatbot/ChatbotBits";
 import { DocumentsEditor } from "@/components/admin/chatbot/DocumentsEditor";
 import { Inbox } from "@/components/admin/chatbot/Inbox";
 import { KnowledgeEditor } from "@/components/admin/chatbot/KnowledgeEditor";
+import { SetupWizard, type SetupWizardData } from "@/components/admin/chatbot/SetupWizard";
 import { TestChat } from "@/components/admin/chatbot/TestChat";
 import { AdminPageHeader, EmptyState, Panel } from "@/components/backoffice/ui";
 import { AutoRefresh } from "@/components/modules/shared/AutoRefresh";
 import { CopyButton } from "@/components/modules/shared/CopyButton";
 import { QrCode } from "@/components/modules/shared/QrCode";
 import { requireAdmin } from "@/lib/admin/auth";
-import { ChatbotNotReadyError, getAdminBot, getConversationMessages, listConversations, type AdminBot } from "@/lib/chatbot/admin-store";
-import { formatWeek } from "@/lib/chatbot/hours";
+import { botSetup, ChatbotNotReadyError, getAdminBot, getConversationMessages, listConversations, type AdminBot } from "@/lib/chatbot/admin-store";
+import { cutByOldVersion } from "@/lib/chatbot/documents";
+import { formatWeek, localClock } from "@/lib/chatbot/hours";
 import { groqEnabled, groqKeyPresent } from "@/lib/chatbot/llm/groq";
 import { mistralKeyPresent } from "@/lib/chatbot/llm/mistral";
 import { ollamaAvailable } from "@/lib/chatbot/llm/ollama";
 import { itemSummary } from "@/lib/chatbot/rows";
+import { entryFor, parseHours, parsePriceList, setupKnowledge, setupQuestions, suggestedFaqs, suggestedTestQuestions, type SetupProgress, type SetupStepId } from "@/lib/chatbot/setup";
 import { siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = { title: "Assistente WhatsApp" };
 
 const tabs = [
+  { id: "configurar", label: "Configurar" },
   { id: "ligacao", label: "Ligação" },
   { id: "conhecimento", label: "Conhecimento" },
   { id: "definicoes", label: "Definições" },
@@ -40,7 +44,6 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
   const { id } = await params;
   const query = await searchParams;
   const requested = first(query.tab);
-  const tab: TabId = tabs.some((item) => item.id === requested) ? (requested as TabId) : "ligacao";
 
   let data: AdminBot | null = null;
   try {
@@ -65,6 +68,9 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
 
   const { row, profile } = data;
   const basePath = `/admin/chatbot/${row.id}`;
+  const setup = botSetup(profile, data.entries, data.documents);
+  // Until the setup is complete, the page opens on «Configurar».
+  const tab: TabId = tabs.some((item) => item.id === requested) ? (requested as TabId) : setup.progress.score < 100 ? "configurar" : "ligacao";
   const conversations = tab === "conversas" ? await listConversations(row.id) : [];
   const selectedId = first(query.c);
   const selected = conversations.find((conversation) => conversation.id === selectedId) ?? null;
@@ -80,6 +86,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
         description={`${data.ownerLabel} · ${kindLabels[row.kind]}`}
         actions={
           <span className="flex flex-wrap items-center gap-2">
+            <SetupScoreBadge score={setup.progress.score} />
             <EnabledBadge enabled={row.enabled} />
             <SessionBadge state={sessionState} />
           </span>
@@ -90,7 +97,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
         {tabs.map((item) => (
           <Link
             key={item.id}
-            href={item.id === "ligacao" ? basePath : `${basePath}?tab=${item.id}`}
+            href={`${basePath}?tab=${item.id}`}
             aria-current={item.id === tab ? "page" : undefined}
             className={`-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm font-semibold transition-colors ${
               item.id === tab ? "border-accent text-text" : "border-transparent text-muted hover:text-text"
@@ -100,6 +107,8 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
           </Link>
         ))}
       </nav>
+
+      {tab === "configurar" ? <SetupWizard key={row.id} data={wizardData(data, setup.progress)} initialStep={initialStep(first(query.passo), setup.progress)} /> : null}
 
       {tab === "ligacao" ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -163,7 +172,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
               <div className="flex flex-col gap-1">
                 <dt className="font-semibold text-text">Horário {establishment ? `(de ${establishment.name})` : ""}</dt>
                 <dd className="whitespace-pre-line text-muted">
-                  {profile.knowledge.hours.length ? formatWeek(profile.knowledge.hours, "pt") : "Sem horário: ligue um espaço nas definições, senão o assistente nunca diz que está fechado."}
+                  {profile.knowledge.hours.length ? formatWeek(profile.knowledge.hours, "pt") : "Sem horário: preencha-o em «Configurar» (passo 2), senão o assistente nunca diz que está fechado."}
                 </dd>
               </div>
               <div className="flex flex-col gap-1">
@@ -180,7 +189,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
                 <dd className="text-muted">
                   {profile.knowledge.items.length
                     ? profile.knowledge.items.slice(0, 12).map(itemSummary).join(" · ") + (profile.knowledge.items.length > 12 ? " · …" : "")
-                    : "Nenhum: ligue um menu em vídeo ou um espaço com serviços nas definições."}
+                    : "Nenhum: preencha-os em «Configurar» (passo 3) ou ligue um menu em vídeo ou um Espaço nas definições."}
                 </dd>
               </div>
             </dl>
@@ -190,7 +199,7 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
           </Panel>
           <Panel title="Documentos">
             {data.documents ? (
-              <DocumentsEditor botId={row.id} documents={data.documents} properties={row.properties} />
+              <DocumentsEditor botId={row.id} documents={data.documents} properties={row.properties} outdated={outdatedDocuments(data)} />
             ) : (
               <EmptyState>
                 Para enviar documentos falta aprovar e aplicar a migração <code className="font-mono text-xs">20261021120000_chatbot_documents.sql</code>.
@@ -227,4 +236,64 @@ export default async function AdminChatbotBotPage({ params, searchParams }: Page
       ) : null}
     </>
   );
+}
+
+const stepNumbers: Record<SetupStepId, number> = { business: 1, hours: 2, prices: 3, questions: 4, documents: 5 };
+
+/** «?passo=3», else the first step not done yet (the last one when everything is done). */
+function initialStep(requested: string, progress: SetupProgress): number {
+  const asked = Number(requested);
+  if (Number.isInteger(asked) && asked >= 1 && asked <= 5) return asked;
+  const missing = progress.steps.find((step) => !step.done);
+  return missing ? stepNumbers[missing.id] : 5;
+}
+
+/** Documents stored by the older cutter (their section titles show it): a hint to send them again. */
+function outdatedDocuments(data: AdminBot): string[] {
+  const byDocument = new Map<string, { title: string; headings: string[] }>();
+  for (const chunk of data.profile.knowledge.chunks ?? []) {
+    const document = byDocument.get(chunk.documentId) ?? { title: chunk.documentTitle, headings: [] };
+    document.headings.push(chunk.heading);
+    byDocument.set(chunk.documentId, document);
+  }
+  return [...byDocument].filter(([, document]) => cutByOldVersion(document.headings, document.title)).map(([id]) => id);
+}
+
+/** What «Configurar em 5 passos» shows, from the bot, its entries and what it reads elsewhere. */
+function wizardData(data: AdminBot, progress: SetupProgress): SetupWizardData {
+  const { row, profile, entries } = data;
+  const today = localClock(new Date(), profile.knowledge.timeZone).date;
+  const active = entries.filter((entry) => entry.active);
+  const own = setupKnowledge(active, today);
+  const hoursEntry = entryFor(active, setupQuestions.hours);
+  const pastedHours = hoursEntry ? parseHours(hoursEntry.answer, today) : null;
+  const servicesEntry = entryFor(active, setupQuestions.services);
+  const establishment = data.establishments.find((item) => item.id === row.establishment_id) ?? null;
+  return {
+    bot: {
+      id: row.id,
+      name: row.name,
+      kind: profile.knowledge.kind,
+      address: row.address,
+      phone: row.phone,
+      booking_url: row.booking_url,
+      maps_url: row.maps_url,
+      languages: row.languages,
+      default_language: row.default_language,
+      tone: row.tone,
+    },
+    establishment: establishment ? { name: establishment.name, hours: data.establishmentHours } : null,
+    bookingSuggestion: establishment ? `${siteUrl}/reservar/${establishment.slug}` : null,
+    hours: { fromSetup: own.hours !== null, week: own.hours ?? pastedHours?.hours ?? [], closures: own.hours ? own.closures : (pastedHours?.closures ?? []) },
+    holidayNotes: entryFor(active, setupQuestions.holidays)?.answer ?? "",
+    services: servicesEntry ? parsePriceList(servicesEntry.answer).items : [],
+    otherItems: Math.max(0, profile.knowledge.items.filter((item) => item.priceCents !== null).length - own.items.filter((item) => item.priceCents !== null).length),
+    faqs: suggestedFaqs(profile.knowledge.kind).map((faq) => ({ id: faq.id, question: faq.question, example: faq.example, answer: entryFor(active, faq.question)?.answer ?? "" })),
+    documents: data.documents,
+    outdatedDocuments: outdatedDocuments(data),
+    properties: row.properties,
+    progress,
+    testQuestions: suggestedTestQuestions(profile.knowledge.kind, profile.knowledge.items),
+    today,
+  };
 }

@@ -230,6 +230,69 @@ export function askedDay(message: string, timeZone: string, now: Date): AskedDay
   return { date: addDays(clock.date, daysAhead), weekday: (clock.weekday + daysAhead) % 7, daysAhead, mention: mention.kind };
 }
 
+const monthWords: readonly (readonly string[])[] = [
+  ["janeiro", "january", "jan", "enero", "janvier", "januar", "gennaio"],
+  ["fevereiro", "february", "feb", "febrero", "fevrier", "februar", "febbraio"],
+  ["marco", "march", "mar", "marzo", "mars", "marz", "maerz"],
+  ["abril", "april", "apr", "avril", "aprile"],
+  ["maio", "may", "mayo", "mai", "maggio"],
+  ["junho", "june", "jun", "junio", "juin", "juni", "giugno"],
+  ["julho", "july", "jul", "julio", "juillet", "juli", "luglio"],
+  ["agosto", "august", "aug", "aout"],
+  ["setembro", "september", "sep", "sept", "septiembre", "septembre", "settembre"],
+  ["outubro", "october", "oct", "octubre", "octobre", "oktober", "ottobre"],
+  ["novembro", "november", "nov", "noviembre", "novembre"],
+  ["dezembro", "december", "dec", "diciembre", "decembre", "dezember", "dicembre"],
+];
+/** Days with a name of their own (normalized): «no Natal», «na passagem de ano». */
+const namedDates: [string, readonly string[]][] = [
+  ["12-24", ["vespera de natal", "consoada", "christmas eve", "nochebuena", "veille de noel", "heiligabend", "vigilia di natale"]],
+  ["12-31", ["passagem de ano", "vespera de ano novo", "new year s eve", "nochevieja", "saint sylvestre", "silvester", "san silvestro"]],
+  ["12-25", ["natal", "dia de natal", "christmas", "christmas day", "navidad", "noel", "weihnachten", "natale"]],
+  ["01-01", ["ano novo", "dia de ano novo", "new year s day", "new year", "ano nuevo", "jour de l an", "nouvel an", "neujahr", "capodanno"]],
+];
+
+/**
+ * A calendar date written in the message («dia 25 de dezembro», «25/12», «December 25», «no Natal»), as the
+ * next such day in the business's time zone (within a year), or null. Separate from askedDay: only answers
+ * that know the business's own hours and closures use it (a document's hours can't say a date is open).
+ */
+export function askedDate(message: string, timeZone: string, now: Date): AskedDay | null {
+  const text = ` ${normalize(message)} `;
+  let month = 0;
+  let date = 0;
+  const numeric = message.match(/(?<![\d/])(\d{1,2})[/.](\d{1,2})(?:[/.](\d{2,4}))?(?![\d/])/);
+  if (numeric) {
+    date = Number(numeric[1]);
+    month = Number(numeric[2]);
+  } else {
+    const names = monthWords.map((list) => list.join("|")).join("|");
+    const dayFirst = text.match(new RegExp(` (\\d{1,2}) (?:de )?(${names}) `));
+    const monthFirst = text.match(new RegExp(` (${names}) (\\d{1,2}) `));
+    const found = dayFirst ? { day: dayFirst[1], name: dayFirst[2] } : monthFirst ? { day: monthFirst[2], name: monthFirst[1] } : null;
+    if (found) {
+      date = Number(found.day);
+      month = monthWords.findIndex((list) => list.includes(found.name)) + 1;
+    } else {
+      const named = namedDates.find(([, phrases]) => phrases.some((phrase) => text.includes(` ${phrase} `)));
+      if (!named) return null;
+      [month, date] = named[0].split("-").map(Number);
+    }
+  }
+  if (month < 1 || month > 12 || date < 1 || date > 31) return null;
+  const clock = localClock(now, timeZone);
+  const [year] = clock.date.split("-").map(Number);
+  for (const candidate of [year, year + 1]) {
+    const value = new Date(Date.UTC(candidate, month - 1, date, 12));
+    if (value.getUTCMonth() !== month - 1) return null;
+    const iso = value.toISOString().slice(0, 10);
+    if (iso < clock.date) continue;
+    const daysAhead = Math.round((Date.parse(`${iso}T12:00:00Z`) - Date.parse(`${clock.date}T12:00:00Z`)) / 86_400_000);
+    return { date: iso, weekday: value.getUTCDay(), daysAhead, mention: daysAhead === 0 ? "today" : daysAhead === 1 ? "tomorrow" : "weekday" };
+  }
+  return null;
+}
+
 /** The opening hours of one calendar day: closed for a closure (with its reason), the weekday's slots otherwise. */
 export function hoursOn(hours: readonly WeeklyHours[], closures: readonly Closure[], day: Pick<AskedDay, "date" | "weekday">): { closure: { reason: string | null } | null; slots: { opens: string; closes: string }[] } {
   const closure = closures.find((item) => item.day === day.date);

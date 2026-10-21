@@ -180,3 +180,23 @@ export function splitIntoChunks(text: string, documentTitle: string, limits = do
   flush();
   return chunks.slice(0, limits.maxChunks);
 }
+
+/**
+ * A document stored by the older cutter (before 2026-10-21): it joined the lines into paragraphs and took
+ * letter-spaced decorations or whole sentences as section titles, so its titles show it. The original text
+ * isn't kept and those sections can't give the lines back: the admin suggests sending the document again
+ * (the answers still work without it).
+ */
+export function cutByOldVersion(headings: readonly string[], documentTitle: string): boolean {
+  return headings.some((heading) =>
+    heading
+      .split(" › ")
+      .map((part) => part.trim())
+      .filter((part, index) => part && !(index === 0 && part === documentTitle.trim()))
+      .some((part) => {
+        const tokens = part.split(/\s+/);
+        const letterSpaced = tokens.length >= 6 && tokens.filter((token) => token.length === 1).length / tokens.length >= 0.7;
+        return letterSpaced || part.length > 70 || /[.!?;,]$/.test(part) || /€|\d{1,2}[:h]\d{2}/.test(part);
+      }),
+  );
+}
