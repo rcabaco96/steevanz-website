@@ -34,6 +34,8 @@ export interface AnswerRequest {
   botId?: string;
   /** One conversation (one answer in flight per conversation with an outside AI). */
   conversationKey?: string;
+  /** Where the chat happens (WhatsApp by default; «web» = the site chat): only changes how the AI is told to write. */
+  channel?: "whatsapp" | "web";
 }
 
 export interface AnswerResult {

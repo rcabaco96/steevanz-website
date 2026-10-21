@@ -29,6 +29,7 @@ import { mockProvider } from "../src/lib/chatbot/llm/mock.ts";
 import { buildSystemPrompt } from "../src/lib/chatbot/llm/prompt.ts";
 import { fixedMessages } from "../src/lib/chatbot/messages.ts";
 import { normalize } from "../src/lib/chatbot/text.ts";
+import { botProfileFrom } from "../src/lib/chatbot/rows.ts";
 import { newConversationState } from "../src/lib/chatbot/types.ts";
 import { documentChunks, fixture } from "./helpers/document-layouts.mjs";
 
@@ -40,8 +41,17 @@ const specs = readdirSync(dialoguesDir)
 
 const settings = { enabled: true, tone: "formal", languages: ["pt", "en", "es", "fr", "de", "it"], defaultLanguage: "pt", autoResumeMinutes: null };
 
-/** A bot that knows only the document (the hardest case: no hours, services or address set in the admin). */
+/**
+ * A bot that knows only the document (the hardest case: no hours, services or address set in the admin). A spec with
+ * «entries» (a JSON file of answers, as the admin stores them) and «bot» (the bot's own fields: phone, booking link,
+ * address…) is read the way the site reads a bot from the database (rows.ts → botProfileFrom).
+ */
 function documentBot(spec, layout) {
+  if (spec.entries) {
+    const rows = JSON.parse(fixture(spec.entries)).map((entry, position) => ({ id: `entry-${position}`, bot_id: spec.sector, property: null, language: "pt", active: true, position, created_at: "", updated_at: "", ...entry }));
+    const row = { id: `${spec.sector}-${layout}`, owner_id: "owner", establishment_id: null, video_menu_id: null, enabled: true, channel_provider: "open-wa", whatsapp_number: null, tone: "formal", languages: settings.languages, default_language: "pt", address: null, phone: null, maps_url: null, booking_url: null, menu_url: null, privacy_url: null, time_zone: "Europe/Lisbon", properties: [], auto_resume_minutes: null, answer_provider: "mock", paid_answers_allowed: false, alert_number: null, retention_days: 30, created_at: "", updated_at: "", name: spec.business, kind: spec.sector, ...spec.bot };
+    return botProfileFrom(row, rows, { siteUrl: "https://www.steevanz.com", chunks: documentChunks(spec.documents, layout, spec.documentTitle) });
+  }
   return {
     id: `${spec.sector}-${layout}`,
     settings,
@@ -105,12 +115,12 @@ const indexOf = (bot) => {
 };
 
 /** Plays a dialogue like the runner does: the chat's history and state carried from turn to turn. */
-async function play(bot, turns, provider, start, onTurn) {
+async function play(bot, turns, provider, start, onTurn, channel = "whatsapp") {
   let state = newConversationState();
   const history = [];
   for (const [index, turn] of turns.entries()) {
     const at = start + index * 60_000;
-    const result = await respond({ bot, conversation: state, history: [...history], message: { body: turn.customer, at }, now: new Date(at), conversationKey: `${bot.id}:${turns[0].customer}`, index: indexOf(bot) }, provider);
+    const result = await respond({ bot, conversation: state, history: [...history], message: { body: turn.customer, at }, now: new Date(at), conversationKey: `${bot.id}:${turns[0].customer}`, index: indexOf(bot), channel, inbox: channel !== "web" }, provider);
     await onTurn(turn, result, index, [...history]);
     history.push({ author: "customer", body: turn.customer, at });
     for (const reply of result.replies) history.push({ author: "bot", body: reply, at: at + 1000 });
@@ -121,13 +131,16 @@ async function play(bot, turns, provider, start, onTurn) {
 /** «onlyWithAi»: a reason (every layout) or { reason, layouts }. */
 const onlyWithAi = (turn, layout) => Boolean(turn.onlyWithAi) && (typeof turn.onlyWithAi === "string" || (turn.onlyWithAi.layouts ?? []).includes(layout));
 
-/** «I don't have that information» in the reply's language (the test bots have no phone). */
-const dontKnow = (result) => fixedMessages[result.language].dontKnow(null);
+/**
+ * «I don't have that information» in the reply's language: on WhatsApp with «reply yes» (the test bots have no phone),
+ * on the site chat («channel»: «web», no team inbox yet) with the bot's phone.
+ */
+const dontKnow = (result, spec) => (spec.channel === "web" ? fixedMessages[result.language].dontKnowContact(spec.bot?.phone ?? null) : fixedMessages[result.language].dontKnow(null));
 
-function checkFree(turn, result, layout, where) {
+function checkFree(turn, result, layout, where, spec) {
   const reply = result.replies.join("\n");
   const free = turn.free;
-  if (turn.notInDocument) assert.equal(reply, dontKnow(result), `${where}: the document doesn't say it («${reply}»)`);
+  if (turn.notInDocument) assert.equal(reply, dontKnow(result, spec), `${where}: the document doesn't say it («${reply}»)`);
   if (applies(free, layout)) {
     if (!onlyWithAi(turn, layout)) {
       if (free.equals) assert.equal(reply, free.equals, `${where}: «${reply}»`);
@@ -161,7 +174,7 @@ function inventionsIn(turn, result, spec, layout) {
   const found = [];
   const known = new Set(figures(fixture(layout === "whatsapp" ? spec.documents.whatsapp : spec.documents.structured)));
   for (const figure of figures(reply)) if (!known.has(figure)) found.push(`«${figure}» is not in the document («${reply}»)`);
-  if (turn.notInDocument && reply !== dontKnow(result)) found.push(`answered what the document doesn't say («${reply}»)`);
+  if (turn.notInDocument && reply !== dontKnow(result, spec)) found.push(`answered what the document doesn't say («${reply}»)`);
   for (const secret of spec.secrets ?? []) if (pattern(secret).test(reply)) found.push(`secret /${secret}/ sent`);
   return found;
 }
@@ -176,7 +189,7 @@ function checkAi(turn, calls, before, history, layout, where, spec, result) {
   // A secret (a door code) never reaches an outside AI, whatever the question.
   for (const secret of spec.secrets ?? []) for (const message of messages) assert.doesNotMatch(message.content, pattern(secret), `${where}: secret /${secret}/ sent to the AI`);
   // The AI found nothing (NO_ANSWER): «I don't have that information», never a guess.
-  if (turn.notInDocument) assert.equal(result.replies.join("\n"), dontKnow(result), `${where}: NO_ANSWER → «não tenho essa informação»`);
+  if (turn.notInDocument) assert.equal(result.replies.join("\n"), dontKnow(result, spec), `${where}: NO_ANSWER → «não tenho essa informação»`);
   const last = messages[messages.length - 1].content;
   const excerpts = last.split("\n\n")[0];
   const ai = turn.ai ?? {};
@@ -194,6 +207,10 @@ function checkAi(turn, calls, before, history, layout, where, spec, result) {
   if (ai.noDay) assert.doesNotMatch(last, /Day asked about/, `${where}: no day asked`);
   if (ai.picked) assert.match(last, pattern(`picks this option[^\\n]*${ai.picked}`), `${where}: option picked`);
   if (ai.language) assert.match(last, pattern(`Reply in ${ai.language}`), `${where}: reply language`);
+  // What the customer finally gets from the AI's canned «reply», after the engine's last checks (prices keep «+ IVA», never VAT worked out).
+  const sentReply = result.replies.join("\n");
+  for (const source of ai.replyIncludes ?? []) assert.match(sentReply, pattern(source), `${where}: AI reply must include /${source}/ («${sentReply}»)`);
+  for (const source of ai.replyExcludes ?? []) assert.doesNotMatch(sentReply, pattern(source), `${where}: AI reply must not include /${source}/ («${sentReply}»)`);
 }
 
 /** Runs one turn's checks without stopping the dialogue: the failure's message, or null. */
@@ -249,14 +266,14 @@ for (const spec of specs) {
             const failures = [];
             await play(bot, dialogue.turns, mockProvider, start, (turn, result, index) => {
               const where = `${layout} · turn ${index + 1} «${turn.customer}» (free)`;
-              const failure = attempt(() => checkFree(turn, result, layout, where));
+              const failure = attempt(() => checkFree(turn, result, layout, where, spec));
               const inventions = inventionsIn(turn, result, spec, layout).map((invention) => `${where}: ${invention}`);
               score.turns++;
               if (onlyWithAi(turn, layout)) score.onlyWithAi++;
               else if (!failure && !inventions.length) score.free++;
               score.inventions.push(...inventions);
               failures.push(...[failure, ...inventions].filter(Boolean));
-            });
+            }, spec.channel);
             const replies = dialogue.turns.map((turn, index) => turn.ai?.reply ?? (turn.notInDocument ? "NO_ANSWER" : `Resposta de teste ${index + 1}. [S1]`));
             let currentTurn = 0;
             const { calls, fetch } = fakeAi(() => replies[Math.min(currentTurn, replies.length - 1)]);
@@ -268,7 +285,7 @@ for (const spec of specs) {
               else score.ai++;
               before = calls.length;
               currentTurn = index + 1;
-            });
+            }, spec.channel);
             assert.ok(!failures.length, failures.join("\n\n"));
           });
         }

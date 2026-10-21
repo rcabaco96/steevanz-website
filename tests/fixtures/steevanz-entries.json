@@ -1,0 +1,218 @@
+[
+  {
+    "kind": "info",
+    "question": "Qual é o horário?",
+    "answer": "Segunda-feira: 10:00–18:00\nTerça-feira: 10:00–18:00\nQuarta-feira: 10:00–18:00\nQuinta-feira: 10:00–18:00\nSexta-feira: 10:00–18:00\nSábado: fechado\nDomingo: fechado",
+    "keywords": "horário, abrem, fecham, aberto, fechado, horas"
+  },
+  {
+    "kind": "info",
+    "question": "Restaurantes e cafés",
+    "answer": "Sim, trabalhamos com restaurantes e cafés: mais avaliações no Google e no Tripadvisor, mesas cheias sem telefonemas perdidos e uma fila de espera que não entope a porta. Recomendamos: Placas para avaliações, Sistema de reservas online, Lista de espera digital e Receção por voz com IA. Mais informação: https://www.steevanz.com/setores/restaurantes",
+    "keywords": "restaurantes"
+  },
+  {
+    "kind": "info",
+    "question": "Cabeleireiros e estética",
+    "answer": "Sim, trabalhamos com cabeleireiros e estética: agenda sempre cheia, menos faltas e clientes que voltam por causa do cartão de fidelidade no telemóvel. Recomendamos: Sistema de reservas online, Placas para avaliações, Cartão de cliente digital e Chatbot com IA para site e WhatsApp. Mais informação: https://www.steevanz.com/setores/cabeleireiros-estetica",
+    "keywords": "cabeleireiros estetica"
+  },
+  {
+    "kind": "info",
+    "question": "Clínicas e consultórios",
+    "answer": "Sim, trabalhamos com clínicas e consultórios: receção que atende sempre, marcações com lembrete e uma sala de espera mais calma para os pacientes. Recomendamos: Sistema de reservas online, Receção por voz com IA, Lista de espera digital e Gestão de reviews com IA. Mais informação: https://www.steevanz.com/setores/clinicas",
+    "keywords": "clinicas"
+  },
+  {
+    "kind": "info",
+    "question": "Comércio local",
+    "answer": "Sim, trabalhamos com comércio local: mais seguidores, mais reviews e clientes que regressam, com tecnologia simples no balcão e na montra. Recomendamos: Placas para avaliações, Placas para redes sociais e site, Cartão de cliente digital e Chatbot com IA para site e WhatsApp. Mais informação: https://www.steevanz.com/setores/comercio",
+    "keywords": "comercio"
+  },
+  {
+    "kind": "info",
+    "question": "Alojamento local",
+    "answer": "Sim, trabalhamos com alojamento local: hóspedes bem informados em qualquer língua, menos mensagens a meio da noite e limpezas que se organizam sozinhas. Recomendamos: Guia digital do alojamento, Chatbot com IA para site e WhatsApp, Automação de processos à medida e Website para o seu negócio. Mais informação: https://www.steevanz.com/setores/alojamento-local\nPack Alojamento Local: 149 € + IVA de configuração + 49 €/mês + IVA (guia, assistente e automatização num só pack). Cada alojamento extra: + 49 € + IVA de configuração e + 9 €/mês + IVA.",
+    "keywords": "alojamento local, pack"
+  },
+  {
+    "kind": "info",
+    "question": "Placas para avaliações",
+    "answer": "Placas, autocolantes e expositores de mesa que, com um toque ou pelo QR code, levam o cliente à avaliação do seu negócio no Google, no Tripadvisor ou na Booking.com. Cada placa abre o destino que escolher. Nós configuramos tudo.\nPreço: desde 29 € + IVA por placa, configuração incluída; em quantidade, 25 € + IVA cada a partir de 3, 23 € + IVA cada a partir de 5 e 20 € + IVA cada a partir de 10 placas; com o seu logótipo, mais 5 € + IVA por placa.\nMais informação: https://www.steevanz.com/produtos/placas-google-reviews",
+    "keywords": "Placas para avaliações, Placas para avaliações no Google, Tripadvisor e Booking, placas google reviews"
+  },
+  {
+    "kind": "info",
+    "question": "Placas para redes sociais e site",
+    "answer": "Placas e cartões que levam o cliente ao seu Instagram, Facebook, TikTok, site ou página de links. Inclui cartões de visita digitais que partilham o seu contacto.\nPreço: desde 24 € + IVA por placa ou cartão; com o seu logótipo, mais 10 € + IVA por placa.\nMais informação: https://www.steevanz.com/produtos/placas-redes-sociais",
+    "keywords": "Placas Redes Sociais, Placas para redes sociais e cartões digitais, placas redes sociais"
+  },
+  {
+    "kind": "info",
+    "question": "Menu digital",
+    "answer": "O menu do seu negócio em vídeo: cada prato tem o seu vídeo vertical, com nome, preço e descrição. O cliente abre-o num toque ou pelo QR da placa da mesa e, se quiser, faz o pedido dali mesmo.\nPreço: desde 20 € + IVA por placa + 30 €/mês + IVA pelo menu em vídeo; em quantidade, 15 € + IVA cada a partir de 10 placas; com o seu logótipo, mais 10 € + IVA uma só vez por encomenda.\nMais informação: https://www.steevanz.com/produtos/menu-digital",
+    "keywords": "Menu Digital, Menu digital, menu digital"
+  },
+  {
+    "kind": "info",
+    "question": "Guia digital do alojamento",
+    "answer": "Uma página para o telemóvel com tudo o que o hóspede precisa de saber: WiFi, check-out, regras, eletrodomésticos, lixo, emergências e as suas recomendações. Abre com um toque numa placa dentro do alojamento e está em português, inglês e mais duas línguas.\nPreço: desde 20 € + IVA por placa, uma por alojamento, + 30 €/mês + IVA por conta · 1.ª placa oferecida na adesão; em quantidade, 15 € + IVA cada a partir de 10 placas; com o seu logótipo, mais 10 € + IVA uma só vez por encomenda.\nMais informação: https://www.steevanz.com/produtos/guia-digital-alojamento",
+    "keywords": "Guia Digital, Guia digital para alojamento local em 4 línguas, guia digital alojamento"
+  },
+  {
+    "kind": "info",
+    "question": "Cartão de cliente digital",
+    "answer": "Um cartão de cliente no telemóvel: adere com um toque ou QR code, sem app, e a equipa carimba a cada visita. Recompensas automáticas.\nPreço: desde 19 €/mês + IVA por loja.\nMais informação: https://www.steevanz.com/produtos/cartao-fidelidade-digital",
+    "keywords": "Cartão de Cliente, Cartão de cliente digital, cartao fidelidade digital"
+  },
+  {
+    "kind": "info",
+    "question": "Cartão de visita digital",
+    "answer": "Um cartão em PVC com o seu nome, contactos e o logótipo da empresa. Com um toque do telemóvel ou pelo QR code, abre a sua página de contacto e o cliente guarda os seus dados num instante. Nós preparamos tudo.\nPreço: desde 10 € + IVA por cartão, com nome, contactos e logótipo; em quantidade, 9 € + IVA cada a partir de 10, 8 € + IVA cada a partir de 25 e 7 € + IVA cada a partir de 50 cartões.\nMais informação: https://www.steevanz.com/produtos/cartao-de-visita-digital",
+    "keywords": "Cartão de visita, Cartão de visita digital, cartao de visita digital"
+  },
+  {
+    "kind": "info",
+    "question": "Porta-chaves digital",
+    "answer": "Um pequeno porta-chaves (ou uma tag para colar ou pendurar) que, com um toque do telemóvel, abre o WhatsApp, o Instagram ou o website do seu negócio. Funciona em iPhone e Android, sem app. Nós configuramos e testamos cada um.\nPreço: desde 5 € + IVA cada, com ou sem argola; abre o WhatsApp, o Instagram ou o site; em quantidade, 4,5 € + IVA cada a partir de 10 e 4 € + IVA cada a partir de 25 unidades.\nMais informação: https://www.steevanz.com/produtos/chaveiro-digital",
+    "keywords": "Porta-chaves digital, chaveiro digital"
+  },
+  {
+    "kind": "info",
+    "question": "Sistema de reservas online",
+    "answer": "Agenda online para restaurantes e serviços, com confirmação e lembrete por email, as reservas no calendário do telemóvel e um link pronto para o Instagram.\nPreço: desde 29 €/mês + IVA por estabelecimento.\nMais informação: https://www.steevanz.com/produtos/sistema-reservas-online",
+    "keywords": "Reservas Online, Sistema de reservas online, sistema reservas online"
+  },
+  {
+    "kind": "info",
+    "question": "Lista de espera digital",
+    "answer": "Fila virtual por QR code ou com um toque, com tempo de espera estimado e aviso no telemóvel quando a mesa ou a vez estiver pronta. Sem aglomerações à porta.\nPreço: desde 19 €/mês + IVA por estabelecimento.\nMais informação: https://www.steevanz.com/produtos/lista-espera-digital",
+    "keywords": "Lista de Espera, Lista de espera digital e fila virtual, lista espera digital"
+  },
+  {
+    "kind": "info",
+    "question": "Chatbot com IA para site e WhatsApp",
+    "answer": "Um assistente com IA treinado com a informação do seu negócio: menu, preços, horários e serviços. Responde 24 horas em vários idiomas e encaminha para reservas ou para a equipa.\nPreço: desde 49 €/mês + IVA, site + WhatsApp.\nMais informação: https://www.steevanz.com/produtos/chatbot-ia",
+    "keywords": "Chatbot IA, Chatbot com IA para site e WhatsApp, chatbot ia"
+  },
+  {
+    "kind": "info",
+    "question": "Receção por voz com IA",
+    "answer": "Uma rececionista com IA que atende o telefone 24 horas, responde às perguntas frequentes, faz reservas e passa as chamadas urgentes à sua equipa.\nPreço: desde 99 €/mês + IVA por número.\nMais informação: https://www.steevanz.com/produtos/rececao-voz-ia",
+    "keywords": "Receção Voz IA, Rececionista virtual com IA por telefone, rececao voz ia"
+  },
+  {
+    "kind": "info",
+    "question": "Gestão de reviews com IA",
+    "answer": "Monitorizamos as reviews do seu negócio no Google, a IA prepara respostas no tom da sua marca para aprovar e é avisado de imediato quando chega uma avaliação negativa.\nPreço: desde 29 €/mês + IVA por perfil Google.\nMais informação: https://www.steevanz.com/produtos/gestao-reviews-ia",
+    "keywords": "Gestão Reviews IA, Gestão de reviews no Google com IA, gestao reviews ia"
+  },
+  {
+    "kind": "info",
+    "question": "Automação de processos à medida",
+    "answer": "Automatizamos faturas, seguimento de contactos, lembretes e ligações entre as ferramentas que já usa. Projetos à medida, com preço fechado antes de começar.\nPreço: desde 149 € + IVA por projeto, preço fechado.\nMais informação: https://www.steevanz.com/produtos/automacao-processos",
+    "keywords": "Automação, Automação de processos, automacao processos"
+  },
+  {
+    "kind": "info",
+    "question": "Landing page",
+    "answer": "Uma página única, rápida e pensada para telemóvel, que leva quem a visita a ligar, reservar ou encomendar. Preço fechado e pronta em 5 dias úteis.\nPreço: desde 350 € + IVA por projeto, + 15 €/mês + IVA de alojamento.\nMais informação: https://www.steevanz.com/produtos/landing-page",
+    "keywords": "Landing page, landing page"
+  },
+  {
+    "kind": "info",
+    "question": "Website para o seu negócio",
+    "answer": "Um site completo até 5 páginas, rápido e fácil de manter, com serviços, preços, galeria, contactos e as ferramentas Steevanz ligadas. Preço fechado e pronto em 10 dias úteis.\nPreço: desde 700 € + IVA, até 5 páginas, + 25 €/mês + IVA de alojamento.\nMais informação: https://www.steevanz.com/produtos/criacao-website",
+    "keywords": "Website, Criação de sites, criacao website"
+  },
+  {
+    "kind": "info",
+    "question": "Loja online",
+    "answer": "Uma loja online pronta a vender: até 50 produtos carregados, pagamentos MB WAY, Multibanco e cartão, envios configurados e regras legais tratadas. Preço fechado.\nPreço: desde 900 € + IVA, até 50 produtos, + 19 €/mês + IVA e 3% por venda.\nMais informação: https://www.steevanz.com/produtos/loja-online",
+    "keywords": "Loja online, Criação de loja online com MB WAY e Multibanco, loja online"
+  },
+  {
+    "kind": "info",
+    "question": "Quem somos?",
+    "answer": "A Steevanz nasceu de uma família alentejana de nerds e geeks com uma ideia simples: a tecnologia deve adaptar-se às pessoas, e não o contrário. Somos uma equipa portuguesa que torna a tecnologia simples e acessível para negócios locais: placas com tecnologia Steevanz, reservas e inteligência artificial com suporte próximo. Desde 2021 que desenvolvemos software à medida para empresas de várias dimensões.",
+    "keywords": "quem são, empresa, sobre vocês, história, equipa"
+  },
+  {
+    "kind": "info",
+    "question": "Qual é o processo?",
+    "answer": "Primeiro ouvimos: cada demonstração começa com perguntas sobre o seu negócio, não com uma apresentação de produto. Depois configuramos: tratamos da instalação, dos testes e da formação da equipa. Recebe tudo pronto a usar. E ficamos por perto: suporte por WhatsApp e e-mail, melhorias contínuas e zero letras miudinhas.",
+    "keywords": "como funciona, processo, passos, instalação, configuração, formação"
+  },
+  {
+    "kind": "info",
+    "question": "Quem são os vossos clientes?",
+    "answer": "Alguns dos nossos clientes: Sporting, BMW, Crédito Agrícola, EIC, Agilflex, Dianaconta e Dolci e Salati.",
+    "keywords": "clientes, marcas, portefólio, referências"
+  },
+  {
+    "kind": "info",
+    "question": "Quais são os contactos?",
+    "answer": "Telefone e WhatsApp: 961 292 679 (https://wa.me/351961292679)\nEmail: rcabaco@steevanz.com\nInstagram: @steevanz_ (https://www.instagram.com/steevanz_)\nAtendimento: segunda a sexta-feira, das 10:00 às 18:00. Resposta habitual no mesmo dia útil.",
+    "keywords": "contacto, contactos, contactar, falar convosco"
+  },
+  {
+    "kind": "info",
+    "question": "Qual é o telefone?",
+    "answer": "Pode ligar para 961 292 679, segunda a sexta-feira, das 10:00 às 18:00. Também pode escrever-nos pelo WhatsApp: https://wa.me/351961292679",
+    "keywords": "telefone, número, ligar, chamada"
+  },
+  {
+    "kind": "info",
+    "question": "Têm WhatsApp?",
+    "answer": "Sim, pode falar connosco pelo WhatsApp, no 961 292 679: https://wa.me/351961292679",
+    "keywords": "whatsapp, mensagem"
+  },
+  {
+    "kind": "info",
+    "question": "Qual é o email?",
+    "answer": "O nosso email é rcabaco@steevanz.com.",
+    "keywords": "email, e-mail, mail, correio eletrónico"
+  },
+  {
+    "kind": "info",
+    "question": "Têm Instagram?",
+    "answer": "Sim: @steevanz_ (https://www.instagram.com/steevanz_).",
+    "keywords": "instagram"
+  },
+  {
+    "kind": "faq",
+    "question": "Como marcar uma demonstração?",
+    "answer": "Escolha dia e hora para uma demonstração gratuita de 20 minutos, online ou por telefone. Marque em https://www.steevanz.com/agendar",
+    "keywords": "demonstração, demo, marcar, marco, agendar, reunião, apresentação, ver a funcionar, gratuita"
+  },
+  {
+    "kind": "faq",
+    "question": "Podem enviar informação por escrito?",
+    "answer": "Deixe o seu contacto e enviamos-lhe detalhes e preços do produto que lhe interessa. Peça em https://www.steevanz.com/pedir-informacao",
+    "keywords": "por escrito, proposta, orçamento, detalhes"
+  },
+  {
+    "kind": "policy",
+    "question": "Os preços incluem IVA?",
+    "answer": "Não. Os preços da Steevanz são sem IVA: acresce IVA à taxa legal.",
+    "keywords": "iva, imposto, impostos"
+  },
+  {
+    "kind": "info",
+    "question": "Que produtos e serviços têm?",
+    "answer": "Temos placas para avaliações, placas para redes sociais e site, menu digital, guia digital do alojamento, cartão de cliente digital, cartão de visita digital, porta-chaves digital, sistema de reservas online, lista de espera digital, chatbot com IA para site e WhatsApp, receção por voz com IA, gestão de reviews com IA, automação de processos à medida, landing page, website para o seu negócio e loja online. Todos os produtos e preços: https://www.steevanz.com/produtos",
+    "keywords": "produtos, serviços, soluções, catálogo"
+  },
+  {
+    "kind": "info",
+    "question": "Que setores?",
+    "answer": "Trabalhamos com restaurantes e cafés, cabeleireiros e estética, clínicas e consultórios, comércio local e alojamento local.",
+    "keywords": "setores, setor, áreas, tipos de negócio"
+  },
+  {
+    "kind": "info",
+    "question": "Que suporte dão?",
+    "answer": "Suporte por WhatsApp e email, melhorias contínuas e zero letras miudinhas.",
+    "keywords": "suporte, apoio, ajuda, assistência"
+  }
+]

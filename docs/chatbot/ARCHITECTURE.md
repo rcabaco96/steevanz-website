@@ -207,6 +207,26 @@ Admin › assistente › Conhecimento › **Documentos**: enviar PDF, Word (.doc
 - Migração `20261021120000_chatbot_documents.sql` (aplicada a 2026-10-21). Sem ela, o resto
   funciona e o painel de documentos mostra o aviso.
 
+### Canal web: página de teste `/chat-teste` (fase D, 2026-10-21)
+
+- **Página** `src/app/(pt)/chat-teste/page.tsx` + `components/chatbot/WebChat.tsx`: noindex/nofollow, fora do sitemap,
+  `Disallow` no `robots.ts`, sem ligações. Só respostas (sem fontes nem notas), sugestões, «a escrever…», conversa no
+  `sessionStorage` do separador, enviada em cada pedido (como «Experimentar»). Nada é guardado no servidor.
+- **Rota** `POST /api/chatbot/web` (`web-channel.ts`): só JSON (≤ 16 KB), mensagem ≤ 500 caracteres, origem do próprio
+  site; 20 mensagens/min e 80/dia por visitante, 300/dia no total (`CHATBOT_WEB_MAX_PER_MINUTE`, `…_PER_DAY`,
+  `…_TOTAL_PER_DAY`), contadas em `submission_attempts` (`kind = 'chat-web'`, hash do IP com sal próprio; sem base de
+  dados, contagem em memória) → «Estamos com muitas mensagens, tente daqui a pouco.». O assistente é
+  `CHATBOT_WEB_TEST_BOT_ID` ou o único chamado «Steevanz»; IA = a escolha do assistente (Groq grátis; Mistral só com o
+  interruptor do dono). O «Ligado» do assistente é o do WhatsApp: a página responde na mesma; `CHATBOT_WEB_DISABLED=1`
+  desliga-a.
+- **Sem caixa da equipa** (`respond({ inbox: false, channel: "web" })`): «não sei» e passagens dão o telefone
+  (`dontKnowContact`, `contactTeam`; emergência → 112 primeiro) e a conversa fica com o assistente.
+- **Assistente Steevanz**: respostas e documento gerados do conteúdo do site (`src/lib/chatbot/steevanz.ts`; correr
+  `node scripts/chatbot/steevanz-bot.mjs --apply` depois de mudar produtos/preços). Preços sempre «X € + IVA».
+- **IVA em todas as respostas** (`guardrails.ts → keepVatAsWritten`): frase com IVA calculado (taxa, «=», «× 1,23») sai
+  sempre; num negócio que escreve «+ IVA» (`pricesExcludeVat`), sai também «com IVA» e cada preço fica com a nota na
+  língua da resposta («+ IVA», «+ VAT», «+ TVA», «zzgl. MwSt.»). O prompt diz o mesmo.
+
 ### IA de teste local: Ollama, grátis (`llm/ollama.ts`)
 
 Pedido do dono (2026-10-21): IA grátis para testes, sem API paga e sem contas novas. O plano grátis do

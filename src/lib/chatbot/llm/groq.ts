@@ -73,7 +73,7 @@ export function groqKeyPresent(env: Record<string, string | undefined>): boolean
 
 /** The request body for POST /openai/v1/chat/completions (exported for the tests). */
 export function groqRequestBody(request: AnswerRequest, items: readonly ContextItem[], model: string) {
-  const system = buildSystemPrompt(request.knowledge, request.settings, request.language);
+  const system = buildSystemPrompt(request.knowledge, request.settings, request.language, request.channel);
   const messages = groundedMessages(request, items, system, languageNames[request.language]);
   const base = { model, stream: false, temperature: groqOptions.temperature };
   return isReasoningModel(model)

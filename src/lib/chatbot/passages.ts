@@ -236,9 +236,11 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
     const line = trimmed
       .replace(bulletStart, "")
       .replace(/^#+\s+/, "")
-      // WhatsApp/Markdown emphasis: «*HORÁRIO*» → «HORÁRIO».
-      .replace(/(^|\s)[*_~]+(?=\S)/g, "$1")
-      .replace(/(?<=\S)[*_~]+(?=\s|$|[.,;:!?)])/g, "")
+      // WhatsApp/Markdown emphasis: «*HORÁRIO*», «_nota_» → «HORÁRIO», «nota». Underscores only in pairs: «@steevanz_» and
+      // «instagram.com/steevanz_» keep theirs (a stripped handle or link is a wrong one).
+      .replace(/(^|\s)([*_~]+)(?=\S)(.+?)(?<=\S)\2(?=\s|$|[.,;:!?)])/g, "$1$3")
+      .replace(/(^|\s)[*~]+(?=\S)/g, "$1")
+      .replace(/(?<=\S)[*~]+(?=\s|$|[.,;:!?)])/g, "")
       .trim();
     if (!line) continue;
     const current: { text: string; chunk: KnowledgeChunk; last: string; bullet: boolean } | null = open;

@@ -380,7 +380,7 @@ export function groundedMessages(request: AnswerRequest, items: readonly Context
         followUp,
         picked,
         `Customer message:\n${request.customerMessage ?? request.message}`,
-        `Reply in ${languageName}: a short, natural WhatsApp message (at most 4 short sentences), or a short question back if it is ambiguous, or ${noAnswer}.`,
+        `Reply in ${languageName}: a short, natural ${request.channel === "web" ? "chat message for the website" : "WhatsApp message"} (at most 4 short sentences), or a short question back if it is ambiguous, or ${noAnswer}.`,
       ]
         .filter(Boolean)
         .join("\n\n"),

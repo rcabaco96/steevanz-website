@@ -36,7 +36,7 @@ export function ollamaAvailable(env: Record<string, string | undefined>): boolea
 
 /** The request body for POST /api/chat (exported for the tests). */
 export function ollamaRequestBody(request: AnswerRequest, items: readonly ContextItem[], model: string) {
-  const system = buildSystemPrompt(request.knowledge, request.settings, request.language);
+  const system = buildSystemPrompt(request.knowledge, request.settings, request.language, request.channel);
   return {
     model,
     stream: false,

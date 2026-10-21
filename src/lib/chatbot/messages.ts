@@ -58,6 +58,12 @@ export interface FixedMessages {
   answerInOtherLanguage: string;
   whichProperty: (list: string) => string;
   textOnly: string;
+  /** A channel without a team inbox (the site chat today): nobody reads a hand-off, so «I don't know» gives the contact instead of «reply yes». */
+  dontKnowContact: (phone: string | null) => string;
+  /** …and a hand-off there: how to reach a person. */
+  contactTeam: (phone: string | null) => string;
+  /** …and an emergency there: 112, without «I have alerted the team». */
+  emergencyCall: string;
 }
 
 const pt: FixedMessages = {
@@ -99,6 +105,9 @@ const pt: FixedMessages = {
   answerInOtherLanguage: "(Por agora, esta informação só está disponível noutra língua.)",
   whichProperty: (list) => `Em qual dos alojamentos está hospedado? ${list}`,
   textOnly: "De momento só consigo ler mensagens de texto. Pode escrever a sua pergunta?",
+  dontKnowContact: (phone) => `Não tenho essa informação. ${phone ? `Para falar com uma pessoa da equipa, ligue para ${phone}.` : "Para falar com uma pessoa da equipa, use os contactos do site."}`,
+  contactTeam: (phone) => (phone ? `Para falar com uma pessoa da equipa, ligue para ${phone}.` : "Para falar com uma pessoa da equipa, use os contactos do site."),
+  emergencyCall: "Se é uma emergência, ligue já para o 112.",
 };
 
 const en: FixedMessages = {
@@ -140,6 +149,9 @@ const en: FixedMessages = {
   answerInOtherLanguage: "(This information is only available in another language for now.)",
   whichProperty: (list) => `Which of our properties are you staying at? ${list}`,
   textOnly: "For now I can only read text messages. Could you type your question?",
+  dontKnowContact: (phone) => `I don't have that information. ${phone ? `To talk to someone on the team, please call ${phone}.` : "To talk to someone on the team, please use the contact details on the website."}`,
+  contactTeam: (phone) => (phone ? `To talk to someone on the team, please call ${phone}.` : "To talk to someone on the team, please use the contact details on the website."),
+  emergencyCall: "If this is an emergency, please call 112 now.",
 };
 
 const es: FixedMessages = {
@@ -181,6 +193,9 @@ const es: FixedMessages = {
   answerInOtherLanguage: "(Por ahora esta información solo está disponible en otro idioma.)",
   whichProperty: (list) => `¿En cuál de nuestros alojamientos se hospeda? ${list}`,
   textOnly: "Por ahora solo puedo leer mensajes de texto. ¿Puede escribir su pregunta?",
+  dontKnowContact: (phone) => `No tengo esa información. ${phone ? `Para hablar con una persona del equipo, llame al ${phone}.` : "Para hablar con una persona del equipo, utilice los datos de contacto de la web."}`,
+  contactTeam: (phone) => (phone ? `Para hablar con una persona del equipo, llame al ${phone}.` : "Para hablar con una persona del equipo, utilice los datos de contacto de la web."),
+  emergencyCall: "Si es una emergencia, llame ahora al 112.",
 };
 
 const fr: FixedMessages = {
@@ -222,6 +237,9 @@ const fr: FixedMessages = {
   answerInOtherLanguage: "(Pour l'instant, cette information n'est disponible que dans une autre langue.)",
   whichProperty: (list) => `Dans lequel de nos logements séjournez-vous ? ${list}`,
   textOnly: "Pour l'instant, je ne peux lire que les messages texte. Pouvez-vous écrire votre question ?",
+  dontKnowContact: (phone) => `Je n'ai pas cette information. ${phone ? `Pour parler à une personne de l'équipe, appelez le ${phone}.` : "Pour parler à une personne de l'équipe, utilisez les coordonnées indiquées sur le site."}`,
+  contactTeam: (phone) => (phone ? `Pour parler à une personne de l'équipe, appelez le ${phone}.` : "Pour parler à une personne de l'équipe, utilisez les coordonnées indiquées sur le site."),
+  emergencyCall: "S'il s'agit d'une urgence, appelez immédiatement le 112.",
 };
 
 const de: FixedMessages = {
@@ -263,6 +281,9 @@ const de: FixedMessages = {
   answerInOtherLanguage: "(Diese Information gibt es vorerst nur in einer anderen Sprache.)",
   whichProperty: (list) => `In welcher unserer Unterkünfte wohnen Sie? ${list}`,
   textOnly: "Im Moment kann ich nur Textnachrichten lesen. Könnten Sie Ihre Frage schreiben?",
+  dontKnowContact: (phone) => `Diese Information habe ich leider nicht. ${phone ? `Um mit jemandem aus dem Team zu sprechen, rufen Sie bitte ${phone} an.` : "Um mit jemandem aus dem Team zu sprechen, nutzen Sie bitte die Kontaktdaten auf der Website."}`,
+  contactTeam: (phone) => (phone ? `Um mit jemandem aus dem Team zu sprechen, rufen Sie bitte ${phone} an.` : "Um mit jemandem aus dem Team zu sprechen, nutzen Sie bitte die Kontaktdaten auf der Website."),
+  emergencyCall: "Wenn es sich um einen Notfall handelt, rufen Sie bitte sofort die 112 an.",
 };
 
 const it: FixedMessages = {
@@ -304,6 +325,9 @@ const it: FixedMessages = {
   answerInOtherLanguage: "(Per ora questa informazione è disponibile solo in un'altra lingua.)",
   whichProperty: (list) => `In quale dei nostri alloggi soggiorna? ${list}`,
   textOnly: "Per ora posso leggere solo messaggi di testo. Può scrivere la Sua domanda?",
+  dontKnowContact: (phone) => `Non ho questa informazione. ${phone ? `Per parlare con una persona del team, chiami il ${phone}.` : "Per parlare con una persona del team, utilizzi i contatti indicati sul sito."}`,
+  contactTeam: (phone) => (phone ? `Per parlare con una persona del team, chiami il ${phone}.` : "Per parlare con una persona del team, utilizzi i contatti indicati sul sito."),
+  emergencyCall: "Se si tratta di un'emergenza, chiami subito il 112.",
 };
 
 export const fixedMessages: Record<ChatbotLanguage, FixedMessages> = { pt, en, es, fr, de, it };

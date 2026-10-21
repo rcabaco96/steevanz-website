@@ -169,7 +169,8 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
       if (fresh.length) fromDocument({ ...fromDocs, text: fresh.join("\n") });
     } else {
       const booking = bookingAnswer(knowledge, language);
-      if (booking) parts.push(booking);
+      // Not when the answer above already gives the booking link («Como marcar uma demonstração? … Marque em <link>»).
+      if (booking && !(knowledge.bookingUrl && parts.some((part) => part.includes(knowledge.bookingUrl!)))) parts.push(booking);
     }
   }
   // «(This information is only available in another language…)» once, at the end.

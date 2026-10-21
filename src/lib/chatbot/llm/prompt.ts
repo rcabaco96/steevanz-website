@@ -3,6 +3,7 @@
 // the owner chooses and pays for one from the site (phase 2). The safety rules are also enforced in code before and after the model
 // (engine.ts, guardrails.ts), so a model that ignores the prompt still can't leak a door code or skip
 // the hand-off.
+import { pricesExcludeVat, vatNotes } from "../guardrails.ts";
 import { formatWeek } from "../hours.ts";
 import type { SearchHit } from "../knowledge.ts";
 import type { BotSettings, BusinessKnowledge, ChatbotLanguage } from "../types.ts";
@@ -37,7 +38,7 @@ const languageStyle: Record<ChatbotLanguage, string[]> = {
   it: ["- Natural Italian, addressing the customer with the formal «Lei».", "- Good: «Sì, domani (giovedì) siamo aperti dalle [ora] alle [ora]. Può prenotare su [link].» Bad: «Apertura domani [ora]–[ora].»"],
 };
 
-export function buildSystemPrompt(knowledge: BusinessKnowledge, settings: BotSettings, language: ChatbotLanguage): string {
+export function buildSystemPrompt(knowledge: BusinessKnowledge, settings: BotSettings, language: ChatbotLanguage, channel: "whatsapp" | "web" = "whatsapp"): string {
   const kindRules: string[] = [];
   if (knowledge.kind === "lodging") {
     kindRules.push(
@@ -51,11 +52,16 @@ export function buildSystemPrompt(knowledge: BusinessKnowledge, settings: BotSet
     kindRules.push("- NEVER give medical advice, diagnoses, dosages or medication guidance. Practical questions only (services, prices, hours, preparation the clinic wrote down).");
   }
   const friendly = settings.tone === "friendly";
+  const web = channel === "web";
+  // A business that writes its prices without VAT (Steevanz and other B2B businesses): the note stays after every price.
+  const vat = pricesExcludeVat(knowledge)
+    ? [`- This business's prices are without VAT: write «${vatNotes[language]}» right after every price, as the information does («20 € ${vatNotes[language]}», «30 €/mês ${vatNotes[language]}»). Never work out VAT nor add it to any price.`]
+    : [];
   return [
-    `You answer the WhatsApp messages of «${knowledge.businessName}» on its behalf. You are its automatic assistant, not a person: if asked, say so.`,
+    `You answer the ${web ? "chat on the website" : "WhatsApp messages"} of «${knowledge.businessName}» on its behalf. You are its automatic assistant, not a person: if asked, say so.`,
     `Answer in ${languageNames[language]}. Tone: ${friendly ? "warm and close, still polite" : "polite and warm, a little formal"}.`,
     "",
-    "How to write (WhatsApp):",
+    `How to write (${web ? "website chat" : "WhatsApp"}):`,
     "- Speak as the business, in the first person plural («we're open», «we do», «we have», «we recommend»), and to the customer as «you can book», «you can come».",
     "- Answer straight away in complete, natural sentences, as a friendly employee would write. Never telegraphic fragments or labels.",
     "- Start with «Yes»/«No» (in the reply language) only when the customer asks a yes/no question («Do you do…?», «Are you open…?»); never before a price, a time or a list («How much?» → «The fade costs [price].», not «Yes, the fade costs…»).",
@@ -76,7 +82,10 @@ export function buildSystemPrompt(knowledge: BusinessKnowledge, settings: BotSet
     "- Do not give medical, legal or financial advice.",
     "- Never ask for sensitive data (health data, card numbers, passwords).",
     "- To book, send the booking link or say how to book as written in the information; you cannot confirm a booking yourself. Mention booking only when the customer asks how to book or about coming on a day, and then write the actual link or contact; never write «link» or «website» without the address itself.",
-    "- If the customer asks for a person or complains, say the team will reply here.",
+    web
+      ? `- If the customer asks for a person or complains, give the phone number${knowledge.phone ? ` (${knowledge.phone})` : " written in the information"}: nobody from the team reads this chat.`
+      : "- If the customer asks for a person or complains, say the team will reply here.",
+    ...vat,
     ...kindRules,
     "",
     "Business information:",

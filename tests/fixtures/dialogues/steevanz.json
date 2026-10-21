@@ -1,0 +1,642 @@
+{
+  "sector": "other",
+  "business": "Steevanz",
+  "about": "The Steevanz assistant on the site chat (/chat-teste, the web channel of phase D): visitors asking about products, prices (always «+ IVA», never VAT worked out), demos, sectors and contacts. The answers and the document are generated from the site's content by scripts/chatbot/steevanz-bot.mjs (tests/fixtures/steevanz-entries.json and steevanz.txt; a test checks they are in sync). «channel»: «web» — no team inbox yet, so «I don't know» and hand-offs give the phone.",
+  "documentTitle": "Steevanz — informação para visitantes do site",
+  "documents": {
+    "structured": "steevanz.txt"
+  },
+  "entries": "steevanz-entries.json",
+  "bot": {
+    "phone": "961 292 679",
+    "booking_url": "https://www.steevanz.com/agendar",
+    "address": "Lisboa (trabalhamos à distância, com clientes em todo o país)"
+  },
+  "channel": "web",
+  "layouts": [
+    "structured",
+    "flat",
+    "messy"
+  ],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "Menu digital price, then seeing it working",
+      "turns": [
+        {
+          "customer": "Quanto custa o Menu digital?",
+          "free": {
+            "includes": [
+              "20 € \\+ IVA por placa",
+              "30 €/mês \\+ IVA"
+            ],
+            "excludes": [
+              "Não tenho"
+            ]
+          },
+          "ai": {
+            "excerpts": [
+              "20 € \\+ IVA por placa"
+            ],
+            "reply": "O Menu digital custa desde 20 € por placa e 30 €/mês pelo menu em vídeo. [E1]",
+            "replyIncludes": [
+              "20 € \\+ IVA por placa",
+              "30 €/mês \\+ IVA"
+            ],
+            "replyExcludes": [
+              "24,60",
+              "36,90",
+              "23 ?%"
+            ]
+          }
+        },
+        {
+          "customer": "E como posso ver a funcionar?",
+          "free": {
+            "includes": [
+              "steevanz\\.com/agendar"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "what the Menu digital is, then its price",
+      "turns": [
+        {
+          "customer": "O que é o Menu digital?",
+          "free": {
+            "includes": [
+              "vídeo",
+              "steevanz\\.com/produtos/menu-digital"
+            ],
+            "excludes": [
+              "Não tenho"
+            ]
+          }
+        },
+        {
+          "customer": "Quanto custa?",
+          "free": {
+            "includes": [
+              "20 € \\+ IVA"
+            ]
+          },
+          "ai": {
+            "followUpOf": "Menu digital"
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking a demo, then whether it is paid",
+      "turns": [
+        {
+          "customer": "Como marco uma demonstração?",
+          "free": {
+            "includes": [
+              "steevanz\\.com/agendar",
+              "20 minutos"
+            ]
+          }
+        },
+        {
+          "customer": "A demonstração é paga?",
+          "free": {
+            "includes": [
+              "gratuita"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "clinics, then the voice receptionist's price",
+      "turns": [
+        {
+          "customer": "Trabalham com clínicas?",
+          "free": {
+            "includes": [
+              "clínicas e consultórios",
+              "steevanz\\.com/setores/clinicas"
+            ],
+            "excludes": [
+              "Não tenho"
+            ]
+          }
+        },
+        {
+          "customer": "Quanto custa a receção por voz?",
+          "free": {
+            "includes": [
+              "99 €/mês \\+ IVA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "contacts, then Instagram",
+      "turns": [
+        {
+          "customer": "Qual é o vosso contacto?",
+          "free": {
+            "includes": [
+              "961 292 679",
+              "rcabaco@steevanz\\.com"
+            ]
+          }
+        },
+        {
+          "customer": "Têm Instagram?",
+          "free": {
+            "includes": [
+              "instagram\\.com/steevanz_"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "VAT: prices are without VAT, never worked out",
+      "turns": [
+        {
+          "customer": "Os preços incluem IVA?",
+          "free": {
+            "includes": [
+              "sem IVA",
+              "acresce IVA"
+            ],
+            "excludes": [
+              "^Sim"
+            ]
+          },
+          "ai": {
+            "reply": "Não. Os preços são sem IVA: acresce IVA à taxa legal. [E1]",
+            "replyIncludes": [
+              "sem IVA"
+            ]
+          }
+        },
+        {
+          "customer": "Então quanto fica o Menu digital com o IVA?",
+          "ai": {
+            "reply": "O Menu digital custa 20 € + IVA por placa. Com IVA (23%) fica 24,60 €. [E1]",
+            "replyIncludes": [
+              "20 € \\+ IVA"
+            ],
+            "replyExcludes": [
+              "24,60",
+              "23 ?%"
+            ]
+          },
+          "free": {
+            "includes": [
+              "20 € \\+ IVA"
+            ],
+            "excludes": [
+              "24,60",
+              "23 ?%"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "«Quanto custa?» with nothing named: a question back, then the website",
+      "turns": [
+        {
+          "customer": "Quanto custa?",
+          "free": {
+            "includes": [
+              "Depende",
+              "\\+ IVA"
+            ],
+            "excludes": [
+              "Não tenho"
+            ]
+          }
+        },
+        {
+          "customer": "Um website",
+          "free": {
+            "includes": [
+              "700 € \\+ IVA",
+              "25 €/mês \\+ IVA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "something Steevanz doesn't do: tattoos",
+      "turns": [
+        {
+          "customer": "Fazem tatuagens?",
+          "notInDocument": true
+        },
+        {
+          "customer": "Ok, obrigado",
+          "free": {
+            "includes": [
+              "De nada"
+            ]
+          },
+          "ai": null
+        }
+      ]
+    },
+    {
+      "name": "not covered: a shop in Porto",
+      "turns": [
+        {
+          "customer": "Têm loja física no Porto?",
+          "notInDocument": true
+        },
+        {
+          "customer": "E onde estão?",
+          "free": {
+            "includes": [
+              "Lisboa"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "not covered: Excel courses",
+      "turns": [
+        {
+          "customer": "Dão formação em Excel?",
+          "notInDocument": true
+        }
+      ]
+    },
+    {
+      "name": "asking for a person on the site chat: the phone, the chat stays with the assistant",
+      "turns": [
+        {
+          "customer": "Quero falar com uma pessoa",
+          "handoff": "customer_asked",
+          "free": {
+            "includes": [
+              "961 292 679"
+            ],
+            "excludes": [
+              "responde aqui",
+              "responda «sim»"
+            ]
+          },
+          "ai": null
+        },
+        {
+          "customer": "Quanto custa o chatbot?",
+          "free": {
+            "includes": [
+              "49 €/mês \\+ IVA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "website, then a landing page",
+      "turns": [
+        {
+          "customer": "Quanto custa um website?",
+          "free": {
+            "includes": [
+              "700 € \\+ IVA",
+              "25 €/mês \\+ IVA"
+            ]
+          }
+        },
+        {
+          "customer": "E uma landing page?",
+          "free": {
+            "includes": [
+              "350 € \\+ IVA",
+              "15 €/mês \\+ IVA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "email, then phone",
+      "turns": [
+        {
+          "customer": "Qual é o email?",
+          "free": {
+            "includes": [
+              "rcabaco@steevanz\\.com"
+            ]
+          }
+        },
+        {
+          "customer": "E o telefone?",
+          "free": {
+            "includes": [
+              "961 292 679"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "open tomorrow, then Saturday",
+      "turns": [
+        {
+          "customer": "Estão abertos amanhã?",
+          "free": {
+            "includes": [
+              "10:00",
+              "18:00"
+            ]
+          },
+          "ai": {
+            "dayAsked": "tomorrow"
+          }
+        },
+        {
+          "customer": "E ao sábado?",
+          "free": {
+            "includes": [
+              "fechad"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "clients",
+      "turns": [
+        {
+          "customer": "Quem são os vossos clientes?",
+          "free": {
+            "includes": [
+              "Sporting",
+              "Dolci e Salati"
+            ]
+          }
+        },
+        {
+          "customer": "Obrigado!",
+          "free": {
+            "includes": [
+              "De nada"
+            ]
+          },
+          "ai": null
+        }
+      ]
+    },
+    {
+      "name": "hello, then the Google review plates",
+      "turns": [
+        {
+          "customer": "Olá",
+          "free": {
+            "equals": "Olá! Em que posso ajudar?"
+          },
+          "ai": null
+        },
+        {
+          "customer": "Quanto custam as placas para o Google?",
+          "free": {
+            "includes": [
+              "29 € \\+ IVA por placa",
+              "20 € \\+ IVA cada a partir de 10"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business card, then 25 cards",
+      "turns": [
+        {
+          "customer": "Quanto custa o cartão de visita digital?",
+          "free": {
+            "includes": [
+              "10 € \\+ IVA por cartão"
+            ]
+          }
+        },
+        {
+          "customer": "E 25 cartões?",
+          "free": {
+            "includes": [
+              "8 € \\+ IVA cada a partir de 25"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "holiday rentals: what we recommend and the pack",
+      "turns": [
+        {
+          "customer": "Para alojamento local o que recomendam?",
+          "free": {
+            "includes": [
+              "Guia digital do alojamento",
+              "149 € \\+ IVA de configuração",
+              "49 €/mês \\+ IVA"
+            ]
+          }
+        },
+        {
+          "customer": "Quanto custa o guia digital?",
+          "free": {
+            "includes": [
+              "20 € \\+ IVA por placa",
+              "30 €/mês \\+ IVA por conta"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "the product list, then the online shop",
+      "turns": [
+        {
+          "customer": "Que produtos têm?",
+          "free": {
+            "includes": [
+              "menu digital",
+              "loja online",
+              "steevanz\\.com/produtos"
+            ]
+          }
+        },
+        {
+          "customer": "Quanto custa a loja online?",
+          "free": {
+            "includes": [
+              "900 € \\+ IVA",
+              "19 €/mês \\+ IVA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "the keychain, then 25 of them",
+      "turns": [
+        {
+          "customer": "Quanto custa o porta-chaves digital?",
+          "free": {
+            "includes": [
+              "5 € \\+ IVA cada"
+            ]
+          }
+        },
+        {
+          "customer": "Quanto custam 25 porta-chaves?",
+          "free": {
+            "includes": [
+              "4 € \\+ IVA cada a partir de 25"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp",
+      "turns": [
+        {
+          "customer": "Têm WhatsApp?",
+          "free": {
+            "includes": [
+              "wa\\.me/351961292679"
+            ]
+          }
+        },
+        {
+          "customer": "Obrigado, até logo",
+          "free": {
+            "includes": [
+              "De nada"
+            ]
+          },
+          "ai": null
+        }
+      ]
+    },
+    {
+      "name": "bookings, then the waiting list",
+      "turns": [
+        {
+          "customer": "Quanto custa o sistema de reservas online?",
+          "free": {
+            "includes": [
+              "29 €/mês \\+ IVA"
+            ]
+          }
+        },
+        {
+          "customer": "E a lista de espera digital?",
+          "free": {
+            "includes": [
+              "19 €/mês \\+ IVA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "a complaint on the site chat: the phone",
+      "turns": [
+        {
+          "customer": "Isto é uma vergonha, ninguém me respondeu ao email",
+          "handoff": "complaint",
+          "free": {
+            "includes": [
+              "961 292 679"
+            ],
+            "excludes": [
+              "responde aqui"
+            ]
+          },
+          "ai": null
+        }
+      ]
+    },
+    {
+      "name": "English visitor: the digital menu (the AI answers in English, «+ VAT»)",
+      "turns": [
+        {
+          "customer": "How much is the digital menu?",
+          "language": "en",
+          "free": {
+            "includes": [
+              "20 € \\+ IVA"
+            ]
+          },
+          "ai": {
+            "language": "English",
+            "reply": "The digital menu costs from €20 per plate, plus €30/month for the video menu. [E1]",
+            "replyIncludes": [
+              "€20 \\+ VAT per plate",
+              "€30/month \\+ VAT"
+            ]
+          }
+        },
+        {
+          "customer": "Thanks!",
+          "language": "en",
+          "free": {
+            "includes": [
+              "welcome"
+            ]
+          },
+          "ai": null
+        }
+      ]
+    },
+    {
+      "name": "loyalty card, then the reviews with AI",
+      "turns": [
+        {
+          "customer": "O que é o cartão de cliente digital?",
+          "free": {
+            "includes": [
+              "carimba",
+              "19 €/mês \\+ IVA"
+            ]
+          }
+        },
+        {
+          "customer": "Quanto custa a gestão de reviews com IA?",
+          "free": {
+            "includes": [
+              "29 €/mês \\+ IVA por perfil Google"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "written information and a proposal",
+      "turns": [
+        {
+          "customer": "Podem enviar-me uma proposta por escrito?",
+          "free": {
+            "includes": [
+              "steevanz\\.com/pedir-informacao"
+            ]
+          }
+        },
+        {
+          "customer": "E a automação de processos, quanto custa?",
+          "free": {
+            "includes": [
+              "149 € \\+ IVA por projeto"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

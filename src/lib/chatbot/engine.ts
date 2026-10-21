@@ -4,7 +4,7 @@
 // (tests/chatbot.test.mjs).
 import { resolveFollowUp } from "./context.ts";
 import { asksPriceOfNothing, intentWords } from "./doc-answers.ts";
-import { handoffSummary, sanitizeReply } from "./guardrails.ts";
+import { handoffSummary, keepVatAsWritten, pricesExcludeVat, sanitizeReply } from "./guardrails.ts";
 import { formatNextOpening, openingState } from "./hours.ts";
 import { detectIntents, isSmallTalk, type Intent } from "./intents.ts";
 import { buildIndex, findProperty, minimumChunkScore, minimumScore, questionWords, search, searchChunks, type KnowledgeIndex } from "./knowledge.ts";
@@ -29,6 +29,14 @@ export interface EngineInput {
   index?: KnowledgeIndex;
   /** Which conversation this is (an outside AI answers one message at a time per conversation). */
   conversationKey?: string;
+  /** Where the chat happens: WhatsApp (default) or the site chat (the web channel, phase D). */
+  channel?: "whatsapp" | "web";
+  /**
+   * false: nobody reads hand-offs on this channel yet (the site chat before the team inbox exists). Then a hand-off
+   * gives the business's phone instead of «the team will reply here», «I don't know» gives the contact instead of
+   * «reply yes», and the chat stays with the assistant. Default true.
+   */
+  inbox?: boolean;
 }
 
 export interface Handoff {
@@ -145,15 +153,18 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
   const opening = openingState(knowledge.hours, knowledge.closures, knowledge.timeZone, now);
   const fullHistory: ChatMessage[] = [...history, { author: "customer", body: message.body, at: message.at }];
 
+  const inbox = input.inbox !== false;
   const handOff = (reason: HandoffReason, sentence: string): EngineResult => {
-    replies.push(sentence);
+    // No inbox on this channel: nobody would read the hand-off, so the customer gets the business's phone (and 112
+    // first for an emergency or a health question) and the chat stays with the assistant.
+    replies.push(inbox ? sentence : [reason === "emergency" || reason === "medical" ? text.emergencyCall : null, text.contactTeam(knowledge.phone ?? null)].filter(Boolean).join(" "));
     const summary = handoffSummary({ reason, language, property: state.property, history: fullHistory });
     return finish({
       ...base,
       intents: found,
       language,
       replies,
-      conversation: { ...state, mode: "human", handoffReason: reason, offeredHandoff: false },
+      conversation: inbox ? { ...state, mode: "human", handoffReason: reason, offeredHandoff: false } : { ...state, offeredHandoff: false },
       handoff: { reason, urgent: reason === "emergency" || (found.includes("urgent") && reason !== "customer_asked"), summary },
       silent: null,
     });
@@ -244,6 +255,7 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
     now,
     botId: input.bot.id,
     conversationKey: input.conversationKey,
+    channel: input.channel ?? "whatsapp",
   };
   let answer;
   let providerNote: string | null = null;
@@ -262,17 +274,29 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
     if (clarifying.text) answer = clarifying;
   }
 
-  if (!answer.text) {
-    replies.push(text.dontKnow(knowledge.phone ?? null));
-    return finish({ ...base, intents: found, language, replies, conversation: { ...state, offeredHandoff: true }, handoff: null, silent: null, provider: answer.provider, providerNote });
-  }
+  const dontKnow = () =>
+    finish({
+      ...base,
+      intents: found,
+      language,
+      replies: [...replies, inbox ? text.dontKnow(knowledge.phone ?? null) : text.dontKnowContact(knowledge.phone ?? null)],
+      conversation: { ...state, offeredHandoff: inbox },
+      handoff: null,
+      silent: null,
+      provider: answer.provider,
+      providerNote,
+    });
+  if (!answer.text) return dontKnow();
 
   const checked = sanitizeReply(answer.text, knowledge.kind);
   if (checked.blocked && !checked.text) {
     // Everything was a secret: the host answers instead.
     return handOff("access_code", text.accessCode);
   }
-  replies.push(checked.text);
+  // Never an amount with VAT worked out; a business that writes «+ IVA» keeps it after every price (owner's rule).
+  const priced = keepVatAsWritten(checked.text, language, pricesExcludeVat(knowledge));
+  if (!priced) return dontKnow();
+  replies.push(priced);
   return finish({
     ...base,
     intents: found,

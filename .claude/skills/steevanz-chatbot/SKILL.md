@@ -105,6 +105,18 @@ inventions (a price/time not in the document, an answer where it has none, a sec
 prints the table per sector; `CHATBOT_GATE_ONLY=<file>` plays one file.
 Live check with Groq's free tier: at most a few dozen calls, ~25 s apart (our 9 000 tokens/min ceiling), key never printed.
 
+## Site chat (web channel, `/chat-teste`, 2026-10-21)
+
+- Public page, noindex; route `POST /api/chatbot/web` with origin check and visitor caps (owner: 20/min, 80/day per IP,
+  300/day total). No server storage: the browser keeps the conversation. No team inbox yet → `inbox: false`: «não
+  sei» and hand-offs give the phone, never «responda sim» / «a equipa responde aqui».
+- The Steevanz bot is generated from the site's content (`steevanz.ts`, `scripts/chatbot/steevanz-bot.mjs --apply`
+  replaces its answers and document as a whole). Gate: `tests/fixtures/dialogues/steevanz.json` (entries + document,
+  `"channel": "web"`); a test fails when the fixtures are out of sync with the site.
+- Prices in every reply: `keepVatAsWritten` (never VAT worked out; a «+ IVA» business keeps the note after each price).
+- Never real AI calls in tests or checks (owner, 2026-10-21: «não me esgotes o plano free»): fake fetch only; the owner
+  tests Groq himself on the page.
+
 ## «Configurar em 5 passos» (phase C, `setup.ts`, admin tab «Configurar»)
 
 - No migrations: hours and the price list are knowledge entries with a fixed question («Qual é o horário?»,

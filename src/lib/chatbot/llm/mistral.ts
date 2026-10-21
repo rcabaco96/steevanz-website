@@ -74,7 +74,7 @@ export function takesReasoningEffort(model: string): boolean {
 
 /** The request body for POST /v1/chat/completions (exported for the tests). */
 export function mistralRequestBody(request: AnswerRequest, items: readonly ContextItem[], model: string) {
-  const system = buildSystemPrompt(request.knowledge, request.settings, request.language);
+  const system = buildSystemPrompt(request.knowledge, request.settings, request.language, request.channel);
   const messages = groundedMessages(request, items, system, languageNames[request.language]);
   return {
     model,
