@@ -108,6 +108,18 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
       it: "Spot del chatbot con IA di Steevanz: in una casa vacanze, di notte, l'host dorme e arrivano gli ospiti; chiedono la password del wifi in inglese e dove parcheggiare in francese, e l'assistente risponde in pochi secondi nella lingua di ciascuno; una doccia rotta passa al personale, con un riepilogo.",
     },
   },
+  "google-review-plates": {
+    src: "/home/placas-avaliacoes-anuncio-720.mp4",
+    poster: "/home/placas-avaliacoes-anuncio-720.jpg",
+    label: {
+      pt: "Anúncio das Placas para avaliações da Steevanz: num restaurante, os clientes contentes saem sem deixar avaliação; com a placa na mesa, um toque ou o QR code abre a avaliação no Google e o cliente dá 5 estrelas; há placas para Google, Tripadvisor e Booking.",
+      en: "Steevanz review plates ad: at a restaurant, happy customers leave without writing a review; with the plate on the table, one tap or the QR code opens the Google review and the customer gives 5 stars; there are plates for Google, Tripadvisor and Booking.",
+      es: "Anuncio de las Placas para reseñas de Steevanz: en un restaurante, los clientes contentos se van sin dejar reseña; con la placa en la mesa, un toque o el código QR abre la reseña en Google y el cliente da 5 estrellas; hay placas para Google, Tripadvisor y Booking.",
+      fr: "Publicité des plaques pour avis Steevanz : dans un restaurant, les clients satisfaits partent sans laisser d'avis ; avec la plaque sur la table, un toucher ou le QR code ouvre l'avis Google et le client donne 5 étoiles ; il existe des plaques pour Google, Tripadvisor et Booking.",
+      de: "Werbespot der Bewertungsschilder von Steevanz: In einem Restaurant gehen zufriedene Gäste, ohne eine Bewertung zu schreiben; mit dem Schild auf dem Tisch öffnet ein Antippen oder der QR-Code die Google-Bewertung, und der Gast vergibt 5 Sterne; es gibt Schilder für Google, Tripadvisor und Booking.",
+      it: "Spot delle targhe per le recensioni di Steevanz: in un ristorante, i clienti soddisfatti se ne vanno senza lasciare una recensione; con la targa sul tavolo, un tocco o il codice QR apre la recensione su Google e il cliente dà 5 stelle; ci sono targhe per Google, Tripadvisor e Booking.",
+    },
+  },
 };
 
 /** The video's buttons. */

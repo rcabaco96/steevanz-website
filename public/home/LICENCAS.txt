@@ -47,3 +47,8 @@ chatbot-anuncio-720 (.mp4 e .jpg) — home e página do Chatbot com IA (2026-10-
   Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Chatbot IA.mp4»
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Responde em segundos.».
+
+placas-avaliacoes-anuncio-720 (.mp4 e .jpg) — página das Placas para avaliações (2026-10-22)
+  Versão web (720×1280, H.264 + AAC) do anúncio «Steevanz - Anuncio Placas Avaliacoes.mp4»
+  (C:\code\steevanz-ads\saidanuncios-C). Licenças e origem dos clips e da música em
+  C:\code\steevanz-ads\saidanuncios-C\LICENCAS.txt. O poster é o fotograma das 5 estrelas.
