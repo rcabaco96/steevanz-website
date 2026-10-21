@@ -52,6 +52,11 @@ Learned over the Menu digital, Sites and Cartão de cliente ads (2026-10-16/17).
   («continua com isto à frente», 2026-10-21). The phone and its screen stay fully visible.
 - Composited cards/objects that look pasted: wrong size for the hand, fingers cut or with light fringes, crooked
   shapes. Match the real object's size and keep the real fingers on top (business card ad v3–v5).
+- **Composited objects in hands, and composited hands, at all** («o tag na mão está horrível… tens um problema na
+  renderização das mãos», keychain ad v1, 2026-10-21). Show our products without hands: a clean lit product shot
+  (3D/graphic on the brand background), or flat on a real surface with nothing touching it. Hands only when the
+  footage is real and untouched (or real footage of our real product).
+- Product variants that add nothing to the story (the «com argola / em tag» shot).
 
 ## Cartão final
 
