@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ChatTestPage() {
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 pt-6 pb-24 sm:pt-10 sm:pb-12">
+    <main className="mx-auto w-full max-w-2xl px-4 pt-6 pb-10 sm:pt-10 sm:pb-12">
       <p className="inline-flex rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-text">Página de teste</p>
       <h1 className="mt-3 font-display text-3xl leading-tight text-text sm:text-4xl">
         Fale com o <em className="text-accent-text">assistente</em> Steevanz

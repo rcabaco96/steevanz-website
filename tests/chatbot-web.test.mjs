@@ -172,7 +172,7 @@ describe("site chat route rules (web-channel.ts)", () => {
 });
 
 describe("/chat-teste stays out of search engines and out of the site's links", () => {
-  const page = readFileSync("src/app/(pt)/chat-teste/page.tsx", "utf8");
+  const page = readFileSync("src/app/(publico)/chat-teste/page.tsx", "utf8");
   const route = readFileSync("src/app/api/chatbot/web/route.ts", "utf8");
 
   it("is noindex, nofollow and disallowed in robots.txt", () => {
@@ -189,7 +189,7 @@ describe("/chat-teste stays out of search engines and out of the site's links", 
       .flatMap(files)
       .filter((path) => readFileSync(path, "utf8").includes("/chat-teste"))
       .map((path) => path.replace(/\\/g, "/"))
-      .filter((path) => !path.startsWith("src/app/(pt)/chat-teste/") && path !== "src/app/robots.ts");
+      .filter((path) => !path.startsWith("src/app/(publico)/chat-teste/") && path !== "src/app/robots.ts");
     // Comments that name the page are fine; an href is not.
     for (const path of mentions) assert.doesNotMatch(readFileSync(path, "utf8"), /href=["'{`][^"'`]*\/chat-teste/, path);
   });

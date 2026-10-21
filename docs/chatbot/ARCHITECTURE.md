@@ -209,7 +209,7 @@ Admin › assistente › Conhecimento › **Documentos**: enviar PDF, Word (.doc
 
 ### Canal web: página de teste `/chat-teste` (fase D, 2026-10-21)
 
-- **Página** `src/app/(pt)/chat-teste/page.tsx` + `components/chatbot/WebChat.tsx`: noindex/nofollow, fora do sitemap,
+- **Página** `src/app/(publico)/chat-teste/page.tsx` + `components/chatbot/WebChat.tsx`: noindex/nofollow, fora do sitemap,
   `Disallow` no `robots.ts`, sem ligações. Só respostas (sem fontes nem notas), sugestões, «a escrever…», conversa no
   `sessionStorage` do separador, enviada em cada pedido (como «Experimentar»). Nada é guardado no servidor.
 - **Rota** `POST /api/chatbot/web` (`web-channel.ts`): só JSON (≤ 16 KB), mensagem ≤ 500 caracteres, origem do próprio
