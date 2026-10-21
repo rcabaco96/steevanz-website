@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
+import { AdVideoModalButton } from "@/components/media/AdVideoModalButton";
 import { formatEuro } from "@/components/ui/Price";
 import { HeroTapScene } from "@/components/visuals/HeroTapScene";
 import { platesCopy, sceneCopy } from "@/content/novo-home";
@@ -12,7 +13,8 @@ import styles from "./plates.module.css";
 
 // The review plates (Google, Tripadvisor or Booking.com, one per plate), as the first band after the clients strip. Prices come from
 // products.ts, without VAT and with «+ IVA». The animation is the plate scene HeroTapScene
-// (owner, 2026-10-20), on a dark panel, paused while off screen.
+// (owner, 2026-10-20), on a dark panel, paused while off screen. Under or beside the main button, a discreet
+// «Ver o vídeo (27 s)» opens the plates ad in a window over the page (owner, 2026-10-22).
 
 export function PlatesBanner({ locale }: { locale: Locale }) {
   const copy = localize(platesCopy, locale);
@@ -59,6 +61,7 @@ export function PlatesBanner({ locale }: { locale: Locale }) {
               {copy.cta}
               <ArrowRight size={18} />
             </Link>
+            <AdVideoModalButton locale={locale} productId={product.id} label={copy.video} />
           </div>
         </div>
       </div>

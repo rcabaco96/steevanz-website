@@ -8,6 +8,8 @@ import type { ProductId } from "./types";
 export interface ProductAd {
   src: string;
   poster: string;
+  /** The length, rounded to whole seconds (shown on the «Ver o vídeo (27 s)» buttons; tests/home-novo checks it against the file). */
+  seconds: number;
   label: Localized<string>;
 }
 
@@ -15,6 +17,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   "digital-menu": {
     src: "/home/menu-digital-anuncio-720.mp4",
     poster: "/home/menu-digital-anuncio-720.jpg",
+    seconds: 23,
     label: {
       pt: "Anúncio do Menu digital da Steevanz: os pratos em vídeo no telemóvel e o pedido feito à mesa.",
       en: "Steevanz Digital menu ad: the dishes on video on the phone and the order placed at the table.",
@@ -27,6 +30,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   loyalty: {
     src: "/home/cartao-cliente-anuncio-720.mp4",
     poster: "/home/cartao-cliente-anuncio-720.jpg",
+    seconds: 23,
     label: {
       pt: "Anúncio do Cartão de cliente digital da Steevanz: o cliente adere com um toque, recebe carimbos no telemóvel e a recompensa chega sozinha.",
       en: "Steevanz digital loyalty card ad: customers join with a tap, collect stamps on their phone and the reward arrives on its own.",
@@ -39,6 +43,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   "guest-guide": {
     src: "/home/guia-alojamento-anuncio-720.mp4",
     poster: "/home/guia-alojamento-anuncio-720.jpg",
+    seconds: 24,
     label: {
       pt: "Anúncio do Guia digital do alojamento da Steevanz: o hóspede toca na placa e encontra no telemóvel o WiFi, o check-in e check-out, as regras da casa e as recomendações.",
       en: "Steevanz digital guest guide ad: guests tap the plate and find the WiFi, check-in and check-out, house rules and recommendations on their phone.",
@@ -51,6 +56,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   "business-card": {
     src: "/home/cartao-visita-anuncio-720.mp4",
     poster: "/home/cartao-visita-anuncio-720.jpg",
+    seconds: 25,
     label: {
       pt: "Anúncio do Cartão de visita digital da Steevanz: um toque no cartão abre a página de contacto e o contacto fica guardado no telemóvel.",
       en: "Steevanz digital business card ad: one tap on the card opens the contact page and the contact is saved on the phone.",
@@ -63,6 +69,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   keychain: {
     src: "/home/porta-chaves-anuncio-720.mp4",
     poster: "/home/porta-chaves-anuncio-720.jpg",
+    seconds: 22,
     label: {
       pt: "Anúncio do Porta-chaves digital da Steevanz: em vez de dizer o número em voz alta ou escrevê-lo num papel, um toque no porta-chaves abre a conversa no WhatsApp e o contacto fica partilhado em privado.",
       en: "Steevanz digital keychain ad: instead of saying your number out loud or writing it on paper, one tap on the keychain opens the WhatsApp chat and the contact is shared privately.",
@@ -75,6 +82,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   waitlist: {
     src: "/home/lista-espera-anuncio-720.mp4",
     poster: "/home/lista-espera-anuncio-720.jpg",
+    seconds: 27,
     label: {
       pt: "Anúncio da Lista de espera digital da Steevanz: numa barbearia, sábado de manhã, a espera é longa; o cliente lê o QR à entrada, vê no telemóvel quanto falta e, quando chega a vez, o telemóvel avisa «É a sua vez».",
       en: "Steevanz digital waitlist ad: at a barbershop on a Saturday morning the wait is long; the customer scans the QR at the entrance, sees on the phone how long is left and, when it's their turn, the phone says «It's your turn».",
@@ -87,6 +95,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   bookings: {
     src: "/home/reservas-anuncio-720.mp4",
     poster: "/home/reservas-anuncio-720.jpg",
+    seconds: 27,
     label: {
       pt: "Anúncio do Sistema de reservas online da Steevanz: num restaurante cheio numa sexta à noite, o telefone não para de tocar; às 23h uma cliente reserva em 30 segundos pelo link do Instagram, recebe a confirmação, guarda a reserva no calendário e recebe o lembrete por email.",
       en: "Steevanz online booking system ad: at a full restaurant on a Friday night the phone keeps ringing; at 11 pm a customer books in 30 seconds from the Instagram link, gets the confirmation, adds the booking to her calendar and receives the reminder by email.",
@@ -99,6 +108,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   "ai-chatbot": {
     src: "/home/chatbot-anuncio-720.mp4",
     poster: "/home/chatbot-anuncio-720.jpg",
+    seconds: 26,
     label: {
       pt: "Anúncio do Chatbot com IA da Steevanz: num alojamento local, à noite, o anfitrião dorme e os hóspedes chegam; perguntam a password do WiFi em inglês e onde estacionar em francês, e o assistente responde em segundos na língua de cada um; um chuveiro avariado passa para a equipa, com um resumo.",
       en: "Steevanz AI chatbot ad: at a holiday rental at night the host is asleep and the guests arrive; they ask for the WiFi password in English and where to park in French, and the assistant answers in seconds in each one's language; a broken shower is passed on to the team, with a summary.",
@@ -111,6 +121,7 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   "google-review-plates": {
     src: "/home/placas-avaliacoes-anuncio-720.mp4",
     poster: "/home/placas-avaliacoes-anuncio-720.jpg",
+    seconds: 27,
     label: {
       pt: "Anúncio das Placas para avaliações da Steevanz: num restaurante, os clientes contentes saem sem deixar avaliação; com a placa na mesa, um toque ou o QR code abre a avaliação no Google e o cliente dá 5 estrelas; há placas para Google, Tripadvisor e Booking.",
       en: "Steevanz review plates ad: at a restaurant, happy customers leave without writing a review; with the plate on the table, one tap or the QR code opens the Google review and the customer gives 5 stars; there are plates for Google, Tripadvisor and Booking.",
@@ -122,12 +133,12 @@ export const productAds: Partial<Record<ProductId, ProductAd>> = {
   },
 };
 
-/** The video's buttons. */
-export const adVideoLabels: Localized<{ soundOn: string; soundOff: string; play: string }> = {
-  pt: { soundOn: "Ver com som", soundOff: "Tirar o som", play: "Ver o vídeo" },
-  en: { soundOn: "Watch with sound", soundOff: "Mute", play: "Play video" },
-  es: { soundOn: "Ver con sonido", soundOff: "Quitar el sonido", play: "Ver el vídeo" },
-  fr: { soundOn: "Regarder avec le son", soundOff: "Couper le son", play: "Lire la vidéo" },
-  de: { soundOn: "Mit Ton ansehen", soundOff: "Ton aus", play: "Video abspielen" },
-  it: { soundOn: "Guardi con l'audio", soundOff: "Disattivi l'audio", play: "Guardi il video" },
+/** The video's buttons; `close` is the label of the video window's close button (AdVideoModalButton). */
+export const adVideoLabels: Localized<{ soundOn: string; soundOff: string; play: string; close: string }> = {
+  pt: { soundOn: "Ver com som", soundOff: "Tirar o som", play: "Ver o vídeo", close: "Fechar o vídeo" },
+  en: { soundOn: "Watch with sound", soundOff: "Mute", play: "Play video", close: "Close the video" },
+  es: { soundOn: "Ver con sonido", soundOff: "Quitar el sonido", play: "Ver el vídeo", close: "Cerrar el vídeo" },
+  fr: { soundOn: "Regarder avec le son", soundOff: "Couper le son", play: "Lire la vidéo", close: "Fermer la vidéo" },
+  de: { soundOn: "Mit Ton ansehen", soundOff: "Ton aus", play: "Video abspielen", close: "Video schließen" },
+  it: { soundOn: "Guardi con l'audio", soundOff: "Disattivi l'audio", play: "Guardi il video", close: "Chiuda il video" },
 };

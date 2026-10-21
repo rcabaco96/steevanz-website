@@ -1,0 +1,193 @@
+/* The «Ver o vídeo (27 s)» button and the video window (AdVideoModalButton). The button is discreet:
+   plum text with a small gold play disc, next to or under a band's main button. The window is dark in
+   both themes: on a phone the 9:16 video as tall as the screen allows, on a computer centred.
+   Only opacity and transform move, and nothing moves with reduced motion. */
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.25rem 0.25rem 0;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #7a2d60;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.trigger > span:last-child {
+  text-decoration: underline;
+  text-decoration-color: rgb(122 45 96 / 0.35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.25s ease;
+}
+
+.trigger:hover > span:last-child {
+  text-decoration-color: currentColor;
+}
+
+.triggerIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #cfa563;
+  color: #1d1220;
+  padding-left: 2px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trigger:hover .triggerIcon {
+  transform: scale(1.08);
+}
+
+.trigger:active .triggerIcon {
+  transform: scale(0.94);
+}
+
+.trigger:focus-visible {
+  outline: 3px solid #7a2d60;
+  outline-offset: 3px;
+}
+
+.length {
+  font-weight: 500;
+  color: #6b5560;
+}
+
+/* ---------- The window ---------- */
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.dialog[open] {
+  display: grid;
+  place-items: center;
+  animation: ad-dialog-in 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog::backdrop {
+  background: rgb(18 10 20 / 0.86);
+  backdrop-filter: blur(4px);
+}
+
+.dialog[open]::backdrop {
+  animation: ad-backdrop-in 0.28s ease;
+}
+
+/* Phone: the 9:16 video as large as the screen allows (full height on tall phones' width, never cut). */
+.stage {
+  position: relative;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  aspect-ratio: 9 / 16;
+  background: #120a14;
+}
+
+@media (min-width: 640px) {
+  .stage {
+    width: min(calc(100vw - 2rem), calc((100dvh - 4rem) * 9 / 16), 29rem);
+    border-radius: 1.75rem;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 40px 80px -30px rgb(0 0 0 / 0.7);
+  }
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #120a14;
+}
+
+.close {
+  position: absolute;
+  z-index: 3;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: rgb(29 18 32 / 0.78);
+  color: #fff;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.16);
+  backdrop-filter: blur(6px);
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease;
+}
+
+.close:hover {
+  background: #cfa563;
+  color: #1d1220;
+}
+
+.close:active {
+  transform: scale(0.94);
+}
+
+.close:focus-visible {
+  outline: 3px solid #cfa563;
+  outline-offset: 2px;
+}
+
+/* «Ver com som» at the top left of the video, clear of the player's controls at the bottom. */
+.stage .sound {
+  top: 0.75rem;
+  left: 0.75rem;
+  right: auto;
+  bottom: auto;
+}
+
+@media (min-width: 1024px) {
+  .close {
+    top: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
+@keyframes ad-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+@keyframes ad-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open],
+  .dialog[open]::backdrop {
+    animation: none;
+  }
+}

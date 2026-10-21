@@ -171,4 +171,32 @@ describe("home page («/» and «/en»)", () => {
     assert.ok((page.match(/t\.common\.bookDemo/g) ?? []).length >= 3);
     assert.match(page, /<CtaBand[\s\S]*primaryLabel=\{t\.common\.bookDemo\}/);
   });
+
+  it("opens the plates ad in a window from a «Ver o vídeo (27 s)» button, loading nothing before the tap (owner, 2026-10-22)", () => {
+    const banner = readFileSync(join(dir, "PlatesBanner.tsx"), "utf8");
+    assert.match(banner, /<AdVideoModalButton locale=\{locale\} productId=\{product\.id\} label=\{copy\.video\} \/>/);
+    assert.deepEqual(
+      Object.values(platesCopy).map((copy) => copy.video),
+      ["Ver o vídeo", "Watch the video", "Ver el vídeo", "Voir la vidéo", "Video ansehen", "Guardi il video"],
+    );
+    const dialog = readFileSync("src/components/media/AdVideoDialog.tsx", "utf8");
+    const video = dialog.match(/<video\s+ref=[\s\S]*?\/>/)?.[0] ?? "";
+    assert.ok(video, "the window has a <video>");
+    assert.doesNotMatch(video, /\b(src|poster|autoPlay)=/, "no source, poster or autoplay before the button is pressed");
+    assert.match(video, /preload="none"/);
+    assert.match(dialog, /<dialog/);
+    assert.match(dialog, /showModal\(\)/);
+    assert.match(dialog, /aria-label=\{copy\.close\}/);
+    assert.match(dialog, /removeAttribute\("src"\)/, "closing drops the source");
+    // Every ad's length, as written in product-ads.ts, matches its file (the mp4 «mvhd» box).
+    for (const [id, ad] of Object.entries(productAds)) {
+      const file = readFileSync(join("public", ad.src));
+      const at = file.indexOf("mvhd");
+      const v1 = file[at + 4] === 1;
+      const scale = file.readUInt32BE(at + (v1 ? 24 : 16));
+      const length = v1 ? Number(file.readBigUInt64BE(at + 28)) : file.readUInt32BE(at + 20);
+      assert.equal(ad.seconds, Math.round(length / scale), id);
+    }
+    assert.equal(productAds["google-review-plates"].seconds, 27);
+  });
 });

@@ -1363,6 +1363,8 @@ const platesPt = {
   pack: "{price} por placa a partir de {quantity}",
   vat: "+ IVA",
   cta: "Conhecer as placas",
+  /** The secondary button that opens the ad in a window; the length «(27 s)» is added from product-ads.ts. */
+  video: "Ver o vídeo",
 };
 
 export const platesCopy: Localized<typeof platesPt> = {
@@ -1378,6 +1380,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     pack: "{price} per plate for {quantity} or more",
     vat: "+ VAT",
     cta: "Discover the plates",
+    video: "Watch the video",
   },
   es: {
     eyebrow: "Placas para reseñas",
@@ -1390,6 +1393,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     pack: "{price} por placa a partir de {quantity}",
     vat: "+ IVA",
     cta: "Conocer las placas",
+    video: "Ver el vídeo",
   },
   fr: {
     eyebrow: "Plaques pour avis",
@@ -1402,6 +1406,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     pack: "{price} la plaque à partir de {quantity}",
     vat: "+ TVA",
     cta: "Découvrir les plaques",
+    video: "Voir la vidéo",
   },
   de: {
     eyebrow: "Bewertungsschilder",
@@ -1414,6 +1419,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     pack: "{price} pro Schild ab {quantity} Stück",
     vat: "zzgl. MwSt.",
     cta: "Die Schilder entdecken",
+    video: "Video ansehen",
   },
   it: {
     eyebrow: "Targhe per recensioni",
@@ -1426,6 +1432,7 @@ export const platesCopy: Localized<typeof platesPt> = {
     pack: "{price} a targa da {quantity} pezzi",
     vat: "+ IVA",
     cta: "Scopra le targhe",
+    video: "Guardi il video",
   },
 };
 
