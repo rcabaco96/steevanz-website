@@ -22,7 +22,8 @@ const prices = (text) => [...text.matchAll(/\d+(?:,\d+)?\s?€(?:\/mês)?(.{0,8}
 
 describe("Steevanz bot knowledge (generated from the site)", () => {
   it("is in sync with the fixtures (run node scripts/chatbot/steevanz-bot.mjs after changing the site)", () => {
-    assert.equal(steevanzDocument(), fixture("steevanz.txt"));
+    // A Windows checkout may turn the fixture's line ends into CRLF.
+    assert.equal(steevanzDocument(), fixture("steevanz.txt").replace(/\r\n/g, "\n"));
     assert.deepEqual(entries, JSON.parse(fixture("steevanz-entries.json")));
   });
 
