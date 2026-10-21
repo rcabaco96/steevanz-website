@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { fabios } from "@/content/fabios-roadstop/facts";
 
@@ -9,106 +10,65 @@ interface HeroVideoProps {
   playLabel: string;
 }
 
-// The restaurant's own 35-second film behind the hero. The poster (its first frame) is the page's largest
-// image and paints first; the video only starts loading once the page has loaded, never with reduced
-// motion, data saving or a slow (2G/3G) connection. It loops between two moments (skipping the white end card) and pauses when the
-// hero is off screen or the tab is hidden.
+// The restaurant's own film behind the hero, playing from the first moment (owner, 2026-10-21: «o vídeo tem de
+// começar logo»). The file is already trimmed (2 s – 30.4 s of the original, without the white end card) and
+// small (1.3 MB, faststart), so it loops natively with no seek. The <video> is written as plain HTML so the
+// browser sees autoplay + muted before React loads (React doesn't put `muted` in server HTML, and without it
+// autoplay is blocked). Its poster is the first frame. With reduced motion it stops and only the poster stays;
+// it pauses off screen and in hidden tabs, and has a pause button.
+const videoHtml =
+  `<video src="${fabios.media.video}" poster="${fabios.media.poster}" autoplay muted loop playsinline ` +
+  `preload="auto" disablepictureinpicture disableremoteplayback ` +
+  `class="absolute inset-0 h-full w-full scale-[1.04] object-cover lg:blur-[1.2px] motion-reduce:hidden"></video>`;
+
 export function HeroVideo({ label, pauseLabel, playLabel }: HeroVideoProps) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [src, setSrc] = useState<string | null>(null);
-  const [visible, setVisible] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const holder = useRef<HTMLDivElement>(null);
   const userPaused = useRef(false);
+  const [paused, setPaused] = useState(false);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
-    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-    const slow = connection?.saveData || /(^|-)2g$|^3g$/.test(connection?.effectiveType ?? "");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || slow) return;
-    let idle = 0;
-    const start = () => {
-      const ric = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
-      idle = ric(() => setSrc(fabios.media.video)) as number;
+    const video = holder.current?.querySelector("video");
+    if (!video) return;
+    video.setAttribute("aria-label", label);
+    if (reduced) {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+      return;
+    }
+    video.muted = true;
+    const play = () => {
+      if (!userPaused.current && document.visibilityState === "visible") void video.play().catch(() => {});
     };
-    if (document.readyState === "complete") start();
-    else window.addEventListener("load", start, { once: true });
-    return () => {
-      window.removeEventListener("load", start);
-      (window.cancelIdleCallback ?? window.clearTimeout)(idle);
-    };
-  }, []);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video || !src) return;
-    const { from, to } = fabios.videoLoop;
-    const onMeta = () => {
-      video.currentTime = from;
-      void video.play().catch(() => {});
-    };
-    const onTime = () => {
-      if (video.currentTime >= to) video.currentTime = from;
-    };
-    const onPlaying = () => setVisible(true);
-    video.addEventListener("loadedmetadata", onMeta);
-    video.addEventListener("timeupdate", onTime);
-    video.addEventListener("playing", onPlaying);
-
-    const observer = new IntersectionObserver(([entry]) => {
-      if (userPaused.current) return;
-      if (entry.isIntersecting && document.visibilityState === "visible") void video.play().catch(() => {});
-      else video.pause();
-    });
+    play();
+    const observer = new IntersectionObserver(([entry]) => (entry.isIntersecting ? play() : video.pause()));
     observer.observe(video);
-    const onVisibility = () => {
-      if (userPaused.current) return;
-      if (document.visibilityState === "visible") void video.play().catch(() => {});
-      else video.pause();
-    };
+    const onVisibility = () => (document.visibilityState === "visible" ? play() : video.pause());
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
-      video.removeEventListener("loadedmetadata", onMeta);
-      video.removeEventListener("timeupdate", onTime);
-      video.removeEventListener("playing", onPlaying);
       observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [src]);
+  }, [label, reduced]);
 
   const toggle = () => {
-    const video = ref.current;
+    const video = holder.current?.querySelector("video");
     if (!video) return;
-    if (video.paused) {
-      userPaused.current = false;
-      setPaused(false);
-      void video.play().catch(() => {});
-    } else {
-      userPaused.current = true;
-      setPaused(true);
-      video.pause();
-    }
+    userPaused.current = !video.paused;
+    setPaused(userPaused.current);
+    if (userPaused.current) video.pause();
+    else void video.play().catch(() => {});
   };
 
-  if (!src) return null;
   return (
     <>
-      <video
-        ref={ref}
-        src={src}
-        muted
-        playsInline
-        preload="auto"
-        aria-label={label}
-        disablePictureInPicture
-        className={`absolute inset-0 h-full w-full scale-[1.04] object-cover transition-opacity duration-[1400ms] lg:blur-[1.2px] ${
-          visible ? "opacity-100" : "opacity-0"
-        }`}
-      />
-      {visible ? (
-        <button
+      <div ref={holder} className="absolute inset-0" dangerouslySetInnerHTML={{ __html: videoHtml }} />
+      <button
           type="button"
           onClick={toggle}
           aria-pressed={paused}
-          className="absolute right-4 bottom-[5.4rem] z-20 grid h-10 w-10 place-items-center rounded-full bg-black/35 text-cream ring-1 ring-white/25 backdrop-blur transition-colors hover:bg-black/55 sm:right-8"
+          className="absolute right-4 bottom-[5.4rem] z-20 grid h-10 w-10 place-items-center rounded-full bg-black/35 text-cream ring-1 ring-white/25 backdrop-blur transition-colors hover:bg-black/55 motion-reduce:hidden sm:right-8"
           aria-label={paused ? playLabel : pauseLabel}
         >
           {paused ? (
@@ -121,7 +81,6 @@ export function HeroVideo({ label, pauseLabel, playLabel }: HeroVideoProps) {
             </svg>
           )}
         </button>
-      ) : null}
     </>
   );
 }

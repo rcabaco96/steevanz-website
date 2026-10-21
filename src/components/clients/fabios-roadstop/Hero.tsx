@@ -19,7 +19,8 @@ export function Hero({ copy, links }: HeroProps) {
   const { hero } = copy;
   return (
     <section aria-labelledby="fr-hero-title" className="relative isolate flex min-h-[620px] flex-col overflow-hidden bg-night text-cream [height:100svh]">
-      {/* The film, under a 1950s TV treatment that hides its 720p: duotone, scanlines, grain, vignette. */}
+      {/* The film, under a 1950s TV treatment that hides its 720p: duotone, scanlines, grain, vignette. The poster
+          below is the same file as the video's poster (unoptimized: one download, the first frame). */}
       <div className="absolute inset-0 -z-10">
         <Image
           src={fabios.media.poster}
@@ -29,6 +30,7 @@ export function Hero({ copy, links }: HeroProps) {
           sizes="720px"
           priority
           fetchPriority="high"
+          unoptimized
           className="absolute inset-0 h-full w-full scale-[1.04] object-cover lg:blur-[1.2px]"
         />
         <HeroVideo label={hero.videoLabel} pauseLabel={hero.pause} playLabel={hero.play} />

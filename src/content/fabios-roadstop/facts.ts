@@ -32,8 +32,10 @@ export const fabios = {
   closes: "23:00",
   openDays: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
   media: {
-    video: `${media}/video.mp4`,
-    poster: `${media}/hero-poster.webp`,
+    /** The client's film, trimmed to 2 s – 30.4 s (no white end card), re-encoded small with faststart. */
+    video: `${media}/hero-loop.mp4`,
+    /** The first frame of the hero video. */
+    poster: `${media}/hero-loop-poster.webp`,
     logo: `${media}/logo.webp`,
     logoPng: `${media}/logo.png`,
     sign: `${media}/placa-poste.webp`,
@@ -52,8 +54,6 @@ export const fabios = {
     appleIcon: `${media}/apple-icon.png`,
     favicon: `${media}/favicon.ico`,
   },
-  /** The hero video loops between these seconds: it starts on the friends and stops before the white end card. */
-  videoLoop: { from: 2, to: 30.4 },
 } as const;
 
 /** The image sizes (px), for next/image and layout without shifts. */

@@ -2,7 +2,9 @@ Fabio's Roadstop — origem e licenças do que este site usa (2026-10-21)
 
 Imagens e vídeo (public/media/clients/fabios-roadstop/)
 - Todos do próprio cliente, tirados do site antigo www.fabiosroadstop.pt (logótipo, video.mp4, interior,
-  limonadas, carro, placa com poste). As fotografias «fachada», «menu-cadillac», «hamburgueres», «a-comer»,
+  limonadas, carro, placa com poste). hero-loop.mp4 é o video.mp4 deles cortado de 2 s a 30,4 s (sem o
+  cartão branco final), sem som, recodificado (H.264, 25 fps, faststart, 1,3 MB); hero-loop-poster.webp é o
+  seu primeiro fotograma. As fotografias «fachada», «menu-cadillac», «hamburgueres», «a-comer»,
   «brinde», «bebidas-tabuleiro» e o poster do vídeo são fotogramas do video.mp4 do cliente, recortados para
   tirar a marca de água. Nenhuma imagem de banco de imagens.
 - Ainda não há fotografia de panquecas: o cartão das panquecas usa a capa do menu até o cliente enviar uma.
