@@ -88,10 +88,13 @@ describe("chatbot test AI (Groq free tier, mocked)", () => {
     assert.ok(!init.body.includes(fakeKey));
     assert.ok(init.signal);
     assert.equal(body.model, defaultGroqModel);
-    assert.equal(body.model, "llama-3.3-70b-versatile");
+    assert.equal(body.model, "openai/gpt-oss-120b");
     assert.equal(body.stream, false);
     assert.ok(body.temperature <= 0.3);
-    assert.ok(body.max_tokens <= 300);
+    // gpt-oss thinks first: little thinking, hidden, with room for it in max_tokens.
+    assert.equal(body.reasoning_effort, "low");
+    assert.equal(body.include_reasoning, false);
+    assert.ok(body.max_tokens <= 1000);
     const system = body.messages[0];
     assert.equal(system.role, "system");
     assert.match(system.content, /Use ONLY the business information below/);
@@ -105,7 +108,7 @@ describe("chatbot test AI (Groq free tier, mocked)", () => {
     assert.match(user.content, /\[E1\]/);
     assert.match(user.content, /Reply in European Portuguese/);
     assert.equal(result.replies[0], "Há um parque público na Rua Nova.");
-    assert.equal(result.provider, "groq:llama-3.3-70b-versatile");
+    assert.equal(result.provider, "groq:openai/gpt-oss-120b");
     assert.equal(result.providerNote, null);
   });
 
@@ -251,8 +254,8 @@ describe("chatbot test AI (Groq free tier, mocked)", () => {
     await new Promise((resolve) => setTimeout(resolve, 5));
     assert.equal(calls.length, 2);
     releases.forEach((release) => release());
-    assert.equal((await first).provider, "groq:llama-3.3-70b-versatile");
-    assert.equal((await other).provider, "groq:llama-3.3-70b-versatile");
+    assert.equal((await first).provider, "groq:openai/gpt-oss-120b");
+    assert.equal((await other).provider, "groq:openai/gpt-oss-120b");
   });
 
   it("an answer cut by max_tokens loses its unfinished sentence", async () => {

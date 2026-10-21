@@ -181,4 +181,12 @@ describe("chatbot test AI (local Ollama, mocked)", () => {
     assert.deepEqual(parsed.entryIds, ["e1"]);
     assert.equal(parsed.sources[0].heading, "Guia › Lixo");
   });
+
+  it("also strips gpt-oss references: CJK brackets and several in one", () => {
+    const items = [{ ref: "S5", text: "x", source: { documentId: "d", documentTitle: "B", heading: "B", chunkId: "c5" } }, { ref: "S7", text: "y", source: { documentId: "d", documentTitle: "B", heading: "B", chunkId: "c7" } }];
+    assert.equal(parseGroundedAnswer("18 € − 2 € = 16 €【S5】【S7】.", items).text, "18 € − 2 € = 16 €.");
+    const grouped = parseGroundedAnswer("Custa 16 € [S5, S7].", items);
+    assert.equal(grouped.text, "Custa 16 €.");
+    assert.equal(grouped.sources.length, 2);
+  });
 });

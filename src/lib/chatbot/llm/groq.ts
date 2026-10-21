@@ -17,10 +17,22 @@ import { buildSystemPrompt, languageNames } from "./prompt.ts";
 import { ProviderDisabledError, type AnswerProvider, type AnswerRequest, type AnswerResult } from "./types.ts";
 
 export const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
-/** A production model on Groq's free tier (console.groq.com/docs/models); CHATBOT_GROQ_MODEL changes it. */
-export const defaultGroqModel = "llama-3.3-70b-versatile";
+/**
+ * The best model this Groq account has (GET /openai/v1/models, 2026-10-21: llama-3.3-70b-versatile is not
+ * available to it); CHATBOT_GROQ_MODEL changes it.
+ */
+export const defaultGroqModel = "openai/gpt-oss-120b";
 export const defaultGroqTimeoutMs = 15_000;
 export const groqOptions = { temperature: 0.2, max_tokens: 220 };
+/**
+ * gpt-oss models think before answering and the thinking counts in max_tokens: little thinking, hidden, and
+ * room for it on top of the answer.
+ */
+export const reasoningModelOptions = { reasoning_effort: "low", include_reasoning: false, max_tokens: 900 } as const;
+
+export function isReasoningModel(model: string): boolean {
+  return /^openai\/gpt-oss/.test(model);
+}
 /**
  * Our ceilings, well below the free tier of llama-3.3-70b-versatile (about 30 requests/min,
  * 1 000/day, 12 000 tokens/min and 100 000 tokens/day per Groq organisation — see
@@ -62,13 +74,11 @@ export function groqKeyPresent(env: Record<string, string | undefined>): boolean
 /** The request body for POST /openai/v1/chat/completions (exported for the tests). */
 export function groqRequestBody(request: AnswerRequest, items: readonly ContextItem[], model: string) {
   const system = buildSystemPrompt(request.knowledge, request.settings, request.language);
-  return {
-    model,
-    stream: false,
-    temperature: groqOptions.temperature,
-    max_tokens: groqOptions.max_tokens,
-    messages: groundedMessages(request, items, system, languageNames[request.language]),
-  };
+  const messages = groundedMessages(request, items, system, languageNames[request.language]);
+  const base = { model, stream: false, temperature: groqOptions.temperature };
+  return isReasoningModel(model)
+    ? { ...base, ...reasoningModelOptions, messages }
+    : { ...base, max_tokens: groqOptions.max_tokens, messages };
 }
 
 /** About how many tokens a request costs (≈ 3,5 characters per token, plus the longest answer). */

@@ -270,10 +270,12 @@ export function parseGroundedAnswer(raw: string, items: readonly ContextItem[]):
   const trimmed = raw.trim();
   // Small models sometimes write a sentence and then NO_ANSWER: anywhere in the reply, it means «I don't know».
   if (!trimmed || /NO[_ ]ANSWER/i.test(trimmed)) return { text: null, sources: [], entryIds: [] };
-  const cited = new Set([...trimmed.matchAll(/\[([ES]\d+)\]/g)].map((match) => match[1]));
+  // gpt-oss writes the references in CJK brackets (【S5】), sometimes several in one («[S1, S3]»).
+  const ref = String.raw`[\[【]\s*[ES]\d+(?:\s*[,;]\s*[ES]\d+)*\s*[\]】]`;
+  const cited = new Set([...trimmed.matchAll(new RegExp(ref, "g"))].flatMap((match) => match[0].match(/[ES]\d+/g) ?? []));
   const used = items.filter((item) => cited.has(item.ref));
   const text = trimmed
-    .replace(/\s*\[[ES]\d+\](?:\s*\[[ES]\d+\])*/g, "")
+    .replace(new RegExp(String.raw`\s*${ref}(?:\s*${ref})*`, "g"), "")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
   const sources: AnswerSource[] = [];
