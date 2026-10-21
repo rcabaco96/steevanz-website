@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { buttonClasses } from "@/components/ui/Button";
 
@@ -137,9 +138,8 @@ export function WebChat({ suggestions }: { suggestions: readonly string[] }) {
     <section aria-label="Conversa com o assistente Steevanz" className="flex min-h-[28rem] flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-sm">
       <header className="flex items-center justify-between gap-3 border-b border-line bg-accent px-4 py-3 text-accent-contrast">
         <div className="flex min-w-0 items-center gap-3">
-          <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#5e1f49] font-display text-lg leading-none text-[#fbf7f1]">
-            S<span className="text-[#cfa563]">.</span>
-          </span>
+          {/* The round «S.» mark, the same as the favicon. */}
+          <Image src="/icons/icon-192.png" alt="" width={36} height={36} className="h-9 w-9 shrink-0 rounded-full" />
           <div className="min-w-0">
             <p className="truncate font-semibold leading-tight">Assistente Steevanz</p>
             <p className="truncate text-xs opacity-80">{pending ? "A escrever…" : "Responde em segundos"}</p>
@@ -190,14 +190,15 @@ export function WebChat({ suggestions }: { suggestions: readonly string[] }) {
           <p className="sr-only" id="chat-suggestions">
             Perguntas sugeridas
           </p>
-          <div role="group" aria-labelledby="chat-suggestions" className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none]">
+          {/* Phone: swipe sideways (thin bar as a hint); from sm up they wrap so every question shows. */}
+          <div role="group" aria-labelledby="chat-suggestions" className="-mx-3 flex snap-x gap-2 overflow-x-auto overscroll-x-contain px-3 pb-2 [scrollbar-width:thin] sm:flex-wrap sm:overflow-visible">
             {suggestions.map((question) => (
               <button
                 key={question}
                 type="button"
                 disabled={pending}
                 onClick={() => void send(question)}
-                className="shrink-0 rounded-full border border-line bg-bg px-3 py-1.5 text-sm text-text transition-colors hover:border-accent hover:text-accent-text disabled:opacity-60"
+                className="shrink-0 snap-start rounded-full border border-line bg-bg px-3 py-1.5 text-sm text-text transition-colors hover:border-accent hover:text-accent-text disabled:opacity-60"
               >
                 {question}
               </button>
