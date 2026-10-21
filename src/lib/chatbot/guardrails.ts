@@ -17,6 +17,11 @@ const digitsRun = /\d[\d\s#*-]{2,}\d|\d{3,}/;
 /** Something that looks like a payment card number. */
 const cardNumber = /\b(?:\d[ -]?){13,19}\b/;
 
+/** A line that would leak a secret for this kind of business (lodging: a «code» word and a run of digits). */
+export function leaksSecret(line: string, kind: ChatbotBusinessKind): boolean {
+  return kind === "lodging" && secretWords.test(line.replace(harmlessCodes, "")) && digitsRun.test(line);
+}
+
 export interface SanitizedReply {
   text: string;
   /** Something was removed: the chat should go to a person. */
@@ -31,7 +36,7 @@ export interface SanitizedReply {
 export function sanitizeReply(text: string, kind: ChatbotBusinessKind, maxLength = 900): SanitizedReply {
   let blocked = false;
   const lines = text.split("\n").filter((line) => {
-    if (kind === "lodging" && secretWords.test(line.replace(harmlessCodes, "")) && digitsRun.test(line)) {
+    if (leaksSecret(line, kind)) {
       blocked = true;
       return false;
     }

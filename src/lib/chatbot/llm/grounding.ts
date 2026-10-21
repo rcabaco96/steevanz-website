@@ -14,9 +14,10 @@
 // with three big sections the model missed «Corte clássico … 16 €» and never saw the student discount
 // together with the price it applies to.
 import { recentTurns } from "../context.ts";
-import { addressPassages, allowed, asksPriceOfNothing, bookingPassages, hoursSignal, intentWords, isAnchor, longestPriceRun, sectionTitleOf, sourceOf, timetable } from "../doc-answers.ts";
+import { leaksSecret } from "../guardrails.ts";
+import { addressPassages, allowed, asksPriceOfNothing, bookingPassages, discountWords, hoursSignal, intentWords, isAnchor, longestPriceRun, sectionPriceLines, sectionTitleOf, sourceOf, timetable } from "../doc-answers.ts";
 import { askedDay, dayAhead, formatDay, hoursOn, localClock, type AskedDay } from "../hours.ts";
-import { buildIndex, minimumScore, passageCoverage, passageMatches, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
+import { buildIndex, coveredWords, minimumScore, passageCoverage, passageMatches, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
 import { answerAfter, blockAfter, type Passage } from "../passages.ts";
 import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
 import type { ChatMessage } from "../types.ts";
@@ -63,8 +64,6 @@ export interface ContextItem {
 
 const cut = (text: string, max: number) => (text.length > max ? `${text.slice(0, max).trimEnd()}…` : text);
 
-/** Discount words in the six languages (normalized; "*" = word beginning). */
-const discountWords = ["desconto*", "promoca*", "discount*", "descuento*", "promocion*", "remise*", "reduction*", "rabatt*", "ermassig*", "sconto*", "sconti"];
 
 /** The nearest section title before a passage: tells the model what a line belongs to. */
 function sectionOf(passage: Passage): string | null {
@@ -112,14 +111,27 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
     if (passage.text.length < 50 && previous && previous.group === passage.group) push(previous);
     push(passage);
   };
-  /** A passage with what makes it readable: a question with its answer, an answer with its question, a title with its lines. */
-  const addWithContext = (passage: Passage) => {
+  /**
+   * A passage with what makes it readable: a question with its answer, an answer with its question, a title with
+   * its lines, and a sentence with the short one after it («Aeroporto de Lisboa: 45 minutos de carro.» + «Podemos
+   * marcar um transfer (60 € por viagem).»): in the same paragraph, or anywhere after the best passages (a
+   * re-wrapped PDF breaks paragraphs at random).
+   */
+  const addWithContext = (passage: Passage, best = false) => {
     add(passage);
     if (passage.question) answerAfter(passage).forEach(add);
     else if (isAnchor(passage)) blockAfter(passage, 4, 320).forEach(add);
     else {
       const previous = passage.siblings[passage.position - 1];
       if (previous?.question) add(previous);
+      // (after one of the best passages, up to two short ones: «… ou de um serviço.» + «Válidos 6 meses.»)
+      let room = 160;
+      for (let at = passage.position + 1, taken = 0; taken < (best ? 2 : 1); at++, taken++) {
+        const next = passage.siblings[at];
+        if (!next || (!best && next.group !== passage.group) || next.question || next.titleLike || next.text.length > room) break;
+        add(next);
+        room -= next.text.length;
+      }
     }
   };
   /** Best first; passages far below the best one (a single common word) are noise and left out. */
@@ -129,24 +141,42 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score);
     const floor = (scored[0]?.score ?? 0) * 0.3;
-    return scored.filter((item) => item.score >= floor).map((item) => item.passage);
+    // Below the floor, a passage still counts when it has words of the message the better ones don't («… frutos secos»
+    // → «O pudim de castanha leva castanha e amêndoa.» after «Alergias: temos a folha dos 14 alergénios…»).
+    // (each word asked by up to two passages: a price line and the sentence that explains it).
+    const covered = new Map<string, number>();
+    return scored
+      .filter((item) => {
+        const own = coveredWords(item.passage, query);
+        if (item.score < floor && ![...own].some((word) => (covered.get(word) ?? 0) < 2)) return false;
+        for (const word of own) covered.set(word, (covered.get(word) ?? 0) + 1);
+        return true;
+      })
+      .map((item) => item.passage);
   };
 
   const has = (intent: string) => request.intents.includes(intent as never);
   const query = passageQuery(request.message);
+  const best = ranked(passages, query).slice(0, contextLimits.passages);
 
   // Price questions: the price lines of what was asked (and the price list itself when nothing priced
   // matches, e.g. «How much is a haircut?» on a Portuguese list), plus discount lines.
   if (has("price") || has("menu")) {
     const priceQuery = passageQuery(request.message, intentWords(request.message, ["menu", "price"]));
     const priced = passages.filter((passage) => passage.price);
+    // «E sobremesas?»: the lines of the list's part with that title first.
+    const part = priceQuery.words.length ? sectionPriceLines(passages, priceQuery) : [];
+    part.forEach(add);
     const matching = priceQuery.words.length ? ranked(priced, priceQuery, true).slice(0, contextLimits.pricePassages) : [];
     matching.forEach(add);
     // Fewer than two lines name what was asked (another language, a generic «cortar o cabelo» carried from
     // the previous turn), or nothing was named («Quanto custa?»): the price list itself too, so the model
     // can answer or ask which one with real examples.
     const direct = matching.filter((passage) => passageMatches(passage, priceQuery.words).length === priceQuery.words.length);
-    if (direct.length < 2 || asksPriceOfNothing(request)) {
+    // Not for a question that only mentions a dish or service («O meu filho é alérgico a frutos secos. Há algum prato
+    // com frutos secos?»): the list would leave no room for the allergy lines.
+    const aboutTheList = has("price") || !priceQuery.words.length;
+    if (((direct.length < 2 && part.length < 2) || asksPriceOfNothing(request)) && aboutTheList) {
       const list = longestPriceRun(passages).filter((passage) => passage.price);
       list.slice(0, contextLimits.priceList).forEach(add);
     }
@@ -172,14 +202,15 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
   if (has("location")) addressPassages(passages).forEach(add);
 
   // Booking questions: how to book (the online link, by phone) and the «sem marcação» rule.
-  if (has("booking")) bookingPassages(passages).slice(0, contextLimits.bookingPassages).forEach(addWithContext);
+  if (has("booking")) bookingPassages(passages).slice(0, contextLimits.bookingPassages).forEach((passage) => addWithContext(passage));
 
-  // The best passages for the message across the whole document.
-  for (const passage of ranked(passages, query).slice(0, contextLimits.passages)) addWithContext(passage);
+  // A follow-up («E são válidos quanto tempo?» after «Vendem vales-oferta?», «Dá para amanhã?» after «Qual é o
+  // preço do cabrito?»): a few passages about the earlier question too, so the model sees what «it» is (before
+  // the general passages, so they always fit).
+  if (request.followUpOf) for (const passage of ranked(passages, passageQuery(request.followUpOf)).slice(0, contextLimits.followUpPassages)) addWithContext(passage, true);
 
-  // A follow-up («E são válidos quanto tempo?» after «Vendem vales-oferta?»): a few passages about the
-  // earlier question too, so the model sees what «it» is.
-  if (request.followUpOf) for (const passage of ranked(passages, passageQuery(request.followUpOf)).slice(0, contextLimits.followUpPassages)) addWithContext(passage);
+  // The other best passages for the message across the whole document.
+  best.forEach((passage, rank) => addWithContext(passage, rank < 5));
 
   // Within the ceilings, in priority order.
   const kept: Passage[] = [];
@@ -194,8 +225,15 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
   return kept;
 }
 
-/** The numbered pieces of information the model may use ([E1] entries, [S1] document passages). */
+/**
+ * The numbered pieces of information the model may use ([E1] entries, [S1] document passages). A piece that
+ * would leak a secret (lodging: a door or key-box code written in the house guide) never reaches the model.
+ */
 export function contextItems(request: AnswerRequest): ContextItem[] {
+  return allContextItems(request).filter((item) => !leaksSecret(item.text, request.knowledge.kind));
+}
+
+function allContextItems(request: AnswerRequest): ContextItem[] {
   const items: ContextItem[] = [];
   const entries = request.hits.filter((hit) => hit.score >= minimumScore * 0.6);
   entries.slice(0, contextLimits.entries).forEach((hit, index) => {
@@ -212,12 +250,16 @@ export function contextItems(request: AnswerRequest): ContextItem[] {
   // Reading order (the model follows a list better as it is written), the pieces of one line joined,
   // the section title in brackets; the same text twice only once.
   const order = new Map(index.passages.map((passage, position) => [passage, position]));
-  const passages = groundingPassages(request, index).sort((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0));
+  const passages = groundingPassages(request, index)
+    .filter((passage) => !leaksSecret(passage.text, request.knowledge.kind))
+    .sort((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0));
   const runs: Passage[][] = [];
   for (const passage of passages) {
     const run = runs[runs.length - 1];
     const last = run?.[run.length - 1];
-    if (last && last.siblings === passage.siblings && last.group === passage.group && last.position + 1 === passage.position) run.push(passage);
+    // A flat document is one long line: its pieces are joined only while the item stays short (else each would be cut).
+    const size = run ? run.reduce((total, item) => total + item.text.length + 1, 0) + passage.text.length : 0;
+    if (last && last.siblings === passage.siblings && last.group === passage.group && last.position + 1 === passage.position && size <= contextLimits.passageChars) run.push(passage);
     else runs.push([passage]);
   }
   const written = new Set<string>();

@@ -6,7 +6,8 @@ import { subjectWords } from "../context.ts";
 import { asksPriceOfNothing, documentNamedItem, documentAnswer, documentBooking, documentCatalog, documentHours, documentLocation, documentPriceExamples, generalSubjectExamples, uniqueSources, type DocumentAnswer } from "../doc-answers.ts";
 import { buildIndex, minimumCoverage, minimumScore, type KnowledgeIndex, type SearchHit } from "../knowledge.ts";
 import { fixedMessages } from "../messages.ts";
-import { formatPrice } from "../text.ts";
+import { intentKeywords } from "../intents.ts";
+import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
 import type { BusinessKnowledge, CatalogItem, ChatbotLanguage } from "../types.ts";
 import type { AnswerProvider, AnswerRequest, AnswerResult, AnswerSource } from "./types.ts";
 
@@ -101,7 +102,12 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   if (has("hours") && !strongEntry) {
     // No structured hours: the documents' hours, wherever they are in the text, before «I don't know».
     if (opening.known && day) parts.push(dayHoursAnswer(knowledge, opening, day, language));
-    else if (opening.known || !hasDocuments || !fromDocument(documentHours(request, index(), day))) parts.push(hoursAnswer(knowledge, opening, language));
+    else if (opening.known || !hasDocuments) parts.push(hoursAnswer(knowledge, opening, language));
+    else if (!fromDocument(documentHours(request, index(), day))) {
+      // «Têm disponibilidade para o fim de semana?» in a house guide without opening hours: no «I don't have the hours»
+      // when the customer didn't ask for them (the day only made it an hours-and-booking question).
+      if (hasAnyKeyword(normalize(request.customerMessage ?? request.message), intentKeywords.hours)) parts.push(hoursAnswer(knowledge, opening, language));
+    }
   }
   if (has("location") && !strongEntry) {
     const location = locationAnswer(knowledge, language);

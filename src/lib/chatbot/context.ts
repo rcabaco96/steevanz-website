@@ -56,7 +56,7 @@ const fillerWords = new Set(
 const genericWords = [
   "menu*", "ementa", "carta", "prato*", "comida", "dish*", "food", "plat", "plats", "speisekarte", "gericht*", "piatt*", "servico*", "service*",
   "servicio*", "dienstleistung*", "serviz*", "tratamento*", "treatment*", "tratamiento*", "soin*", "behandlung*", "trattament*", "opcao", "opcoes",
-  "option*", "opcion*", "coisa*", "thing*",
+  "option*", "opcion*", "coisa*", "thing*", "consulta", "consultas", "appointment*", "consultation*",
 ];
 
 /** Words that point back to what was just talked about («isso», «that», «eso», «ça», «dies», «quello»; not «das», a Portuguese contraction too). */
@@ -66,6 +66,9 @@ const pointingWords = new Set(
     "ca cela celui celle ceux dies davon dafur dafuer quello quella questo questa cio"
   ).split(" "),
 );
+
+/** «Também há ao sábado?», «Is there also…?», «¿Hay también…?»: the same thing asked again, for another day. */
+const sameThingWords = ["tambem", "ha", "existe", "also", "too", "is there", "hay", "tambien", "aussi", "y a t il", "auch", "gibt es", "anche", "c e"];
 
 /** A message that starts like a continuation: «E ao sábado?», «and on Saturday?», «y para niños?», «et pour…», «und…», «e per…». */
 const continuationStart = /^(?:e|and|y|et|und|ed|tambem|also|plus|what about|how about|e quanto|e se|then)\b/;
@@ -168,12 +171,12 @@ function resolveAgainst(text: string, at: number, kind: ChatbotBusinessKind, top
   const elliptic = !own.length || continuationStart.test(normalize(text)) || tokens.some((token) => pointingWords.has(token));
   // «Fazem tranças?» after a price question stands alone; «E tranças?» doesn't.
   if (!elliptic || own.length > 3) return alone;
-  // «E num degradê à quarta?» after a price or discount question: the day only says when; it is still about
-  // the price (a day alone, «E ao sábado?», stays an hours question).
+  // «E num degradê à quarta?», «Também há ao sábado?» after a price, menu or discount question: the day only says
+  // when; it is still about the same thing (a day alone, «E ao sábado?», stays an hours question).
   const normalized = normalize(text);
   const dayOnly =
     ownDay !== null &&
-    own.length > 0 &&
+    (own.length > 0 || hasAnyKeyword(normalized, sameThingWords)) &&
     ownIntents.every((intent) => intent === "hours" || intent === "booking") &&
     topic.intents.some((intent) => intent === "price" || intent === "menu") &&
     !hasAnyKeyword(normalized, [...intentKeywords.hours, ...intentKeywords.booking, ...availabilityPhrases]);
@@ -186,6 +189,11 @@ function resolveAgainst(text: string, at: number, kind: ChatbotBusinessKind, top
   // thing («E a barba?»); hours and address only when nothing new is named («E então?»).
   const carried = keptOwn.length ? [] : topic.intents.filter((intent) => !own.length || itemIntents.includes(intent));
   if (!carrySubject && !carried.length) {
+    // «Dá para amanhã?» after «Qual é o preço do cabrito?»: a day and «can I» with nothing named asks about the
+    // same thing; the answer is that day's hours and how to book, and an AI also sees what «it» is.
+    if (!own.length && topic.subject.length && hasAnyKeyword(normalized, availabilityPhrases) && ownIntents.every((intent) => intent === "hours" || intent === "booking")) {
+      return { ...alone, previous: topic.text };
+    }
     if (ownIntents.length || !own.length) return alone;
     return { ...alone, previous: topic.text, windowQuery: topic.subject.length ? `${text} ${topic.subject.join(" ")}` : undefined };
   }
@@ -213,7 +221,10 @@ export function resolveFollowUp(input: { message: string; at: number; history: r
   for (const message of customers) topic = resolveAgainst(message.body, message.at, input.kind, topic).topic;
   // «Quero a segunda opção» right after a list: that option, with the topic's kind of question.
   const last = input.history[input.history.length - 1];
-  const picked = last && (last.author === "bot" || last.author === "owner") ? pickedOption(input.message, listOptions(last.body)) : null;
+  // Only after a list offered as a question («… Qual lhe interessa?») or written as bullets: «Qual é a primeira
+  // consulta?» after a sentence with commas is a question of its own.
+  const offered = last && (last.author === "bot" || last.author === "owner") && (/\?\s*$/.test(last.body) || /^\s*[•▪◦*-]\s/m.test(last.body));
+  const picked = offered ? pickedOption(input.message, listOptions(last.body)) : null;
   if (picked) {
     const name = picked.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
     // «Quero a segunda» is the second option here, not Monday: no hours or booking question unless written out.

@@ -1,0 +1,218 @@
+{
+  "sector": "clinic",
+  "business": "Clínica Dentária Sorriso Atlântico",
+  "about": "Dental clinic dialogues for the quality gate (tests/chatbot-conversations.test.mjs): services and prices, insurances and agreements, how to book, hours, cancellations, children, payments in instalments; and what the assistant must never do: clinical advice — pain, swelling, bleeding, medication or after-care questions go to the clinical team (hand-off «medical», with 112 for emergencies) and never reach an AI. Same format as barbearia.json.",
+  "documentTitle": "Clinica Dentaria Sorriso Atlantico - informacao para pacientes",
+  "documents": { "structured": "clinica-sorriso-atlantico.txt", "whatsapp": "clinica-sorriso-atlantico-whatsapp.txt" },
+  "layouts": ["structured", "flat", "messy", "whatsapp"],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "price of a cleaning, then whitening",
+      "turns": [
+        { "customer": "Quanto custa uma limpeza?", "free": { "includes": ["55 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["limpeza[^\\n]*55 ?€"] } },
+        {
+          "customer": "E o branqueamento?",
+          "free": { "includes": ["250 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Bb]ranqueamento[^\\n]*250 ?€"], "followUpOf": "limpeza" }
+        }
+      ]
+    },
+    {
+      "name": "implants: no price before the assessment",
+      "turns": [
+        { "customer": "Quanto custa um implante?", "free": { "includes": ["avaliação"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Ii]mplantes"] } },
+        {
+          "customer": "E a consulta de avaliação, quanto é?",
+          "free": { "includes": ["40 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Cc]onsulta de avaliação[^\\n]*40 ?€"] }
+        },
+        {
+          "customer": "É paga mesmo que faça o tratamento?",
+          "onlyWithAi": {
+            "reason": "the message leaves out what is paid (the assessment asked about just before) and the WhatsApp copy has no frequent question that names it; the AI gets the conversation and the line",
+            "layouts": ["whatsapp"]
+          },
+          "free": { "includes": ["oferecida"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["oferecida"] }
+        }
+      ]
+    },
+    {
+      "name": "an agreement, then ADSE",
+      "turns": [
+        { "customer": "Têm acordo com o Plano Vida+?", "free": { "includes": ["Vida\\+"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Vida\\+"] } },
+        { "customer": "E com a ADSE?", "free": { "includes": ["ADSE"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["ADSE"] } }
+      ]
+    },
+    {
+      "name": "how to book, then the first appointment",
+      "turns": [
+        {
+          "customer": "Como faço para marcar uma consulta?",
+          "free": { "includes": ["marcacoes\\.sorrisoatlantico"], "excludes": ["Não tenho", "há vaga"] },
+          "ai": { "excerpts": ["marcacoes\\.sorrisoatlantico"] }
+        },
+        { "customer": "Qual é a primeira consulta?", "free": { "includes": ["avaliação"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["primeira consulta"] } }
+      ]
+    },
+    {
+      "name": "open on Saturday, then Sunday",
+      "turns": [
+        { "customer": "Atendem ao sábado?", "free": { "includes": ["09:00[–-]13:00|09:00 às 13:00"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["09:00"], "dayAsked": "Saturday" } },
+        { "customer": "E ao domingo?", "free": { "includes": ["[Ee]ncerrad"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "Sunday" } }
+      ]
+    },
+    {
+      "name": "open today, then tomorrow afternoon",
+      "turns": [
+        { "customer": "Estão abertos hoje?", "free": { "includes": ["20:00"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "today, Wednesday" } },
+        { "customer": "E amanhã à tarde?", "free": { "includes": ["14:00"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "tomorrow, Thursday" } }
+      ]
+    },
+    {
+      "name": "toothache and what to take: no clinical advice",
+      "turns": [
+        { "customer": "Estou com uma dor de dentes muito forte, o que posso tomar?", "free": { "includes": ["Não posso dar aconselhamento médico", "112"] }, "handoff": "medical", "ai": null }
+      ]
+    },
+    {
+      "name": "a swollen face: to the clinical team",
+      "turns": [
+        { "customer": "Boa tarde, tenho a cara inchada desde ontem", "free": { "includes": ["Não posso dar aconselhamento médico"] }, "handoff": "medical", "ai": null }
+      ]
+    },
+    {
+      "name": "a broken, bleeding tooth: to the clinical team",
+      "turns": [
+        { "customer": "Caí e parti um dente, está a sangrar muito", "free": { "includes": ["Não posso dar aconselhamento médico", "112"] }, "handoff": "medical", "ai": null }
+      ]
+    },
+    {
+      "name": "after-care after an extraction: no clinical advice",
+      "turns": [
+        { "customer": "Quanto custa tirar um dente?", "free": { "includes": ["70 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Ee]xtração simples[^\\n]*70 ?€"] } },
+        { "customer": "E depois da extração posso comer normalmente?", "free": { "includes": ["Não posso dar aconselhamento médico"] }, "handoff": "medical", "ai": null }
+      ]
+    },
+    {
+      "name": "urgent appointments",
+      "turns": [
+        { "customer": "Têm consultas de urgência?", "free": { "includes": ["60 ?€|próprio dia"], "excludes": ["Não tenho", "há vaga"] }, "ai": { "excerpts": ["[Cc]onsulta de urgência"] } },
+        { "customer": "Como faço?", "free": { "includes": ["manhã|marcacoes\\.sorrisoatlantico|telefone"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["de manhã"] } }
+      ]
+    },
+    {
+      "name": "a child of 4, then the price",
+      "turns": [
+        { "customer": "O meu filho tem 4 anos, já pode ir ao dentista?", "free": { "includes": ["3 anos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["3 anos"] } },
+        { "customer": "E quanto custa a consulta?", "free": { "includes": ["35 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["35 ?€"] } }
+      ]
+    },
+    {
+      "name": "payments in instalments",
+      "turns": [
+        { "customer": "Aceitam pagamento em prestações?", "free": { "includes": ["6 meses"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["prestações"] } },
+        { "customer": "E MB WAY?", "free": { "includes": ["MB WAY"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["MB WAY"] } }
+      ]
+    },
+    {
+      "name": "invisible aligners, then a fixed brace",
+      "turns": [
+        { "customer": "Fazem aparelhos invisíveis?", "free": { "includes": ["2500 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Aa]linhadores invisíveis[^\\n]*2500 ?€"] } },
+        { "customer": "E o aparelho fixo?", "free": { "includes": ["1500 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["1500 ?€"] } }
+      ]
+    },
+    {
+      "name": "cancelling, then missing an appointment",
+      "turns": [
+        { "customer": "Como desmarco uma consulta?", "free": { "includes": ["24 horas"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["24 horas"] } },
+        { "customer": "E se faltar sem avisar?", "free": { "includes": ["20 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["20 ?€"] } }
+      ]
+    },
+    {
+      "name": "running late",
+      "turns": [
+        { "customer": "Vou chegar 10 minutos atrasado à consulta", "free": { "includes": ["15 minutos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["15 minutos"] } },
+        { "customer": "Obrigado!", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "parking, then the metro",
+      "turns": [
+        { "customer": "Há estacionamento perto?", "free": { "includes": ["parque"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["subterrâneo"] } },
+        { "customer": "E de metro?", "free": { "includes": ["Matosinhos Sul"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Matosinhos Sul"] } }
+      ]
+    },
+    {
+      "name": "address, then a lift",
+      "turns": [
+        { "customer": "Qual é a morada?", "free": { "includes": ["Avenida da Liberdade 450"] }, "ai": { "excerpts": ["Avenida da Liberdade 450"] } },
+        { "customer": "Tem elevador? A minha mãe anda de cadeira de rodas", "free": { "includes": ["elevador"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["elevador"] } }
+      ]
+    },
+    {
+      "name": "not in the document: botox (they don't do it), then facial harmonisation and home visits",
+      "turns": [
+        { "customer": "Fazem botox?", "free": { "includes": ["[Nn]ão fazemos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["botox"] } },
+        { "customer": "E harmonização facial?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "Fazem consultas ao domicílio?", "notInDocument": true, "free": { "excludes": ["€"] } }
+      ]
+    },
+    {
+      "name": "not in the document: x-rays",
+      "turns": [
+        { "customer": "Fazem raio-X panorâmico?", "notInDocument": true, "free": { "excludes": ["€"] } }
+      ]
+    },
+    {
+      "name": "complaint",
+      "turns": [
+        { "customer": "Fui muito mal atendido na última consulta, quero fazer uma reclamação", "free": { "includes": ["equipa"] }, "handoff": "complaint", "ai": null }
+      ]
+    },
+    {
+      "name": "asks for the doctor",
+      "turns": [
+        { "customer": "Quem é a diretora clínica?", "free": { "includes": ["Sofia Ramalhete"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Sofia Ramalhete"] } },
+        { "customer": "Posso falar com a Dra. Sofia?", "free": { "includes": ["equipa"] }, "handoff": "customer_asked", "ai": null }
+      ]
+    },
+    {
+      "name": "English: speaking English, then a cleaning",
+      "turns": [
+        { "customer": "Hello, do you speak English?", "language": "en", "free": { "includes": ["inglês"], "excludes": ["don't have"] }, "ai": { "excerpts": ["inglês"], "language": "English" } },
+        { "customer": "How much is a dental cleaning?", "language": "en", "free": { "includes": ["55 ?€"], "excludes": ["don't have"] }, "ai": { "excerpts": ["55 ?€"], "language": "English" } }
+      ]
+    },
+    {
+      "name": "Spanish: a cleaning, then Saturday",
+      "turns": [
+        { "customer": "Hola, ¿cuánto cuesta una limpieza dental?", "language": "es", "free": { "includes": ["55 ?€"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["55 ?€"], "language": "Spanish" } },
+        { "customer": "¿Y abren el sábado?", "language": "es", "free": { "includes": ["09:00"], "excludes": ["No tengo"] }, "ai": { "dayAsked": "Saturday", "language": "Spanish" } }
+      ]
+    },
+    {
+      "name": "French: whitening, then the price",
+      "turns": [
+        { "customer": "Bonjour, vous faites le blanchiment des dents ?", "language": "fr", "free": { "includes": ["250 ?€|[Bb]ranqueamento"], "excludes": ["Je n'ai pas"] }, "ai": { "excerpts": ["[Bb]ranqueamento"], "language": "French" } },
+        { "customer": "Et le prix ?", "language": "fr", "free": { "includes": ["250 ?€"], "excludes": ["Je n'ai pas"] }, "ai": { "excerpts": ["250 ?€"], "language": "French" } }
+      ]
+    },
+    {
+      "name": "greeting, then teeth grinding",
+      "turns": [
+        { "customer": "Bom dia", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Fazem goteiras para quem range os dentes?", "free": { "includes": ["220 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["220 ?€"], "history": ["Bom dia"] } }
+      ]
+    },
+    {
+      "name": "a filling, then a root canal",
+      "turns": [
+        { "customer": "Quanto custa um chumbo?", "free": { "includes": ["60 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["60 ?€"] } },
+        { "customer": "E uma desvitalização?", "free": { "includes": ["180 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["180 ?€"] } },
+        { "customer": "Obrigada, até amanhã", "free": { "equals": "De nada! Até breve." }, "ai": null }
+      ]
+    }
+  ]
+}

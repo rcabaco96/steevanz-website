@@ -1,0 +1,93 @@
+DOCUMENTO FICTÍCIO PARA TESTES — a loja «Novelo — Lãs e Retrosaria» não existe. Foi inventada para testar o
+assistente da Steevanz: nomes, contactos, moradas e preços são inventados.
+
+NOVELO
+Lãs e Retrosaria · Braga · desde 1998
+Informação para clientes da loja e da loja online
+
+Sobre a loja
+Somos uma retrosaria de bairro com tudo para tricô, croché, costura e bordados: lãs e fios, agulhas, tecidos,
+botões, fechos, linhas e kits. Fazemos também workshops para principiantes.
+Equipa: Fátima e Joana (atendimento e workshops) e Rui (loja online e envios).
+
+Morada e contactos
+Rua do Souto 88
+4700-000 Braga
+Telefone: 253 000 000 (exemplo) · WhatsApp: 936 000 000 (exemplo)
+Email: loja@novelo.example
+Loja online: loja.novelo.example
+
+Horário da loja
+Segunda a sexta-feira: 09:30–19:00
+Sábado: 10:00–13:00 e 15:00–19:00
+Domingo: fechado
+Feriados: fechado (em dezembro abrimos nos domingos antes do Natal, das 14:00 às 19:00).
+A loja online funciona 24 horas por dia; as encomendas feitas ao fim de semana são enviadas na segunda-feira.
+
+Produtos e preços (intervalos indicativos)
+Lãs e fios
+Novelos de lã acrílica (100 g) 3,50 € a 5,00 €
+Lã merino (50 g) 6,90 € a 9,50 €
+Algodão para croché (50 g) 2,80 € a 4,20 €
+Lã de alpaca (50 g) 8,50 € a 12,00 €
+Agulhas e acessórios
+Agulhas de tricô (par) 4,00 € a 15,00 €
+Agulhas de croché 2,50 € a 9,00 €
+Marcadores de malha, contadores e fitas métricas 1,50 € a 6,00 €
+Costura
+Tecidos de algodão ao metro 8,00 € a 22,00 € por metro
+Linhas de costura 1,20 € a 3,50 €
+Botões 0,20 € a 2,50 € cada
+Fechos éclair 1,50 € a 6,00 €
+Kits
+Kit de croché para principiantes (agulha, fio e instruções) 25,00 €
+Kit de amigurumi 18,00 € a 32,00 €
+Kit de bordado 15,00 € a 28,00 €
+Não vendemos máquinas de costura nem fazemos arranjos de roupa.
+
+Stock e encomendas especiais
+Temos cerca de 2000 referências. O stock da loja online não é atualizado ao minuto: para saber se uma cor ou
+um lote está disponível, envie-nos mensagem com a referência e a equipa confirma no próprio dia (em dias úteis).
+Para trabalhos grandes, recomendamos comprar todos os novelos do mesmo lote de tinta de uma vez.
+Encomendas especiais de cores ou marcas que não temos: chegam em 1 a 2 semanas, com pagamento adiantado.
+
+Envios e levantamento
+Envios por correio para Portugal continental: 3,90 €; grátis em encomendas a partir de 50 €.
+Açores e Madeira: 6,90 €.
+Prazo de entrega: 2 a 4 dias úteis depois do pagamento.
+Não enviamos para fora de Portugal.
+Levantamento na loja: grátis; a encomenda fica pronta em 24 horas e guardamos durante 15 dias.
+
+Trocas e devoluções
+Compras na loja online: pode devolver no prazo de 14 dias depois de receber, sem dar motivo (os portes de
+devolução são pagos pelo cliente).
+Compras na loja: trocas no prazo de 30 dias, com o talão. Não devolvemos dinheiro em compras feitas na loja:
+damos um vale para usar noutra compra.
+Lãs: só trocamos novelos por abrir e com a etiqueta.
+Tecidos cortados ao metro não podem ser trocados nem devolvidos.
+Produtos com defeito: trocamos ou devolvemos o dinheiro, na loja e online.
+
+Pagamentos
+Na loja: dinheiro, Multibanco, MB WAY, Visa e Mastercard.
+Online: MB WAY, Multibanco (referência), cartão e PayPal.
+Não aceitamos cheques.
+
+Vales-oferta
+Vales de 10 €, 25 € ou 50 €, ou de outro valor à escolha a partir de 10 €.
+Compram-se na loja ou online; o vale online é enviado por email.
+Válidos durante 1 ano. Podem ser usados na loja e online.
+
+Workshops
+Croché para principiantes: 3 sessões de 2 horas, 45 €, material incluído.
+Tricô para principiantes: 3 sessões de 2 horas, 45 €, material incluído.
+Grupos de no máximo 6 pessoas, ao sábado de manhã. Inscrição na loja ou por WhatsApp.
+
+Perguntas frequentes
+Têm lugar para estacionar?
+Não temos estacionamento próprio; há um parque público a 200 m (Parque da Praça).
+Fazem descontos?
+Estudantes de moda e costura têm 10 % de desconto com cartão de estudante válido.
+Posso reservar um produto?
+Sim, guardamos até 3 dias. Peça por WhatsApp.
+
+Novelo · loja fictícia · documento de teste de outubro de 2026.

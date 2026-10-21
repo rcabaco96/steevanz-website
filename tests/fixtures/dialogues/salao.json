@@ -1,0 +1,194 @@
+{
+  "sector": "beauty",
+  "business": "Salão Flor de Lis",
+  "about": "Women's hairdresser and beauty-salon dialogues for the quality gate (tests/chatbot-conversations.test.mjs): services with durations and price ranges («desde»), booking and walk-ins, cancellations and lateness, nails, waxing, lashes, brides, allergy test, men and children, products, vouchers, discounts. Same format as barbearia.json.",
+  "documentTitle": "Salao Flor de Lis - tabela de servicos",
+  "documents": { "structured": "salao-flor-de-lis.txt", "whatsapp": "salao-flor-de-lis-whatsapp.txt" },
+  "layouts": ["structured", "flat", "messy", "whatsapp"],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "price of a haircut, then long hair",
+      "turns": [
+        { "customer": "Quanto custa um corte?", "free": { "includes": ["22 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Cc]orte de senhora[^\\n]*22 ?€"] } },
+        { "customer": "Tenho o cabelo comprido", "free": { "includes": ["28 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["28 ?€"] } }
+      ]
+    },
+    {
+      "name": "highlights, then balayage",
+      "turns": [
+        { "customer": "Quanto custam as madeixas?", "free": { "includes": ["60 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Mm]adeixas[^\\n]*60 ?€"] } },
+        { "customer": "E o balayage?", "free": { "includes": ["85 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Bb]alayage[^\\n]*85 ?€"], "followUpOf": "madeixas" } }
+      ]
+    },
+    {
+      "name": "straightening, then how long it takes",
+      "turns": [
+        { "customer": "Fazem alisamentos?", "free": { "includes": ["90 ?€|[Qq]ueratina"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Qq]ueratina"] } },
+        { "customer": "Quanto tempo demora?", "free": { "includes": ["2 a 3 horas"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["2 a 3 horas"], "followUpOf": "alisamentos" } }
+      ]
+    },
+    {
+      "name": "booking online, then walk-ins",
+      "turns": [
+        { "customer": "Posso marcar online?", "free": { "includes": ["marcacoes\\.flordelis"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["marcacoes\\.flordelis"] } },
+        { "customer": "E sem marcação?", "free": { "includes": ["disponibilidade"], "excludes": ["Não tenho", "há vaga"] }, "ai": { "excerpts": ["sem marcação"] } }
+      ]
+    },
+    {
+      "name": "a blow-dry on Saturday without booking",
+      "turns": [
+        {
+          "customer": "Dá para ir no sábado sem marcação fazer um brushing?",
+          "free": { "includes": ["09:00", "sábado é sempre preciso marcar"], "excludes": ["há vaga"] },
+          "ai": { "excerpts": ["sábado é sempre preciso marcar"], "dayAsked": "Saturday" }
+        }
+      ]
+    },
+    {
+      "name": "Mondays, then December",
+      "turns": [
+        { "customer": "Abrem à segunda?", "free": { "includes": ["[Ff]echad"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "Monday" } },
+        { "customer": "Mesmo em dezembro?", "free": { "includes": ["dezembro"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["dezembro"] } }
+      ]
+    },
+    {
+      "name": "cancelling: the cost",
+      "turns": [
+        { "customer": "Se tiver de desmarcar, há algum custo?", "free": { "includes": ["24 horas"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["24 horas"] } },
+        { "customer": "E se faltar sem avisar?", "free": { "includes": ["50 ?%"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["50 ?%"] } }
+      ]
+    },
+    {
+      "name": "running late",
+      "turns": [
+        { "customer": "Vou chegar uns 10 minutos atrasada", "free": { "includes": ["15 minutos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["15 minutos"] } },
+        { "customer": "Obrigada!", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "gel nails, then removal",
+      "turns": [
+        { "customer": "Fazem unhas de gel?", "free": { "includes": ["25 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["gel[^\\n]*25 ?€"] } },
+        { "customer": "E quanto custa tirar o gel?", "free": { "includes": ["8 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Rr]emoção de gel 8 ?€"] } }
+      ]
+    },
+    {
+      "name": "waxing: full leg, then underarms",
+      "turns": [
+        { "customer": "Quanto custa a depilação da perna inteira?", "free": { "includes": ["25 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Pp]erna inteira 25 ?€"] } },
+        { "customer": "E das axilas?", "free": { "includes": ["8 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Aa]xilas 8 ?€"] } }
+      ]
+    },
+    {
+      "name": "eyelash extensions, then maintenance",
+      "turns": [
+        { "customer": "Fazem extensão de pestanas?", "free": { "includes": ["60 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["pestanas[^\\n]*60 ?€"] } },
+        { "customer": "E a manutenção?", "free": { "includes": ["35 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["manutenção 35 ?€"] } }
+      ]
+    },
+    {
+      "name": "the bridal package, then how early to book",
+      "turns": [
+        { "customer": "Vou casar em junho, como funciona o pacote de noiva?", "free": { "includes": ["150 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Pp]acote noiva[^\\n]*150 ?€"] } },
+        { "customer": "Com quanto tempo de antecedência tenho de marcar a prova?", "free": { "includes": ["1 mês"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["1 mês"] } }
+      ]
+    },
+    {
+      "name": "allergic to hair dye",
+      "turns": [
+        { "customer": "Sou alérgica a algumas tintas, posso pintar o cabelo?", "free": { "includes": ["48 horas|teste de alergia"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["teste de alergia"] } }
+      ]
+    },
+    {
+      "name": "pregnant, then highlights",
+      "turns": [
+        { "customer": "Estou grávida, há algum problema em fazer madeixas?", "free": { "includes": ["gravidez|60 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["gravidez"] } }
+      ]
+    },
+    {
+      "name": "men's haircut, then a beard",
+      "turns": [
+        { "customer": "Cortam cabelo a homens?", "free": { "includes": ["14 ?€|homens"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Cc]orte de homem[^\\n]*14 ?€"] } },
+        { "customer": "E fazem a barba?", "free": { "includes": ["não fazemos barba"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["barba"] } }
+      ]
+    },
+    {
+      "name": "laser hair removal: they don't",
+      "turns": [
+        { "customer": "Fazem depilação a laser?", "free": { "includes": ["[Nn]ão fazemos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["laser"] } }
+      ]
+    },
+    {
+      "name": "not in the document: massages, braids, wigs",
+      "turns": [
+        { "customer": "Fazem massagens?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "E tranças africanas?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "Vendem perucas?", "notInDocument": true, "free": { "excludes": ["€"] } }
+      ]
+    },
+    {
+      "name": "complaint",
+      "turns": [
+        { "customer": "A coloração de ontem ficou horrível, quero fazer uma reclamação", "free": { "includes": ["equipa"] }, "handoff": "complaint", "ai": null }
+      ]
+    },
+    {
+      "name": "who does colour, then asks for her",
+      "turns": [
+        { "customer": "Quem faz as colorações?", "free": { "includes": ["Patrícia"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Patrícia"] } },
+        { "customer": "Quero falar com a Patrícia", "free": { "includes": ["equipa"] }, "handoff": "customer_asked", "ai": null }
+      ]
+    },
+    {
+      "name": "English: a manicure, then gel nails",
+      "turns": [
+        { "customer": "Hi, how much is a manicure?", "language": "en", "free": { "includes": ["15 ?€"], "excludes": ["don't have"] }, "ai": { "excerpts": ["[Mm]anicure simples 15 ?€"], "language": "English" } },
+        { "customer": "And gel nails?", "language": "en", "free": { "includes": ["25 ?€"], "excludes": ["don't have"] }, "ai": { "excerpts": ["gel[^\\n]*25 ?€"], "language": "English" } }
+      ]
+    },
+    {
+      "name": "Spanish: eyebrows, then waxing the upper lip",
+      "turns": [
+        { "customer": "Hola, ¿hacen diseño de cejas?", "language": "es", "free": { "includes": ["8 ?€"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["sobrancelhas[^\\n]*8 ?€"], "language": "Spanish" } },
+        { "customer": "¿Y depilación del bigote?", "language": "es", "free": { "includes": ["5 ?€"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["[Bb]uço 5 ?€"], "language": "Spanish" } }
+      ]
+    },
+    {
+      "name": "French: balayage",
+      "turns": [
+        { "customer": "Bonjour, vous faites le balayage ?", "language": "fr", "free": { "includes": ["85 ?€"], "excludes": ["Je n'ai pas"] }, "ai": { "excerpts": ["85 ?€"], "language": "French" } },
+        { "customer": "Merci, au revoir", "language": "fr", "free": { "equals": "Je vous en prie ! À bientôt." }, "ai": null }
+      ]
+    },
+    {
+      "name": "products, then gift vouchers",
+      "turns": [
+        { "customer": "Vendem champôs?", "free": { "includes": ["12 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["champôs"] } },
+        { "customer": "E vales de oferta?", "free": { "includes": ["20 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Vv]ales"] } },
+        { "customer": "Duram quanto tempo?", "free": { "includes": ["6 meses"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["6 meses"] } }
+      ]
+    },
+    {
+      "name": "a senior discount",
+      "turns": [
+        { "customer": "A minha mãe tem 70 anos, têm algum desconto para ela?", "free": { "includes": ["65 anos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["65 anos"] } }
+      ]
+    },
+    {
+      "name": "greeting, a child's haircut",
+      "turns": [
+        { "customer": "Bom dia!", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Posso levar a minha filha de 6 anos para cortar o cabelo?", "free": { "includes": ["12 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["12 ?€"], "history": ["Bom dia"] } }
+      ]
+    },
+    {
+      "name": "facial cleansing, then parking",
+      "turns": [
+        { "customer": "Quanto custa uma limpeza de pele?", "free": { "includes": ["45 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Ll]impeza de pele 45 ?€"] } },
+        { "customer": "Há estacionamento perto?", "free": { "includes": ["parque público da Igreja"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["150 m"] } },
+        { "customer": "Obrigada, até sábado!", "free": { "equals": "De nada! Até breve." }, "ai": null }
+      ]
+    }
+  ]
+}

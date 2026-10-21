@@ -43,6 +43,8 @@ export function isTitleLike(text: string): boolean {
   const core = text.replace(/^#+\s*/, "").replace(/^\d{1,2}(?:\.\d{1,2})*\.?\s+/, "").trim();
   if (!core || /[.!?;:,…]["»”')\]]*$/.test(core)) return false;
   if (/\d/.test(core) || /@|https?:|www\./i.test(core)) return false;
+  // «Falamos português, inglês e espanhol 🇬🇧», «We speak English»: a sentence said by the business, not a heading.
+  if (/^(?:\p{L}{2,}(?:amos|emos|imos)|we|nous|wir|noi|nosotros)\b/iu.test(core)) return false;
   return /^["«“]?\p{Lu}/u.test(core) && core.length <= 60 && core.split(/\s+/).length <= 6;
 }
 
@@ -68,17 +70,45 @@ export function collapseLetterSpacing(line: string): string {
   return out.join(" ");
 }
 
+/** Articles, prepositions and «and/or» in the six languages: a line that ends with one was wrapped mid-sentence. */
+const functionWords = new Set(
+  (
+    "a o as os um uma de do da dos das no na nos nas em e ou com para por ao aos à às pelo pela pelos pelas sem que " +
+    "até desde entre como mas nem se já não também muito mais menos cada quando onde seu sua seus suas " +
+    "the an of to in on at for and or with by from " +
+    "el la los las del al y en con para por " +
+    "le les des du et au aux pour avec sur " +
+    "der die das den dem des und mit für von zu im am " +
+    "il lo gli di della dello degli con per alla nel nella"
+  ).split(" "),
+);
+
+/** A short title in capitals («EMENTA», «HORÁRIO», «SERVIÇOS E PREÇOS»): what follows is a new passage, whatever its case. */
+function isCapitalTitle(text: string): boolean {
+  const letters = text.replace(/[^\p{L}]/gu, "");
+  return letters.length >= 3 && letters === letters.toUpperCase() && letters !== letters.toLowerCase() && text.split(/\s+/).length <= 4 && !/[.!?;,]$/.test(text);
+}
+
 /** Whether a new line starts a new passage or continues the previous one (a PDF or pasted text wraps lines anywhere). */
 function startsNewPassage(previous: string, line: string, bullet: boolean): boolean {
   if (bullet || /^\d{1,2}[.)]\s/.test(line)) return true;
+  if (isCapitalTitle(previous)) return true;
+  // «… (não precisam de esperar por ninguém)» + «porta do prédio: …», «… código 4729#» + «caixa das chaves …» (a
+  // WhatsApp list without bullets): after a closed bracket or «#», a lower-case line starts anew, unless it begins
+  // with «e», «de», «até»… (a sentence wrapped there). Not after a number: «… 40» + «min 18 €» is one line.
+  if (/^\p{Ll}/u.test(line) && /[)#]$/.test(previous) && !functionWords.has(line.split(/\s+/)[0])) return true;
   if (/^[\p{Ll}(\[,;)–\-]/u.test(line)) return false;
   if (/[.!?…:;]["»”')\]]*$/.test(previous)) return true;
   // An open bracket: «… 24 de junho (São» + «João), …».
   if ((previous.match(/\(/g) ?? []).length > (previous.match(/\)/g) ?? []).length) return false;
   if (/(?:€|\beur(?:os?)?)\s*[)\]]?$/i.test(previous)) return true;
+  // «… (confirmo os códigos no dia da chegada)» + «Chegadas depois das 22:00…»: a capital after a closed bracket starts anew.
+  if (/\)$/.test(previous) && /^\p{Lu}/u.test(line)) return true;
   // «… 40 min» + «18 €», «… loja B» + «4050-032 Porto»: the same line, wrapped.
   if (/^[\d€+]/.test(line)) return false;
   if (valueEnd.test(previous)) return true;
+  // «Estacionamento gratuito no Largo da» + «Ribeira (poucos lugares)…»: a line that ends with «da», «de», «and»… goes on.
+  if (functionWords.has(previous.split(/\s+/).pop() ?? "")) return false;
   if (labelStart.test(line)) return true;
   if (isShortLine(previous) || isShortLine(line)) return true;
   // A title («12. Reclamações e contacto com a gerência») followed by a sentence.
@@ -88,9 +118,24 @@ function startsNewPassage(previous: string, line: string, bullet: boolean): bool
 /** Sentences, and the lines of a price list or timetable written without line breaks. */
 export function splitPassage(text: string): string[] {
   return text
-    .split(/(?<=[.!?…]["»”')\]]*)\s+(?=(?:\p{Extended_Pictographic}\uFE0F?\s*)*["«“(¿¡]?[\p{Lu}\d])/u)
+    // Not after «Dra.», «Sr.», «D.», «Av.»… («Diretora clínica: Dra. Sofia Ramalhete»).
+    .split(/(?<=[.!?…]["»”')\]]*)(?<!\b(?:Dr|Dra|Sr|Sra|Srs|Prof|Profa|Eng|Arq|Av|Mr|Mrs|Ms|St|Sto|Sta|D)\.)\s+(?=(?:\p{Extended_Pictographic}\uFE0F?\s*)*["«“(¿¡]?[\p{Lu}\d])/u)
     .flatMap((part) => part.split(/(?<=(?:€|\b(?:eur(?:os?)?|EUR|Euros?)\b|\d{1,2}[:h]\d{2}\b)\)?)\s+(?=["«“]?\p{Lu})/u))
+    // A text flattened to one line: a web address or e-mail ends its item («… reservas.casa.example Check-in (entrada) …»),
+    // and «Label: …» after a name, a number or a bracket starts one («… 2655-319 Ericeira Anfitriã: Marta …», «… (exemplo)
+    // Email: …»; not «Praia dos Pescadores: …» nor «… para Portugal continental: 3,90 €», inside a sentence).
+    .flatMap((part) => part.split(/(?<=\b[\w.-]+\.(?:com|pt|es|fr|de|it|eu|net|org|io|app|example)\b\/?)\s+(?=\p{Lu})|(?<=(?:^|\s)(?:\p{Lu}\S*|\S*[^\p{L}\s]))\s+(?=\p{Lu}\p{Ll}[\p{Ll}\-']*(?:\s+\p{Ll}[\p{Ll}\-']*){0,4}:\s)/u))
     .flatMap((part) => part.split(/\s+[•|]\s+/))
+    // «queijo 9,50€ · enchidos 8,00€ · sopa 3,00€»: a list separated by middle dots (not «16€ · 30 min», a price and its duration).
+    .flatMap((part) => {
+      const prices = new RegExp(pricePattern.source, "i");
+      if ((part.match(new RegExp(pricePattern.source, "gi")) ?? []).length < 2) return [part];
+      return part.split(/\s+·\s+/).reduce<string[]>((pieces, piece) => {
+        if (pieces.length && !prices.test(piece)) pieces[pieces.length - 1] += ` · ${piece}`;
+        else pieces.push(piece);
+        return pieces;
+      }, []);
+    })
     // «pomada 16€, cera 15€, óleo 14€»: a price list written as one sentence.
     .flatMap((part) => ((part.match(new RegExp(pricePattern.source, "gi")) ?? []).length >= 3 ? part.split(/(?<=(?:€|\beuros?\b)(?:\s*\([^)]{0,30}\))?)\s*[,;]\s+(?=\p{L})/iu) : [part]))
     .map((part) => part.replace(bulletStart, "").trim())
@@ -101,6 +146,28 @@ export function splitPassage(text: string): string[] {
       else parts.push(part);
       return parts;
     }, []);
+}
+
+/** Column titles of a table in the six languages (accents kept as written, compared in lower case). */
+const captionTitles = new Set(
+  (
+    "serviço serviços duração preço preços produto produtos dia dias horário horários descrição valor tempo " +
+    "service services duration price prices product products day days hours description item " +
+    "servicio duración precio producto descripción jour horaire prix produit durée tag zeit preis produkt dauer giorno orario prezzo prodotto durata"
+  ).split(" "),
+);
+
+/** «Cabeleireiro Serviço Duração Preço Corte de senhora…» (a table flattened into the text): the column titles go. */
+function withoutCaptions(text: string): string {
+  const tokens = text.split(" ");
+  const keep = tokens.map(() => true);
+  for (let start = 0; start < tokens.length; start++) {
+    let end = start;
+    while (end < tokens.length && /^\p{Lu}/u.test(tokens[end]) && captionTitles.has(tokens[end].toLowerCase())) end++;
+    if (end - start >= 2) for (let at = start; at < end; at++) keep[at] = false;
+    start = Math.max(start, end - 1);
+  }
+  return keep.every(Boolean) ? text : tokens.filter((_, at) => keep[at]).join(" ");
 }
 
 /** Column titles repeated across a document («Serviço Duração Preço» in every table): noise, removed. */
@@ -175,7 +242,12 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
       .trim();
     if (!line) continue;
     const current: { text: string; chunk: KnowledgeChunk; last: string; bullet: boolean } | null = open;
-    const midSentence = current !== null && /^\p{Ll}/u.test(line) && /\p{Ll}$/u.test(current.last) && !(bullet && current.bullet);
+    // «… a 6 minutos a pé» + «- (pago nos dias úteis…)»: a bracket that goes on a sentence, whatever list marker the copy added.
+    // «… para saber se uma cor ou» + «• um lote está disponível»: after «ou», «de», «e»… the sentence goes on, bullets or not.
+    const midSentence =
+      current !== null &&
+      ((/\p{Ll}$/u.test(current.last) && ((/^\p{Ll}/u.test(line) && !(bullet && current.bullet)) || /^\(/.test(line))) ||
+        (/^\p{Ll}/u.test(line) && functionWords.has(current.last.split(/\s+/).pop() ?? "")));
     const joins = current !== null && (midSentence || (!blank && !startsNewPassage(current.last, line, bullet)));
     blank = false;
     if (current && joins) {
@@ -192,7 +264,7 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
   groups.forEach((group, number) => {
     for (const text of splitPassage(group.text)) pieces.push({ text, chunk: group.chunk, group: number });
   });
-  const cleaned = dropRepeatedCaptions(pieces.map((piece) => piece.text));
+  const cleaned = dropRepeatedCaptions(pieces.map((piece) => piece.text)).map(withoutCaptions);
   const siblings: Passage[] = [];
   cleaned.forEach((text, index) => {
     const words = searchWords(text);
@@ -211,6 +283,11 @@ export function documentPassages(chunks: readonly KnowledgeChunk[]): Passage[] {
       time: timePattern.test(text),
     });
   });
+  // «Surf? Ribeira d'Ilhas a 5 km…», «Alergias? Avise antes…»: a one-word question with its answer on the same line.
+  for (const passage of siblings) {
+    const next = siblings[passage.position + 1];
+    if (!passage.question && passage.words.length === 1 && /\?["»”')\]]*$/.test(passage.text) && next?.group === passage.group) passage.question = true;
+  }
   return siblings;
 }
 

@@ -40,6 +40,27 @@ resposta errada, inventada ou com português estranho.
 
 **Aceitação:** ≥ 95 % das conversas certas em todos os setores, 0 invenções.
 
+**Estado (2026-10-22): feito nas respostas grátis e no que a IA recebe; falta a verificação com IA real.**
+
+- Documentos fictícios (marcados no topo, contactos 9xx 000 000 e domínios .example, sem avaliações):
+  restaurante (`restaurante-lagar-da-ribeira`), alojamento (`alojamento-casa-das-ondas`, com o código da porta
+  e da caixa das chaves de propósito), clínica dentária (`clinica-sorriso-atlantico`), loja/retrosaria
+  (`loja-novelo`) e cabeleireiro/estética de senhora (`salao-flor-de-lis`), cada um em texto arrumado e em estilo
+  WhatsApp; o teste corre-os em 4 formatos (arrumado, corrido, desarrumado, WhatsApp).
+- 26 a 30 conversas por setor (`tests/fixtures/dialogues/*.json`), de 1 a 4 mensagens, em pt, en, es e fr:
+  preços, seguimentos, horários (hoje, amanhã, dia da semana, feriado, fecho semanal), reservas (nunca «há vaga»),
+  temas do setor, reclamação e pedido de pessoa, cumprimentos/agradecimentos, 3+ perguntas fora do documento.
+- Guardas verificadas em todas as mensagens: o código da porta nunca vai numa resposta nem no que a IA recebe; na
+  clínica, dores, inchaço, sangramento, medicamentos e cuidados pós-tratamento passam à equipa clínica (com 112) e
+  a IA não é chamada; pedido de reembolso passa à equipa, pergunta sobre a política é respondida.
+- Resultado (mensagens × 4 formatos, respostas grátis): barbearia 100 %, salão 100 %, alojamento 99,6 %, clínica
+  99,5 %, restaurante 98,4 %, loja 95,8 %; 0 invenções; o que a IA recebe certo em 100 % dos casos.
+- Marcadas «só com IA» (contam como erradas nos 95 %): «cabrito… dá para amanhã?» (o prato só ao domingo), na loja
+  «12 novelos para uma camisola» e «quanto tempo demora a chegar?» depois dos envios, e no formato WhatsApp «só uma
+  noite?» (alojamento) e «é paga mesmo que faça o tratamento?» (clínica).
+- Correções todas no motor comum (lições na skill `steevanz-chatbot`). Falta: conversa de verificação com a IA de
+  teste/Mistral quando houver quota grátis e autorização do dono.
+
 ## Fase C — Configuração que um cliente consegue fazer sozinho
 
 - Assistente de configuração em passos: dados do negócio (morada, telefone, link de marcação), horário e fechos,

@@ -12,12 +12,15 @@ const markers: Record<ChatbotLanguage, string[]> = {
     "estacionamento mesa pessoas sao umas uns tambem muito obg pf favor gostava preciso fazer marcacao ementa " +
     "pequeno almoco chave chaves casa aqui ai lugar lugares jantar almocar almoco precos preco horario uma um quero " +
     "segunda terca quarta quinta sexta feira cabelo cortar marcar reserva fazem fazer voces obrigadinho telemovel " +
-    "estacionar pagar crianca criancas filho filha depois antes entao isso esse essa"
+    // Not «do» (English «do you…»), nor «das» (German).
+    "estacionar pagar crianca criancas filho filha depois antes entao isso esse essa dos ao aos pelo pela num numa em"
   ).split(" "),
   en: (
-    "hello hi hey thanks thank you please do does have has where what when how much open close closed today tomorrow " +
+    // Not «do»: Portuguese writes it all the time («do aeroporto»).
+    "hello hi hey thanks thank you please does have has where what when how much open close closed today tomorrow " +
     "good morning evening night can could would like need book table people the is are there any your our we " +
-    "parking menu price prices hours time check out wifi password key keys house here dinner lunch breakfast"
+    // Not «check» / «out»: «check-in» and «check-out» are written so in Portuguese, Spanish and French too.
+    "parking menu price prices hours time wifi password key keys house here dinner lunch breakfast speak english"
   ).split(" "),
   es: (
     "hola gracias usted ustedes tiene tienen donde cuanto cuanta cuesta abierto abren cierran hoy manana " +

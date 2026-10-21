@@ -1,0 +1,207 @@
+{
+  "sector": "retail",
+  "business": "Novelo — Lãs e Retrosaria",
+  "about": "Shop dialogues for the quality gate (tests/chatbot-conversations.test.mjs): products and price ranges, stock it can't confirm live (the team confirms), special orders, shipping and pick-up, returns and exchanges (a policy question is answered, a refund request goes to the team), payments, hours, gift cards, workshops. Same format as barbearia.json.",
+  "documentTitle": "Novelo - informacao para clientes",
+  "documents": { "structured": "loja-novelo.txt", "whatsapp": "loja-novelo-whatsapp.txt" },
+  "layouts": ["structured", "flat", "messy", "whatsapp"],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "price of merino, then alpaca",
+      "turns": [
+        { "customer": "Quanto custa a lã merino?", "free": { "includes": ["6,90 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["merino[^\\n]*6,90 ?€"] } },
+        {
+          "customer": "E a de alpaca?",
+          "free": { "includes": ["8,50 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["alpaca[^\\n]*8,50 ?€"], "followUpOf": "merino" }
+        }
+      ]
+    },
+    {
+      "name": "a colour in stock: the team confirms, never «temos»",
+      "turns": [
+        {
+          "customer": "Têm a lã merino azul-petróleo em stock?",
+          "free": { "includes": ["confirma"], "excludes": ["Não tenho", "^Sim\b", "temos (essa|esta) (cor|lã) em stock"] },
+          "ai": { "excerpts": ["não (está|é) atualizado ao minuto"] }
+        },
+        {
+          "customer": "Vou precisar de 12 novelos para uma camisola, há algum cuidado?",
+          "onlyWithAi": "«uma camisola» ↔ «trabalhos grandes» and «cuidado» ↔ «recomendamos»: only an AI joins them; the free answers quote a line about «novelos»",
+          "free": { "excludes": ["^Sim\b"] },
+          "ai": { "excerpts": ["mesmo lote"], "layouts": ["structured", "flat", "messy"] }
+        }
+      ]
+    },
+    {
+      "name": "shipping to Madeira, then how long",
+      "turns": [
+        { "customer": "Fazem envios para a Madeira?", "free": { "includes": ["6,90 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Madeira[^\\n]*6,90 ?€"] } },
+        {
+          "customer": "E quanto tempo demora a chegar?",
+          "onlyWithAi": "two lines answer «quanto tempo demora a chegar» («Prazo de entrega: 2 a 4 dias úteis», «Encomendas especiais … chegam em 1 a 2 semanas»): only the conversation (shipping to Madeira) says which",
+          "free": { "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["2 a 4 dias"], "followUpOf": "Madeira" }
+        }
+      ]
+    },
+    {
+      "name": "shipping abroad, then free shipping",
+      "turns": [
+        { "customer": "Enviam para Espanha?", "free": { "includes": ["fora de Portugal"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["fora de Portugal"] } },
+        { "customer": "E a partir de quanto é que os portes são grátis?", "free": { "includes": ["50 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["50 ?€"] } }
+      ]
+    },
+    {
+      "name": "pick-up at the shop",
+      "turns": [
+        { "customer": "Posso encomendar online e levantar na loja?", "free": { "includes": ["[Ll]evantamento"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Ll]evantamento"] } },
+        { "customer": "E guardam quanto tempo?", "free": { "includes": ["15 dias"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["15 dias"] } }
+      ]
+    },
+    {
+      "name": "returns policy online: answered, not handed off",
+      "turns": [
+        { "customer": "Comprei na loja online e não gostei, posso devolver?", "free": { "includes": ["14 dias"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["14 dias"] } },
+        { "customer": "E quem paga os portes da devolução?", "free": { "includes": ["cliente"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["cliente"] } }
+      ]
+    },
+    {
+      "name": "exchanging wool bought in the shop",
+      "turns": [
+        { "customer": "Comprei lã na loja e quero trocar por outra cor", "free": { "includes": ["30 dias"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["30 dias"] } },
+        { "customer": "Os novelos já estão abertos, faz mal?", "free": { "includes": ["por abrir"], "excludes": ["Não tenho", "^Sim\b"] }, "ai": { "excerpts": ["por abrir"] } }
+      ]
+    },
+    {
+      "name": "fabric cut by the metre can't be exchanged",
+      "turns": [
+        { "customer": "Posso trocar um tecido que cortaram ao metro?", "free": { "includes": ["não (podem ser trocados|se trocam)"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["ao metro"] } }
+      ]
+    },
+    {
+      "name": "a refund request goes to the team",
+      "turns": [
+        { "customer": "A encomenda veio com um defeito, quero o reembolso", "free": { "includes": ["equipa"] }, "handoff": "refund", "ai": null }
+      ]
+    },
+    {
+      "name": "PayPal, then in the shop",
+      "turns": [
+        { "customer": "Aceitam PayPal?", "free": { "includes": ["PayPal"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["PayPal"] } },
+        { "customer": "E na loja, posso pagar com cartão?", "free": { "includes": ["Visa"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Visa"] } }
+      ]
+    },
+    {
+      "name": "gift cards, then how long they last",
+      "turns": [
+        { "customer": "Vendem vales de oferta?", "free": { "includes": ["10 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Vv]ales"] } },
+        { "customer": "São válidos durante quanto tempo?", "free": { "includes": ["1 ano"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["1 ano"] } }
+      ]
+    },
+    {
+      "name": "Saturday afternoon, then Sunday",
+      "turns": [
+        { "customer": "Abrem ao sábado à tarde?", "free": { "includes": ["15:00"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["15:00"], "dayAsked": "Saturday" } },
+        { "customer": "E ao domingo?", "free": { "includes": ["[Ff]echad"], "excludes": ["Não tenho"] }, "ai": { "dayAsked": "Sunday" } }
+      ]
+    },
+    {
+      "name": "Sundays before Christmas",
+      "turns": [
+        { "customer": "Estão abertos nos domingos antes do Natal?", "free": { "includes": ["14:00"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Natal"] } }
+      ]
+    },
+    {
+      "name": "crochet workshops, then the group size",
+      "turns": [
+        { "customer": "Fazem workshops de croché?", "free": { "includes": ["45 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["45 ?€"] } },
+        { "customer": "Quantas pessoas por grupo?", "free": { "includes": ["6"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["6 pessoas|grupos de 6"] } }
+      ]
+    },
+    {
+      "name": "sewing machines and alterations: they don't",
+      "turns": [
+        { "customer": "Vendem máquinas de costura?", "free": { "includes": ["[Nn]ão vendemos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["máquinas de costura"] } },
+        { "customer": "E fazem arranjos de roupa?", "free": { "includes": ["arranjos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["arranjos"] } }
+      ]
+    },
+    {
+      "name": "not in the document: Wi-Fi, toilets, birthday parties",
+      "turns": [
+        { "customer": "Têm Wi-Fi na loja?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "Têm casa de banho para clientes?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "Organizam festas de aniversário para crianças?", "notInDocument": true, "free": { "excludes": ["€"] } }
+      ]
+    },
+    {
+      "name": "complaint",
+      "turns": [
+        { "customer": "Já mandei três mensagens sobre a encomenda e ninguém responde, quero fazer uma reclamação", "free": { "includes": ["equipa"] }, "handoff": "complaint", "ai": null }
+      ]
+    },
+    {
+      "name": "asks for a person",
+      "turns": [
+        { "customer": "Quem dá os workshops?", "free": { "includes": ["Fátima|Joana"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Fátima"] } },
+        { "customer": "Posso falar com a Fátima?", "free": { "includes": ["equipa"] }, "handoff": "customer_asked", "ai": null }
+      ]
+    },
+    {
+      "name": "English: shipping to the UK, then gift cards",
+      "turns": [
+        { "customer": "Hi, do you ship to the UK?", "language": "en", "free": { "includes": ["fora de Portugal"], "excludes": ["don't have"] }, "ai": { "excerpts": ["fora de Portugal"], "language": "English" } },
+        { "customer": "Do you sell gift cards?", "language": "en", "free": { "includes": ["10 ?€"], "excludes": ["don't have"] }, "ai": { "excerpts": ["[Vv]ales"], "language": "English" } }
+      ]
+    },
+    {
+      "name": "Spanish: merino wool, then shipping cost",
+      "turns": [
+        { "customer": "Hola, ¿tienen lana merino?", "language": "es", "free": { "includes": ["6,90 ?€"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["merino"], "language": "Spanish" } },
+        { "customer": "¿Y cuánto cuesta el envío?", "language": "es", "free": { "includes": ["3,90 ?€"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["3,90 ?€"], "language": "Spanish" } }
+      ]
+    },
+    {
+      "name": "French: exchanging an item",
+      "turns": [
+        { "customer": "Bonjour, est-ce que je peux échanger un article ?", "language": "fr", "free": { "includes": ["30 dias|14 dias"], "excludes": ["Je n'ai pas"] }, "ai": { "excerpts": ["30 dias"], "language": "French" } }
+      ]
+    },
+    {
+      "name": "keeping a kit until Saturday",
+      "turns": [
+        { "customer": "Podem guardar-me um kit de bordado até sábado?", "free": { "includes": ["3 dias"], "excludes": ["Não tenho", "há vaga"] }, "ai": { "excerpts": ["3 dias"] } }
+      ]
+    },
+    {
+      "name": "parking, then thanks",
+      "turns": [
+        { "customer": "Há estacionamento perto?", "free": { "includes": ["Parque da Praça"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Parque da Praça"] } },
+        { "customer": "Obrigada!", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "greeting, a student discount",
+      "turns": [
+        { "customer": "Boa tarde", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Fazem desconto a estudantes?", "free": { "includes": ["10 ?%"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["10 ?%"], "history": ["Boa tarde"] } }
+      ]
+    },
+    {
+      "name": "a crochet kit, then what comes in it",
+      "turns": [
+        { "customer": "Quanto custa um kit de croché?", "free": { "includes": ["25,00 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["25,00 ?€"] } },
+        { "customer": "Traz instruções?", "free": { "includes": ["instruções"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["instruções"] } }
+      ]
+    },
+    {
+      "name": "knitting needles, then special orders",
+      "turns": [
+        { "customer": "Têm agulhas de tricô?", "free": { "includes": ["4,00 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["4,00 ?€"] } },
+        { "customer": "Mandam vir cores que não têm na loja?", "free": { "includes": ["1 a 2 semanas"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["1 a 2 semanas"] } },
+        { "customer": "Obrigado, até amanhã", "free": { "equals": "De nada! Até breve." }, "ai": null }
+      ]
+    }
+  ]
+}

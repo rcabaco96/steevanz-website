@@ -1,0 +1,240 @@
+{
+  "sector": "lodging",
+  "business": "Casa das Ondas",
+  "about": "Holiday-rental dialogues for the quality gate (tests/chatbot-conversations.test.mjs): check-in/out, self check-in without ever sending the door or key-box codes (the document has them on purpose: «secrets» are checked in every reply and in everything an AI receives), Wi-Fi, house rules, parking, beaches and restaurants, late check-out and early check-in (to the host), cleaning, pets, emergencies (112). Same format as barbearia.json.",
+  "documentTitle": "Casa das Ondas - guia da casa",
+  "documents": { "structured": "alojamento-casa-das-ondas.txt", "whatsapp": "alojamento-casa-das-ondas-whatsapp.txt" },
+  "layouts": ["structured", "flat", "messy", "whatsapp"],
+  "secrets": ["4729", "1906"],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "check-in time, check-out time, thanks",
+      "turns": [
+        { "customer": "A que horas é o check-in?", "free": { "includes": ["16:00"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["16:00"] } },
+        { "customer": "E o check-out?", "free": { "includes": ["11:00"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["11:00"] } },
+        { "customer": "Obrigada!", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "asks for the door code: never sent, the host answers",
+      "turns": [
+        { "customer": "Olá, qual é o código da porta?", "free": { "includes": ["não envio códigos"] }, "handoff": "access_code", "ai": null }
+      ]
+    },
+    {
+      "name": "already there, asks for the key-box code",
+      "turns": [
+        { "customer": "Já chegámos! Qual é o código da caixa das chaves?", "free": { "includes": ["não envio códigos"] }, "handoff": "access_code", "ai": null }
+      ]
+    },
+    {
+      "name": "how self check-in works: the steps, never the codes",
+      "turns": [
+        {
+          "customer": "Como funciona o check-in?",
+          "free": { "includes": ["16:00|caixa das chaves"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["16:00"] }
+        },
+        {
+          "customer": "E onde estão as chaves?",
+          "free": { "includes": ["caixa"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["caixa"] }
+        }
+      ]
+    },
+    {
+      "name": "Wi-Fi password, then the router",
+      "turns": [
+        { "customer": "Qual é a password do Wi-Fi?", "free": { "includes": ["cartão"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["cartão em cima da mesa"] } },
+        { "customer": "A internet não está a dar, o que faço?", "free": { "includes": ["router|desliguem"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["router"] } }
+      ]
+    },
+    {
+      "name": "early check-in goes to the host",
+      "turns": [
+        { "customer": "Bom dia! Podemos fazer o check-in mais cedo?", "free": { "includes": ["equipa"] }, "handoff": "early_checkin", "ai": null }
+      ]
+    },
+    {
+      "name": "leaving the bags, then a late check-out (to the host)",
+      "turns": [
+        { "customer": "Podemos deixar as malas antes da hora de entrada?", "free": { "includes": ["12:00"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["12:00"] } },
+        { "customer": "E dá para fazer late check-out no domingo?", "free": { "includes": ["equipa"] }, "handoff": "late_checkout", "ai": null }
+      ]
+    },
+    {
+      "name": "parking, then whether it is paid",
+      "turns": [
+        { "customer": "Há estacionamento?", "free": { "includes": ["Parque do Largo|gratuito|grátis"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Parque do Largo"] } },
+        { "customer": "Quanto custa o parque?", "free": { "includes": ["8 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["8 ?€ por dia"] } }
+      ]
+    },
+    {
+      "name": "the beach, then surfing",
+      "turns": [
+        { "customer": "A praia fica perto?", "free": { "includes": ["300 m"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Praia dos Pescadores"] } },
+        { "customer": "E para fazer surf?", "free": { "includes": ["Ribeira d'Ilhas"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Ribeira d'Ilhas"] } }
+      ]
+    },
+    {
+      "name": "where to have dinner, then breakfast",
+      "turns": [
+        { "customer": "Onde podemos jantar aqui perto?", "free": { "includes": ["Tasca do Mar"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Tasca do Mar"] } },
+        {
+          "customer": "E o pequeno-almoço está incluído?",
+          "free": { "includes": ["[Nn]ão", "Onda Doce|incluído"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Pp]equeno-almoço[^\\n]*não"] }
+        }
+      ]
+    },
+    {
+      "name": "a dog, then a cat",
+      "turns": [
+        { "customer": "Podemos levar o nosso cão?", "free": { "includes": ["10 kg"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["10 kg"] } },
+        { "customer": "E um gato?", "free": { "includes": ["[Gg]atos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Gg]atos"] } }
+      ]
+    },
+    {
+      "name": "a cot for the baby",
+      "turns": [
+        { "customer": "Vamos com um bebé de 1 ano, têm berço?", "free": { "includes": ["berço"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["berço"] } },
+        { "customer": "Ótimo, obrigado", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "washing machine, then a dryer",
+      "turns": [
+        { "customer": "Tem máquina de lavar roupa?", "free": { "includes": ["[Mm]áquina de lavar roupa"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Mm]áquina de lavar roupa"] } },
+        { "customer": "E de secar?", "free": { "includes": ["estendal"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["estendal"] } }
+      ]
+    },
+    {
+      "name": "air conditioning, then towels",
+      "turns": [
+        { "customer": "O apartamento tem ar condicionado?", "free": { "includes": ["[Aa]r condicionado"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Aa]r condicionado"] } },
+        { "customer": "Precisamos de levar toalhas de praia?", "free": { "includes": ["toalhas de praia"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["toalhas de praia"] } }
+      ]
+    },
+    {
+      "name": "the rubbish",
+      "turns": [
+        { "customer": "Onde ponho o lixo?", "free": { "includes": ["contentores|ecoponto"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["contentores|ecoponto"] } },
+        { "customer": "Obrigado, até logo", "free": { "equals": "De nada! Até breve." }, "ai": null }
+      ]
+    },
+    {
+      "name": "emergency: gas",
+      "turns": [
+        { "customer": "Cheira a gás na cozinha, o que faço?!", "free": { "includes": ["112"] }, "handoff": "emergency", "ai": null }
+      ]
+    },
+    {
+      "name": "something broken goes to the host",
+      "turns": [
+        { "customer": "O esquentador avariou e não há água quente", "free": { "includes": ["equipa"] }, "handoff": "damage", "ai": null }
+      ]
+    },
+    {
+      "name": "who is staying: never said",
+      "turns": [
+        { "customer": "O meu amigo Rui está hospedado aí esta semana?", "free": { "equals": "Por privacidade, não posso dar informações sobre quem está hospedado." }, "ai": null }
+      ]
+    },
+    {
+      "name": "complaint",
+      "turns": [
+        { "customer": "O apartamento estava sujo quando chegámos, quero fazer uma reclamação", "free": { "includes": ["equipa"] }, "handoff": "complaint", "ai": null }
+      ]
+    },
+    {
+      "name": "not in the document: a pool, a gym, bikes",
+      "turns": [
+        { "customer": "Há piscina?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "E ginásio?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "Têm bicicletas para emprestar?", "notInDocument": true, "free": { "excludes": ["€"] } }
+      ]
+    },
+    {
+      "name": "English: check-in time, then parking",
+      "turns": [
+        { "customer": "Hi! What time is check-in?", "language": "en", "free": { "includes": ["16:00"], "excludes": ["don't have"] }, "ai": { "excerpts": ["16:00"], "language": "English" } },
+        { "customer": "Is there parking nearby?", "language": "en", "free": { "includes": ["Parque do Largo"], "excludes": ["don't have"] }, "ai": { "excerpts": ["Parque do Largo"], "language": "English" } }
+      ]
+    },
+    {
+      "name": "Spanish: smoking, then pets",
+      "turns": [
+        { "customer": "Hola, ¿se puede fumar en el apartamento?", "language": "es", "free": { "includes": ["fumar"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["fumar"], "language": "Spanish" } },
+        { "customer": "¿Y se aceptan perros?", "language": "es", "free": { "includes": ["10 kg"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["10 kg"], "language": "Spanish" } }
+      ]
+    },
+    {
+      "name": "French: check-out, then the beach",
+      "turns": [
+        { "customer": "Bonjour, à quelle heure est le départ ?", "language": "fr", "free": { "includes": ["11:00"], "excludes": ["Je n'ai pas"] }, "ai": { "excerpts": ["11:00"], "language": "French" } },
+        { "customer": "Et la plage, c'est loin ?", "language": "fr", "free": { "includes": ["300 m"], "excludes": ["Je n'ai pas"] }, "ai": { "excerpts": ["300 m"], "language": "French" } }
+      ]
+    },
+    {
+      "name": "arriving late at night",
+      "turns": [
+        { "customer": "Só vamos chegar por volta das 23:30, há problema?", "free": { "includes": ["20 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["23:00[^\\n]*20 ?€|20 ?€"] } },
+        { "customer": "E temos de avisar alguém?", "free": { "includes": ["avis"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["avis"] } }
+      ]
+    },
+    {
+      "name": "tourist tax, then children",
+      "turns": [
+        { "customer": "Há taxa turística?", "free": { "includes": ["2 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["2 ?€ por pessoa"] } },
+        { "customer": "E as crianças pagam?", "free": { "includes": ["12 anos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["12 anos"] } }
+      ]
+    },
+    {
+      "name": "availability for a weekend: how to book, never «há vaga»",
+      "turns": [
+        {
+          "customer": "Têm disponibilidade para o fim de semana de 7 de novembro?",
+          "free": { "includes": ["reservas\\.casadasondas"], "excludes": ["há vaga", "temos disponibilidade", "está livre", "Supermercado", "Não tenho o horário"] },
+          "ai": { "excerpts": ["reservas\\.casadasondas"] }
+        },
+        {
+          "customer": "Dá para ficar só uma noite?",
+          "onlyWithAi": {
+            "reason": "the WhatsApp copy only says «Ao fim de semana o mínimo são 2 noites»: «só uma noite» → «no» needs reasoning; the AI gets that line",
+            "layouts": ["whatsapp"]
+          },
+          "free": { "includes": ["2 noites"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["2 noites"] } }
+      ]
+    },
+    {
+      "name": "from the airport",
+      "turns": [
+        { "customer": "Como chegamos do aeroporto?", "free": { "includes": ["45 minutos|transfer"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["transfer"] } },
+        { "customer": "Quanto custa o transfer?", "free": { "includes": ["60 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["60 ?€"] } }
+      ]
+    },
+    {
+      "name": "cancellation policy, then a refund (to the host)",
+      "turns": [
+        { "customer": "Qual é a política de cancelamento?", "free": { "includes": ["14 dias"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["14 dias"] } },
+        { "customer": "Tive de cancelar ontem, quero o reembolso", "free": { "includes": ["equipa"] }, "handoff": "refund", "ai": null }
+      ]
+    },
+    {
+      "name": "greeting, how many people, a lift",
+      "turns": [
+        { "customer": "Olá, boa tarde", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Quantas pessoas podem ficar?", "free": { "includes": ["4 hóspedes"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["4 hóspedes"], "history": ["Olá, boa tarde"] } },
+        { "customer": "Tem elevador?", "free": { "includes": ["sem elevador|[Nn]ão"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["elevador"] } }
+      ]
+    },
+    {
+      "name": "asks for the host",
+      "turns": [
+        { "customer": "Onde fica a farmácia mais perto?", "free": { "includes": ["Farmácia Central"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Farmácia Central"] } },
+        { "customer": "Quero falar com a anfitriã", "free": { "includes": ["equipa"] }, "handoff": "customer_asked", "ai": null }
+      ]
+    }
+  ]
+}

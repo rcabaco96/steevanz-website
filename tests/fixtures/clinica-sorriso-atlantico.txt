@@ -1,0 +1,83 @@
+DOCUMENTO FICTÍCIO PARA TESTES — a «Clínica Dentária Sorriso Atlântico» não existe. Foi inventada para testar o
+assistente da Steevanz: nomes, contactos, moradas, acordos e preços são inventados.
+
+Clínica Dentária Sorriso Atlântico
+Medicina dentária geral, ortodontia e odontopediatria · Matosinhos
+Informação para pacientes — outubro de 2026
+
+Quem somos
+Clínica dentária com 4 gabinetes e uma equipa de 6 médicos dentistas, 2 higienistas orais e 3 assistentes.
+Diretora clínica: Dra. Sofia Ramalhete (médica dentista, cédula profissional n.º 00000, exemplo).
+Falamos português, inglês e espanhol.
+
+Morada e contactos
+Avenida da Liberdade 450, 1.º andar
+4450-000 Matosinhos
+Telefone: 229 000 000 (exemplo) · WhatsApp: 935 000 000 (exemplo)
+Email: geral@sorrisoatlantico.example
+Marcações online: marcacoes.sorrisoatlantico.example
+O prédio tem elevador e a clínica é acessível em cadeira de rodas.
+Estacionamento: parque público subterrâneo em frente (pago). Metro: estação Matosinhos Sul, a 3 minutos a pé.
+
+Horário
+Segunda a sexta-feira: 09:00–13:00 e 14:00–20:00
+Sábado: 09:00–13:00
+Domingo e feriados: encerrado
+Em agosto não abrimos ao sábado.
+
+Serviços e preços
+Os preços são indicativos. O valor final de cada tratamento é dado no plano de tratamento, depois da consulta.
+Consulta de avaliação (inclui exame e plano de tratamento) 40 € — oferecida se fizer o tratamento connosco
+Consulta de urgência (no próprio dia, conforme disponibilidade) 60 €
+Destartarização e polimento (limpeza) 55 €
+Branqueamento dentário em consultório 250 €
+Branqueamento caseiro (com goteiras) 180 €
+Restauração (obturação, «chumbo») desde 60 €
+Extração simples 70 €
+Desvitalização (tratamento de canal) desde 180 €
+Coroa em cerâmica desde 450 €
+Implantes: preço só depois da consulta de avaliação, porque depende de cada caso.
+Ortodontia com aparelho fixo: desde 1500 €
+Ortodontia com alinhadores invisíveis: desde 2500 €
+Odontopediatria (crianças a partir dos 3 anos): consulta 35 €
+Goteira para o bruxismo (ranger os dentes) 220 €
+Não fazemos: tratamentos de medicina estética (botox, preenchimentos) nem cirurgia maxilofacial.
+
+Acordos e seguros
+Temos acordo com o Seguro Saúde Atlântico (exemplo) e com o Plano Vida+ (exemplo): traga o cartão.
+ADSE: não temos acordo; passamos fatura para pedir o reembolso.
+Outros seguros: pagamento na clínica e fatura com os dados para pedir o reembolso à sua seguradora.
+Cheque-dentista do SNS: aceitamos.
+
+Marcações
+Online em marcacoes.sorrisoatlantico.example, por telefone ou por WhatsApp, nos dias úteis das 09:00 às 20:00.
+A primeira consulta é sempre a consulta de avaliação.
+Consultas de urgência: ligue de manhã; atendemos no próprio dia conforme a disponibilidade.
+Desmarcações: avise com pelo menos 24 horas de antecedência. Faltas sem aviso: na falta seguinte pedimos um
+sinal de 20 €, descontado na consulta.
+Atrasos: esperamos até 15 minutos; depois disso a consulta pode ter de ser remarcada.
+
+Pagamentos
+Dinheiro, Multibanco, MB WAY, Visa e Mastercard.
+Tratamentos acima de 500 €: pagamento em prestações (até 6 meses, sem juros).
+
+Crianças
+Atendemos crianças a partir dos 3 anos, com a Dra. Inês Barros (odontopediatra). Os menores vêm sempre com um
+adulto.
+
+Nota para o assistente automático
+O assistente só responde a perguntas práticas (serviços, preços, horários, marcações, acordos, como chegar).
+Não dá conselhos clínicos nem diz que medicamentos tomar. Dores, inchaço, sangramento, febre ou dentes partidos:
+passa a conversa à equipa clínica. Em caso de emergência grave, ligue 112.
+
+Perguntas frequentes
+A consulta de avaliação é paga?
+Custa 40 € e é oferecida se fizer o tratamento connosco.
+Fazem branqueamento?
+Sim: em consultório (250 €) ou caseiro com goteiras (180 €).
+Têm estacionamento?
+Há um parque público subterrâneo em frente (pago).
+Atendem ao sábado?
+Sim, das 09:00 às 13:00 (em agosto não abrimos ao sábado).
+
+Clínica Dentária Sorriso Atlântico · negócio fictício · documento de teste de outubro de 2026.

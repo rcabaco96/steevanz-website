@@ -4,6 +4,8 @@
 /** "Olá! Qual é a password do Wi-Fi?" → "ola qual e a password do wi fi". */
 export function normalize(text: string): string {
   return text
+    // «lã» / «lãs» (wool) would become «la» / «las», Spanish and French articles: written as the Spanish «lana».
+    .replace(/(?<!\p{L})l[ãÃ](s?)(?!\p{L})/giu, "lana$1")
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
@@ -14,8 +16,17 @@ export function normalize(text: string): string {
     .trim();
 }
 
+/** Words written in two parts that mean one thing: «check-in» ≠ «check-out» once «in» (a stopword) is gone. */
+const compounds: [RegExp, string][] = [
+  [/\bcheck (in|out)\b/g, "check$1"],
+  [/\bwi fi\b/g, "wifi"],
+  [/\be mail\b/g, "email"],
+  [/\bmb way\b/g, "mbway"],
+];
+
 export function words(text: string): string[] {
-  const normalized = normalize(text);
+  let normalized = normalize(text);
+  for (const [pattern, joined] of compounds) normalized = normalized.replace(pattern, joined);
   return normalized ? normalized.split(" ") : [];
 }
 
@@ -33,7 +44,12 @@ const stopwords = new Set(
     "der die das ein eine einen dem den des und oder ist sind ich du er sie es wir ihr mit fur von zu im am " +
     "il lo la gli le un uno una di del della e o sono io tu lui lei noi voi con per al alla nel " +
     // Portuguese contractions («num degradê», «duma vez»).
-    "num numa nuns numas dum duma duns dumas"
+    "num numa nuns numas dum duma duns dumas " +
+    // Possessives («o nosso bolo», «notre table»).
+    "nosso nossa nossos nossas vosso vossa vossos vossas nuestro nuestra nuestros nuestras notre nos votre vos unser unsere euer eure nostro nostra nostri vostro vostra " +
+    // «sem glúten», «sobre nós»: «without» and «about» never say what a message is about (and «sobre» would
+    // meet «sobremesas» in the light stemming).
+    "sem sobre sin sans ohne senza without"
   ).split(" "),
 );
 
@@ -46,8 +62,17 @@ export function searchWords(text: string): string[] {
   return words(text).filter((word) => word.length > 1 && !stopwords.has(word));
 }
 
-/** A light stem so «reservas»/«reserva», «pratos»/«prato» and «cães»/«cão» meet: drops a plural ending. */
+/** Irregular Portuguese participles and their verb («já estão abertos» ↔ «por abrir»). */
+const participles = new Map(
+  Object.entries({ abrir: ["aberto", "aberta", "abertos", "abertas"], cobrir: ["coberto", "coberta", "cobertos", "cobertas"], escrever: ["escrito", "escrita", "escritos", "escritas"] }).flatMap(([verb, forms]) =>
+    forms.map((form) => [form, verb] as const),
+  ),
+);
+
+/** A light stem so «reservas»/«reserva», «pratos»/«prato», «cães»/«cão» and «abertos»/«abrir» meet: drops a plural ending. */
 export function stem(word: string): string {
+  const verb = participles.get(word);
+  if (verb) return verb;
   // Portuguese plurals in «-ães»/«-ões» (cães → cão, botões → botão; accents already removed).
   if (word.length > 3 && (word.endsWith("aes") || word.endsWith("oes"))) return `${word.slice(0, -3)}ao`;
   if (word.length > 4 && word.endsWith("es")) return word.slice(0, -2);
@@ -55,14 +80,32 @@ export function stem(word: string): string {
   return word;
 }
 
-/** Two words are the same for search when their stems match or share a long beginning. */
+/** Verb and noun endings of Portuguese and Spanish (accents removed): «avisar», «avisem», «avisaram» and «aviso» share «avis». */
+// Not «-a»/«-e» alone: «corte» (a cut) and «cortar» stay apart, so do «porta» and «porto».
+const inflections = ["aram", "eram", "amos", "emos", "imos", "ando", "endo", "indo", "ados", "adas", "idos", "idas", "ado", "ada", "ido", "ida", "ar", "er", "ir", "am", "em", "ou", "ei", "o"];
+
+/** A word without its verb or noun ending, when at least 4 letters stay («avisem» → «avis», «chegada» → «cheg»; «porto» stays). */
+export function inflectionRoot(word: string): string {
+  for (const ending of inflections) if (word.length - ending.length >= 4 && word.endsWith(ending)) return word.slice(0, -ending.length);
+  return word;
+}
+
+/** Two words are the same for search when their stems or roots match or share a long beginning. */
 export function sameWord(a: string, b: string): boolean {
   if (a === b) return true;
   const sa = stem(a);
   const sb = stem(b);
   if (sa === sb) return true;
+  // Two forms of a verb («avisar» / «avisem», «fechado» / «fechamos»): both lose an ending and meet («cortar» and «cortes» don't).
+  const ra = inflectionRoot(sa);
+  const rb = inflectionRoot(sb);
+  if (ra !== sa && rb !== sb && ra === rb) return true;
+  // A long shared beginning («estacionar» / «estacionamento», «atraso» / «atrasado»), but not one that leaves the
+  // shorter word with two letters of its own («checkin» / «checkout»).
   const shortest = Math.min(sa.length, sb.length);
-  return shortest >= 5 && sa.slice(0, 5) === sb.slice(0, 5) && Math.abs(sa.length - sb.length) <= 4;
+  let shared = 0;
+  while (shared < shortest && sa[shared] === sb[shared]) shared++;
+  return shared >= Math.max(5, shortest - 1) && Math.abs(sa.length - sb.length) <= 4;
 }
 
 /**
@@ -70,14 +113,22 @@ export function sameWord(a: string, b: string): boolean {
  * "*" matches any word starting with it ("reserv*" → reserva, reservation, reservieren).
  */
 export function hasKeyword(normalizedText: string, keyword: string): boolean {
-  const textWords = normalizedText ? normalizedText.split(" ") : [];
+  return keywordStarts(normalizedText ? normalizedText.split(" ") : [], keyword, true).length > 0;
+}
+
+/** Where a keyword (one or more words, "*" = word beginning) starts in a list of normalized words (all places, or the first). */
+export function keywordStarts(textWords: readonly string[], keyword: string, firstOnly = false): number[] {
   const parts = keyword.split(" ").filter(Boolean);
-  if (!parts.length || parts.length > textWords.length) return false;
+  const starts: number[] = [];
+  if (!parts.length || parts.length > textWords.length) return starts;
   const matches = (word: string, part: string) => (part.endsWith("*") ? word.startsWith(part.slice(0, -1)) : word === part);
   for (let start = 0; start + parts.length <= textWords.length; start++) {
-    if (parts.every((part, offset) => matches(textWords[start + offset], part))) return true;
+    if (parts.every((part, offset) => matches(textWords[start + offset], part))) {
+      starts.push(start);
+      if (firstOnly) break;
+    }
   }
-  return false;
+  return starts;
 }
 
 export function hasAnyKeyword(normalizedText: string, keywords: readonly string[]): boolean {

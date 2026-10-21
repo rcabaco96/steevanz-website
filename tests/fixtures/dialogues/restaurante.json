@@ -1,0 +1,343 @@
+{
+  "sector": "restaurant",
+  "business": "Restaurante O Lagar da Ribeira",
+  "about": "Restaurant dialogues for the quality gate (tests/chatbot-conversations.test.mjs): menu and prices, allergens, vegetarian/vegan, reservations and groups, weekly closing day, holidays, take-away without delivery, parking, payments, children, pets, events. Same format as barbearia.json; «notInDocument» turns must get «não tenho essa informação», «onlyWithAi» turns (with the reason) only assert what the AI gets.",
+  "documentTitle": "Restaurante O Lagar da Ribeira - informacao para clientes",
+  "documents": { "structured": "restaurante-lagar-da-ribeira.txt", "whatsapp": "restaurante-lagar-da-ribeira-whatsapp.txt" },
+  "layouts": ["structured", "flat", "messy", "whatsapp"],
+  "now": "2026-10-21T12:30:00Z",
+  "dialogues": [
+    {
+      "name": "weekly closing day, then Sunday, then thanks",
+      "turns": [
+        {
+          "customer": "Abrem à segunda-feira?",
+          "free": { "includes": ["[Ee]ncerrado|descanso"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Ee]ncerrado"], "dayAsked": "Monday" }
+        },
+        {
+          "customer": "E ao domingo?",
+          "free": { "includes": ["12:00[–-]15:30"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["15:30"], "dayAsked": "Sunday, 25/10/2026" }
+        },
+        { "customer": "Obrigado", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "dinner tonight, how to book, arriving late",
+      "turns": [
+        {
+          "customer": "Estão abertos hoje ao jantar?",
+          "free": { "includes": ["19:00[–-]22:30", "reservas\\.lagardaribeira"], "excludes": ["Não tenho", "há vaga", "temos mesa"] },
+          "ai": { "excerpts": ["19:00", "reservas\\.lagardaribeira"], "dayAsked": "today, Wednesday" }
+        },
+        {
+          "customer": "Como faço a reserva?",
+          "free": { "includes": ["reservas\\.lagardaribeira"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["reservas\\.lagardaribeira"] }
+        },
+        {
+          "customer": "E se chegarmos 20 minutos atrasados?",
+          "free": { "includes": ["15 minutos"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["15 minutos depois da hora marcada"] }
+        }
+      ]
+    },
+    {
+      "name": "price of a dish, another dish, then gluten-free",
+      "turns": [
+        { "customer": "Quanto custa o polvo à lagareiro?", "free": { "includes": ["19,50 ?€"] }, "ai": { "excerpts": ["[Pp]olvo à lagareiro[^\\n]*19,50 ?€"] } },
+        {
+          "customer": "E o bacalhau?",
+          "free": { "includes": ["17,50 ?€"], "excludes": ["Não tenho", "19,50"] },
+          "ai": { "excerpts": ["[Bb]acalhau à Lagar[^\\n]*17,50 ?€"], "followUpOf": "polvo" }
+        },
+        {
+          "customer": "Pode ser sem glúten?",
+          "free": { "includes": ["sem glúten"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["truta, (a )?vitela[^\n]*sem glúten"] }
+        }
+      ]
+    },
+    {
+      "name": "«Quanto custa?» first, then «a segunda opção»",
+      "turns": [
+        {
+          "customer": "Quanto custa?",
+          "free": { "includes": ["^Depende do que procura", "\\d ?€", "Qual lhe interessa\\?"], "excludes": ["Não tenho"] },
+          "ai": {
+            "excerpts": ["Vitela assada[^\\n]*18,50 ?€"],
+            "reply": "Depende do que procura. Por exemplo: queijo da Serra (9,50 €), vitela assada (18,50 €) ou polvo à lagareiro (19,50 €). Qual lhe interessa? [S1]"
+          }
+        },
+        {
+          "customer": "A segunda opção",
+          "free": { "includes": ["\\d ?€"], "excludes": ["Não tenho", "[Ss]egunda-feira", "[Ee]ncerrado"] },
+          "ai": { "noDay": true, "picked": "vitela" }
+        }
+      ]
+    },
+    {
+      "name": "vegetarian dishes, a price, then goodbye",
+      "turns": [
+        { "customer": "Têm pratos vegetarianos?", "free": { "includes": ["cogumelos"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["vegan"] } },
+        {
+          "customer": "E quanto custa o arroz de cogumelos?",
+          "free": { "includes": ["13,50 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Aa]rroz de cogumelos[^\\n]*13,50 ?€"] }
+        },
+        { "customer": "Obrigada, até logo!", "free": { "equals": "De nada! Até breve." }, "ai": null }
+      ]
+    },
+    {
+      "name": "English: vegan options, then their price",
+      "turns": [
+        {
+          "customer": "Hi, do you have vegan options?",
+          "language": "en",
+          "free": { "includes": ["vegano"], "excludes": ["don't have"] },
+          "ai": { "excerpts": ["vegano"], "language": "English" }
+        },
+        {
+          "customer": "How much is it?",
+          "language": "en",
+          "free": { "includes": ["13,50 ?€"], "excludes": ["don't have"] },
+          "ai": { "excerpts": ["13,50 ?€"], "language": "English" }
+        }
+      ]
+    },
+    {
+      "name": "nut allergy, then gluten-free bread",
+      "turns": [
+        {
+          "customer": "O meu filho é alérgico a frutos secos. Há algum prato com frutos secos?",
+          "free": { "includes": ["amêndoa|alergénios"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["amêndoa", "14 alergénios"] }
+        },
+        {
+          "customer": "E têm pão sem glúten?",
+          "free": { "includes": ["pão sem glúten"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["pão sem glúten"] }
+        }
+      ]
+    },
+    {
+      "name": "a group of 12, a cake, the deposit",
+      "turns": [
+        {
+          "customer": "Somos 12 pessoas para um jantar de aniversário, como fazemos a reserva?",
+          "free": { "includes": ["\\d+ pessoas", "telefone"], "excludes": ["Não tenho", "há vaga"] },
+          "ai": { "excerpts": ["8 pessoas", "sinal de 10 ?€"] }
+        },
+        {
+          "customer": "Podemos levar o nosso bolo?",
+          "free": { "includes": ["1,50 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["bolo[^\\n]*1,50 ?€"] }
+        },
+        {
+          "customer": "Quanto é o sinal?",
+          "free": { "includes": ["10 ?€"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["sinal de 10 ?€"] }
+        }
+      ]
+    },
+    {
+      "name": "private room for a christening, then the rent",
+      "turns": [
+        { "customer": "Têm sala privada para um batizado?", "free": { "includes": ["30 pessoas"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["30 pessoas"] } },
+        {
+          "customer": "Cobram aluguer da sala?",
+          "free": { "includes": ["[Nn]ão cobramos aluguer|sem aluguer"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["aluguer"] }
+        }
+      ]
+    },
+    {
+      "name": "take-away, delivery, and the goat",
+      "turns": [
+        { "customer": "Fazem take-away?", "free": { "includes": ["levant"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Tt]ake-away"] } },
+        {
+          "customer": "E entregas ao domicílio?",
+          "free": { "includes": ["[Nn]ão fazemos"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Ee]ntregas ao domicílio"] }
+        },
+        {
+          "customer": "O cabrito também dá para levar?",
+          "free": { "includes": ["exceto o cabrito|menos o cabrito"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["exceto o cabrito|menos o cabrito"] }
+        }
+      ]
+    },
+    {
+      "name": "where to park, then whether it is paid",
+      "turns": [
+        { "customer": "Onde posso estacionar?", "free": { "includes": ["Fontelo"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["Fontelo"] } },
+        { "customer": "E o parque é pago?", "free": { "includes": ["dias úteis"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["dias úteis"] } }
+      ]
+    },
+    {
+      "name": "address, then wheelchair access",
+      "turns": [
+        { "customer": "Qual é a morada?", "free": { "includes": ["Largo da Ribeira 12"] }, "ai": { "excerpts": ["Largo da Ribeira 12"] } },
+        {
+          "customer": "Têm acesso para cadeira de rodas?",
+          "free": { "includes": ["acessível|adaptada"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["acessível"] }
+        }
+      ]
+    },
+    {
+      "name": "meal cards, then American Express",
+      "turns": [
+        { "customer": "Aceitam cartão de refeição?", "free": { "includes": ["cartões de refeição"] }, "ai": { "excerpts": ["cartões de refeição"] } },
+        {
+          "customer": "E American Express?",
+          "free": { "includes": ["[Nn]ão aceitamos American Express"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["American Express"] }
+        }
+      ]
+    },
+    {
+      "name": "children's menu, then a high chair",
+      "turns": [
+        { "customer": "Têm menu para crianças?", "free": { "includes": ["9,50 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Mm]enu de criança[^\\n]*9,50 ?€"] } },
+        { "customer": "E cadeira de bebé?", "free": { "includes": ["cadeiras de bebé"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["cadeiras de bebé"] } }
+      ]
+    },
+    {
+      "name": "a dog on the terrace, then inside",
+      "turns": [
+        { "customer": "Posso levar o meu cão?", "free": { "includes": ["esplanada"] }, "ai": { "excerpts": ["esplanada"] } },
+        { "customer": "E dentro da sala?", "free": { "includes": ["assistência"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["assistência"] } }
+      ]
+    },
+    {
+      "name": "Christmas day, then another holiday",
+      "turns": [
+        {
+          "customer": "Abrem no dia 25 de dezembro?",
+          "free": { "includes": ["25 de dezembro"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["25 de dezembro"] }
+        },
+        {
+          "customer": "E no feriado de 8 de dezembro?",
+          "free": { "includes": ["[Ff]eriados"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["[Ff]eriados"] }
+        }
+      ]
+    },
+    {
+      "name": "lunch next Monday (the closing day)",
+      "turns": [
+        {
+          "customer": "Vou estar em Viseu na próxima segunda, dá para ir almoçar?",
+          "free": { "includes": ["[Ee]ncerrado"], "excludes": ["há vaga"] },
+          "ai": { "excerpts": ["[Ee]ncerrado"], "dayAsked": "Monday" }
+        },
+        {
+          "customer": "E na terça?",
+          "free": { "includes": ["12:00[–-]15:00"], "excludes": ["Não tenho"] },
+          "ai": { "dayAsked": "Tuesday" }
+        }
+      ]
+    },
+    {
+      "name": "the set lunch menu, then Saturday",
+      "turns": [
+        { "customer": "Têm menu do dia ao almoço?", "free": { "includes": ["12,50 ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Mm]enu executivo[^\\n]*12,50 ?€"] } },
+        {
+          "customer": "Também há ao sábado?",
+          "free": { "includes": ["terça a sexta"], "excludes": ["Não tenho"] },
+          "ai": { "excerpts": ["terça a sexta"], "followUpOf": "menu do dia" }
+        }
+      ]
+    },
+    {
+      "name": "complaint",
+      "turns": [
+        { "customer": "Ontem a comida veio fria e esperámos uma hora, quero fazer uma reclamação", "free": { "includes": ["equipa"] }, "handoff": "complaint", "ai": null }
+      ]
+    },
+    {
+      "name": "weddings, then asks for a person",
+      "turns": [
+        { "customer": "Fazem casamentos?", "free": { "includes": ["[Nn]ão fazemos casamentos"] }, "ai": { "excerpts": ["casamentos"] } },
+        { "customer": "Queria falar com alguém sobre um jantar de empresa", "free": { "includes": ["equipa"] }, "handoff": "customer_asked", "ai": null }
+      ]
+    },
+    {
+      "name": "not in the document: sushi, then francesinhas",
+      "turns": [
+        { "customer": "Fazem sushi?", "notInDocument": true, "free": { "excludes": ["€"] } },
+        { "customer": "E francesinhas?", "notInDocument": true, "free": { "excludes": ["€"] } }
+      ]
+    },
+    {
+      "name": "not in the document: football on TV, a playground",
+      "turns": [
+        { "customer": "Dá para ver os jogos de futebol aí?", "notInDocument": true, "free": { "excludes": ["€", "[Ee]stacionamento"] } },
+        { "customer": "Têm parque infantil?", "notInDocument": true, "free": { "excludes": ["[Ee]stacionamento", "Fontelo"] } }
+      ]
+    },
+    {
+      "name": "Spanish: a terrace, then a dog",
+      "turns": [
+        { "customer": "Hola, ¿tienen terraza?", "language": "es", "free": { "includes": ["esplanada"] }, "ai": { "excerpts": ["esplanada"], "language": "Spanish" } },
+        { "customer": "¿Y se puede ir con perro?", "language": "es", "free": { "includes": ["esplanada"], "excludes": ["No tengo"] }, "ai": { "excerpts": ["[Cc]ães"], "language": "Spanish" } }
+      ]
+    },
+    {
+      "name": "French: Sunday evening, then Monday",
+      "turns": [
+        {
+          "customer": "Bonjour, vous êtes ouverts dimanche soir ?",
+          "language": "fr",
+          "free": { "includes": ["15:30"] },
+          "ai": { "excerpts": ["15:30"], "dayAsked": "Sunday", "language": "French" }
+        },
+        { "customer": "Et lundi ?", "language": "fr", "free": { "includes": ["[Ee]ncerrado"], "excludes": ["Je n'ai pas"] }, "ai": { "dayAsked": "Monday", "language": "French" } }
+      ]
+    },
+    {
+      "name": "English: parking, then Wi-Fi",
+      "turns": [
+        { "customer": "Do you have parking?", "language": "en", "free": { "includes": ["Fontelo"] }, "ai": { "excerpts": ["Fontelo"] } },
+        { "customer": "And Wi-Fi?", "language": "en", "free": { "includes": ["Wi-Fi"], "excludes": ["don't have"] }, "ai": { "excerpts": ["Wi-Fi"] } }
+      ]
+    },
+    {
+      "name": "greeting, the goat's price, then tomorrow",
+      "turns": [
+        { "customer": "Boa noite", "free": { "equals": "Olá! Em que posso ajudar?" }, "ai": null },
+        { "customer": "Qual é o preço do cabrito?", "free": { "includes": ["21,00 ?€"] }, "ai": { "excerpts": ["[Cc]abrito[^\\n]*21,00 ?€"], "history": ["Boa noite"] } },
+        {
+          "customer": "Dá para amanhã?",
+          "onlyWithAi": "the goat is only on Sundays: the free answers give tomorrow's hours and how to book, only an AI joins the dish asked before and the day",
+          "free": { "includes": ["12:00"], "excludes": ["há vaga"] },
+          "ai": { "excerpts": ["só ao domingo e por encomenda"], "followUpOf": "cabrito", "dayAsked": "tomorrow, Thursday" }
+        }
+      ]
+    },
+    {
+      "name": "Wi-Fi, then thanks",
+      "turns": [
+        { "customer": "Têm Wi-Fi?", "free": { "includes": ["LagarClientes"] }, "ai": { "excerpts": ["LagarClientes"] } },
+        { "customer": "Obrigado, boa noite", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    },
+    {
+      "name": "the menu, then desserts",
+      "turns": [
+        { "customer": "Podem enviar-me a ementa?", "free": { "includes": ["\\d ?€"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["\\d ?€"] } },
+        { "customer": "E sobremesas?", "free": { "includes": ["[Pp]ão-de-ló|[Pp]udim|[Aa]rroz doce"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["[Pp]udim de castanha"] } }
+      ]
+    },
+    {
+      "name": "when the kitchen closes",
+      "turns": [
+        { "customer": "A que horas fecha a cozinha?", "free": { "includes": ["30 minutos antes|30 min antes"], "excludes": ["Não tenho"] }, "ai": { "excerpts": ["cozinha fecha"] } },
+        { "customer": "Ok, obrigado!", "free": { "includes": ["^De nada"] }, "ai": null }
+      ]
+    }
+  ]
+}

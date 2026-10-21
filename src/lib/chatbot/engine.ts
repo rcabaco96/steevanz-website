@@ -7,12 +7,12 @@ import { asksPriceOfNothing, intentWords } from "./doc-answers.ts";
 import { handoffSummary, sanitizeReply } from "./guardrails.ts";
 import { formatNextOpening, openingState } from "./hours.ts";
 import { detectIntents, isSmallTalk, type Intent } from "./intents.ts";
-import { buildIndex, findProperty, minimumChunkScore, minimumScore, search, searchChunks, type KnowledgeIndex } from "./knowledge.ts";
+import { buildIndex, findProperty, minimumChunkScore, minimumScore, questionWords, search, searchChunks, type KnowledgeIndex } from "./knowledge.ts";
 import { replyLanguage } from "./language.ts";
 import { mockProvider } from "./llm/mock.ts";
 import { ProviderDisabledError, type AnswerProvider, type AnswerSource } from "./llm/types.ts";
 import { fixedMessages } from "./messages.ts";
-import { normalize, searchWords } from "./text.ts";
+import { hasAnyKeyword, normalize, searchWords } from "./text.ts";
 import type { BotProfile, ChatbotLanguage, ChatMessage, ConversationState, HandoffReason } from "./types.ts";
 
 /** More than this many bot replies in the loop window and the chat goes to a person (another bot?). */
@@ -61,30 +61,49 @@ export interface EngineResult {
   blocked: boolean;
 }
 
+/**
+ * «Quero o reembolso», «Devolvam-me o dinheiro», «I want a refund»: a request. «Posso devolver?», «Há reembolso se
+ * cancelar?» are questions about the policy, which the business's information answers.
+ */
+const requestWords = [
+  "quero", "queria", "exijo", "pretendo", "devolvam", "reembolsem", "want", "would like", "demand", "give me", "quiero", "quisiera", "exijo", "devuelvan",
+  "je veux", "je voudrais", "j exige", "remboursez", "ich will", "ich mochte", "ich moechte", "ich verlange", "voglio", "vorrei", "pretendo", "rimborsatemi",
+];
+
 /** Hand-off rules by intent, most serious first. */
-function handoffFor(found: readonly Intent[], state: ConversationState, kind: BotProfile["knowledge"]["kind"]): HandoffReason | null {
+function handoffFor(found: readonly Intent[], state: ConversationState, kind: BotProfile["knowledge"]["kind"], message: string): HandoffReason | null {
   const has = (intent: Intent) => found.includes(intent);
   if (has("emergency")) return "emergency";
   if (kind === "lodging" && has("access_code")) return "access_code";
   if (kind === "clinic" && has("medical")) return "medical";
   if (has("complaint")) return "complaint";
+  const refundAsked = has("refund") && hasAnyKeyword(normalize(message), requestWords);
   if (kind === "lodging") {
-    if (has("refund")) return "refund";
+    if (refundAsked) return "refund";
     if (has("damage")) return "damage";
     if (has("early_checkin")) return "early_checkin";
     if (has("late_checkout")) return "late_checkout";
   }
   if (has("human")) return "customer_asked";
   if (state.offeredHandoff && has("yes") && found.every((intent) => intent === "yes" || intent === "thanks")) return "customer_asked";
-  if (kind !== "lodging" && has("refund")) return "refund";
+  if (kind !== "lodging" && refundAsked) return "refund";
   return null;
 }
 
 /** A message made only of greetings, thanks or «ok» («Olá!», «Bom dia», «Hi there», «Obrigado!»): nothing to look up. */
 function bareSmallTalk(body: string, found: readonly Intent[]): boolean {
   if (!isSmallTalk(found)) return false;
-  const explained = new Set(intentWords(body, found, ["there", "tudo bem", "td bem", "boas", "everyone", "a todos", "senhor", "senhora"]));
+  const explained = new Set(intentWords(body, found, smallTalkExtras));
   return searchWords(body).every((word) => explained.has(word));
+}
+
+const smallTalkExtras = ["there", "tudo bem", "td bem", "boas", "everyone", "a todos", "senhor", "senhora"];
+
+/** «Hola, ¿se puede fumar en el apartamento?»: a greeting with a real question (a word about something and «?», or two words). */
+function asksSomething(body: string, found: readonly Intent[]): boolean {
+  const explained = new Set(intentWords(body, found, smallTalkExtras));
+  const about = searchWords(body).filter((word) => !explained.has(word) && !questionWords.has(word)).length;
+  return about >= 2 || (about >= 1 && body.includes("?"));
 }
 
 export async function respond(input: EngineInput, provider: AnswerProvider = mockProvider): Promise<EngineResult> {
@@ -143,7 +162,7 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
   // Too many replies in a short time: probably another bot or a stuck loop. A person takes over.
   if (state.recentBotReplies.length >= loopGuard.maxReplies) return handOff("loop_guard", text.handoff);
 
-  const reason = handoffFor(found, state, knowledge.kind);
+  const reason = handoffFor(found, state, knowledge.kind, message.body);
   if (reason === "emergency") return handOff(reason, text.emergency);
   if (reason === "access_code") return handOff(reason, text.accessCode);
   if (reason === "medical") return handOff(reason, text.medical);
@@ -185,7 +204,10 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
   }
 
   // «Olá», «obrigado», «ok» with nothing to look up: a short polite answer («Olá! Em que posso ajudar?»).
-  if (bareSmallTalk(message.body, found) || ((isSmallTalk(found) || (named && !found.length)) && !followUp.previous && !hits.some((hit) => hit.score >= minimumScore) && !chunkHits.some((hit) => hit.score >= minimumChunkScore))) {
+  if (
+    bareSmallTalk(message.body, found) ||
+    ((isSmallTalk(found) || (named && !found.length)) && !asksSomething(message.body, found) && !followUp.previous && !hits.some((hit) => hit.score >= minimumScore) && !chunkHits.some((hit) => hit.score >= minimumChunkScore))
+  ) {
     if (found.includes("bye")) replies.push(found.includes("thanks") ? text.thanksBye : text.bye);
     else if (found.includes("thanks")) replies.push(text.thanks);
     else if (found.includes("greeting") || firstReply) replies.push(text.hello);

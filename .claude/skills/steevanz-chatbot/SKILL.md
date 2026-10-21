@@ -77,11 +77,32 @@ Never fix a client's case with a client-specific rule: generalise it and add it 
 | `withoutEmptyLinks` check | Split «reservas.fiodenavalha.example.» at the dot and dropped the real link; a list before «veja o nosso site» vanished | `sentences()`: a sentence ends only at punctuation + space/end, and every line is its own sentence |
 | «E para crianças?» (Groq) | Also offered the «pai e filho» combo | Prompt: never suggest a service, package or product not asked about |
 | «Onde ficam?» | Free answers: «não sei» (phrase keyword «onde fica*» left «ficam» as a subject) | `intentWords` explains the message's own words for phrase keywords with «*»; the AI gets the address lines |
+| Door/key-box code written in a house guide (phase B) | The line went to the AI with the excerpts | `leaksSecret` (guardrails) drops it from everything an AI receives, as `sanitizeReply` does from replies; the gate's `secrets` checks both |
+| «Têm parque infantil?», «cadeira de bebé», «frutos secos» | «parque» alone found the car park; «bebé» the kids' menu | An idea in several words counts only whole (`phraseGroups`); a concept inside a longer phrase of another one doesn't count; phrases match without their small words too («blanchiment dents») |
+| «Têm pratos vegetarianos?», «É sem glúten?» | Taken out as «the kind of question», nothing left to search | `subjectKeywords`: diet words make a menu question and stay the subject |
+| «E sobremesas?», «E o check-out?», «avisar»/«aviso», «abertos»/«por abrir», «lãs» | «sobre» met «sobremesas»; checkin = checkout; verb forms apart; «lã» became the article «la» | «sem/sobre» stopwords; a shared beginning must leave ≤ 1 letter of the shorter word; verb endings meet (`inflectionRoot`), irregular participles, «check-in» one word, «lã» → «lana» |
+| Wrapped and WhatsApp lines | «… no Largo da» + «Ribeira» cut as a title; «Dra.» ended a sentence; lines after «)» glued; «Surf? Ribeira…» | Lines ending in «de/da/ou…» go on; a line after «)»/«#» or a capitals title starts anew; abbreviations; one-word questions; middle-dot price lists; table column titles dropped |
+| Flat documents (one line) | AI excerpts joined into one long item and cut; «Label:» inside a name split it | Runs joined only while short; flat text split after web addresses and before «Label:» only after a name, number or bracket |
+| Long messages («O meu filho é alérgico a frutos secos. Há algum prato com frutos secos?») | No single sentence covered half → «não sei» | Two passages that cover ≥ 60 % together (`jointPick`); windows from a third for long messages; the AI keeps complementary lines below the score floor |
+| «Fazem envios para a Madeira?», «Somos 12 para um aniversário, como reservamos?» | Best line left «Madeira» / the group rule out | The line with the missing words goes with the best one; booking answers add the booking rule about what else was asked |
+| Menu, discount, «quem», «onde fica X» questions | Price lines that shared one word; the price list for «há desconto?»; a service line for «Quem faz…?» | Non-price menu questions prefer the sentence that says it; discount questions the discount lines; «quem» lines with names; «onde fica» lines with a distance; price questions always get price lines |
+| Follow-ups: «Também há ao sábado?», «Dá para amanhã?», «Duram quanto tempo?», «E na loja…?» | Read as hours; topic lost; the topic's own line quoted again | Same-thing words keep the menu question; «can I + day» after a dish is a follow-up for the AI; a follow-up with its own words must be covered by them, the topic (same paragraph) only helps choose; a line just quoted counts less |
+| «Hola, ¿se puede fumar…?», «Bom dia, …» | «¡Hola!» ignored the question; «boa noite» hid «só uma noite» | A greeting with a question is answered; greetings are removed whole, not word by word |
+| «Posso devolver?» vs «quero o reembolso» | Every «devolução» went to the team | Policy questions are answered; only requests («quero», «want»…) hand off |
+| Clinic: pain, swelling, bleeding, medication, «posso comer depois?» | Only a few symptom words | Six-language medical words → hand-off to the clinical team (112 in the reply), the AI is never called |
+| «Os novelos já estão abertos?», «guardar até sábado», house guide without opening hours | Hours answers; the supermarket's hours as the business's | «aberto» after another subject isn't hours; «até + day» is a deadline; «Label:» lines of other places aren't the timetable; no «não tenho o horário» unless hours were asked |
+| «Fazem consultas ao domicílio?» | «consultas» (everywhere in a clinic) gave half coverage | Coverage weighs a word found in > ⅛ of the document's passages by half |
 
-Fixtures: `tests/fixtures/barbearia-fio-de-navalha*.txt` in several layouts (structured, flat, messy, WhatsApp).
+Fixtures: `tests/fixtures/<business>.txt` + `<business>-whatsapp.txt` for each sector (barbearia, restaurante,
+alojamento, clinica, loja, salao — fictional, marked at the top), played in 4 layouts (structured, flat, messy, WhatsApp).
 Conversations: `tests/fixtures/dialogues/<sector>.json`, played by `tests/chatbot-conversations.test.mjs` (free
 answers + what a fake AI receives) in every layout — the quality gate. When a new failure shows up with any
 client, add the dialogue there (or a new sector file) before fixing it, and make it pass in every layout.
+Turn fields: `notInDocument` (must be «não tenho essa informação», counted as an invention otherwise), `onlyWithAi`
+(a reason, or `{ reason, layouts }`: free answers not asserted, AI excerpts still are), spec `secrets` (never in a reply
+or an AI request). Each sector needs ≥ 95 % of turns right with free answers (onlyWithAi counts against) and 0
+inventions (a price/time not in the document, an answer where it has none, a secret). `CHATBOT_GATE_SUMMARY=1`
+prints the table per sector; `CHATBOT_GATE_ONLY=<file>` plays one file.
 Live check with Groq's free tier: at most a few dozen calls, ~25 s apart (our 9 000 tokens/min ceiling), key never printed.
 
 ## Before publishing a chatbot change

@@ -37,7 +37,8 @@ const keywords: Record<Intent, readonly string[]> = {
   ],
   thanks: ["obrigad*", "obg", "thank*", "thx", "gracias", "merci", "danke", "grazie", "muito obrigad*"],
   bye: [
-    "adeus", "ate logo", "ate ja", "ate amanha", "ate breve", "ate a proxima", "tchau", "xau", "bye", "goodbye", "good bye", "see you", "adios",
+    "adeus", "ate logo", "ate ja", "ate amanha", "ate breve", "ate a proxima", "ate segunda", "ate terca", "ate quarta", "ate quinta", "ate sexta", "ate sabado",
+    "ate domingo", "ate para a semana", "tchau", "xau", "bye", "goodbye", "good bye", "see you", "adios",
     "hasta luego", "hasta pronto", "hasta manana", "au revoir", "a bientot", "a demain", "tschuss", "tschuess", "auf wiedersehen", "bis bald", "bis morgen",
     "arrivederci", "a presto", "a domani",
   ],
@@ -100,13 +101,19 @@ const keywords: Record<Intent, readonly string[]> = {
     "alloggia da voi",
   ],
   medical: [
-    "diagnostic*", "sintoma*", "medicament*", "medicacao", "dose", "dosagem", "receita", "dor", "doi", "febre", "tomar comprimido*",
-    "symptom*", "medication", "medicine", "diagnos*", "prescription", "pain", "fever", "dolor", "fiebre", "symptome*", "medicament",
-    "douleur", "fievre", "medikament*", "schmerz*", "fieber", "sintomi", "farmac*", "dolore", "febbre",
+    "diagnostic*", "sintoma*", "medicament*", "medicacao", "dose", "dosagem", "receita", "dor", "dores", "doi", "doem", "doer", "febre", "tomar comprimido*",
+    "inchad*", "inchaco", "sangra*", "sangue", "infec*", "abcesso", "antibiotic*", "analgesic*", "anti inflamatorio", "ibuprofeno", "paracetamol",
+    "o que posso tomar", "posso tomar", "posso comer", "posso beber", "pos operatorio", "cuidados depois",
+    "symptom*", "medication", "medicine", "diagnos*", "prescription", "pain", "painful", "hurts", "fever", "swollen", "swelling", "bleeding", "infection",
+    "antibiotic*", "painkiller*", "toothache", "can i eat", "can i drink", "can i take", "aftercare",
+    "dolor", "duele", "fiebre", "hinchad*", "sangr*", "infeccion", "puedo tomar", "puedo comer", "symptome*", "medicament", "douleur", "fievre", "gonfle*",
+    "saigne*", "infection", "puis je manger", "puis je prendre", "medikament*", "schmerz*", "fieber", "geschwollen", "blutet", "entzund*", "darf ich essen",
+    "sintomi", "farmac*", "dolore", "febbre", "gonfi*", "sanguin*", "infezione", "posso mangiare",
   ],
   refund: ["reembols*", "devolu*", "dinheiro de volta", "refund*", "money back", "reembolso", "rembours*", "ruckerstattung", "rueckerstattung", "erstattung", "rimbors*"],
   damage: [
-    "parti", "partiu", "partido", "estragad*", "avaria*", "avariad*", "danific*", "nao funciona", "deixou de funcionar", "broken", "broke",
+    "parti", "partiu", "partido", "estragad*", "estragou", "avari*", "danific*", "nao funciona", "deixou de funcionar", "sem agua quente", "nao ha agua quente",
+    "nao ha agua", "sem agua", "nao ha luz", "sem luz", "broken", "broke", "no hot water",
     "damage*", "not working", "doesn t work", "roto", "rota", "averia*", "no funciona", "casse", "en panne", "ne marche pas",
     "ne fonctionne pas", "kaputt", "defekt", "funktioniert nicht", "rotto", "guasto", "non funziona",
   ],
@@ -138,6 +145,12 @@ export const availabilityPhrases = [
   "avete posto",
 ];
 
+/**
+ * Keywords that make a menu question and also say what it is about («Têm pratos vegetarianos?», «É sem
+ * glúten?»): never taken out of a message as «the kind of question» (doc-answers.ts intentWords).
+ */
+export const subjectKeywords: ReadonlySet<string> = new Set(["vegetarian*", "vegan*", "sem gluten", "gluten*"]);
+
 /** Intents that say nothing about what the customer wants to know (a day with only these is about the hours of that day). */
 const smallTalk: readonly Intent[] = ["greeting", "thanks", "bye", "yes"];
 
@@ -166,7 +179,43 @@ export function detectIntents(text: string, kind: ChatbotBusinessKind): Intent[]
     }
     return true;
   });
-  return withDayQuestion(normalized, kept);
+  return withDayQuestion(normalized, aboutTheBusiness(normalized, kept));
+}
+
+/** «aberto», «fechado», «open», «closed» in the six languages (normalized; "*" = word beginning). */
+const openWords = ["abert*", "fechad*", "abiert*", "cerrad*", "ouvert*", "ferme*", "geoffnet", "geschlossen", "aperto", "aperti", "aperta", "aperte", "chiuso", "chiusi", "chiusa", "open", "closed"];
+
+/** Words before «aberto» that keep it about the business: the place, «vocês», verbs, greetings, small words. */
+const openSubjects = new Set(
+  (
+    "loja restaurante cozinha clinica consultorio salao barbearia cabeleireiro esplanada cafe bar espaco casa sala voces voce senhores " +
+    "you ustedes vosotros vous sie ihr voi shop store restaurant clinic salon kitchen tienda cocina boutique magasin cuisine laden kuche negozio cucina ristorante " +
+    "estao estamos esta estara estarao vao ficam sao e is are will be estan esta etes est sont ist sind sono siete ainda ja hoje amanha agora ola bom boa dia tarde noite " +
+    "hello hi hola bonjour hallo ciao buongiorno sim nao ok entao tambem que qual quais quando como"
+  ).split(" "),
+);
+
+/**
+ * «Os novelos já estão abertos, faz mal?» is about the wool, not the opening hours: when only «aberto/fechado» says
+ * hours and another subject comes before it, it is not an hours question («A loja está aberta?», «Estão abertos
+ * amanhã?» still are).
+ */
+function aboutTheBusiness(normalized: string, found: Intent[]): Intent[] {
+  if (!found.includes("hours")) return found;
+  if (keywords.hours.some((keyword) => !openWords.includes(keyword) && hasAnyKeyword(normalized, [keyword]) && !openWords.some((word) => hasAnyKeyword(keyword, [word])))) return found;
+  const tokens = normalized.split(" ");
+  const at = tokens.findIndex((token) => openWords.some((word) => hasAnyKeyword(token, [word])));
+  if (at <= 0) return found;
+  const subject = searchWords(tokens.slice(0, at).join(" ")).some((word) => !openSubjects.has(word) && !isDayWord(word) && !/^\d+$/.test(word));
+  return subject ? found.filter((intent) => intent !== "hours") : found;
+}
+
+/** «até sábado», «until Monday», «hasta el lunes»: a day as a deadline, not as a day to come. */
+const deadlineWords = new Set(["ate", "until", "till", "by", "hasta", "jusqu", "bis", "fino", "entro"]);
+
+function untilDay(normalized: string): boolean {
+  const tokens = normalized.split(" ");
+  return tokens.some((token, at) => isDayWord(token) && token !== "feira" && tokens.slice(Math.max(0, at - 2), at).some((word) => deadlineWords.has(word)));
 }
 
 /**
@@ -175,8 +224,9 @@ export function detectIntents(text: string, kind: ChatbotBusinessKind): Intent[]
  * «Cortam cabelo no sábado?») is about the opening hours of that day and how to book.
  */
 function withDayQuestion(normalized: string, found: Intent[]): Intent[] {
-  // «Obrigado, até amanhã!» says goodbye, it doesn't ask about tomorrow.
-  if (found.includes("bye") || !dayMention(normalized)) return found;
+  // «Obrigado, até amanhã!» says goodbye, it doesn't ask about tomorrow; «Podem guardar-me um kit até sábado?» asks
+  // them to keep something until then.
+  if (found.includes("bye") || !dayMention(normalized) || untilDay(normalized)) return found;
   const about = found.filter((intent) => !smallTalk.includes(intent));
   const phrased = hasAnyKeyword(normalized, availabilityPhrases);
   // «Dá para fazer um tratamento no sábado?» (a service named) still asks whether one can come that day.
