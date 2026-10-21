@@ -1,0 +1,21 @@
+Fabio's Roadstop — origem e licenças do que este site usa (2026-10-21)
+
+Imagens e vídeo (public/media/clients/fabios-roadstop/)
+- Todos do próprio cliente, tirados do site antigo www.fabiosroadstop.pt (logótipo, video.mp4, interior,
+  limonadas, carro, placa com poste). As fotografias «fachada», «menu-cadillac», «hamburgueres», «a-comer»,
+  «brinde», «bebidas-tabuleiro» e o poster do vídeo são fotogramas do video.mp4 do cliente, recortados para
+  tirar a marca de água. Nenhuma imagem de banco de imagens.
+- Ainda não há fotografia de panquecas: o cartão das panquecas usa a capa do menu até o cliente enviar uma.
+
+Tipos de letra (Google Fonts, via next/font, SIL Open Font License 1.1)
+- Anton, Yellowtail, Monoton, DM Sans.
+
+Bibliotecas
+- motion 13.4.6 (MIT).
+- gsap 3.15.0 com ScrollTrigger e SplitText (licença «Standard no-charge» da GSAP: uso comercial gratuito).
+- @gsap/react 2.1.2 (mesma licença).
+- lenis 1.3.26 (MIT).
+- React Bits (© David Haz, MIT + Commons Clause; texto completo em react-bits/LICENSE.md): SplitText,
+  CountUp, Magnet, ScrollVelocity, RotatingText e CircularText adaptados em react-bits/, e a ideia do ShinyText
+  em CSS (.fr-chrome). A licença permite usá-los num site, também comercial; não permite vender os componentes.
+- country-flag-icons (MIT) para as bandeiras PT/EN.
