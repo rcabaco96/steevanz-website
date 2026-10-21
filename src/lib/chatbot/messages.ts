@@ -30,6 +30,8 @@ export interface FixedMessages {
   bookingByPhone: (phone: string) => string;
   menuIntro: string;
   menuLink: (url: string) => string;
+  /** After the first lines of a long list quoted from a document. */
+  moreInList: string;
   minutes: (count: number) => string;
   /** An answer written in another language than the customer's (the mock can't translate). */
   answerInOtherLanguage: string;
@@ -63,6 +65,7 @@ const pt: FixedMessages = {
   bookingByPhone: (phone) => `Para reservar, ligue para ${phone}.`,
   menuIntro: "Encontrei isto:",
   menuLink: (url) => `Veja tudo aqui: ${url}`,
+  moreInList: "(Há mais opções. Diga-me qual procura e eu digo-lhe o preço.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Por agora, esta informação só está disponível noutra língua.)",
   whichProperty: (list) => `Em qual dos alojamentos está hospedado? ${list}`,
@@ -95,6 +98,7 @@ const en: FixedMessages = {
   bookingByPhone: (phone) => `To book, please call ${phone}.`,
   menuIntro: "Here's what I found:",
   menuLink: (url) => `See everything here: ${url}`,
+  moreInList: "(There's more. Tell me which one you're looking for and I'll tell you the price.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(This information is only available in another language for now.)",
   whichProperty: (list) => `Which of our properties are you staying at? ${list}`,
@@ -127,6 +131,7 @@ const es: FixedMessages = {
   bookingByPhone: (phone) => `Para reservar, llame al ${phone}.`,
   menuIntro: "Esto es lo que he encontrado:",
   menuLink: (url) => `Véalo todo aquí: ${url}`,
+  moreInList: "(Hay más opciones. Dígame cuál busca y le digo el precio.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Por ahora esta información solo está disponible en otro idioma.)",
   whichProperty: (list) => `¿En cuál de nuestros alojamientos se hospeda? ${list}`,
@@ -159,6 +164,7 @@ const fr: FixedMessages = {
   bookingByPhone: (phone) => `Pour réserver, appelez le ${phone}.`,
   menuIntro: "Voici ce que j'ai trouvé :",
   menuLink: (url) => `Tout voir ici : ${url}`,
+  moreInList: "(Il y a d'autres options. Dites-moi laquelle vous cherchez et je vous donne le prix.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Pour l'instant, cette information n'est disponible que dans une autre langue.)",
   whichProperty: (list) => `Dans lequel de nos logements séjournez-vous ? ${list}`,
@@ -191,6 +197,7 @@ const de: FixedMessages = {
   bookingByPhone: (phone) => `Für eine Reservierung rufen Sie bitte ${phone} an.`,
   menuIntro: "Das habe ich gefunden:",
   menuLink: (url) => `Alles finden Sie hier: ${url}`,
+  moreInList: "(Es gibt noch mehr. Sagen Sie mir, was Sie suchen, und ich nenne Ihnen den Preis.)",
   minutes: (count) => `${count} Min.`,
   answerInOtherLanguage: "(Diese Information gibt es vorerst nur in einer anderen Sprache.)",
   whichProperty: (list) => `In welcher unserer Unterkünfte wohnen Sie? ${list}`,
@@ -223,6 +230,7 @@ const it: FixedMessages = {
   bookingByPhone: (phone) => `Per prenotare, chiami il ${phone}.`,
   menuIntro: "Ecco cosa ho trovato:",
   menuLink: (url) => `Veda tutto qui: ${url}`,
+  moreInList: "(Ci sono altre opzioni. Mi dica quale cerca e Le dico il prezzo.)",
   minutes: (count) => `${count} min`,
   answerInOtherLanguage: "(Per ora questa informazione è disponibile solo in un'altra lingua.)",
   whichProperty: (list) => `In quale dei nostri alloggi soggiorna? ${list}`,

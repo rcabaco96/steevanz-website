@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { deflateRawSync } from "node:zlib";
 import { demoLodging } from "../src/lib/chatbot/demo.ts";
-import { bestSentences, documentKindOf, headingOf, htmlToText, splitIntoChunks } from "../src/lib/chatbot/documents.ts";
+import { documentKindOf, headingOf, htmlToText, splitIntoChunks } from "../src/lib/chatbot/documents.ts";
 import { respond } from "../src/lib/chatbot/engine.ts";
 import { docxToText, extractDocument, isPrivateHost } from "../src/lib/chatbot/extract.ts";
 import { buildIndex, minimumChunkScore, searchChunks } from "../src/lib/chatbot/knowledge.ts";
@@ -141,11 +141,6 @@ describe("chatbot documents: sections", () => {
     assert.ok(chunks.length > 1);
     assert.ok(chunks.every((chunk) => chunk.body.length <= 1200));
     assert.ok(chunks.every((chunk) => chunk.heading === "Guia › Equipamentos"));
-  });
-
-  it("quotes the relevant sentences", () => {
-    const quote = bestSentences("Primeira frase. O wifi chama-se Casa. Terceira frase.", (sentence) => (/wifi/i.test(sentence) ? 1 : 0));
-    assert.equal(quote, "O wifi chama-se Casa.");
   });
 
   it("only uses sections of active documents", () => {

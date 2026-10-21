@@ -121,12 +121,26 @@ Admin › assistente › Conhecimento › **Documentos**: enviar PDF, Word (.doc
 - Extração no servidor, grátis: Word lido com o zlib do Node (`extract.ts`, sem bibliotecas), PDF com
   `unpdf` (pdf.js, licença MIT; única dependência nova), HTML limpo (`documents.ts → htmlToText`).
   PDFs digitalizados (imagens) não têm texto e são recusados com uma mensagem clara (OCR seria extra).
-- O texto é cortado em secções de ~800 caracteres com título («Documento › Secção»), guardadas em
-  `chatbot_document_chunks`; o ficheiro original não é guardado.
-- Pesquisa: BM25 sobre as secções + títulos + conceitos nas 6 línguas + regra de cobertura
-  (`knowledge.ts → searchChunks`). As respostas do negócio ganham sempre aos documentos.
-- O mock cita as 1–3 frases mais relevantes da melhor secção. Em «Experimentar» aparece a fonte
-  (documento › secção); ao cliente nunca.
+- O texto é guardado em secções de ~800 caracteres (`chatbot_document_chunks`), linha a linha, com
+  o título que houver («Documento › Secção»); o ficheiro original não é guardado.
+- **Nada depende da estrutura do documento** (decisão do dono, 2026-10-21: «todo o texto do pdf deve
+  ser apanhado independentemente da estrutura»). Ao carregar o bot, o texto de cada documento é
+  relido por ordem a partir das secções e cortado em passagens (`passages.ts`): uma frase, uma linha
+  de preços («Barba à navalha … 35 min 15 €», também quando a lista vem sem quebras de linha ou
+  separada por vírgulas), uma pergunta com a resposta que vem a seguir. Linhas partidas a meio (PDF,
+  texto colado) voltam a juntar-se; títulos de colunas repetidos e letras espaçadas saem. Os títulos,
+  quando existem, são só um sinal extra.
+- Pesquisa: BM25 sobre janelas de passagens (~450 caracteres, metade partilhada com a seguinte) +
+  conceitos nas 6 línguas + plurais (cão/cães) + regra de cobertura (`knowledge.ts → searchChunks`);
+  dentro das melhores janelas escolhe-se a melhor passagem, que também tem de cobrir metade do
+  perguntado. As respostas do negócio ganham sempre aos documentos.
+- Respostas grátis a partir dos documentos (`doc-answers.ts`): as 1–3 melhores passagens (a resposta
+  de uma pergunta frequente, as linhas a seguir a um título, as linhas de preço pedidas). Sem horário
+  estruturado, o horário vem das passagens com dias e horas, onde quer que estejam; sem serviços
+  estruturados, os preços vêm das linhas com €; sem morada, a passagem com rua e código postal. Se o
+  documento não diz, «Não tenho essa informação». Em «Experimentar» aparece a fonte; ao cliente nunca.
+- Documentos guardados antes desta versão (linhas juntas em parágrafos) funcionam sem voltar a
+  enviar; voltar a enviar só melhora as quebras de linha.
 - Preparado para embeddings mais tarde (uma coluna nova nas secções) sem mudar o resto.
 - Migração `20261021120000_chatbot_documents.sql` (aplicada a 2026-10-21). Sem ela, o resto
   funciona e o painel de documentos mostra o aviso.

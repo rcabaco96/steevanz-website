@@ -2,7 +2,7 @@
 // (later, only when the owner turns it on from the site and chooses who pays) are interchangeable.
 import type { OpeningState } from "../hours.ts";
 import type { Intent } from "../intents.ts";
-import type { SearchHit } from "../knowledge.ts";
+import type { KnowledgeIndex, SearchHit } from "../knowledge.ts";
 import type { BotSettings, BusinessKnowledge, ChatbotLanguage, ChatMessage } from "../types.ts";
 
 export interface AnswerRequest {
@@ -13,6 +13,8 @@ export interface AnswerRequest {
   hits: readonly SearchHit[];
   /** The best sections of the business's documents (searchChunks), best first. */
   chunkHits?: readonly SearchHit[];
+  /** The bot's search index (documents' passages for the free answers); built from `knowledge` when missing. */
+  index?: KnowledgeIndex;
   knowledge: BusinessKnowledge;
   settings: BotSettings;
   opening: OpeningState;

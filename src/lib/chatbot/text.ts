@@ -44,8 +44,10 @@ export function searchWords(text: string): string[] {
   return words(text).filter((word) => word.length > 1 && !stopwords.has(word));
 }
 
-/** A light stem so «reservas»/«reserva» and «pratos»/«prato» meet: drops a plural ending. */
+/** A light stem so «reservas»/«reserva», «pratos»/«prato» and «cães»/«cão» meet: drops a plural ending. */
 export function stem(word: string): string {
+  // Portuguese plurals in «-ães»/«-ões» (cães → cão, botões → botão; accents already removed).
+  if (word.length > 3 && (word.endsWith("aes") || word.endsWith("oes"))) return `${word.slice(0, -3)}ao`;
   if (word.length > 4 && word.endsWith("es")) return word.slice(0, -2);
   if (word.length > 3 && word.endsWith("s")) return word.slice(0, -1);
   return word;

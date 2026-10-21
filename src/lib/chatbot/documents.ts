@@ -74,15 +74,25 @@ export interface DocumentChunk {
   body: string;
 }
 
-/** A line that is a section title: Markdown «#», a short line in capitals, or a short line ending in «:». */
+/**
+ * A line that looks like a section title: Markdown «#», a short numbered title («4. Serviços e
+ * preços»), a short line in capitals, or a very short line ending in «:». Only a hint for the
+ * section names shown in the admin: every line is searched whatever this says (passages.ts).
+ */
 export function headingOf(line: string): { level: number; text: string } | null {
   const markdown = line.match(/^(#{1,6})\s+(.+?)\s*#*$/);
   if (markdown) return { level: markdown[1].length, text: markdown[2].trim() };
   const trimmed = line.trim();
   if (trimmed.length < 3 || trimmed.length > 70) return null;
+  const tokens = trimmed.split(/\s+/);
+  // Letter-spaced decoration («B A R B E A R I A · P O R T O») is not a title.
+  if (tokens.length >= 6 && tokens.filter((token) => token.length === 1).length / tokens.length >= 0.7) return null;
+  if (/€|\d{1,2}[:h]\d{2}/.test(trimmed)) return null;
+  const numbered = trimmed.match(/^(\d{1,2}(?:\.\d{1,2})?)\.?\s+(\p{Lu}.*)$/u);
+  if (numbered && tokens.length <= 8 && !/[.!?;:,]$/.test(trimmed)) return { level: numbered[1].includes(".") ? 3 : 2, text: trimmed };
   const letters = trimmed.replace(/[^\p{L}]/gu, "");
   if (letters.length >= 3 && letters === letters.toUpperCase() && letters !== letters.toLowerCase() && !/[.!?;,]$/.test(trimmed)) return { level: 2, text: trimmed };
-  if (trimmed.endsWith(":") && trimmed.length <= 60 && !/[.!?]/.test(trimmed.slice(0, -1))) return { level: 3, text: trimmed.slice(0, -1).trim() };
+  if (trimmed.endsWith(":") && tokens.length <= 4 && !/[.!?]/.test(trimmed.slice(0, -1))) return { level: 3, text: trimmed.slice(0, -1).trim() };
   return null;
 }
 
@@ -97,7 +107,15 @@ function splitLong(text: string, max: number): string[] {
       current = "";
     }
     if (sentence.length > max) {
-      for (let start = 0; start < sentence.length; start += max) parts.push(sentence.slice(start, start + max));
+      // A very long «sentence» (a list without full stops): cut between words.
+      let rest = sentence;
+      while (rest.length > max) {
+        const space = rest.lastIndexOf(" ", max);
+        const cut = space > max / 2 ? space : max;
+        parts.push(rest.slice(0, cut).trim());
+        rest = rest.slice(cut).trim();
+      }
+      current = rest;
       continue;
     }
     current = current ? `${current} ${sentence}` : sentence;
@@ -107,8 +125,9 @@ function splitLong(text: string, max: number): string[] {
 }
 
 /**
- * Cuts a document into sections of about `chunkTarget` characters, at paragraph boundaries, each
- * with the title path it sits under. Headings never end up alone in a chunk.
+ * Cuts a document into sections of about `chunkTarget` characters, at line boundaries, each with the
+ * title path it sits under (titles are kept in the path, the other lines exactly as they were, so
+ * the whole text can be read back in order: passages.ts → documentLines).
  */
 export function splitIntoChunks(text: string, documentTitle: string, limits = documentLimits): DocumentChunk[] {
   const lines = cleanText(text).slice(0, limits.maxChars).split("\n");
@@ -148,36 +167,16 @@ export function splitIntoChunks(text: string, documentTitle: string, limits = do
     }
     if (!line.trim()) {
       endParagraph();
+      // Blank lines are kept: they separate things for the search.
+      if (paragraphs.length && paragraphs[paragraphs.length - 1] !== "") paragraphs.push("");
       continue;
     }
-    // A line that ends a sentence or starts a list item closes the paragraph (PDF lines break mid-sentence).
-    if (/^\s*([•\-*–]|\d+[.)])\s/.test(line)) endParagraph();
-    paragraph = paragraph ? `${paragraph} ${line.trim()}` : line.trim();
-    if (/[.!?:]$/.test(line.trim()) && paragraph.length > limits.chunkTarget / 2) endParagraph();
+    // Every line stays a line: the search decides later which lines belong together.
+    paragraph = line.trim();
+    endParagraph();
     if (chunks.length >= limits.maxChunks) break;
   }
   endParagraph();
   flush();
   return chunks.slice(0, limits.maxChunks);
-}
-
-/** The best 1–3 sentences of a chunk for a question, in their original order (for quoting). */
-export function bestSentences(body: string, isRelevant: (sentence: string) => number, max = 3, maxChars = 600): string {
-  const sentences = body
-    .split(/(?<=[.!?…])\s+|\n+/)
-    .map((sentence) => sentence.trim())
-    .filter(Boolean);
-  const scored = sentences.map((sentence, index) => ({ sentence, index, score: isRelevant(sentence) }));
-  const picked = scored
-    .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score || a.index - b.index)
-    .slice(0, max)
-    .sort((a, b) => a.index - b.index);
-  const chosen = picked.length ? picked.map((item) => item.sentence) : sentences.slice(0, 2);
-  let text = "";
-  for (const sentence of chosen) {
-    if (text && (text + " " + sentence).length > maxChars) break;
-    text = text ? `${text} ${sentence}` : sentence.slice(0, maxChars);
-  }
-  return text;
 }

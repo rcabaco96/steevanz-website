@@ -146,3 +146,6 @@ export function detectIntents(text: string, kind: ChatbotBusinessKind): Intent[]
 export function isSmallTalk(found: readonly Intent[]): boolean {
   return found.length > 0 && found.every((intent) => intent === "greeting" || intent === "thanks" || intent === "yes");
 }
+
+/** The keywords of each intent (normalized; "*" = word beginning), for answers that need them. */
+export { keywords as intentKeywords };

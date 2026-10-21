@@ -182,7 +182,7 @@ export async function respond(input: EngineInput, provider: AnswerProvider = moc
   }
 
   const answerIntents = query === message.body ? found : detectIntents(query, knowledge.kind);
-  const request = { language, message: query, intents: answerIntents, hits, chunkHits, knowledge, settings, opening, history, property: state.property, now };
+  const request = { language, message: query, intents: answerIntents, hits, chunkHits, index, knowledge, settings, opening, history, property: state.property, now };
   let answer;
   let providerNote: string | null = null;
   try {
