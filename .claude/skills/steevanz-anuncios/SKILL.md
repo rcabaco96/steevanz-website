@@ -14,6 +14,9 @@ Learned over the Menu digital, Sites and Cartão de cliente ads (2026-10-16/17).
   `node tools/build.mjs sites`, `node tools/build.mjs cartao`; voice swap: `node tools/build.mjs voz` with
   `voz/linhas/01.wav…`. Music/SFX timings and voice lines share one timeline file, so sound always matches picture.
 - Remotion's ffmpeg: `node_modules/@remotion/compositor-win32-x64-msvc/ffmpeg.exe`.
+- The official Remotion skill `remotion-best-practices` is installed for all projects (owner, 2026-10-21): use its
+  markup, timing, transitions, effects, motion-blur, sfx and 3D references. Two of its defaults don't apply here: we
+  DO render (the owner reviews MP4s on his phone, not the Studio), and the delivery rules below win.
 
 ## Formato e entrega
 
