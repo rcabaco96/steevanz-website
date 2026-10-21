@@ -3,9 +3,19 @@
 // rule, whatever model writes the free answers later. Pure module.
 import type { ChatbotLanguage } from "./types.ts";
 
+/** The day a customer asked about, ready for a sentence: today, tomorrow or another day, its weekday name and «22/10». */
+export interface DayLabel {
+  kind: "today" | "tomorrow" | "other";
+  weekday: string;
+  date: string;
+}
+
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+const list = (parts: string[], and: string) => (parts.length > 1 ? `${parts.slice(0, -1).join(", ")} ${and} ${parts[parts.length - 1]}` : parts.join(""));
+
 export interface FixedMessages {
-  /** First message of a chat: who is answering and the privacy note (the site promises both). */
-  intro: (business: string, privacyUrl: string | null) => string;
+  /** The answer to a bare «Olá» / «Bom dia» / «Hi». */
+  hello: string;
   howCanIHelp: string;
   thanks: string;
   /** The chat goes to a person. */
@@ -23,6 +33,10 @@ export interface FixedMessages {
   closedNow: (when: string | null) => string;
   closedTodayReason: (reason: string) => string;
   opensOn: (when: string) => string;
+  /** The opening hours of the day asked («amanhã», «no sábado»): open slots, or closed (with the closure's reason). */
+  dayHours: (day: DayLabel, slots: readonly { opens: string; closes: string }[], closedReason: string | null) => string;
+  /** «Amanhã é quinta-feira, 22/10.» — before a timetable quoted from a document. */
+  dayIs: (day: DayLabel) => string;
   noHours: string;
   address: (address: string) => string;
   mapsLink: (url: string) => string;
@@ -40,9 +54,7 @@ export interface FixedMessages {
 }
 
 const pt: FixedMessages = {
-  intro: (business, privacyUrl) =>
-    `Olá! Sou o assistente automático de ${business}. Respondo com a informação do negócio e, quando for preciso, passo a conversa à equipa.` +
-    ` As mensagens são guardadas apenas para prestar este serviço${privacyUrl ? ` (${privacyUrl})` : ""}.`,
+  hello: "Olá! Em que posso ajudar?",
   howCanIHelp: "Em que posso ajudar?",
   thanks: "De nada! Se precisar de mais alguma coisa, estou por aqui.",
   handoff: "Vou passar a sua mensagem à equipa, que lhe responde aqui assim que possível.",
@@ -58,6 +70,12 @@ const pt: FixedMessages = {
   closedNow: (when) => (when ? `Neste momento estamos fechados. Abrimos ${when}.` : "Neste momento estamos fechados."),
   closedTodayReason: (reason) => `Hoje estamos fechados (${reason}).`,
   opensOn: (when) => `Abrimos ${when}.`,
+  dayHours: (day, slots, reason) => {
+    const when = day.kind === "today" ? `hoje (${day.weekday}, ${day.date})` : day.kind === "tomorrow" ? `amanhã (${day.weekday}, ${day.date})` : `${day.weekday} (${day.date})`;
+    if (!slots.length) return `${capitalize(when)} estamos fechados${reason ? ` (${reason})` : ""}.`;
+    return `${capitalize(when)} estamos abertos ${list(slots.map((slot) => `das ${slot.opens} às ${slot.closes}`), "e")}.`;
+  },
+  dayIs: (day) => (day.kind === "today" ? `Hoje é ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Amanhã é ${day.weekday}, ${day.date}.` : `${capitalize(day.weekday)}: ${day.date}.`),
   noHours: "Não tenho o horário atualizado. A equipa confirma-lho em breve.",
   address: (address) => `Estamos em ${address}.`,
   mapsLink: (url) => `Mapa: ${url}`,
@@ -73,9 +91,7 @@ const pt: FixedMessages = {
 };
 
 const en: FixedMessages = {
-  intro: (business, privacyUrl) =>
-    `Hello! I'm the automated assistant of ${business}. I answer with the business's own information and, when needed, pass the conversation to the team.` +
-    ` Messages are kept only to provide this service${privacyUrl ? ` (${privacyUrl})` : ""}.`,
+  hello: "Hello! How can I help you?",
   howCanIHelp: "How can I help you?",
   thanks: "You're welcome! If you need anything else, I'm here.",
   handoff: "I'll pass your message to the team, who will reply here as soon as possible.",
@@ -91,6 +107,12 @@ const en: FixedMessages = {
   closedNow: (when) => (when ? `We're closed right now. We open ${when}.` : "We're closed right now."),
   closedTodayReason: (reason) => `We're closed today (${reason}).`,
   opensOn: (when) => `We open ${when}.`,
+  dayHours: (day, slots, reason) => {
+    const when = day.kind === "today" ? `Today (${day.weekday}, ${day.date})` : day.kind === "tomorrow" ? `Tomorrow (${day.weekday}, ${day.date})` : `On ${day.weekday} (${day.date})`;
+    if (!slots.length) return `${when} we're closed${reason ? ` (${reason})` : ""}.`;
+    return `${when} we're open ${list(slots.map((slot) => `from ${slot.opens} to ${slot.closes}`), "and")}.`;
+  },
+  dayIs: (day) => (day.kind === "today" ? `Today is ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Tomorrow is ${day.weekday}, ${day.date}.` : `${day.weekday}: ${day.date}.`),
   noHours: "I don't have the current opening hours. The team will confirm them shortly.",
   address: (address) => `We're at ${address}.`,
   mapsLink: (url) => `Map: ${url}`,
@@ -106,9 +128,7 @@ const en: FixedMessages = {
 };
 
 const es: FixedMessages = {
-  intro: (business, privacyUrl) =>
-    `¡Hola! Soy el asistente automático de ${business}. Respondo con la información del negocio y, cuando hace falta, paso la conversación al equipo.` +
-    ` Los mensajes se guardan solo para prestar este servicio${privacyUrl ? ` (${privacyUrl})` : ""}.`,
+  hello: "¡Hola! ¿En qué puedo ayudarle?",
   howCanIHelp: "¿En qué puedo ayudarle?",
   thanks: "¡De nada! Si necesita algo más, aquí estoy.",
   handoff: "Paso su mensaje al equipo, que le responderá aquí lo antes posible.",
@@ -124,6 +144,12 @@ const es: FixedMessages = {
   closedNow: (when) => (when ? `Ahora mismo estamos cerrados. Abrimos ${when}.` : "Ahora mismo estamos cerrados."),
   closedTodayReason: (reason) => `Hoy estamos cerrados (${reason}).`,
   opensOn: (when) => `Abrimos ${when}.`,
+  dayHours: (day, slots, reason) => {
+    const when = day.kind === "today" ? `Hoy (${day.weekday}, ${day.date})` : day.kind === "tomorrow" ? `Mañana (${day.weekday}, ${day.date})` : `El ${day.weekday} (${day.date})`;
+    if (!slots.length) return `${when} estamos cerrados${reason ? ` (${reason})` : ""}.`;
+    return `${when} estamos abiertos ${list(slots.map((slot) => `de ${slot.opens} a ${slot.closes}`), "y")}.`;
+  },
+  dayIs: (day) => (day.kind === "today" ? `Hoy es ${day.weekday}, ${day.date}.` : day.kind === "tomorrow" ? `Mañana es ${day.weekday}, ${day.date}.` : `${capitalize(day.weekday)}: ${day.date}.`),
   noHours: "No tengo el horario actualizado. El equipo se lo confirmará en breve.",
   address: (address) => `Estamos en ${address}.`,
   mapsLink: (url) => `Mapa: ${url}`,
@@ -139,9 +165,7 @@ const es: FixedMessages = {
 };
 
 const fr: FixedMessages = {
-  intro: (business, privacyUrl) =>
-    `Bonjour ! Je suis l'assistant automatique de ${business}. Je réponds avec les informations de l'établissement et, si nécessaire, je transmets la conversation à l'équipe.` +
-    ` Les messages sont conservés uniquement pour fournir ce service${privacyUrl ? ` (${privacyUrl})` : ""}.`,
+  hello: "Bonjour ! Comment puis-je vous aider ?",
   howCanIHelp: "Comment puis-je vous aider ?",
   thanks: "Je vous en prie ! Si vous avez besoin d'autre chose, je suis là.",
   handoff: "Je transmets votre message à l'équipe, qui vous répondra ici dès que possible.",
@@ -157,6 +181,12 @@ const fr: FixedMessages = {
   closedNow: (when) => (when ? `Nous sommes fermés en ce moment. Nous ouvrons ${when}.` : "Nous sommes fermés en ce moment."),
   closedTodayReason: (reason) => `Nous sommes fermés aujourd'hui (${reason}).`,
   opensOn: (when) => `Nous ouvrons ${when}.`,
+  dayHours: (day, slots, reason) => {
+    const when = day.kind === "today" ? `Aujourd'hui (${day.weekday} ${day.date})` : day.kind === "tomorrow" ? `Demain (${day.weekday} ${day.date})` : `${capitalize(day.weekday)} (${day.date})`;
+    if (!slots.length) return `${when}, nous sommes fermés${reason ? ` (${reason})` : ""}.`;
+    return `${when}, nous sommes ouverts ${list(slots.map((slot) => `de ${slot.opens} à ${slot.closes}`), "et")}.`;
+  },
+  dayIs: (day) => (day.kind === "today" ? `Nous sommes ${day.weekday} ${day.date}.` : day.kind === "tomorrow" ? `Demain, c'est ${day.weekday} ${day.date}.` : `${capitalize(day.weekday)} : ${day.date}.`),
   noHours: "Je n'ai pas les horaires à jour. L'équipe vous les confirmera rapidement.",
   address: (address) => `Nous sommes au ${address}.`,
   mapsLink: (url) => `Plan : ${url}`,
@@ -172,9 +202,7 @@ const fr: FixedMessages = {
 };
 
 const de: FixedMessages = {
-  intro: (business, privacyUrl) =>
-    `Guten Tag! Ich bin der automatische Assistent von ${business}. Ich antworte mit den Informationen des Betriebs und gebe das Gespräch bei Bedarf an das Team weiter.` +
-    ` Nachrichten werden nur zur Erbringung dieses Dienstes gespeichert${privacyUrl ? ` (${privacyUrl})` : ""}.`,
+  hello: "Guten Tag! Wie kann ich Ihnen helfen?",
   howCanIHelp: "Wie kann ich Ihnen helfen?",
   thanks: "Gern geschehen! Wenn Sie noch etwas brauchen, bin ich für Sie da.",
   handoff: "Ich gebe Ihre Nachricht an das Team weiter, das Ihnen hier so bald wie möglich antwortet.",
@@ -190,6 +218,12 @@ const de: FixedMessages = {
   closedNow: (when) => (when ? `Wir haben gerade geschlossen. Wir öffnen ${when}.` : "Wir haben gerade geschlossen."),
   closedTodayReason: (reason) => `Heute haben wir geschlossen (${reason}).`,
   opensOn: (when) => `Wir öffnen ${when}.`,
+  dayHours: (day, slots, reason) => {
+    const when = day.kind === "today" ? `Heute (${day.weekday}, ${day.date})` : day.kind === "tomorrow" ? `Morgen (${day.weekday}, ${day.date})` : `Am ${day.weekday} (${day.date})`;
+    if (!slots.length) return `${when} haben wir geschlossen${reason ? ` (${reason})` : ""}.`;
+    return `${when} haben wir ${list(slots.map((slot) => `von ${slot.opens} bis ${slot.closes} Uhr`), "und")} geöffnet.`;
+  },
+  dayIs: (day) => (day.kind === "today" ? `Heute ist ${day.weekday}, der ${day.date}.` : day.kind === "tomorrow" ? `Morgen ist ${day.weekday}, der ${day.date}.` : `${day.weekday}: ${day.date}.`),
   noHours: "Ich habe die aktuellen Öffnungszeiten nicht. Das Team bestätigt sie Ihnen in Kürze.",
   address: (address) => `Sie finden uns hier: ${address}.`,
   mapsLink: (url) => `Karte: ${url}`,
@@ -205,9 +239,7 @@ const de: FixedMessages = {
 };
 
 const it: FixedMessages = {
-  intro: (business, privacyUrl) =>
-    `Buongiorno! Sono l'assistente automatico di ${business}. Rispondo con le informazioni dell'attività e, quando serve, passo la conversazione al team.` +
-    ` I messaggi vengono conservati solo per fornire questo servizio${privacyUrl ? ` (${privacyUrl})` : ""}.`,
+  hello: "Buongiorno! Come posso aiutarLa?",
   howCanIHelp: "Come posso aiutarLa?",
   thanks: "Prego! Se ha bisogno di altro, sono qui.",
   handoff: "Passo il Suo messaggio al team, che Le risponderà qui il prima possibile.",
@@ -223,6 +255,12 @@ const it: FixedMessages = {
   closedNow: (when) => (when ? `In questo momento siamo chiusi. Apriamo ${when}.` : "In questo momento siamo chiusi."),
   closedTodayReason: (reason) => `Oggi siamo chiusi (${reason}).`,
   opensOn: (when) => `Apriamo ${when}.`,
+  dayHours: (day, slots, reason) => {
+    const when = day.kind === "today" ? `Oggi (${day.weekday} ${day.date})` : day.kind === "tomorrow" ? `Domani (${day.weekday} ${day.date})` : `${capitalize(day.weekday)} (${day.date})`;
+    if (!slots.length) return `${when} siamo chiusi${reason ? ` (${reason})` : ""}.`;
+    return `${when} siamo aperti ${list(slots.map((slot) => `dalle ${slot.opens} alle ${slot.closes}`), "e")}.`;
+  },
+  dayIs: (day) => (day.kind === "today" ? `Oggi è ${day.weekday} ${day.date}.` : day.kind === "tomorrow" ? `Domani è ${day.weekday} ${day.date}.` : `${capitalize(day.weekday)}: ${day.date}.`),
   noHours: "Non ho gli orari aggiornati. Il team glieli confermerà a breve.",
   address: (address) => `Ci trova in ${address}.`,
   mapsLink: (url) => `Mappa: ${url}`,

@@ -3,6 +3,7 @@
 // has no structured hours or services, the hours and the price list found anywhere in the text.
 // Quotes only what the documents say; returns null when they don't say it. Pure module
 // (tests/chatbot-passages.test.mjs).
+import { dayLabel, mentionsWeekday, type AskedDay } from "./hours.ts";
 import { intentKeywords, type Intent } from "./intents.ts";
 import { minimumChunkScore, minimumCoverage, passageCoverage, passageQuery, scorePassage, type KnowledgeIndex, type PassageQuery } from "./knowledge.ts";
 import type { AnswerRequest, AnswerSource } from "./llm/types.ts";
@@ -179,13 +180,28 @@ export function timetable(passages: readonly Passage[]): Passage[] {
 }
 
 /**
- * Opening hours from the documents, for a business without structured hours: the passages about
- * the day or date asked, or the timetable (the passages around the one with the most days and times).
+ * Opening hours from the documents, for a business without structured hours: for a day asked
+ * («amanhã», «no sábado») the timetable lines of that weekday (or the whole timetable when it names
+ * the day only in a range, «Terça a sexta-feira»), after «Amanhã é quinta-feira, 22/10.»; otherwise
+ * the passages about the day or date asked, or the timetable (the passages around the one with the
+ * most days and times).
  */
-export function documentHours(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
+export function documentHours(request: DocumentRequest, index: KnowledgeIndex, day: AskedDay | null = null): DocumentAnswer | null {
   const passages = index.passages.filter((passage) => allowed(passage, request));
   const signal = new Map(passages.map((passage) => [passage, hoursSignal(passage)]));
   if (![...signal.values()].some((value) => value >= 2)) return null;
+  if (day) {
+    const chosen = timetable(passages);
+    if (chosen.length) {
+      const sameDay = chosen.filter((passage) => mentionsWeekday(normalize(passage.text), day.weekday));
+      const lines = sameDay.length ? sameDay : chosen;
+      const answer = finish(request, { passages: lines, joiner: "\n" });
+      const first = lines[0].text;
+      const text = answer.text.replace(first, withoutTitlePrefix(first));
+      const intro = day.mention === "weekday" || day.mention === "weekend" ? null : fixedMessages[request.language].dayIs(dayLabel(day, request.language));
+      return { ...answer, text: intro ? `${intro}\n${text}` : text };
+    }
+  }
   const query = passageQuery(request.message, intentWords(request.message, ["hours"], openWords));
   if (query.words.length) {
     const candidates = passages.filter((passage) => (signal.get(passage) ?? 0) > 0 || (passage.question && answerAfter(passage).some((next) => hoursSignal(next) > 0)));
@@ -288,4 +304,48 @@ export function documentCatalog(request: DocumentRequest, index: KnowledgeIndex)
   while (lines.length && !lines[lines.length - 1].price) lines.pop();
   const more = best.filter((passage) => passage.price).length > shown ? fixedMessages[request.language].moreInList : null;
   return finish(request, { passages: lines, joiner: "\n" }, (passage) => (passage.price ? "• " : ""), more);
+}
+
+/** Booking words in the six languages (normalized; "*" = word beginning). */
+const bookingWords = [
+  "marcar", "marcac*", "marque", "marcam", "reserv*", "agend*", "book", "booking*", "booked", "appointment*", "walk in*", "cita", "citas",
+  "rendez vous", "rdv", "buchen", "termin", "termine", "prenot*", "appuntament*", "vaga", "vagas", "hueco*",
+];
+/** «Sem marcação»: coming without booking, in the six languages. */
+const walkInWords = [
+  "sem marcac*", "sem reserva*", "walk in*", "without booking", "without an appointment", "sin cita", "sin reserva", "sans rendez vous",
+  "sans reservation", "ohne termin", "ohne reservierung", "ohne voranmeldung", "senza appuntamento", "senza prenotazione",
+];
+/** A web address or a bare domain («reservas.fiodenavalha.example»). */
+const linkPattern = /\bhttps?:\/\/\S+|\bwww\.\S+|(?<![@\w.-])[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|pt|es|fr|de|it|eu|net|org|io|app|example)\b/i;
+
+/**
+ * The document's lines about booking, best first: coming without booking («Sem marcação: aceitamos
+ * clientes sem marcação quando há vaga»), then the booking link, then the other booking lines. Price
+ * lines are left out («Noivo … (com marcação) 90 min 55 €»).
+ */
+export function bookingPassages(passages: readonly Passage[]): Passage[] {
+  return passages
+    .filter((passage) => !passage.price)
+    .map((passage) => {
+      const normalized = normalize(passage.text);
+      const walkIn = hasAnyKeyword(normalized, walkInWords);
+      const booking = walkIn || hasAnyKeyword(normalized, bookingWords);
+      const link = linkPattern.test(passage.text);
+      return { passage, booking, score: (walkIn ? 3 : 0) + (link ? 2 : 0) + (hasKeyword(normalized, "online") ? 1 : 0) - (passage.question ? 1 : 0) };
+    })
+    .filter((item) => item.booking)
+    .sort((a, b) => b.score - a.score || a.passage.position - b.passage.position)
+    .map((item) => item.passage);
+}
+
+/** How to book, from the documents: the booking link line and the «sem marcação» rule (null: they don't say). */
+export function documentBooking(request: DocumentRequest, index: KnowledgeIndex): DocumentAnswer | null {
+  const ranked = bookingPassages(index.passages.filter((passage) => allowed(passage, request) && !passage.question));
+  if (!ranked.length) return null;
+  const link = ranked.find((passage) => linkPattern.test(passage.text));
+  const walkIn = ranked.find((passage) => hasAnyKeyword(normalize(passage.text), walkInWords));
+  const chosen = [...new Set([link, walkIn].filter((passage): passage is Passage => Boolean(passage)))];
+  if (!chosen.length) chosen.push(ranked[0]);
+  return finish(request, { passages: inOrder(index, chosen), joiner: "\n" });
 }

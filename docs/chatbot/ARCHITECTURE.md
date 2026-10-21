@@ -12,7 +12,8 @@ Fontes: `src/content/product-copy/ai-chatbot.ts` e `src/content/docs/ai-chatbot.
 | --- | --- |
 | Responde com a informação do negócio (menu, preços, horários, serviços, políticas), não inventa | `knowledge.ts` (pesquisa), `llm/mock.ts`; sem resposta → «não tenho essa informação» + oferta de pessoa |
 | Responde na língua do cliente (pt, en, es, fr, de, it); pode limitar línguas | `language.ts`, definição «Línguas em que responde» |
-| Diz que é um assistente automático e mostra nota de privacidade no início | primeira mensagem (`messages.ts → intro`) |
+| ~~Diz que é um assistente automático e mostra nota de privacidade no início~~ | **Retirado a 2026-10-21 por decisão do dono** (informado do art. 50.º do AI Act e do aviso RGPD): não há mensagem de apresentação; a promessa saiu das páginas do produto (FAQ e docs, 6 línguas). Um «Olá» sozinho recebe «Olá! Em que posso ajudar?» (`messages.ts → hello`). Não repor sem perguntar ao dono |
+| Diz o horário de um dia («Dá para ir amanhã?», «Estão abertos no sábado?») e como marcar, nunca «há vaga» | `intents.ts → withDayQuestion`, `hours.ts → askedDay/hoursOn`, `llm/mock.ts → dayHoursAnswer`, `doc-answers.ts → documentHours/documentBooking` |
 | Envia o link de reserva (sistema de reservas Steevanz ou outro) | intenção `booking` → `bookingUrl` |
 | Passa para uma pessoa (reclamações, pedidos especiais, quando o cliente pede) com resumo | `engine.ts → handoffFor`, `guardrails.ts → handoffSummary` |
 | A equipa assume a conversa e o assistente cala-se até ser devolvida | `mode = human`; o dono a responder pelo telemóvel pausa sozinho (open-wa) |
@@ -62,7 +63,8 @@ sem Next.js: corre no Next, no `runner.mjs` (Node 24, sem compilação) e nos te
 4. `engine.respond`:
    - assistente desligado → silêncio; conversa com a equipa → silêncio (volta sozinho só se o negócio
      escolheu «volta depois de X horas sem a equipa escrever»);
-   - língua da resposta; primeira mensagem = apresentação + privacidade;
+   - língua da resposta; sem mensagem de apresentação (a primeira resposta é logo a resposta; um
+     «Olá» / «Bom dia» / «Hi» sozinho → «Olá! Em que posso ajudar?» na língua do cliente);
    - regras fixas por ordem: emergência (112 + alerta urgente) → código de acesso (alojamento) →
      questão médica (clínica) → reclamação → reembolso/dano/entrada antecipada/saída tardia
      (alojamento) → «quero falar com uma pessoa» → «sim» depois de o assistente oferecer uma pessoa;
@@ -91,6 +93,19 @@ sem Next.js: corre no Next, no `runner.mjs` (Node 24, sem compilação) e nos te
 Vem do espaço (`establishment_hours` / `establishment_closures`) ligado ao assistente. Sem horário, o
 assistente nunca diz que está fechado. Fora de horas: responde às perguntas na mesma (a informação não
 fecha) e, ao passar para a equipa, diz quando ela responde («respondemos amanhã às 12:00»).
+
+**Perguntas sobre um dia** («Dá para cortar o cabelo amanhã?», «Estão abertos no sábado?», «Abrem
+hoje?», «Can I come tomorrow?», «Posso ir sem marcação no sábado?»): `intents.ts` reconhece hoje,
+amanhã, depois de amanhã, esta tarde/noite, fim de semana e os dias da semana nas 6 línguas, junto
+com «dá para», «têm vaga», «posso ir», «estão abertos»… (ou sem mais nada perguntado: «E no
+sábado?») → intenções `hours` + `booking`. «Dá para pagar com MB WAY?» ou «Posso ir com o cão?» (sem
+dia) não contam; uma pergunta de preço num dia continua de preço. `hours.ts → askedDay` resolve o dia
+no fuso do assistente. Respostas grátis: com horário estruturado, o horário desse dia («Amanhã
+(quinta-feira, 22/10) estamos abertos das 10:00 às 13:00 e das 14:30 às 20:00.»; num dia de fecho,
+«estamos fechados (Natal)»; hoje, também se está aberto agora) + link de reserva; só com documentos,
+«Amanhã é quinta-feira, 22/10.» + as linhas do horário desse dia (ou o horário todo, quando o dia só
+aparece num intervalo «Terça a sexta-feira») + as linhas de marcação do documento (link online e regra
+«sem marcação»). **Nunca «há vaga»**: o assistente não vê a agenda; diz o horário e como marcar.
 
 ### Línguas
 
@@ -226,14 +241,22 @@ para testar IA também no site usa-se o **plano grátis da Groq** (API compatív
   de terça a sábado.»). No máximo ~26 passagens e 3800 caracteres.
 - Perguntas de preço: as linhas de preço do que foi perguntado e, se nenhuma corresponder (pergunta
   noutra língua, «How much is a haircut?»), a própria tabela de preços; mais as linhas de descontos.
-  Perguntas de horário: o horário, os feriados e os fechos. (Um teste com o documento da barbearia
+  Perguntas de horário: o horário, os feriados e os fechos; perguntas de marcação: o link de reservas
+  e a regra «sem marcação» (horário e marcação vêm antes das passagens gerais, para caberem sempre).
+  O prompt diz hoje e amanhã com dia da semana e data no fuso do assistente («Today: Wednesday,
+  21/10/2026 (quarta-feira). Tomorrow: Thursday, 22/10/2026 (quinta-feira).») e, junto à mensagem,
+  o dia perguntado («Day asked about: tomorrow, Thursday, 22/10/2026 (quinta-feira).», com o horário
+  desse dia quando está no admin). (Um teste com o documento da barbearia
   mostrou porquê: com 3 secções grandes a IA não via «Corte clássico … 16 €» nem juntava o desconto de
   estudante ao preço do degradê.)
 - Regras: responder `NO_ANSWER` quando os excertos não chegam (→ «não tenho essa informação» e oferta
   de passar à equipa); citar [S1]/[E1] (viram as fontes de «Experimentar»); preços como estão
   escritos; contas simples só com números dos excertos e mostradas («18 € − 2 € = 16 €»), verificando
   as condições do desconto; **nunca calcular IVA** nem dar valores com IVA; uma data ou feriado que os
-  excertos não nomeiam → «não tenho essa informação para esse dia», sem deduzir pelo dia da semana;
+  excertos não nomeiam → «não tenho essa informação para esse dia», sem deduzir pelo dia da semana
+  (hoje/amanhã/dias da semana usam o horário desse dia da semana, salvo feriado ou fecho escrito);
+  «posso ir amanhã?» → horário do dia + como marcar, nunca «há vaga» nem marcação confirmada; o
+  horário do negócio nunca se tira dos dias em que um funcionário trabalha;
   responder na língua do cliente (pt, en, es, fr, de, it).
 
 ### Camada de IA (LLM)

@@ -129,7 +129,7 @@ export type HandoffReason =
 export interface ConversationState {
   mode: ConversationMode;
   language: ChatbotLanguage | null;
-  /** The first message (who it is, privacy note) was sent. */
+  /** The assistant has already answered in this chat (there is no introduction message since 2026-10-21). */
   greeted: boolean;
   /** The last bot message offered to pass the chat to a person: a «sim» now means yes. */
   offeredHandoff: boolean;

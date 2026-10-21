@@ -1,7 +1,8 @@
 // What a customer message is about, from keywords in the six languages (normalized, "*" = word
 // beginning). Free and deterministic. The safety intents (emergency, access codes, medical…) decide
 // the fixed rules before any answer is written. Pure module (tests/chatbot.test.mjs).
-import { hasAnyKeyword, normalize } from "./text.ts";
+import { dayMention, isDayWord } from "./hours.ts";
+import { hasAnyKeyword, normalize, searchWords } from "./text.ts";
 import type { ChatbotBusinessKind } from "./types.ts";
 
 export const intents = [
@@ -56,7 +57,7 @@ const keywords: Record<Intent, readonly string[]> = {
     "tratamento*", "treatment*", "tratamiento*", "soin*", "behandlung*", "trattament*",
   ],
   price: [
-    "preco*", "quanto custa*", "quanto e", "quanto fica", "valor", "price*", "cost*", "how much", "precio*", "cuanto cuesta*",
+    "preco*", "quanto custa*", "quanto e", "quanto fica", "quanto pago", "quanto se paga", "quanto pagam", "valor", "price*", "cost*", "how much", "precio*", "cuanto cuesta*",
     "cuanto vale", "cuanto es", "prix", "combien", "tarif*", "preis*", "kostet", "wie viel", "wieviel", "prezz*", "quanto costa*",
   ],
   human: [
@@ -115,6 +116,25 @@ const keywords: Record<Intent, readonly string[]> = {
   ],
 };
 
+/**
+ * «Can I come?» phrasing in the six languages (normalized). With a day («amanhã», «no sábado») it is a
+ * question about the opening hours of that day and how to book (never about a free slot: the assistant
+ * doesn't see the calendar). Alone it is too vague («Dá para pagar com MB WAY?», «Posso ir com o cão?»).
+ */
+const availabilityPhrases = [
+  "da para", "dava para", "daria para", "tem vaga*", "tens vaga*", "ha vaga*", "tem lugar", "ha lugar", "posso ir", "podemos ir", "posso passar",
+  "podemos passar", "posso aparecer", "posso vir", "podemos vir", "estao abertos", "estao abertas", "vao estar abertos", "funcionam", "atendem",
+  "trabalham", "can i come", "can we come", "can i drop", "can i walk in", "can i stop by", "are you open", "will you be open", "do you have space",
+  "any slots", "any availability", "is there availability", "puedo ir", "podemos ir", "puedo pasar", "estan abiertos", "abren", "hay hueco",
+  "teneis hueco", "tienen hueco", "se puede ir", "je peux venir", "puis je venir", "peut on venir", "on peut venir", "etes vous ouverts",
+  "vous etes ouverts", "avez vous de la place", "kann ich kommen", "kann ich vorbeikommen", "konnen wir kommen", "haben sie offen", "haben sie geoffnet",
+  "habt ihr offen", "habt ihr geoffnet", "noch platz", "termin frei", "posso venire", "possiamo venire", "posso passare", "siete aperti", "c e posto",
+  "avete posto",
+];
+
+/** Intents that say nothing about what the customer wants to know (a day with only these is about the hours of that day). */
+const smallTalk: readonly Intent[] = ["greeting", "thanks", "yes"];
+
 /** Intents that only mean something for some kinds of business. */
 const onlyFor: Partial<Record<Intent, readonly ChatbotBusinessKind[]>> = {
   access_code: ["lodging"],
@@ -133,13 +153,32 @@ export function detectIntents(text: string, kind: ChatbotBusinessKind): Intent[]
     return hasAnyKeyword(normalized, keywords[intent]);
   });
   // «pin» alone is a code only in a short message; «sim» / «ok» count as a yes only when they are the message.
-  return found.filter((intent) => {
+  const kept = found.filter((intent) => {
     if (intent === "yes") return normalized.split(" ").length <= 4;
     if (intent === "access_code" && hasAnyKeyword(normalized, ["pin"]) && !hasAnyKeyword(normalized, keywords.access_code.filter((k) => k !== "pin"))) {
       return normalized.split(" ").length <= 8;
     }
     return true;
   });
+  return withDayQuestion(normalized, kept);
+}
+
+/**
+ * «Dá para cortar o cabelo amanhã?», «Estão abertos no sábado?», «Can I come tomorrow?»: a day with
+ * «can I come» phrasing, with an hours or booking question, or with nothing else asked («E amanhã?»,
+ * «Cortam cabelo no sábado?») is about the opening hours of that day and how to book.
+ */
+function withDayQuestion(normalized: string, found: Intent[]): Intent[] {
+  if (!dayMention(normalized)) return found;
+  const about = found.filter((intent) => !smallTalk.includes(intent));
+  const phrased = hasAnyKeyword(normalized, availabilityPhrases);
+  // «Dá para fazer um tratamento no sábado?» (a service named) still asks whether one can come that day.
+  const fits = about.every((intent) => intent === "hours" || intent === "booking" || intent === "urgent" || (phrased && intent === "menu"));
+  if (!fits) return found;
+  // A day and a few words («Cortam cabelo no sábado?»); a longer message is about something else («Hoje está a chover, há guarda-chuvas?»).
+  if (!phrased && !about.length && searchWords(normalized).filter((word) => !isDayWord(word)).length > 3) return found;
+  const add: Intent[] = ["hours", "booking"];
+  return intents.filter((intent) => found.includes(intent) || add.includes(intent));
 }
 
 /** Only small talk (hello, thanks, yes): nothing to look up. */

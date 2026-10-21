@@ -920,7 +920,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "rgpd", text: "Privacidade e RGPD" },
           {
             type: "p",
-            text: "O widget e o WhatsApp mostram uma nota de privacidade no início da conversa. Os registos das conversas são guardados apenas durante o prazo acordado e usados para prestar o serviço e melhorar as respostas do seu negócio. O seu negócio é o responsável pelo tratamento e a Steevanz atua como subcontratante.",
+            text: "Os registos das conversas são guardados apenas durante o prazo acordado e usados para prestar o serviço e melhorar as respostas do seu negócio. O seu negócio é o responsável pelo tratamento e a Steevanz atua como subcontratante.",
           },
         ],
       },
@@ -990,7 +990,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "gdpr", text: "Privacy and GDPR" },
           {
             type: "p",
-            text: "The widget and WhatsApp show a privacy notice at the start of the conversation. Conversation logs are kept only for the agreed period and used to provide the service and improve your business's answers. Your business is the data controller and Steevanz acts as a processor.",
+            text: "Conversation logs are kept only for the agreed period and used to provide the service and improve your business's answers. Your business is the data controller and Steevanz acts as a processor.",
           },
         ],
       },
@@ -1060,7 +1060,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "gdpr", text: "Privacidad y RGPD" },
           {
             type: "p",
-            text: "El widget y WhatsApp muestran un aviso de privacidad al inicio de la conversación. El historial de conversaciones se guarda solo durante el plazo acordado y se usa para prestar el servicio y mejorar las respuestas de su negocio. Su negocio es el responsable del tratamiento y Steevanz actúa como encargado del tratamiento.",
+            text: "El historial de conversaciones se guarda solo durante el plazo acordado y se usa para prestar el servicio y mejorar las respuestas de su negocio. Su negocio es el responsable del tratamiento y Steevanz actúa como encargado del tratamiento.",
           },
         ],
       },
@@ -1130,7 +1130,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "gdpr", text: "Confidentialité et RGPD" },
           {
             type: "p",
-            text: "Le widget et WhatsApp affichent un avis de confidentialité au début de la conversation. L'historique des conversations n'est conservé que pendant la durée convenue et sert à fournir le service et à améliorer les réponses de votre établissement. Votre établissement est le responsable du traitement et Steevanz agit en tant que sous-traitant.",
+            text: "L'historique des conversations n'est conservé que pendant la durée convenue et sert à fournir le service et à améliorer les réponses de votre établissement. Votre établissement est le responsable du traitement et Steevanz agit en tant que sous-traitant.",
           },
         ],
       },
@@ -1200,7 +1200,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "gdpr", text: "Datenschutz und DSGVO" },
           {
             type: "p",
-            text: "Das Widget und WhatsApp zeigen zu Beginn des Gesprächs einen Datenschutzhinweis. Gesprächsverläufe werden nur für den vereinbarten Zeitraum gespeichert und dienen dazu, den Service zu erbringen und die Antworten Ihres Betriebs zu verbessern. Ihr Betrieb ist der Verantwortliche, Steevanz handelt als Auftragsverarbeiter.",
+            text: "Gesprächsverläufe werden nur für den vereinbarten Zeitraum gespeichert und dienen dazu, den Service zu erbringen und die Antworten Ihres Betriebs zu verbessern. Ihr Betrieb ist der Verantwortliche, Steevanz handelt als Auftragsverarbeiter.",
           },
         ],
       },
@@ -1270,7 +1270,7 @@ export const docs: ProductDocs = {
           { type: "h2", id: "gdpr", text: "Privacy e GDPR" },
           {
             type: "p",
-            text: "Il widget e WhatsApp mostrano un'informativa sulla privacy all'inizio della conversazione. Lo storico delle conversazioni viene conservato solo per il periodo concordato e serve a fornire il servizio e migliorare le risposte della Sua attività. La Sua attività è il titolare del trattamento e Steevanz agisce come responsabile del trattamento.",
+            text: "Lo storico delle conversazioni viene conservato solo per il periodo concordato e serve a fornire il servizio e migliorare le risposte della Sua attività. La Sua attività è il titolare del trattamento e Steevanz agisce come responsabile del trattamento.",
           },
         ],
       },

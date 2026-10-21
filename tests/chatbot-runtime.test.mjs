@@ -44,11 +44,12 @@ describe("chatbot runtime", () => {
     const { adapter, store, runtime, message } = setup();
     const outcome = await runtime.handle(message("351910000001@c.us", "Olá, têm estacionamento?"));
     assert.equal(outcome.status, "replied");
-    assert.equal(adapter.sent.length, 2);
-    assert.match(adapter.sent[0].text, /assistente automático/);
-    assert.match(adapter.sent[1].text, /Rua Nova/);
+    // No introduction message (owner's decision, 2026-10-21): only the answer.
+    assert.equal(adapter.sent.length, 1);
+    assert.match(adapter.sent[0].text, /Rua Nova/);
+    assert.doesNotMatch(adapter.sent[0].text, /assistente automático/);
     const conversation = store.conversations.get("demo-restaurante:351910000001@c.us");
-    assert.deepEqual(conversation.messages.map((m) => m.author), ["customer", "bot", "bot"]);
+    assert.deepEqual(conversation.messages.map((m) => m.author), ["customer", "bot"]);
   });
 
   it("never answers groups", async () => {
@@ -62,7 +63,7 @@ describe("chatbot runtime", () => {
     const first = message("351910000002@c.us", "Olá");
     await runtime.handle(first);
     assert.equal((await runtime.handle(first)).status, "duplicate");
-    assert.equal(adapter.sent.length, 2);
+    assert.equal(adapter.sent.length, 1);
   });
 
   it("does not auto-reply to old messages after a reconnection", async () => {
@@ -81,7 +82,7 @@ describe("chatbot runtime", () => {
     advance(5_000);
     const outcome = await runtime.handle(message(chat, "Obrigado, fico à espera"));
     assert.equal(outcome.status, "silent");
-    assert.equal(adapter.sent.length, 2);
+    assert.equal(adapter.sent.length, 1);
     const conversation = store.conversations.get(`demo-restaurante:${chat}`);
     assert.equal(conversation.state.mode, "human");
     assert.equal(conversation.state.handoffReason, "owner_took_over");
@@ -108,7 +109,7 @@ describe("chatbot runtime", () => {
     const { adapter, runtime, message } = setup();
     const chat = "351910000007@c.us";
     await Promise.all([runtime.handle(message(chat, "Olá")), runtime.handle(message(chat, "A que horas fecham?"))]);
-    assert.match(adapter.sent[0].text, /assistente automático/);
+    assert.equal(adapter.sent[0].text, "Olá! Em que posso ajudar?");
     assert.match(adapter.sent.at(-1).text, /15:00/);
   });
 

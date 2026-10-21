@@ -102,7 +102,7 @@ describe("chatbot test AI (Groq free tier, mocked)", () => {
     assert.match(system.content, /Never calculate VAT/);
     assert.match(system.content, /simple arithmetic using only numbers written in the information/);
     assert.match(system.content, /specific date or holiday that the information does not name explicitly/);
-    assert.match(system.content, /Today: Wednesday, 21 October 2026/);
+    assert.match(system.content, /Today: Wednesday, 21\/10\/2026 \(quarta-feira\)\. Tomorrow: Thursday, 22\/10\/2026 \(quinta-feira\)\./);
     const user = body.messages.at(-1);
     assert.equal(user.role, "user");
     assert.match(user.content, /\[E1\]/);
@@ -292,6 +292,18 @@ describe("chatbot AI grounding: the right lines reach the model (barbershop fixt
     ["How much is a haircut?", "en", [/Corte clássico[^\n]*16 ?€/, /Degradê[^\n]*18 ?€/]],
     ["Sou estudante, quanto pago por um degradê na quarta?", "pt", [/Degradê \/ fade[^\n]*18 ?€/, /[Ee]studantes:? 2 ?€ de desconto[^\n]*terça a quinta/]],
     ["Abrem no dia 8 de dezembro?", "pt", [/1 de janeiro[^\n]*25 (de dezembro )?e 26 de dezembro/, /outros feriados abrimos com o horário de sábado/, /Sábado:? 09:00–18:00/]],
+    // A day in the question: the hours, holidays and booking lines, and the day resolved (Wednesday 21/10/2026 in Lisbon).
+    ...[
+      ["Dá para cortar o cabelo amanhã?", "pt", /Day asked about: tomorrow, Thursday, 22\/10\/2026 \(quinta-feira\)\./],
+      ["Estão abertos no sábado?", "pt", /Day asked about: Saturday, 24\/10\/2026 \(sábado\)\./],
+      ["Abrem hoje?", "pt", /Day asked about: today, Wednesday, 21\/10\/2026 \(quarta-feira\)\./],
+      ["Can I come tomorrow?", "en", /Day asked about: tomorrow, Thursday, 22\/10\/2026\./],
+      ["Posso ir sem marcação no sábado?", "pt", /Day asked about: Saturday, 24\/10\/2026 \(sábado\)\./],
+    ].map(([question, language, day]) => [
+      question,
+      language,
+      [day, /Terça a sexta(-feira)?:? 10:00–13:00 e 14:30–20:00/, /Sábado:? 09:00–18:00/, /Segunda(-feira)?:? [Ff]echad/, /Feriados:? fechamos/, /reservas\.fiodenavalha\.example/, /[Ss]em marcação/],
+    ]),
   ];
   for (const [version, chunks] of Object.entries(barbershopVersions)) {
     describe(version, () => {
@@ -309,6 +321,22 @@ describe("chatbot AI grounding: the right lines reach the model (barbershop fixt
       }
     });
   }
+
+  it("a day with structured hours: the model gets that day's hours and the rule against promising a free slot", async () => {
+    const { fetch, calls } = fakeFetch("Sim, amanhã (quinta) estamos abertos das 12:00 às 15:00 e das 19:00 às 23:00. Pode reservar em https://www.steevanz.com/reservar/tasca-exemplo");
+    const result = await ask(demoRestaurant, "Dá para jantar amanhã?", provider(fetch));
+    const [system, user] = [calls[0].body.messages[0].content, calls[0].body.messages.at(-1).content];
+    assert.match(user, /Day asked about: tomorrow, Thursday, 22\/10\/2026 \(quinta-feira\)\. Opening hours that day: 12:00–15:00 and 19:00–23:00\./);
+    assert.match(system, /never say that there is a free slot/);
+    assert.match(system, /Booking link: https:\/\/www\.steevanz\.com\/reservar\/tasca-exemplo/);
+    assert.deepEqual(result.intents, ["hours", "booking"]);
+    assert.match(result.replies[0], /amanhã \(quinta\)/);
+    // A closure day says so.
+    const christmasEve = new Date("2026-12-24T12:00:00Z");
+    const closed = fakeFetch("NO_ANSWER");
+    await respond({ bot: demoRestaurant, conversation: { ...newConversationState(), greeted: true, language: "pt" }, history: [], message: { body: "Abrem amanhã?", at: christmasEve.getTime() }, now: christmasEve }, provider(closed.fetch, { clock: () => christmasEve.getTime() }));
+    assert.match(closed.calls[0].body.messages.at(-1).content, /Day asked about: tomorrow, Friday, 25\/12\/2026 \(sexta-feira\)\. Opening hours that day: closed \(Natal\)\./);
+  });
 
   it("the model's sources point at the document; the arithmetic answer passes through", async () => {
     const reply = (call) => {

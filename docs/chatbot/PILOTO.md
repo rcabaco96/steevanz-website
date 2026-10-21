@@ -59,8 +59,10 @@ O número de teste está só no `.env.local` (`CHATBOT_TEST_NUMBER`), nunca no g
    ```
    node scripts/chatbot/runner.mjs --bot <id do assistente> --reply
    ```
-   Envie perguntas do seu telemóvel pessoal (horário, morada, «quero falar com alguém»). Só o seu
-   número recebe respostas, no máximo 10 por hora.
+   Envie perguntas do seu telemóvel pessoal (horário, «dá para ir amanhã?», morada, «quero falar com
+   alguém»). Só o seu número recebe respostas, no máximo 10 por hora. Não há mensagem de apresentação
+   (decisão do dono, 2026-10-21): a primeira resposta é logo a resposta, e um «Olá» sozinho recebe
+   «Olá! Em que posso ajudar?».
 7. **Para parar:** «Desligar respostas» no admin (para em segundos) ou `Ctrl+C` no terminal.
 
 ## IA de teste local (opcional, grátis)

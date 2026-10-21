@@ -1,8 +1,8 @@
 // The free answer writer used everywhere today: deterministic answers put together from the
 // business's own information (frequent questions, hours, address, menu or services, booking link).
 // It never invents: when nothing matches it returns null and the engine says «I don't know».
-import { formatNextOpening, formatWeek, type OpeningState } from "../hours.ts";
-import { documentAnswer, documentCatalog, documentHours, documentLocation, type DocumentAnswer } from "../doc-answers.ts";
+import { askedDay, dayLabel, formatNextOpening, formatWeek, hoursOn, type AskedDay, type OpeningState } from "../hours.ts";
+import { documentAnswer, documentBooking, documentCatalog, documentHours, documentLocation, type DocumentAnswer } from "../doc-answers.ts";
 import { buildIndex, minimumCoverage, minimumScore, type SearchHit } from "../knowledge.ts";
 import { fixedMessages } from "../messages.ts";
 import { formatPrice } from "../text.ts";
@@ -21,6 +21,20 @@ export function hoursAnswer(knowledge: BusinessKnowledge, opening: OpeningState,
       ? text.openNow(opening.closesAt)
       : text.closedNow(opening.next ? formatNextOpening(opening.next, language) : null);
   return `${now}\n\n${text.hoursTitle}\n${formatWeek(knowledge.hours, language)}`;
+}
+
+/**
+ * The opening hours of the day asked («Abrem amanhã?», «Dá para ir no sábado?»): that day's slots or
+ * «closed» (a closure day says why); for today, also whether it is open right now. Never whether
+ * there is a free slot: the assistant doesn't see the calendar.
+ */
+export function dayHoursAnswer(knowledge: BusinessKnowledge, opening: OpeningState, day: AskedDay, language: ChatbotLanguage): string {
+  const text = fixedMessages[language];
+  const { closure, slots } = hoursOn(knowledge.hours, knowledge.closures, day);
+  const sentence = text.dayHours(dayLabel(day, language), slots, closure?.reason ?? null);
+  if (day.daysAhead !== 0 || !slots.length) return sentence;
+  const now = opening.open && opening.closesAt ? text.openNow(opening.closesAt) : opening.next?.daysAhead === 0 ? text.closedNow(formatNextOpening(opening.next, language)) : text.closedNow(null);
+  return `${sentence} ${now}`;
 }
 
 export function locationAnswer(knowledge: BusinessKnowledge, language: ChatbotLanguage): string | null {
@@ -78,9 +92,12 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   const hasDocuments = Boolean(knowledge.chunks?.length);
 
   if (strongEntry) parts.push(entryText(strongEntry));
+  // «Abrem amanhã?», «Dá para ir no sábado?»: the hours of that day.
+  const day = has("hours") ? askedDay(request.message, knowledge.timeZone, request.now) : null;
   if (has("hours") && !strongEntry) {
     // No structured hours: the documents' hours, wherever they are in the text, before «I don't know».
-    if (opening.known || !hasDocuments || !fromDocument(documentHours(request, index()))) parts.push(hoursAnswer(knowledge, opening, language));
+    if (opening.known && day) parts.push(dayHoursAnswer(knowledge, opening, day, language));
+    else if (opening.known || !hasDocuments || !fromDocument(documentHours(request, index(), day))) parts.push(hoursAnswer(knowledge, opening, language));
   }
   if (has("location") && !strongEntry) {
     const location = locationAnswer(knowledge, language);
@@ -98,10 +115,21 @@ export function mockAnswer(request: AnswerRequest): AnswerResult {
   if (!parts.length && topEntry) parts.push(entryText(topEntry));
   if (!parts.length && hasDocuments) fromDocument(documentAnswer(request, index()));
   if (has("booking")) {
-    const booking = bookingAnswer(knowledge, language);
-    if (booking) parts.push(booking);
+    // The booking link set in the admin; otherwise what the documents say (online link, «sem marcação»), then the phone.
+    const fromDocs = !knowledge.bookingUrl && hasDocuments ? documentBooking(request, index()) : null;
+    if (fromDocs) {
+      // Not twice when the answer above already quotes these lines.
+      const said = parts.join("\n");
+      if (!fromDocs.text.split("\n").every((line) => said.includes(line))) fromDocument(fromDocs);
+    } else {
+      const booking = bookingAnswer(knowledge, language);
+      if (booking) parts.push(booking);
+    }
   }
-  return { text: parts.length ? parts.join("\n\n") : null, provider: "mock", usedEntryIds: used, sources };
+  // «(This information is only available in another language…)» once, at the end.
+  const note = fixedMessages[language].answerInOtherLanguage;
+  const noted = parts.filter((part) => part.endsWith(note)).length > 1 ? [...parts.map((part) => (part.endsWith(note) ? part.slice(0, -note.length).trimEnd() : part)), note] : parts;
+  return { text: noted.length ? noted.join("\n\n") : null, provider: "mock", usedEntryIds: used, sources };
 }
 
 export const mockProvider: AnswerProvider = {

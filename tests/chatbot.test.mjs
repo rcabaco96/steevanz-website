@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { demoLodging, demoRestaurant } from "../src/lib/chatbot/demo.ts";
 import { respond } from "../src/lib/chatbot/engine.ts";
 import { handoffSummary, sanitizeReply } from "../src/lib/chatbot/guardrails.ts";
-import { formatNextOpening, formatWeek, localClock, openingState } from "../src/lib/chatbot/hours.ts";
+import { askedDay, formatNextOpening, formatWeek, hoursOn, localClock, openingState } from "../src/lib/chatbot/hours.ts";
 import { detectIntents } from "../src/lib/chatbot/intents.ts";
 import { buildIndex, findProperty, minimumScore, search } from "../src/lib/chatbot/knowledge.ts";
 import { guessLanguage, replyLanguage } from "../src/lib/chatbot/language.ts";
@@ -102,6 +102,72 @@ describe("chatbot intents", () => {
   it("spots emergencies", () => {
     assert.ok(detectIntents("Socorro, cheira a gás na cozinha!", "lodging").includes("emergency"));
     assert.ok(detectIntents("There's a fire!", "restaurant").includes("emergency"));
+  });
+
+  it("a day with «can I come» phrasing is about that day's hours and how to book, in the six languages", () => {
+    for (const question of [
+      "Dá para cortar o cabelo amanhã?",
+      "Estão abertos no sábado?",
+      "Abrem hoje?",
+      "Posso ir sem marcação no sábado?",
+      "Têm vaga hoje à tarde?",
+      "E no fim de semana?",
+      "Cortam cabelo depois de amanhã?",
+      "Can I come tomorrow?",
+      "Are you open on Sunday?",
+      "¿Puedo ir mañana por la mañana?",
+      "Vous êtes ouverts demain ?",
+      "Haben Sie am Samstag geöffnet?",
+      "Siete aperti domenica?",
+      "Posso venire oggi?",
+    ]) {
+      assert.deepEqual(detectIntents(question, "beauty"), ["hours", "booking"], question);
+    }
+  });
+
+  it("does not turn other questions into hours questions", () => {
+    assert.deepEqual(detectIntents("Posso ir com o meu cão?", "beauty"), []);
+    assert.deepEqual(detectIntents("Dá para pagar com MB WAY?", "beauty"), []);
+    assert.deepEqual(detectIntents("Guten Morgen", "beauty"), ["greeting"]);
+    assert.deepEqual(detectIntents("Hoje está a chover, há guarda-chuvas para os clientes?", "beauty"), []);
+    // A price question on a day stays a price question.
+    assert.deepEqual(detectIntents("Sou estudante, quanto pago por um degradê na quarta?", "beauty"), ["price"]);
+  });
+});
+
+describe("chatbot asked day", () => {
+  // Wednesday 21/10/2026, 13:30 in Lisbon.
+  const wednesday = new Date("2026-10-21T12:30:00Z");
+  const day = (message, now = wednesday) => askedDay(message, "Europe/Lisbon", now);
+
+  it("resolves today, tomorrow, the day after, weekdays and the weekend in the business's time zone", () => {
+    assert.deepEqual(day("Abrem hoje?"), { date: "2026-10-21", weekday: 3, daysAhead: 0, mention: "today" });
+    assert.deepEqual(day("Dá para amanhã?"), { date: "2026-10-22", weekday: 4, daysAhead: 1, mention: "tomorrow" });
+    assert.equal(day("E depois de amanhã?").date, "2026-10-23");
+    assert.equal(day("Estão abertos no sábado?").date, "2026-10-24");
+    assert.equal(day("Abrem à segunda?").date, "2026-10-26");
+    assert.equal(day("Abrem na quarta?").daysAhead, 0);
+    assert.equal(day("Abrem na próxima quarta?").daysAhead, 7);
+    assert.equal(day("This weekend?").date, "2026-10-24");
+    assert.equal(day("Mañana por la mañana").date, "2026-10-22");
+    assert.equal(day("Demain ?").date, "2026-10-22");
+    assert.equal(day("Morgen?").date, "2026-10-22");
+    assert.equal(day("Domani?").date, "2026-10-22");
+    // 23:30 UTC on 21/10 is already 00:30 on Thursday 22/10 in Lisbon.
+    assert.equal(day("Abrem hoje?", new Date("2026-10-21T23:30:00Z")).date, "2026-10-22");
+  });
+
+  it("ignores words that only look like days", () => {
+    assert.equal(day("Guten Morgen"), null);
+    assert.equal(day("Abrem no dia 8 de dezembro?"), null);
+    assert.equal(day("Quero a segunda via da fatura"), null);
+  });
+
+  it("gives that day's hours, closures first", () => {
+    const { hours, closures } = demoRestaurant.knowledge;
+    assert.deepEqual(hoursOn(hours, closures, { date: "2026-10-22", weekday: 4 }), { closure: null, slots: [{ opens: "12:00", closes: "15:00" }, { opens: "19:00", closes: "23:00" }] });
+    assert.deepEqual(hoursOn(hours, closures, { date: "2026-10-26", weekday: 1 }), { closure: null, slots: [] });
+    assert.deepEqual(hoursOn(hours, closures, { date: "2026-12-25", weekday: 5 }), { closure: { reason: "Natal" }, slots: [] });
   });
 });
 
@@ -223,13 +289,35 @@ describe("chatbot guardrails", () => {
 });
 
 describe("chatbot engine", () => {
-  it("introduces itself (automatic assistant, privacy) in the first message", async () => {
+  it("sends no introduction message: a bare greeting gets a short hello in the customer's language", async () => {
     const result = await ask(demoRestaurant, "Olá");
-    assert.equal(result.replies.length, 2);
-    assert.match(result.replies[0], /assistente automático de Tasca Exemplo/);
-    assert.match(result.replies[0], /guardadas/);
-    assert.equal(result.replies[1], "Em que posso ajudar?");
+    assert.deepEqual(result.replies, ["Olá! Em que posso ajudar?"]);
     assert.equal(result.conversation.greeted, true);
+    for (const [body, reply] of [
+      ["Bom dia", "Olá! Em que posso ajudar?"],
+      ["Boa tarde, tudo bem?", "Olá! Em que posso ajudar?"],
+      ["Hi there", "Hello! How can I help you?"],
+      ["Hola", "¡Hola! ¿En qué puedo ayudarle?"],
+      ["Bonjour", "Bonjour ! Comment puis-je vous aider ?"],
+      ["Guten Morgen", "Guten Tag! Wie kann ich Ihnen helfen?"],
+      ["Buongiorno", "Buongiorno! Come posso aiutarLa?"],
+    ]) {
+      const greeting = await ask(demoRestaurant, body);
+      assert.deepEqual(greeting.replies, [reply], body);
+    }
+    // Also later in the chat, and never the old introduction.
+    const later = await ask(demoRestaurant, "Olá", { state: greeted() });
+    assert.deepEqual(later.replies, ["Olá! Em que posso ajudar?"]);
+  });
+
+  it("the first reply to a question is the answer itself (no introduction before it)", async () => {
+    const result = await ask(demoRestaurant, "Olá, têm estacionamento?");
+    assert.equal(result.replies.length, 1);
+    assert.match(result.replies[0], /parque público na Rua Nova/);
+    assert.doesNotMatch(result.replies.join(" "), /assistente automático|guardadas/);
+    const media = await ask(demoRestaurant, "");
+    assert.equal(media.replies.length, 1);
+    assert.match(media.replies[0], /só consigo ler mensagens de texto/);
   });
 
   it("answers the hours in the customer's language", async () => {
@@ -250,6 +338,22 @@ describe("chatbot engine", () => {
     const result = await ask(demoRestaurant, "Queria reservar uma mesa para sábado", { state: greeted() });
     assert.match(result.replies.at(-1), /https:\/\/www\.steevanz\.com\/reservar\/tasca-exemplo/);
     assert.equal(result.handoff, null);
+  });
+
+  it("a day asked: that day's hours and how to book, never a free slot", async () => {
+    // Tuesday 20/10/2026, 13:30 in Lisbon.
+    const tomorrow = await ask(demoRestaurant, "Dá para jantar amanhã?", { state: greeted() });
+    assert.deepEqual(tomorrow.replies, [
+      "Amanhã (quarta-feira, 21/10) estamos abertos das 12:00 às 15:00 e das 19:00 às 23:00.\n\nPode reservar aqui, com a disponibilidade em tempo real: https://www.steevanz.com/reservar/tasca-exemplo",
+    ]);
+    const today = await ask(demoRestaurant, "Abrem hoje?", { state: greeted(), now: tuesdayAfternoon });
+    assert.match(today.replies[0], /^Hoje \(terça-feira, 20\/10\) estamos abertos das 12:00 às 15:00 e das 19:00 às 23:00\. Neste momento estamos fechados\. Abrimos hoje às 19:00\./);
+    const monday = await ask(demoRestaurant, "Can I come on Monday?", { state: greeted({ language: "en" }) });
+    assert.match(monday.replies[0], /^On Monday \(26\/10\) we're closed\./);
+    const christmas = new Date("2026-12-24T12:00:00Z");
+    const closure = await ask(demoRestaurant, "Abrem amanhã?", { state: greeted(), now: christmas });
+    assert.match(closure.replies[0], /^Amanhã \(sexta-feira, 25\/12\) estamos fechados \(Natal\)\./);
+    for (const result of [tomorrow, today, monday, closure]) assert.doesNotMatch(result.replies.join(" "), /há vaga|temos vaga|free slot/i);
   });
 
   it("lists matching dishes with prices", async () => {

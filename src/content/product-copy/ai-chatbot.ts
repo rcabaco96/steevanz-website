@@ -128,7 +128,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Como são tratados os dados das conversas?",
-        a: "As conversas são tratadas de acordo com o RGPD, usadas apenas para prestar o serviço e melhorar as respostas do seu chatbot. Indicamos aos clientes que estão a falar com um assistente automático.",
+        a: "As conversas são tratadas de acordo com o RGPD, usadas apenas para prestar o serviço e melhorar as respostas do seu chatbot.",
       },
       {
         q: "Quanto tempo demora a pôr a funcionar?",
@@ -271,7 +271,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "How is conversation data handled?",
-        a: "Conversations are handled in line with GDPR and used only to provide the service and improve your chatbot's answers. We make it clear to customers that they're talking to an automated assistant.",
+        a: "Conversations are handled in line with GDPR and used only to provide the service and improve your chatbot's answers.",
       },
       {
         q: "How long does it take to go live?",
@@ -414,7 +414,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "¿Cómo se tratan los datos de las conversaciones?",
-        a: "Las conversaciones se tratan conforme al RGPD y solo se usan para prestar el servicio y mejorar las respuestas de su chatbot. Indicamos a los clientes que están hablando con un asistente automático.",
+        a: "Las conversaciones se tratan conforme al RGPD y solo se usan para prestar el servicio y mejorar las respuestas de su chatbot.",
       },
       {
         q: "¿Cuánto tarda en estar en marcha?",
@@ -557,7 +557,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Comment les données des conversations sont-elles traitées ?",
-        a: "Les conversations sont traitées conformément au RGPD et servent uniquement à fournir le service et à améliorer les réponses de votre chatbot. Nous indiquons aux clients qu'ils échangent avec un assistant automatique.",
+        a: "Les conversations sont traitées conformément au RGPD et servent uniquement à fournir le service et à améliorer les réponses de votre chatbot.",
       },
       {
         q: "Combien de temps faut-il pour le mettre en service ?",
@@ -700,7 +700,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Wie werden die Gesprächsdaten behandelt?",
-        a: "Die Gespräche werden gemäß DSGVO verarbeitet und nur genutzt, um den Dienst zu erbringen und die Antworten Ihres Chatbots zu verbessern. Wir weisen Ihre Kunden darauf hin, dass sie mit einem automatischen Assistenten schreiben.",
+        a: "Die Gespräche werden gemäß DSGVO verarbeitet und nur genutzt, um den Dienst zu erbringen und die Antworten Ihres Chatbots zu verbessern.",
       },
       {
         q: "Wie lange dauert es bis zum Start?",
@@ -843,7 +843,7 @@ export const copy: ProductCopyByLocale = {
       },
       {
         q: "Come vengono trattati i dati delle conversazioni?",
-        a: "Le conversazioni sono trattate nel rispetto del GDPR e usate solo per fornire il servizio e migliorare le risposte del Suo chatbot. Informiamo i clienti che stanno parlando con un assistente automatico.",
+        a: "Le conversazioni sono trattate nel rispetto del GDPR e usate solo per fornire il servizio e migliorare le risposte del Suo chatbot.",
       },
       {
         q: "Quanto ci vuole per metterlo in funzione?",

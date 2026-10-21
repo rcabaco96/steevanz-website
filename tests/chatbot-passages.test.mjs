@@ -97,6 +97,15 @@ const expectations = [
   ["Vendem máquinas de cortar?", [dontKnow], [/€/]],
 ];
 
+/** «Can I come on that day?» → the day's hours (or the timetable after «Amanhã é quinta-feira»), plus how to book. */
+const dayQuestions = [
+  ["Dá para cortar o cabelo amanhã?", [/Amanhã é quinta-feira, 22\/10/, /10:00–13:00/]],
+  ["Estão abertos no sábado?", [/S[áa]bado:? 09:00–18:00/]],
+  ["Abrem hoje?", [/Hoje é quarta-feira, 21\/10/, /10:00–13:00/]],
+  ["Can I come tomorrow?", [/Tomorrow is Thursday, 22\/10/, /10:00–13:00/, /another language/]],
+  ["Posso ir sem marcação no sábado?", [/S[áa]bado:? 09:00–18:00/, /[Ss]em marcação/]],
+];
+
 describe("chatbot document answers: any layout, same answers", () => {
   for (const [name, chunks] of Object.entries(versions)) {
     describe(name, () => {
@@ -108,6 +117,18 @@ describe("chatbot document answers: any layout, same answers", () => {
           for (const pattern of mustNot) assert.doesNotMatch(text, pattern, `${question} → ${text}`);
           // Never a title or the columns of a table as the start of an answer.
           assert.doesNotMatch(text, /^(\d{1,2}\.\s|Serviço Duração Preço|Dia Horário)/, `${question} → ${text}`);
+        });
+      }
+
+      // Wednesday 21/10/2026 in Lisbon: «amanhã» is Thursday (only in the range «Terça a sexta-feira»).
+      for (const [question, must] of dayQuestions) {
+        it(`a day: ${question}`, async () => {
+          const { text } = await ask(bot, question);
+          for (const pattern of must) assert.match(text, pattern, `${question} → ${text}`);
+          assert.match(text, /reservas\.fiodenavalha\.example/, `${question} → ${text}`);
+          assert.doesNotMatch(text, dontKnow, `${question} → ${text}`);
+          // Opening hours and how to book, never a free slot.
+          assert.doesNotMatch(text, /temos vaga|há vaga (amanhã|hoje|no sábado)|there is a (free )?slot/i, `${question} → ${text}`);
         });
       }
 

@@ -5,11 +5,16 @@
 //
 // Document passages come from passages.ts across the WHOLE document (not 2–3 big sections): the best
 // small passages for the message, plus, for price questions, the matching price lines (or the price
-// list itself when the question is in another language) and any discount lines, and for hours
-// questions the timetable, holiday and closing lines. A test with the barbershop fixture showed why:
+// list itself when the question is in another language) and any discount lines, for hours questions
+// the timetable, holiday and closing lines, and for booking questions the booking link and the «sem
+// marcação» rule. A day in the message («Dá para cortar o cabelo amanhã?», «Estão abertos no
+// sábado?») counts as an hours + booking question (intents.ts); the model also gets today's and
+// tomorrow's weekday and date and the day asked, resolved in the bot's time zone (with that day's
+// hours when they are set in the admin). A test with the barbershop fixture showed why:
 // with three big sections the model missed «Corte clássico … 16 €» and never saw the student discount
 // together with the price it applies to.
-import { allowed, hoursSignal, intentWords, isAnchor, longestPriceRun, timetable } from "../doc-answers.ts";
+import { allowed, bookingPassages, hoursSignal, intentWords, isAnchor, longestPriceRun, timetable } from "../doc-answers.ts";
+import { askedDay, dayAhead, formatDay, hoursOn, localClock, type AskedDay } from "../hours.ts";
 import { buildIndex, minimumScore, passageCoverage, passageQuery, scorePassage, type KnowledgeIndex } from "../knowledge.ts";
 import { answerAfter, blockAfter, type Passage } from "../passages.ts";
 import { formatPrice, hasAnyKeyword, normalize } from "../text.ts";
@@ -29,6 +34,7 @@ export const contextLimits = {
   pricePassages: 6,
   priceList: 12,
   hoursPassages: 10,
+  bookingPassages: 4,
   discountPassages: 3,
   passageChars: 320,
   maxPassages: 26,
@@ -149,10 +155,8 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
     (relevant.length ? relevant : discounts).slice(0, contextLimits.discountPassages).forEach(add);
   }
 
-  // The best passages for the message across the whole document.
-  for (const passage of ranked(passages, query).slice(0, contextLimits.passages)) addWithContext(passage);
-
-  // Hours questions: the timetable, holiday and closing lines (strongest hours signal first).
+  // Hours questions (also «Dá para ir amanhã?», «Estão abertos no sábado?»): the timetable, holiday and
+  // closing lines (strongest hours signal first), before the general passages so they always fit.
   if (has("hours")) {
     timetable(passages).forEach(add);
     passages
@@ -163,6 +167,12 @@ export function groundingPassages(request: Pick<AnswerRequest, "message" | "inte
       .slice(0, contextLimits.hoursPassages)
       .forEach((item) => add(item.passage));
   }
+
+  // Booking questions: how to book (the online link, by phone) and the «sem marcação» rule.
+  if (has("booking")) bookingPassages(passages).slice(0, contextLimits.bookingPassages).forEach(addWithContext);
+
+  // The best passages for the message across the whole document.
+  for (const passage of ranked(passages, query).slice(0, contextLimits.passages)) addWithContext(passage);
 
   // Within the ceilings, in priority order.
   const kept: Passage[] = [];
@@ -236,20 +246,50 @@ export function groundingRules(): string[] {
     "After each fact you use, cite its reference in square brackets, e.g. [S1] or [E2]. Never cite anything else.",
     "Prices: quote them exactly as written. Only when the question needs it (e.g. a discount on a listed price), do simple arithmetic using only numbers written in the information, and show it briefly, e.g. «18 € − 2 € = 16 €». Check that the conditions of a discount (days, who, which service) match the question; if they don't, don't apply it.",
     "Never calculate VAT and never add VAT to any price: if a price says «+ IVA» / «+ VAT», keep it that way.",
-    "Dates: if the customer asks about a specific date or holiday that the information does not name explicitly, do not work it out from the weekday or from general rules; say you don't have that information for that date and offer to pass the chat to the team. Never contradict yourself.",
+    "Days: «today», «tomorrow» and weekday names are worked out for you above and next to the message («Day asked about»). For such a day, use the opening hours of that weekday from the information, unless the information lists a holiday, closure or holidays period that covers that date. If the customer asks about a specific date or holiday that the information does not name explicitly, do not work it out from the weekday or from general rules; say you don't have that information for that date and offer to pass the chat to the team. Never contradict yourself.",
+    "«Can I come tomorrow?», «Is there a free slot on Saturday?»: answer with that day's opening hours (or that it is closed) and how to book or the rule for coming without booking, as written in the information. You cannot see the calendar: never say that there is a free slot or that a time is available, and never confirm a booking.",
+    "Opening hours of the business always come from the business's opening hours, never from the days a staff member works.",
   ];
 }
 
-/** «Today: Wednesday, 21 October 2026 (Europe/Lisbon).» — for «are you open today?». */
-export function todayLine(request: Pick<AnswerRequest, "now" | "knowledge">): string {
+/** «Wednesday, 21/10/2026 (quarta-feira)»: English for the model, the weekday also in the reply language. */
+function dayText(day: AskedDay, language: AnswerRequest["language"]): string {
+  const english = formatDay(day, "en");
+  return language === "en" ? english : `${english} (${formatDay(day, language).split(",")[0]})`;
+}
+
+/** «Today: Wednesday, 21/10/2026 (quarta-feira). Tomorrow: Thursday, 22/10/2026 (quinta-feira). Time zone: Europe/Lisbon.» */
+export function todayLine(request: Pick<AnswerRequest, "now" | "knowledge" | "language">): string {
   const zone = request.knowledge.timeZone || "Europe/Lisbon";
-  let day: string;
   try {
-    day = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: zone }).format(request.now);
+    localClock(request.now, zone);
   } catch {
-    day = request.now.toISOString().slice(0, 10);
+    return `Today: ${request.now.toISOString().slice(0, 10)}.`;
   }
-  return `Today: ${day} (${zone}).`;
+  const today = dayAhead(request.now, zone, 0);
+  const tomorrow = dayAhead(request.now, zone, 1);
+  return `Today: ${dayText(today, request.language)}. Tomorrow: ${dayText(tomorrow, request.language)}. Time zone: ${zone}.`;
+}
+
+/**
+ * The day the message asks about («amanhã», «no sábado»…), resolved in the business's time zone, with
+ * that day's opening hours when the business set them in the admin (null: the message names no day).
+ */
+export function askedDayLine(request: Pick<AnswerRequest, "now" | "knowledge" | "language" | "message">): string | null {
+  const zone = request.knowledge.timeZone || "Europe/Lisbon";
+  let day: AskedDay | null;
+  try {
+    day = askedDay(request.message, zone, request.now);
+  } catch {
+    return null;
+  }
+  if (!day) return null;
+  const relative = day.daysAhead === 0 ? "today, " : day.daysAhead === 1 ? "tomorrow, " : "";
+  const line = `Day asked about: ${relative}${dayText(day, request.language)}.`;
+  if (!request.knowledge.hours.length) return line;
+  const { closure, slots } = hoursOn(request.knowledge.hours, request.knowledge.closures, day);
+  if (closure) return `${line} Opening hours that day: closed${closure.reason ? ` (${closure.reason})` : ""}.`;
+  return `${line} Opening hours that day: ${slots.length ? slots.map((slot) => `${slot.opens}–${slot.closes}`).join(" and ") : "closed"}.`;
 }
 
 /** The chat messages for any chat-completion API: system prompt, the last turns, then the excerpts and the message. */
@@ -258,10 +298,14 @@ export function groundedMessages(request: AnswerRequest, items: readonly Context
     role: message.author === "customer" ? "user" : "assistant",
     content: message.body,
   }));
+  const dayLine = askedDayLine(request);
   return [
     { role: "system", content: [system, todayLine(request), "", ...groundingRules()].join("\n") },
     ...history,
-    { role: "user", content: `Relevant information:\n${contextBlock(items)}\n\nCustomer message:\n${request.message}\n\nReply in ${languageName}, in at most 4 short sentences, or ${noAnswer}.` },
+    {
+      role: "user",
+      content: `Relevant information:\n${contextBlock(items)}\n\n${dayLine ? `${dayLine}\n\n` : ""}Customer message:\n${request.message}\n\nReply in ${languageName}, in at most 4 short sentences, or ${noAnswer}.`,
+    },
   ];
 }
 
