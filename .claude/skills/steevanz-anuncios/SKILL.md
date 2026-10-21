@@ -48,6 +48,10 @@ Learned over the Menu digital, Sites and Cartão de cliente ads (2026-10-16/17).
 - A big price on the end card; the phone number in videos.
 - Pointless transitions (the gold dot «Agora imagine…» scene).
 - Repeating the brand name next to the logo («Steevanz. A Steevanz resolve.» → just «Steevanz. resolve.»).
+- Anything in front of the product: blurred foreground phones or hands (`ForePhone`), objects over the phone screen
+  («continua com isto à frente», 2026-10-21). The phone and its screen stay fully visible.
+- Composited cards/objects that look pasted: wrong size for the hand, fingers cut or with light fringes, crooked
+  shapes. Match the real object's size and keep the real fingers on top (business card ad v3–v5).
 
 ## Cartão final
 
