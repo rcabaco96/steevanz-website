@@ -3,7 +3,6 @@ import type { CSSProperties } from "react";
 import { clientLogos, type ClientLogo } from "@/content/client-logos";
 import { novoCopy } from "@/content/novo-home";
 import { localize, type Locale } from "@/lib/i18n";
-import { MarqueePause } from "./MarqueePause";
 import styles from "./novo.module.css";
 
 // «Clientes» (owner, 2026-10-22: the old grey row was «super podre e fraca»; he wants a carousel that never stops):
@@ -85,10 +84,6 @@ export function ClientStrip({ locale }: { locale: Locale }) {
             </div>
           );
         })}
-      </div>
-
-      <div className={styles.wrap}>
-        <MarqueePause pauseLabel={copy.pause} playLabel={copy.play} className={styles.marqueePause} />
       </div>
     </section>
   );

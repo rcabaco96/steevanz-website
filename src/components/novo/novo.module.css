@@ -277,8 +277,7 @@
     animation-direction: reverse;
   }
 
-  .marquee:hover .marqueeRow,
-  .clients[data-paused] .marqueeRow {
+  .marquee:hover .marqueeRow {
     animation-play-state: paused;
   }
 }
@@ -312,35 +311,9 @@
   object-fit: contain;
 }
 
-.marqueePause {
-  display: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .marqueePause {
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    margin: 0.5rem 0 0 auto;
-    border-radius: 999px;
-    color: var(--text-muted);
-    background: color-mix(in oklab, var(--text) 6%, transparent);
-    transition:
-      background-color 0.25s var(--ease),
-      color 0.25s var(--ease);
-  }
 
-  .marqueePause:hover {
-    color: var(--text);
-    background: color-mix(in oklab, var(--text) 11%, transparent);
-  }
 
-  .marqueePause:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
 
 /* Reduced motion: no carousel, the list once as a centred grid. */
 @media (prefers-reduced-motion: reduce) {
