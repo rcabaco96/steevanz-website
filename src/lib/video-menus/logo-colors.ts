@@ -80,10 +80,19 @@ export function pickLogoColor(pixels: Uint8Array | number[]): Rgb | null {
       ink[2] += rgb[2];
     }
   }
-  const best = [...buckets.values()].sort((a, b) => b.weight - a.weight)[0];
+  const ranked = [...buckets.values()].sort((a, b) => b.weight - a.weight);
+  const colorOf = (b: { weight: number; r: number; g: number; b: number }) => [b.r / b.weight, b.g / b.weight, b.b / b.weight].map((c) => Math.round(c)) as Rgb;
+  const best = ranked[0];
   // A few coloured pixels (an outline's antialiasing) don't beat a clearly black logo.
   if (best && best.weight >= Math.max(8, inkWeight * 0.08)) {
-    return [best.r / best.weight, best.g / best.weight, best.b / best.weight].map((c) => Math.round(c)) as Rgb;
+    // A light main colour would turn muddy once darkened for white text (Lobo do Mar's coral went brown, 2026-10-23):
+    // a deep colour of the same logo that already reads well wins, when it is a real part of the logo.
+    const top = colorOf(best);
+    if (contrast(top, [255, 255, 255]) < 3) {
+      const deep = ranked.slice(1).find((b) => b.weight >= best.weight * 0.3 && contrast(colorOf(b), [255, 255, 255]) >= 4.5);
+      if (deep) return colorOf(deep);
+    }
+    return top;
   }
   if (inkWeight) return ink.map((c) => Math.round(c / inkWeight)) as Rgb;
   return null;

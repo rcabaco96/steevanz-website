@@ -46,8 +46,13 @@ site que façamos!»
   manifest, JSON-LD Restaurant with real data only. `metadataBase` = the ORIGIN only (a base with a path put
   O Ermita's image under /o-ermita/media/… → 404).
 - **Menu (/menu/<slug>):** an entry in `ownPreviews` in `src/app/(publico)/menu/[slug]/page.tsx` (title
-  «<Nome> · A ementa em vídeo», description, the client's 1200×630 image), and the menu logo from the client's real
+  «<Nome> · Menu digital», description, and its OWN 1200×630 image), and the menu logo from the client's real
   logo (its colours drive the menu's buttons).
+- **The menu's image is never the site's** (owner, 2026-10-23): it shows phones with the menu OPEN (the grid and a
+  dish full screen, captured from the live menu after its colours are right), with the client's logo and «Menu
+  digital», on a background that differs from the site's image.
+- **Wording:** «Menu digital» (en «Digital menu»), never «ementa em vídeo» / «menu em vídeo» on buttons, titles or
+  previews (owner, 2026-10-23).
 - **Check live** after publishing: `curl` the page and confirm og:title / og:description / og:image, and that the
   image URL answers 200. Tell the owner to test with `?v=2` (WhatsApp caches previews).
 

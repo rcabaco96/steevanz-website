@@ -35,19 +35,19 @@ const siteOrigin = "https://www.steevanz.com";
 /** Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, Fabio's Roadstop, Lobo do Mar). */
 const ownPreviews: Record<string, { title: string; description: string; image: string }> = {
   "o-ermita": {
-    title: "O Ermita · A ementa em vídeo",
-    description: "Os pratos do Ermita em vídeo: veja cada prato antes de escolher e faça o pedido à mesa.",
+    title: "O Ermita · Menu digital",
+    description: "O menu digital do Ermita: cada prato em vídeo, para ver antes de escolher, e o pedido feito à mesa.",
     image: "/media/clients/o-ermita/og-menu.jpg",
   },
   "fabios-roadstop": {
-    title: "Fabio's Roadstop · O menu em vídeo",
+    title: "Fabio's Roadstop · Menu digital",
     description: "Burgers, pequenos-almoços e cocktails: veja cada prato em vídeo antes de escolher.",
     image: "/media/clients/fabios-roadstop/og-menu.jpg",
   },
   "lobo-do-mar": {
-    title: "Lobo do Mar · A ementa em vídeo",
-    description: "Marisco, peixe e petiscos da marisqueira Lobo do Mar: veja cada prato em vídeo e faça o pedido à mesa.",
-    image: "/media/clients/lobo-do-mar/og-site.jpg",
+    title: "Lobo do Mar · Menu digital",
+    description: "O menu digital da marisqueira Lobo do Mar: marisco, peixe e petiscos, cada prato em vídeo, e o pedido feito à mesa.",
+    image: "/media/clients/lobo-do-mar/og-menu.jpg",
   },
 };
 

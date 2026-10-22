@@ -92,6 +92,15 @@
 .lm-loading body {
   overflow: hidden;
 }
+/* The opening's words and films wait hidden for their entrance (GSAP brings them in once). If the script never runs
+   its course, they show anyway after a few seconds. */
+@keyframes lm-show {
+  to { opacity: 1; }
+}
+.lm-anim .lm-in {
+  opacity: 0;
+  animation: lm-show 0s 6s forwards;
+}
 
 /* A wave that keeps rolling sideways (transform only). */
 @keyframes lm-roll {

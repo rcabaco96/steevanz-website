@@ -109,7 +109,7 @@ const pt: ErmitaCopy = {
   nav: {
     house: "A casa",
     cuisine: "Cozinha",
-    menu: "Ementa",
+    menu: "Menu digital",
     gallery: "Galeria",
     visit: "Visitar",
     book: "Reservar",
@@ -201,7 +201,7 @@ const pt: ErmitaCopy = {
       { name: "Para terminar", dishes: ["Marquise de chocolate", "Doces conventuais"] },
     ],
     menuNote: "Alguns dos pratos que se destacam na ementa.",
-    menuButton: "Ver a ementa em vídeo",
+    menuButton: "Ver o menu digital",
     imageAlt: "Garrafeira e mesas postas junto a painéis de azulejo, com a luz da tarde a entrar pela janela",
     people: [
       {
@@ -296,7 +296,7 @@ const en: ErmitaCopy = {
   nav: {
     house: "The house",
     cuisine: "Cuisine",
-    menu: "Menu",
+    menu: "Digital menu",
     gallery: "Gallery",
     visit: "Visit",
     book: "Book",
@@ -388,7 +388,7 @@ const en: ErmitaCopy = {
       { name: "To finish", dishes: ["Chocolate marquise", "Convent sweets"] },
     ],
     menuNote: "Some of the dishes that stand out on the menu.",
-    menuButton: "See the menu in video",
+    menuButton: "See the digital menu",
     imageAlt: "Wine cellar and laid tables beside tile panels, with afternoon light coming through the window",
     people: [
       {

@@ -10,7 +10,7 @@ import { loboSections } from "./sections";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// The display on ice, driven by the scroll: the scene holds still and the restaurant's own film of its display
+// The display on ice, driven by the scroll (full screen on phones, a tall frame on large screens): the scene holds still and the restaurant's own film of its display
 // moves forward and back with the page (every frame is a keyframe, so it follows the finger), while three short
 // lines take turns beside it, each staying long enough to read. Reduced motion: the still frame and the three lines.
 export function Showcase({ copy }: { copy: LoboCopy }) {
@@ -48,7 +48,10 @@ export function Showcase({ copy }: { copy: LoboCopy }) {
             },
           },
         });
-        tl.fromTo(q("[data-frame]"), { clipPath: "inset(12% 18% 12% 18% round 2rem)" }, { clipPath: "inset(0% 0% 0% 0% round 2rem)", duration: 0.25 }, 0);
+        // Large screens only: the frame opens a little as the scene starts (phones show the film full screen at once).
+        if (window.matchMedia("(min-width: 1024px)").matches) {
+          tl.fromTo(q("[data-frame]"), { clipPath: "inset(8% 10% 8% 10% round 2rem)" }, { clipPath: "inset(0% 0% 0% 0% round 2rem)", duration: 0.2 }, 0);
+        }
         steps.forEach((step, i) => {
           if (i > 0) tl.to(steps[i - 1], { opacity: 0, y: -40, duration: 0.06 }, i * 0.33 - 0.04).to(step, { opacity: 1, y: 0, duration: 0.06 }, i * 0.33);
         });
@@ -60,30 +63,30 @@ export function Showcase({ copy }: { copy: LoboCopy }) {
   );
 
   return (
-    <section ref={root} id={loboSections.showcase} aria-labelledby="lm-showcase-title" className="relative overflow-hidden bg-areia text-abismo">
-      <div className="mx-auto grid min-h-svh max-w-[90rem] items-center gap-8 px-5 py-20 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:py-10">
-        <div className="relative z-10 order-2 lg:order-1">
-          <p className="lm-eyebrow text-coral-deep">{showcase.eyebrow}</p>
+    <section ref={root} id={loboSections.showcase} aria-labelledby="lm-showcase-title" className="relative overflow-hidden bg-abismo text-white lg:bg-areia lg:text-abismo">
+      <div className="relative mx-auto flex min-h-svh max-w-[90rem] flex-col justify-end px-5 pt-24 pb-12 sm:px-8 lg:grid lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16 lg:py-10">
+        {/* Phones: the film fills the screen behind the words; large screens: a tall frame on the right. */}
+        <div data-frame className="absolute inset-0 overflow-hidden bg-abismo lg:relative lg:inset-auto lg:order-2 lg:mx-auto lg:aspect-[9/16] lg:h-[86svh] lg:rounded-[2rem]">
+          {/* eslint-disable-next-line @next/next/no-img-element -- the still frame under the film */}
+          <img src={lobo.media.showcase} alt={showcase.alt} className="absolute inset-0 h-full w-full object-cover" />
+          <video ref={film} src={lobo.media.clipIce} muted playsInline preload="auto" aria-hidden="true" className="absolute inset-0 hidden h-full w-full object-cover" />
+          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(18_33_59/0.55)_0%,transparent_30%,transparent_45%,rgb(18_33_59/0.95)_100%)] lg:hidden" />
+        </div>
+        <div className="relative z-10 lg:order-1">
+          <p className="lm-eyebrow text-coral">{showcase.eyebrow}</p>
           <h2 id="lm-showcase-title" className="mt-4 font-display text-[clamp(2.6rem,9vw,5.6rem)] leading-[0.92] uppercase">
             {showcase.title}
           </h2>
-          <ol className="relative mt-8 grid min-h-[7.5rem]">
+          <ol className="relative mt-6 grid min-h-[5.5rem] lg:mt-8 lg:min-h-[7.5rem]">
             {showcase.steps.map((step, i) => (
-              <li key={step} data-step className="col-start-1 row-start-1 flex gap-4 text-[1.3rem] leading-snug font-semibold sm:text-2xl motion-reduce:relative motion-reduce:row-auto motion-reduce:mb-4">
+              <li key={step} data-step className="col-start-1 row-start-1 flex gap-4 text-[1.2rem] leading-snug font-semibold sm:text-2xl motion-reduce:relative motion-reduce:row-auto motion-reduce:mb-4">
                 <span className="font-display text-coral">{String(i + 1).padStart(2, "0")}</span>
                 {step}
               </li>
             ))}
           </ol>
-          <div aria-hidden="true" className="mt-6 h-1 w-full max-w-xs overflow-hidden rounded-full bg-abismo/10 motion-reduce:hidden">
+          <div aria-hidden="true" className="mt-5 h-1 w-full max-w-xs overflow-hidden rounded-full bg-current/15 motion-reduce:hidden">
             <div data-bar className="h-full origin-left scale-x-0 bg-coral" />
-          </div>
-        </div>
-        <div className="order-1 lg:order-2">
-          <div data-frame className="relative mx-auto aspect-[9/16] max-h-[46svh] overflow-hidden rounded-[2rem] bg-abismo lg:max-h-[86svh]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- the still frame under the film */}
-            <img src={lobo.media.showcase} alt={showcase.alt} className="absolute inset-0 h-full w-full object-cover" />
-            <video ref={film} src={lobo.media.clipIce} muted playsInline preload="auto" aria-hidden="true" className="absolute inset-0 hidden h-full w-full object-cover" />
           </div>
         </div>
       </div>
