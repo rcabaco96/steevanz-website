@@ -32,7 +32,7 @@ async function loadMenu(slug: string) {
 // a client's menu gets its own name and no Steevanz picture.
 const siteOrigin = "https://www.steevanz.com";
 
-/** Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, Fabio's Roadstop). */
+/** Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, Fabio's Roadstop, Lobo do Mar). */
 const ownPreviews: Record<string, { title: string; description: string; image: string }> = {
   "o-ermita": {
     title: "O Ermita · A ementa em vídeo",
@@ -43,6 +43,11 @@ const ownPreviews: Record<string, { title: string; description: string; image: s
     title: "Fabio's Roadstop · O menu em vídeo",
     description: "Burgers, pequenos-almoços e cocktails: veja cada prato em vídeo antes de escolher.",
     image: "/media/clients/fabios-roadstop/og-menu.jpg",
+  },
+  "lobo-do-mar": {
+    title: "Lobo do Mar · A ementa em vídeo",
+    description: "Marisco, peixe e petiscos da marisqueira Lobo do Mar: veja cada prato em vídeo e faça o pedido à mesa.",
+    image: "/media/clients/lobo-do-mar/og-site.jpg",
   },
 };
 
