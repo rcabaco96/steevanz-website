@@ -1,16 +1,17 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { ActionState } from "@/lib/action-state";
 import { AdminAccessError, requireAdmin } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
 import { maxTablesAtOnce, tableName, tableNamesUpTo } from "./ordering-rules";
 import { newOrderingToken } from "./ordering-store";
-import { uuidPattern } from "./store";
+import { menuPaths } from "./rules";
+import { menuCacheTag, uuidPattern } from "./store";
 
 // Admin: ordering at the table. The «Pedidos no menu» switch and the menu's tables (each with its
 // own secret link for the table's plate). The table pages are rendered on every visit, so only the
-// admin's page needs refreshing.
+// admin's page needs refreshing (and, for the switch, the menu's public page: see setMenuOrdering).
 
 type ServiceClient = ReturnType<typeof createServiceClient>;
 
@@ -69,8 +70,14 @@ export async function setMenuOrdering(_previous: ActionState, formData: FormData
     const client = createServiceClient();
     const menuId = await findMenuId(client, value(formData, "id"));
     const enabled = value(formData, "enabled") === "on";
-    const { error } = await client.from("video_menus").update({ ordering_enabled: enabled }).eq("id", menuId);
+    const { data, error } = await client.from("video_menus").update({ ordering_enabled: enabled }).eq("id", menuId).select("slug").maybeSingle();
     if (error) throw new Error(`setMenuOrdering: ${error.message}`);
+    // The public link reads the switch too (a demo menu's demo orders): its cached page follows.
+    const slug = (data as { slug: string } | null)?.slug;
+    if (slug) {
+      revalidateTag(menuCacheTag(slug), { expire: 0 });
+      for (const path of menuPaths(slug)) revalidatePath(path);
+    }
     refresh();
     return { ok: true, message: enabled ? "Pedidos ligados: os links das mesas já aceitam pedidos." : "Pedidos desligados: os links das mesas mostram só o menu." };
   });

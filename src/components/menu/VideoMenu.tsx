@@ -5,14 +5,14 @@ import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useStat
 import { preload } from "react-dom";
 import { formatMenuPrice, languageLocales, localizeMenu, menuText, type MenuLanguage } from "@/lib/video-menus/i18n";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
-import { AddToOrder, type TableOrderingConfig } from "./AddToOrder";
+import { AddToOrder, type MenuOrderingConfig } from "./AddToOrder";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
 import { LanguagePicker } from "./LanguagePicker";
 import { chooseMenuLanguage, useMenuLanguage } from "./menu-language";
 import { hideIfBroken, pictureGuard } from "./safe-picture";
 import { ShortsViewer, type ShortItem } from "./VideoShorts";
 
-/** Ordering at the table: its code comes only on a table's page (/m/<token>), after the menu. */
+/** Ordering: its code comes only on a table's page (/m/<token>) or a demo menu's link with demo orders, after the menu. */
 const TableOrdering = dynamic(() => import("./ordering/TableOrdering"), { ssr: false });
 
 /** The business's colours (Dolci e Salati's logo), for accents only: the page keeps the theme's text and background. */
@@ -186,8 +186,8 @@ export function VideoMenu({
   menu: VideoMenuData;
   /** Demo menus (isDemoMenu): say their videos and prices are examples. */
   demo?: boolean;
-  /** A table's page with ordering on: «Adicionar» on each dish and the table's order. */
-  ordering?: TableOrderingConfig;
+  /** A table's page with ordering on (or a demo menu's link with demo orders): «Adicionar» on each dish and the order. */
+  ordering?: MenuOrderingConfig;
 }) {
   const orderable = Boolean(ordering);
   // The menu in the customer's language (owner, 2026-10-19): drawn in Portuguese on the server, then in
@@ -538,7 +538,7 @@ export function VideoMenu({
         </div>
       ) : null}
 
-      {ordering ? <TableOrdering {...ordering} dishes={menu.dishes} /> : null}
+      {ordering ? <TableOrdering config={ordering} dishes={menu.dishes} /> : null}
 
       {viewer !== null ? (
         <ShortsViewer items={items} start={sequence.at[viewer] ?? 0} label={menu.business} closeLabel={text.close} slideLabel={text.slideAria} onClose={closeViewer} />

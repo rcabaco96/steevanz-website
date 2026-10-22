@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { preconnect } from "react-dom";
 import { VideoMenu } from "@/components/menu/VideoMenu";
-import { bunnyHost, isDemoMenu, menuReferrer, slugProblem } from "@/lib/video-menus/rules";
+import { bunnyHost, hasPublicDemoOrdering, isDemoMenu, menuReferrer, slugProblem } from "@/lib/video-menus/rules";
 import { getPublicMenu, MenusNotReadyError } from "@/lib/video-menus/store";
 
 // A client's digital menu in videos (managed in /admin/menus), opened from a QR code or a link. Only
@@ -38,5 +38,6 @@ export default async function VideoMenuPage({ params }: PageProps<"/menu/[slug]"
   const { slug } = await params;
   const menu = await loadMenu(slug);
   if (!menu) notFound();
-  return <VideoMenu menu={menu} demo={isDemoMenu(slug)} />;
+  // A demo menu may take demo orders here: each visitor's own, kept in their tab (never on the server).
+  return <VideoMenu menu={menu} demo={isDemoMenu(slug)} ordering={hasPublicDemoOrdering(slug, menu.ordering) ? { demo: true, slug } : undefined} />;
 }

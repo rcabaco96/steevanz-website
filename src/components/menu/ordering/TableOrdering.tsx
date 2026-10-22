@@ -22,7 +22,8 @@ import { bunnyThumbnail, type MenuDish } from "@/lib/video-menus/rules";
 import { useMenuLanguage } from "../menu-language";
 import { hideIfBroken, pictureGuard } from "../safe-picture";
 
-import { orderBridge, type TableOrderingConfig } from "../AddToOrder";
+import { demoAdd, demoChange, demoConfirmDue, demoPlaceOrder, demoStorageKey, newDemoSession, nextDemoConfirmIn, readDemoSession, type DemoSession } from "@/lib/video-menus/demo-ordering";
+import { isDemoOrdering, orderBridge, type DemoOrderingConfig, type MenuOrderingConfig, type TableOrderingConfig } from "../AddToOrder";
 import { listenToBroadcast } from "./realtime";
 
 // Ordering at the table (owner, 2026-10-16): loaded only on a table's page (/m/<token>). Everyone at
@@ -30,6 +31,8 @@ import { listenToBroadcast } from "./realtime";
 // the other phones (Realtime Broadcast) to fetch it. Taps show at once (the change is drawn before
 // the server's answer, with the same rules), and the newest state from the server always wins. In the
 // menu's language (owner, 2026-10-19); the order itself keeps the Portuguese names for the staff.
+// On a demo menu's public link (owner, 2026-10-22) the same sheet runs on a cart of the visitor's own
+// (useDemoCart): kept in their tab only, never sent to the server, so no two visitors ever share it.
 
 const money = (cents: number, language: MenuLanguage) => formatMenuPrice(cents / 100, language);
 /** Without Realtime (or while it reconnects), the state is fetched this often. */
@@ -40,6 +43,33 @@ const sheetMs = 260;
 type Change = { id: number; kind: "add"; dish: string } | { id: number; kind: "set"; line: string; quantity?: number; note?: string };
 type View = { kind: "cart" } | { kind: "confirm" } | { kind: "order"; token: string };
 
+/** What the order sheet needs from a cart: the table's (shared, on the server) or a demo visitor's own. */
+interface OrderCart {
+  ready: boolean;
+  lines: CartLine[];
+  orders: TableOrder[];
+  add: (dish: string) => void;
+  change: (line: string, update: { quantity?: number; note?: string }) => void;
+  placeOrder: () => Promise<{ number: number; token: string } | null>;
+  /** The last problem, in the menu's language. */
+  problem: string | null;
+  off: OrderingError | null;
+  busy: boolean;
+}
+
+/** The last problem's code, for a few seconds. */
+function useProblem() {
+  const [problem, setProblem] = useState<OrderingError | string | null>(null);
+  const problemTimer = useRef<number | undefined>(undefined);
+  const say = useCallback((error: OrderingError | string) => {
+    setProblem(error);
+    window.clearTimeout(problemTimer.current);
+    problemTimer.current = window.setTimeout(() => setProblem(null), 3500);
+  }, []);
+  useEffect(() => () => window.clearTimeout(problemTimer.current), []);
+  return { problem, say };
+}
+
 interface Answer {
   state?: TableState;
   placed?: { number: number; token: string };
@@ -47,11 +77,11 @@ interface Answer {
 }
 
 /** The table's cart and orders, its changes drawn at once, and its phones kept in step. */
-function useTableCart({ token, channel, realtime, dishes, language }: TableOrderingConfig & { dishes: Record<string, MenuDish>; language: MenuLanguage }) {
+function useTableCart({ token, channel, realtime, dishes, language }: TableOrderingConfig & { dishes: Record<string, MenuDish>; language: MenuLanguage }): OrderCart {
   const [server, setServer] = useState<TableState | null>(null);
   const [changes, setChanges] = useState<Change[]>([]);
   // The last problem's code (its words follow the menu's language).
-  const [problem, setProblem] = useState<OrderingError | string | null>(null);
+  const { problem, say } = useProblem();
   const [off, setOff] = useState<OrderingError | null>(null);
   const version = useRef(-1);
   const nextId = useRef(1);
@@ -65,15 +95,6 @@ function useTableCart({ token, channel, realtime, dishes, language }: TableOrder
     version.current = state.version;
     setServer(state);
   }, []);
-
-  // The last problem, for a few seconds.
-  const problemTimer = useRef<number | undefined>(undefined);
-  const say = useCallback((error: OrderingError | string) => {
-    setProblem(error);
-    window.clearTimeout(problemTimer.current);
-    problemTimer.current = window.setTimeout(() => setProblem(null), 3500);
-  }, []);
-  useEffect(() => () => window.clearTimeout(problemTimer.current), []);
 
   const refresh = useCallback(async () => {
     if (fetching.current) {
@@ -215,6 +236,95 @@ function useTableCart({ token, channel, realtime, dishes, language }: TableOrder
   }, [send, language]);
 
   return { ready: server !== null, lines, orders: server?.orders ?? [], add, change, placeOrder, problem: problem === null ? null : orderingError(language, problem), off, busy: changes.length > 0 };
+}
+
+function readStored(key: string): string | null {
+  try {
+    return window.sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStored(key: string, value: string): void {
+  try {
+    window.sessionStorage.setItem(key, value);
+  } catch {
+    // Private mode or storage off: the demo order lives in memory until the page closes.
+  }
+}
+
+/** A random id for this tab's demo session (only names its orders; never sent anywhere). */
+function randomSessionId(): string {
+  const bytes = new Uint8Array(12);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function startDemoSession(key: string): DemoSession {
+  const now = Date.now();
+  const kept = readDemoSession(readStored(key), now);
+  return demoConfirmDue(kept ?? newDemoSession(randomSessionId(), now), now);
+}
+
+/**
+ * A demo menu's public link: the visitor's own cart and orders, with the table's rules, kept in this
+ * tab only (sessionStorage) and never sent to the server. The staff's confirmation is simulated.
+ */
+function useDemoCart({ slug, dishes, language }: DemoOrderingConfig & { dishes: Record<string, MenuDish>; language: MenuLanguage }): OrderCart {
+  const key = demoStorageKey(slug);
+  const [session, setSession] = useState(() => startDemoSession(key));
+  const current = useRef(session);
+  const { problem, say } = useProblem();
+
+  const commit = useCallback(
+    (next: DemoSession) => {
+      current.current = next;
+      setSession(next);
+      writeStored(key, JSON.stringify(next));
+    },
+    [key],
+  );
+
+  // The simulated confirmation of the orders still waiting.
+  useEffect(() => {
+    const wait = nextDemoConfirmIn(session, Date.now());
+    if (wait === null) return;
+    const timer = window.setTimeout(() => commit(demoConfirmDue(current.current, Date.now())), wait + 50);
+    return () => window.clearTimeout(timer);
+  }, [session, commit]);
+
+  const add = useCallback(
+    (dishId: string) => {
+      const dish = dishes[dishId];
+      if (!dish) return;
+      const result = demoAdd(current.current, { id: dishId, name: dish.name, priceCents: Math.round(dish.price * 100) }, Date.now());
+      if ("error" in result) say(result.error);
+      else commit(result.session);
+    },
+    [dishes, say, commit],
+  );
+
+  const change = useCallback(
+    (line: string, update: { quantity?: number; note?: string }) => {
+      const result = demoChange(current.current, line, update, Date.now());
+      if ("error" in result) say(result.error);
+      else commit(result.session);
+    },
+    [say, commit],
+  );
+
+  const placeOrder = useCallback(async () => {
+    const result = demoPlaceOrder(current.current, Date.now());
+    if ("error" in result) {
+      say(result.error);
+      return null;
+    }
+    commit(result.session);
+    return { number: result.order.number, token: result.order.token };
+  }, [say, commit]);
+
+  return { ready: true, lines: session.lines, orders: session.orders, add, change, placeOrder, problem: problem === null ? null : orderingError(language, problem), off: null, busy: false };
 }
 
 function CloseIcon() {
@@ -378,16 +488,44 @@ function LineRow({
   );
 }
 
+/** The table's shared order (a table's link). */
+function TableCartOrdering({ config, dishes }: { config: TableOrderingConfig; dishes: Record<string, MenuDish> }) {
+  const language = useMenuLanguage();
+  const cart = useTableCart({ ...config, dishes, language });
+  return <OrderSheet cart={cart} dishes={dishes} language={language} heading={tableLabel(config.tableName, language)} demo={false} />;
+}
+
+/** A demo visitor's own order (a demo menu's public link). */
+function DemoCartOrdering({ config, dishes }: { config: DemoOrderingConfig; dishes: Record<string, MenuDish> }) {
+  const language = useMenuLanguage();
+  const cart = useDemoCart({ ...config, dishes, language });
+  return <OrderSheet cart={cart} dishes={dishes} language={language} heading={orderingText[language].demoLabel} demo />;
+}
+
+export default function TableOrdering({ config, dishes }: { config: MenuOrderingConfig; dishes: Record<string, MenuDish> }) {
+  return isDemoOrdering(config) ? <DemoCartOrdering config={config} dishes={dishes} /> : <TableCartOrdering config={config} dishes={dishes} />;
+}
+
 /**
  * The order bar (fixed at the bottom once there's something in the cart, or an order placed) and the
  * order view it opens: the lines, the total, «Fazer pedido», the QR code of an order and «Já pedido».
+ * A demo order says it is one, and what the QR code would do, instead of showing a code.
  */
-export default function TableOrdering(props: TableOrderingConfig & { dishes: Record<string, MenuDish> }) {
-  const { dishes } = props;
-  const language = useMenuLanguage();
+function OrderSheet({
+  cart,
+  dishes,
+  language,
+  heading,
+  demo,
+}: {
+  cart: OrderCart;
+  dishes: Record<string, MenuDish>;
+  language: MenuLanguage;
+  /** Above the sheet's title: the table's name, or «Pedido de demonstração». */
+  heading: string;
+  demo: boolean;
+}) {
   const text = orderingText[language];
-  const tableName = tableLabel(props.tableName, language);
-  const cart = useTableCart({ ...props, language });
   const [view, setView] = useState<View | null>(null);
   const [closing, setClosing] = useState(false);
   const [placing, setPlacing] = useState(false);
@@ -498,7 +636,7 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
       ) : null}
 
       {view ? (
-        <div className="fixed inset-0 z-[85]" role="dialog" aria-modal="true" aria-label={text.tableOrderAria(tableName)}>
+        <div className="fixed inset-0 z-[85]" role="dialog" aria-modal="true" aria-label={demo ? heading : text.tableOrderAria(heading)}>
           <button
             type="button"
             aria-label={text.closeOrder}
@@ -513,9 +651,9 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
             <div className="flex items-center gap-3 px-5 pt-4 pb-3">
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent)" }}>
-                  {tableName}
+                  {heading}
                 </p>
-                <h2 className="display text-xl text-text">{view.kind === "order" ? text.yourOrder : text.tableOrder}</h2>
+                <h2 className="display text-xl text-text">{view.kind === "order" || demo ? text.yourOrder : text.tableOrder}</h2>
               </div>
               <button type="button" onClick={close} aria-label={text.close} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-surface-2 text-text">
                 <CloseIcon />
@@ -530,9 +668,19 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
                     {shownOrder.status === "confirmed" ? (
                       <p className="menu-add-pop w-full rounded-2xl bg-success-soft px-4 py-3 text-base font-semibold text-success">{text.status.confirmed}</p>
                     ) : (
-                      <p className="text-base font-semibold text-text">{text.showCode}</p>
+                      <p className="text-base font-semibold text-text">{demo ? text.status.placed : text.showCode}</p>
                     )}
-                    <OrderQr token={shownOrder.token} label={text.qrAria} />
+                    {demo ? (
+                      // No QR code: a demo order goes to no restaurant (it has no staff page).
+                      <div data-demo-order className="w-full rounded-2xl border border-dashed px-4 py-3 text-left" style={{ borderColor: "var(--menu-accent)" }}>
+                        <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent)" }}>
+                          {text.demoLabel}
+                        </p>
+                        <p className="mt-1 text-sm text-muted">{text.demoExplain}</p>
+                      </div>
+                    ) : (
+                      <OrderQr token={shownOrder.token} label={text.qrAria} />
+                    )}
                     <p className="text-xs text-muted">
                       {orderClock(language, shownOrder.createdAt)} · {text.items(cartItemCount(shownOrder.lines))} · {money(shownOrder.totalCents, language)}
                     </p>
@@ -562,7 +710,7 @@ export default function TableOrdering(props: TableOrderingConfig & { dishes: Rec
             ) : (
               <>
                 <div className="flex-1 overflow-y-auto px-5">
-                  <p className="-mt-1 mb-1 text-xs text-muted">{text.shared}</p>
+                  <p className="-mt-1 mb-1 text-xs text-muted">{demo ? text.demoShared : text.shared}</p>
                   {!cart.ready ? (
                     <div className="my-3 flex flex-col gap-3">
                       <div className="h-16 animate-pulse rounded-2xl bg-surface-2" />

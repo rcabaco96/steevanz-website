@@ -4,7 +4,8 @@ import { useState, useSyncExternalStore } from "react";
 import { menuText, type MenuLanguage } from "@/lib/video-menus/i18n";
 
 // The only piece of ordering in the menu's own bundle: the «Adicionar» buttons and the little store
-// that links them to the ordering code (loaded only on a table's page, ordering/TableOrdering). Each
+// that links them to the ordering code (loaded only on a table's page or a demo menu's link with demo
+// orders, ordering/TableOrdering). Each
 // button reads its own dish's count, so a change in the cart redraws only the buttons whose count
 // changed, never the cards (their videos) around them.
 
@@ -17,6 +18,22 @@ export interface TableOrderingConfig {
   channel: string;
   /** Supabase's public URL and anon key, for Realtime only (null: the phones just fetch now and then). */
   realtime: { url: string; key: string } | null;
+}
+
+/**
+ * What a demo menu's public link passes instead (hasPublicDemoOrdering): an order of the visitor's
+ * own, kept in their tab only (demo-ordering), never sent to the server nor shared with anyone.
+ */
+export interface DemoOrderingConfig {
+  demo: true;
+  /** The menu's slug (its demo session's key in the tab). */
+  slug: string;
+}
+
+export type MenuOrderingConfig = TableOrderingConfig | DemoOrderingConfig;
+
+export function isDemoOrdering(config: MenuOrderingConfig): config is DemoOrderingConfig {
+  return "demo" in config && config.demo === true;
 }
 
 let counts: Record<string, number> = {};

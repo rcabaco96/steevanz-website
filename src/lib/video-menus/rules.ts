@@ -42,6 +42,8 @@ export interface VideoMenuData {
    * collection last, without a heading. Never empty.
    */
   collections: MenuCollection[];
+  /** «Pedidos no menu» is on in the admin (set by the public read; the table links check it again). */
+  ordering?: boolean;
 }
 
 // Bunny Stream -------------------------------------------------------------------------------------
@@ -158,6 +160,16 @@ export function menuPublicPath(slug: string): string {
 const demoMenuSlugs = new Set(["dolci-salati", "trattoria-da-nonna", "sakura-sushi", "marisqueira-do-cais"]);
 export function isDemoMenu(slug: string): boolean {
   return demoMenuSlugs.has(slug);
+}
+
+/**
+ * Demo menus whose public link (/menu/<slug>) takes demo orders (owner, 2026-10-22: the Trattoria
+ * only). Each visitor gets an order of their own that never leaves their browser (demo-ordering).
+ */
+const publicDemoOrderingSlugs = new Set(["trattoria-da-nonna"]);
+/** The public link takes demo orders: a demo menu named above, with «Pedidos no menu» on in the admin. */
+export function hasPublicDemoOrdering(slug: string, orderingEnabled: boolean | undefined): boolean {
+  return isDemoMenu(slug) && publicDemoOrderingSlugs.has(slug) && orderingEnabled === true;
 }
 
 /** Every path that shows this menu, to refresh after a change. */

@@ -118,11 +118,12 @@ export function getPublicMenu(slug: string): Promise<VideoMenuData | null> {
       if (error) fail(error, "getPublicMenu");
       if (!data) return null;
       const parts = await loadMenuParts(data as VideoMenuRow);
-      return toVideoMenuData(parts.menu, parts.dishes, parts.collections, parts.links);
+      const menu = toVideoMenuData(parts.menu, parts.dishes, parts.collections, parts.links);
+      return menu && { ...menu, ordering: Boolean(parts.menu.ordering_enabled) };
     },
     // The shape's version: a new one never reads a menu cached in an older shape (sections, then
-    // translations: 2026-10-19).
-    ["video-menu", "sections-i18n", slug],
+    // translations: 2026-10-19; the ordering switch: 2026-10-22).
+    ["video-menu", "sections-i18n-ordering", slug],
     { tags: [menusCacheTag, menuCacheTag(slug)], revalidate: 3600 },
   )();
 }

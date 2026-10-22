@@ -40,6 +40,10 @@ export interface OrderingText {
   waitingChip: string;
   status: Record<OrderStatus, string>;
   errors: Record<OrderingError, string>;
+  /** A demo menu's public link (demo-ordering): the order's badge, the cart's note and what replaces the QR code. */
+  demoLabel: string;
+  demoShared: string;
+  demoExplain: string;
 }
 
 export const orderingText: Record<MenuLanguage, OrderingText> = {
@@ -90,6 +94,9 @@ export const orderingText: Record<MenuLanguage, OrderingText> = {
       network: "Sem ligação. Tente outra vez.",
       bad_request: "Ocorreu um erro. Tente outra vez.",
     },
+    demoLabel: "Pedido de demonstração",
+    demoShared: "Demonstração: este pedido fica só neste dispositivo e não é enviado a nenhum restaurante.",
+    demoExplain: "Num restaurante, mostraria aqui o código do pedido ao funcionário, que o confirma. Nesta demonstração, a confirmação é simulada.",
   },
   en: {
     items: (count) => `${count} ${count === 1 ? "item" : "items"}`,
@@ -138,6 +145,9 @@ export const orderingText: Record<MenuLanguage, OrderingText> = {
       network: "No connection. Try again.",
       bad_request: "Something went wrong. Try again.",
     },
+    demoLabel: "Demo order",
+    demoShared: "Demo: this order stays on this device only and is not sent to any restaurant.",
+    demoExplain: "In a restaurant, you would show the order’s code here to a member of staff, who confirms it. In this demo, the confirmation is simulated.",
   },
   es: {
     items: (count) => `${count} ${count === 1 ? "artículo" : "artículos"}`,
@@ -186,6 +196,9 @@ export const orderingText: Record<MenuLanguage, OrderingText> = {
       network: "Sin conexión. Inténtelo de nuevo.",
       bad_request: "Se ha producido un error. Inténtelo de nuevo.",
     },
+    demoLabel: "Pedido de demostración",
+    demoShared: "Demostración: este pedido se queda solo en este dispositivo y no se envía a ningún restaurante.",
+    demoExplain: "En un restaurante, mostraría aquí el código del pedido al personal, que lo confirma. En esta demostración, la confirmación es simulada.",
   },
   fr: {
     items: (count) => `${count} ${count === 1 ? "article" : "articles"}`,
@@ -234,6 +247,9 @@ export const orderingText: Record<MenuLanguage, OrderingText> = {
       network: "Pas de connexion. Réessayez.",
       bad_request: "Une erreur s’est produite. Réessayez.",
     },
+    demoLabel: "Commande de démonstration",
+    demoShared: "Démonstration : cette commande reste uniquement sur cet appareil et n’est envoyée à aucun restaurant.",
+    demoExplain: "Dans un restaurant, vous montreriez ici le code de la commande au personnel, qui la confirme. Dans cette démonstration, la confirmation est simulée.",
   },
   de: {
     items: (count) => `${count} Artikel`,
@@ -282,6 +298,9 @@ export const orderingText: Record<MenuLanguage, OrderingText> = {
       network: "Keine Verbindung. Versuchen Sie es erneut.",
       bad_request: "Ein Fehler ist aufgetreten. Versuchen Sie es erneut.",
     },
+    demoLabel: "Demo-Bestellung",
+    demoShared: "Demo: Diese Bestellung bleibt nur auf diesem Gerät und wird an kein Restaurant gesendet.",
+    demoExplain: "In einem Restaurant würden Sie hier dem Personal den Code der Bestellung zeigen, das sie bestätigt. In dieser Demo wird die Bestätigung simuliert.",
   },
   it: {
     items: (count) => `${count} ${count === 1 ? "articolo" : "articoli"}`,
@@ -330,6 +349,9 @@ export const orderingText: Record<MenuLanguage, OrderingText> = {
       network: "Nessuna connessione. Riprovi.",
       bad_request: "Si è verificato un errore. Riprovi.",
     },
+    demoLabel: "Ordine dimostrativo",
+    demoShared: "Dimostrazione: questo ordine resta solo su questo dispositivo e non viene inviato a nessun ristorante.",
+    demoExplain: "In un ristorante, mostrerebbe qui il codice dell’ordine al personale, che lo conferma. In questa dimostrazione, la conferma è simulata.",
   },
 };
 
