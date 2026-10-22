@@ -22,6 +22,15 @@ export function PhoneIcon(props: IconProps) {
   );
 }
 
+/** The menu in video. */
+export function PlayIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M7 4.5v15l12-7.5-12-7.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function PinIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>

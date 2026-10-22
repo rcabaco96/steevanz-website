@@ -14,7 +14,7 @@ export function Booking({ copy }: { copy: LoboCopy }) {
       <WaveEdge className="absolute bottom-[calc(100%-1px)] left-0 text-abismo" />
       <Reveal className="mx-auto flex max-w-3xl flex-col items-center px-5 pt-16 text-center sm:px-8">
         <p className="lm-eyebrow text-coral">{booking.eyebrow}</p>
-        <h2 id="lm-booking-title" className="mt-5 font-display text-[clamp(2.6rem,9vw,5.6rem)] leading-[0.95] font-extrabold uppercase">
+        <h2 id="lm-booking-title" className="mt-5 font-display text-[clamp(2.6rem,9vw,5.6rem)] leading-[0.95] uppercase">
           {booking.title}
         </h2>
         <p className="mt-6 max-w-md text-areia/80">{booking.text}</p>
@@ -22,7 +22,7 @@ export function Booking({ copy }: { copy: LoboCopy }) {
           <Magnet className="w-full sm:w-auto">
             <a
               href={lobo.phoneHref}
-              className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-coral px-8 font-display text-[0.75rem] font-bold tracking-[0.18em] text-abismo uppercase transition-colors hover:bg-areia sm:w-auto"
+              className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-coral px-8 text-[0.8rem] font-bold tracking-[0.14em] text-white uppercase transition-colors hover:bg-coral-deep sm:w-auto"
             >
               <PhoneIcon width={18} height={18} />
               {booking.call} · {lobo.phoneShort}
@@ -30,7 +30,7 @@ export function Booking({ copy }: { copy: LoboCopy }) {
           </Magnet>
           <a
             href={`mailto:${lobo.email}`}
-            className="inline-flex h-14 items-center justify-center gap-2 rounded-full px-8 font-display text-[0.75rem] font-bold tracking-[0.18em] uppercase ring-1 ring-areia/45 transition-colors hover:bg-areia/10"
+            className="inline-flex h-14 items-center justify-center gap-2 rounded-full px-8 text-[0.8rem] font-bold tracking-[0.14em] uppercase ring-1 ring-areia/45 transition-colors hover:bg-areia/10"
           >
             <MailIcon width={18} height={18} />
             {booking.email}

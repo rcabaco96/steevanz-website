@@ -6,21 +6,21 @@
 @source "./";
 
 @theme {
-  --color-abismo: #0b2430;
-  --color-abismo-2: #10303f;
-  --color-mar: #15506a;
-  --color-espuma: #e7f2ef;
-  --color-areia: #f4ecdf;
-  --color-areia-2: #eadfcd;
-  --color-coral: #ff6a4a;
-  --color-coral-deep: #c9452a;
-  --color-tinta: #0d1a21;
-  --color-calhau: #53646c;
-  --color-ardosia: #1d2a2f;
+  /* From the logo (navy and coral), the dining room's blue ceiling and its white walls with the octopus. */
+  --color-abismo: #12213b;
+  --color-abismo-2: #1a2c4d;
+  --color-marinho: #233a5e;
+  --color-azul: #1d4fa3;
+  --color-espuma: #eaf1f8;
+  --color-areia: #f6f1e8;
+  --color-areia-2: #ece4d6;
+  --color-coral: #ec6f4f;
+  --color-coral-deep: #c24f30;
+  --color-tinta: #0f1a2c;
+  --color-calhau: #5b6678;
 
-  --font-display: var(--lm-font-display), "Arial Black", sans-serif;
+  --font-display: var(--lm-font-display), "Rockwell Extra Bold", Georgia, serif;
   --font-sans: var(--lm-font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-chalk: var(--lm-font-chalk), "Comic Sans MS", cursive;
 
   --ease-mare: cubic-bezier(0.65, 0, 0.2, 1);
 }
@@ -47,6 +47,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: clip;
+    font-synthesis-weight: none;
   }
   ::selection {
     background: var(--color-coral);
@@ -81,17 +82,6 @@
     display: block;
     width: 100%;
     height: clamp(28px, 5vw, 72px);
-  }
-  /* The slate of the board, with the haze chalk leaves. */
-  .lm-slate {
-    background:
-      radial-gradient(120% 90% at 30% 20%, rgb(255 255 255 / 0.06), transparent 60%),
-      radial-gradient(90% 80% at 80% 90%, rgb(255 255 255 / 0.04), transparent 60%),
-      var(--color-ardosia);
-  }
-  .lm-chalk {
-    font-family: var(--font-chalk);
-    text-shadow: 0 0 1px rgb(255 255 255 / 0.4);
   }
 }
 

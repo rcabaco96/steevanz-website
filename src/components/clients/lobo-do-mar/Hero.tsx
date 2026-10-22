@@ -3,23 +3,26 @@
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
 import { useRef } from "react";
-import { lobo, loboPhotoSize } from "@/content/lobo-do-mar/facts";
+import { lobo } from "@/content/lobo-do-mar/facts";
 import type { LoboCopy } from "@/content/lobo-do-mar/copy";
-import { PhoneIcon } from "./icons";
+import { AutoVideo } from "./AutoVideo";
+import { PhoneIcon, PlayIcon } from "./icons";
+import { Badge } from "./Logo";
 import { Magnet } from "./react-bits/Magnet";
-import { loboSections } from "./sections";
 import { WaveEdge } from "./WaveEdge";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const slides = [lobo.media.seabass, lobo.media.stew, lobo.media.squid] as const;
+const clips = [
+  { src: lobo.media.clipShowcase, poster: lobo.media.clipShowcasePoster },
+  { src: lobo.media.clipTank, poster: lobo.media.clipTankPoster },
+  { src: lobo.media.clipFish, poster: lobo.media.clipFishPoster },
+] as const;
 
-// The opening: the restaurant's own plates come in one after another like waves — each new photo rises from the
-// bottom with a rolling swell on its edge — behind the name in very large letters, which rise letter by letter
-// after the curtain. Scrolling away, the name spreads apart and the plates sink slower than the page.
-// Reduced motion: the first plate and the name, still.
+// The opening, in the restaurant's own reels: on large screens three of them stand side by side like phones (the
+// display, the live tank, the fish of the day), each column drifting at its own speed as the page scrolls; on phones
+// the display fills the screen. The name rises letter by letter in the logo's heavy slab capitals after the curtain.
 export function Hero({ copy }: { copy: LoboCopy }) {
   const { hero } = copy;
   const root = useRef<HTMLElement>(null);
@@ -30,115 +33,90 @@ export function Hero({ copy }: { copy: LoboCopy }) {
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const q = gsap.utils.selector(root);
         const start = () => {
-          gsap.fromTo(q("[data-letter]"), { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, stagger: 0.045, duration: 1.1, ease: "power4.out" });
-          gsap.fromTo(q("[data-rise]"), { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.9, delay: 0.5, ease: "power3.out" });
+          gsap.fromTo(q("[data-letter]"), { yPercent: 110 }, { yPercent: 0, stagger: 0.04, duration: 1, ease: "power4.out" });
+          gsap.fromTo(q("[data-rise]"), { y: 28, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.09, duration: 0.9, delay: 0.35, ease: "power3.out" });
+          gsap.fromTo(q("[data-card]"), { y: 120, opacity: 0, rotate: (i) => [-4, 2, 5][i] ?? 0 }, { y: 0, opacity: 1, stagger: 0.12, duration: 1.2, ease: "power3.out" });
         };
         if (document.documentElement.classList.contains("lm-loading")) window.addEventListener("lm:revealed", start, { once: true });
         else start();
-
-        // The tide of plates: every few seconds the next one rises over the last.
-        const layers = q("[data-slide]");
-        gsap.set(layers.slice(1), { yPercent: 100 });
-        const cycle = gsap.timeline({ repeat: -1, delay: 3.2 });
-        for (let step = 1; step <= layers.length; step++) {
-          const next = step % layers.length;
-          cycle
-            .call(() => {
-              gsap.set(layers[next], { zIndex: 2 + step, yPercent: 100 });
-            })
-            .to(layers[next], { yPercent: 0, duration: 1.4, ease: "power2.inOut" })
-            .fromTo(layers[next].querySelector("img"), { scale: 1.18 }, { scale: 1.04, duration: 4.4, ease: "none" }, "<")
-            .to({}, { duration: 2.4 });
-        }
-
-        gsap.to(q("[data-title]"), {
-          letterSpacing: "0.12em",
-          yPercent: -18,
-          opacity: 0.25,
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+        q("[data-card]").forEach((card, i) => {
+          gsap.to(card, { yPercent: [-14, 10, -22][i] ?? 0, ease: "none", scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true } });
         });
-        gsap.to(q("[data-plates]"), { yPercent: 18, ease: "none", scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true } });
-        return () => cycle.kill();
+        gsap.to(q("[data-copy]"), { yPercent: -10, opacity: 0.2, ease: "none", scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true } });
       });
       return () => mm.revert();
     },
     { scope: root },
   );
 
-  const word = (text: string, className: string) => (
-    <span className={`flex justify-center overflow-hidden ${className}`}>
-      {text.split("").map((letter, i) => (
-        <span key={i} data-letter className="inline-block whitespace-pre will-change-transform">
-          {letter}
-        </span>
-      ))}
-    </span>
-  );
+  const word = (text: string) =>
+    text.split("").map((letter, i) => (
+      <span key={i} data-letter className="inline-block whitespace-pre will-change-transform">
+        {letter}
+      </span>
+    ));
 
   return (
-    <section ref={root} aria-labelledby="lm-hero-title" className="relative isolate flex min-h-[max(100svh,640px)] flex-col overflow-hidden bg-abismo text-areia">
-      <div data-plates className="absolute inset-0 -z-10 will-change-transform">
-        {slides.map((src, i) => (
-          <div key={src} data-slide className="absolute inset-0" style={{ zIndex: i === 0 ? 1 : 0 }}>
-            {/* The foam on the rising plate's edge. */}
-            <WaveEdge className="absolute bottom-[calc(100%-1px)] left-0 text-espuma/70" />
-            <div className="absolute inset-0 overflow-hidden">
-            <Image
-              src={src}
-              alt={hero.alts[i]}
-              width={loboPhotoSize.tall.width}
-              height={loboPhotoSize.tall.height}
-              sizes="100vw"
-              priority={i === 0}
-              fetchPriority={i === 0 ? "high" : "auto"}
-              className="absolute inset-0 h-full w-full object-cover will-change-transform"
-            />
-            </div>
-          </div>
-        ))}
-        <div className="absolute inset-0 z-20 bg-[linear-gradient(180deg,rgb(11_36_48/0.82)_0%,rgb(11_36_48/0.35)_35%,rgb(11_36_48/0.45)_65%,rgb(11_36_48/0.95)_100%)]" />
+    <section ref={root} aria-labelledby="lm-hero-title" className="relative isolate overflow-hidden bg-abismo text-areia">
+      {/* Phones: the display, full screen, behind the words. */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 lg:hidden">
+        <AutoVideo src={clips[0].src} poster={clips[0].poster} priority />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(18_33_59/0.85)_0%,rgb(18_33_59/0.35)_38%,rgb(18_33_59/0.55)_68%,rgb(18_33_59/0.96)_100%)]" />
       </div>
+      <div aria-hidden="true" className="absolute inset-0 -z-20 hidden bg-[radial-gradient(80%_70%_at_75%_40%,#1d4fa3_0%,#12213b_60%)] lg:block" />
 
-      <div className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col items-center justify-center px-4 pt-28 pb-24 text-center sm:px-8">
-        <p data-rise className="lm-eyebrow text-coral">
-          {hero.kicker}
-        </p>
-        <h1 id="lm-hero-title" data-title className="mt-6 font-display leading-[0.86] font-extrabold uppercase">
-          {word(hero.titleTop, "text-[clamp(4.6rem,24vw,15rem)]")}
-          {word(hero.titleBottom, "lm-outline text-[clamp(3.4rem,17vw,11rem)] text-coral")}
-        </h1>
-        <p data-rise className="mt-7 max-w-md text-[1.02rem] leading-relaxed text-areia/85 sm:text-lg">
-          {hero.lead}
-        </p>
-        <div data-rise className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-          <Magnet className="w-full sm:w-auto">
+      <div className="relative mx-auto grid min-h-[max(100svh,680px)] max-w-[90rem] items-center gap-10 px-5 pt-28 pb-24 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:pt-24">
+        <div data-copy className="flex flex-col items-start">
+          <div data-rise className="flex items-center gap-3">
+            <Badge className="h-14 w-14 rounded-full bg-white p-0.5" />
+            <p className="lm-eyebrow text-coral">{hero.kicker}</p>
+          </div>
+          <h1 id="lm-hero-title" className="mt-7 font-display leading-[0.86] uppercase">
+            <span className="flex overflow-hidden text-[clamp(4.4rem,21vw,10.5rem)]">{word(hero.titleTop)}</span>
+            <span className="flex overflow-hidden text-[clamp(3.4rem,15.5vw,8rem)] text-coral">{word(hero.titleBottom)}</span>
+          </h1>
+          <p data-rise className="mt-4 font-display text-sm tracking-[0.5em] text-areia/80 uppercase">
+            {hero.sub}
+          </p>
+          <p data-rise className="mt-7 max-w-md text-[1.05rem] leading-relaxed text-areia/90 sm:text-lg">
+            {hero.lead}
+          </p>
+          <div data-rise className="mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Magnet className="w-full sm:w-auto">
+              <a
+                href={lobo.phoneHref}
+                className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-coral px-7 text-[0.82rem] font-bold tracking-[0.14em] text-white uppercase shadow-[0_20px_40px_-18px_rgb(236_111_79/0.9)] transition-colors hover:bg-coral-deep sm:w-auto"
+              >
+                <PhoneIcon width={18} height={18} />
+                {hero.book}
+              </a>
+            </Magnet>
             <a
-              href={lobo.phoneHref}
-              className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-coral px-7 font-display text-[0.72rem] font-bold tracking-[0.18em] text-abismo uppercase shadow-[0_20px_40px_-18px_rgb(255_106_74/0.8)] transition-colors hover:bg-areia sm:w-auto"
+              href={lobo.menu}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white/10 px-7 text-[0.82rem] font-bold tracking-[0.14em] uppercase ring-1 ring-white/40 backdrop-blur-md transition-colors hover:bg-white/20"
             >
-              <PhoneIcon width={18} height={18} />
-              {hero.call}
+              <PlayIcon width={14} height={14} />
+              {hero.menu}
+              <span className="sr-only"> {copy.newTab}</span>
             </a>
-          </Magnet>
-          <a
-            href={`#${loboSections.board}`}
-            className="inline-flex h-14 items-center justify-center rounded-full px-7 font-display text-[0.72rem] font-bold tracking-[0.18em] uppercase ring-1 ring-areia/45 backdrop-blur-sm transition-colors hover:bg-areia/10"
-          >
-            {hero.board}
-          </a>
+          </div>
+        </div>
+
+        {/* Large screens: three reels side by side. */}
+        <div aria-hidden="true" className="relative hidden h-[78svh] max-h-[46rem] grid-cols-3 items-center gap-5 lg:grid">
+          {clips.map((clip, i) => (
+            <figure key={clip.src} data-card className={`relative will-change-transform ${i === 1 ? "translate-y-10" : "-translate-y-6"}`}>
+              <div className="relative aspect-[9/16] overflow-hidden rounded-[2rem] bg-abismo-2 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.8)] ring-1 ring-white/15">
+                <AutoVideo src={clip.src} poster={clip.poster} priority={i === 0} />
+                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(180deg,transparent,rgb(18_33_59/0.85))]" />
+                <figcaption className="absolute bottom-4 left-4 font-display text-sm tracking-[0.12em] uppercase">{hero.clips[i]}</figcaption>
+              </div>
+            </figure>
+          ))}
         </div>
       </div>
-
-      <a
-        href={`#${loboSections.tides}`}
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[0.6rem] font-semibold tracking-[0.3em] text-areia/70 uppercase [@media(min-height:820px)]:flex"
-      >
-        {hero.scroll}
-        <span aria-hidden="true" className="block h-9 w-5 rounded-full ring-1 ring-areia/50">
-          <span className="mx-auto mt-1.5 block h-2 w-0.5 animate-bounce rounded-full bg-coral" />
-        </span>
-      </a>
       <WaveEdge className="absolute -bottom-px left-0 z-10 text-areia" />
     </section>
   );

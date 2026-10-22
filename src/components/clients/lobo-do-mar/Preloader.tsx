@@ -9,7 +9,7 @@ import { WaveEdge } from "./WaveEdge";
 
 gsap.registerPlugin(useGSAP);
 
-// The tide comes in: the badge turns into place on the deep blue, the coral tide rises over it with a rolling
+// The tide comes in: the logo turns into place on the deep navy, the blue tide rises over it with a rolling
 // wave on top, and then the whole sea draws back upwards, uncovering the page. Once per tab session; never with
 // reduced motion or without JavaScript (the layout's <head> hides it before the first paint: ./preloader-gate.ts).
 export function Preloader({ label }: { label: string }) {
@@ -48,9 +48,9 @@ export function Preloader({ label }: { label: string }) {
     <div ref={root} aria-hidden="true" className="lm-pre fixed inset-0 z-[80] overflow-hidden bg-abismo text-areia" aria-label={label}>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
         <div data-badge>
-          <Badge className="w-36 sm:w-44" ink="var(--color-areia)" />
+          <Badge className="w-44 rounded-full bg-white p-1.5 sm:w-52" />
         </div>
-        <p data-name className="flex overflow-hidden font-display text-xl font-extrabold tracking-[0.3em] sm:text-2xl">
+        <p data-name className="flex overflow-hidden font-display text-xl tracking-[0.3em] sm:text-2xl">
           {letters.map((letter, i) => (
             <span key={i} className="inline-block whitespace-pre">
               {letter}
@@ -58,9 +58,9 @@ export function Preloader({ label }: { label: string }) {
           ))}
         </p>
       </div>
-      <div data-tide className="absolute inset-0 translate-y-full text-coral">
+      <div data-tide className="absolute inset-0 translate-y-full text-azul">
         <WaveEdge className="absolute bottom-full left-0" />
-        <div className="h-full bg-coral" />
+        <div className="h-full bg-azul" />
       </div>
     </div>
   );

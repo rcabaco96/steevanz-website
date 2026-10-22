@@ -11,21 +11,19 @@ import { loboSections } from "./sections";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const sources: Record<LoboImage, string> = {
-  bar: lobo.media.bar,
-  barTall: lobo.media.barTall,
-  wall: lobo.media.wall,
-  board: lobo.media.board,
-  squid: lobo.media.squid,
-  bream: lobo.media.bream,
-  grilledFish: lobo.media.grilledFish,
-  salmon: lobo.media.salmon,
-  stew: lobo.media.stew,
-  cuttlefish: lobo.media.cuttlefish,
-  mixedGrill: lobo.media.mixedGrill,
-  pot: lobo.media.pot,
-  cutlet: lobo.media.cutlet,
-  seabass: lobo.media.seabass,
+const sources: Record<LoboImage, { src: string; width: number; height: number }> = {
+  boat: { src: lobo.media.boat, ...loboPhotoSize.boat },
+  front: { src: lobo.media.front, ...loboPhotoSize.front },
+  platter: { src: lobo.media.platter, ...loboPhotoSize.platter },
+  skewers: { src: lobo.media.skewers, ...loboPhotoSize.skewers },
+  showcase: { src: lobo.media.showcase, ...loboPhotoSize.clip },
+  bar: { src: lobo.media.bar, ...loboPhotoSize.wide },
+  wall: { src: lobo.media.wall, ...loboPhotoSize.tall },
+  squid: { src: lobo.media.squid, ...loboPhotoSize.tall },
+  bream: { src: lobo.media.bream, ...loboPhotoSize.tall },
+  stew: { src: lobo.media.stew, ...loboPhotoSize.tall },
+  cuttlefish: { src: lobo.media.cuttlefish, ...loboPhotoSize.tall },
+  seabass: { src: lobo.media.seabass, ...loboPhotoSize.tall },
 };
 
 // The plates, sideways: on large screens the section holds still and the row travels with the scroll, the
@@ -74,7 +72,7 @@ export function Gallery({ copy }: { copy: LoboCopy }) {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="lm-eyebrow text-coral">{gallery.eyebrow}</p>
-            <h2 id="lm-gallery-title" className="mt-5 font-display text-[clamp(2.2rem,7vw,4.6rem)] leading-[0.98] font-extrabold uppercase">
+            <h2 id="lm-gallery-title" className="mt-5 font-display text-[clamp(2.2rem,7vw,4.6rem)] leading-[0.98] uppercase">
               {gallery.title}
             </h2>
           </div>
@@ -87,16 +85,17 @@ export function Gallery({ copy }: { copy: LoboCopy }) {
       <div ref={rail} className="mt-12 snap-x snap-mandatory scroll-pl-5 overflow-x-auto overscroll-x-contain [scrollbar-width:none] sm:scroll-pl-8 [&::-webkit-scrollbar]:hidden">
         <ul ref={track} className="flex w-max gap-4 px-5 pb-2 will-change-transform sm:gap-6 sm:px-8 lg:gap-8 lg:pr-[10vw] lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))]">
           {gallery.photos.map((photo, i) => {
-            const wide = photo.image === "bar";
+            const { src, width, height } = sources[photo.image];
+            const wide = width > height;
             return (
               <li key={photo.image} className="snap-start">
                 <figure data-card className="will-change-transform">
                   <div className={`relative overflow-hidden rounded-[1.6rem] bg-abismo-2 ${wide ? "h-[min(60svh,28rem)] w-[min(86vw,40rem)] lg:h-[58svh] lg:w-[calc(58svh*1.5)]" : "h-[min(60svh,28rem)] w-[min(66vw,21rem)] lg:h-[58svh] lg:w-[calc(58svh*0.75)]"}`}>
                     <Image
-                      src={sources[photo.image]}
+                      src={src}
                       alt={photo.alt}
-                      width={wide ? loboPhotoSize.wide.width : loboPhotoSize.tall.width}
-                      height={wide ? loboPhotoSize.wide.height : loboPhotoSize.tall.height}
+                      width={width}
+                      height={height}
                       sizes={wide ? "(min-width: 1024px) 60vw, 86vw" : "(min-width: 1024px) 32vw, 66vw"}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-[1.05]"
                     />

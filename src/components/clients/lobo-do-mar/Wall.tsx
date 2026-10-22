@@ -44,7 +44,7 @@ export function Wall({ copy }: { copy: LoboCopy }) {
         <div className="grid items-center gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-20">
           <figure>
             <p className="lm-eyebrow text-coral-deep">{wall.eyebrow}</p>
-            <blockquote data-line className="mt-6 font-display text-[clamp(2rem,6.4vw,4.8rem)] leading-[1.06] font-extrabold tracking-[-0.01em] text-abismo">
+            <blockquote data-line className="mt-6 font-display text-[clamp(2rem,6.4vw,4.8rem)] leading-[1.06] tracking-[-0.01em] text-abismo">
               <h2 id="lm-wall-title" className="contents">
                 «
                 {words.map((word, i) => (

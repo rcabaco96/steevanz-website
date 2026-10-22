@@ -1,17 +1,27 @@
-Lobo do Mar (Tapas e Petiscos, Armação de Pêra) - origem das imagens deste site
-Recolhidas a 2026-10-22. O Lobo do Mar é cliente da Steevanz; as imagens são do próprio restaurante.
+Lobo do Mar (Marisqueira, Armação de Pêra) - origem das imagens e vídeos deste site
+Recolhidos a 2026-10-22. O Lobo do Mar é cliente da Steevanz; as imagens e os vídeos são do próprio restaurante.
 
-Fotografias (todas publicadas pelo restaurante no seu próprio site, https://restaurantelobodomar.metro.rest/,
-servidas por cdn.website.dish.co). Convertidas para WebP, sem retoque de conteúdo:
-  bar.webp, bar-alto.webp   - o balcão com a placa Lobo do Mar
-  parede.webp               - a parede com a frase «A melhor rede social ainda é uma mesa rodeada de amigos!»
-  quadro.webp               - o quadro de ardósia com os pratos, escrito a giz (fonte da lista de pratos)
-  lulas.webp, dourada.webp, peixe-grelhado.webp, salmao.webp, cataplana.webp, choquinhos.webp,
-  grelhada-mista.webp, feijoada.webp, panado.webp, robalo.webp - pratos do restaurante
+Do site do restaurante (https://restaurantelobodomar.metro.rest/, servidas por cdn.website.dish.co), em WebP:
+  bar.webp, bar-alto.webp, parede.webp, quadro.webp, lulas.webp, dourada.webp, peixe-grelhado.webp, salmao.webp,
+  cataplana.webp, choquinhos.webp, grelhada-mista.webp, feijoada.webp, panado.webp, robalo.webp
 
-Logótipo: só existe online em 40 px (no site do restaurante). O selo do site (Logo.tsx) é um redesenho em vetor
-feito pela Steevanz a partir dele. A confirmar com o cliente: o ficheiro original do logótipo em alta resolução.
+Do Instagram do restaurante (@restaurante_lobodomar), as suas publicações públicas:
+  video-montra.mp4 / .webp      - a montra com marisco e o polvo da parede (excerto de um reel, sem som)
+  video-viveiro.mp4 / .webp     - o viveiro com marisco vivo (excerto de um reel, sem som)
+  video-peixe.mp4 / .webp       - o peixe do dia mostrado na montra (excerto de um reel, sem som)
+  video-gelo-scrub.mp4 / video-gelo.webp - a montra com peixe no gelo (excerto de um reel, sem som; todos os
+                                  fotogramas são chave, para o scroll o poder conduzir)
+  espetadas.webp, mariscada.webp, viveiro-foto.webp - fotografias das publicações
+
+Do dono (enviadas pela Steevanz, 2026-10-22):
+  barco-marisco.webp - o dono com o barco de marisco
+  fachada.webp       - a esplanada com o letreiro «Marisqueira Lobo do Mar · Sea Wolf»
+
+Logótipo: redesenhado em vetor pela Steevanz (Logo.tsx) a partir da imagem de perfil do Instagram e das placas de
+mesa. A confirmar com o cliente: o ficheiro original do logótipo em alta resolução.
 
 Derivados feitos pela Steevanz:
-  og-site.jpg (1200x630) - pré-visualização do site: selo + cataplana.webp + robalo.webp
-  icone.ico, icone-192.png, icone-512.png, icone-apple.png - o selo em fundo azul-marinho
+  og-site.jpg (1200x630) - pré-visualização do site: logótipo + video-montra.webp + barco-marisco.webp
+  icone.ico, icone-192.png, icone-512.png, icone-apple.png, menu-logo-v2.png - o logótipo em fundo branco
+  menu-logo.png - logótipo provisório do menu (estilo do letreiro), substituído por menu-logo-v2.png
+  ementa-ecra.webp - captura do menu em vídeo do Lobo do Mar (Steevanz)

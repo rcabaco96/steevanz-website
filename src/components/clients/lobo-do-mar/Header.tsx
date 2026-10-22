@@ -60,8 +60,9 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
   }, [open]);
 
   const nav = [
-    { id: loboSections.tides, label: copy.nav.tides },
-    { id: loboSections.board, label: copy.nav.board },
+    { id: loboSections.showcase, label: copy.nav.showcase },
+    { id: loboSections.boat, label: copy.nav.boat },
+    { id: loboSections.menu, label: copy.nav.menu },
     { id: loboSections.gallery, label: copy.nav.gallery },
     { id: loboSections.visit, label: copy.nav.visit },
   ];
@@ -75,13 +76,13 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
         }`}
       >
         <a href={homeHref} className="relative z-10 flex items-center gap-2.5" aria-label={copy.logoLabel}>
-          <Badge className="h-9 w-9 sm:h-10 sm:w-10" ink="var(--color-areia)" />
+          <Badge className="h-10 w-10 rounded-full bg-white p-px sm:h-11 sm:w-11" />
           <Wordmark className="text-[0.82rem] sm:text-sm" />
         </a>
 
         <nav aria-label={copy.nav.label} className="hidden items-center gap-1 lg:flex">
           {nav.map((item) => (
-            <a key={item.id} href={`#${item.id}`} className="rounded-full px-4 py-2.5 font-display text-[0.66rem] font-medium tracking-[0.2em] uppercase transition-colors hover:bg-areia/10">
+            <a key={item.id} href={`#${item.id}`} className="rounded-full px-3.5 py-2.5 text-[0.74rem] font-semibold tracking-[0.14em] uppercase transition-colors hover:bg-areia/10">
               {item.label}
             </a>
           ))}
@@ -98,7 +99,7 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
           </a>
           <a
             href={lobo.phoneHref}
-            className="inline-flex h-10 items-center gap-2 rounded-full bg-coral px-4 font-display text-[0.64rem] font-bold tracking-[0.16em] text-abismo uppercase transition-colors hover:bg-areia sm:h-11 sm:px-5"
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-coral px-4 text-[0.72rem] font-bold tracking-[0.14em] text-white uppercase transition-colors hover:bg-coral-deep sm:h-11 sm:px-5"
           >
             <PhoneIcon width={15} height={15} className="max-[359px]:hidden" />
             {copy.nav.book}
@@ -138,7 +139,7 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
                   initial={reduced ? false : { y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: reduced ? 0 : 0.2 + i * 0.06, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex items-baseline gap-4 border-b border-areia/15 py-4 font-display text-[clamp(1.9rem,9vw,3rem)] leading-none font-extrabold uppercase"
+                  className="flex items-baseline gap-4 border-b border-areia/15 py-4 font-display text-[clamp(1.9rem,9vw,3rem)] leading-none uppercase"
                 >
                   <span className="text-xs font-medium tracking-[0.2em] text-coral">0{i + 1}</span>
                   {item.label}
@@ -153,8 +154,8 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
                 {lobo.phoneDisplay}
               </a>
             </div>
-            <WaveEdge className="text-coral" />
-            <div className="h-8 bg-coral" />
+            <WaveEdge className="text-azul" />
+            <div className="h-8 bg-azul" />
           </m.div>
         ) : null}
       </AnimatePresence>

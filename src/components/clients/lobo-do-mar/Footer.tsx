@@ -10,7 +10,7 @@ export function Footer({ copy }: { copy: LoboCopy }) {
     <footer className="border-t border-areia/10 bg-abismo text-areia">
       <div className="mx-auto flex max-w-[90rem] flex-col gap-10 px-5 py-14 sm:px-8 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-5">
-          <Badge className="w-20 shrink-0" ink="var(--color-areia)" label={copy.logoLabel} />
+          <Badge className="w-24 shrink-0 rounded-full bg-white p-1" label={copy.logoLabel} />
           <p className="max-w-xs text-areia/75">{footer.tagline}</p>
         </div>
         <div className="flex flex-col gap-3 text-sm md:items-end">

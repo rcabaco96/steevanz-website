@@ -1,32 +1,23 @@
 // Texts of Lobo do Mar's website, in European Portuguese and English. Every fact comes from a source listed in
-// ./facts.ts: the restaurant's own site, the chalkboard by its door and the line on its wall. No ratings, no
-// reviews, no prices, no invented dishes.
+// ./facts.ts: the restaurant's own site, its sign («Marisqueira · Sea Wolf»), its Instagram videos (the showcase,
+// the live-seafood tank), the owner's photo with the seafood boat and the line on its wall. No ratings, no reviews,
+// no prices on the site (the video menu is a demo and says so).
 
 import type { LoboLocale } from "./routes";
 
 export type LoboImage =
+  | "boat"
+  | "front"
+  | "platter"
+  | "skewers"
+  | "showcase"
   | "bar"
-  | "barTall"
   | "wall"
-  | "board"
   | "squid"
-  | "bream"
-  | "grilledFish"
-  | "salmon"
   | "stew"
   | "cuttlefish"
-  | "mixedGrill"
-  | "pot"
-  | "cutlet"
-  | "seabass";
-
-export interface LoboTide {
-  index: string;
-  title: string;
-  dishes: string[];
-  image: LoboImage;
-  alt: string;
-}
+  | "seabass"
+  | "bream";
 
 export interface LoboCopy {
   htmlLang: string;
@@ -36,18 +27,12 @@ export interface LoboCopy {
   newTab: string;
   langLabel: string;
   logoLabel: string;
-  nav: { tides: string; board: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
-  hero: { kicker: string; titleTop: string; titleBottom: string; lead: string; call: string; board: string; scroll: string; alts: string[] };
-  tides: { eyebrow: string; title: string; items: LoboTide[] };
-  board: {
-    eyebrow: string;
-    title: string;
-    intro: string;
-    columns: { name: string; dishes: string[] }[];
-    bubbles: string[];
-    alt: string;
-    note: string;
-  };
+  nav: { showcase: string; boat: string; menu: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
+  hero: { kicker: string; titleTop: string; titleBottom: string; sub: string; lead: string; book: string; menu: string; scroll: string; clips: string[] };
+  showcase: { eyebrow: string; title: string; steps: string[]; alt: string };
+  tank: { eyebrow: string; title: string; text: string; fishTitle: string; fishText: string };
+  boat: { eyebrow: string; title: string; text: string; alt: string; spots: string[] };
+  menu: { eyebrow: string; title: string; text: string; button: string; sections: string[] };
   wall: { eyebrow: string; line: string; source: string; alt: string };
   services: { eyebrow: string; items: { title: string; text: string }[] };
   gallery: { eyebrow: string; title: string; hint: string; photos: { image: LoboImage; caption: string; alt: string }[] };
@@ -67,6 +52,7 @@ export interface LoboCopy {
     mapButton: string;
     mapNote: string;
     mapTitle: string;
+    frontAlt: string;
   };
   booking: { eyebrow: string; title: string; text: string; call: string; email: string };
   footer: { tagline: string; complaints: string; credit: string; rights: string; follow: string };
@@ -77,17 +63,18 @@ const pt: LoboCopy = {
   htmlLang: "pt-PT",
   ogLocale: "pt_PT",
   meta: {
-    title: "Lobo do Mar · Tapas e Petiscos em Armação de Pêra",
+    title: "Lobo do Mar · Marisqueira em Armação de Pêra",
     description:
-      "Peixe grelhado, arroz de marisco, cataplana de polvo e petiscos em Armação de Pêra. De terça a domingo, almoço e jantar. Esplanada, ar condicionado e take-away.",
+      "Marisqueira em Armação de Pêra: marisco e peixe escolhidos na montra, mariscada no barco, arroz de marisco e cataplana. De terça a domingo, almoço e jantar.",
   },
   skip: "Saltar para o conteúdo",
   newTab: "(abre num novo separador)",
   langLabel: "Português",
   logoLabel: "Lobo do Mar, restaurante",
   nav: {
-    tides: "Cozinha",
-    board: "O quadro",
+    showcase: "A montra",
+    boat: "O barco",
+    menu: "Ementa",
     gallery: "Pratos",
     visit: "Visitar",
     book: "Reservar",
@@ -96,58 +83,42 @@ const pt: LoboCopy = {
     label: "Navegação principal",
   },
   hero: {
-    kicker: "Tapas e Petiscos · Armação de Pêra",
+    kicker: "Marisqueira · Armação de Pêra",
     titleTop: "Lobo",
     titleBottom: "do Mar",
-    lead: "Peixe grelhado, mariscos, arrozes e petiscos, feitos no momento.",
-    call: "Ligar para reservar",
-    board: "Ver o quadro",
+    sub: "Sea Wolf",
+    lead: "Marisco e peixe escolhidos na montra, preparados na hora e servidos à mesa.",
+    book: "Reservar mesa",
+    menu: "Ver a ementa em vídeo",
     scroll: "Descer",
-    alts: [
-      "Peixe inteiro grelhado com batatas, salada e limão",
-      "Tacho com marisco, mexilhão e pimento",
-      "Lulas grelhadas com batata cozida e salada",
-    ],
+    clips: ["A montra", "O viveiro", "O peixe do dia"],
   },
-  tides: {
-    eyebrow: "A cozinha",
-    title: "Três marés",
-    items: [
-      {
-        index: "01",
-        title: "Peixe na grelha",
-        dishes: ["Dourada", "Robalo", "Linguado", "Sargos", "Salmão"],
-        image: "seabass",
-        alt: "Peixe inteiro grelhado com batatas, salada e limão",
-      },
-      {
-        index: "02",
-        title: "Arrozes e tachos",
-        dishes: ["Arroz de marisco", "Arroz de tamboril", "Arroz de lingueirão", "Cataplana de polvo", "Feijoada de chocos"],
-        image: "stew",
-        alt: "Tacho com marisco, mexilhão e pimento",
-      },
-      {
-        index: "03",
-        title: "Tapas e petiscos",
-        dishes: ["Choquinhos fritos", "Polvo à lagareiro", "Saladas de polvo e ovas", "Camarão à Lobo do Mar", "Mariscos variados"],
-        image: "cuttlefish",
-        alt: "Choquinhos fritos com batata frita e pão",
-      },
-    ],
+  showcase: {
+    eyebrow: "A montra",
+    title: "Escolha na montra",
+    steps: ["O peixe e o marisco esperam no gelo, à vista de todos.", "Escolha o que lhe apetece.", "Vai para a cozinha e chega à mesa."],
+    alt: "A montra do restaurante com peixe e marisco no gelo",
   },
-  board: {
-    eyebrow: "O quadro",
-    title: "Escrito a giz, à porta",
-    intro: "Os pratos do quadro do restaurante.",
-    columns: [
-      { name: "Peixes", dishes: ["Bacalhau à casa", "Moqueca de camarão", "Dourada", "Robalo", "Salmão", "Choquinhos fritos", "Polvo à lagareiro", "Linguado", "Sargos"] },
-      { name: "Carnes", dishes: ["Bife à portuguesa", "Bife pimenta", "Lagartos de porco preto"] },
-      { name: "Especialidades", dishes: ["Arroz de marisco", "Arroz de tamboril", "Arroz de lingueirão", "Cataplana de polvo", "Feijoada de chocos"] },
-    ],
-    bubbles: ["Mariscos variados", "Tapas & petiscos", "Saladas de polvo e ovas", "Camarão à Lobo do Mar"],
-    alt: "O quadro de ardósia do restaurante, escrito a giz, com os peixes, as carnes e as especialidades",
-    note: "Preços e prato do dia: pergunte à mesa ou pelo telefone.",
+  tank: {
+    eyebrow: "O viveiro",
+    title: "Marisco vivo, à vista",
+    text: "Na sala, o viveiro guarda o marisco vivo até ir para a cozinha.",
+    fishTitle: "O peixe do dia",
+    fishText: "Mostrado à mesa antes de ir para a grelha.",
+  },
+  boat: {
+    eyebrow: "O barco",
+    title: "A mariscada chega num barco",
+    text: "Ostras, camarão, lagostins e percebes, servidos num barco à mesa.",
+    alt: "O dono do Lobo do Mar com um barco de madeira cheio de marisco: ostras, camarão, lagostins e percebes",
+    spots: ["Ostras", "Lagostins", "Percebes", "Camarão"],
+  },
+  menu: {
+    eyebrow: "Ementa",
+    title: "A ementa em vídeo",
+    text: "Veja cada prato a mexer antes de escolher, na sua língua, e faça o pedido à mesa.",
+    button: "Abrir a ementa",
+    sections: ["Marisco", "Petiscos", "Peixes", "Especialidades", "Carnes", "Bebidas"],
   },
   wall: {
     eyebrow: "Na parede",
@@ -158,7 +129,7 @@ const pt: LoboCopy = {
   services: {
     eyebrow: "A casa",
     items: [
-      { title: "Esplanada", text: "Mesas cá fora, quando está calor." },
+      { title: "Esplanada", text: "Mesas cá fora, debaixo dos chapéus." },
       { title: "Ar condicionado", text: "Fresco lá dentro, todo o ano." },
       { title: "Take-away", text: "Encomende para levar, pelo telefone." },
       { title: "Wi-Fi grátis", text: "Para partilhar a mesa com quem não veio." },
@@ -166,21 +137,20 @@ const pt: LoboCopy = {
   },
   gallery: {
     eyebrow: "Pratos",
-    title: "Da cozinha do Lobo",
+    title: "Da montra para a mesa",
     hint: "Deslize para ver mais",
     photos: [
-      { image: "squid", caption: "Lulas grelhadas", alt: "Lulas grelhadas com batata cozida, salada e limão" },
-      { image: "bream", caption: "Peixe aberto na grelha", alt: "Peixe aberto e grelhado numa travessa, com batatas e salada" },
+      { image: "platter", caption: "Mariscada", alt: "Travessa com sapateira, camarão e marisco variado" },
+      { image: "skewers", caption: "Espetada de camarão", alt: "Espetada de camarão e peixe numa tábua, com salada" },
+      { image: "seabass", caption: "Peixe grelhado", alt: "Peixe inteiro grelhado com batatas, salada e limão" },
       { image: "stew", caption: "Tacho de marisco", alt: "Tacho com marisco, mexilhão e pimento" },
       { image: "cuttlefish", caption: "Choquinhos fritos", alt: "Choquinhos fritos com batata frita e pão" },
-      { image: "seabass", caption: "Peixe grelhado", alt: "Peixe inteiro grelhado com batatas, salada e limão" },
-      { image: "mixedGrill", caption: "Carne na grelha", alt: "Carne grelhada com batata frita, salada e limão" },
-      { image: "grilledFish", caption: "Posta grelhada", alt: "Posta de peixe grelhada com batatas, salada e limão" },
-      { image: "pot", caption: "Saído do tacho", alt: "Tacho de barro com o prato e uma taça de arroz ao lado" },
+      { image: "squid", caption: "Lulas grelhadas", alt: "Lulas grelhadas com batata cozida, salada e limão" },
+      { image: "bream", caption: "Peixe aberto na grelha", alt: "Peixe aberto e grelhado numa travessa, com batatas e salada" },
       { image: "bar", caption: "O balcão", alt: "O balcão do restaurante com a placa Lobo do Mar e as garrafas" },
     ],
   },
-  marquee: ["Tapas", "Petiscos", "Peixe grelhado", "Mariscos", "Armação de Pêra"],
+  marquee: ["Marisqueira", "Marisco", "Peixe grelhado", "Petiscos", "Armação de Pêra"],
   visit: {
     eyebrow: "Visitar",
     title: "Em Armação de Pêra",
@@ -199,6 +169,7 @@ const pt: LoboCopy = {
     mapButton: "Ver mapa",
     mapNote: "O mapa do Google só carrega quando carregar no botão.",
     mapTitle: "Mapa: Lobo do Mar, Armação de Pêra",
+    frontAlt: "A esplanada do Lobo do Mar com o letreiro azul «Marisqueira Lobo do Mar · Sea Wolf» e dois chapéus",
   },
   booking: {
     eyebrow: "Reservas",
@@ -208,7 +179,7 @@ const pt: LoboCopy = {
     email: "Enviar e-mail",
   },
   footer: {
-    tagline: "Tapas e petiscos em Armação de Pêra.",
+    tagline: "Marisqueira em Armação de Pêra.",
     complaints: "Livro de Reclamações",
     credit: "Site por Steevanz",
     rights: "Todos os direitos reservados.",
@@ -225,17 +196,18 @@ const en: LoboCopy = {
   htmlLang: "en",
   ogLocale: "en_GB",
   meta: {
-    title: "Lobo do Mar · Tapas and Petiscos in Armação de Pêra",
+    title: "Lobo do Mar · Seafood restaurant in Armação de Pêra",
     description:
-      "Grilled fish, seafood rice, octopus cataplana and petiscos in Armação de Pêra. Tuesday to Sunday, lunch and dinner. Terrace, air conditioning and takeaway.",
+      "Seafood restaurant in Armação de Pêra: seafood and fish chosen from the display, a seafood platter served on a boat, seafood rice and cataplana. Tuesday to Sunday, lunch and dinner.",
   },
   skip: "Skip to content",
   newTab: "(opens in a new tab)",
   langLabel: "English",
   logoLabel: "Lobo do Mar, restaurant",
   nav: {
-    tides: "Cooking",
-    board: "The board",
+    showcase: "The display",
+    boat: "The boat",
+    menu: "Menu",
     gallery: "Dishes",
     visit: "Visit",
     book: "Book",
@@ -244,58 +216,42 @@ const en: LoboCopy = {
     label: "Main navigation",
   },
   hero: {
-    kicker: "Tapas and Petiscos · Armação de Pêra",
+    kicker: "Seafood restaurant · Armação de Pêra",
     titleTop: "Lobo",
     titleBottom: "do Mar",
-    lead: "Grilled fish, seafood, rice dishes and petiscos, cooked to order.",
-    call: "Call to book",
-    board: "See the board",
+    sub: "Sea Wolf",
+    lead: "Seafood and fish chosen from the display, cooked to order and served at your table.",
+    book: "Book a table",
+    menu: "See the menu in video",
     scroll: "Scroll",
-    alts: [
-      "Whole grilled fish with potatoes, salad and lemon",
-      "Pot of seafood with mussels and peppers",
-      "Grilled squid with boiled potatoes and salad",
-    ],
+    clips: ["The display", "The live tank", "Fish of the day"],
   },
-  tides: {
-    eyebrow: "The cooking",
-    title: "Three tides",
-    items: [
-      {
-        index: "01",
-        title: "Fish on the grill",
-        dishes: ["Gilthead bream", "Sea bass", "Sole", "White seabream", "Salmon"],
-        image: "seabass",
-        alt: "Whole grilled fish with potatoes, salad and lemon",
-      },
-      {
-        index: "02",
-        title: "Rice and pots",
-        dishes: ["Seafood rice", "Monkfish rice", "Razor clam rice", "Octopus cataplana", "Cuttlefish bean stew"],
-        image: "stew",
-        alt: "Pot of seafood with mussels and peppers",
-      },
-      {
-        index: "03",
-        title: "Tapas and petiscos",
-        dishes: ["Fried baby cuttlefish", "Octopus à lagareiro", "Octopus and roe salads", "Prawns à Lobo do Mar", "Assorted seafood"],
-        image: "cuttlefish",
-        alt: "Fried baby cuttlefish with chips and bread",
-      },
-    ],
+  showcase: {
+    eyebrow: "The display",
+    title: "Choose from the display",
+    steps: ["Fish and seafood wait on ice, in plain sight.", "Pick what you feel like.", "It goes to the kitchen and comes to your table."],
+    alt: "The restaurant's display with fish and seafood on ice",
   },
-  board: {
-    eyebrow: "The board",
-    title: "Written in chalk, at the door",
-    intro: "The dishes on the restaurant's board.",
-    columns: [
-      { name: "Fish", dishes: ["House salt cod", "Prawn moqueca", "Gilthead bream", "Sea bass", "Salmon", "Fried baby cuttlefish", "Octopus à lagareiro", "Sole", "White seabream"] },
-      { name: "Meat", dishes: ["Portuguese-style steak", "Pepper steak", "Black pork lagartos"] },
-      { name: "Specialities", dishes: ["Seafood rice", "Monkfish rice", "Razor clam rice", "Octopus cataplana", "Cuttlefish bean stew"] },
-    ],
-    bubbles: ["Assorted seafood", "Tapas & petiscos", "Octopus and roe salads", "Prawns à Lobo do Mar"],
-    alt: "The restaurant's slate board, written in chalk, with the fish, the meat and the specialities",
-    note: "Prices and the dish of the day: ask at the table or by phone.",
+  tank: {
+    eyebrow: "The live tank",
+    title: "Live seafood, in plain sight",
+    text: "In the dining room, the tank keeps the seafood alive until it goes to the kitchen.",
+    fishTitle: "Fish of the day",
+    fishText: "Shown at the table before it goes on the grill.",
+  },
+  boat: {
+    eyebrow: "The boat",
+    title: "The seafood platter comes on a boat",
+    text: "Oysters, prawns, langoustines and goose barnacles, served on a boat at your table.",
+    alt: "Lobo do Mar's owner holding a wooden boat full of seafood: oysters, prawns, langoustines and goose barnacles",
+    spots: ["Oysters", "Langoustines", "Goose barnacles", "Prawns"],
+  },
+  menu: {
+    eyebrow: "Menu",
+    title: "The menu in video",
+    text: "Watch every dish move before you choose, in your language, and order at the table.",
+    button: "Open the menu",
+    sections: ["Seafood", "Petiscos", "Fish", "Specialities", "Meat", "Drinks"],
   },
   wall: {
     eyebrow: "On the wall",
@@ -306,7 +262,7 @@ const en: LoboCopy = {
   services: {
     eyebrow: "The house",
     items: [
-      { title: "Terrace", text: "Tables outside when it's warm." },
+      { title: "Terrace", text: "Tables outside, under the umbrellas." },
       { title: "Air conditioning", text: "Cool inside, all year round." },
       { title: "Takeaway", text: "Order to take away, by phone." },
       { title: "Free Wi-Fi", text: "To share the table with those who didn't come." },
@@ -314,21 +270,20 @@ const en: LoboCopy = {
   },
   gallery: {
     eyebrow: "Dishes",
-    title: "From Lobo's kitchen",
+    title: "From the display to the table",
     hint: "Swipe to see more",
     photos: [
-      { image: "squid", caption: "Grilled squid", alt: "Grilled squid with boiled potatoes, salad and lemon" },
-      { image: "bream", caption: "Butterflied fish on the grill", alt: "Butterflied grilled fish on a platter, with potatoes and salad" },
+      { image: "platter", caption: "Seafood platter", alt: "Platter with brown crab, prawns and assorted seafood" },
+      { image: "skewers", caption: "Prawn skewer", alt: "Prawn and fish skewer on a board, with salad" },
+      { image: "seabass", caption: "Grilled fish", alt: "Whole grilled fish with potatoes, salad and lemon" },
       { image: "stew", caption: "Seafood pot", alt: "Pot of seafood with mussels and peppers" },
       { image: "cuttlefish", caption: "Fried baby cuttlefish", alt: "Fried baby cuttlefish with chips and bread" },
-      { image: "seabass", caption: "Grilled fish", alt: "Whole grilled fish with potatoes, salad and lemon" },
-      { image: "mixedGrill", caption: "Meat on the grill", alt: "Grilled meat with chips, salad and lemon" },
-      { image: "grilledFish", caption: "Grilled fish steak", alt: "Grilled fish steak with potatoes, salad and lemon" },
-      { image: "pot", caption: "Straight from the pot", alt: "Clay pot with the dish and a bowl of rice beside it" },
+      { image: "squid", caption: "Grilled squid", alt: "Grilled squid with boiled potatoes, salad and lemon" },
+      { image: "bream", caption: "Butterflied fish on the grill", alt: "Butterflied grilled fish on a platter, with potatoes and salad" },
       { image: "bar", caption: "The bar", alt: "The restaurant's bar with the Lobo do Mar sign and the bottles" },
     ],
   },
-  marquee: ["Tapas", "Petiscos", "Grilled fish", "Seafood", "Armação de Pêra"],
+  marquee: ["Seafood", "Marisqueira", "Grilled fish", "Petiscos", "Armação de Pêra"],
   visit: {
     eyebrow: "Visit",
     title: "In Armação de Pêra",
@@ -347,6 +302,7 @@ const en: LoboCopy = {
     mapButton: "Show map",
     mapNote: "The Google map only loads when you press the button.",
     mapTitle: "Map: Lobo do Mar, Armação de Pêra",
+    frontAlt: "Lobo do Mar's terrace with the blue sign «Marisqueira Lobo do Mar · Sea Wolf» and two umbrellas",
   },
   booking: {
     eyebrow: "Bookings",
@@ -356,7 +312,7 @@ const en: LoboCopy = {
     email: "Send an e-mail",
   },
   footer: {
-    tagline: "Tapas and petiscos in Armação de Pêra.",
+    tagline: "Seafood restaurant in Armação de Pêra.",
     complaints: "Complaints book",
     credit: "Website by Steevanz",
     rights: "All rights reserved.",

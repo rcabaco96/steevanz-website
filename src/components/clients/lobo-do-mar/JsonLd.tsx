@@ -10,10 +10,10 @@ export function loboJsonLd(locale: LoboLocale) {
     "@id": `${loboCanonical("pt")}#restaurant`,
     name: lobo.name,
     url: loboCanonical(locale),
-    image: [`${site}${lobo.media.seabass}`, `${site}${lobo.media.bar}`, `${site}${lobo.media.og}`],
+    image: [`${site}${lobo.media.boat}`, `${site}${lobo.media.front}`, `${site}${lobo.media.og}`],
     telephone: "+351918194530",
     email: lobo.email,
-    servesCuisine: ["Portuguese", "Seafood", "Tapas"],
+    servesCuisine: ["Seafood", "Portuguese"],
     acceptsReservations: true,
     address: {
       "@type": "PostalAddress",

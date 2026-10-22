@@ -14,7 +14,7 @@ export function Visit({ copy }: { copy: LoboCopy }) {
       <div className="mx-auto grid max-w-[90rem] gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-20">
         <div>
           <p className="lm-eyebrow text-coral-deep">{visit.eyebrow}</p>
-          <h2 id="lm-visit-title" className="mt-5 font-display text-[clamp(2.2rem,7vw,4.6rem)] leading-[0.98] font-extrabold text-abismo uppercase">
+          <h2 id="lm-visit-title" className="mt-5 font-display text-[clamp(2.2rem,7vw,4.6rem)] leading-[0.98] text-abismo uppercase">
             {visit.title}
           </h2>
           <dl className="mt-10 flex flex-col">
@@ -30,7 +30,7 @@ export function Visit({ copy }: { copy: LoboCopy }) {
                   href={lobo.directions}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-2 font-display text-[0.7rem] font-bold tracking-[0.18em] text-coral-deep uppercase"
+                  className="mt-2 inline-flex items-center gap-2 text-[0.78rem] font-bold tracking-[0.14em] text-coral-deep uppercase"
                 >
                   {visit.directions} <ArrowIcon width={16} height={16} />
                   <span className="sr-only"> {copy.newTab}</span>
@@ -72,7 +72,7 @@ export function Visit({ copy }: { copy: LoboCopy }) {
           </dl>
         </div>
         <Reveal delay={120} className="lg:pt-16">
-          <MapEmbed button={visit.mapButton} note={visit.mapNote} title={visit.mapTitle} alt={copy.gallery.photos[copy.gallery.photos.length - 1].alt} />
+          <MapEmbed button={visit.mapButton} note={visit.mapNote} title={visit.mapTitle} alt={visit.frontAlt} />
         </Reveal>
       </div>
     </section>
