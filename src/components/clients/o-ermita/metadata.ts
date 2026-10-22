@@ -9,7 +9,8 @@ export function ermitaMetadata({ locale }: ErmitaRoute): Metadata {
   const copy = ermitaCopy[locale];
   const { title, description } = copy.meta;
   return {
-    metadataBase: new URL(ermitaOrigin),
+    // The origin only: a base with a path (/o-ermita) would put the preview image under /o-ermita/media/… (a 404).
+    metadataBase: new URL(new URL(ermitaOrigin).origin),
     title: { absolute: title },
     description,
     applicationName: ermita.name,
