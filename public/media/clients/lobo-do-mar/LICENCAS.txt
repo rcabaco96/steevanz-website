@@ -9,8 +9,7 @@ Do Instagram do restaurante (@restaurante_lobodomar), as suas publicações púb
   video-montra.mp4 / .webp      - a montra com marisco e o polvo da parede (excerto de um reel, sem som)
   video-viveiro.mp4 / .webp     - o viveiro com marisco vivo (excerto de um reel, sem som)
   video-peixe.mp4 / .webp       - o peixe do dia mostrado na montra (excerto de um reel, sem som)
-  video-gelo-scrub.mp4 / video-gelo.webp - a montra com peixe no gelo (excerto de um reel, sem som; todos os
-                                  fotogramas são chave, para o scroll o poder conduzir)
+  video-gelo.mp4 / .webp        - a montra com peixe no gelo (excerto de um reel, sem som)
   espetadas.webp, mariscada.webp, viveiro-foto.webp - fotografias das publicações
 
 Do dono (enviadas pela Steevanz, 2026-10-22):

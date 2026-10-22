@@ -6,28 +6,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
 import { lobo } from "@/content/lobo-do-mar/facts";
 import type { LoboCopy } from "@/content/lobo-do-mar/copy";
+import { AutoVideo } from "./AutoVideo";
 import { loboSections } from "./sections";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// The display on ice, driven by the scroll (full screen on phones, a tall frame on large screens): the scene holds still and the restaurant's own film of its display
-// moves forward and back with the page (every frame is a keyframe, so it follows the finger), while three short
-// lines take turns beside it, each staying long enough to read. Reduced motion: the still frame and the three lines.
+// The display on ice (full screen on phones, a tall frame on large screens): the restaurant's own film of its display
+// plays by itself, in a loop (owner, 2026-10-23: driving it with the scroll made it stutter), while the scene holds
+// still and three short lines take turns with the scroll, each staying long enough to read. Reduced motion: the still
+// frame and the three lines.
 export function Showcase({ copy }: { copy: LoboCopy }) {
   const { showcase } = copy;
   const root = useRef<HTMLElement>(null);
-  const film = useRef<HTMLVideoElement>(null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const q = gsap.utils.selector(root);
-        const video = film.current;
-        if (video) {
-          video.style.display = "block";
-          video.load();
-        }
         const steps = q("[data-step]");
         gsap.set(steps.slice(1), { opacity: 0, y: 40 });
         const tl = gsap.timeline({
@@ -35,17 +31,10 @@ export function Showcase({ copy }: { copy: LoboCopy }) {
           scrollTrigger: {
             trigger: root.current,
             start: "top top",
-            end: "+=260%",
+            end: "+=180%",
             pin: true,
             scrub: 0.5,
             anticipatePin: 1,
-            // iPhones only paint a seeked frame once the film has played: a silent play/pause unlocks it.
-            onEnter: () => {
-              if (video) void video.play().then(() => video.pause()).catch(() => {});
-            },
-            onUpdate: (self) => {
-              if (video && video.duration) video.currentTime = Math.min(video.duration - 0.05, self.progress * video.duration);
-            },
           },
         });
         // Large screens only: the frame opens a little as the scene starts (phones show the film full screen at once).
@@ -67,9 +56,8 @@ export function Showcase({ copy }: { copy: LoboCopy }) {
       <div className="relative mx-auto flex min-h-svh max-w-[90rem] flex-col justify-end px-5 pt-24 pb-12 sm:px-8 lg:grid lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16 lg:py-10">
         {/* Phones: the film fills the screen behind the words; large screens: a tall frame on the right. */}
         <div data-frame className="absolute inset-0 overflow-hidden bg-abismo lg:relative lg:inset-auto lg:order-2 lg:mx-auto lg:aspect-[9/16] lg:h-[86svh] lg:rounded-[2rem]">
-          {/* eslint-disable-next-line @next/next/no-img-element -- the still frame under the film */}
-          <img src={lobo.media.showcase} alt={showcase.alt} className="absolute inset-0 h-full w-full object-cover" />
-          <video ref={film} src={lobo.media.clipIce} muted playsInline preload="auto" aria-hidden="true" className="absolute inset-0 hidden h-full w-full object-cover" />
+          <AutoVideo src={lobo.media.clipIce} poster={lobo.media.showcase} />
+          <span className="sr-only">{showcase.alt}</span>
           <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(18_33_59/0.55)_0%,transparent_30%,transparent_45%,rgb(18_33_59/0.95)_100%)] lg:hidden" />
         </div>
         <div className="relative z-10 lg:order-1">

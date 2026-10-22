@@ -56,8 +56,8 @@ export const lobo = {
     clipTankPoster: `${media}/video-viveiro.webp`,
     clipFish: `${media}/video-peixe.mp4`,
     clipFishPoster: `${media}/video-peixe.webp`,
-    /** The display on ice, every frame a keyframe so the scroll can drive it. */
-    clipIce: `${media}/video-gelo-scrub.mp4`,
+    /** The display on ice (plays by itself, in a loop). */
+    clipIce: `${media}/video-gelo.mp4`,
     menuScreen: `${media}/ementa-ecra.webp`,
     og: `${media}/og-site.jpg`,
     icon192: `${media}/icone-192.png`,
