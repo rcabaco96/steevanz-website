@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { preconnect } from "react-dom";
 import { VideoMenu } from "@/components/menu/VideoMenu";
+import { menuColorsFromLogo } from "@/lib/video-menus/logo-colors-server";
 import { bunnyHost, hasPublicDemoOrdering, isDemoMenu, menuReferrer, slugProblem } from "@/lib/video-menus/rules";
 import { getPublicMenu, MenusNotReadyError } from "@/lib/video-menus/store";
 
@@ -80,5 +81,6 @@ export default async function VideoMenuPage({ params }: PageProps<"/menu/[slug]"
   const menu = await loadMenu(slug);
   if (!menu) notFound();
   // A demo menu may take demo orders here: each visitor's own, kept in their tab (never on the server).
-  return <VideoMenu menu={menu} demo={isDemoMenu(slug)} ordering={hasPublicDemoOrdering(slug, menu.ordering) ? { demo: true, slug } : undefined} />;
+  const colors = await menuColorsFromLogo(menu.logo);
+  return <VideoMenu menu={menu} colors={colors} demo={isDemoMenu(slug)} ordering={hasPublicDemoOrdering(slug, menu.ordering) ? { demo: true, slug } : undefined} />;
 }

@@ -65,10 +65,10 @@ export const ermita = {
     /** Link previews (1200×630): the site (the convent from the air and the painted vault) and the video menu. */
     og: `${media}/og-site.jpg`,
     ogMenu: `${media}/og-menu.jpg`,
-    icon192: `${media}/icon-192.png`,
-    icon512: `${media}/icon-512.png`,
-    appleIcon: `${media}/apple-icon.png`,
-    favicon: `${media}/favicon.ico`,
+    icon192: `${media}/icone-logo-192.png`,
+    icon512: `${media}/icone-logo-512.png`,
+    appleIcon: `${media}/icone-logo-apple.png`,
+    favicon: `${media}/icone-logo.ico`,
   },
 } as const;
 

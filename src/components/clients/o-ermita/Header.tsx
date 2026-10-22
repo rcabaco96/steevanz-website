@@ -86,12 +86,15 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
 
   const solid = scrolled && !open;
   const onDark = !solid;
+  // The video menu (on steevanz.com, a new tab) sits with the page's sections.
   const nav = [
-    { id: ermitaSections.house, label: copy.nav.house },
-    { id: ermitaSections.cuisine, label: copy.nav.cuisine },
-    { id: ermitaSections.gallery, label: copy.nav.gallery },
-    { id: ermitaSections.visit, label: copy.nav.visit },
+    { id: ermitaSections.house, href: `#${ermitaSections.house}`, label: copy.nav.house, external: false },
+    { id: ermitaSections.cuisine, href: `#${ermitaSections.cuisine}`, label: copy.nav.cuisine, external: false },
+    { id: "ementa", href: ermita.menu, label: copy.nav.menu, external: true },
+    { id: ermitaSections.gallery, href: `#${ermitaSections.gallery}`, label: copy.nav.gallery, external: false },
+    { id: ermitaSections.visit, href: `#${ermitaSections.visit}`, label: copy.nav.visit, external: false },
   ];
+  const externalProps = (external: boolean) => (external ? { target: "_blank", rel: "noopener noreferrer" } : {});
 
   return (
     <header
@@ -108,10 +111,12 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
           {nav.map((item) => (
             <a
               key={item.id}
-              href={`#${item.id}`}
+              href={item.href}
+              {...externalProps(item.external)}
               className="group relative flex h-11 items-center px-4 text-[0.74rem] font-semibold tracking-[0.24em] uppercase"
             >
               {item.label}
+              {item.external ? <span className="sr-only"> {copy.newTab}</span> : null}
               <span
                 aria-hidden="true"
                 className={`absolute inset-x-4 bottom-2 h-px origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100 ${
@@ -171,7 +176,8 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
                 <m.a
                   key={item.id}
                   ref={i === 0 ? firstLinkRef : undefined}
-                  href={`#${item.id}`}
+                  href={item.href}
+                  {...externalProps(item.external)}
                   onClick={() => setOpen(false)}
                   initial={reduced ? false : { y: 28, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -180,6 +186,7 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
                 >
                   <span className="font-sans text-xs tracking-[0.2em] text-ouro">0{i + 1}</span>
                   {item.label}
+                  {item.external ? <span className="sr-only"> {copy.newTab}</span> : null}
                 </m.a>
               ))}
             </nav>

@@ -875,3 +875,12 @@ html.reveal-ready [data-reveal] {
 
 
 }
+
+/* The video menu's accent as text (VideoMenu brandStyle, colours from the business's logo): lighter on the dark
+   theme so it stays readable; buttons keep --menu-accent with white text. */
+[data-menu-brand] {
+  --menu-accent-text: var(--menu-accent);
+}
+[data-theme="dark"] [data-menu-brand] {
+  --menu-accent-text: var(--menu-accent-on-dark);
+}

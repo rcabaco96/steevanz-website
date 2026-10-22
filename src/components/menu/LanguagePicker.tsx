@@ -104,7 +104,7 @@ export function LanguagePicker({ language, onChoose }: { language: MenuLanguage;
                 onClick={() => pick(index)}
                 onPointerMove={() => setActive(index)}
                 className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-3 text-[15px] font-semibold text-text select-none ${index === active ? "bg-surface-2" : ""}`}
-                style={selected ? { color: "var(--menu-accent)" } : undefined}
+                style={selected ? { color: "var(--menu-accent-text)" } : undefined}
               >
                 <LanguageFlag language={option} size={16} />
                 <span lang={languageLocales[option]} className="min-w-0 flex-1 truncate">

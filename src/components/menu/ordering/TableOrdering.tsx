@@ -650,7 +650,7 @@ function OrderSheet({
           >
             <div className="flex items-center gap-3 px-5 pt-4 pb-3">
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent)" }}>
+                <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent-text)" }}>
                   {heading}
                 </p>
                 <h2 className="display text-xl text-text">{view.kind === "order" || demo ? text.yourOrder : text.tableOrder}</h2>
@@ -672,8 +672,8 @@ function OrderSheet({
                     )}
                     {demo ? (
                       // No QR code: a demo order goes to no restaurant (it has no staff page).
-                      <div data-demo-order className="w-full rounded-2xl border border-dashed px-4 py-3 text-left" style={{ borderColor: "var(--menu-accent)" }}>
-                        <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent)" }}>
+                      <div data-demo-order className="w-full rounded-2xl border border-dashed px-4 py-3 text-left" style={{ borderColor: "var(--menu-accent-text)" }}>
+                        <p className="text-xs font-semibold tracking-wide uppercase" style={{ color: "var(--menu-accent-text)" }}>
                           {text.demoLabel}
                         </p>
                         <p className="mt-1 text-sm text-muted">{text.demoExplain}</p>

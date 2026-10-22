@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { preconnect } from "react-dom";
 import { VideoMenu } from "@/components/menu/VideoMenu";
+import { menuColorsFromLogo } from "@/lib/video-menus/logo-colors-server";
 import { publicSupabaseConfig } from "@/lib/supabase/env";
 import { getTableByToken, type OrderingTable } from "@/lib/video-menus/ordering-store";
 import { bunnyHost, isDemoMenu, menuReferrer } from "@/lib/video-menus/rules";
@@ -44,9 +45,11 @@ export default async function TableMenuPage({ params }: PageProps<"/m/[token]">)
   const menu = await loadMenu(table);
   if (!table || !menu) notFound();
   const supabase = publicSupabaseConfig();
+  const colors = await menuColorsFromLogo(menu.logo);
   return (
     <VideoMenu
       menu={menu}
+      colors={colors}
       demo={isDemoMenu(table.slug)}
       ordering={table.ordering ? { token, tableName: table.name, channel: table.id, realtime: supabase ? { url: supabase.url, key: supabase.anonKey } : null } : undefined}
     />

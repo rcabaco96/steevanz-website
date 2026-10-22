@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from "react";
 import { preload } from "react-dom";
 import { formatMenuPrice, languageLocales, localizeMenu, menuText, type MenuLanguage } from "@/lib/video-menus/i18n";
+import { neutralMenuColors, type MenuColors } from "@/lib/video-menus/logo-colors";
 import { bunnyThumbnail, type MenuDish, type VideoMenuData } from "@/lib/video-menus/rules";
 import { AddToOrder, type MenuOrderingConfig } from "./AddToOrder";
 import { BunnyVideo, bunnyEarlyScript, hasBunnyVideo } from "./BunnyVideo";
@@ -15,8 +16,19 @@ import { ShortsViewer, type ShortItem } from "./VideoShorts";
 /** Ordering: its code comes only on a table's page (/m/<token>) or a demo menu's link with demo orders, after the menu. */
 const TableOrdering = dynamic(() => import("./ordering/TableOrdering"), { ssr: false });
 
-/** The business's colours (Dolci e Salati's logo), for accents only: the page keeps the theme's text and background. */
-const brand = { "--menu-accent": "#c23d7a", "--menu-accent-soft": "rgba(226, 99, 155, 0.14)" } as CSSProperties;
+/**
+ * The business's colours, always from its own logo (logo-colors.ts), for accents only: the page keeps the theme's text
+ * and background. --menu-accent fills buttons (white text); --menu-accent-text is the accent as text, lighter on the
+ * dark theme (globals.css, [data-menu-brand]).
+ */
+function brandStyle(colors: MenuColors): CSSProperties {
+  return {
+    "--menu-accent": colors.accent,
+    "--menu-accent-on-dark": colors.accentOnDark,
+    "--menu-accent-soft": colors.soft,
+    "--menu-accent-glow": colors.glow,
+  } as CSSProperties;
+}
 
 /** A section's place in the page (☰ scrolls to it). */
 const sectionId = (id: string) => `seccao-${id}`;
@@ -72,7 +84,7 @@ const DishCard = memo(function DishCard({
         {/* A word too long to sit beside the price (German, 320 px) sends the price to the next line instead of being cut. */}
         <div className="flex flex-wrap items-start justify-between gap-x-2">
           <span className="flex-[1_1_0%] text-sm leading-snug font-semibold break-words hyphens-auto text-text">{dish.name}</span>
-          <span className="ml-auto shrink-0 text-sm font-semibold" style={{ color: "var(--menu-accent)" }}>
+          <span className="ml-auto shrink-0 text-sm font-semibold" style={{ color: "var(--menu-accent-text)" }}>
             {formatMenuPrice(dish.price, language)}
           </span>
         </div>
@@ -164,7 +176,7 @@ function MosaicSplash({ logo, pictures, ready, onDone }: { logo: string; picture
         {/* Only the logo: it already is the name (owner, 2026-10-19). */}
         <div className="menu-mosaic-mark flex flex-col items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img ref={hideIfBroken} src={logo} alt="" width={168} height={168} fetchPriority="high" {...pictureGuard} className="h-42 w-42 rounded-full shadow-[0_20px_60px_rgba(194,61,122,0.35)]" />
+          <img ref={hideIfBroken} src={logo} alt="" width={168} height={168} fetchPriority="high" {...pictureGuard} className="h-42 w-42 rounded-full shadow-[0_20px_60px_var(--menu-accent-glow)]" />
         </div>
       </div>
     </div>
@@ -182,10 +194,13 @@ export function VideoMenu({
   menu: source,
   demo = false,
   ordering,
+  colors = neutralMenuColors,
 }: {
   menu: VideoMenuData;
   /** Demo menus (isDemoMenu): say their videos and prices are examples. */
   demo?: boolean;
+  /** The accent colours, read from the business's logo on the server (menuColorsFromLogo). */
+  colors?: MenuColors;
   /** A table's page with ordering on (or a demo menu's link with demo orders): «Adicionar» on each dish and the order. */
   ordering?: MenuOrderingConfig;
 }) {
@@ -410,7 +425,7 @@ export function VideoMenu({
   };
 
   return (
-    <div style={brand} lang={languageLocales[language]} className="relative min-h-dvh">
+    <div style={brandStyle(colors)} data-menu-brand lang={languageLocales[language]} className="relative min-h-dvh">
       {/* First in the page: the phone paints it before the menu under it (owner, 2026-10-16: at the end
           of the HTML, the grid showed for an instant before the opening). */}
       <MosaicSplash
@@ -514,7 +529,7 @@ export function VideoMenu({
                       onClick={() => choose(option.id)}
                       aria-current={selected ? "location" : undefined}
                       className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl px-4 text-left font-semibold text-text"
-                      style={selected ? { background: "var(--menu-accent-soft)", color: "var(--menu-accent)" } : undefined}
+                      style={selected ? { background: "var(--menu-accent-soft)", color: "var(--menu-accent-text)" } : undefined}
                     >
                       <span>{option.name}</span>
                       <span className="text-sm font-normal text-muted">{option.dishes.length}</span>
@@ -529,7 +544,7 @@ export function VideoMenu({
                 target="_blank"
                 rel="noopener"
                 className="border-t border-line px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-sm font-semibold"
-                style={{ color: "var(--menu-accent)" }}
+                style={{ color: "var(--menu-accent-text)" }}
               >
                 {text.instagram(menu.instagram)}
               </a>

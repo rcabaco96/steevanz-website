@@ -1,10 +1,10 @@
 import { ermita } from "@/content/o-ermita/facts";
 import type { ErmitaCopy } from "@/content/o-ermita/copy";
-import { ChatIcon, PhoneIcon } from "./icons";
+import { ChatIcon, PhoneIcon, PlayIcon } from "./icons";
 import { Magnet } from "./react-bits/Magnet";
 import { Reveal } from "./Reveal";
 
-// The last call before the footer: book on WhatsApp (the restaurant's own booking line) or by phone.
+// The last call before the footer: book on WhatsApp (the restaurant's own booking line) or by phone, or see the menu.
 export function Booking({ copy }: { copy: ErmitaCopy }) {
   const { booking } = copy;
   return (
@@ -39,6 +39,16 @@ export function Booking({ copy }: { copy: ErmitaCopy }) {
           </a>
         </div>
         <p className="mt-3 text-xs text-cal/70">{copy.visit.phoneNote}</p>
+        <a
+          href={ermita.menu}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-8 inline-flex items-center gap-3 border-b border-ouro/60 pb-1 font-serif text-xl text-cal italic transition-colors hover:border-cal sm:text-2xl"
+        >
+          <PlayIcon width={14} height={14} className="text-ouro" />
+          {copy.cuisine.menuButton}
+          <span className="sr-only"> {copy.newTab}</span>
+        </a>
       </Reveal>
     </section>
   );

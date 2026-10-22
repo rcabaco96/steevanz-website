@@ -45,7 +45,7 @@ export interface ErmitaCopy {
   langLabel: string;
   otherLang: string;
   logoLabel: string;
-  nav: { house: string; cuisine: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
+  nav: { house: string; cuisine: string; menu: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
   hero: { kicker: string; title: string; lead: string; whatsapp: string; call: string; directions: string; scroll: string; alt: string };
   manifesto: { eyebrow: string; text: string };
   timeline: { eyebrow: string; title: string; titleItalic: string; hint: string; chapters: ErmitaChapter[] };
@@ -109,6 +109,7 @@ const pt: ErmitaCopy = {
   nav: {
     house: "A casa",
     cuisine: "Cozinha",
+    menu: "Ementa",
     gallery: "Galeria",
     visit: "Visitar",
     book: "Reservar",
@@ -295,6 +296,7 @@ const en: ErmitaCopy = {
   nav: {
     house: "The house",
     cuisine: "Cuisine",
+    menu: "Menu",
     gallery: "Gallery",
     visit: "Visit",
     book: "Book",
