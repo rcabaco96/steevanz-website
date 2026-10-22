@@ -6,7 +6,8 @@
 //  - Address with the road and km: visitalentejo.pt. Coordinates: Google.
 //  - History, the Capela do Bispo, dishes, chef and sommelier: the hotel's own site (hotelconventosaopaulo.com).
 //  - Photos: the restaurant's Google profile and the hotel's own site, with its aerial film (see LICENCAS.txt).
-// The restaurant's menu (Canva → Adobe Express → Google Drive) is private, so there is no menu link.
+// The restaurant's own menu (Canva → Adobe Express → Google Drive) is private. The menu link is Steevanz's video menu
+// (a demo with example prices, owner 2026-10-22), on steevanz.com so it keeps working after the domain switch.
 
 const media = "/media/clients/o-ermita";
 
@@ -34,6 +35,7 @@ export const ermita = {
   mapsEmbed:
     "https://www.google.com/maps?q=O+Ermita,+Hotel+Convento+de+S%C3%A3o+Paulo,+Aldeia+da+Serra,+7170-120+Redondo&output=embed",
   complaints: "https://www.livroreclamacoes.pt/Inicio/",
+  menu: "https://www.steevanz.com/menu/o-ermita",
   /** Lunch and dinner, every day (Google; visitalentejo: «Não encerra»). */
   services: [
     { opens: "12:30", closes: "15:00" },

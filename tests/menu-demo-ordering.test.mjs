@@ -27,10 +27,12 @@ function ok(result) {
 }
 
 describe("which public links take demo orders", () => {
-  it("only the Trattoria, and only with «Pedidos no menu» on", () => {
-    assert.equal(hasPublicDemoOrdering("trattoria-da-nonna", true), true);
-    assert.equal(hasPublicDemoOrdering("trattoria-da-nonna", false), false);
-    assert.equal(hasPublicDemoOrdering("trattoria-da-nonna", undefined), false);
+  it("only the Trattoria and O Ermita, and only with «Pedidos no menu» on", () => {
+    for (const slug of ["trattoria-da-nonna", "o-ermita"]) {
+      assert.equal(hasPublicDemoOrdering(slug, true), true, slug);
+      assert.equal(hasPublicDemoOrdering(slug, false), false, slug);
+      assert.equal(hasPublicDemoOrdering(slug, undefined), false, slug);
+    }
   });
 
   it("never another demo menu nor a client's menu", () => {

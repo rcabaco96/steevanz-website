@@ -156,17 +156,21 @@ export function menuPublicPath(slug: string): string {
   return `/menu/${slug}`;
 }
 
-/** Demo menus (stock videos, example prices; «Trattoria da Nonna» and «Sakura Sushi» are fictitious): they say so under the grid. */
-const demoMenuSlugs = new Set(["dolci-salati", "trattoria-da-nonna", "sakura-sushi", "marisqueira-do-cais"]);
+/**
+ * Demo menus (stock videos, example prices; «Trattoria da Nonna» and «Sakura Sushi» are fictitious): they say so under
+ * the grid. «O Ermita» (owner, 2026-10-22) is a real restaurant's dishes with example prices and stock videos, to show
+ * its owner before the dinners open.
+ */
+const demoMenuSlugs = new Set(["dolci-salati", "trattoria-da-nonna", "sakura-sushi", "marisqueira-do-cais", "o-ermita"]);
 export function isDemoMenu(slug: string): boolean {
   return demoMenuSlugs.has(slug);
 }
 
 /**
- * Demo menus whose public link (/menu/<slug>) takes demo orders (owner, 2026-10-22: the Trattoria
- * only). Each visitor gets an order of their own that never leaves their browser (demo-ordering).
+ * Demo menus whose public link (/menu/<slug>) takes demo orders (owner, 2026-10-22: the Trattoria and
+ * O Ermita). Each visitor gets an order of their own that never leaves their browser (demo-ordering).
  */
-const publicDemoOrderingSlugs = new Set(["trattoria-da-nonna"]);
+const publicDemoOrderingSlugs = new Set(["trattoria-da-nonna", "o-ermita"]);
 /** The public link takes demo orders: a demo menu named above, with «Pedidos no menu» on in the admin. */
 export function hasPublicDemoOrdering(slug: string, orderingEnabled: boolean | undefined): boolean {
   return isDemoMenu(slug) && publicDemoOrderingSlugs.has(slug) && orderingEnabled === true;

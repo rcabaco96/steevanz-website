@@ -60,6 +60,7 @@ export interface ErmitaCopy {
     menuTitle: string;
     courses: ErmitaCourse[];
     menuNote: string;
+    menuButton: string;
     imageAlt: string;
     people: { role: string; name: string; initials: string; text: string }[];
   };
@@ -199,6 +200,7 @@ const pt: ErmitaCopy = {
       { name: "Para terminar", dishes: ["Marquise de chocolate", "Doces conventuais"] },
     ],
     menuNote: "Alguns dos pratos que se destacam na ementa.",
+    menuButton: "Ver a ementa em vídeo",
     imageAlt: "Garrafeira e mesas postas junto a painéis de azulejo, com a luz da tarde a entrar pela janela",
     people: [
       {
@@ -384,6 +386,7 @@ const en: ErmitaCopy = {
       { name: "To finish", dishes: ["Chocolate marquise", "Convent sweets"] },
     ],
     menuNote: "Some of the dishes that stand out on the menu.",
+    menuButton: "See the menu in video",
     imageAlt: "Wine cellar and laid tables beside tile panels, with afternoon light coming through the window",
     people: [
       {

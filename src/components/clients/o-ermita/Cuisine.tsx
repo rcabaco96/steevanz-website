@@ -7,7 +7,9 @@ import Image from "next/image";
 import { useRef } from "react";
 import { ermita, ermitaImageSize } from "@/content/o-ermita/facts";
 import type { ErmitaCopy } from "@/content/o-ermita/copy";
+import { PlayIcon } from "./icons";
 import { Skyline } from "./Logo";
+import { Magnet } from "./react-bits/Magnet";
 import { Reveal } from "./Reveal";
 import { SplitText } from "./react-bits/SplitText";
 import { ermitaSections } from "./sections";
@@ -101,6 +103,18 @@ export function Cuisine({ copy }: { copy: ErmitaCopy }) {
               </div>
               <span aria-hidden="true" className="oe-diamond mx-auto mt-12 block text-ouro" />
               <p className="mt-6 font-serif text-lg text-pedra italic">{cuisine.menuNote}</p>
+              <Magnet className="mt-9 inline-block">
+                <a
+                  href={ermita.menu}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-azulejo-deep px-7 text-[0.78rem] font-semibold tracking-[0.18em] text-cal uppercase shadow-[0_18px_40px_-20px_rgb(19_40_90/0.8)] transition-colors hover:bg-azulejo"
+                >
+                  <PlayIcon width={16} height={16} />
+                  {cuisine.menuButton}
+                  <span className="sr-only"> {copy.newTab}</span>
+                </a>
+              </Magnet>
             </div>
           </div>
         </div>
