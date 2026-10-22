@@ -121,55 +121,189 @@
   transform: translateX(3px);
 }
 
-/* ---------- Clients ---------- */
+/* ---------- Clients (owner, 2026-10-22: a real band with an endless logo carousel) ---------- */
 
 .clients {
-  padding-block: 2.5rem;
-}
-
-.clientsTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* Phones: 3×2 grid. From 640px: one row, spread across the container. Each logo's height is the strip's
-   logo height × its optical scale (src/content/client-logos.ts); width follows the aspect ratio. */
-.clientLogos {
-  --logo-h: 2.125rem;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: center;
-  justify-items: center;
-  gap: 1.75rem 0.75rem;
-  margin: 1.5rem 0 0;
-  padding: 0;
-  list-style: none;
+  --tile: #ffffff;
+  --tile-line: rgb(29 18 32 / 0.07);
+  --tile-w: 6.75rem;
+  --tile-h: 4.25rem;
+  --tile-gap: 0.625rem;
+  --logo-h: 2.05rem;
+  /* Seconds per logo: the same slow speed whatever the screen or the number of logos. */
+  --per-logo: 4.5s;
+  position: relative;
+  padding-block: 3.5rem 2.25rem;
+  background: var(--bg);
+  overflow: hidden;
 }
 
 @media (min-width: 640px) {
-  .clientLogos {
-    --logo-h: 2.75rem;
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-top: 1.75rem;
+  .clients {
+    --tile-w: 9rem;
+    --tile-h: 5.25rem;
+    --tile-gap: 0.875rem;
+    --logo-h: 2.6rem;
+    padding-block: 4.5rem 3rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .clientLogos {
-    --logo-h: 3.25rem;
+  .clients {
+    --tile-w: 12rem;
+    --tile-h: 6.25rem;
+    --tile-gap: 1.25rem;
+    --logo-h: 3.4rem;
+    padding-block: 6rem 3.5rem;
   }
 }
 
-/* The logos in their own colours (owner, 2026-10-22), optically balanced by --logo-scale. */
-.clientLogo {
-  position: relative;
-  display: grid;
-  place-items: center;
+/* Dark theme: the colour logos (black «ei», navy Agilflex) need a light ground, so the tiles turn cream. */
+:global(:root[data-theme="dark"]) .clients {
+  --tile: #fbf7f1;
+  --tile-line: transparent;
 }
 
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .clients {
+    --tile: #fbf7f1;
+    --tile-line: transparent;
+  }
+}
+
+.clientsHead {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.clientsEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.clientsEyebrow::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.clientsTitle {
+  margin-top: 0.85rem;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.875rem, 7vw, 3.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.clientsAccent {
+  /* Its own line: «Grandes marcas e negócios locais / confiam em nós.» */
+  display: block;
+  font-family: var(--font-fraunces-italic), var(--font-fraunces), ui-serif, Georgia, serif;
+  font-style: italic;
+  color: var(--accent-text);
+}
+
+.clientsLead {
+  margin-top: 0.9rem;
+  max-width: 40rem;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+@media (min-width: 1024px) {
+  .clientsLead {
+    font-size: 1.1875rem;
+  }
+}
+
+/* The carousel: full width, the edges fading into the band. */
+.marquee {
+  display: grid;
+  gap: var(--tile-gap);
+  margin-top: 2rem;
+  padding-block: 0.75rem;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .marquee {
+    margin-top: 3.25rem;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+  }
+}
+
+.marqueeRow {
+  display: flex;
+  width: max-content;
+}
+
+/* One copy of the list. The trailing padding equals the gap, so copy after copy the spacing never changes and a
+   slide of one copy's width lands exactly on the next copy. */
+.marqueeGroup {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--tile-gap);
+  margin: 0;
+  padding: 0 var(--tile-gap) 0 0;
+  list-style: none;
+}
+
+/* The whole row slides by one copy (100% / copies), then starts again: one animation per row, so the copies can never
+   drift apart (even when the page arrives in pieces). */
+@media (prefers-reduced-motion: no-preference) {
+  .marqueeRow {
+    animation: clientsMarquee calc(var(--count, 6) * var(--per-logo)) linear infinite;
+    will-change: transform;
+  }
+
+  .marqueeRow[data-reverse] {
+    animation-direction: reverse;
+  }
+
+  .marquee:hover .marqueeRow,
+  .clients[data-paused] .marqueeRow {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes clientsMarquee {
+  to {
+    transform: translateX(calc(-100% / var(--copies, 2)));
+  }
+}
+
+.clientTile {
+  display: grid;
+  place-items: center;
+  width: var(--tile-w);
+  height: var(--tile-h);
+  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
+  background: var(--tile);
+  box-shadow:
+    inset 0 0 0 1px var(--tile-line),
+    0 1px 2px rgb(29 18 32 / 0.04),
+    0 10px 24px -14px rgb(29 18 32 / 0.18);
+}
+
+/* Each logo's height is the band's logo height × its optical scale (src/content/client-logos.ts). */
 .clientLogoImage {
   display: block;
   width: auto;
@@ -178,11 +312,64 @@
   object-fit: contain;
 }
 
-/* Dark theme: colour logos (black «ei», navy Agilflex) need a light ground, so each sits on a cream tile. */
-:global(:root[data-theme="dark"]) .clientLogo {
-  padding: 0.45rem 0.7rem;
-  border-radius: 0.875rem;
-  background: #fbf7f1;
+.marqueePause {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marqueePause {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: 0.5rem 0 0 auto;
+    border-radius: 999px;
+    color: var(--text-muted);
+    background: color-mix(in oklab, var(--text) 6%, transparent);
+    transition:
+      background-color 0.25s var(--ease),
+      color 0.25s var(--ease);
+  }
+
+  .marqueePause:hover {
+    color: var(--text);
+    background: color-mix(in oklab, var(--text) 11%, transparent);
+  }
+
+  .marqueePause:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced motion: no carousel, the list once as a centred grid. */
+@media (prefers-reduced-motion: reduce) {
+  .clients {
+    --tile-w: min(10.5rem, calc((100vw - 2 * var(--gutter) - var(--tile-gap)) / 2));
+  }
+
+  .marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .marqueeRow {
+    width: auto;
+    justify-content: center;
+    padding-inline: var(--gutter);
+  }
+
+  .marqueeGroup {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 78rem;
+    padding: 0;
+  }
+
+  .marqueeGroup[aria-hidden] {
+    display: none;
+  }
 }
 
 /* ---------- Goals ---------- */

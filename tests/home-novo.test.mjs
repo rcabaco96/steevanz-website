@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { businessCardBandCopy, goals, guideBandCopy, heroReelCopy, homeAdBands, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { clientLogos } from "../src/content/client-logos.ts";
 import { productAds } from "../src/content/product-ads.ts";
 import { getProduct } from "../src/content/products.ts";
 
@@ -264,5 +265,25 @@ describe("home page («/» and «/en»)", () => {
       assert.equal(ad.seconds, Math.round(length / scale), id);
     }
     assert.equal(productAds["google-review-plates"].seconds, 27);
+  });
+
+  it("shows the clients as a band with an endless logo carousel, readable once, still under reduced motion (owner, 2026-10-22)", () => {
+    // Eyebrow, title (the accent in italic) and one line in six languages; truthful: «2021» is the About page's date.
+    for (const copy of Object.values(novoCopy)) {
+      for (const key of ["eyebrow", "titleStart", "titleAccent", "lead", "pause", "play"]) assert.ok(copy.clients[key], key);
+      assert.match(copy.clients.lead, /2021/);
+    }
+    assert.equal(novoCopy.pt.clients.titleStart + " " + novoCopy.pt.clients.titleAccent, "Grandes marcas e negócios locais confiam em nós.");
+    // The big three first; adding a client is one line in client-logos.ts.
+    assert.deepEqual(clientLogos.slice(0, 3).map((logo) => logo.id), ["sporting", "bmw", "credito-agricola"]);
+    for (const logo of clientLogos) assert.ok(existsSync(join("public", logo.src)), logo.src);
+    const strip = readFileSync(join(dir, "ClientStrip.tsx"), "utf8");
+    assert.match(strip, /hidden=\{copyIndex > 0\}/, "only the first copy is read");
+    assert.match(strip, /aria-hidden=\{hidden \|\| undefined\}/);
+    assert.match(strip, /alt=\{hidden \? "" : logo\.name\}/);
+    assert.match(strip, /<MarqueePause /, "a pause button (WCAG 2.2.2)");
+    const css = readFileSync(join(dir, "novo.module.css"), "utf8");
+    assert.match(css, /\.marquee:hover \.marqueeRow,\s*\.clients\[data-paused\] \.marqueeRow \{\s*animation-play-state: paused;/);
+    assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.marqueeGroup\[aria-hidden\] \{\s*display: none;/);
   });
 });

@@ -113,7 +113,15 @@ const novoPt = {
   whatsappMessage: "Olá! Gostava de saber mais sobre as soluções da Steevanz.",
   perMonth: "/mês",
   clients: {
-    title: "Confiam em nós",
+    // Owner, 2026-10-22: «super podre e fraca» → a real band. Truthful only: the logos are real clients (sport,
+    // cars, banking, insurance, accounting) and «desde 2021» is the About page's own date.
+    eyebrow: "Clientes",
+    titleStart: "Grandes marcas e negócios locais",
+    titleAccent: "confiam em nós.",
+    lead: "Do desporto aos automóveis, da banca aos seguros. Desde 2021, o mesmo cuidado com cada cliente, grande ou pequeno.",
+    /** The marquee's pause button (WCAG 2.2.2: anything moving for more than 5 s can be paused). */
+    pause: "Pausar os logótipos",
+    play: "Retomar os logótipos",
   },
   goals: {
     title: "O que quer melhorar?",
@@ -163,7 +171,12 @@ export const novoCopy: Localized<NovoCopy> = {
     whatsappMessage: "Hi! I'd like to know more about Steevanz solutions.",
     perMonth: "/month",
     clients: {
-      title: "They trust us",
+      eyebrow: "Clients",
+      titleStart: "Big brands and local businesses",
+      titleAccent: "trust us.",
+      lead: "From sport to cars, from banking to insurance. Since 2021, the same care for every client, large or small.",
+      pause: "Pause the logos",
+      play: "Play the logos",
     },
     goals: {
       title: "What would you like to improve?",
@@ -208,7 +221,12 @@ export const novoCopy: Localized<NovoCopy> = {
     whatsappMessage: "¡Hola! Me gustaría saber más sobre las soluciones de Steevanz.",
     perMonth: "/mes",
     clients: {
-      title: "Confían en nosotros",
+      eyebrow: "Clientes",
+      titleStart: "Grandes marcas y negocios locales",
+      titleAccent: "confían en nosotros.",
+      lead: "Del deporte a la automoción, de la banca a los seguros. Desde 2021, el mismo cuidado con cada cliente, grande o pequeño.",
+      pause: "Pausar los logotipos",
+      play: "Reanudar los logotipos",
     },
     goals: {
       title: "¿Qué quiere mejorar?",
@@ -252,7 +270,12 @@ export const novoCopy: Localized<NovoCopy> = {
     whatsappMessage: "Bonjour ! J'aimerais en savoir plus sur les solutions Steevanz.",
     perMonth: "/mois",
     clients: {
-      title: "Ils nous font confiance",
+      eyebrow: "Clients",
+      titleStart: "Grandes marques et commerces de proximité",
+      titleAccent: "nous font confiance.",
+      lead: "Du sport à l'automobile, de la banque à l'assurance. Depuis 2021, le même soin pour chaque client, grand ou petit.",
+      pause: "Mettre les logos en pause",
+      play: "Relancer les logos",
     },
     goals: {
       title: "Que souhaitez-vous améliorer ?",
@@ -296,7 +319,12 @@ export const novoCopy: Localized<NovoCopy> = {
     whatsappMessage: "Hallo! Ich möchte mehr über die Lösungen von Steevanz erfahren.",
     perMonth: "/Monat",
     clients: {
-      title: "Sie vertrauen uns",
+      eyebrow: "Kunden",
+      titleStart: "Große Marken und lokale Betriebe",
+      titleAccent: "vertrauen uns.",
+      lead: "Vom Sport bis zum Automobil, von Banken bis zu Versicherungen. Seit 2021 dieselbe Sorgfalt für jeden Kunden, ob groß oder klein.",
+      pause: "Logos anhalten",
+      play: "Logos abspielen",
     },
     goals: {
       title: "Was möchten Sie verbessern?",
@@ -340,7 +368,12 @@ export const novoCopy: Localized<NovoCopy> = {
     whatsappMessage: "Buongiorno! Vorrei saperne di più sulle soluzioni Steevanz.",
     perMonth: "/mese",
     clients: {
-      title: "Si fidano di noi",
+      eyebrow: "Clienti",
+      titleStart: "Grandi marchi e attività locali",
+      titleAccent: "si fidano di noi.",
+      lead: "Dallo sport all'automobile, dalla banca alle assicurazioni. Dal 2021, la stessa cura per ogni cliente, grande o piccolo.",
+      pause: "Metti in pausa i loghi",
+      play: "Riprendi i loghi",
     },
     goals: {
       title: "Cosa vuole migliorare?",
