@@ -1,67 +1,43 @@
-"use client";
-
 import Image from "next/image";
-import { useState } from "react";
-import { novoCopy, trustedClients, type TrustedClient } from "@/content/novo-home";
+import type { CSSProperties } from "react";
+import { clientLogos } from "@/content/client-logos";
+import { novoCopy } from "@/content/novo-home";
 import { localize, type Locale } from "@/lib/i18n";
 import styles from "./novo.module.css";
 
-// «Confiam em nós»: a slow marquee of the clients we may name. It pauses on hover and with the
-// button (WCAG 2.2.2); with reduced motion it is a still, wrapped list.
-
-function ClientName({ client }: { client: TrustedClient }) {
-  // TODO(logos): when the owner sends each logo, set `logo` in src/content/novo-home.ts and the SVG
-  // takes the name's place here, at the same height.
-  if (client.logo) {
-    return (
-      <li className={styles.client} data-client={client.id}>
-        <Image src={client.logo.src} alt={client.name} width={client.logo.width} height={client.logo.height} className={styles.clientLogo} />
-      </li>
-    );
-  }
-  return (
-    <li className={styles.client} data-client={client.id}>
-      {client.name}
-    </li>
-  );
-}
+// «Confiam em nós»: the client logos, still (no marquee), in the site's ink; each one shows its own
+// colours on hover. Phones: a 3×2 grid; from 640px: one row. Sizes are optically balanced
+// (src/content/client-logos.ts) and the width/height attributes keep the aspect ratio, so nothing shifts
+// while they load. Not links: they are references, not destinations.
 
 export function ClientStrip({ locale }: { locale: Locale }) {
-  const [paused, setPaused] = useState(false);
   const copy = localize(novoCopy, locale).clients;
   return (
     <section aria-labelledby="novo-clients" className={styles.clients}>
       <div className={styles.wrap}>
-        <div className={styles.clientsHead}>
-          <h2 id="novo-clients" className={styles.clientsTitle}>
-            {copy.title}
-          </h2>
-          <button type="button" className={styles.pauseBtn} onClick={() => setPaused((p) => !p)} aria-label={paused ? copy.play : copy.pause} aria-pressed={paused}>
-            {paused ? (
-              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M4 2.5v11l9-5.5z" fill="currentColor" />
-              </svg>
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M4 2.5h2.6v11H4zM9.4 2.5H12v11H9.4z" fill="currentColor" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-      <div className={styles.marquee} data-paused={paused ? "" : undefined}>
-        <div className={styles.marqueeTrack}>
-          <ul className={styles.marqueeList}>
-            {trustedClients.map((client) => (
-              <ClientName key={client.id} client={client} />
-            ))}
-          </ul>
-          <ul className={styles.marqueeList} aria-hidden="true">
-            {trustedClients.map((client) => (
-              <ClientName key={client.id} client={client} />
-            ))}
-          </ul>
-        </div>
+        <h2 id="novo-clients" className={styles.clientsTitle}>
+          {copy.title}
+        </h2>
+        <ul className={styles.clientLogos}>
+          {clientLogos.map((logo) => {
+            // Rendered at up to ~66px tall: the width/height props ask next/image for that size
+            // (and its 2× for sharp screens) instead of the full-size file. SVGs are served as they are.
+            const h = Math.round(52 * logo.scale);
+            const w = Math.round((h * logo.width) / logo.height);
+            return (
+              <li
+                key={logo.id}
+                className={styles.clientLogo}
+                data-client={logo.id}
+                data-featured={logo.featured ? "" : undefined}
+                style={{ "--logo-scale": logo.scale } as CSSProperties}
+              >
+                <Image src={logo.monoSrc} alt={logo.name} width={w} height={h} className={styles.clientLogoMono} />
+                <Image src={logo.src} alt="" aria-hidden width={w} height={h} className={styles.clientLogoColour} />
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

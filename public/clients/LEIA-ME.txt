@@ -1,0 +1,19 @@
+Logótipos de clientes (2026-10-22)
+
+LICENÇA: logótipos dos nossos clientes Sporting, BMW, Crédito Agrícola, EIC, Agilflex Seguros e Dianaconta,
+usados com a autorização do dono da Steevanz apenas como referência de clientes («Confiam em nós»). As marcas
+pertencem às respetivas empresas; não são licenças nossas para outros usos.
+
+originais/  Os ficheiros tal como o dono os enviou (capturas e downloads, sem alterações).
+
+Ficheiros tratados (fundos e restos removidos, recortados rente, proporções e cores do original):
+  sporting.png/.webp        Escudo SCP, PNG transparente; o branco de dentro do escudo fica branco.
+  bmw.png/.webp             Roundel BMW, PNG transparente recortado pelo círculo (sem orla branca).
+  credito-agricola.svg      Vetorizado (verde e laranja do original).
+  eic.svg                   Vetorizado (cinza-escuro e vermelho do original).
+  agilflex.svg              Vetorizado (azul, vermelho, cinza); sem o falso xadrez nem o ícone do Google Lens.
+  dianaconta.svg            Vetorizado, logótipo completo com «contabilidade e consultoria fiscal», no azul do
+                            quadrado original (o original é branco sobre esse azul).
+  dianaconta-compacto.svg   Chavetas + nome, sem a linha descritiva (para tamanhos pequenos).
+  *-mono.svg / *-mono.png   Versões numa só cor, a tinta do site (#1d1220); as partes brancas ficam
+                            transparentes (vazadas), não cinzentas. Usadas na faixa da home.

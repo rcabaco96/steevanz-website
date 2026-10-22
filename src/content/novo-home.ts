@@ -114,8 +114,6 @@ const novoPt = {
   perMonth: "/mês",
   clients: {
     title: "Confiam em nós",
-    pause: "Pausar a faixa de clientes",
-    play: "Retomar a faixa de clientes",
   },
   goals: {
     title: "O que quer melhorar?",
@@ -166,8 +164,6 @@ export const novoCopy: Localized<NovoCopy> = {
     perMonth: "/month",
     clients: {
       title: "They trust us",
-      pause: "Pause the client strip",
-      play: "Play the client strip",
     },
     goals: {
       title: "What would you like to improve?",
@@ -213,8 +209,6 @@ export const novoCopy: Localized<NovoCopy> = {
     perMonth: "/mes",
     clients: {
       title: "Confían en nosotros",
-      pause: "Pausar la franja de clientes",
-      play: "Reanudar la franja de clientes",
     },
     goals: {
       title: "¿Qué quiere mejorar?",
@@ -259,8 +253,6 @@ export const novoCopy: Localized<NovoCopy> = {
     perMonth: "/mois",
     clients: {
       title: "Ils nous font confiance",
-      pause: "Mettre en pause le défilé des clients",
-      play: "Relancer le défilé des clients",
     },
     goals: {
       title: "Que souhaitez-vous améliorer ?",
@@ -305,8 +297,6 @@ export const novoCopy: Localized<NovoCopy> = {
     perMonth: "/Monat",
     clients: {
       title: "Sie vertrauen uns",
-      pause: "Kundenleiste anhalten",
-      play: "Kundenleiste fortsetzen",
     },
     goals: {
       title: "Was möchten Sie verbessern?",
@@ -351,8 +341,6 @@ export const novoCopy: Localized<NovoCopy> = {
     perMonth: "/mese",
     clients: {
       title: "Si fidano di noi",
-      pause: "Metta in pausa la fascia dei clienti",
-      play: "Riprenda la fascia dei clienti",
     },
     goals: {
       title: "Cosa vuole migliorare?",
@@ -704,27 +692,7 @@ export const goalCtas: Record<ProductId, Localized<string>> = {
   automation: { pt: "Conhecer a automação", en: "Discover automation", es: "Conocer la automatización", fr: "Découvrir l'automatisation", de: "Die Automatisierung entdecken", it: "Scopra l'automazione" },
 };
 
-/**
- * Clients the owner allowed us to name (2026-10-18). The logo files are still to come: each one
- * gets an SVG slot (`logo`), and until then the name is set in type. Never add what was done for a
- * client here without the owner's word.
- */
-export interface TrustedClient {
-  id: string;
-  name: string;
-  /** TODO(logos): path to the client's SVG logo in public/home/clients/ once the owner sends it. */
-  logo?: { src: string; width: number; height: number };
-}
-
-export const trustedClients: TrustedClient[] = [
-  { id: "sporting", name: "Sporting" },
-  { id: "bmw", name: "BMW" },
-  { id: "credito-agricola", name: "Crédito Agrícola" },
-  { id: "eic", name: "EIC" },
-  { id: "agilflex", name: "Agilflex" },
-  { id: "dianaconta", name: "Dianaconta" },
-  { id: "dolci-salati", name: "Dolci e Salati" },
-];
+// The «Confiam em nós» strip shows the client logos in src/content/client-logos.ts.
 
 /* ---------- Como trabalhamos ---------- */
 

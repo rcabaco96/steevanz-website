@@ -435,108 +435,91 @@
   padding-block: 2.5rem;
 }
 
-.clientsHead {
-  /* The pause button sits next to the title, clear of the floating WhatsApp button's corner. */
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-}
-
 .clientsTitle {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-muted);
 }
 
-.pauseBtn {
-  display: inline-grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  color: var(--text-muted);
-  background: color-mix(in oklab, var(--text) 6%, transparent);
-  transition: background-color 0.2s var(--ease);
-}
-
-.pauseBtn:hover {
-  background: color-mix(in oklab, var(--text) 11%, transparent);
-}
-
-.marquee {
-  margin-top: 1rem;
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-.marqueeTrack {
-  display: flex;
-  width: max-content;
-}
-
-.marqueeList {
-  display: flex;
+/* Phones: 3×2 grid. From 640px: one row, spread across the container. Each logo's height is the strip's
+   logo height × its optical scale (src/content/client-logos.ts); width follows the aspect ratio. */
+.clientLogos {
+  --logo-h: 2.125rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  flex-shrink: 0;
+  justify-items: center;
+  gap: 1.75rem 0.75rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.client {
-  display: flex;
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  padding-right: clamp(1.5rem, 4vw, 3rem);
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(1.5rem, 5.4vw, 2.5rem);
-  letter-spacing: -0.02em;
-  color: var(--text);
-  white-space: nowrap;
+@media (min-width: 640px) {
+  .clientLogos {
+    --logo-h: 2.75rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+  }
 }
 
-.client::after {
-  content: "";
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: var(--gold);
+@media (min-width: 1024px) {
+  .clientLogos {
+    --logo-h: 3.25rem;
+  }
 }
 
+/* The one-colour logo sets the slot's size; the colour logo sits exactly on top and fades in on hover. */
 .clientLogo {
-  height: 2.75rem;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.clientLogoMono,
+.clientLogoColour {
+  grid-area: 1 / 1;
+  display: block;
   width: auto;
+  max-width: 100%;
+  height: calc(var(--logo-h) * var(--logo-scale, 1));
+  object-fit: contain;
+  transition: opacity 0.35s var(--ease);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .marqueeTrack {
-    animation: marquee 48s linear infinite;
+/* A touch softer than the text, so the strip stays calm; the three big names a little stronger. */
+.clientLogoMono {
+  opacity: 0.72;
+}
+
+.clientLogo[data-featured] .clientLogoMono {
+  opacity: 0.86;
+}
+
+.clientLogoColour {
+  opacity: 0;
+}
+
+@media (hover: hover) {
+  .clientLogo:hover .clientLogoMono {
+    opacity: 0;
   }
-  .marquee:hover .marqueeTrack,
-  .marquee[data-paused] .marqueeTrack {
-    animation-play-state: paused;
+  .clientLogo:hover .clientLogoColour {
+    opacity: 1;
   }
 }
 
-@keyframes marquee {
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
+/* Dark theme: the ink logos turn light (invert keeps the knock-outs). */
+:global(:root[data-theme="dark"]) .clientLogoMono {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee {
-    mask-image: none;
-  }
-  .marqueeTrack {
-    width: auto;
-  }
-  .marqueeList {
-    flex-wrap: wrap;
-    row-gap: 0.5rem;
-  }
-  .marqueeList[aria-hidden="true"],
-  .pauseBtn {
-    display: none;
+  .clientLogoMono,
+  .clientLogoColour {
+    transition: none;
   }
 }
 

@@ -1,6 +1,7 @@
 // Shared data and helpers for /novo-ultra. Pure data: value imports use explicit .ts extensions so
 // `node --test` can load this file (tests/home-ultra.test.mjs). Section copy lives next to it in
 // src/content/home-ultra/<section>.ts (one file per section builder).
+import { clientLogos } from "../client-logos.ts";
 import { products, type Product } from "../products.ts";
 import type { ProductId } from "../types";
 
@@ -18,18 +19,15 @@ export interface ClientLogo {
   src: string;
   width: number;
   height: number;
+  /** Optical scale of the logo's height (src/content/client-logos.ts). */
+  scale: number;
 }
 
-// TODO(logos): official logo files for Sporting, BMW, Crédito Agrícola, EIC, Agilflex and Dianaconta
-// still to come from the owner; the Dolci logo exists at /media/clients/dolci-e-salati-logo.png but
-// stays typographic for consistency until all logos arrive. Never describe what was done for a client.
+// The client logos (one-colour versions, in src/content/client-logos.ts), then Dolci e Salati, still set in
+// type here (its logo is a colourful badge; it has its own case section on this page). Never describe
+// what was done for a client.
 export const clients: readonly { name: string; logo?: ClientLogo }[] = [
-  { name: "Sporting" },
-  { name: "BMW" },
-  { name: "Crédito Agrícola" },
-  { name: "EIC" },
-  { name: "Agilflex" },
-  { name: "Dianaconta" },
+  ...clientLogos.map((l) => ({ name: l.name, logo: { src: l.monoSrc, width: l.width, height: l.height, scale: l.scale } })),
   { name: "Dolci e Salati" },
 ];
 
