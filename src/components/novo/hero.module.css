@@ -1,4 +1,4 @@
-/* The home hero (Hero.tsx): dark plum, real footage, Steevanz moments over it. The owner chose this dark hero
+/* The home hero (Hero.tsx): dark plum, real footage of three sectors, Steevanz moments over it. The owner chose this dark hero
    (2026-10-22); the rest of the page stays light. Phone first: copy on plain plum, three zig-zag strips, buttons,
    brand line. From 1024px: copy on the left, three full-height columns of footage on the right.
    Only transform and opacity move, and only without «reduce motion»: the still state shows every card. */
@@ -118,6 +118,7 @@
 .shot {
   position: relative;
   aspect-ratio: 320 / 118;
+  min-height: 110px;
   border-radius: 14px;
   background: rgb(251 247 241 / 0.06);
   box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.1);
@@ -186,8 +187,50 @@
   right: 63.5cqi;
 }
 
+.bar {
+  color: rgb(230 197 140 / 0.75);
+}
+
+/* The narrowest phones: more room for the two sector names. */
+@media (max-width: 359px) {
+  .media {
+    width: 56%;
+  }
+  .tag {
+    left: 59.6cqi;
+  }
+  .shot1 .tag {
+    right: 57.5cqi;
+  }
+}
+
+/* The salon | rental loop: the card that matches the scene on screen (HeroReel sets data-scene on the reel).
+   Without video (reduced motion, Save-Data, before it starts) the salon's card shows. */
+.sceneA,
+.sceneB {
+  transition: opacity 0.5s ease;
+}
+
+/* The computer cards' scene layers cover the footage exactly, outside the grid and the strips' flow. */
+.reel > .sceneA,
+.reel > .sceneB {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.reel[data-scene="b"] .sceneA,
+.reel[data-scene="a"] .sceneB,
+.sceneOnly {
+  opacity: 0;
+}
+
+.reel[data-scene="b"] .sceneOnly {
+  opacity: 1;
+}
+
 .tag b {
-  margin-right: 0.45em;
+  margin-right: 0.2em;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--gold-l);
@@ -236,15 +279,9 @@
   color: #1e7a4c;
 }
 
-.iconQueue {
-  background: var(--plum);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 1.3em;
-  font-weight: 500;
-  width: 1.7em;
-  height: 1.7em;
-  border-radius: 0.5em;
+.iconGold {
+  background: #f6ead3;
+  color: #7f5a1c;
 }
 
 .chipText {
@@ -566,7 +603,7 @@
   .tag,
   .shot1 .tag {
     top: auto;
-    right: auto;
+    right: 1.4rem;
     left: 1.4rem;
     bottom: 1.6rem;
     font-size: 0.75rem;
@@ -613,8 +650,8 @@
   }
 
   .cardReview {
-    left: 10.7%;
-    top: 30%;
+    left: 4%;
+    top: 56%;
     padding: 1.23em 1.23em 1.08em;
   }
 
@@ -674,8 +711,8 @@
   }
 
   .cardMenu {
-    left: 48.1%;
-    top: 12%;
+    left: 8%;
+    top: 13%;
     width: 20.15em;
     display: grid;
     grid-template-columns: 5.69em minmax(0, 1fr);
@@ -737,8 +774,133 @@
   }
 
   .cardBooking {
-    left: 36.4%;
-    top: 57.8%;
+    left: 37%;
+    top: 50%;
+  }
+
+  .cardGuide {
+    left: 38%;
+    top: 30%;
+    padding: 1.08em 1.23em 1.23em;
+  }
+
+  .cardKicker {
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--card-subtle);
+  }
+
+  .guideHouse {
+    margin-top: 0.15em;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.38em;
+  }
+
+  .guideRow {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    margin-top: 0.9em;
+  }
+
+  .guideIcon {
+    flex: none;
+    width: 2.4em;
+    height: 2.4em;
+    border-radius: 0.77em;
+    display: grid;
+    place-items: center;
+    background: #f6ead3;
+    color: #7f5a1c;
+  }
+
+  .guideIcon svg {
+    width: 1.3em;
+    height: 1.3em;
+  }
+
+  .guideWifi small {
+    font-size: 0.85em;
+    color: var(--card-subtle);
+  }
+
+  .guideWifi b {
+    font-size: 1.04em;
+    font-weight: 700;
+  }
+
+  .guideCopy {
+    display: grid;
+    place-items: center;
+    height: 2.6em;
+    margin-top: 0.85em;
+    border-radius: 999px;
+    background: var(--plum);
+    color: #fff;
+    font-size: 0.96em;
+    font-weight: 600;
+  }
+
+  .guideTimes {
+    display: block;
+    margin-top: 0.7em;
+    text-align: center;
+    font-size: 0.92em;
+    color: var(--card-subtle);
+  }
+
+  .cardClinic {
+    right: 3%;
+    top: 60%;
+    padding: 1.23em 1.23em 1.15em;
+  }
+
+  .clinicDone {
+    display: flex;
+    align-items: center;
+    gap: 0.77em;
+    margin-top: 1em;
+  }
+
+  .clinicDone .bookingOk {
+    flex: none;
+    margin: 0;
+  }
+
+  .clinicDone b {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.38em;
+    line-height: 1.15;
+  }
+
+  .clinicDone small {
+    margin-top: 0.15em;
+    font-size: 0.96em;
+    color: var(--card-subtle);
+  }
+
+  .clinicReminder {
+    display: flex;
+    align-items: center;
+    gap: 0.46em;
+    margin-top: 0.92em;
+    padding: 0.5em 0.8em;
+    border-radius: 999px;
+    background: #f4e4ee;
+    color: var(--plum);
+    font-size: 0.92em;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .clinicReminder svg {
+    flex: none;
+    width: 1.15em;
+    height: 1.15em;
   }
 
   .bookingTop {
@@ -747,8 +909,7 @@
     color: #fff;
   }
 
-  .bookingTop small,
-  .queueKicker {
+  .bookingTop small {
     font-size: 0.85em;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -787,7 +948,7 @@
   .bookingBody b {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 1.77em;
+    font-size: 1.6em;
     letter-spacing: -0.01em;
     line-height: 1.15;
   }
@@ -798,65 +959,19 @@
     line-height: 1.45;
     color: var(--card-subtle);
   }
+}
 
-  .cardQueue {
-    left: 68%;
-    top: 50.2%;
-    width: 16.9em;
-    padding: 1.08em 1.23em 1.23em;
-    background: var(--plum);
-    color: #fff;
+/* Narrow computers (1024-1199px): the columns are narrow, so the salon and clinic cards stack further apart. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .cardBooking {
+    top: 45%;
   }
-
-  .queueShop {
-    margin-top: 0.15em;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.38em;
-  }
-
-  .queueRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5em;
-    margin-top: 0.77em;
-    font-size: 0.96em;
-    color: rgb(255 255 255 / 0.85);
-  }
-
-  .queuePill {
-    padding: 0.38em 0.77em;
-    border-radius: 999px;
-    background: var(--gold);
-    color: var(--card-text);
-    font-size: 0.96em;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .queueNumber {
-    display: block;
-    margin-top: 0.1em;
-    font-family: var(--font-display);
-    font-size: 4.46em;
-    line-height: 1;
-  }
-
-  .queueName {
-    display: block;
-    font-size: 1.08em;
-    font-weight: 600;
-  }
-
-  .queueGo {
-    display: block;
-    margin-top: 0.4em;
-    color: rgb(255 255 255 / 0.85);
+  .cardClinic {
+    top: 69%;
   }
 }
 
-/* ---------- Motion: one cycle of three moments (café, restaurant, barbershop), then all together ---------- */
+/* ---------- Motion: one cycle of three moments (café | restaurant, salon | rental, clinic), then all together ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
   .eyebrow,
@@ -890,8 +1005,8 @@
   .moment1 {
     animation: moment-1 var(--cycle) var(--ease) infinite;
   }
-  .moment1b {
-    animation: moment-1b var(--cycle) var(--ease) infinite;
+  .moment0b {
+    animation: moment-0b var(--cycle) var(--ease) infinite;
   }
   .moment2 {
     animation: moment-2 var(--cycle) var(--ease) infinite;
@@ -915,7 +1030,7 @@
   .publish {
     animation: publish var(--cycle) ease-out infinite;
   }
-  .bookingOk {
+  .cardBooking .bookingOk {
     animation: booking-ok var(--cycle) var(--ease) infinite;
   }
 
@@ -1050,22 +1165,22 @@
   }
 }
 
-@keyframes moment-1b {
+@keyframes moment-0b {
   0%,
-  28% {
+  3% {
     opacity: 0;
     transform: translate3d(0, 12px, 0);
   }
-  32%,
-  46% {
+  7%,
+  21% {
     opacity: 1;
     transform: none;
   }
-  50% {
+  25% {
     opacity: 0;
     transform: translate3d(0, -8px, 0);
   }
-  51%,
+  26%,
   76% {
     opacity: 0;
     transform: translate3d(0, 12px, 0);
@@ -1224,13 +1339,13 @@
 
 @keyframes booking-ok {
   0%,
-  31% {
+  28% {
     transform: scale(0.4);
   }
-  34% {
+  31% {
     transform: scale(1.12);
   }
-  36%,
+  33%,
   76% {
     transform: none;
   }

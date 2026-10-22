@@ -58,19 +58,22 @@ reservas-cabeleireiro-anuncio-720 (.mp4 e .jpg) — home e página do Sistema de
   (C:\code\steevanz-ads\saida\anuncios-C). Licenças e origem dos clips, dos sons e da música em
   C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt. O poster é o fotograma «Marcação em 30 segundos.».
 
-hero/ (.mp4 e .webp) — hero da home «Negócios reais + Steevanz» (2026-10-22)
-  Ciclos curtos, sem som, em câmara lenta e com o fim fundido no início (H.264, faststart), feitos a partir dos mesmos
-  clips gratuitos dos anúncios (C:\code\steevanz-ads\public\editorial; licenças em
-  C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt). Uso comercial permitido, sem atribuição obrigatória, nada gerado
-  por IA, ninguém fala para a câmara nem recomenda a Steevanz. «-col» = coluna do computador (432×1080), «-strip» = faixa
-  do telemóvel (576×334); o .webp é o primeiro fotograma (poster).
-  - cafe-*         Pexels 12893492 «Man in cafe» - Pexels License
-                   https://www.pexels.com/video/man-in-cafe-12893492/
-  - restaurante-*  Pexels 7772235 «Customers in a Mexican restaurant» - Pexels License
-                   https://www.pexels.com/video/7772235/
-  - barbearia-*    Mixkit 43241 «Barber begins to cut the hair of his client» (emblema da capa apagado) - Mixkit Stock Video Free License
-                   https://mixkit.co/free-stock-video/barber-begins-to-cut-the-hair-of-his-client-43241/
+hero/ (.mp4 e .webp) — hero da home «Negócios reais + Steevanz» (2026-10-22; três setores)
+  Ciclos curtos, sem som, em câmara lenta, sem costura (o fim fundido no início ou ida e volta), H.264 com faststart.
+  Gratuitos, uso comercial permitido, sem atribuição obrigatória, nada gerado por IA, ninguém fala para a câmara nem
+  recomenda a Steevanz. «-col» = coluna do computador (432×1080), «-strip» = faixa do telemóvel (576×342); o .webp é o
+  primeiro fotograma (poster). Os da Steevanz Ads têm a origem também em C:\code\steevanz-ads\saida\anuncios-C\LICENCAS.txt.
+  - restaurante-*  Pexels «Gourmet soup with clams» (autor 宇航 钱) - Pexels License (o vídeo do prato do menu de demonstração)
+                   https://www.pexels.com/video/gourmet-soup-with-clams-10200310/
+  - cabeleireiro-alojamento-*  dois planos num só ciclo:
+                   salão: Pexels 8225484 «A woman sitting in a salon chair» (cabeleireira a fazer brushing) - Pexels License
+                   https://www.pexels.com/video/8225484/
+                   alojamento: Pexels 7749205 «A grey couch and a round coffee table» - Pexels License
+                   https://www.pexels.com/video/a-grey-couch-and-a-round-coffee-table-7749205/
+  - clinica-*      Pexels 6763347 «Man talking to receptionist at dental clinic» (autor Pavel Danilyuk) - Pexels License
+                   https://www.pexels.com/video/man-talking-to-receptionist-at-dental-clinic-6763347/
+                   (o logótipo da clínica na parede foi apagado e a imagem espelhada: sem marcas de terceiros)
   - margherita.webp  fotograma do vídeo do prato do menu de demonstração: Pexels «Irresistible cheese pull pizza delight»
                    (autor Rene Strgar, cor corrigida pela Steevanz) - Pexels License
                    https://www.pexels.com/video/irresistible-cheese-pull-pizza-delight-29543382/
-  Licenças: https://www.pexels.com/license/  e  https://mixkit.co/license/#videoFree
+  Licença: https://www.pexels.com/license/

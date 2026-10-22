@@ -7,7 +7,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 //   «-col» files and phones the short «-strip» ones, swapped if the window crosses 1024px;
 // - they play only while the hero is on screen and the tab is visible, and the card animations pause with them
 //   ([data-paused], read by hero.module.css);
-// - reduced motion or Save-Data: posters only, never a video.
+// - reduced motion or Save-Data: posters only, never a video;
+// - a loop with two scenes (data-scene-b) tells the reel which one is on screen ([data-scene]), for its cards.
 
 type Connection = { saveData?: boolean };
 
@@ -47,6 +48,17 @@ export function HeroReel({ className, children }: { className?: string; children
     const onPlaying = (event: Event) => (event.currentTarget as HTMLVideoElement).setAttribute("data-playing", "");
     for (const video of videos) video.addEventListener("playing", onPlaying);
 
+    // A loop with two scenes (data-scene-b="from-to", in seconds): the reel says which one is on screen, so the
+    // cards that belong to it show (hero.module.css, .sceneA / .sceneB).
+    const onTime = (event: Event) => {
+      const video = event.currentTarget as HTMLVideoElement;
+      const [from, to] = (video.dataset.sceneB ?? "").split("-").map(Number);
+      const scene = video.currentTime >= from && video.currentTime < to ? "b" : "a";
+      if (root.dataset.scene !== scene) root.dataset.scene = scene;
+    };
+    const scened = videos.filter((video) => video.dataset.sceneB);
+    for (const video of scened) video.addEventListener("timeupdate", onTime);
+
     const observer =
       "IntersectionObserver" in window
         ? new IntersectionObserver(([entry]) => {
@@ -84,6 +96,7 @@ export function HeroReel({ className, children }: { className?: string; children
       document.removeEventListener("visibilitychange", sync);
       for (const video of videos) {
         video.removeEventListener("playing", onPlaying);
+        video.removeEventListener("timeupdate", onTime);
         video.pause();
       }
     };

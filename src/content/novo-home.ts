@@ -370,60 +370,68 @@ export const novoCopy: Localized<NovoCopy> = {
   },
 };
 
-/** The hero's filmed businesses and the product moments over them (owner, 2026-10-22: «Negócios reais + Steevanz»).
- * Fictional businesses already used in the ads; the review card is only the empty form whose stars are being
- * tapped (no names, counts or averages), and no prices. */
+/** The hero's three sectors and the Steevanz moments over their footage (owner, 2026-10-22: «Negócios reais +
+ * Steevanz», three columns: café | restaurant, hair salon | holiday rental, clinic | practice). Fictional businesses;
+ * the review card is only the empty form whose stars are being tapped (no names, counts or averages); no prices;
+ * the guest guide shows the Wi-Fi and check-in, never a door code. */
 export interface HeroReelCopy {
-  /** The three filmed places, in order: café, restaurant, barbershop. */
-  places: [string, string, string];
+  /** Each sector's two names, shown as «A | B». */
+  places: [[string, string], [string, string], [string, string]];
   review: { business: string; prompt: string; publish: string; chip: string };
   menu: { dish: string; note: string };
-  booking: { kicker: string; business: string; done: string; when: string; party: string };
-  queue: { kicker: string; business: string; ticket: string; turn: string; name: string; go: string };
+  booking: { kicker: string; business: string; done: string; service: string; when: string; chip: string };
+  guide: { kicker: string; business: string; wifi: string; network: string; copy: string; times: string; chip: string; chipNote: string };
+  clinic: { kicker: string; business: string; done: string; when: string; reminder: string; chipNote: string };
 }
 
 export const heroReelCopy: Localized<HeroReelCopy> = {
   pt: {
-    places: ["Café", "Restaurante", "Barbearia"],
+    places: [["Café", "Restaurante"], ["Cabeleireiros", "Alojamento local"], ["Clínicas", "Consultórios"]],
     review: { business: "Café da Praça", prompt: "Deixe a sua avaliação", publish: "Publicar", chip: "Avalie-nos" },
     menu: { dish: "Pizza Margherita", note: "Menu digital · em vídeo" },
-    booking: { kicker: "Reservar mesa", business: "Casa do Largo", done: "Está reservado.", when: "Sábado · 20:30", party: "4 pessoas · Confirmada" },
-    queue: { kicker: "Lista de espera", business: "Barbearia Avenida", ticket: "A sua senha", turn: "É a sua vez", name: "Miguel", go: "Dirija-se à cadeira." },
+    booking: { kicker: "Marcar serviço", business: "Salão Flor de Lis", done: "Está reservado.", service: "Corte + brushing · Ana", when: "Sábado · 11:00", chip: "Corte + brushing · 11:00" },
+    guide: { kicker: "Guia digital", business: "Casa das Ondas", wifi: "Wi-Fi", network: "CasaOndas_5G", copy: "Copiar password", times: "Check-in 15:00 · Check-out 11:00", chip: "Guia da casa", chipNote: "Wi-Fi · Check-in 15:00" },
+    clinic: { kicker: "Marcar consulta", business: "Clínica Sorriso Atlântico", done: "Consulta marcada.", when: "Terça · 09:30", reminder: "Lembrete por email na véspera", chipNote: "Lembrete na véspera" },
   },
   en: {
-    places: ["Café", "Restaurant", "Barbershop"],
+    places: [["Café", "Restaurant"], ["Hair salons", "Holiday rentals"], ["Clinics", "Practices"]],
     review: { business: "Café da Praça", prompt: "Leave a review", publish: "Post", chip: "Rate us" },
     menu: { dish: "Pizza Margherita", note: "Digital menu · on video" },
-    booking: { kicker: "Book a table", business: "Casa do Largo", done: "You're booked.", when: "Saturday · 20:30", party: "4 people · Confirmed" },
-    queue: { kicker: "Waitlist", business: "Barbearia Avenida", ticket: "Your number", turn: "It's your turn", name: "Miguel", go: "Please take the chair." },
+    booking: { kicker: "Book a service", business: "Salão Flor de Lis", done: "You're booked.", service: "Cut + blow-dry · Ana", when: "Saturday · 11:00", chip: "Cut + blow-dry · 11:00" },
+    guide: { kicker: "Digital guide", business: "Casa das Ondas", wifi: "Wi-Fi", network: "CasaOndas_5G", copy: "Copy password", times: "Check-in 15:00 · Check-out 11:00", chip: "House guide", chipNote: "Wi-Fi · Check-in 15:00" },
+    clinic: { kicker: "Book an appointment", business: "Clínica Sorriso Atlântico", done: "Appointment booked.", when: "Tuesday · 09:30", reminder: "Email reminder the day before", chipNote: "Reminder the day before" },
   },
   es: {
-    places: ["Cafetería", "Restaurante", "Barbería"],
+    places: [["Cafetería", "Restaurante"], ["Peluquerías", "Alojamiento turístico"], ["Clínicas", "Consultas"]],
     review: { business: "Café da Praça", prompt: "Deje su reseña", publish: "Publicar", chip: "Valórenos" },
     menu: { dish: "Pizza Margherita", note: "Menú digital · en vídeo" },
-    booking: { kicker: "Reservar mesa", business: "Casa do Largo", done: "Mesa reservada.", when: "Sábado · 20:30", party: "4 personas · Confirmada" },
-    queue: { kicker: "Lista de espera", business: "Barbearia Avenida", ticket: "Su número", turn: "Es su turno", name: "Miguel", go: "Pase a la silla." },
+    booking: { kicker: "Reservar servicio", business: "Salão Flor de Lis", done: "Cita reservada.", service: "Corte + peinado · Ana", when: "Sábado · 11:00", chip: "Corte + peinado · 11:00" },
+    guide: { kicker: "Guía digital", business: "Casa das Ondas", wifi: "Wi-Fi", network: "CasaOndas_5G", copy: "Copiar contraseña", times: "Check-in 15:00 · Check-out 11:00", chip: "Guía de la casa", chipNote: "Wi-Fi · Check-in 15:00" },
+    clinic: { kicker: "Pedir cita", business: "Clínica Sorriso Atlântico", done: "Cita confirmada.", when: "Martes · 09:30", reminder: "Recordatorio por email el día antes", chipNote: "Recordatorio el día antes" },
   },
   fr: {
-    places: ["Café", "Restaurant", "Barbier"],
+    places: [["Café", "Restaurant"], ["Coiffure", "Location saisonnière"], ["Cliniques", "Cabinets"]],
     review: { business: "Café da Praça", prompt: "Laissez votre avis", publish: "Publier", chip: "Notez-nous" },
     menu: { dish: "Pizza Margherita", note: "Menu digital · en vidéo" },
-    booking: { kicker: "Réserver une table", business: "Casa do Largo", done: "C'est réservé.", when: "Samedi · 20 h 30", party: "4 personnes · Confirmée" },
-    queue: { kicker: "Liste d'attente", business: "Barbearia Avenida", ticket: "Votre numéro", turn: "C'est votre tour", name: "Miguel", go: "Installez-vous au fauteuil." },
+    booking: { kicker: "Réserver une prestation", business: "Salão Flor de Lis", done: "C'est réservé.", service: "Coupe + brushing · Ana", when: "Samedi · 11 h", chip: "Coupe + brushing · 11 h" },
+    guide: { kicker: "Guide digital", business: "Casa das Ondas", wifi: "Wi-Fi", network: "CasaOndas_5G", copy: "Copier le mot de passe", times: "Arrivée 15 h · Départ 11 h", chip: "Guide de la maison", chipNote: "Wi-Fi · Arrivée 15 h" },
+    clinic: { kicker: "Prendre rendez-vous", business: "Clínica Sorriso Atlântico", done: "Rendez-vous confirmé.", when: "Mardi · 9 h 30", reminder: "Rappel par e-mail la veille", chipNote: "Rappel la veille" },
   },
   de: {
-    places: ["Café", "Restaurant", "Barbershop"],
+    places: [["Café", "Restaurant"], ["Friseure", "Ferienwohnungen"], ["Kliniken", "Praxen"]],
     review: { business: "Café da Praça", prompt: "Ihre Bewertung", publish: "Veröffentlichen", chip: "Bewerten Sie uns" },
     menu: { dish: "Pizza Margherita", note: "Digitale Speisekarte · im Video" },
-    booking: { kicker: "Tisch reservieren", business: "Casa do Largo", done: "Reserviert.", when: "Samstag · 20:30 Uhr", party: "4 Personen · Bestätigt" },
-    queue: { kicker: "Warteliste", business: "Barbearia Avenida", ticket: "Ihre Nummer", turn: "Sie sind dran", name: "Miguel", go: "Bitte nehmen Sie Platz." },
+    booking: { kicker: "Termin buchen", business: "Salão Flor de Lis", done: "Reserviert.", service: "Schnitt + Föhnen · Ana", when: "Samstag · 11:00 Uhr", chip: "Schnitt + Föhnen · 11:00" },
+    guide: { kicker: "Digitale Gästemappe", business: "Casa das Ondas", wifi: "WLAN", network: "CasaOndas_5G", copy: "Passwort kopieren", times: "Check-in 15:00 · Check-out 11:00", chip: "Gästemappe", chipNote: "WLAN · Check-in 15:00" },
+    clinic: { kicker: "Termin vereinbaren", business: "Clínica Sorriso Atlântico", done: "Termin gebucht.", when: "Dienstag · 09:30 Uhr", reminder: "Erinnerung per E-Mail am Vortag", chipNote: "Erinnerung am Vortag" },
   },
   it: {
-    places: ["Bar", "Ristorante", "Barbiere"],
+    places: [["Bar", "Ristorante"], ["Parrucchieri", "Case vacanza"], ["Cliniche", "Studi medici"]],
     review: { business: "Café da Praça", prompt: "Lasci una recensione", publish: "Pubblica", chip: "Ci valuti" },
     menu: { dish: "Pizza Margherita", note: "Menù digitale · in video" },
-    booking: { kicker: "Prenoti un tavolo", business: "Casa do Largo", done: "Tavolo prenotato.", when: "Sabato · 20:30", party: "4 persone · Confermata" },
-    queue: { kicker: "Lista d'attesa", business: "Barbearia Avenida", ticket: "Il Suo numero", turn: "Tocca a Lei", name: "Miguel", go: "Si accomodi alla poltrona." },
+    booking: { kicker: "Prenoti un servizio", business: "Salão Flor de Lis", done: "È prenotato.", service: "Taglio + piega · Ana", when: "Sabato · 11:00", chip: "Taglio + piega · 11:00" },
+    guide: { kicker: "Guida digitale", business: "Casa das Ondas", wifi: "Wi-Fi", network: "CasaOndas_5G", copy: "Copi la password", times: "Check-in 15:00 · Check-out 11:00", chip: "Guida della casa", chipNote: "Wi-Fi · Check-in 15:00" },
+    clinic: { kicker: "Prenoti una visita", business: "Clínica Sorriso Atlântico", done: "Visita prenotata.", when: "Martedì · 09:30", reminder: "Promemoria via email il giorno prima", chipNote: "Promemoria il giorno prima" },
   },
 };
 

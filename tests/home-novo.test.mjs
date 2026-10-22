@@ -170,7 +170,7 @@ describe("home page («/» and «/en»)", () => {
     assert.match(css, /@media \(prefers-reduced-motion: no-preference\)/);
     // Small loops and posters in public/home/hero, with their licences recorded.
     const licences = readFileSync("public/home/LICENCAS.txt", "utf8");
-    for (const id of ["cafe", "restaurante", "barbearia"]) {
+    for (const id of ["restaurante", "cabeleireiro-alojamento", "clinica"]) {
       for (const variant of ["col", "strip"]) {
         const video = `public/home/hero/${id}-${variant}.mp4`;
         assert.ok(existsSync(video), video);
@@ -186,15 +186,29 @@ describe("home page («/» and «/en»)", () => {
     assert.deepEqual(Object.keys(heroReelCopy), locales);
     for (const locale of locales) {
       const copy = heroReelCopy[locale];
+      // Three sectors, each with its two names (owner, 2026-10-22).
       assert.equal(copy.places.length, 3, locale);
+      for (const place of copy.places) assert.equal(place.length, 2, locale);
       assert.equal(copy.review.business, "Café da Praça", locale);
-      assert.equal(copy.booking.business, "Casa do Largo", locale);
-      assert.equal(copy.queue.business, "Barbearia Avenida", locale);
+      assert.equal(copy.booking.business, "Salão Flor de Lis", locale);
+      assert.equal(copy.guide.business, "Casa das Ondas", locale);
+      assert.equal(copy.clinic.business, "Clínica Sorriso Atlântico", locale);
       assert.deepEqual(Object.keys(copy), Object.keys(heroReelCopy.pt), locale);
+      for (const key of Object.keys(copy)) assert.deepEqual(Object.keys(copy[key]), Object.keys(heroReelCopy.pt[key]), `${locale}.${key}`);
       const text = JSON.stringify(copy);
       assert.doesNotMatch(text, /€|\bEUR\b|\bNFC\b|fideliza|★|\d[.,]\d|avalia(ç|c)ões|\breviews\b/i, locale);
+      // The guest guide shows the Wi-Fi and the times, never a door or key-box code.
+      assert.doesNotMatch(JSON.stringify(copy.guide), /c[oó]dig|\bcode\b|\bcodice\b|\bCode\b|PIN|cofre|key ?box/i, locale);
     }
-    assert.equal(heroReelCopy.it.booking.kicker, "Prenoti un tavolo");
+    assert.deepEqual(heroReelCopy.pt.places, [["Café", "Restaurante"], ["Cabeleireiros", "Alojamento local"], ["Clínicas", "Consultórios"]]);
+    assert.equal(heroReelCopy.it.booking.kicker, "Prenoti un servizio");
+    // The salon | rental loop swaps its cards with the scene on screen; without video the salon's card shows.
+    assert.match(hero, /data-scene-b=/);
+    assert.match(reel, /dataset\.scene/);
+    assert.match(css, /\.reel\[data-scene="b"\] \.sceneOnly/);
+    // No Menu digital card in the salon | rental column: the menu dish belongs to the café | restaurant moment.
+    assert.match(hero, /cardMenu\} \$\{h\.moment0b\}/);
+    assert.doesNotMatch(hero, /cardMenu\} \$\{h\.moment1\}/);
   });
 
   it("sends every product call to its product page with «Conhecer …», never straight to a demo", () => {
