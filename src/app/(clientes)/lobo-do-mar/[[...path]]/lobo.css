@@ -1,0 +1,124 @@
+/* Lobo do Mar's own stylesheet: none of the Steevanz site's styles load on these pages, and Tailwind only scans
+   the client's own files. Identity (2026-10-22): the colours of its badge (deep navy and coral), the sand of the
+   Algarve and the foam of the tide; the motif is the wave — every transition rises like the tide. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/lobo-do-mar";
+@source "./";
+
+@theme {
+  --color-abismo: #0b2430;
+  --color-abismo-2: #10303f;
+  --color-mar: #15506a;
+  --color-espuma: #e7f2ef;
+  --color-areia: #f4ecdf;
+  --color-areia-2: #eadfcd;
+  --color-coral: #ff6a4a;
+  --color-coral-deep: #c9452a;
+  --color-tinta: #0d1a21;
+  --color-calhau: #53646c;
+  --color-ardosia: #1d2a2f;
+
+  --font-display: var(--lm-font-display), "Arial Black", sans-serif;
+  --font-sans: var(--lm-font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-chalk: var(--lm-font-chalk), "Comic Sans MS", cursive;
+
+  --ease-mare: cubic-bezier(0.65, 0, 0.2, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-areia);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-coral);
+    color: var(--color-abismo);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-coral);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+@layer components {
+  .lm-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  /* The outline letters of the big words. */
+  .lm-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px currentColor;
+  }
+  /* The tide's edge: a wave drawn on top of a rising panel (its colour is the panel's, via currentColor). */
+  .lm-wave {
+    display: block;
+    width: 100%;
+    height: clamp(28px, 5vw, 72px);
+  }
+  /* The slate of the board, with the haze chalk leaves. */
+  .lm-slate {
+    background:
+      radial-gradient(120% 90% at 30% 20%, rgb(255 255 255 / 0.06), transparent 60%),
+      radial-gradient(90% 80% at 80% 90%, rgb(255 255 255 / 0.04), transparent 60%),
+      var(--color-ardosia);
+  }
+  .lm-chalk {
+    font-family: var(--font-chalk);
+    text-shadow: 0 0 1px rgb(255 255 255 / 0.4);
+  }
+}
+
+/* The curtain (Preloader): gone at once when already seen this session or with reduced motion. */
+.lm-seen .lm-pre {
+  display: none;
+}
+.lm-loading body {
+  overflow: hidden;
+}
+
+/* A wave that keeps rolling sideways (transform only). */
+@keyframes lm-roll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.lm-roll {
+  animation: lm-roll 9s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lm-roll {
+    animation: none !important;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

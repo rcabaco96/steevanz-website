@@ -51,6 +51,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/o-ermita/"],
   },
+  {
+    // Lobo do Mar (owner, 2026-10-22): no domain yet, only the preview path. When one is chosen, list it here, set
+    // `loboOrigin` in src/content/lobo-do-mar/routes.ts and add its host to the proxy matcher (src/proxy.ts).
+    id: "lobo-do-mar",
+    hosts: [],
+    base: "/lobo-do-mar",
+    rootFiles: {
+      "/robots.txt": "/lobo-do-mar/robots.txt",
+      "/sitemap.xml": "/lobo-do-mar/sitemap.xml",
+      "/manifest.webmanifest": "/lobo-do-mar/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/lobo-do-mar/icone.ico",
+      "/apple-touch-icon.png": "/media/clients/lobo-do-mar/icone-apple.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
+  },
 ];
 
 export type ClientSiteDecision =

@@ -39,5 +39,7 @@ export const config = {
     { source: "/((?!_next/).*)", has: [{ type: "host", value: "www.fabiosroadstop.pt" }] },
     "/o-ermita",
     "/o-ermita/:path*",
+    "/lobo-do-mar",
+    "/lobo-do-mar/:path*",
   ],
 };

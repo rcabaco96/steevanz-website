@@ -1,0 +1,17 @@
+Lobo do Mar (Tapas e Petiscos, Armação de Pêra) - origem das imagens deste site
+Recolhidas a 2026-10-22. O Lobo do Mar é cliente da Steevanz; as imagens são do próprio restaurante.
+
+Fotografias (todas publicadas pelo restaurante no seu próprio site, https://restaurantelobodomar.metro.rest/,
+servidas por cdn.website.dish.co). Convertidas para WebP, sem retoque de conteúdo:
+  bar.webp, bar-alto.webp   - o balcão com a placa Lobo do Mar
+  parede.webp               - a parede com a frase «A melhor rede social ainda é uma mesa rodeada de amigos!»
+  quadro.webp               - o quadro de ardósia com os pratos, escrito a giz (fonte da lista de pratos)
+  lulas.webp, dourada.webp, peixe-grelhado.webp, salmao.webp, cataplana.webp, choquinhos.webp,
+  grelhada-mista.webp, feijoada.webp, panado.webp, robalo.webp - pratos do restaurante
+
+Logótipo: só existe online em 40 px (no site do restaurante). O selo do site (Logo.tsx) é um redesenho em vetor
+feito pela Steevanz a partir dele. A confirmar com o cliente: o ficheiro original do logótipo em alta resolução.
+
+Derivados feitos pela Steevanz:
+  og-site.jpg (1200x630) - pré-visualização do site: selo + cataplana.webp + robalo.webp
+  icone.ico, icone-192.png, icone-512.png, icone-apple.png - o selo em fundo azul-marinho
