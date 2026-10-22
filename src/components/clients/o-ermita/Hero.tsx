@@ -8,11 +8,12 @@ import { ermitaSections } from "./sections";
 
 // The hotel's own aerial film flies over the olive groves to the convent, full screen. As the page scrolls the
 // scene holds still and the film closes into the arch of a convent window (HeroCinema), the words lifting away.
+// The «Descer» cue only shows on tall screens: on a phone with the browser bars it ran into the buttons.
 export function Hero({ copy }: { copy: ErmitaCopy }) {
   const { hero } = copy;
   return (
     <HeroCinema poster={ermita.media.dronePoster} video={ermita.media.drone} alt={hero.alt} label={hero.title}>
-      <div data-hero-copy className="relative mx-auto flex w-full max-w-[60rem] flex-1 flex-col items-center justify-center px-5 pt-24 pb-28 text-center sm:px-8">
+      <div data-hero-copy className="relative mx-auto flex w-full max-w-[60rem] flex-1 flex-col items-center justify-center px-5 pt-24 pb-28 text-center sm:px-8 [@media(max-height:820px)]:pt-20 [@media(max-height:820px)]:pb-10">
         <p className="oe-eyebrow oe-rise text-cal/85 [animation-delay:100ms]">{hero.kicker}</p>
 
         <div aria-hidden="true" className="mt-7 flex w-[min(78vw,30rem)] flex-col items-center sm:mt-9">
@@ -71,7 +72,7 @@ export function Hero({ copy }: { copy: ErmitaCopy }) {
         </div>
       </div>
 
-      <div data-hero-cue className="pointer-events-none absolute inset-x-0 bottom-5 z-10 flex justify-center sm:bottom-7">
+      <div data-hero-cue className="pointer-events-none absolute inset-x-0 bottom-5 z-10 flex justify-center sm:bottom-7 [@media(max-height:820px)]:hidden">
         <a
           href={`#${ermitaSections.house}`}
           className="oe-rise pointer-events-auto flex flex-col items-center gap-2 text-[0.65rem] font-semibold tracking-[0.3em] text-cal/75 uppercase [animation-delay:1600ms]"
