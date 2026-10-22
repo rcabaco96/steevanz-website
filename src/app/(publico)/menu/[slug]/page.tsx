@@ -32,12 +32,17 @@ async function loadMenu(slug: string) {
 // a client's menu gets its own name and no Steevanz picture.
 const siteOrigin = "https://www.steevanz.com";
 
-/** Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, sent to its owner). */
+/** Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, Fabio's Roadstop). */
 const ownPreviews: Record<string, { title: string; description: string; image: string }> = {
   "o-ermita": {
     title: "O Ermita · A ementa em vídeo",
     description: "Os pratos do Ermita em vídeo: veja cada prato antes de escolher e faça o pedido à mesa.",
     image: "/media/clients/o-ermita/og-menu.jpg",
+  },
+  "fabios-roadstop": {
+    title: "Fabio's Roadstop · O menu em vídeo",
+    description: "Burgers, pequenos-almoços e cocktails: veja cada prato em vídeo antes de escolher.",
+    image: "/media/clients/fabios-roadstop/og-menu.jpg",
   },
 };
 
