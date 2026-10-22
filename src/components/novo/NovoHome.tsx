@@ -14,6 +14,7 @@ import { AdBand } from "./AdBand";
 import { ClientStrip } from "./ClientStrip";
 import { Goals, type GoalView } from "./Goals";
 import { MenuShowcase } from "./MenuShowcase";
+import { Hero } from "./Hero";
 import { HowWeWork, SectorSolutions } from "./NovoSections";
 import { LoyaltyBanner } from "./LoyaltyBanner";
 import { PlatesBanner } from "./PlatesBanner";
@@ -40,19 +41,6 @@ export function NovoHome({ locale }: { locale: Locale }) {
   const bookHref = href(locale, { key: "book" });
   const menuProductHref = href(locale, { key: "product", productId: "digital-menu" });
 
-  const heroCtas = (
-    <div className={`${styles.ctaRow} ${styles.heroCtas}`}>
-      <Link href={bookHref} className={`${styles.btn} ${styles.btnPrimary}`}>
-        {copy.hero.primary}
-        <ArrowRight size={18} />
-      </Link>
-      <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={`${styles.btn} ${styles.btnGhost}`}>
-        <WhatsAppIcon size={18} />
-        {copy.hero.secondary}
-      </a>
-    </div>
-  );
-
   const goalViews: GoalView[] = localize(goals, locale).map((goal) => ({
     id: goal.id,
     title: goal.title,
@@ -78,31 +66,9 @@ export function NovoHome({ locale }: { locale: Locale }) {
 
   return (
     <div className={styles.root} data-novo>
-      {/* 1. Hero: Steevanz as a brand (text first, no video, no phone) */}
-      <section id="novo-hero" aria-labelledby="novo-hero-title" className={styles.hero}>
-        <div className={`${styles.wrap} ${styles.heroGrid}`}>
-          <div>
-            <p className={styles.heroEyebrow}>{copy.hero.eyebrow}</p>
-            <h1 id="novo-hero-title" className={styles.heroTitle}>
-              {copy.hero.titleStart} <span className={styles.heroAccent}>{copy.hero.titleAccent}</span>
-            </h1>
-            <p className={styles.heroSub}>{copy.hero.subtitle}</p>
-            {heroCtas}
-          </div>
-          <div className={styles.heroBrand}>
-            <div className={styles.markWrap} aria-hidden="true">
-              <div className={styles.mark}>
-                <span className={styles.markS}>S</span>
-                <span className={styles.markDot} />
-              </div>
-            </div>
-            <p className={styles.brandLine}>
-              <span>{copy.brandLine[0]}</span>
-              <span>{copy.brandLine[1]}</span>
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* 1. Hero (owner, 2026-10-22): dark plum, three real businesses filmed in loops with the Steevanz moments over
+          them; on a phone the title and intro, then the three zig-zag strips, then the buttons. */}
+      <Hero locale={locale} copy={copy} bookHref={bookHref} whatsapp={whatsapp} />
 
       {/* 2. Confiam em nós */}
       <ClientStrip locale={locale} />

@@ -370,6 +370,63 @@ export const novoCopy: Localized<NovoCopy> = {
   },
 };
 
+/** The hero's filmed businesses and the product moments over them (owner, 2026-10-22: «Negócios reais + Steevanz»).
+ * Fictional businesses already used in the ads; the review card is only the empty form whose stars are being
+ * tapped (no names, counts or averages), and no prices. */
+export interface HeroReelCopy {
+  /** The three filmed places, in order: café, restaurant, barbershop. */
+  places: [string, string, string];
+  review: { business: string; prompt: string; publish: string; chip: string };
+  menu: { dish: string; note: string };
+  booking: { kicker: string; business: string; done: string; when: string; party: string };
+  queue: { kicker: string; business: string; ticket: string; turn: string; name: string; go: string };
+}
+
+export const heroReelCopy: Localized<HeroReelCopy> = {
+  pt: {
+    places: ["Café", "Restaurante", "Barbearia"],
+    review: { business: "Café da Praça", prompt: "Deixe a sua avaliação", publish: "Publicar", chip: "Avalie-nos" },
+    menu: { dish: "Pizza Margherita", note: "Menu digital · em vídeo" },
+    booking: { kicker: "Reservar mesa", business: "Casa do Largo", done: "Está reservado.", when: "Sábado · 20:30", party: "4 pessoas · Confirmada" },
+    queue: { kicker: "Lista de espera", business: "Barbearia Avenida", ticket: "A sua senha", turn: "É a sua vez", name: "Miguel", go: "Dirija-se à cadeira." },
+  },
+  en: {
+    places: ["Café", "Restaurant", "Barbershop"],
+    review: { business: "Café da Praça", prompt: "Leave a review", publish: "Post", chip: "Rate us" },
+    menu: { dish: "Pizza Margherita", note: "Digital menu · on video" },
+    booking: { kicker: "Book a table", business: "Casa do Largo", done: "You're booked.", when: "Saturday · 20:30", party: "4 people · Confirmed" },
+    queue: { kicker: "Waitlist", business: "Barbearia Avenida", ticket: "Your number", turn: "It's your turn", name: "Miguel", go: "Please take the chair." },
+  },
+  es: {
+    places: ["Cafetería", "Restaurante", "Barbería"],
+    review: { business: "Café da Praça", prompt: "Deje su reseña", publish: "Publicar", chip: "Valórenos" },
+    menu: { dish: "Pizza Margherita", note: "Menú digital · en vídeo" },
+    booking: { kicker: "Reservar mesa", business: "Casa do Largo", done: "Mesa reservada.", when: "Sábado · 20:30", party: "4 personas · Confirmada" },
+    queue: { kicker: "Lista de espera", business: "Barbearia Avenida", ticket: "Su número", turn: "Es su turno", name: "Miguel", go: "Pase a la silla." },
+  },
+  fr: {
+    places: ["Café", "Restaurant", "Barbier"],
+    review: { business: "Café da Praça", prompt: "Laissez votre avis", publish: "Publier", chip: "Notez-nous" },
+    menu: { dish: "Pizza Margherita", note: "Menu digital · en vidéo" },
+    booking: { kicker: "Réserver une table", business: "Casa do Largo", done: "C'est réservé.", when: "Samedi · 20 h 30", party: "4 personnes · Confirmée" },
+    queue: { kicker: "Liste d'attente", business: "Barbearia Avenida", ticket: "Votre numéro", turn: "C'est votre tour", name: "Miguel", go: "Installez-vous au fauteuil." },
+  },
+  de: {
+    places: ["Café", "Restaurant", "Barbershop"],
+    review: { business: "Café da Praça", prompt: "Ihre Bewertung", publish: "Veröffentlichen", chip: "Bewerten Sie uns" },
+    menu: { dish: "Pizza Margherita", note: "Digitale Speisekarte · im Video" },
+    booking: { kicker: "Tisch reservieren", business: "Casa do Largo", done: "Reserviert.", when: "Samstag · 20:30 Uhr", party: "4 Personen · Bestätigt" },
+    queue: { kicker: "Warteliste", business: "Barbearia Avenida", ticket: "Ihre Nummer", turn: "Sie sind dran", name: "Miguel", go: "Bitte nehmen Sie Platz." },
+  },
+  it: {
+    places: ["Bar", "Ristorante", "Barbiere"],
+    review: { business: "Café da Praça", prompt: "Lasci una recensione", publish: "Pubblica", chip: "Ci valuti" },
+    menu: { dish: "Pizza Margherita", note: "Menù digitale · in video" },
+    booking: { kicker: "Prenoti un tavolo", business: "Casa do Largo", done: "Tavolo prenotato.", when: "Sabato · 20:30", party: "4 persone · Confermata" },
+    queue: { kicker: "Lista d'attesa", business: "Barbearia Avenida", ticket: "Il Suo numero", turn: "Tocca a Lei", name: "Miguel", go: "Si accomodi alla poltrona." },
+  },
+};
+
 export type GoalId = "found" | "full" | "sell" | "return" | "custom";
 
 /** A product in a goal: its card shows `benefit` (what it does for that goal); `label` replaces its name. */

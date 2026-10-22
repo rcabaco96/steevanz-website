@@ -103,6 +103,48 @@
   }
 }
 
+/* The home's dark plum hero (components/novo/Hero.tsx, [data-hero-dark]): while the page is at the top, the
+   header bar over it reads light on dark (Header sets [data-top]). Its pop-ups (products, languages) keep the
+   page's own theme, saved on <html> before the bar changes it. */
+html:has([data-hero-dark]) {
+  --page-text: var(--text);
+  --page-text-muted: var(--text-muted);
+  --page-line: var(--line);
+  --page-surface-2: var(--surface-2);
+  --page-accent: var(--accent);
+  --page-accent-hover: var(--accent-hover);
+  --page-accent-contrast: var(--accent-contrast);
+  --page-accent-text: var(--accent-text);
+  --page-glow: var(--glow);
+  --page-ring: var(--ring);
+}
+
+html:has([data-hero-dark]) header[data-top] {
+  --text: #fbf7f1;
+  --text-muted: rgb(251 247 241 / 0.84);
+  --line: rgb(251 247 241 / 0.35);
+  --surface-2: rgb(251 247 241 / 0.12);
+  --accent: #fbf7f1;
+  --accent-hover: #ffffff;
+  --accent-contrast: #5e1f49;
+  --accent-text: #e6c58c;
+  --glow: 0 0 0;
+  --ring: #e6c58c;
+}
+
+html:has([data-hero-dark]) header[data-top] :is(#products-menu, [role="listbox"]) {
+  --text: var(--page-text);
+  --text-muted: var(--page-text-muted);
+  --line: var(--page-line);
+  --surface-2: var(--page-surface-2);
+  --accent: var(--page-accent);
+  --accent-hover: var(--page-accent-hover);
+  --accent-contrast: var(--page-accent-contrast);
+  --accent-text: var(--page-accent-text);
+  --glow: var(--page-glow);
+  --ring: var(--page-ring);
+}
+
 @theme inline {
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;

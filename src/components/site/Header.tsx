@@ -126,6 +126,8 @@ export function Header({ locale, labels, links, products }: HeaderProps) {
   return (
     <>
       <header
+        // At the top of the page, over a dark hero (the home's, [data-hero-dark]), globals.css turns the bar light.
+        data-top={scrolled || menuOpen ? undefined : ""}
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
           scrolled || menuOpen
             ? "border-b border-line/80 bg-bg/80 backdrop-blur-xl backdrop-saturate-150"

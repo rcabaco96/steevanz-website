@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { businessCardBandCopy, goals, guideBandCopy, homeAdBands, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
+import { businessCardBandCopy, goals, guideBandCopy, heroReelCopy, homeAdBands, howCopy, loyaltyCopy, novoCopy, platesCopy } from "../src/content/novo-home.ts";
 import { productAds } from "../src/content/product-ads.ts";
 import { getProduct } from "../src/content/products.ts";
 
@@ -99,9 +99,9 @@ describe("home page («/» and «/en»)", () => {
     const home = readFileSync(join(dir, "NovoHome.tsx"), "utf8");
     assert.doesNotMatch(home, /PricesFaq|novo-prices/);
     for (const page of ["src/app/(pt)/page.tsx", "src/app/(intl)/[lang]/page.tsx"]) assert.doesNotMatch(readFileSync(page, "utf8"), /faqJsonLd/);
-    // Section order: clients, plates, Menu digital, loyalty card, the bands with an ad video (homeAdBands), then the
+    // Section order: the hero, clients, plates, Menu digital, loyalty card, the bands with an ad video (homeAdBands), then the
     // goals, below every band with a video (owner rule), sectors, how we work, final call.
-    const order = ["<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", "{homeAdBands", "<AdBand", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
+    const order = ["<Hero ", "<ClientStrip", "<PlatesBanner", 'id="novo-menu"', "<LoyaltyBanner", "{homeAdBands", "<AdBand", 'id="novo-goals"', "<SectorSolutions", "<HowWeWork", 'id="novo-final"'];
     const positions = order.map((needle) => home.indexOf(needle));
     assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
     assert.deepEqual([...positions].sort((a, b) => a - b), positions);
@@ -143,6 +143,58 @@ describe("home page («/» and «/en»)", () => {
     assert.match(novoCopy.pt.metaTitle, /encontram, compram e voltam/);
     assert.match(novoCopy.en.metaTitle, /find you, buy from you and come back/);
     for (const { path, text } of pageFiles) assert.doesNotMatch(text, /escolhem e voltam/, path);
+  });
+
+  it("has the hero chosen on 2026-10-22: real businesses in loops, phone order title → strips → buttons, in six languages", () => {
+    const hero = readFileSync(join(dir, "Hero.tsx"), "utf8");
+    const css = readFileSync(join(dir, "hero.module.css"), "utf8");
+    const reel = readFileSync(join(dir, "HeroReel.tsx"), "utf8");
+    // Mobile order (owner rule): heading and intro, then the footage, then the buttons, then the brand line and «S.».
+    const order = ['id="novo-hero-title"', "copy.hero.subtitle", "<HeroReel", "copy.hero.primary", "copy.hero.secondary", "markS", "copy.brandLine[0]"];
+    const positions = order.map((needle) => hero.indexOf(needle));
+    assert.ok(positions.every((pos) => pos > 0), JSON.stringify(positions));
+    assert.deepEqual([...positions].sort((a, b) => a - b), positions);
+    assert.match(hero, /data-hero-dark/);
+    // The phone strips zig-zag: the middle one has its image on the right and its card on the left.
+    assert.match(css, /\.shot1 \.media \{\s*left: auto;\s*right: 0;/);
+    assert.match(css, /\.shot1 \.chip \{\s*right: auto;\s*left: 2\.5cqi;/);
+    // Decorative footage: hidden from screen readers, no sound, nothing loaded before the page is idle, posters only
+    // with reduced motion or Save-Data, paused off screen.
+    assert.match(reel, /aria-hidden="true"/);
+    assert.match(hero, /preload="none"/);
+    assert.match(hero, /\bmuted\b/);
+    assert.match(reel, /prefers-reduced-motion: reduce/);
+    assert.match(reel, /saveData/);
+    assert.match(reel, /requestIdleCallback/);
+    assert.match(reel, /IntersectionObserver/);
+    assert.match(css, /@media \(prefers-reduced-motion: no-preference\)/);
+    // Small loops and posters in public/home/hero, with their licences recorded.
+    const licences = readFileSync("public/home/LICENCAS.txt", "utf8");
+    for (const id of ["cafe", "restaurante", "barbearia"]) {
+      for (const variant of ["col", "strip"]) {
+        const video = `public/home/hero/${id}-${variant}.mp4`;
+        assert.ok(existsSync(video), video);
+        assert.ok(statSync(video).size <= 600 * 1024, `${video} is over 600 KB`);
+        assert.ok(existsSync(`public/home/hero/${id}-${variant}.webp`), `${id}-${variant}.webp`);
+        assert.ok(hero.includes(`-${variant}.mp4`), `the ${variant} loops in Hero.tsx`);
+      }
+      assert.ok(licences.includes(`- ${id}-*`), `${id} in LICENCAS.txt`);
+    }
+    // The cards in the six languages, the same fictional businesses, no prices, no «NFC», no «fidelização», and
+    // the review card is only the form (no reviewer, count or average).
+    const locales = ["pt", "en", "es", "fr", "de", "it"];
+    assert.deepEqual(Object.keys(heroReelCopy), locales);
+    for (const locale of locales) {
+      const copy = heroReelCopy[locale];
+      assert.equal(copy.places.length, 3, locale);
+      assert.equal(copy.review.business, "Café da Praça", locale);
+      assert.equal(copy.booking.business, "Casa do Largo", locale);
+      assert.equal(copy.queue.business, "Barbearia Avenida", locale);
+      assert.deepEqual(Object.keys(copy), Object.keys(heroReelCopy.pt), locale);
+      const text = JSON.stringify(copy);
+      assert.doesNotMatch(text, /€|\bEUR\b|\bNFC\b|fideliza|★|\d[.,]\d|avalia(ç|c)ões|\breviews\b/i, locale);
+    }
+    assert.equal(heroReelCopy.it.booking.kicker, "Prenoti un tavolo");
   });
 
   it("sends every product call to its product page with «Conhecer …», never straight to a demo", () => {

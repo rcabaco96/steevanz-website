@@ -1,0 +1,1247 @@
+/* The home hero (Hero.tsx): dark plum, real footage, Steevanz moments over it. The owner chose this dark hero
+   (2026-10-22); the rest of the page stays light. Phone first: copy on plain plum, three zig-zag strips, buttons,
+   brand line. From 1024px: copy on the left, three full-height columns of footage on the right.
+   Only transform and opacity move, and only without «reduce motion»: the still state shows every card. */
+
+.hero {
+  --ink: #1f0d1b;
+  --gold-l: #e6c58c;
+  --cream: #fbf7f1;
+  --plum: #7a2d60;
+  --plum-deep: #5e1f49;
+  --gold: #cfa563;
+  --card-text: #1d1220;
+  --card-subtle: #6f5d71;
+  --cycle: 18s;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--cream);
+  padding-top: 5rem;
+  padding-bottom: 2.5rem;
+}
+
+.glow {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(30rem 22rem at 0% 16%, rgb(122 45 96 / 0.55), rgb(122 45 96 / 0) 70%);
+  pointer-events: none;
+}
+
+.inner {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 640px) {
+  .inner {
+    padding-inline: 2rem;
+  }
+}
+
+/* ---------- Copy ---------- */
+
+.copy {
+  max-width: 38rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: clamp(0.6875rem, 3.1vw, 0.8125rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-l);
+}
+
+.eyebrow::before {
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.title {
+  margin-top: 0.8rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.95rem, 9.4vw, 3.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.022em;
+  color: var(--cream);
+}
+
+.accent {
+  display: block;
+  font-family: var(--font-fraunces-italic), var(--font-fraunces), ui-serif, Georgia, serif;
+  font-style: italic;
+  color: var(--gold-l);
+}
+
+.sub {
+  margin-top: 0.85rem;
+  max-width: 34rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgb(251 247 241 / 0.8);
+}
+
+@media (min-width: 640px) {
+  .sub {
+    font-size: 1.0625rem;
+  }
+}
+
+/* ---------- Footage: phone strips ---------- */
+
+.reel {
+  position: relative;
+  margin-top: 1.25rem;
+  width: 100%;
+  max-width: 34rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.shot {
+  position: relative;
+  aspect-ratio: 320 / 118;
+  border-radius: 14px;
+  background: rgb(251 247 241 / 0.06);
+  box-shadow: inset 0 0 0 1px rgb(251 247 241 / 0.1);
+  container-type: inline-size;
+}
+
+.media {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 62%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #2a1426;
+}
+
+/* Zig-zag (owner, 2026-10-22): the middle strip has its image on the right and its card on the left. */
+.shot1 .media {
+  left: auto;
+  right: 0;
+}
+
+.poster,
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+.video[data-playing] {
+  opacity: 1;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tag {
+  position: absolute;
+  z-index: 2;
+  top: 4.4cqi;
+  left: 65.6cqi;
+  right: 3cqi;
+  font-size: clamp(0.5625rem, 3cqi, 0.8125rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgb(251 247 241 / 0.92);
+}
+
+.shot1 .tag {
+  left: 3.6cqi;
+  right: 63.5cqi;
+}
+
+.tag b {
+  margin-right: 0.45em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-l);
+}
+
+/* The strip's small card: on the text side, only touching the image's outer edge (background, never a face). */
+.chip {
+  position: absolute;
+  z-index: 3;
+  right: 2.5cqi;
+  bottom: 4.4cqi;
+  display: flex;
+  align-items: center;
+  gap: 0.65em;
+  min-width: 44cqi;
+  max-width: 58cqi;
+  padding: 0.6em 0.75em;
+  border-radius: 1em;
+  background: #fff;
+  color: var(--card-text);
+  box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.8);
+  font-size: clamp(0.65625rem, 3.75cqi, 0.9375rem);
+}
+
+.shot1 .chip {
+  right: auto;
+  left: 2.5cqi;
+}
+
+.chipIcon {
+  flex: none;
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 0.66em;
+  display: grid;
+  place-items: center;
+}
+
+.iconRose {
+  background: #f4e4ee;
+  color: var(--plum);
+}
+
+.iconOk {
+  background: #e3f3ea;
+  color: #1e7a4c;
+}
+
+.iconQueue {
+  background: var(--plum);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.3em;
+  font-weight: 500;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 0.5em;
+}
+
+.chipText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.chipText b {
+  font-weight: 700;
+}
+
+.chipText small {
+  margin-top: 0.1em;
+  font-size: 0.875em;
+  color: var(--card-subtle);
+}
+
+.chipStars {
+  display: flex;
+  gap: 0.12em;
+  margin-top: 0.2em;
+}
+
+.chipStars .star {
+  width: 0.95em;
+  height: 0.95em;
+}
+
+/* The five stars of the review form (Stars in Hero.tsx): a grey star with the gold one over it. */
+.star {
+  position: relative;
+  display: inline-block;
+  flex: none;
+}
+
+.star svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.starOff {
+  color: #e7ddd0;
+}
+
+.starOn {
+  color: #e3a21a;
+}
+
+/* Computer-only pieces. */
+.fade,
+.card {
+  display: none;
+}
+
+/* ---------- Buttons and brand line ---------- */
+
+.ctas {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.625rem;
+}
+
+@media (min-width: 480px) {
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 3.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition:
+    transform 0.25s var(--ease),
+    background-color 0.25s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--gold-l);
+  outline-offset: 3px;
+}
+
+.btn svg {
+  transition: transform 0.3s var(--ease);
+}
+
+.btn:hover svg {
+  transform: translateX(3px);
+}
+
+.btnCream {
+  background: var(--cream);
+  color: var(--plum-deep);
+  box-shadow: 0 16px 34px -16px rgb(0 0 0 / 0.6);
+}
+
+.btnCream:hover {
+  background: #fff;
+}
+
+.btnLine {
+  border: 1px solid rgb(251 247 241 / 0.4);
+  color: var(--cream);
+}
+
+.btnLine:hover {
+  background: rgb(251 247 241 / 0.08);
+}
+
+.wa {
+  color: #6fd49e;
+}
+
+.brand {
+  margin-top: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+/* The «S.»: plum tile, cream S, gold dot, on a gold disc (its room on the right is reserved by the margin). */
+.mark {
+  --m: 2.5rem;
+  position: relative;
+  flex: none;
+  width: var(--m);
+  height: var(--m);
+  margin-right: calc(var(--m) * 0.3);
+}
+
+.mark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.85;
+  transform: translate3d(30%, 10%, 0) scale(1.12);
+}
+
+.markTile {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 24%;
+  background: linear-gradient(150deg, #8e3a74 0%, var(--plum) 45%, var(--plum-deep) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 calc(var(--m) * 0.16) calc(var(--m) * 0.22) calc(var(--m) * -0.12) rgb(0 0 0 / 0.55);
+  transform: rotate(-6deg);
+}
+
+.markS {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: calc(var(--m) * 0.7);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--cream);
+  transform: translate3d(-6%, -4%, 0);
+}
+
+.markDot {
+  position: absolute;
+  right: 19%;
+  bottom: 24%;
+  width: calc(var(--m) * 0.13);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.brandLine {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: rgb(251 247 241 / 0.88);
+}
+
+.brandLine span + span {
+  font-family: var(--font-fraunces-italic), var(--font-fraunces), ui-serif, Georgia, serif;
+  font-style: italic;
+  color: var(--gold-l);
+}
+
+/* ---------- Computer: copy left, three columns of footage right ---------- */
+
+@media (min-width: 1024px) {
+  .hero {
+    --reel-left: max(46%, calc(50% - 3.5rem));
+    --copy-max: min(36rem, calc(46vw - 3rem));
+    display: flex;
+    min-height: clamp(40rem, 100svh, 62rem);
+    padding: 0;
+  }
+
+  .glow {
+    background: radial-gradient(56rem 44rem at 10% 52%, rgb(122 45 96 / 0.55), rgb(122 45 96 / 0) 70%);
+  }
+
+  .inner {
+    /* A fixed top (about centred), not flex centring: the copy never moves while the rest of the HTML streams in. */
+    flex: 1;
+    padding-top: max(6.5rem, calc(min(100svh, 62rem) / 2 - 13.5rem));
+    padding-bottom: 7rem;
+  }
+
+  .copy {
+    position: relative;
+    z-index: 5;
+    max-width: var(--copy-max);
+  }
+
+  .eyebrow {
+    font-size: 0.8125rem;
+  }
+
+  .title {
+    /* May reach into the footage's fade, as in the mockup, to keep «encontram, compram» on one line. */
+    width: max-content;
+    max-width: calc(var(--copy-max) + 3rem);
+    margin-top: 1.6rem;
+    font-size: clamp(3.25rem, 4.75vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 30px rgb(31 13 27 / 0.6);
+  }
+
+  .sub {
+    margin-top: 1.75rem;
+    max-width: 28rem;
+    font-size: clamp(1.0625rem, 1.32vw, 1.1875rem);
+    line-height: 1.55;
+    color: rgb(251 247 241 / 0.78);
+  }
+
+  .ctas {
+    position: relative;
+    z-index: 5;
+    margin-top: 2.25rem;
+    max-width: var(--copy-max);
+  }
+
+  .brand {
+    position: absolute;
+    z-index: 5;
+    left: max(2rem, calc(50% - 36rem));
+    bottom: 2.5rem;
+    margin: 0;
+  }
+
+  .reel {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    bottom: 0;
+    left: var(--reel-left);
+    right: 0;
+    width: auto;
+    margin: 0;
+    max-width: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    container-type: inline-size;
+  }
+
+  .shot {
+    aspect-ratio: auto;
+    border-radius: 0;
+    background: #2a1426;
+    box-shadow: none;
+    container-type: normal;
+  }
+
+  .shot + .shot {
+    box-shadow: -1px 0 0 rgb(251 247 241 / 0.16);
+  }
+
+  .media,
+  .shot1 .media {
+    inset: 0;
+    width: auto;
+    border-radius: 0;
+  }
+
+  .media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(31 13 27 / 0.5) 0%, rgb(31 13 27 / 0) 26%, rgb(31 13 27 / 0) 64%, rgb(31 13 27 / 0.78) 100%),
+      linear-gradient(0deg, rgb(94 31 73 / 0.16), rgb(94 31 73 / 0.16));
+    pointer-events: none;
+  }
+
+  .tag,
+  .shot1 .tag {
+    top: auto;
+    right: auto;
+    left: 1.4rem;
+    bottom: 1.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: rgb(251 247 241 / 0.85);
+  }
+
+  .chip {
+    display: none;
+  }
+
+  .fade {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 9.5rem;
+    background: linear-gradient(90deg, var(--ink) 0%, rgb(31 13 27 / 0.55) 45%, rgb(31 13 27 / 0) 100%);
+    pointer-events: none;
+  }
+
+  /* Cards: sizes in em of a font-size that follows the footage's width (13px × 0.92 at 840px, as in the mockup). */
+  .card {
+    display: block;
+    position: absolute;
+    z-index: 4;
+    width: 18.46em;
+    font-size: clamp(10px, 1.424cqi, 13.5px);
+    line-height: 1.3;
+    border-radius: 1.38em;
+    overflow: hidden;
+    background: #fff;
+    color: var(--card-text);
+    box-shadow:
+      0 30px 60px -24px rgb(0 0 0 / 0.6),
+      0 0 0 1px rgb(255 255 255 / 0.4);
+  }
+
+  .card b,
+  .card small {
+    display: block;
+  }
+
+  .cardReview {
+    left: 10.7%;
+    top: 30%;
+    padding: 1.23em 1.23em 1.08em;
+  }
+
+  .reviewHead {
+    display: flex;
+    align-items: center;
+    gap: 0.77em;
+  }
+
+  .reviewIcon {
+    flex: none;
+    width: 2.6em;
+    height: 2.6em;
+    border-radius: 0.77em;
+    display: grid;
+    place-items: center;
+    background: var(--plum);
+    color: var(--cream);
+  }
+
+  .reviewIcon svg {
+    width: 1.4em;
+    height: 1.4em;
+  }
+
+  .reviewHead b {
+    font-size: 1.154em;
+    font-weight: 700;
+  }
+
+  .reviewHead small {
+    margin-top: 0.1em;
+    font-size: 0.96em;
+    color: var(--card-subtle);
+  }
+
+  .reviewStars {
+    display: flex;
+    gap: 0.46em;
+    margin: 1.08em 0 0.92em;
+  }
+
+  .reviewStars .star {
+    width: 2em;
+    height: 2em;
+  }
+
+  .publish {
+    display: grid;
+    place-items: center;
+    height: 2.77em;
+    border-radius: 999px;
+    background: var(--plum);
+    color: #fff;
+    font-size: 1.04em;
+    font-weight: 600;
+  }
+
+  .cardMenu {
+    left: 48.1%;
+    top: 12%;
+    width: 20.15em;
+    display: grid;
+    grid-template-columns: 5.69em minmax(0, 1fr);
+    gap: 0.92em;
+    align-items: center;
+    padding: 0.77em 1.08em 0.77em 0.77em;
+  }
+
+  .dish {
+    position: relative;
+    display: block;
+    width: 5.69em;
+    height: 7.08em;
+    border-radius: 0.92em;
+    overflow: hidden;
+    background: #eadfd3;
+  }
+
+  .dish img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .dish::after {
+    /* A play badge: the dish is a video in the Menu digital. */
+    content: "";
+    position: absolute;
+    right: 0.46em;
+    bottom: 0.46em;
+    width: 1.69em;
+    height: 1.69em;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.92);
+  }
+
+  .dish::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: 1.05em;
+    bottom: 0.98em;
+    border-style: solid;
+    border-width: 0.32em 0 0.32em 0.52em;
+    border-color: transparent transparent transparent var(--plum);
+  }
+
+  .cardMenu b {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.31em;
+    line-height: 1.15;
+  }
+
+  .cardMenu small {
+    margin-top: 0.3em;
+    font-size: 0.92em;
+    color: var(--card-subtle);
+  }
+
+  .cardBooking {
+    left: 36.4%;
+    top: 57.8%;
+  }
+
+  .bookingTop {
+    padding: 1.08em 1.23em 1.38em;
+    background: var(--plum);
+    color: #fff;
+  }
+
+  .bookingTop small,
+  .queueKicker {
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .bookingTop b {
+    margin-top: 0.2em;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.54em;
+  }
+
+  .bookingBody {
+    padding: 1.54em 1.23em 1.23em;
+    text-align: center;
+  }
+
+  .bookingOk {
+    width: 2.92em;
+    height: 2.92em;
+    margin: 0 auto 0.62em;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #e3f3ea;
+    color: #1e7a4c;
+  }
+
+  .bookingOk svg {
+    width: 1.4em;
+    height: 1.4em;
+  }
+
+  .bookingBody b {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.77em;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  .bookingBody small {
+    margin-top: 0.3em;
+    font-size: 0.96em;
+    line-height: 1.45;
+    color: var(--card-subtle);
+  }
+
+  .cardQueue {
+    left: 68%;
+    top: 50.2%;
+    width: 16.9em;
+    padding: 1.08em 1.23em 1.23em;
+    background: var(--plum);
+    color: #fff;
+  }
+
+  .queueShop {
+    margin-top: 0.15em;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.38em;
+  }
+
+  .queueRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    margin-top: 0.77em;
+    font-size: 0.96em;
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .queuePill {
+    padding: 0.38em 0.77em;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--card-text);
+    font-size: 0.96em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .queueNumber {
+    display: block;
+    margin-top: 0.1em;
+    font-family: var(--font-display);
+    font-size: 4.46em;
+    line-height: 1;
+  }
+
+  .queueName {
+    display: block;
+    font-size: 1.08em;
+    font-weight: 600;
+  }
+
+  .queueGo {
+    display: block;
+    margin-top: 0.4em;
+    color: rgb(255 255 255 / 0.85);
+  }
+}
+
+/* ---------- Motion: one cycle of three moments (café, restaurant, barbershop), then all together ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .eyebrow,
+  .ctas {
+    animation: hero-fade 0.8s var(--ease) both;
+  }
+  .ctas {
+    animation-delay: 0.2s;
+  }
+  /* The title and intro only move (no fade): they paint at once for LCP. */
+  .title,
+  .sub {
+    animation: hero-rise 0.9s var(--ease) both;
+  }
+  .sub {
+    animation-delay: 0.1s;
+  }
+
+  .shot0 .shade {
+    animation: shade-0 var(--cycle) ease-in-out infinite;
+  }
+  .shot1 .shade {
+    animation: shade-1 var(--cycle) ease-in-out infinite;
+  }
+  .shot2 .shade {
+    animation: shade-2 var(--cycle) ease-in-out infinite;
+  }
+  .moment0 {
+    animation: moment-0 var(--cycle) var(--ease) infinite;
+  }
+  .moment1 {
+    animation: moment-1 var(--cycle) var(--ease) infinite;
+  }
+  .moment1b {
+    animation: moment-1b var(--cycle) var(--ease) infinite;
+  }
+  .moment2 {
+    animation: moment-2 var(--cycle) var(--ease) infinite;
+  }
+  /* The stars are tapped one by one, then «Publicar» wakes up. */
+  .star:nth-child(1) .starOn {
+    animation: star-0 var(--cycle) ease-out infinite;
+  }
+  .star:nth-child(2) .starOn {
+    animation: star-1 var(--cycle) ease-out infinite;
+  }
+  .star:nth-child(3) .starOn {
+    animation: star-2 var(--cycle) ease-out infinite;
+  }
+  .star:nth-child(4) .starOn {
+    animation: star-3 var(--cycle) ease-out infinite;
+  }
+  .star:nth-child(5) .starOn {
+    animation: star-4 var(--cycle) ease-out infinite;
+  }
+  .publish {
+    animation: publish var(--cycle) ease-out infinite;
+  }
+  .bookingOk {
+    animation: booking-ok var(--cycle) var(--ease) infinite;
+  }
+
+  /* Off screen (HeroReel sets data-paused), everything waits. */
+  .reel[data-paused] * {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translate3d(0, 0.9rem, 0);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.75rem, 0);
+  }
+}
+
+@keyframes shade-0 {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  27%,
+  72% {
+    opacity: 0.58;
+  }
+  77%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shade-1 {
+  0%,
+  22% {
+    opacity: 0.58;
+  }
+  27%,
+  47% {
+    opacity: 0;
+  }
+  52%,
+  72% {
+    opacity: 0.58;
+  }
+  77%,
+  95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes shade-2 {
+  0%,
+  47% {
+    opacity: 0.58;
+  }
+  52%,
+  95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes moment-0 {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  4%,
+  21% {
+    opacity: 1;
+    transform: none;
+  }
+  25% {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+  26%,
+  75% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  79%,
+  96% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes moment-1 {
+  0%,
+  25% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  29%,
+  46% {
+    opacity: 1;
+    transform: none;
+  }
+  50% {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+  51%,
+  75% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  79%,
+  96% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes moment-1b {
+  0%,
+  28% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  32%,
+  46% {
+    opacity: 1;
+    transform: none;
+  }
+  50% {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+  51%,
+  76% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  80%,
+  96% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes moment-2 {
+  0%,
+  50% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  54%,
+  96% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes star-0 {
+  0%,
+  6% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  7.2% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  8.4%,
+  97% {
+    opacity: 1;
+    transform: none;
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes star-1 {
+  0%,
+  8.2% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  9.4% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  10.6%,
+  97% {
+    opacity: 1;
+    transform: none;
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes star-2 {
+  0%,
+  10.4% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  11.6% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  12.8%,
+  97% {
+    opacity: 1;
+    transform: none;
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes star-3 {
+  0%,
+  12.6% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  13.8% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  15%,
+  97% {
+    opacity: 1;
+    transform: none;
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes star-4 {
+  0%,
+  14.8% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  16% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  17.2%,
+  97% {
+    opacity: 1;
+    transform: none;
+  }
+  99%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes publish {
+  0%,
+  17% {
+    opacity: 0.45;
+  }
+  19%,
+  97% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes booking-ok {
+  0%,
+  31% {
+    transform: scale(0.4);
+  }
+  34% {
+    transform: scale(1.12);
+  }
+  36%,
+  76% {
+    transform: none;
+  }
+  77% {
+    transform: scale(0.4);
+  }
+  80% {
+    transform: scale(1.12);
+  }
+  82%,
+  100% {
+    transform: none;
+  }
+}
