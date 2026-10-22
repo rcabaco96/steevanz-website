@@ -5,8 +5,8 @@ import { novoCopy } from "@/content/novo-home";
 import { localize, type Locale } from "@/lib/i18n";
 import styles from "./novo.module.css";
 
-// «Confiam em nós»: the client logos, still (no marquee), in the site's ink; each one shows its own
-// colours on hover. Phones: a 3×2 grid; from 640px: one row. Sizes are optically balanced
+// «Confiam em nós»: the client logos, still (no marquee), in their own colours (owner, 2026-10-22: the
+// one-colour version looked dull; the mono files stay in public/clients/ for other uses). Phones: a 3×2 grid; from 640px: one row. Sizes are optically balanced
 // (src/content/client-logos.ts) and the width/height attributes keep the aspect ratio, so nothing shifts
 // while they load. Not links: they are references, not destinations.
 
@@ -32,8 +32,7 @@ export function ClientStrip({ locale }: { locale: Locale }) {
                 data-featured={logo.featured ? "" : undefined}
                 style={{ "--logo-scale": logo.scale } as CSSProperties}
               >
-                <Image src={logo.monoSrc} alt={logo.name} width={w} height={h} className={styles.clientLogoMono} />
-                <Image src={logo.src} alt="" aria-hidden width={w} height={h} className={styles.clientLogoColour} />
+                <Image src={logo.src} alt={logo.name} width={w} height={h} className={styles.clientLogoImage} />
               </li>
             );
           })}

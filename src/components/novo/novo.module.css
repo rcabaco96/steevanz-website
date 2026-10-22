@@ -471,56 +471,26 @@
   }
 }
 
-/* The one-colour logo sets the slot's size; the colour logo sits exactly on top and fades in on hover. */
+/* The logos in their own colours (owner, 2026-10-22), optically balanced by --logo-scale. */
 .clientLogo {
   position: relative;
   display: grid;
   place-items: center;
 }
 
-.clientLogoMono,
-.clientLogoColour {
-  grid-area: 1 / 1;
+.clientLogoImage {
   display: block;
   width: auto;
   max-width: 100%;
   height: calc(var(--logo-h) * var(--logo-scale, 1));
   object-fit: contain;
-  transition: opacity 0.35s var(--ease);
 }
 
-/* A touch softer than the text, so the strip stays calm; the three big names a little stronger. */
-.clientLogoMono {
-  opacity: 0.72;
-}
-
-.clientLogo[data-featured] .clientLogoMono {
-  opacity: 0.86;
-}
-
-.clientLogoColour {
-  opacity: 0;
-}
-
-@media (hover: hover) {
-  .clientLogo:hover .clientLogoMono {
-    opacity: 0;
-  }
-  .clientLogo:hover .clientLogoColour {
-    opacity: 1;
-  }
-}
-
-/* Dark theme: the ink logos turn light (invert keeps the knock-outs). */
-:global(:root[data-theme="dark"]) .clientLogoMono {
-  filter: invert(1) hue-rotate(180deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .clientLogoMono,
-  .clientLogoColour {
-    transition: none;
-  }
+/* Dark theme: colour logos (black «ei», navy Agilflex) need a light ground, so each sits on a cream tile. */
+:global(:root[data-theme="dark"]) .clientLogo {
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.875rem;
+  background: #fbf7f1;
 }
 
 /* ---------- Goals ---------- */
