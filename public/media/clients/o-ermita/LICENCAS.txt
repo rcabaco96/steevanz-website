@@ -31,3 +31,6 @@ Derivados feitos pela Steevanz a partir dos ficheiros acima:
   favicon.ico, icon-192.png, icon-512.png, apple-icon.png - letras «O E» do logótipo sobre azul.
 
 Não usado: fotografias de lifecooler.com e visitalentejo.pt (direitos de terceiros). Nenhuma imagem gerada por IA.
+  og-site.jpg (1200x630) - pré-visualização do site: convento-drone-poster.webp + sala-fresco.webp + logótipo.
+  og-menu.jpg (1200x630) - pré-visualização da ementa em vídeo: capturas do menu Steevanz + logótipo.
+  menu-logo.png - logótipo em fundo azul para o menu em vídeo.

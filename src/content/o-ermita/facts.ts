@@ -62,7 +62,9 @@ export const ermita = {
     fonte: `${media}/fonte.webp`,
     capelaExterior: `${media}/capela-exterior.webp`,
     terraco: `${media}/terraco.webp`,
-    og: `${media}/og.jpg`,
+    /** Link previews (1200×630): the site (the convent from the air and the painted vault) and the video menu. */
+    og: `${media}/og-site.jpg`,
+    ogMenu: `${media}/og-menu.jpg`,
     icon192: `${media}/icon-192.png`,
     icon512: `${media}/icon-512.png`,
     appleIcon: `${media}/apple-icon.png`,
