@@ -16,6 +16,16 @@ Logótipo:
   restaurante na sua página https://oermita.my.canva.site/ (imagem _assets/media/c4071ee8adea0dcc993248707db77398.png).
   logo.png - exportado de logo.svg.
 
+Do site do próprio hotel (https://www.hotelconventosaopaulo.com/ - o restaurante O Ermita é o restaurante do hotel):
+  convento-drone.mp4     - os primeiros 16 s do filme aéreo do hotel (Hotel-Convento-Sao-Paulo_-Intro-I.mp4), sem som, 1280 px
+  convento-drone-poster.webp - uma imagem desse filme
+  sala-fresco.webp       - a sala do restaurante sob a abóbada pintada (DSC01359-restaurante-maior.jpg)
+  painel-azulejo.webp    - painel de azulejo atrás de uma mesa posta (DSC01292-restaurante-menor.jpg)
+  fonte.webp             - fonte barroca com tanque (D610361.jpg)
+  capela-exterior.webp   - capela caiada no fim de um caminho de calçada (GBD3511.jpg)
+  terraco.webp           - terraço com oliveiras (GBD3304.jpg)
+  A confirmar com o cliente: autorização para usar o filme e as fotos do hotel no site do restaurante.
+
 Derivados feitos pela Steevanz a partir dos ficheiros acima:
   og.jpg (1200x630) - portal.webp escurecido + logótipo.
   favicon.ico, icon-192.png, icon-512.png, apple-icon.png - letras «O E» do logótipo sobre azul.

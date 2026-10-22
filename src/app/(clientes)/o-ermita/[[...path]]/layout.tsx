@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "./ermita.css";
 import { ermitaFontVariables } from "@/components/clients/o-ermita/fonts";
 import { ermitaViewport } from "@/components/clients/o-ermita/metadata";
+import { preloaderGateScript, preloaderNoscriptStyle } from "@/components/clients/o-ermita/preloader-gate";
 import { ermitaCopy } from "@/content/o-ermita/copy";
 import { resolveErmitaPath } from "@/content/o-ermita/routes";
 
@@ -16,7 +17,13 @@ type Params = Promise<{ path?: string[] }>;
 export default async function ErmitaLayout({ children, params }: { children: ReactNode; params: Params }) {
   const locale = resolveErmitaPath((await params).path)?.locale ?? "pt";
   return (
-    <html lang={ermitaCopy[locale].htmlLang} className={ermitaFontVariables}>
+    <html lang={ermitaCopy[locale].htmlLang} className={ermitaFontVariables} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: preloaderGateScript }} />
+        <noscript>
+          <style>{preloaderNoscriptStyle}</style>
+        </noscript>
+      </head>
       <body>{children}</body>
     </html>
   );

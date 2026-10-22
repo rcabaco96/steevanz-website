@@ -5,22 +5,14 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { useRef } from "react";
-import { ermita, ermitaImageSize } from "@/content/o-ermita/facts";
-import type { ErmitaCopy, ErmitaPhoto } from "@/content/o-ermita/copy";
+import { ermitaPhotos } from "@/content/o-ermita/facts";
+import type { ErmitaCopy } from "@/content/o-ermita/copy";
 import { ermitaSections } from "./sections";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const sources: Record<ErmitaPhoto["image"], { src: string; tall: boolean }> = {
-  portal: { src: ermita.media.portal, tall: false },
-  vault: { src: ermita.media.vault, tall: false },
-  vaultTall: { src: ermita.media.vaultTall, tall: true },
-  tiles: { src: ermita.media.tiles, tall: false },
-  cellar: { src: ermita.media.cellar, tall: false },
-  entrance: { src: ermita.media.entrance, tall: false },
-};
 
-// The restaurant's own photos (its Google profile). Large screens: the section holds still and the photos
+// The restaurant's own photos (its Google profile) and the hotel's. Large screens: the section holds still and the photos
 // travel sideways as the page scrolls (GSAP pin), each photo drifting inside its frame. Phones, tablets and
 // reduced motion: a row to swipe, with snap points.
 export function Gallery({ copy }: { copy: ErmitaCopy }) {
@@ -91,7 +83,8 @@ export function Gallery({ copy }: { copy: ErmitaCopy }) {
       <div ref={rail} className="mt-12 snap-x snap-mandatory scroll-pl-5 overflow-x-auto sm:scroll-pl-8 overscroll-x-contain [scrollbar-width:none] sm:mt-16 [&::-webkit-scrollbar]:hidden">
         <ul ref={track} className="flex w-max gap-4 px-5 pb-2 will-change-transform sm:gap-6 sm:px-8 lg:gap-10 lg:pr-[12vw] lg:pl-[max(2rem,calc((100vw-88rem)/2+2rem))]">
           {gallery.photos.map((photo, i) => {
-            const { src, tall } = sources[photo.image];
+            const { src, width, height } = ermitaPhotos[photo.image];
+            const tall = height > width;
             return (
               <li key={photo.image} className="snap-start">
                 <figure>
@@ -106,8 +99,8 @@ export function Gallery({ copy }: { copy: ErmitaCopy }) {
                       data-drift
                       src={src}
                       alt={photo.alt}
-                      width={tall ? ermitaImageSize.tall.width : ermitaImageSize.wide.width}
-                      height={tall ? ermitaImageSize.tall.height : ermitaImageSize.wide.height}
+                      width={width}
+                      height={height}
                       sizes={tall ? "(min-width: 1024px) 30vw, 70vw" : "(min-width: 1024px) 62vw, 86vw"}
                       className="absolute inset-0 h-full w-full scale-[1.14] object-cover"
                     />

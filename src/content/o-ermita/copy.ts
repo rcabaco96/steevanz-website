@@ -9,8 +9,29 @@ export interface ErmitaCourse {
   dishes: string[];
 }
 
+export type ErmitaImage =
+  | "portal"
+  | "vault"
+  | "vaultTall"
+  | "tiles"
+  | "cellar"
+  | "entrance"
+  | "salaFresco"
+  | "painel"
+  | "fonte"
+  | "capelaExterior"
+  | "terraco";
+
+export interface ErmitaChapter {
+  mark: string;
+  title: string;
+  text: string;
+  image: ErmitaImage;
+  alt: string;
+}
+
 export interface ErmitaPhoto {
-  image: "portal" | "vault" | "vaultTall" | "tiles" | "cellar" | "entrance";
+  image: ErmitaImage;
   caption: string;
   alt: string;
 }
@@ -26,16 +47,11 @@ export interface ErmitaCopy {
   logoLabel: string;
   nav: { house: string; cuisine: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
   hero: { kicker: string; title: string; lead: string; whatsapp: string; call: string; directions: string; scroll: string; alt: string };
-  story: {
-    eyebrow: string;
-    title: string;
-    titleItalic: string;
-    intro: string;
-    text: string;
-    imageAlt: string;
-    facts: { value: string; label: string }[];
-  };
-  interlude: { line: string; source: string };
+  manifesto: { eyebrow: string; text: string };
+  timeline: { eyebrow: string; title: string; titleItalic: string; hint: string; chapters: ErmitaChapter[] };
+  azulejos: { value: number; label: string; line: string; source: string };
+  sala: { eyebrow: string; title: string; titleItalic: string; text: string; alt: string };
+  marquee: string[];
   cuisine: {
     eyebrow: string;
     title: string;
@@ -107,26 +123,69 @@ const pt: ErmitaCopy = {
     call: "Ligar",
     directions: "Como chegar",
     scroll: "Descer",
-    alt: "Portal de mármore com uma cruz, entre dois lavabos de pedra e painéis de azulejo azul e branco, aberto para a sala do restaurante",
+    alt: "Vista aérea do Convento de São Paulo, caiado e com telhados de telha, entre o arvoredo da Serra d'Ossa",
   },
-  story: {
+  manifesto: {
+    eyebrow: "Desde 1182",
+    text: "Em 1182, os Monges Ermitas de São Paulo ergueram um convento na Serra d'Ossa. Mais de oito séculos depois, na antiga Capela do Bispo, é o Alentejo que se senta à mesa.",
+  },
+  timeline: {
     eyebrow: "A casa",
-    title: "À mesa numa capela",
-    titleItalic: "de setecentos",
-    intro:
-      "O Convento de São Paulo foi construído em 1182, na Serra d'Ossa, pela Ordem dos Monges Ermitas de São Paulo. Pelas suas salas passaram D. Sebastião, D. João IV e D. Catarina de Bragança.",
-    text: "O restaurante fica na Capela do Bispo, construída na primeira década do século XVIII: uma sala coberta por uma abóbada de berço, com azulejos assinados por António de Oliveira Bernardes e pinturas de brutesco na abóbada.",
-    imageAlt: "Sala com painéis de azulejo azul e branco com figuras, mesas postas com toalhas brancas e cadeiras douradas",
-    facts: [
-      { value: "1182", label: "O ano em que o convento foi construído" },
-      { value: "54 mil", label: "Azulejos nas paredes do convento" },
-      { value: "Séc. XVIII", label: "A Capela do Bispo, onde fica o restaurante" },
+    title: "Oito séculos",
+    titleItalic: "numa só sala",
+    hint: "Deslize para ver mais",
+    chapters: [
+      {
+        mark: "1182",
+        title: "A fundação",
+        text: "A Ordem dos Monges Ermitas de São Paulo constrói o convento na Serra d'Ossa, entre Estremoz e Redondo.",
+        image: "capelaExterior",
+        alt: "Pequena capela caiada no fim de um caminho de calçada, entre árvores, na Serra d'Ossa",
+      },
+      {
+        mark: "Reis e rainhas",
+        title: "Hóspedes da casa",
+        text: "Pelas salas do convento passaram D. Sebastião, D. João IV e D. Catarina de Bragança.",
+        image: "fonte",
+        alt: "Fonte barroca de mármore com um tanque de água verde, ao lado de um muro caiado e de um telhado",
+      },
+      {
+        mark: "Séc. XVIII",
+        title: "A Capela do Bispo",
+        text: "Construída na primeira década do século XVIII: uma abóbada de berço com pinturas de brutesco. É aqui que fica o restaurante.",
+        image: "salaFresco",
+        alt: "A sala do restaurante sob a abóbada pintada, com mesas postas, cadeiras estofadas e chão de pedra",
+      },
+      {
+        mark: "D. João V · D. José I",
+        title: "O azul-cobalto",
+        text: "Os azulejos que revestem os corredores vêm destes dois reinados. Os da capela são assinados por António de Oliveira Bernardes.",
+        image: "painel",
+        alt: "Painel de azulejo azul e branco com um monge e figuras diante de um convento, atrás de uma mesa posta",
+      },
+      {
+        mark: "Hoje",
+        title: "O Ermita",
+        text: "O restaurante do Hotel Convento de São Paulo. Almoço e jantar, todos os dias.",
+        image: "vault",
+        alt: "Sala comprida com tecto abobadado, mesas postas e chão em xadrez preto e branco",
+      },
     ],
   },
-  interlude: {
+  azulejos: {
+    value: 54000,
+    label: "azulejos nas paredes do convento",
     line: "O azul-cobalto que reveste os corredores do convento vem dos reinados de D. João V e D. José I.",
     source: "Convento de São Paulo, Serra d'Ossa",
   },
+  sala: {
+    eyebrow: "A sala",
+    title: "Sob a abóbada",
+    titleItalic: "da Capela do Bispo",
+    text: "Uma sala coberta por uma abóbada de berço, com azulejos assinados por António de Oliveira Bernardes e pinturas de brutesco na abóbada.",
+    alt: "A sala do restaurante sob a abóbada pintada, com mesas postas, cadeiras estofadas e chão de pedra",
+  },
+  marquee: ["Reserve a sua mesa", "Almoço e jantar", "Todos os dias", "Serra d'Ossa"],
   cuisine: {
     eyebrow: "A cozinha",
     title: "Uma viagem pela",
@@ -162,11 +221,13 @@ const pt: ErmitaCopy = {
     titleItalic: "por dentro",
     hint: "Deslize para ver mais",
     photos: [
+      { image: "salaFresco", caption: "A abóbada pintada", alt: "A sala do restaurante sob a abóbada pintada, com mesas postas e chão de pedra" },
       { image: "vault", caption: "A sala", alt: "Sala comprida com tecto abobadado, mesas postas e chão em xadrez preto e branco" },
       { image: "tiles", caption: "Os azulejos", alt: "Mesas postas junto a um painel de azulejo azul e branco com cenas de figuras" },
       { image: "vaultTall", caption: "Luz das arcadas", alt: "A sala abobadada vista de frente, com a luz quente das arcadas e a mesa de serviço" },
       { image: "portal", caption: "O portal", alt: "Portal de mármore com uma cruz, entre dois lavabos de pedra com azulejos" },
       { image: "cellar", caption: "A garrafeira", alt: "Garrafas de vinho, um candeeiro aceso e mesas junto aos azulejos" },
+      { image: "terraco", caption: "O terraço", alt: "Terraço caiado com oliveiras em vasos e um muro de pedra, com a serra ao fundo" },
       { image: "entrance", caption: "A entrada", alt: "Entrada do restaurante numa parede caiada, com a placa O Ermita e dois candeeiros" },
     ],
   },
@@ -247,26 +308,69 @@ const en: ErmitaCopy = {
     call: "Call",
     directions: "Directions",
     scroll: "Scroll",
-    alt: "Marble doorway with a cross, between two stone basins and blue and white tile panels, opening onto the restaurant's dining room",
+    alt: "Aerial view of the whitewashed Convento de São Paulo with its tiled roofs, among the trees of the Serra d'Ossa",
   },
-  story: {
+  manifesto: {
+    eyebrow: "Since 1182",
+    text: "In 1182, the Hermit Monks of Saint Paul raised a convent in the Serra d'Ossa. More than eight centuries later, in the old Bishop's Chapel, it is the Alentejo that sits down at the table.",
+  },
+  timeline: {
     eyebrow: "The house",
-    title: "Dining in a chapel",
-    titleItalic: "from the 1700s",
-    intro:
-      "The Convento de São Paulo was built in 1182, in the Serra d'Ossa, by the Order of the Hermit Monks of Saint Paul. King Sebastian, King John IV and Catherine of Braganza all passed through its halls.",
-    text: "The restaurant is in the Bishop's Chapel, built in the first decade of the 18th century: a room under a barrel vault, with tiles signed by António de Oliveira Bernardes and brutesco paintings on the vault.",
-    imageAlt: "Room with blue and white figurative tile panels, tables laid with white cloths and golden chairs",
-    facts: [
-      { value: "1182", label: "The year the convent was built" },
-      { value: "54,000", label: "Tiles on the convent's walls" },
-      { value: "18th c.", label: "The Bishop's Chapel, home of the restaurant" },
+    title: "Eight centuries",
+    titleItalic: "in a single room",
+    hint: "Swipe to see more",
+    chapters: [
+      {
+        mark: "1182",
+        title: "The founding",
+        text: "The Order of the Hermit Monks of Saint Paul builds the convent in the Serra d'Ossa, between Estremoz and Redondo.",
+        image: "capelaExterior",
+        alt: "Small whitewashed chapel at the end of a cobbled path, among trees, in the Serra d'Ossa",
+      },
+      {
+        mark: "Kings and queens",
+        title: "Guests of the house",
+        text: "King Sebastian, King John IV and Catherine of Braganza all passed through the convent's halls.",
+        image: "fonte",
+        alt: "Baroque marble fountain with a green water tank, beside a whitewashed wall and a tiled roof",
+      },
+      {
+        mark: "18th c.",
+        title: "The Bishop's Chapel",
+        text: "Built in the first decade of the 18th century: a barrel vault with brutesco paintings. This is where the restaurant is.",
+        image: "salaFresco",
+        alt: "The restaurant's dining room under the painted vault, with laid tables, upholstered chairs and a stone floor",
+      },
+      {
+        mark: "John V · Joseph I",
+        title: "Cobalt blue",
+        text: "The tiles lining the corridors date from these two reigns. Those in the chapel are signed by António de Oliveira Bernardes.",
+        image: "painel",
+        alt: "Blue and white tile panel with a monk and figures before a convent, behind a laid table",
+      },
+      {
+        mark: "Today",
+        title: "O Ermita",
+        text: "The restaurant of the Hotel Convento de São Paulo. Lunch and dinner, every day.",
+        image: "vault",
+        alt: "Long room with a vaulted ceiling, laid tables and a black and white chequered floor",
+      },
     ],
   },
-  interlude: {
+  azulejos: {
+    value: 54000,
+    label: "tiles on the convent's walls",
     line: "The cobalt blue lining the convent's corridors dates from the reigns of King John V and King Joseph I.",
     source: "Convento de São Paulo, Serra d'Ossa",
   },
+  sala: {
+    eyebrow: "The dining room",
+    title: "Under the vault",
+    titleItalic: "of the Bishop's Chapel",
+    text: "A room under a barrel vault, with tiles signed by António de Oliveira Bernardes and brutesco paintings on the vault.",
+    alt: "The restaurant's dining room under the painted vault, with laid tables, upholstered chairs and a stone floor",
+  },
+  marquee: ["Book your table", "Lunch and dinner", "Every day", "Serra d'Ossa"],
   cuisine: {
     eyebrow: "The cuisine",
     title: "A journey through",
@@ -302,11 +406,13 @@ const en: ErmitaCopy = {
     titleItalic: "the house",
     hint: "Swipe to see more",
     photos: [
+      { image: "salaFresco", caption: "The painted vault", alt: "The restaurant's dining room under the painted vault, with laid tables and a stone floor" },
       { image: "vault", caption: "The dining room", alt: "Long room with a vaulted ceiling, laid tables and a black and white chequered floor" },
       { image: "tiles", caption: "The tiles", alt: "Laid tables beside a blue and white tile panel with figure scenes" },
       { image: "vaultTall", caption: "Light under the arches", alt: "The vaulted room seen head-on, with warm light along the arches and the service table" },
       { image: "portal", caption: "The doorway", alt: "Marble doorway with a cross, between two stone basins with tiles" },
       { image: "cellar", caption: "The cellar", alt: "Wine bottles, a lit lamp and tables beside the tiles" },
+      { image: "terraco", caption: "The terrace", alt: "Whitewashed terrace with potted olive trees and a stone wall, the hills beyond" },
       { image: "entrance", caption: "The entrance", alt: "The restaurant's entrance in a whitewashed wall, with the O Ermita sign and two lanterns" },
     ],
   },
