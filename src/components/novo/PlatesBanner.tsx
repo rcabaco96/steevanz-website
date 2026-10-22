@@ -11,7 +11,7 @@ import { PauseOffscreen } from "./PauseOffscreen";
 import base from "./novo.module.css";
 import styles from "./plates.module.css";
 
-// The review plates (Google, Tripadvisor or Booking.com, one per plate), as the first band after the clients strip. Prices come from
+// The review plates (Google, Tripadvisor or Booking.com, one per plate), right after the last band with a video. Prices come from
 // products.ts, without VAT and with «+ IVA». The animation is the plate scene HeroTapScene
 // (owner, 2026-10-20), on a dark panel, paused while off screen. Under or beside the main button, a discreet
 // «Ver o vídeo (27 s)» opens the plates ad in a window over the page (owner, 2026-10-22).

@@ -73,10 +73,7 @@ export function NovoHome({ locale }: { locale: Locale }) {
       {/* 2. Confiam em nós */}
       <ClientStrip locale={locale} />
 
-      {/* 3. Placas para avaliações: the flagship, first after the clients */}
-      <PlatesBanner locale={locale} />
-
-      {/* 4. Menu digital showcase */}
+      {/* 3. Menu digital showcase */}
       <section aria-labelledby="novo-menu" className={styles.showcase}>
         <div className={styles.wrap}>
           <MenuShowcase
@@ -105,10 +102,10 @@ export function NovoHome({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* 5. Cartão de cliente digital: after the menu, to make them come back */}
+      {/* 4. Cartão de cliente digital: after the menu, to make them come back */}
       <LoyaltyBanner locale={locale} />
 
-      {/* 6. The bands with a product ad (content/novo-home.ts, homeAdBands: guest guide, business card, keychain, waitlist,
+      {/* 5. The bands with a product ad (content/novo-home.ts, homeAdBands: guest guide, business card, keychain, waitlist,
           bookings, …), each shown once its ad is in content/product-ads.ts. All the bands with a video come before the
           goals; the tones and the video sides alternate (owner, 2026-10-20). */}
       {homeAdBands
@@ -124,6 +121,10 @@ export function NovoHome({ locale }: { locale: Locale }) {
             media={index % 2 === 0 ? "left" : "right"}
           />
         ))}
+
+      {/* 6. Placas para avaliações: right after the last section with a video (owner, 2026-10-22); its own ad opens
+          in a window from a button. */}
+      <PlatesBanner locale={locale} />
 
       {/* 7. O que quer melhorar? Always below every band with a video (owner, 2026-10-20). */}
       <section id="solucoes" aria-labelledby="novo-goals" className={styles.section}>
