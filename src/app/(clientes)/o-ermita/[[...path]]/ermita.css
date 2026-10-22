@@ -1,0 +1,206 @@
+/* O Ermita's own stylesheet: none of the Steevanz site's styles load on these pages, and Tailwind only scans
+   the client's own files. Identity (2026-10-22): lime-washed walls, cobalt azulejos, the bronze of the logo. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/o-ermita";
+@source "./";
+
+@theme {
+  --color-cal: #f6f1e7;
+  --color-linho: #ece3d1;
+  --color-azulejo: #1f3f7a;
+  --color-azulejo-deep: #13285a;
+  --color-noite: #0f1624;
+  --color-noite-2: #18213a;
+  --color-oliva: #645939;
+  --color-ouro: #c4a26a;
+  --color-tinta: #1e1b16;
+  --color-pedra: #645c50;
+
+  --font-serif: var(--oe-font-serif), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--oe-font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-convento: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-cal);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    /* Cormorant's default old-style figures make hours and phone numbers look uneven. */
+    font-variant-numeric: lining-nums;
+  }
+  ::selection {
+    background: var(--color-azulejo);
+    color: var(--color-cal);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ouro);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* Changing language is a full page load: the two pages cross-fade instead of flashing. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: oe-fade-out 0.35s var(--ease-convento) both;
+}
+::view-transition-new(root) {
+  animation: oe-fade-in 0.6s var(--ease-convento) both;
+}
+
+@layer components {
+  /* The logo files, painted in the current text colour (one cached file, any colour). */
+  .oe-mask {
+    display: block;
+    background-color: currentColor;
+    -webkit-mask: var(--src) center / contain no-repeat;
+    mask: var(--src) center / contain no-repeat;
+  }
+
+  /* Azulejo: a cobalt diamond lattice with a four-petal flower, like the panels by the restaurant's door. */
+  .oe-azulejo {
+    --tile: 72px;
+    background-color: var(--color-cal);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%231f3f7a' stroke-width='2.2'%3E%3Cpath d='M36 2 70 36 36 70 2 36Z'/%3E%3Cpath d='M36 14 58 36 36 58 14 36Z'/%3E%3C/g%3E%3Cg fill='%231f3f7a'%3E%3Ccircle cx='36' cy='36' r='4.5'/%3E%3Cpath d='M36 19c4 6 4 8 0 12-4-4-4-6 0-12ZM36 53c-4-6-4-8 0-12 4 4 4 6 0 12ZM19 36c6-4 8-4 12 0-4 4-6 4-12 0ZM53 36c-6 4-8 4-12 0 4-4 6-4 12 0Z'/%3E%3Ccircle cx='0' cy='0' r='7'/%3E%3Ccircle cx='72' cy='0' r='7'/%3E%3Ccircle cx='0' cy='72' r='7'/%3E%3Ccircle cx='72' cy='72' r='7'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: var(--tile) var(--tile);
+  }
+  .oe-azulejo-dark {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23f6f1e7' stroke-width='1.6'%3E%3Cpath d='M36 2 70 36 36 70 2 36Z'/%3E%3Cpath d='M36 14 58 36 36 58 14 36Z'/%3E%3C/g%3E%3Cg fill='%23f6f1e7'%3E%3Ccircle cx='36' cy='36' r='4'/%3E%3Cpath d='M36 19c4 6 4 8 0 12-4-4-4-6 0-12ZM36 53c-4-6-4-8 0-12 4 4 4 6 0 12ZM19 36c6-4 8-4 12 0-4 4-6 4-12 0ZM53 36c-6 4-8 4-12 0 4-4 6-4 12 0Z'/%3E%3Ccircle cx='0' cy='0' r='6'/%3E%3Ccircle cx='72' cy='0' r='6'/%3E%3Ccircle cx='0' cy='72' r='6'/%3E%3Ccircle cx='72' cy='72' r='6'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 72px 72px;
+  }
+
+  /* A thin band of tiles, as a border between rooms. */
+  .oe-barra {
+    --tile: 36px;
+    height: 36px;
+  }
+
+  /* The arch of the convent's windows and doors. */
+  .oe-arch {
+    border-radius: 999px 999px 0.4rem 0.4rem;
+  }
+
+  /* A small diamond, the ornament between the menu's courses. */
+  .oe-diamond {
+    width: 0.5rem;
+    height: 0.5rem;
+    transform: rotate(45deg);
+    background: currentColor;
+  }
+
+  .oe-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+  @media (min-width: 640px) {
+    .oe-eyebrow {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* The double rule of a printed menu. */
+  .oe-menu-card {
+    background: var(--color-cal);
+    box-shadow:
+      inset 0 0 0 1px rgb(100 89 57 / 0.45),
+      inset 0 0 0 6px var(--color-cal),
+      inset 0 0 0 7px rgb(100 89 57 / 0.3),
+      0 30px 60px -30px rgb(30 27 22 / 0.35);
+  }
+}
+
+/* Slow drift of the hero photo (transform only, on its own layer). */
+@keyframes oe-kenburns {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
+}
+.oe-kenburns {
+  animation: oe-kenburns 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Entrance of the hero: separate translate property, so the element's own transform stays. */
+@keyframes oe-rise {
+  from { opacity: 0; translate: 0 1.1rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+.oe-rise {
+  animation: oe-rise 1.2s var(--ease-convento) both;
+}
+
+/* The skyline of the logo drawn from left to right: two opposite translations inside an overflow:hidden box. */
+@keyframes oe-wipe-outer {
+  from { transform: translate3d(-101%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+@keyframes oe-wipe-inner {
+  from { transform: translate3d(101%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.oe-wipe {
+  overflow: hidden;
+}
+.oe-wipe > * {
+  animation: oe-wipe-outer 2.2s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
+}
+.oe-wipe > * > * {
+  animation: oe-wipe-inner 2.2s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
+}
+
+/* The scroll cue: a thin line that keeps falling. */
+@keyframes oe-cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.oe-cue {
+  animation: oe-cue 2.4s var(--ease-convento) infinite;
+}
+
+@keyframes oe-fade-out {
+  to { opacity: 0; }
+}
+@keyframes oe-fade-in {
+  from { opacity: 0; translate: 0 12px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oe-kenburns,
+  .oe-rise,
+  .oe-wipe > *,
+  .oe-wipe > * > *,
+  .oe-cue {
+    animation: none !important;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

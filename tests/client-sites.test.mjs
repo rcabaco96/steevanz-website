@@ -182,9 +182,9 @@ describe("Fabio's Roadstop: content rules", () => {
     assert.deepEqual(shape(fabiosCopy.en), shape(fabiosCopy.pt));
   });
 
-  it("loads GSAP and Lenis only from the client's own components", () => {
+  it("loads GSAP and Lenis only from the client sites' own components", () => {
     const offenders = filesUnder("src")
-      .filter((path) => !path.includes(join("clients", "fabios-roadstop")))
+      .filter((path) => !path.includes(join("clients", "fabios-roadstop")) && !path.includes(join("clients", "o-ermita")))
       .filter((path) => /from "(gsap|lenis|@gsap\/react)|import\("lenis"\)/.test(readFileSync(path, "utf8")));
     assert.deepEqual(offenders, []);
   });

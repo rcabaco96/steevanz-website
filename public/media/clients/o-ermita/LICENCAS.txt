@@ -1,0 +1,23 @@
+O Ermita (restaurante do Hotel Convento de São Paulo, Redondo) - origem das imagens deste site
+Recolhidas a 2026-10-22. O Ermita é cliente da Steevanz; as imagens são do próprio restaurante.
+
+Fotografias (todas publicadas pela conta «Restaurante O Ermita» no seu perfil do Google Maps / Google Business,
+https://www.google.com/maps/contrib/100305715869271130190/photos ; ficha «O Ermita», /g/11cltx38mw).
+Descarregadas a 2400 px, com correção ligeira de exposição/contraste (sem retoque de conteúdo) e convertidas para WebP:
+  portal.webp            - portal de mármore com cruz e lavabos (foto de 11/2007)
+  sala-abobadada.webp    - sala abobadada com mesas postas, vista da porta
+  sala-vertical.webp     - a mesma sala, enquadramento vertical
+  sala-azulejos.webp     - sala com painéis de azulejo figurativo
+  garrafeira.webp        - garrafeira e mesas junto aos azulejos
+  entrada.webp           - entrada do restaurante com a placa «O Ermita»
+
+Logótipo:
+  skyline.svg, wordmark.svg, restaurante.svg, logo.svg - vetorizados (contornos) a partir do logótipo do próprio
+  restaurante na sua página https://oermita.my.canva.site/ (imagem _assets/media/c4071ee8adea0dcc993248707db77398.png).
+  logo.png - exportado de logo.svg.
+
+Derivados feitos pela Steevanz a partir dos ficheiros acima:
+  og.jpg (1200x630) - portal.webp escurecido + logótipo.
+  favicon.ico, icon-192.png, icon-512.png, apple-icon.png - letras «O E» do logótipo sobre azul.
+
+Não usado: fotografias de lifecooler.com e visitalentejo.pt (direitos de terceiros). Nenhuma imagem gerada por IA.

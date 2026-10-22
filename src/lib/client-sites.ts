@@ -36,6 +36,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/fabios-roadstop/"],
   },
+  {
+    // O Ermita (owner, 2026-10-22): no domain yet, only the preview path. When one is chosen, list it here, set
+    // `ermitaOrigin` in src/content/o-ermita/routes.ts and add its host to the proxy matcher (src/proxy.ts).
+    id: "o-ermita",
+    hosts: [],
+    base: "/o-ermita",
+    rootFiles: {
+      "/robots.txt": "/o-ermita/robots.txt",
+      "/sitemap.xml": "/o-ermita/sitemap.xml",
+      "/manifest.webmanifest": "/o-ermita/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/o-ermita/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/o-ermita/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/o-ermita/"],
+  },
 ];
 
 export type ClientSiteDecision =
