@@ -104,8 +104,8 @@
   display: grid;
   place-items: center;
   border-radius: 9999px;
-  background: #25d366;
-  color: #0b2e17;
+  background: var(--color-accent, #6e2a57);
+  color: #fff;
   -webkit-tap-highlight-color: transparent;
   transition: transform 200ms var(--hu-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }

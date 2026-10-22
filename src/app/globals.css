@@ -177,7 +177,8 @@ html:has([data-hero-dark]) header[data-top] :is(#products-menu, [role="listbox"]
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-ring: var(--ring);
-  --color-whatsapp: #25d366;
+  /* No WhatsApp green anywhere on the site (owner): WhatsApp buttons use the Steevanz plum. */
+  --color-whatsapp: var(--accent);
 }
 
 @theme {

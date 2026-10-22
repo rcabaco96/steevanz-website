@@ -122,7 +122,7 @@ export function DocsIndexPage({ locale }: { locale: Locale }) {
             <p className="text-muted">{text.helpBody}</p>
           </div>
           <div className="flex flex-wrap gap-3 text-sm font-semibold">
-            <a href={whatsappUrl(t.common.whatsappMessage)} target="_blank" rel="noopener noreferrer" className="rounded-full bg-whatsapp px-5 py-2.5 text-[#0b2e17]">
+            <a href={whatsappUrl(t.common.whatsappMessage)} target="_blank" rel="noopener noreferrer" className="rounded-full bg-accent px-5 py-2.5 text-accent-contrast">
               WhatsApp
             </a>
             <a href={`mailto:${site.email}`} className="rounded-full border border-line-strong px-5 py-2.5 text-text">
