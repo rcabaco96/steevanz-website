@@ -51,7 +51,7 @@ them needs the owner's confirmation.
   line, no «X € + IVA = Y €». Show the value without VAT and say «+ IVA» / «acresce IVA» / «Preços sem IVA». Businesses
   have organised accounting and know they pay VAT; VAT maths only confuses everyone.
 - Prices come from `src/content/products.ts` only. Menu digital: «desde 20 € por placa (15 € a partir de 10) + 30 €/mês
-  pelo menu em vídeo». Landing page 350 € + 15 €/mês; site 700 € + 25 €/mês.
+  pelo menu em vídeo». Landing page 600 € + 15 €/mês; site (várias páginas) 800 € + 25 €/mês; loja online 1200 € (owner, 2026-10-22).
 
 ## Clientes que se podem mostrar
 

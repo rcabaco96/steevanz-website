@@ -117,7 +117,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa no total?",
-        a: "Desde 700 € + IVA, uma vez, para até 5 páginas. Cada página extra custa 90 € + IVA. O plano mensal de alojamento e manutenção custa 25 € + IVA, sem fidelização. O domínio e o email pagam-se à parte.",
+        a: "Desde 800 € + IVA, uma vez, para até 5 páginas. Cada página extra custa 90 € + IVA. O plano mensal de alojamento e manutenção custa 25 € + IVA, sem fidelização. O domínio e o email pagam-se à parte.",
       },
       {
         q: "O que preciso de vos enviar?",
@@ -296,7 +296,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost in total?",
-        a: "From €700 + VAT, once, for up to 5 pages. Each extra page is €90 + VAT. The monthly hosting and maintenance plan is €25 + VAT, with no lock-in. Domain and email are paid separately.",
+        a: "From €800 + VAT, once, for up to 5 pages. Each extra page is €90 + VAT. The monthly hosting and maintenance plan is €25 + VAT, with no lock-in. Domain and email are paid separately.",
       },
       {
         q: "What do I need to send you?",
@@ -475,7 +475,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "¿Cuánto cuesta en total?",
-        a: "Desde 700 € + IVA, en un único pago, por hasta 5 páginas. Cada página adicional cuesta 90 € + IVA. El plan mensual de hosting y mantenimiento cuesta 25 € + IVA, sin permanencia. El dominio y el correo se pagan aparte.",
+        a: "Desde 800 € + IVA, en un único pago, por hasta 5 páginas. Cada página adicional cuesta 90 € + IVA. El plan mensual de hosting y mantenimiento cuesta 25 € + IVA, sin permanencia. El dominio y el correo se pagan aparte.",
       },
       {
         q: "¿Qué tengo que enviarles?",
@@ -654,7 +654,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Combien cela coûte-t-il au total ?",
-        a: "À partir de 700 € + TVA, en une fois, pour 5 pages maximum. Chaque page supplémentaire coûte 90 € + TVA. L'offre mensuelle d'hébergement et de maintenance coûte 25 € + TVA, sans engagement. Le nom de domaine et l'e-mail sont payés à part.",
+        a: "À partir de 800 € + TVA, en une fois, pour 5 pages maximum. Chaque page supplémentaire coûte 90 € + TVA. L'offre mensuelle d'hébergement et de maintenance coûte 25 € + TVA, sans engagement. Le nom de domaine et l'e-mail sont payés à part.",
       },
       {
         q: "Que dois-je vous envoyer ?",
@@ -833,7 +833,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Was kostet das insgesamt?",
-        a: "Ab 700 € zzgl. MwSt., einmalig, für bis zu 5 Seiten. Jede weitere Seite kostet 90 € zzgl. MwSt. Der Monatsplan für Hosting und Wartung kostet 25 € zzgl. MwSt., ohne Mindestlaufzeit. Domain und E-Mail werden separat bezahlt.",
+        a: "Ab 800 € zzgl. MwSt., einmalig, für bis zu 5 Seiten. Jede weitere Seite kostet 90 € zzgl. MwSt. Der Monatsplan für Hosting und Wartung kostet 25 € zzgl. MwSt., ohne Mindestlaufzeit. Domain und E-Mail werden separat bezahlt.",
       },
       {
         q: "Was muss ich Ihnen schicken?",
@@ -1012,7 +1012,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto costa in tutto?",
-        a: "Da 700 € + IVA, una tantum, per un massimo di 5 pagine. Ogni pagina in più costa 90 € + IVA. Il piano mensile di hosting e manutenzione costa 25 € + IVA, senza vincoli. Dominio ed email si pagano a parte.",
+        a: "Da 800 € + IVA, una tantum, per un massimo di 5 pagine. Ogni pagina in più costa 90 € + IVA. Il piano mensile di hosting e manutenzione costa 25 € + IVA, senza vincoli. Dominio ed email si pagano a parte.",
       },
       {
         q: "Cosa devo inviarvi?",

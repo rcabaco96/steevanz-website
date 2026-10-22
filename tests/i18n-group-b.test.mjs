@@ -52,9 +52,9 @@ describe("website products translated in es, fr, de, it", () => {
   }
 });
 
-describe("online shop price (owner, 2026-10-20: from 900 €)", () => {
-  it("says 900 in the FAQ in every language", () => {
-    for (const locale of ["pt", "en", ...extraLocales]) assert.match(productCopy["online-shop"][locale].faq[0].a, /900/, locale);
+describe("online shop price (owner, 2026-10-22: from 1200 €)", () => {
+  it("says 1200 in the FAQ in every language", () => {
+    for (const locale of ["pt", "en", ...extraLocales]) assert.match(productCopy["online-shop"][locale].faq[0].a, /1[., ]?200/, locale);
   });
 });
 

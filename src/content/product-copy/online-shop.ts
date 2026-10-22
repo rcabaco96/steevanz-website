@@ -112,7 +112,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto custa no total?",
-        a: "Desde 900 € + IVA, uma vez, com até 50 produtos carregados. Depois, 19 € + IVA por mês e 3% de cada venda feita na loja, sem fidelização: só ganhamos mais quando a sua loja vende. À parte ficam as comissões do fornecedor de pagamentos (por exemplo, cerca de 1 a 1,5% em MB WAY e cerca de 0,30 a 0,50 € por referência Multibanco nos fornecedores portugueses) e, se usar Shopify, a mensalidade da plataforma.",
+        a: "Desde 1200 € + IVA, uma vez, com até 50 produtos carregados. Depois, 19 € + IVA por mês e 3% de cada venda feita na loja, sem fidelização: só ganhamos mais quando a sua loja vende. À parte ficam as comissões do fornecedor de pagamentos (por exemplo, cerca de 1 a 1,5% em MB WAY e cerca de 0,30 a 0,50 € por referência Multibanco nos fornecedores portugueses) e, se usar Shopify, a mensalidade da plataforma.",
       },
       {
         q: "Que plataforma usam?",
@@ -284,7 +284,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "How much does it cost in total?",
-        a: "From €900 + VAT, once, with up to 50 products uploaded. After that, €19 + VAT a month and 3% of each sale made in the shop, with no lock-in: we only earn more when your shop sells. Payment provider fees are separate (for example, about 1 to 1.5% on MB WAY and about €0.30 to €0.50 per Multibanco reference with Portuguese providers), plus the platform fee if you use Shopify.",
+        a: "From €1,200 + VAT, once, with up to 50 products uploaded. After that, €19 + VAT a month and 3% of each sale made in the shop, with no lock-in: we only earn more when your shop sells. Payment provider fees are separate (for example, about 1 to 1.5% on MB WAY and about €0.30 to €0.50 per Multibanco reference with Portuguese providers), plus the platform fee if you use Shopify.",
       },
       {
         q: "Which platform do you use?",
@@ -456,7 +456,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "¿Cuánto cuesta en total?",
-        a: "Desde 900 € + IVA, en un único pago, con hasta 50 productos cargados. Después, 19 € + IVA al mes y el 3 % de cada venta hecha en la tienda, sin permanencia: solo ganamos más cuando su tienda vende. Aparte van las comisiones del proveedor de pagos (por ejemplo, entre un 1 y un 1,5 % en MB WAY y entre 0,30 y 0,50 € por referencia Multibanco con los proveedores portugueses) y, si usa Shopify, la cuota mensual de la plataforma.",
+        a: "Desde 1200 € + IVA, en un único pago, con hasta 50 productos cargados. Después, 19 € + IVA al mes y el 3 % de cada venta hecha en la tienda, sin permanencia: solo ganamos más cuando su tienda vende. Aparte van las comisiones del proveedor de pagos (por ejemplo, entre un 1 y un 1,5 % en MB WAY y entre 0,30 y 0,50 € por referencia Multibanco con los proveedores portugueses) y, si usa Shopify, la cuota mensual de la plataforma.",
       },
       {
         q: "¿Qué plataforma utilizan?",
@@ -628,7 +628,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Combien cela coûte-t-il au total ?",
-        a: "À partir de 900 € + TVA, en une fois, avec jusqu'à 50 produits ajoutés. Ensuite, 19 € + TVA par mois et 3 % de chaque vente réalisée sur la boutique, sans engagement : nous ne gagnons plus que lorsque votre boutique vend. Les frais du prestataire de paiement sont à part (par exemple, environ 1 à 1,5 % sur MB WAY et environ 0,30 à 0,50 € par référence Multibanco chez les prestataires portugais), ainsi que l'abonnement à la plateforme si vous utilisez Shopify.",
+        a: "À partir de 1 200 € + TVA, en une fois, avec jusqu'à 50 produits ajoutés. Ensuite, 19 € + TVA par mois et 3 % de chaque vente réalisée sur la boutique, sans engagement : nous ne gagnons plus que lorsque votre boutique vend. Les frais du prestataire de paiement sont à part (par exemple, environ 1 à 1,5 % sur MB WAY et environ 0,30 à 0,50 € par référence Multibanco chez les prestataires portugais), ainsi que l'abonnement à la plateforme si vous utilisez Shopify.",
       },
       {
         q: "Quelle plateforme utilisez-vous ?",
@@ -800,7 +800,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Was kostet das insgesamt?",
-        a: "Ab 900 € zzgl. MwSt., einmalig, mit bis zu 50 eingepflegten Produkten. Danach 19 € zzgl. MwSt. pro Monat und 3 % jedes Verkaufs im Shop, ohne Mindestlaufzeit: Wir verdienen nur mehr, wenn Ihr Shop verkauft. Separat kommen die Gebühren des Zahlungsanbieters hinzu (zum Beispiel etwa 1 bis 1,5 % bei MB WAY und etwa 0,30 bis 0,50 € pro Multibanco-Referenz bei portugiesischen Anbietern) und, wenn Sie Shopify nutzen, die Monatsgebühr der Plattform.",
+        a: "Ab 1.200 € zzgl. MwSt., einmalig, mit bis zu 50 eingepflegten Produkten. Danach 19 € zzgl. MwSt. pro Monat und 3 % jedes Verkaufs im Shop, ohne Mindestlaufzeit: Wir verdienen nur mehr, wenn Ihr Shop verkauft. Separat kommen die Gebühren des Zahlungsanbieters hinzu (zum Beispiel etwa 1 bis 1,5 % bei MB WAY und etwa 0,30 bis 0,50 € pro Multibanco-Referenz bei portugiesischen Anbietern) und, wenn Sie Shopify nutzen, die Monatsgebühr der Plattform.",
       },
       {
         q: "Welche Plattform verwenden Sie?",
@@ -972,7 +972,7 @@ export const copy: ProductCopyByLocale = {
     faq: [
       {
         q: "Quanto costa in tutto?",
-        a: "Da 900 € + IVA, una tantum, con fino a 50 prodotti caricati. Poi 19 € + IVA al mese e il 3% di ogni vendita fatta nel negozio, senza vincoli: guadagniamo di più solo quando il Suo negozio vende. A parte restano le commissioni del fornitore dei pagamenti (per esempio, circa l'1-1,5% su MB WAY e circa 0,30-0,50 € per riferimento Multibanco con i fornitori portoghesi) e, se usa Shopify, il canone mensile della piattaforma.",
+        a: "Da 1.200 € + IVA, una tantum, con fino a 50 prodotti caricati. Poi 19 € + IVA al mese e il 3% di ogni vendita fatta nel negozio, senza vincoli: guadagniamo di più solo quando il Suo negozio vende. A parte restano le commissioni del fornitore dei pagamenti (per esempio, circa l'1-1,5% su MB WAY e circa 0,30-0,50 € per riferimento Multibanco con i fornitori portoghesi) e, se usa Shopify, il canone mensile della piattaforma.",
       },
       {
         q: "Che piattaforma usate?",
