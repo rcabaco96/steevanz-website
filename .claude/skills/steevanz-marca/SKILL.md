@@ -13,6 +13,8 @@ them needs the owner's confirmation.
 - **Colours:** plum `#7a2d60` (main), gold `#cfa563` (highlights, the dot), cream `#fbf7f1` (backgrounds),
   near-black `#1d1220` (text); supporting: dark plum `#5e1f49`, soft rose `#f4e4ee`, soft gold `#f6ead3`.
   Tokens live in `src/app/globals.css`.
+- **Never WhatsApp green on the site** (owner, said twice, 2026-10-22): WhatsApp buttons, icons and cards use the plum
+  (`--accent`, white/cream icon). No #25D366, no green badges. (Chat mock-ups inside ad videos are a separate case.)
 - **Fonts:** Fraunces 500 (titles; the key word in *italic* or inside a gold box) and Hanken Grotesk (text).
 - **Wordmark:** «Steevanz» followed by a gold dot «.». The short mark is «S.» (owner's favourite profile versions: dark-plum
   or plum background, cream S, gold dot).
