@@ -409,8 +409,9 @@
   background: rgb(251 247 241 / 0.08);
 }
 
+/* White, never WhatsApp green (owner). */
 .wa {
-  color: #6fd49e;
+  color: #fff;
 }
 
 .brand {

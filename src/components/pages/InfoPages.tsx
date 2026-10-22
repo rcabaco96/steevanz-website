@@ -136,9 +136,9 @@ export function ContactPage({ locale }: { locale: Locale }) {
                     href={channel.link}
                     target={channel.external ? "_blank" : undefined}
                     rel={channel.external ? "noopener noreferrer" : undefined}
-                    className={`card card-interactive flex h-full flex-col gap-3 p-6 ${channel.highlight ? "border-accent/40" : ""}`}
+                    className="card card-interactive flex h-full flex-col gap-3 p-6"
                   >
-                    <span className={`grid h-11 w-11 place-items-center rounded-xl ${channel.highlight ? "bg-accent text-accent-contrast" : "bg-accent-soft text-accent-text"}`}>
+                    <span className={`grid h-11 w-11 place-items-center rounded-xl bg-accent-soft text-accent-text`}>
                       <Icon size={22} />
                     </span>
                     <span className="text-lg font-semibold text-text">{channel.title}</span>
