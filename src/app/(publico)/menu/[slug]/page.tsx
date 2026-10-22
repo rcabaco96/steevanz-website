@@ -26,9 +26,30 @@ async function loadMenu(slug: string) {
   }
 }
 
+// Link previews (WhatsApp, Facebook…) read the Open Graph tags. This layout has no metadataBase,
+// so the URLs are absolute. Demo menus are shared as Steevanz's free demo, with its own picture;
+// a client's menu gets its own name and no Steevanz picture.
+const siteOrigin = "https://www.steevanz.com";
+
 export async function generateMetadata({ params }: PageProps<"/menu/[slug]">): Promise<Metadata> {
-  const menu = await loadMenu((await params).slug);
-  return { title: menu ? `Menu · ${menu.business}` : "Menu", referrer: menuReferrer };
+  const { slug } = await params;
+  const menu = await loadMenu(slug);
+  if (!menu) return { title: "Menu", referrer: menuReferrer };
+  const url = `${siteOrigin}/menu/${slug}`;
+  if (isDemoMenu(slug)) {
+    const description = "Cada prato em vídeo e pedidos feitos na mesa.";
+    const image = { url: `${siteOrigin}/og/og-menu-steevanz.jpg`, width: 1200, height: 630, alt: "Menu digital em vídeo da Steevanz" };
+    return {
+      title: "Demonstração grátis · Menu digital Steevanz",
+      description,
+      referrer: menuReferrer,
+      openGraph: { type: "website", url, siteName: "Steevanz", locale: "pt_PT", title: "Demonstração grátis do menu digital", description, images: [image] },
+      twitter: { card: "summary_large_image", title: "Demonstração grátis do menu digital", description, images: [image.url] },
+    };
+  }
+  const title = `Menu · ${menu.business}`;
+  const description = `O menu de ${menu.business}, com cada prato em vídeo.`;
+  return { title, description, referrer: menuReferrer, openGraph: { type: "website", url, title, description } };
 }
 
 export default async function VideoMenuPage({ params }: PageProps<"/menu/[slug]">) {
