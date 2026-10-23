@@ -1,0 +1,57 @@
+Orvé - origem das imagens e vídeos deste site
+==============================================
+Orvé é um negócio FICTÍCIO, criado pela Steevanz (2026-10-23) como site de demonstração para vender sites a
+negócios de estética e beleza. Nome, logótipo, equipa, morada, contactos, tratamentos e preços são inventados.
+
+Vídeos e fotografias: Mixkit (https://mixkit.co), «Mixkit Stock Video Free License»
+(https://mixkit.co/license/#videoFree): uso gratuito em projetos comerciais e pessoais, sem atribuição obrigatória;
+não é permitido revender ou redistribuir os ficheiros soltos. A licença de cada clip foi confirmada na sua página
+(campo «license»: videoFree) a 2026-10-23. Nenhuma imagem foi gerada por IA nem paga.
+
+Os clips foram cortados/redimensionados (ffmpeg, H.264, sem som) e as fotografias são fotogramas desses clips,
+com uma correção ligeira e comum a todas (saturação -10 %, luz +2 %), convertidas para WebP:
+
+  hero.mp4, hero-retrato.mp4,
+  hero-poster.webp, hero-retrato-poster.webp,
+  hidratacao.webp            - «A skilled spa staff gently applies a beauty face mask» (52165)
+                               https://mixkit.co/free-stock-video/a-skilled-spa-staff-gently-applies-a-beauty-face-mask-52165/
+  vapor.mp4, vapor-poster.webp - «A young woman gets a massage on her face while…» (52144)
+                               https://mixkit.co/free-stock-video/a-young-woman-gets-a-massage-on-her-face-while-52144/
+  rosto.webp                 - «A young woman laying on the spa bed receives…» (52148)
+                               https://mixkit.co/free-stock-video/a-young-woman-laying-on-the-spa-bed-receives-52148/
+  corpo.webp                 - «Massage oil pouring onto back of a woman» (49545)
+                               https://mixkit.co/free-stock-video/massage-oil-pouring-onto-back-of-a-woman-49545/
+  maos.webp                  - «Top view of manicure nail painting timelapse» (15806)
+                               https://mixkit.co/free-stock-video/top-view-of-manicure-nail-painting-timelapse-15806/
+  olhar.webp                 - «A young model with her eyes shut gets her eyelid…» (52055)
+                               https://mixkit.co/free-stock-video/a-young-model-with-her-eyes-shut-gets-her-eyelid-52055/
+  pele.webp                  - «A young woman wrapped in a towel robe sprays micellar…» (51169)
+                               https://mixkit.co/free-stock-video/a-young-woman-wrapped-in-a-towel-robe-sprays-micellar-51169/
+  maquilhagem.webp           - «Makeup artist powdering a bride» (40556)
+                               https://mixkit.co/free-stock-video/makeup-artist-powdering-a-bride-40556/
+  espaco.webp                - «A young woman laying on a relaxing spa bed receives…» (52143)
+                               https://mixkit.co/free-stock-video/a-young-woman-laying-on-a-relaxing-spa-bed-receives-52143/
+  led.webp                   - «Woman with red LED mask in a spa» (52163)
+                               https://mixkit.co/free-stock-video/woman-with-red-led-mask-in-a-spa-52163/
+  alta-frequencia.webp       - «A skilled masseuse rubs a crystal clear tube as beauty…» (52171)
+                               https://mixkit.co/free-stock-video/a-skilled-masseuse-rubs-a-crystal-clear-tube-as-beauty-52171/
+  mascara.webp               - «A young woman applies a dark mixture of skincare products» (51180)
+                               https://mixkit.co/free-stock-video/a-young-woman-applies-a-dark-mixture-of-skincare-products-51180/
+  costas.webp                - «Doing a back massage in the spa» (24136)
+                               https://mixkit.co/free-stock-video/doing-a-back-massage-in-the-spa-24136/
+  maos-massagem.webp         - «Top view of manicurist giving hand massage» (15835)
+                               https://mixkit.co/free-stock-video/top-view-of-manicurist-giving-hand-massage-15835/
+  lifting.webp               - «Woman's face during a facial lifting massage» (52159)
+                               https://mixkit.co/free-stock-video/womans-face-during-a-facial-lifting-massage-52159/
+  esfera.webp                - «A skilled masseuse gives a face massage to a young…» (52162)
+                               https://mixkit.co/free-stock-video/a-skilled-masseuse-gives-a-face-massage-to-a-young-52162/
+  limpeza.webp               - «A young woman receive a face cleaning by a skilled…» (52146)
+                               https://mixkit.co/free-stock-video/a-young-woman-receive-a-face-cleaning-by-a-skilled-52146/
+
+Feitos pela Steevanz (desenho original, sem fontes de terceiros):
+  logo.svg, logo.png         - o logótipo «orvé» desenhado à mão (didone, o acento do «é» é uma gota)
+  icon.svg, icon-192.png, icon-512.png, apple-icon.png, favicon.ico - o «o» com a gota
+  og.jpg (1200x630)          - logótipo + olhar.webp num círculo (pré-visualização de links)
+
+As pessoas nas imagens são modelos dos vídeos da Mixkit; os nomes da equipa no site são inventados e não as
+identificam.

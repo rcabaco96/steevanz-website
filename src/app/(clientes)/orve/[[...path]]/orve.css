@@ -1,0 +1,223 @@
+/* Orvé's own stylesheet (a fictional beauty atelier, Steevanz demo): none of the Steevanz site's styles load on these
+   pages, and Tailwind only scans the atelier's own files. Identity (2026-10-23): dawn — mother-of-pearl, blush clay,
+   copper, the cocoa of the hour before sunrise and the pale blue glint of dew. Bodoni Moda + Jost. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/orve";
+@source "./";
+
+@theme {
+  --color-nacar: #f5efe8;
+  --color-linho: #ece0d6;
+  --color-argila: #dcae98;
+  --color-argila-2: #c98e76;
+  --color-cobre: #9a4a2e;
+  --color-cobre-deep: #7c3a22;
+  --color-cacau: #241814;
+  --color-cacau-2: #33241e;
+  --color-tinta: #2a1c17;
+  --color-pedra: #6f5a52;
+  --color-orvalho: #cfdde2;
+
+  --font-display: var(--or-font-display), "Bodoni 72", Didot, Georgia, serif;
+  --font-sans: var(--or-font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-orvalho: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-nacar);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    font-variant-numeric: lining-nums;
+  }
+  ::selection {
+    background: var(--color-cobre);
+    color: var(--color-nacar);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-cobre);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .or-on-dark :focus-visible {
+    outline-color: var(--color-argila);
+  }
+  button,
+  summary {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Small spaced capitals for labels. */
+  .or-label {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+  @media (min-width: 640px) {
+    .or-label {
+      font-size: 0.74rem;
+    }
+  }
+
+  /* The dew drop as a frame: a square with three round corners, turned 45° so the point faces up. The picture inside
+     turns back (.or-drop-inner) so it stays straight. */
+  .or-drop {
+    border-radius: 0 50% 50% 50%;
+    transform: rotate(45deg);
+    overflow: hidden;
+  }
+  .or-drop-inner {
+    position: absolute;
+    inset: -21%;
+    transform: rotate(-45deg);
+  }
+
+  /* A drop of water on glass: a soft highlight up top and a darker rim, over a round picture. */
+  .or-bead::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 30% at 32% 24%, rgb(255 255 255 / 0.55), transparent 70%),
+      radial-gradient(70% 70% at 50% 50%, transparent 62%, rgb(36 24 20 / 0.32) 100%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  }
+
+  /* Text that fills from below like a glass, a copper meniscus rising through it and leaving it dark (Manifesto).
+     Without JavaScript it is simply filled. */
+  .or-fill {
+    background-image: linear-gradient(to top, var(--color-tinta) 44%, var(--color-cobre) 44% 51%, rgb(42 28 23 / 0.14) 51%);
+    background-size: 100% 250%;
+    background-position: 0 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* Slow drops sliding down the glass (decoration, transform only). */
+@keyframes or-slide {
+  0% { transform: translate3d(0, -10vh, 0) scale(0.9); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate3d(0, 110vh, 0) scale(1); opacity: 0; }
+}
+.or-slide {
+  animation: or-slide var(--dur, 14s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+
+/* The opening drop (Preloader): gone at once when already seen this session or with reduced motion; while it plays,
+   the hero's entrance waits behind it and the page doesn't scroll. */
+.or-seen .or-pre {
+  display: none;
+}
+.or-loading body {
+  overflow: hidden;
+}
+.or-loading .or-rise {
+  animation-play-state: paused;
+}
+
+/* Entrance of the hero: separate translate property, so the element's own transform stays. */
+@keyframes or-rise {
+  from { opacity: 0; translate: 0 1.2rem; filter: blur(6px); }
+  to { opacity: 1; translate: 0 0; filter: blur(0); }
+}
+.or-rise {
+  animation: or-rise 1.3s var(--ease-orvalho) both;
+}
+
+/* The scroll cue: a drop that keeps falling down a thread. */
+@keyframes or-cue {
+  0% { transform: translate3d(0, -0.6rem, 0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate3d(0, 2.6rem, 0); opacity: 0; }
+}
+.or-cue {
+  animation: or-cue 2.2s var(--ease-orvalho) infinite;
+}
+
+/* The ring of words around the lens turns slowly on its own (the scroll adds to it). */
+@keyframes or-spin {
+  to { rotate: 360deg; }
+}
+.or-spin {
+  animation: or-spin 40s linear infinite;
+}
+
+/* FAQ answers open by animating their height to «auto». */
+.or-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.5s var(--ease-orvalho),
+    content-visibility 0.5s allow-discrete;
+}
+.or-faq[open]::details-content {
+  block-size: auto;
+}
+:root {
+  interpolate-size: allow-keywords;
+}
+.or-faq summary::-webkit-details-marker {
+  display: none;
+}
+.or-faq summary {
+  list-style: none;
+}
+.or-faq[open] .or-faq-icon {
+  rotate: 45deg;
+}
+
+/* A fine film grain over the whole page (a static texture: no blending, no animation, cheap on phones). */
+.or-grain {
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes or-fade-out {
+  to { opacity: 0; }
+}
+@keyframes or-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .or-rise,
+  .or-cue,
+  .or-slide,
+  .or-spin {
+    animation: none !important;
+  }
+  .or-slide {
+    display: none;
+  }
+  .or-faq::details-content {
+    transition: none;
+  }
+}

@@ -66,6 +66,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
   },
+  {
+    // Orvé (owner, 2026-10-23): a FICTIONAL beauty atelier, Steevanz's showcase site for beauty businesses. Only the
+    // preview path; it will never have a domain of its own.
+    id: "orve",
+    hosts: [],
+    base: "/orve",
+    rootFiles: {
+      "/robots.txt": "/orve/robots.txt",
+      "/sitemap.xml": "/orve/sitemap.xml",
+      "/manifest.webmanifest": "/orve/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/orve/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/orve/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/orve/"],
+  },
 ];
 
 export type ClientSiteDecision =
