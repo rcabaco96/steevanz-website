@@ -1,18 +1,5 @@
-// Prospecting rules. Pure module: used by the prospector script, the admin and the tests.
-
-export const prospectStatuses = ["new", "contacted", "interested", "discarded"] as const;
-export type ProspectStatus = (typeof prospectStatuses)[number];
-
-export const prospectStatusLabels: Record<ProspectStatus, string> = {
-  new: "Novo",
-  contacted: "Contactado",
-  interested: "Interessado",
-  discarded: "Descartado",
-};
-
-export function isProspectStatus(value: string): value is ProspectStatus {
-  return (prospectStatuses as readonly string[]).includes(value);
-}
+// Prospecting rules. Pure module: used by the prospector script, the admin and the tests. The CRM's
+// stages and the rest of the pipeline are in crm.ts.
 
 /** What a business could buy from us, from what Google shows about it. */
 export type Opportunity = "site" | "modules";

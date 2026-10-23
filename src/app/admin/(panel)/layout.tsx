@@ -13,7 +13,7 @@ const links = [
   { href: "/admin", label: "Início", exact: true },
   { href: "/admin/clientes", label: "Clientes" },
   { href: "/admin/encomendas", label: "Encomendas" },
-  { href: "/admin/bookings", label: "Contactos", also: ["/admin/leads", "/admin/prospecao", "/admin/availability"] },
+  { href: "/admin/bookings", label: "Contactos", also: ["/admin/leads", "/admin/crm", "/admin/prospecao", "/admin/availability"] },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/menus", label: "Menus em vídeo" },
   { href: "/admin/cartoes", label: "Cartões de visita" },

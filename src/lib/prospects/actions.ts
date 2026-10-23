@@ -5,7 +5,6 @@ import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
-import { isProspectStatus } from "./rules";
 
 const searchSchema = z.object({
   query: z.string().trim().min(2).max(80),
@@ -29,37 +28,16 @@ export async function queueProspectSearch(_previous: ActionState, formData: Form
     const { error } = await client.from("prospect_searches").insert({ ...parsed.data, requested_by: email });
     if (error) throw new Error(error.message);
     revalidatePath("/admin/prospecao");
-    return { ok: true, message: `Pesquisa na fila: ${parsed.data.query} em ${parsed.data.area}. Os resultados aparecem aqui quando a pesquisa terminar (alguns minutos).` };
+    return { ok: true, message: `Pesquisa na fila: ${parsed.data.query} em ${parsed.data.area}. Os negócios aparecem no CRM, na lista «${parsed.data.area}», quando a pesquisa terminar (alguns minutos).` };
   } catch (error) {
     console.error("[prospects] queue failed:", error instanceof Error ? error.message : error);
     return { ok: false, message: "Não foi possível pôr a pesquisa na fila." };
   }
 }
 
-/** Admin: where we are with a business (new, contacted, interested, discarded) and a note. */
-export async function updateProspect(_previous: ActionState, formData: FormData): Promise<ActionState> {
-  try {
-    await requireAdmin();
-    const placeId = String(formData.get("place_id") ?? "");
-    const status = String(formData.get("status") ?? "");
-    const notes = String(formData.get("notes") ?? "").trim().slice(0, 2000);
-    if (!placeId || !isProspectStatus(status)) return { ok: false, message: "Pedido inválido." };
-    const { error } = await createServiceClient()
-      .from("prospects")
-      .update({ status, notes: notes || null, updated_at: new Date().toISOString() })
-      .eq("place_id", placeId);
-    if (error) throw new Error(error.message);
-    revalidatePath("/admin/prospecao");
-    return { ok: true, message: "Guardado." };
-  } catch (error) {
-    console.error("[prospects] update failed:", error instanceof Error ? error.message : error);
-    return { ok: false, message: "Não foi possível guardar." };
-  }
-}
-
 /**
- * Admin: deletes a search. Businesses only that search found, still «Novo» and without notes, go
- * with it; any business already worked on (another status or a note) stays, so no work is lost.
+ * Admin: deletes a search. Businesses only that search found and never touched in the CRM go with
+ * it; any business already worked on (a stage, a note, a call) stays, so no work is lost.
  */
 export async function deleteProspectSearch(_previous: ActionState, formData: FormData): Promise<ActionState> {
   try {
@@ -83,11 +61,12 @@ export async function deleteProspectSearch(_previous: ActionState, formData: For
       const kept = new Set((still ?? []).map((row: { place_id: string }) => row.place_id));
       const orphans = batch.filter((placeId) => !kept.has(placeId));
       if (!orphans.length) continue;
-      const { data: gone, error: deleteError } = await client.from("prospects").delete().in("place_id", orphans).eq("status", "new").is("notes", null).select("place_id");
+      const { data: gone, error: deleteError } = await client.from("prospects").delete().in("place_id", orphans).eq("status", "new").is("notes", null).is("worked_at", null).select("place_id");
       if (deleteError) throw new Error(deleteError.message);
       removed += gone?.length ?? 0;
     }
     revalidatePath("/admin/prospecao");
+    revalidatePath("/admin/crm");
     return { ok: true, message: removed ? `Pesquisa apagada, com ${removed} ${removed === 1 ? "negócio que só ela tinha encontrado" : "negócios que só ela tinha encontrado"}.` : "Pesquisa apagada." };
   } catch (error) {
     console.error("[prospects] delete search failed:", error instanceof Error ? error.message : error);

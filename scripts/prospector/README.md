@@ -24,6 +24,13 @@ grava os negócios em `prospects`.
 
 As pesquisas pedidas com o computador desligado ficam na fila e correm quando o prospetor arrancar.
 
+Entre pesquisas, o prospetor abre o site de cada negócio ainda por ver (uma página, sem custos) e põe
+a situação no CRM: sem site próprio, em baixo ou partido (não abre, erro, domínio estacionado,
+página do servidor), desatualizado (sem HTTPS, WordPress ou jQuery antigos, sem versão para
+telemóvel, rodapé com um ano antigo) ou em ordem. «Parece feito com IA» só é posto aqui quando o
+site o diz (feito com Lovable); de resto marca-se à mão no CRM. Uma situação mudada à mão nunca é
+apagada pelo prospetor.
+
 ## Regras
 
 - No máximo 20 pesquisas por dia (o admin recusa as seguintes) e um browser de cada vez (`-c 1`),

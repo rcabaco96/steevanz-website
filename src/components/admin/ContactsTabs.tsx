@@ -3,13 +3,14 @@ import Link from "next/link";
 const tabs = [
   { id: "bookings", href: "/admin/bookings", label: "Demonstrações" },
   { id: "leads", href: "/admin/leads", label: "Pedidos de informação" },
+  { id: "crm", href: "/admin/crm", label: "CRM" },
   { id: "prospects", href: "/admin/prospecao", label: "Encontrar clientes" },
   { id: "availability", href: "/admin/availability", label: "Horário" },
 ] as const;
 
 /**
  * The «Contactos» section of the admin: people who want to know more (demos booked on the site and
- * information requests), businesses to contact (prospecting) and the hours offered for demos.
+ * information requests), businesses to contact (the CRM, filled by prospecting) and the hours offered for demos.
  */
 export function ContactsTabs({ current }: { current: (typeof tabs)[number]["id"] }) {
   return (

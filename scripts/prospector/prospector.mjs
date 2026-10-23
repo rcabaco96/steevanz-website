@@ -2,6 +2,8 @@
 // Picks the next search from Supabase, asks the open-source google-maps-scraper (Docker, only on
 // localhost, see docker-compose.yml here) to run it, and stores the businesses it found. Like the
 // reviews reader, it only makes outgoing connections: nothing on this computer is opened to the web.
+// Between searches it also opens the website of each business not checked yet (free, one page each)
+// and labels it for the CRM (no site of its own, down, out of date…).
 //   docker compose -f scripts/prospector/docker-compose.yml up -d
 //   npm run prospector
 // Needs .env.local with NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.
@@ -9,6 +11,7 @@ import { createClient } from "@supabase/supabase-js";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseCsv, prospectFromRow } from "../../src/lib/prospects/rules.ts";
+import { checkSite } from "../../src/lib/prospects/site-check.ts";
 
 const envFile = join(import.meta.dirname, "../../.env.local");
 if (existsSync(envFile)) {
@@ -137,13 +140,40 @@ async function work(search) {
   }
 }
 
+/**
+ * Labels the websites not checked yet, a few at a time (newest businesses first). Only rows still
+ * unchecked are written, so a label set by hand in the CRM is never overwritten. Returns how many.
+ */
+async function checkSites(limit = 24) {
+  const { data, error } = await db.from("prospects").select("place_id, name, website").is("site_checked_at", null).order("created_at", { ascending: false }).limit(limit);
+  if (error) throw new Error(error.message);
+  if (!data.length) return 0;
+  const queue = [...data];
+  const worker = async () => {
+    for (let prospect = queue.shift(); prospect; prospect = queue.shift()) {
+      // A check that breaks leaves the label empty («por verificar») but is not tried again in a loop.
+      const verdict = await checkSite(prospect.website).catch(() => ({ status: null, reasons: [] }));
+      check(
+        await db
+          .from("prospects")
+          .update({ site_status: verdict.status, site_reasons: verdict.reasons, site_checked_at: new Date().toISOString() })
+          .eq("place_id", prospect.place_id)
+          .is("site_checked_at", null),
+      );
+    }
+  };
+  await Promise.all([worker(), worker(), worker(), worker()]);
+  log(`${data.length} site(s) vistos`);
+  return data.length;
+}
+
 log(`prospetor ligado · scraper em ${scraper}`);
 for (;;) {
   try {
     await failInterrupted();
     const search = await claim();
     if (search) await work(search);
-    else await sleep(pollMs);
+    else if (!(await checkSites())) await sleep(pollMs);
   } catch (error) {
     log("erro:", error instanceof Error ? error.message : error);
     await sleep(pollMs);

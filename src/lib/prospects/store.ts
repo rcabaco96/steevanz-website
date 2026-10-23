@@ -1,5 +1,6 @@
 import { createServiceClient } from "@/lib/supabase/service";
-import { isProspectStatus, opportunities, type Opportunity, type ProspectFields, type ProspectStatus } from "./rules";
+import { listKey, sectorOf, type SiteStatus, type Stage, type WhatsAppSettings } from "./crm";
+import type { ProspectFields } from "./rules";
 
 export interface ProspectSearchRow {
   id: string;
@@ -17,53 +18,54 @@ export interface ProspectSearchRow {
 }
 
 export interface ProspectRow extends ProspectFields {
-  status: ProspectStatus;
+  status: Stage;
   notes: string | null;
+  next_contact: string | null;
+  attempts: number;
+  other_emails: string[];
+  sector: string | null;
+  site_status: SiteStatus | null;
+  site_reasons: string[];
+  site_checked_at: string | null;
+  worked_at: string | null;
+  worked_by: string | null;
   first_search_id: string | null;
   last_search_id: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface ProspectFilters {
-  /** A search's id, "all" for every business, or "" for the latest search. */
-  search: string;
-  status: ProspectStatus | "";
-  opportunity: Opportunity | "";
-  contact: "" | "phone" | "email";
-  /** Reviews on Google: "lt20", "lt50", "lt100", "gte100". */
-  reviews: "" | "lt20" | "lt50" | "lt100" | "gte100";
-  /** Google rating: "lt40", "lt45", "gte45". */
-  rating: "" | "lt40" | "lt45" | "gte45";
-  sort: "best" | "fewest" | "most" | "lowest";
-  q: string;
+/** A business as the CRM board shows it. */
+export interface CrmProspect extends Omit<ProspectRow, "latitude" | "longitude" | "first_search_id" | "last_search_id" | "created_at" | "updated_at" | "sector" | "site_checked_at"> {
+  sector: string;
+  /** Came in with a later search of the list, in the last two weeks. */
+  fresh: boolean;
+  /** Already one of our customers (reviews product). */
+  customer: boolean;
 }
 
-export const reviewFilterLabels: Record<Exclude<ProspectFilters["reviews"], "">, string> = { lt20: "menos de 20", lt50: "menos de 50", lt100: "menos de 100", gte100: "100 ou mais" };
-export const ratingFilterLabels: Record<Exclude<ProspectFilters["rating"], "">, string> = { lt40: "abaixo de 4,0", lt45: "abaixo de 4,5", gte45: "4,5 ou mais" };
-export const sortLabels: Record<ProspectFilters["sort"], string> = { best: "mais oportunidades", fewest: "menos reviews", most: "mais reviews", lowest: "nota mais baixa" };
+/** A list: the businesses found by the searches done in one zone («Onde»). */
+export interface CrmList {
+  key: string;
+  area: string;
+  searchIds: string[];
+  count: number;
+}
 
-export function parseProspectFilters(params: Record<string, string | string[] | undefined>): ProspectFilters {
-  const one = (key: string) => {
-    const value = params[key];
-    return (Array.isArray(value) ? value[0] : value)?.trim() ?? "";
-  };
-  const status = one("estado");
-  const opportunity = one("oportunidade");
-  const contact = one("contacto");
-  const reviews = one("reviews");
-  const rating = one("nota");
-  const sort = one("ordem");
-  return {
-    reviews: reviews in reviewFilterLabels ? (reviews as ProspectFilters["reviews"]) : "",
-    rating: rating in ratingFilterLabels ? (rating as ProspectFilters["rating"]) : "",
-    sort: sort in sortLabels ? (sort as ProspectFilters["sort"]) : "best",
-    search: one("pesquisa") === "todas" ? "all" : /^[0-9a-f-]{36}$/.test(one("pesquisa")) ? one("pesquisa") : "",
-    status: isProspectStatus(status) ? status : "",
-    opportunity: opportunity === "site" || opportunity === "modules" ? opportunity : "",
-    contact: contact === "phone" || contact === "email" ? contact : "",
-    q: one("q").slice(0, 80),
-  };
+export const crmColumns =
+  "place_id, name, category, address, phone, website, email, rating, reviews, maps_url, status, notes, next_contact, attempts, other_emails, sector, site_status, site_reasons, worked_at, worked_by";
+
+/** Every row of a query, a page at a time (Supabase returns at most 1000 rows per request). */
+async function allRows<T>(page: (from: number, to: number) => PromiseLike<{ data: unknown[] | null; error: { message: string } | null }>, max = 20_000): Promise<T[]> {
+  const size = 1000;
+  const rows: T[] = [];
+  for (let from = 0; from < max; from += size) {
+    const { data, error } = await page(from, from + size - 1);
+    if (error) throw new Error(error.message);
+    rows.push(...((data ?? []) as T[]));
+    if ((data ?? []).length < size) break;
+  }
+  return rows;
 }
 
 export async function listSearches(limit = 20): Promise<ProspectSearchRow[]> {
@@ -72,38 +74,59 @@ export async function listSearches(limit = 20): Promise<ProspectSearchRow[]> {
   return (data ?? []) as ProspectSearchRow[];
 }
 
-/** Prospects matching the filters, best opportunities first (most reasons to call, then fewer reviews). */
-export async function listProspects(filters: ProspectFilters, limit = 300): Promise<ProspectRow[]> {
-  const bySearch = filters.search && filters.search !== "all";
-  let query = createServiceClient()
-    .from("prospects")
-    .select(bySearch ? "*, prospect_search_hits!inner(search_id)" : "*")
-    .order("updated_at", { ascending: false })
-    .limit(2000);
-  if (bySearch) query = query.eq("prospect_search_hits.search_id", filters.search);
-  if (filters.status) query = query.eq("status", filters.status);
-  if (filters.contact === "phone") query = query.not("phone", "is", null);
-  if (filters.contact === "email") query = query.not("email", "is", null);
-  if (filters.reviews === "lt20") query = query.lt("reviews", 20);
-  if (filters.reviews === "lt50") query = query.lt("reviews", 50);
-  if (filters.reviews === "lt100") query = query.lt("reviews", 100);
-  if (filters.reviews === "gte100") query = query.gte("reviews", 100);
-  if (filters.rating === "lt40") query = query.lt("rating", 4);
-  if (filters.rating === "lt45") query = query.lt("rating", 4.5);
-  if (filters.rating === "gte45") query = query.gte("rating", 4.5);
-  const term = filters.q.replace(/[%,()*]/g, " ").trim();
-  if (term) query = query.or(`name.ilike.%${term}%,address.ilike.%${term}%,category.ilike.%${term}%`);
-  const { data, error } = await query;
-  if (error) throw new Error(`listProspects: ${error.message}`);
-  return ((data ?? []) as unknown as ProspectRow[])
-    .filter((row) => !filters.opportunity || opportunities(row).includes(filters.opportunity))
-    .sort((a, b) => {
-      if (filters.sort === "fewest") return (a.reviews ?? 0) - (b.reviews ?? 0);
-      if (filters.sort === "most") return (b.reviews ?? 0) - (a.reviews ?? 0);
-      if (filters.sort === "lowest") return (a.rating ?? 6) - (b.rating ?? 6);
-      return opportunities(b).length - opportunities(a).length || (a.reviews ?? 0) - (b.reviews ?? 0);
-    })
-    .slice(0, limit);
+/** The zones searched (or imported), oldest first, with how many businesses each has. */
+export async function listCrmLists(): Promise<CrmList[]> {
+  const client = createServiceClient();
+  const [searches, hits] = await Promise.all([
+    allRows<{ id: string; area: string }>((from, to) => client.from("prospect_searches").select("id, area").order("created_at").order("id").range(from, to)),
+    allRows<{ search_id: string; place_id: string }>((from, to) => client.from("prospect_search_hits").select("search_id, place_id").order("search_id").order("place_id").range(from, to), 100_000),
+  ]);
+  const lists = new Map<string, CrmList & { places: Set<string> }>();
+  const listOfSearch = new Map<string, string>();
+  for (const search of searches) {
+    const key = listKey(search.area);
+    const list = lists.get(key) ?? { key, area: search.area.trim(), searchIds: [], count: 0, places: new Set<string>() };
+    list.searchIds.push(search.id);
+    lists.set(key, list);
+    listOfSearch.set(search.id, key);
+  }
+  for (const hit of hits) {
+    const key = listOfSearch.get(hit.search_id);
+    if (key) lists.get(key)?.places.add(hit.place_id);
+  }
+  return [...lists.values()].map(({ places, ...list }) => ({ ...list, count: places.size })).filter((list) => list.count > 0);
+}
+
+const freshDays = 14;
+
+/** The businesses of a list (or of every list), as the board shows them. */
+export async function listCrmProspects(list: CrmList | null, now: Date = new Date()): Promise<CrmProspect[]> {
+  const client = createServiceClient();
+  const page = (from: number, to: number) => {
+    const query = client
+      .from("prospects")
+      .select(list ? `${crmColumns}, first_search_id, created_at, prospect_search_hits!inner(search_id)` : `${crmColumns}, first_search_id, created_at`)
+      .order("created_at")
+      .order("place_id")
+      .range(from, to);
+    return list ? query.in("prospect_search_hits.search_id", list.searchIds) : query;
+  };
+  const [rows, customers] = await Promise.all([allRows<ProspectRow & { prospect_search_hits?: unknown }>(page), customerPlaceIds()]);
+  const firstSearch = list?.searchIds[0];
+  const freshSince = now.getTime() - freshDays * 86_400_000;
+  return rows.map((row) => {
+    const { first_search_id: firstFound, created_at: createdAt, ...rest } = row;
+    delete rest.prospect_search_hits;
+    return {
+      ...rest,
+      rating: rest.rating === null ? null : Number(rest.rating),
+      other_emails: rest.other_emails ?? [],
+      site_reasons: rest.site_reasons ?? [],
+      sector: rest.sector || sectorOf(rest.category),
+      fresh: Boolean(list && firstFound && firstFound !== firstSearch && list.searchIds.includes(firstFound) && Date.parse(createdAt) >= freshSince),
+      customer: customers.has(row.place_id),
+    };
+  });
 }
 
 /** Google places that are already our customers (reviews product), so the list can say so. */
@@ -111,4 +134,43 @@ export async function customerPlaceIds(): Promise<Set<string>> {
   const { data, error } = await createServiceClient().from("review_businesses").select("place_id, google_place_id").limit(5000);
   if (error) throw new Error(`customerPlaceIds: ${error.message}`);
   return new Set(((data ?? []) as { place_id: string | null; google_place_id: string | null }[]).flatMap((row) => [row.place_id, row.google_place_id]).filter((id): id is string => Boolean(id)));
+}
+
+export const settingsColumns = "whatsapp_template, whatsapp_none, whatsapp_down, whatsapp_ai, whatsapp_outdated, whatsapp_other";
+
+export async function getProspectSettings(): Promise<WhatsAppSettings> {
+  const { data, error } = await createServiceClient().from("prospect_settings").select(settingsColumns).eq("id", true).maybeSingle();
+  if (error) throw new Error(`getProspectSettings: ${error.message}`);
+  return (data as WhatsAppSettings | null) ?? { whatsapp_template: "{situacao}", whatsapp_none: "", whatsapp_down: "", whatsapp_ai: "", whatsapp_outdated: "", whatsapp_other: "" };
+}
+
+export interface ProspectEvent {
+  id: number;
+  kind: "stage" | "no_answer" | "next_contact" | "note" | "site" | "product";
+  value: string | null;
+  previous: string | null;
+  actor: string | null;
+  created_at: string;
+}
+
+export async function listProspectEvents(placeId: string, limit = 100): Promise<ProspectEvent[]> {
+  const { data, error } = await createServiceClient()
+    .from("prospect_events")
+    .select("id, kind, value, previous, actor, created_at")
+    .eq("place_id", placeId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`listProspectEvents: ${error.message}`);
+  return (data ?? []) as ProspectEvent[];
+}
+
+/** «Para hoje» across every list, for the admin's start page. */
+export async function countDueProspects(today: string): Promise<number> {
+  const { count, error } = await createServiceClient()
+    .from("prospects")
+    .select("place_id", { count: "exact", head: true })
+    .lte("next_contact", today)
+    .not("status", "in", "(customer,lost)");
+  if (error) throw new Error(`countDueProspects: ${error.message}`);
+  return count ?? 0;
 }
