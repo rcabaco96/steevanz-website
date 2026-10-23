@@ -1,0 +1,25 @@
+- [Mobile first](mobile-first.md) — build and screenshot-check every UI change at 320/360px before desktop
+- [Google Business Profile & Cloud](google-business-profile.md) — support case 1-8398000041203, owner rogeriocabaco3@gmail.com, project steevanz-app, API access pending
+- [Copy word rules](copy-words.md) — no «NFC» (say «um toque»/«tecnologia Steevanz»), no «fidelização» in labels, «Menu digital», phone 961 292 679
+- [Never invent reviews](never-invent-reviews.md) — absolute rule: no fabricated reviews anywhere, not even demo/seed data
+- [Shared places database](shared-places-database.md) — competitor stats stored once per Google place, one daily routine only for places not updated today; prices per distinct place
+- [Gamification planned](gamification-planned.md) — software will get levels/challenges/rewards tied to selling Steevanz services; design features with that in mind
+- [Reviews: no gaps](reviews-no-gaps.md) — always continue from the last stored review, never just the newest N
+- [Paid API spend](paid-api-spend.md) — ABSOLUTE: I never spend paid API balance (no scripts/probes/tests); only the owner via site buttons
+- [Deploys and production](deploy-login-page-only.md) — 2026-10-10 login-page merged into main, live on www.steevanz.com; old site on branch site-antigo
+- [Reader always for clients](reader-always-for-clients.md) — optimise the reader to the max; pauses only for competitor work, never client jobs; explain slowdowns first
+- [Reader restart: manual, by me](reader-restart-manual.md) — restart the local reader myself only when its code changed and it's idle; no auto-restart
+- [Reader only](reader-only-no-paid-sources.md) — DataForSEO/Apify dropped for everyone (2026-10-09); delete leftovers, reader does everything
+- [Brand line](brand-line.md) — «Tecnologia do futuro. Com os bons modos de antigamente.» together; never «de sempre»
+- [Supabase migrations](supabase-migrations.md) — applied via Management API with token from .env.local; ask owner each time, rollback + transaction
+- [Reader mission](reader-mission.md) — free own reader, no login, 100% history or nothing, ≤15 min/1000 reviews, Oracle free later
+- [Site redesign 2026](site-redesign-2026.md) — home first; animated/3D feel; all products equal weight; all sectors; brand fixed; real clients Sporting, BMW, Crédito Agrícola, EIC, Agilflex, Dianaconta
+- [Never VAT totals](never-vat-totals.md) — ABSOLUTE, all projects: never amounts with IVA calculated; value + «+ IVA» only
+- [Mobile section order](mobile-media-first.md) — mobile: heading+intro, then image/video, then buttons; site-wide
+- [Chatbot test number](chatbot-test-number.md) — open-wa only for tests on 937 967 281; never risk a ban, owner pairs, allowlist only
+- [No WhatsApp green](no-whatsapp-green.md) — never WhatsApp green on the site; WhatsApp buttons in Steevanz plum
+- [Send videos 720p HQ](send-videos-720p-hq.md) — review copies for the owner: 720p high bitrate under 30 MB, not the «para enviar» file
+- [No carousel pause button](no-carousel-pause-button.md) — carousels/marquees: hover-pause ok, never a pause/play button
+- [Client sites standard](client-sites-standard.md) — every client site at O Ermita's cinematic level (GSAP/Lenis/React Bits scenes, real video); never template-like
+- [Client metadata always](client-metadata-always.md) — every client site + its video menu: own OG/Twitter 1200x630, icons from the logo, verified live
+- [Client sites motion & menu rules](client-sites-motion-menu-rules.md) — smooth scroll to top on reload/route; no repeated videos in a menu; site ≠ menu previews
