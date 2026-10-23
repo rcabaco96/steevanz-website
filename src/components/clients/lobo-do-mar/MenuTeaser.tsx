@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
 import { lobo } from "@/content/lobo-do-mar/facts";
 import type { LoboCopy } from "@/content/lobo-do-mar/copy";
+import { AutoVideo } from "./AutoVideo";
 import { ArrowIcon, PlayIcon } from "./icons";
 import { Octopus } from "./Octopus";
 import { Magnet } from "./react-bits/Magnet";
@@ -13,8 +14,8 @@ import { loboSections } from "./sections";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// The video menu: the octopus from the restaurant's walls draws itself line by line behind a phone showing the real
-// menu, which turns upright as it comes in; the sections of the menu pop in one after another. Reduced motion: the
+// The video menu: the octopus from the restaurant's walls draws itself line by line behind a phone playing a recording
+// of the real menu (its dish videos running, the page scrolling), which turns upright as it comes in; the sections of the menu pop in one after another. Reduced motion: the
 // octopus already drawn, the phone straight.
 export function MenuTeaser({ copy }: { copy: LoboCopy }) {
   const { menu } = copy;
@@ -71,8 +72,10 @@ export function MenuTeaser({ copy }: { copy: LoboCopy }) {
         </div>
         <a href={lobo.menu} target="_blank" rel="noopener noreferrer" aria-label={`${menu.button} ${copy.newTab}`} className="mx-auto block w-[min(78vw,20rem)]">
           <div data-phone className="relative rounded-[2.6rem] bg-abismo p-3 shadow-[0_50px_90px_-35px_rgb(18_33_59/0.7)] will-change-transform">
-            {/* eslint-disable-next-line @next/next/no-img-element -- a screenshot of the live menu inside the phone frame */}
-            <img src={lobo.media.menuScreen} alt="" width={780} height={1688} className="block h-auto w-full rounded-[2rem]" loading="lazy" />
+            {/* A recording of the live menu, its dish videos playing and the page scrolling (plays only on screen). */}
+            <div className="relative aspect-[390/844] overflow-hidden rounded-[2rem] bg-areia">
+              <AutoVideo src={lobo.media.menuDemo} poster={lobo.media.menuDemoPoster} />
+            </div>
           </div>
         </a>
       </div>

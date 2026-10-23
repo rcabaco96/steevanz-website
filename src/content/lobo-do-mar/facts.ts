@@ -56,7 +56,9 @@ export const lobo = {
     clipTankPoster: `${media}/video-viveiro.webp`,
     clipFish: `${media}/video-peixe.mp4`,
     clipFishPoster: `${media}/video-peixe.webp`,
-    menuScreen: `${media}/ementa-ecra.webp`,
+    /** A recording of the live video menu (its dishes playing, the page scrolling) for the phone on the site. */
+    menuDemo: `${media}/menu-demo.mp4`,
+    menuDemoPoster: `${media}/menu-demo.webp`,
     og: `${media}/og-site.jpg`,
     icon192: `${media}/icone-192.png`,
     icon512: `${media}/icone-512.png`,

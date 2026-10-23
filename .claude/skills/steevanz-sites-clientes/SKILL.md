@@ -48,7 +48,7 @@ site que façamos!»
 - **Menu (/menu/<slug>):** an entry in `ownPreviews` in `src/app/(publico)/menu/[slug]/page.tsx` (title
   «<Nome> · Menu digital», description, and its OWN 1200×630 image), and the menu logo from the client's real
   logo (its colours drive the menu's buttons).
-- **The menu's image is never the site's** (owner, 2026-10-23): it shows phones with the menu OPEN (the grid and a
+- **The site's and the menu's images are never the same** (owner, 2026-10-23, said twice): it shows phones with the menu OPEN (the grid and a
   dish full screen, captured from the live menu after its colours are right), with the client's logo and «Menu
   digital», on a background that differs from the site's image.
 - **Wording:** «Menu digital» (en «Digital menu»), never «ementa em vídeo» / «menu em vídeo» on buttons, titles or
@@ -56,11 +56,22 @@ site que façamos!»
 - **Check live** after publishing: `curl` the page and confirm og:title / og:description / og:image, and that the
   image URL answers 200. Tell the owner to test with `?v=2` (WhatsApp caches previews).
 
+## Menu digital: nunca vídeos repetidos (owner, 2026-10-23)
+
+- A menu never shows the same video twice — not the same file, and not the same footage uploaded twice under two ids
+  (the demo library has such twins: Orata alla griglia = Peixe do dia grelhado, Amêijoas com tomate e coentros =
+  Vongole alla marinara, Teppanyaki de camarão = Gamberi all'aglio). Before publishing a menu, compare every dish's
+  thumbnail (perceptual hash) within the menu and swap any pair that matches.
+
 ## Sempre
 
 - Mobile first: check 320/360/390 px and a short viewport (an iPhone with browser bars is ~660 px tall): nothing may
   overlap (the Ermita «Descer» cue ran into the buttons; it now hides under 820 px of height).
 - Respect prefers-reduced-motion (everything readable, no pin, no film); text in the HTML without JavaScript.
+- **Back to the top, smoothly, on every reload and route change** (owner, 2026-10-23): the sites' SmoothScroll does
+  it (Lenis `scrollTo(0)` after load; a #section link is left alone; jump with reduced motion). Copy that helper.
+- **The opening comes in once**: elements that animate in start hidden from the first paint (a class set in the
+  head script), never visible → hidden → animated (owner, 2026-10-23: «dá load 2 vezes»).
 - Animate transform/opacity/clip-path only; smooth on mid-range Android; no horizontal scroll.
 - No pause buttons on carousels/marquees, no WhatsApp green, «Site por Steevanz» credit in the footer.
 - Look at the result yourself (Playwright frames down the whole page, phone + desktop) before telling the owner it's

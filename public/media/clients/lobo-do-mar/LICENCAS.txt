@@ -23,4 +23,4 @@ Derivados feitos pela Steevanz:
   og-site.jpg (1200x630) - pré-visualização do site: logótipo + video-montra.webp + barco-marisco.webp
   icone.ico, icone-192.png, icone-512.png, icone-apple.png, menu-logo-v2.png - o logótipo em fundo branco
   menu-logo.png - logótipo provisório do menu (estilo do letreiro), substituído por menu-logo-v2.png
-  ementa-ecra.webp - captura do menu em vídeo do Lobo do Mar (Steevanz)
+  menu-demo.mp4 / .webp - gravação do menu digital do Lobo do Mar a funcionar (Steevanz)
