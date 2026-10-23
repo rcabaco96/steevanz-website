@@ -60,7 +60,6 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
   }, [open]);
 
   const nav = [
-    { id: loboSections.showcase, label: copy.nav.showcase },
     { id: loboSections.boat, label: copy.nav.boat },
     { id: loboSections.menu, label: copy.nav.menu },
     { id: loboSections.gallery, label: copy.nav.gallery },

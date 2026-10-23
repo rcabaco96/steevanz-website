@@ -11,7 +11,6 @@ import { Marquee } from "./Marquee";
 import { MenuTeaser } from "./MenuTeaser";
 import { MotionRoot } from "./MotionRoot";
 import { Preloader } from "./Preloader";
-import { Showcase } from "./Showcase";
 import { SmoothScroll } from "./SmoothScroll";
 import { Tank } from "./Tank";
 import { Visit } from "./Visit";
@@ -21,8 +20,7 @@ import { Wall } from "./Wall";
 // Lives inside the Steevanz app with its own root layout; see src/lib/client-sites.ts for its domain.
 // Concept (steevanz-sites-clientes): THE DISPLAY AND THE SEA, told with the restaurant's own reels. Its logo's navy
 // and coral, the dining room's blue ceiling and the octopus drawn on its white walls, the logo's heavy slab capitals.
-// Scenes: the tide curtain with the logo; three reels side by side (display, live tank, fish of the day); the display
-// on ice driven frame by frame by the scroll; the live tank and the fish opening out of rounded windows; the owner's
+// Scenes: the tide curtain with the logo; three reels side by side (display, live tank, fish of the day); the live tank and the fish opening out of rounded windows; the owner's
 // seafood boat opening out of a porthole with each thing named; the octopus drawing itself behind the video menu;
 // the line on its wall; a gallery leaning with the scroll; drifting words; the visit and the booking.
 export function LoboSite({ route }: { route: LoboRoute }) {
@@ -41,7 +39,6 @@ export function LoboSite({ route }: { route: LoboRoute }) {
       <Header copy={copy} locale={locale} homeHref={loboHref(mode, locale)} otherLocaleHref={loboHref(mode, other)} />
       <main id="conteudo" tabIndex={-1} className="outline-none">
         <Hero copy={copy} />
-        <Showcase copy={copy} />
         <Tank copy={copy} />
         <Boat copy={copy} />
         <MenuTeaser copy={copy} />

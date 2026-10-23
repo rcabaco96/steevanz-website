@@ -117,7 +117,7 @@ export function Hero({ copy }: { copy: LoboCopy }) {
           ))}
         </div>
       </div>
-      <WaveEdge className="absolute -bottom-px left-0 z-10 text-areia" />
+      <WaveEdge className="absolute -bottom-px left-0 z-10 text-azul" />
     </section>
   );
 }

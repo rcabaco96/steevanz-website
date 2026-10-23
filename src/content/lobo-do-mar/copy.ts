@@ -27,9 +27,8 @@ export interface LoboCopy {
   newTab: string;
   langLabel: string;
   logoLabel: string;
-  nav: { showcase: string; boat: string; menu: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
+  nav: { boat: string; menu: string; gallery: string; visit: string; book: string; open: string; close: string; label: string };
   hero: { kicker: string; titleTop: string; titleBottom: string; sub: string; lead: string; book: string; menu: string; scroll: string; clips: string[] };
-  showcase: { eyebrow: string; title: string; steps: string[]; alt: string };
   tank: { eyebrow: string; title: string; text: string; fishTitle: string; fishText: string };
   boat: { eyebrow: string; title: string; text: string; alt: string; spots: string[] };
   menu: { eyebrow: string; title: string; text: string; button: string; sections: string[] };
@@ -72,7 +71,6 @@ const pt: LoboCopy = {
   langLabel: "Português",
   logoLabel: "Lobo do Mar, restaurante",
   nav: {
-    showcase: "A montra",
     boat: "O barco",
     menu: "Menu digital",
     gallery: "Pratos",
@@ -92,12 +90,6 @@ const pt: LoboCopy = {
     menu: "Ver o menu digital",
     scroll: "Descer",
     clips: ["A montra", "O viveiro", "O peixe do dia"],
-  },
-  showcase: {
-    eyebrow: "A montra",
-    title: "Escolha na montra",
-    steps: ["O peixe e o marisco esperam no gelo, à vista de todos.", "Escolha o que lhe apetece.", "Vai para a cozinha e chega à mesa."],
-    alt: "A montra do restaurante com peixe e marisco no gelo",
   },
   tank: {
     eyebrow: "O viveiro",
@@ -205,7 +197,6 @@ const en: LoboCopy = {
   langLabel: "English",
   logoLabel: "Lobo do Mar, restaurant",
   nav: {
-    showcase: "The display",
     boat: "The boat",
     menu: "Digital menu",
     gallery: "Dishes",
@@ -225,12 +216,6 @@ const en: LoboCopy = {
     menu: "See the digital menu",
     scroll: "Scroll",
     clips: ["The display", "The live tank", "Fish of the day"],
-  },
-  showcase: {
-    eyebrow: "The display",
-    title: "Choose from the display",
-    steps: ["Fish and seafood wait on ice, in plain sight.", "Pick what you feel like.", "It goes to the kitchen and comes to your table."],
-    alt: "The restaurant's display with fish and seafood on ice",
   },
   tank: {
     eyebrow: "The live tank",
