@@ -63,6 +63,13 @@ site que façamos!»
   Vongole alla marinara, Teppanyaki de camarão = Gamberi all'aglio). Before publishing a menu, compare every dish's
   thumbnail (perceptual hash) within the menu and swap any pair that matches.
 
+## Telemóvel com o menu no site
+
+- The site's menu section shows a phone PLAYING a recording of the live menu (dish videos running), never a still
+  (owner, 2026-10-23). Record with Playwright `recordVideo` at the phone viewport, and scroll with ONE eased
+  requestAnimationFrame glide inside the page (not many page.evaluate steps, never sped up afterwards): that stuttered
+  («o scroll está a brekar»). Start and end at the top so the loop is seamless; ~18 s, H.264 600 px, ≈3 MB.
+
 ## Sempre
 
 - Mobile first: check 320/360/390 px and a short viewport (an iPhone with browser bars is ~660 px tall): nothing may
