@@ -77,6 +77,8 @@ site que façamos!»
 - Respect prefers-reduced-motion (everything readable, no pin, no film); text in the HTML without JavaScript.
 - **Back to the top, smoothly, on every reload and route change** (owner, 2026-10-23): the sites' SmoothScroll does
   it (Lenis `scrollTo(0)` after load; a #section link is left alone; jump with reduced motion). Copy that helper.
+- **The menu bar stays on screen** (owner, 2026-10-23): never hide it on scroll down / show on scroll up — with the
+  scroll scenes it keeps coming and going and looks like a bug.
 - **The opening comes in once**: elements that animate in start hidden from the first paint (a class set in the
   head script), never visible → hidden → animated (owner, 2026-10-23: «dá load 2 vezes»).
 - Animate transform/opacity/clip-path only; smooth on mid-range Android; no horizontal scroll.

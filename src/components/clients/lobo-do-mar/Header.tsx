@@ -17,25 +17,17 @@ interface HeaderProps {
   otherLocaleHref: string;
 }
 
-// A floating pill: clear over the opening, frosted deep blue once the page scrolls, hiding while scrolling down
-// and coming back when scrolling up. Small screens: a full-screen menu in deep blue with the tide's wave.
+// A floating pill, always on screen (owner, 2026-10-23: hiding it on scroll, with the scroll scenes, looked like a
+// bug): clear over the opening, frosted deep blue once the page scrolls. Small screens: a full-screen menu in deep blue with the tide's wave.
 export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
   const toggleRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 40);
-      setHidden(y > 400 && y > last + 4);
-      if (y < last - 4) setHidden(false);
-      last = y;
-    };
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -68,7 +60,7 @@ export function Header({ copy, locale, homeHref, otherLocaleHref }: HeaderProps)
   const other = locale === "pt" ? "EN" : "PT";
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 px-3 pt-3 transition-transform duration-500 sm:px-5 sm:pt-4 ${hidden && !open ? "-translate-y-[120%]" : ""}`}>
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
       <div
         className={`mx-auto flex h-14 max-w-[72rem] items-center justify-between gap-2 rounded-full pr-2 pl-4 text-areia transition-[background-color,box-shadow] duration-500 sm:h-16 sm:pl-6 ${
           scrolled || open ? "bg-abismo/85 shadow-[0_10px_40px_-15px_rgb(0_0_0/0.6)] backdrop-blur-xl" : "bg-transparent"
