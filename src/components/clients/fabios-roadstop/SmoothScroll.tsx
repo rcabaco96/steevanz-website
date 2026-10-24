@@ -12,10 +12,12 @@ type LenisLike = { scrollTo: (target: number, options?: { duration?: number }) =
 // Lenis smooths the mouse wheel (touch scrolling stays native) and drives GSAP's ScrollTrigger from the same
 // clock, so the scroll scenes never lag behind. Off when the visitor asks for reduced motion.
 // Back to the top, smoothly, whenever the page is reloaded or the route changes (owner, 2026-10-23): the browser
-// may restore the old position on a reload; once the page has loaded it glides back up (a link to a section, #…,
-// is left alone). With reduced motion it jumps.
+// may restore the old position on a reload; once the page has loaded it glides back up. A reload always goes up,
+// even when a menu link left #section in the address (the hash is dropped, so the next reload does the same); only a
+// link to a section opened from elsewhere stays there. With reduced motion it jumps.
 export function SmoothScroll() {
   const lenisRef = useRef<LenisLike | null>(null);
+  const firstRun = useRef(true);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -45,7 +47,12 @@ export function SmoothScroll() {
   }, []);
 
   useEffect(() => {
-    if (window.location.hash) return;
+    const reloaded = firstRun.current && (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)?.type === "reload";
+    firstRun.current = false;
+    if (window.location.hash) {
+      if (!reloaded) return;
+      history.replaceState(history.state, "", window.location.pathname + window.location.search);
+    }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let timer = 0;
     const toTop = () => {
