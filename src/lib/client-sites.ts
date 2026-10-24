@@ -66,6 +66,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
   },
+  {
+    // Ponteiro (owner, 2026-10-24): a FICTIONAL café, kitchen and bar in Porto, Steevanz's showcase site for
+    // restaurants, cafés, pastelarias and bars. Only the preview path; it will never have a domain of its own.
+    id: "ponteiro",
+    hosts: [],
+    base: "/ponteiro",
+    rootFiles: {
+      "/robots.txt": "/ponteiro/robots.txt",
+      "/sitemap.xml": "/ponteiro/sitemap.xml",
+      "/manifest.webmanifest": "/ponteiro/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/ponteiro/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/ponteiro/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/ponteiro/"],
+  },
 ];
 
 export type ClientSiteDecision =
