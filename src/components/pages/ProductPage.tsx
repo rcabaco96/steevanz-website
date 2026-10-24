@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { photos } from "@/content/media";
@@ -334,32 +335,65 @@ function ProductExamplesSection({ examples, locale }: { examples: ProductExample
   return (
     <Section labelledBy="examples-title">
       <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-      <ul className={`mt-10 grid gap-4 ${examples.items.length > 3 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}>
-        {examples.items.map((item, index) => (
-          <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
-            <a
-              href={item.external ? `${item.href}/${baseLocaleOf(locale)}` : item.href}
-              {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
-              className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
-            >
-              <span className="flex items-center gap-3">
-                {item.logo ? (
-                  // Logos come from Supabase storage or /media; a plain img keeps next.config's image hosts untouched.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.logo} alt="" width={48} height={48} loading="lazy" className="h-12 w-12 shrink-0 rounded-xl border border-line bg-white object-contain p-1" />
-                ) : null}
+      {examples.items.some((item) => item.preview) ? (
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {examples.items.map((item, index) => (
+            <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 3) * 70}ms` }}>
+              {/* Shown like the link preview a phone draws when the menu's link is shared. */}
+              <a href={item.href} className="group block overflow-hidden rounded-[1.25rem] border border-line bg-surface-2 transition-colors hover:border-accent/50">
+                <Image
+                  src={item.preview ?? "/og/og-menu-steevanz.jpg"}
+                  alt=""
+                  width={1200}
+                  height={630}
+                  sizes="(min-width: 1024px) 368px, (min-width: 640px) 50vw, 100vw"
+                  className="aspect-[1200/630] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                />
+                <span className="flex flex-col gap-1.5 px-5 py-4">
+                  <span className="text-lg font-semibold text-text">
+                    {localize(item.label, locale)}
+                    {copy.kind ? ` · ${copy.kind}` : null}
+                  </span>
+                  <span className="inline-flex items-center gap-2 text-sm text-muted">
+                    <GlobeIcon />
+                    steevanz.com
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className="mt-10 grid gap-4 sm:grid-cols-3">
+          {examples.items.map((item, index) => (
+            <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
+              <a
+                href={item.external ? `${item.href}/${baseLocaleOf(locale)}` : item.href}
+                {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
+                className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
+              >
                 <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
-                {copy.open}
-                <ArrowRight size={16} />
-                {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
+                  {copy.open}
+                  <ArrowRight size={16} />
+                  {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
       <p className="mt-6 text-sm text-subtle">{copy.note}</p>
     </Section>
+  );
+}
+
+/** The globe a phone's link preview shows beside the domain. */
+function GlobeIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" />
+    </svg>
   );
 }

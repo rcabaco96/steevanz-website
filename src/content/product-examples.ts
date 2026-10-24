@@ -7,21 +7,28 @@ import type { ProductId } from "./types";
 
 export interface ProductExamples {
   /** `href` is a path on this site, or an external address opened in a new tab. */
-  items: { href: string; label: Localized<string>; external?: boolean; /** A small square logo shown beside the name. */ logo?: string }[];
-  copy: Localized<{ eyebrow: string; title: string; lead: string; open: string; note: string }>;
+  /**
+   * `preview`: the item shows as its link preview (the 1200×630 image people see when the link is shared, the
+   * name and the domain), like a link sent on WhatsApp (owner, 2026-10-24, the menus). Otherwise a text card.
+   */
+  items: { href: string; label: Localized<string>; external?: boolean; preview?: string }[];
+  /** `kind`: said after the name in a link preview («Lobo do Mar · Menu digital»). */
+  copy: Localized<{ eyebrow: string; title: string; lead: string; open: string; note: string; kind?: string }>;
 }
 
 export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   // Every Steevanz menu (owner, 2026-10-24: «mete os menus digitais que temos»), the demos first.
   "digital-menu": {
+    // The image each menu shows when its link is shared: its own (ownPreviews in src/app/(publico)/menu/[slug]/page.tsx)
+    // or, for the demo menus without one, the Steevanz demo image. Keep these in step with that file.
     items: [
-      { href: "/menu/trattoria-da-nonna", label: { pt: "Trattoria da Nonna", en: "Trattoria da Nonna" }, logo: "https://odvtklbxrqdugrtzjzye.supabase.co/storage/v1/object/public/menu-logos/abdb3eed-76f7-4757-84fe-bcd1a175932d/-prUEFK68oqq.png" },
-      { href: "/menu/sakura-sushi", label: { pt: "Sakura Sushi", en: "Sakura Sushi" }, logo: "https://odvtklbxrqdugrtzjzye.supabase.co/storage/v1/object/public/menu-logos/bb52f2bd-9eba-469e-9515-9ace97316786/xQiqZiSGdb91.png" },
-      { href: "/menu/marisqueira-do-cais", label: { pt: "Marisqueira do Cais", en: "Marisqueira do Cais" }, logo: "https://odvtklbxrqdugrtzjzye.supabase.co/storage/v1/object/public/menu-logos/5080ac48-0ccd-42a1-b471-1e18e33192c3/N7L69sAunZUe.png" },
-      { href: "/menu/dolci-salati", label: { pt: "Dolci e Salati", en: "Dolci e Salati" }, logo: "/media/clients/dolci-e-salati-logo.png" },
-      { href: "/menu/o-ermita", label: { pt: "O Ermita", en: "O Ermita" }, logo: "/media/clients/o-ermita/menu-logo.png" },
-      { href: "/menu/lobo-do-mar", label: { pt: "Lobo do Mar", en: "Lobo do Mar" }, logo: "/media/clients/lobo-do-mar/menu-logo-v2.png" },
-      { href: "/menu/fabios-roadstop", label: { pt: "Fabio's Roadstop", en: "Fabio's Roadstop" }, logo: "https://odvtklbxrqdugrtzjzye.supabase.co/storage/v1/object/public/menu-logos/6521f54c-e0b2-42c9-87d0-e31b8b1ded03/kBIClrnkYdn_.png" },
+      { href: "/menu/o-ermita", label: { pt: "O Ermita", en: "O Ermita" }, preview: "/media/clients/o-ermita/og-menu.jpg" },
+      { href: "/menu/lobo-do-mar", label: { pt: "Lobo do Mar", en: "Lobo do Mar" }, preview: "/media/clients/lobo-do-mar/og-menu.jpg" },
+      { href: "/menu/fabios-roadstop", label: { pt: "Fabio's Roadstop", en: "Fabio's Roadstop" }, preview: "/media/clients/fabios-roadstop/og-menu.jpg" },
+      { href: "/menu/trattoria-da-nonna", label: { pt: "Trattoria da Nonna", en: "Trattoria da Nonna" }, preview: "/og/og-menu-steevanz.jpg" },
+      { href: "/menu/dolci-salati", label: { pt: "Dolci e Salati", en: "Dolci e Salati" }, preview: "/og/og-menu-steevanz.jpg" },
+      { href: "/menu/sakura-sushi", label: { pt: "Sakura Sushi", en: "Sakura Sushi" }, preview: "/og/og-menu-steevanz.jpg" },
+      { href: "/menu/marisqueira-do-cais", label: { pt: "Marisqueira do Cais", en: "Marisqueira do Cais" }, preview: "/og/og-menu-steevanz.jpg" },
     ],
     copy: {
       pt: {
@@ -30,6 +37,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Menus feitos pela Steevanz, com os pratos em vídeo. Abra-os no telemóvel, como um cliente à mesa.",
         open: "Ver o menu",
         note: "Alguns são menus de demonstração: os vídeos e os preços podem ser exemplos.",
+        kind: "Menu digital",
       },
       en: {
         eyebrow: "Examples",
@@ -37,6 +45,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Menus made by Steevanz, with the dishes on video. Open them on your phone, just like a customer at the table.",
         open: "See the menu",
         note: "Some are demo menus: the videos and prices may be examples.",
+        kind: "Digital menu",
       },
       es: {
         eyebrow: "Ejemplos",
@@ -44,6 +53,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Menús hechos por Steevanz, con los platos en vídeo. Ábralos en el móvil, como un cliente sentado a la mesa.",
         open: "Ver el menú",
         note: "Algunos son menús de demostración: los vídeos y los precios pueden ser ejemplos.",
+        kind: "Menú digital",
       },
       fr: {
         eyebrow: "Exemples",
@@ -51,6 +61,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Des menus réalisés par Steevanz, avec les plats en vidéo. Ouvrez-les sur votre téléphone, comme un client à table.",
         open: "Voir le menu",
         note: "Certains sont des menus de démonstration : les vidéos et les prix peuvent être des exemples.",
+        kind: "Menu digital",
       },
       de: {
         eyebrow: "Beispiele",
@@ -58,6 +69,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Speisekarten von Steevanz, mit den Gerichten im Video. Öffnen Sie sie auf dem Handy, wie ein Gast am Tisch.",
         open: "Speisekarte ansehen",
         note: "Einige sind Demo-Speisekarten: Videos und Preise können Beispiele sein.",
+        kind: "Digitale Speisekarte",
       },
       it: {
         eyebrow: "Esempi",
@@ -65,6 +77,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Menù realizzati da Steevanz, con i piatti in video. Li apra sullo smartphone, come un cliente seduto al tavolo.",
         open: "Veda il menù",
         note: "Alcuni sono menù dimostrativi: i video e i prezzi possono essere esempi.",
+        kind: "Menù digitale",
       },
     },
   },
