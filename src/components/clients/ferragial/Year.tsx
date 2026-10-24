@@ -122,7 +122,9 @@ export function Year({ copy }: { copy: FerragialCopy }) {
 
       {/* Phones, short screens: the year down the page. */}
       <div className="relative motion-safe:[@media(min-width:1024px)_and_(min-height:640px)]:hidden">
-        <div className="px-5 pt-24 pb-12 sm:px-8 sm:pt-32">{heading}</div>
+        <div className="px-5 pt-24 pb-12 sm:px-8 sm:pt-32">
+          <div className="mx-auto max-w-[40rem]">{heading}</div>
+        </div>
         <ol>
           {moments.map((moment, i) => {
             const photo = ferragialPhotos[moment.image];
