@@ -44,6 +44,27 @@ const ownPreviews: Record<string, { title: string; description: string; image: s
     description: "Burgers, pequenos-almoços e cocktails: veja cada prato em vídeo antes de escolher.",
     image: "/media/clients/fabios-roadstop/og-menu.jpg",
   },
+  // Their own previews (owner, 2026-10-25: «Cria imagem de metadados para os que não têm»): phones with the live menu open.
+  "trattoria-da-nonna": {
+    title: "Trattoria da Nonna · Menu digital",
+    description: "Demonstração grátis do Menu digital da Steevanz: cada prato em vídeo, para ver antes de escolher, e o pedido feito à mesa.",
+    image: "/media/clients/trattoria-da-nonna/og-menu.jpg",
+  },
+  "sakura-sushi": {
+    title: "Sakura Sushi · Menu digital",
+    description: "O Menu digital do Sakura Sushi: cada prato em vídeo, para ver antes de escolher.",
+    image: "/media/clients/sakura-sushi/og-menu.jpg",
+  },
+  "marisqueira-do-cais": {
+    title: "Marisqueira do Cais · Menu digital",
+    description: "O Menu digital da Marisqueira do Cais: cada prato em vídeo, para ver antes de escolher.",
+    image: "/media/clients/marisqueira-do-cais/og-menu.jpg",
+  },
+  "dolci-salati": {
+    title: "Dolci e Salati · Menu digital",
+    description: "O Menu digital da Dolci e Salati: cada prato em vídeo, para ver antes de escolher.",
+    image: "/media/clients/dolci-salati/og-menu.jpg",
+  },
   "lobo-do-mar": {
     title: "Lobo do Mar · Menu digital",
     description: "O menu digital da marisqueira Lobo do Mar: marisco, peixe e petiscos, cada prato em vídeo, e o pedido feito à mesa.",

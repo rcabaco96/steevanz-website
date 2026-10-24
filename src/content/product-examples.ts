@@ -19,16 +19,16 @@ export interface ProductExamples {
 export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   // Every Steevanz menu (owner, 2026-10-24: «mete os menus digitais que temos»), the demos first.
   "digital-menu": {
-    // The image each menu shows when its link is shared: its own (ownPreviews in src/app/(publico)/menu/[slug]/page.tsx)
-    // or, for the demo menus without one, the Steevanz demo image. Keep these in step with that file.
+    // The image each menu shows when its link is shared (ownPreviews in src/app/(publico)/menu/[slug]/page.tsx).
+    // Keep these in step with that file.
     items: [
       { href: "/menu/o-ermita", label: { pt: "O Ermita", en: "O Ermita" }, preview: "/media/clients/o-ermita/og-menu.jpg" },
       { href: "/menu/lobo-do-mar", label: { pt: "Lobo do Mar", en: "Lobo do Mar" }, preview: "/media/clients/lobo-do-mar/og-menu.jpg" },
       { href: "/menu/fabios-roadstop", label: { pt: "Fabio's Roadstop", en: "Fabio's Roadstop" }, preview: "/media/clients/fabios-roadstop/og-menu.jpg" },
-      { href: "/menu/trattoria-da-nonna", label: { pt: "Trattoria da Nonna", en: "Trattoria da Nonna" }, preview: "/og/og-menu-steevanz.jpg" },
-      { href: "/menu/dolci-salati", label: { pt: "Dolci e Salati", en: "Dolci e Salati" }, preview: "/og/og-menu-steevanz.jpg" },
-      { href: "/menu/sakura-sushi", label: { pt: "Sakura Sushi", en: "Sakura Sushi" }, preview: "/og/og-menu-steevanz.jpg" },
-      { href: "/menu/marisqueira-do-cais", label: { pt: "Marisqueira do Cais", en: "Marisqueira do Cais" }, preview: "/og/og-menu-steevanz.jpg" },
+      { href: "/menu/trattoria-da-nonna", label: { pt: "Trattoria da Nonna", en: "Trattoria da Nonna" }, preview: "/media/clients/trattoria-da-nonna/og-menu.jpg" },
+      { href: "/menu/dolci-salati", label: { pt: "Dolci e Salati", en: "Dolci e Salati" }, preview: "/media/clients/dolci-salati/og-menu.jpg" },
+      { href: "/menu/sakura-sushi", label: { pt: "Sakura Sushi", en: "Sakura Sushi" }, preview: "/media/clients/sakura-sushi/og-menu.jpg" },
+      { href: "/menu/marisqueira-do-cais", label: { pt: "Marisqueira do Cais", en: "Marisqueira do Cais" }, preview: "/media/clients/marisqueira-do-cais/og-menu.jpg" },
     ],
     copy: {
       pt: {
