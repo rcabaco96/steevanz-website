@@ -88,7 +88,7 @@ describe("Ponteiro: owner's rules", () => {
       assert.match(text, /plusVat/, path);
     }
     assert.equal(ponteiroPrice(1.2), "1,20 €");
-    assert.equal(ponteiroPrice(8), "8 €");
+    assert.equal(ponteiroPrice(8), "8,00 €");
   });
 
   it("never writes «NFC» or «fidelização», says «Menu digital», never uses Steevanz's stylesheet or shell, never WhatsApp green", () => {

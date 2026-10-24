@@ -110,9 +110,9 @@ export function ponteiroWhatsappHref(text?: string): string {
   return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
-/** «1,20 €» — prices are always without VAT (owner's absolute rule); the «+ IVA» is shown next to them. */
+/** «1,20 €», «8,00 €» — prices are always without VAT (owner's absolute rule); the «+ IVA» is shown next to them. */
 export function ponteiroPrice(euros: number): string {
-  return `${euros.toLocaleString("pt-PT", { minimumFractionDigits: Number.isInteger(euros) ? 0 : 2, maximumFractionDigits: 2 })} €`;
+  return `${euros.toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 }
 
 /** Minutes since midnight → «07:30». */
