@@ -66,6 +66,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
   },
+  {
+    // Sete Chaves (owner, 2026-10-24): a FICTIONAL guest house in Aljezur, Steevanz's showcase site for lodging
+    // businesses. Only the preview path; it will never have a domain of its own.
+    id: "sete-chaves",
+    hosts: [],
+    base: "/sete-chaves",
+    rootFiles: {
+      "/robots.txt": "/sete-chaves/robots.txt",
+      "/sitemap.xml": "/sete-chaves/sitemap.xml",
+      "/manifest.webmanifest": "/sete-chaves/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/sete-chaves/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/sete-chaves/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/sete-chaves/"],
+  },
 ];
 
 export type ClientSiteDecision =
