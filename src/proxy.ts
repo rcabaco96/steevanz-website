@@ -41,5 +41,7 @@ export const config = {
     "/o-ermita/:path*",
     "/lobo-do-mar",
     "/lobo-do-mar/:path*",
+    "/risca",
+    "/risca/:path*",
   ],
 };

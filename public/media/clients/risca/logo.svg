@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -14 264 128"><defs>
+<clipPath id="wb"><rect x="-2" y="0" width="230" height="100"/></clipPath>
+<clipPath id="wl"><polygon points="-20,85 244,18 244,160 -20,160"/></clipPath>
+<clipPath id="wh"><polygon points="-20,-60 244,-60 244,16.4 -20,80.4"/></clipPath>
+</defs>
+<g clip-path="url(#wb)"><g clip-path="url(#wl)"><g fill="none" stroke="#121110" stroke-width="15" stroke-miterlimit="10"><path d="M7.5 106V7.5H25a17.5 17.5 0 0 1 0 35H7.5M24 42.5L38.5 106"/><path d="M58.5 -6V106"/><path d="M114 22Q114 7.5 96 7.5Q80.5 7.5 80.5 27Q80.5 45 96 49Q111.5 53 111.5 72Q111.5 92.5 95.5 92.5Q79 92.5 78.5 78"/><path d="M166 24Q165 7.5 147.5 7.5Q131.5 7.5 131.5 30V70Q131.5 92.5 147.5 92.5Q165 92.5 166 76"/><path d="M181.5 106L194 7.5H206L218.5 106M188 70H212"/></g></g></g>
+<g transform="translate(4 -1)"><g clip-path="url(#wb)"><g clip-path="url(#wh)"><g fill="none" stroke="#121110" stroke-width="15" stroke-miterlimit="10"><path d="M7.5 106V7.5H25a17.5 17.5 0 0 1 0 35H7.5M24 42.5L38.5 106"/><path d="M58.5 -6V106"/><path d="M114 22Q114 7.5 96 7.5Q80.5 7.5 80.5 27Q80.5 45 96 49Q111.5 53 111.5 72Q111.5 92.5 95.5 92.5Q79 92.5 78.5 78"/><path d="M166 24Q165 7.5 147.5 7.5Q131.5 7.5 131.5 30V70Q131.5 92.5 147.5 92.5Q165 92.5 166 76"/><path d="M181.5 106L194 7.5H206L218.5 106M188 70H212"/></g></g></g></g>
+<line x1="-14" y1="82" x2="238" y2="18" stroke="#ff4127" stroke-width="2.6"/></svg>
