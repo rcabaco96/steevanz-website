@@ -4,6 +4,7 @@ import { ContactsTabs } from "@/components/admin/ContactsTabs";
 import { CrmBoard } from "@/components/admin/crm/CrmBoard";
 import type { ProductOption } from "@/components/admin/crm/CrmRow";
 import { ActionForm, SubmitButton } from "@/components/backoffice/ActionForm";
+import { KeepCurrentInView } from "@/components/backoffice/KeepCurrentInView";
 import { AdminPageHeader, EmptyState, adminInputClasses, adminLabelClasses } from "@/components/backoffice/ui";
 import { buttonClasses } from "@/components/ui/Button";
 import { getProductCopy } from "@/content/product-copy";
@@ -58,8 +59,9 @@ export default async function AdminCrmPage({ searchParams }: { searchParams: Pro
               <span className="text-xs font-medium opacity-75 tabular-nums">{total}</span>
             </Link>
           ) : null}
+          <KeepCurrentInView watch={list?.key ?? "todas"} />
         </nav>
-        <Link href={`/admin/prospecao${list ? `?onde=${encodeURIComponent(list.area)}` : ""}#nova-pesquisa`} className={buttonClasses("secondary", "sm", "shrink-0 self-start sm:self-auto")}>
+        <Link href={`/admin/prospecao${list ? `?onde=${encodeURIComponent(list.area)}` : ""}#nova-pesquisa`} className={buttonClasses("secondary", "sm", "min-h-10 shrink-0 self-start sm:self-auto")}>
           {list ? `Procurar novos em ${list.area}` : "Procurar novos"}
         </Link>
       </div>

@@ -127,7 +127,14 @@ function History({ placeId, today, me, products }: { placeId: string; today: str
         <span role="status" className="sr-only">
           A carregar o histórico…
         </span>
-        {slow ? [0, 1, 2].map((key) => <Skeleton key={key} className="h-4 w-full max-w-md" />) : null}
+        {slow
+          ? [0, 1, 2].map((key) => (
+              <div key={key} className="flex flex-col gap-1 sm:flex-row sm:gap-3">
+                <Skeleton className="h-3.5 w-28 shrink-0 sm:w-36" />
+                <Skeleton className="h-4 w-full max-w-xs" />
+              </div>
+            ))
+          : null}
       </div>
     );
   if (!events.length) return <p className="text-sm text-subtle">Ainda nada feito com este negócio.</p>;
@@ -231,7 +238,7 @@ function CrmRowView({ prospect, today, me, settings, products, version, run, onN
             <span>sem reviews</span>
           )}
           {prospect.maps_url ? (
-            <a href={prospect.maps_url} target="_blank" rel="noopener noreferrer" className="font-medium text-accent-text hover:underline">
+            <a href={prospect.maps_url} target="_blank" rel="noopener noreferrer" className="-my-2.5 py-2.5 font-medium text-accent-text hover:underline">
               Ver no Maps
             </a>
           ) : null}
@@ -241,7 +248,7 @@ function CrmRowView({ prospect, today, me, settings, products, version, run, onN
       <div className={`min-w-0 ${closed ? "opacity-55" : ""}`}>
         <Dropdown
           ariaLabel={`Situação do site de ${prospect.name}: ${prospect.site_status ? siteStatusLabels[prospect.site_status] : "por verificar"}. Mudar`}
-          className={`h-8 rounded-full px-3 text-xs font-semibold ${siteTone[prospect.site_status ?? "unchecked"]}`}
+          className={`h-10 rounded-full px-3 text-xs font-semibold xl:h-8 ${siteTone[prospect.site_status ?? "unchecked"]}`}
           label={prospect.site_status ? siteStatusLabels[prospect.site_status] : "Site por verificar"}
         >
           {(close) => (
@@ -268,7 +275,7 @@ function CrmRowView({ prospect, today, me, settings, products, version, run, onN
           {prospect.website ? (
             <>
               {prospect.site_reasons.length ? " · " : ""}
-              <a href={prospect.website} target="_blank" rel="noopener noreferrer" className="font-medium break-all text-accent-text hover:underline">
+              <a href={prospect.website} target="_blank" rel="noopener noreferrer" className="py-2.5 font-medium wrap-anywhere text-accent-text hover:underline">
                 {linkName(prospect.website) || "Site"}
               </a>
             </>
@@ -297,7 +304,7 @@ function CrmRowView({ prospect, today, me, settings, products, version, run, onN
         ) : null}
         {emails.map((email) => (
           <div key={email} className="flex flex-wrap items-center gap-1.5">
-            <span className="mr-1 min-w-0 break-all text-text select-all">{email}</span>
+            <span className="mr-1 min-w-0 wrap-anywhere text-text select-all">{email}</span>
             <CopyButton text={email} ariaLabel={`Copiar o email ${email}`} />
           </div>
         ))}

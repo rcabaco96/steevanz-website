@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { KeepCurrentInView } from "./KeepCurrentInView";
 
 export interface NavLink {
   href: string;
@@ -31,6 +32,7 @@ export function BackofficeNav({ links, label }: { links: NavLink[]; label: strin
           </Link>
         );
       })}
+      <KeepCurrentInView watch={pathname} />
     </nav>
   );
 }

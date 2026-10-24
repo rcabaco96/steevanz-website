@@ -132,7 +132,7 @@ export function CrmBoard({ prospects, me, settings, products }: CrmBoardProps) {
         setStage(stage === key ? "" : key);
         setShown(pageSize);
       }}
-      className={`flex min-w-[6.5rem] cursor-pointer flex-col gap-0.5 rounded-2xl border bg-surface px-3 py-2.5 text-left transition-colors ${stage === key ? `border-2 ${tone}` : "border-line text-text hover:border-line-strong"}`}
+      className={`flex min-w-[6.5rem] cursor-pointer flex-col gap-0.5 rounded-2xl border bg-surface px-3 py-2.5 text-left xl:px-2 transition-colors ${stage === key ? `border-2 ${tone}` : "border-line text-text hover:border-line-strong"}`}
     >
       <b className="font-display text-2xl leading-none font-semibold tabular-nums">{count}</b>
       <span className="truncate text-xs text-muted">{label}</span>
@@ -200,14 +200,17 @@ export function CrmBoard({ prospects, me, settings, products }: CrmBoardProps) {
             ))
           }
         </Dropdown>
-        <label className="inline-flex h-11 cursor-pointer items-center gap-2 px-1 text-sm text-muted">
-          <input type="checkbox" checked={onlyEmail} onChange={(event) => setOnlyEmail(event.target.checked)} className="size-[18px] accent-(--accent)" />
-          Só com email
-        </label>
-        <label className="inline-flex h-11 cursor-pointer items-center gap-2 px-1 text-sm text-muted">
-          <input type="checkbox" checked={onlyWhatsApp} onChange={(event) => setOnlyWhatsApp(event.target.checked)} className="size-[18px] accent-(--accent)" />
-          Só com WhatsApp
-        </label>
+        {/* The two ticks stay together (on phones they share a line under the menus). */}
+        <div className="flex flex-wrap items-center gap-x-2">
+          <label className="inline-flex h-11 cursor-pointer items-center gap-2 px-1 text-sm text-muted">
+            <input type="checkbox" checked={onlyEmail} onChange={(event) => setOnlyEmail(event.target.checked)} className="size-[18px] accent-(--accent)" />
+            Só com email
+          </label>
+          <label className="inline-flex h-11 cursor-pointer items-center gap-2 px-1 text-sm text-muted">
+            <input type="checkbox" checked={onlyWhatsApp} onChange={(event) => setOnlyWhatsApp(event.target.checked)} className="size-[18px] accent-(--accent)" />
+            Só com WhatsApp
+          </label>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -279,7 +282,7 @@ export function CrmBoard({ prospects, me, settings, products }: CrmBoardProps) {
       </div>
 
       {message ? (
-        <p role="status" className="fixed bottom-[calc(18px+env(safe-area-inset-bottom,0px))] left-1/2 z-50 max-w-[calc(100%-32px)] -translate-x-1/2 rounded-xl bg-surface-inverse px-4 py-2.5 text-sm text-inverse shadow-lg">
+        <p role="status" className="fixed inset-x-4 bottom-[calc(18px+env(safe-area-inset-bottom,0px))] z-50 mx-auto w-fit max-w-md rounded-xl bg-surface-inverse px-4 py-2.5 text-sm text-inverse shadow-lg">
           {message}
         </p>
       ) : null}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { KeepCurrentInView } from "@/components/backoffice/KeepCurrentInView";
 
 const tabs = [
   { id: "bookings", href: "/admin/bookings", label: "Demonstrações" },
@@ -27,6 +28,7 @@ export function ContactsTabs({ current }: { current: (typeof tabs)[number]["id"]
           {tab.label}
         </Link>
       ))}
+      <KeepCurrentInView watch={current} />
     </nav>
   );
 }

@@ -43,9 +43,15 @@ export function Dropdown({ label, ariaLabel, className = "", children, menuClass
     const top = below < height + 12 && box.top > below ? Math.max(8, box.top - height - 6) : box.bottom + 6;
     const left = Math.min(Math.max(8, box.left), window.innerWidth - width - 8);
     setPosition({ top, left, minWidth: Math.max(200, box.width) });
+  }, [open]);
+
+  // Focus the chosen option once the menu is placed and visible (a hidden menu cannot take focus), so the
+  // arrow keys and Escape work straight away.
+  useEffect(() => {
+    if (!position || !menu.current) return;
     const chosen = menu.current.querySelector<HTMLElement>('[data-opt][aria-selected="true"]') ?? menu.current.querySelector<HTMLElement>("[data-opt]");
     chosen?.focus({ preventScroll: true });
-  }, [open]);
+  }, [position]);
 
   useEffect(() => {
     if (!open) return;
@@ -54,7 +60,9 @@ export function Dropdown({ label, ariaLabel, className = "", children, menuClass
       if (!menu.current?.contains(target) && !button.current?.contains(target)) close(false);
     };
     const scrolled = (event: Event) => {
-      if (!menu.current?.contains(event.target as Node)) close(false);
+      // A phone may scroll the page to show the date field while it is being filled: keep the menu then.
+      const typing = document.activeElement instanceof HTMLInputElement && menu.current?.contains(document.activeElement);
+      if (!menu.current?.contains(event.target as Node) && !typing) close(false);
     };
     const resized = () => close(false);
     document.addEventListener("pointerdown", outside);

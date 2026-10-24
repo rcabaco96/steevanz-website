@@ -444,10 +444,10 @@ describe("prospecting", () => {
   it("says why to call in plain words", () => {
     const texts = (prospect) => reasons(prospect).map((reason) => (reason.note ? `nota: ${reason.text}` : reason.text));
     assert.deepEqual(texts({ rating: 4.1, reviews: 23, website: "https://www.facebook.com/x", category: "Barbeiro" }), [
-      "Reservas Online e Cartão Fidelização",
+      "Reservas Online e Cartão de cliente digital",
       "nota: Sem site próprio: só tem Facebook",
     ]);
-    assert.deepEqual(texts({ rating: 4.9, reviews: 300, website: "https://barbearia-x.buk.pt", category: "Barbeiro" }), ["Reservas Online e Cartão Fidelização", "nota: Já reserva com Buk", "nota: Sem site próprio"]);
+    assert.deepEqual(texts({ rating: 4.9, reviews: 300, website: "https://barbearia-x.buk.pt", category: "Barbeiro" }), ["Reservas Online e Cartão de cliente digital", "nota: Já reserva com Buk", "nota: Sem site próprio"]);
     assert.deepEqual(texts({ rating: 4.7, reviews: 900, website: "https://tasca.pt", category: "Restaurante" }), ["Lista de Espera e Reservas Online"]);
     assert.deepEqual(texts({ rating: 4.8, reviews: 400, website: "https://loja.pt", category: "Loja de roupa" }), []);
     // Reviews are only a filter: we cannot tell from Google whether a place already has review plates.

@@ -66,7 +66,7 @@ export function reasons(prospect: { rating: number | null; reviews: number | nul
   const found: Reason[] = [];
   const kind = siteKind(prospect.website);
   if (prospect.category && moduleCategories.test(prospect.category)) {
-    const products = restaurantLike.test(prospect.category) ? "Lista de Espera e Reservas Online" : sportsLike.test(prospect.category) ? "Reservas Online" : "Reservas Online e Cartão Fidelização";
+    const products = restaurantLike.test(prospect.category) ? "Lista de Espera e Reservas Online" : sportsLike.test(prospect.category) ? "Reservas Online" : "Reservas Online e Cartão de cliente digital";
     found.push({ opportunity: "modules", text: products });
   }
   if (kind === "booking") found.push({ opportunity: null, text: `Já reserva com ${linkName(prospect.website)}`, note: true });
