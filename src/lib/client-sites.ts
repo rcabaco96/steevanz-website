@@ -66,6 +66,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
   },
+  {
+    // Prumo (owner, 2026-10-24): a FICTIONAL clinic of physiotherapy, osteopathy and wellness, Steevanz's showcase site
+    // for health and wellness businesses. Only the preview path; it will never have a domain of its own.
+    id: "prumo",
+    hosts: [],
+    base: "/prumo",
+    rootFiles: {
+      "/robots.txt": "/prumo/robots.txt",
+      "/sitemap.xml": "/prumo/sitemap.xml",
+      "/manifest.webmanifest": "/prumo/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/prumo/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/prumo/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/prumo/"],
+  },
 ];
 
 export type ClientSiteDecision =
