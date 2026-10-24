@@ -6,7 +6,6 @@ import { pageLabels, type PageLabels } from "@/content/page-labels";
 import { productExamples, type ProductExamples } from "@/content/product-examples";
 import { adTabsLabel, adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct, type Product } from "@/content/products";
-import { getSector } from "@/content/sectors";
 import type { ProductId } from "@/content/types";
 import { ui } from "@/content/ui";
 import { isWebProductId } from "@/content/web-products";
@@ -178,6 +177,8 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
         </div>
       </Section>
 
+      {productExamples[productId] ? <ProductExamplesSection examples={productExamples[productId]} locale={locale} /> : null}
+
       <Section labelledBy="how-title">
         <SectionHeader id="how-title" eyebrow={labels.howEyebrow} title={labels.howTitle} />
         <ol className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -202,27 +203,6 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
           />
         </div>
       ) : null}
-
-      <Section tone="soft" labelledBy="usecases-title">
-        <SectionHeader id="usecases-title" eyebrow={labels.useCasesEyebrow} title={labels.useCasesTitle} />
-        <div className="mt-12 grid gap-5 md:grid-cols-2">
-          {copy.useCases.map((useCase, index) => (
-            <article key={useCase.title} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 2) * 90}ms` }} className={`card flex flex-col gap-3 p-7 ${index === copy.useCases.length - 1 && copy.useCases.length % 2 === 1 ? "md:col-span-2" : ""}`}>
-              {useCase.sector ? (
-                <Link href={href(locale, { key: "sector", sectorId: useCase.sector })} className="eyebrow w-fit hover:underline">
-                  {useCase.label ?? localizePartial(getSector(useCase.sector).copy, locale).name}
-                </Link>
-              ) : useCase.label ? (
-                <p className="eyebrow">{useCase.label}</p>
-              ) : null}
-              <h3 className="text-xl font-semibold text-text">{useCase.title}</h3>
-              <p className="leading-relaxed text-muted">{useCase.body}</p>
-            </article>
-          ))}
-        </div>
-      </Section>
-
-      {productExamples[productId] ? <ProductExamplesSection examples={productExamples[productId]} locale={locale} /> : null}
 
       {webId ? (
         <>
@@ -354,7 +334,7 @@ function ProductExamplesSection({ examples, locale }: { examples: ProductExample
   return (
     <Section labelledBy="examples-title">
       <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-      <ul className="mt-10 grid gap-4 sm:grid-cols-3">
+      <ul className={`mt-10 grid gap-4 ${examples.items.length > 3 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}>
         {examples.items.map((item, index) => (
           <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
             <a
@@ -362,7 +342,14 @@ function ProductExamplesSection({ examples, locale }: { examples: ProductExample
               {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
               className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
             >
-              <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
+              <span className="flex items-center gap-3">
+                {item.logo ? (
+                  // Logos come from Supabase storage or /media; a plain img keeps next.config's image hosts untouched.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.logo} alt="" width={48} height={48} loading="lazy" className="h-12 w-12 shrink-0 rounded-xl border border-line bg-white object-contain p-1" />
+                ) : null}
+                <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
+              </span>
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
                 {copy.open}
                 <ArrowRight size={16} />
