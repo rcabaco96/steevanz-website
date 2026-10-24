@@ -11,7 +11,8 @@ gsap.registerPlugin(useGSAP);
 // The first visit of a session opens like the café does every morning: the steel shutter is down, the name painted on
 // it; the clock hand ticks round to 7:30, the sign lights up and the shutter rolls up out of sight, uncovering the
 // coffee falling from the machine. Shown once per tab session; never with reduced motion or without JavaScript (the
-// layout's <head> hides it before the first paint, so it never flashes: ./preloader-gate.ts).
+// layout's <head> hides it before the first paint, so it never flashes: ./preloader-gate.ts). The name plate starts
+// hidden in the HTML too, so it only ever fades in once.
 export function Shutter({ label, sign }: { label: string; sign: string }) {
   const root = useRef<HTMLDivElement>(null);
 
@@ -47,7 +48,7 @@ export function Shutter({ label, sign }: { label: string; sign: string }) {
 
   return (
     <div ref={root} aria-hidden="true" className="pn-shutter pn-slats fixed inset-0 z-[80] flex flex-col items-center justify-center will-change-transform">
-      <div data-plate className="flex flex-col items-center gap-6 rounded-[1.4rem] bg-noite px-9 pt-8 pb-7 text-papel shadow-[0_30px_60px_-30px_rgb(0_0_0/0.6)]" aria-label={label}>
+      <div data-plate className="flex flex-col items-center gap-6 opacity-0 rounded-[1.4rem] bg-noite px-9 pt-8 pb-7 text-papel shadow-[0_30px_60px_-30px_rgb(0_0_0/0.6)]" aria-label={label}>
         <Mark data-clock className="h-24 w-auto text-papel" angle={-90} />
         <span className="font-display text-[2.6rem] leading-none">Ponteiro</span>
         <span data-sign className="pn-label pn-neon opacity-0">
