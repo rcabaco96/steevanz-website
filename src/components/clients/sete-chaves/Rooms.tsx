@@ -303,7 +303,7 @@ function Room({ unit, index }: { unit: SeteChavesUnit; index: number }) {
 
       <div
         data-room-info
-        className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] sm:gap-8 [.sc-board-on_&]:mt-7"
+        className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-8 [.sc-board-on_&]:mt-7"
       >
         <div>
           <p className="leading-relaxed text-cal/80">{unit.text}</p>
