@@ -1,0 +1,37 @@
+Roaz (negócio FICTÍCIO, site de demonstração da Steevanz) — origem e licença de cada ficheiro desta pasta.
+
+Fotografias e vídeos: Pixabay (https://pixabay.com), Pixabay Content License (https://pixabay.com/service/license-summary/):
+uso comercial permitido, sem atribuição obrigatória (indicamos os autores por cortesia). Nenhum ficheiro é gerado por IA
+(verificadas as etiquetas de cada um). Os vídeos foram cortados, reduzidos e recomprimidos (ffmpeg, sem som); as
+imagens fixas são fotografias redimensionadas ou fotogramas dos vídeos (sharp, WebP).
+
+Vídeos
+- hero.mp4, hero-retrato.mp4 (recorte vertical), hero-poster.webp, hero-retrato-poster.webp
+  Falésias do Algarve vistas de drone, com a esteira de um barco — Radds — https://pixabay.com/videos/id-230456/
+- grutas.mp4, grutas.webp — Arco de rocha sobre o mar, Algarve (drone) — Radds — https://pixabay.com/videos/id-236016/
+- golfinhos.mp4, golfinhos.webp — Golfinhos junto à proa de um barco — PaulsAdventures — https://pixabay.com/videos/id-342166/
+- por-do-sol.mp4, por-do-sol.webp — Veleiro ao pôr do sol — TonyDias7 — https://pixabay.com/videos/id-219596/
+- kayak.mp4, kayak.webp — Dois kayaks vistos de cima — CameronBiddinger — https://pixabay.com/videos/id-187321/
+
+Fotogramas de vídeos (só a imagem fixa)
+- esteira.webp — Lancha e a sua esteira vistas de cima — bellergy — https://pixabay.com/videos/id-2946/
+- farol.webp — Farol de Alfanzina, Lagoa (drone) — Radds — https://pixabay.com/videos/id-247954/
+- falesias.webp — Falésias e rochedos do Algarve (drone) — Radds — https://pixabay.com/videos/id-230779/
+- sup.webp — SUP ao pôr do sol — Valentin_Aleksandrov — https://pixabay.com/videos/id-189902/
+
+Fotografias
+- benagil-interior.webp — Gruta de Benagil por dentro — Julius_Silver — https://pixabay.com/photos/portugal-algarve-benagil-selfie-3029665/
+- algar.webp — O algar (abertura no teto) da gruta de Benagil — makabera — https://pixabay.com/photos/rock-cave-sandstone-stones-8423150/
+- marinha.webp — Praia da Marinha, Lagoa — inonoyazy — https://pixabay.com/photos/marinha-benagil-lagoa-beach-rocks-5363044/
+- ferragudo.webp — Ferragudo junto ao rio Arade — joelsantinho — https://pixabay.com/photos/ferragudo-portugal-village-water-953785/
+- aldeia.webp — Ferragudo, a baía e os barcos — ruiparreira — https://pixabay.com/photos/algarve-portugal-bay-tourism-sea-3907872/
+- castelo.webp — Castelo de São João do Arade, Ferragudo — crissequeira89 — https://pixabay.com/photos/castelo-praia-rio-s%C3%A3o-jo%C3%A3o-arade-1608769/
+- carvoeiro.webp — Carvoeiro — ruiparreira — https://pixabay.com/photos/portugal-carvoeiro-beach-algarve-3907873/
+- praia.webp — Praia e falésia do Algarve — utilizador 2770862 — https://pixabay.com/photos/navy-beach-portugal-algarve-1786783/
+- rochedos.webp — Rochedos da Marinha — jopeni — https://pixabay.com/photos/algarve-marinha-coast-bay-beach-1972512/
+
+Imagem de pré-visualização (link preview)
+- og.jpg — composição feita pela Steevanz: logótipo da Roaz sobre um fotograma de hero-poster.webp (Radds, Pixabay, acima).
+
+Logótipo e ícones (desenhados pela Steevanz para o negócio fictício)
+- logo.svg, favicon.ico, icon-192.png, icon-512.png, apple-icon.png
