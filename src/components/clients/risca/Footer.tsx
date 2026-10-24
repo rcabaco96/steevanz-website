@@ -37,7 +37,7 @@ export function Footer({ copy }: { copy: RiscaCopy }) {
         <div>
           <h2 className="rc-label mb-4 text-vermelhao">{copy.footer.contacts}</h2>
           <p>
-            <a href={risca.phoneHref} className="rc-display text-[1.7rem] whitespace-nowrap hover:text-vermelhao">
+            <a href={risca.phoneHref} className="rc-display inline-flex min-h-11 items-center text-[1.7rem] whitespace-nowrap hover:text-vermelhao">
               {risca.phoneDisplay}
             </a>
             <span className="block text-xs text-gesso/55">{copy.visit.phoneNote}</span>

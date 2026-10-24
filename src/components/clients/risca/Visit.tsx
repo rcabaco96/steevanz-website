@@ -95,7 +95,7 @@ export function Visit({ copy }: { copy: RiscaCopy }) {
               <h3 className={label}>
                 <PhoneIcon width={16} height={16} /> {visit.phoneLabel}
               </h3>
-              <a href={risca.phoneHref} className="rc-display text-[2.1rem] whitespace-nowrap hover:text-vermelhao">
+              <a href={risca.phoneHref} className="rc-display inline-flex min-h-11 items-center text-[2.1rem] whitespace-nowrap hover:text-vermelhao">
                 {risca.phoneDisplay}
               </a>
               <p className="mt-1 text-xs text-gesso/55">{visit.phoneNote}</p>
@@ -104,7 +104,7 @@ export function Visit({ copy }: { copy: RiscaCopy }) {
               <h3 className={label}>
                 <ChatIcon width={16} height={16} /> {visit.whatsappLabel}
               </h3>
-              <a href={riscaWhatsappHref()} target="_blank" rel="noopener noreferrer" className="rc-display text-[2.1rem] whitespace-nowrap hover:text-vermelhao">
+              <a href={riscaWhatsappHref()} target="_blank" rel="noopener noreferrer" className="rc-display inline-flex min-h-11 items-center text-[2.1rem] whitespace-nowrap hover:text-vermelhao">
                 {risca.whatsappDisplay}
                 <span className="sr-only"> {copy.newTab}</span>
               </a>
