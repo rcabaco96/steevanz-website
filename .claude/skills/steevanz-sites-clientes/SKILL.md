@@ -55,6 +55,10 @@ site que façamos!»
   previews (owner, 2026-10-23).
 - **Check live** after publishing: `curl` the page and confirm og:title / og:description / og:image, and that the
   image URL answers 200. Tell the owner to test with `?v=2` (WhatsApp caches previews).
+- **On a preview too** (owner, 2026-10-24, Orvé: «não criaste imagem de metadados»): a site not yet on main has no
+  image on www.steevanz.com, so og:image must use the preview's own address (`VERCEL_ENV === "preview"` →
+  `https://${VERCEL_BRANCH_URL}`, as Orvé's metadata.ts). Check the **exact URL written in og:image** with curl, not
+  the file on the preview: Orvé's file answered 200 on the preview while og:image pointed to a 404.
 
 ## Menu digital: nunca vídeos repetidos (owner, 2026-10-23)
 
@@ -76,7 +80,10 @@ site que façamos!»
   overlap (the Ermita «Descer» cue ran into the buttons; it now hides under 820 px of height).
 - Respect prefers-reduced-motion (everything readable, no pin, no film); text in the HTML without JavaScript.
 - **Back to the top, smoothly, on every reload and route change** (owner, 2026-10-23): the sites' SmoothScroll does
-  it (Lenis `scrollTo(0)` after load; a #section link is left alone; jump with reduced motion). Copy that helper.
+  it (Lenis `scrollTo(0)` after load; jump with reduced motion). Copy that helper. **A reload always goes up, even
+  with #section in the address** (owner, 2026-10-24: a menu link leaves `/orve#rituais`, and the old helper then
+  stayed mid-page on every reload): on a reload the hash is dropped and the page glides up; only a #section link
+  opened from elsewhere stays. Test it: click a menu link, reload, scrollY must reach 0.
 - **The menu bar stays on screen** (owner, 2026-10-23): never hide it on scroll down / show on scroll up — with the
   scroll scenes it keeps coming and going and looks like a bug.
 - **The opening comes in once**: elements that animate in start hidden from the first paint (a class set in the
