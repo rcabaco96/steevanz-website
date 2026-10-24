@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
     const form = await request.formData();
     const ids = [...new Set(String(form.get("ids") ?? "").split(",").map((id) => id.trim()).filter((id) => id.length >= 3 && id.length <= 300))].slice(0, 3000);
     if (!ids.length) return new Response("Sem negócios", { status: 400 });
-    const found = (await cards(ids)).filter((row) => row.phone || row.email);
+    // Same rule as the board's «Guardar contactos (N)»: a phone or any email.
+    const found = (await cards(ids)).filter((row) => row.phone || row.email || row.other_emails.length);
     if (!found.length) return new Response("Nenhum destes negócios tem telefone ou email", { status: 404 });
     return card(vcards(found), `leads-steevanz-${found.length}.vcf`, "attachment");
   } catch (error) {
