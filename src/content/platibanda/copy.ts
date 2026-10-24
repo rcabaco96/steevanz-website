@@ -308,6 +308,8 @@ export const platibandaCopy = {
     bedrooms: "Quartos",
     bathrooms: "Casas de banho",
     energy: "Classe energética",
+    /** Never invented (an official certificate value): a placeholder the agency fills in. */
+    energyPlaceholder: "(do certificado)",
     guests: "Hóspedes",
     minNights: "Estadia mínima",
     nights: "{n} noites",

@@ -33,7 +33,7 @@ export function ListingPage({ mode, listing }: { mode: PlatibandaMode; listing: 
     [t.bathrooms, String(listing.bathrooms)],
     ...(listing.guests ? ([[t.guests, String(listing.guests)]] as [string, string][]) : []),
     ...(listing.minNights ? ([[t.minNights, fill(t.nights, { n: listing.minNights })]] as [string, string][]) : []),
-    [t.energy, listing.energy],
+    [t.energy, t.energyPlaceholder],
     [t.zone, `${zones[listing.zone]} · ${listing.spot}`],
   ];
 
@@ -172,6 +172,9 @@ export function ListingPage({ mode, listing }: { mode: PlatibandaMode; listing: 
                             <p className="text-sm text-pedra">{zones[l.zone]}</p>
                             <h3 className="font-display text-[1.3rem] leading-tight text-ria">{l.title}</h3>
                             <p className="mt-2 font-semibold text-ria">{listingPrice(l)}</p>
+                            <p className="mt-1 text-xs text-pedra">
+                              {t.energy}: {t.energyPlaceholder}
+                            </p>
                           </div>
                           <span className="grid size-11 shrink-0 place-items-center rounded-full ring-1 ring-ria/20 group-hover:bg-ria group-hover:text-cal">
                             <ArrowIcon width={18} height={18} />

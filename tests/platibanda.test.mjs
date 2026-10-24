@@ -127,10 +127,21 @@ describe("Platibanda: owner's rules", () => {
     }
   });
 
-  it("marks every property as fictional and never invents an AMI licence", () => {
+  it("marks every property as fictional and never invents an AMI licence or an energy class", () => {
     assert.equal(platibandaCopy.fictionalListing, "Imóvel fictício (exemplo)");
     assert.equal(platibanda.ami, "AMI: (número da licença)");
-    for (const { path, text } of files) assert.doesNotMatch(text, /AMI[:\s]+\d/, path);
+    assert.equal(platibandaCopy.listing.energyPlaceholder, "(do certificado)");
+    for (const l of listings) assert.equal("energy" in l, false, l.slug);
+    for (const { path, text } of files) {
+      assert.doesNotMatch(text, /AMI[:\s]+\d/, path);
+      assert.doesNotMatch(text, /energy:\s*"[A-G][+-]?"|classe energ[ée]tica:?\s*[A-G]/i, path);
+    }
+  });
+
+  it("illustrates the listings only with interiors and generic outdoor spaces, never a recognisable building", () => {
+    const scenery = ["fachadaPlatibanda", "taviraPraca", "taviraPorta", "reflexo"];
+    for (const l of listings) for (const p of l.photos) assert.ok(!scenery.includes(p.id), `${l.slug}: ${p.id}`);
+    assert.match(platibandaCopy.photosNote, /ilustrativas/);
   });
 
   it("never writes «NFC» or «fidelização», never uses Steevanz's stylesheet or shell, never WhatsApp green", () => {

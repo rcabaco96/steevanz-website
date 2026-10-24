@@ -4,7 +4,9 @@
 // prices are made up for the demo. The contacts are deliberately unusable placeholders (no real person answers them).
 // No ratings, no reviews, no customer numbers, no legal identifiers: the AMI licence is an obvious placeholder.
 // Media: free stock from Pexels (Pexels License), see public/media/clients/platibanda/LICENCAS.txt. The photos
-// illustrate the fictional listings; they are not pictures of the buildings described.
+// illustrate the fictional listings; they are not pictures of the buildings described. The listings only use interiors
+// and generic outdoor spaces that identify no real address (coordinator, 2026-10-24); recognisable buildings of the
+// town (the town hall, the yellow façade with its platibanda, a tiled door) appear only as scenery, never as a listing.
 // Kept free of imports so the unit tests can load it directly.
 
 const media = "/media/clients/platibanda";
@@ -55,7 +57,6 @@ export const platibanda = {
 
 export type PlatibandaPhotoId =
   | "fachadaPlatibanda"
-  | "barraOcreFachada"
   | "barraOcreSala"
   | "barraOcreCozinha"
   | "barraOcreQuarto"
@@ -69,18 +70,18 @@ export type PlatibandaPhotoId =
   | "cabanasPiscina"
   | "cabanasSala"
   | "cabanasQuarto"
-  | "olhaoFachada"
   | "olhaoSala"
   | "olhaoQuarto"
-  | "santaLuziaExterior"
+  | "olhaoCasaDeBanho"
   | "santaLuziaCozinha"
   | "santaLuziaQuarto"
+  | "santaLuziaQuintal"
   | "fusetaExterior"
   | "fusetaTerraco"
   | "fusetaVaranda"
-  | "buganviliasExterior"
   | "buganviliasSala"
   | "buganviliasPiscina"
+  | "buganviliasAlpendre"
   | "taviraPraca"
   | "taviraPorta"
   | "reflexo";
@@ -90,7 +91,6 @@ const photo = (file: string, width: number, height: number) => ({ src: `${media}
 /** The stills (Pexels photos and one frame of a Pexels clip, see LICENCAS.txt) and their real sizes. */
 export const platibandaPhotos: Record<PlatibandaPhotoId, { src: string; width: number; height: number }> = {
   fachadaPlatibanda: photo("fachada-platibanda", 1600, 1066),
-  barraOcreFachada: photo("barra-ocre-fachada", 1067, 1600),
   barraOcreSala: photo("barra-ocre-sala", 1600, 1068),
   barraOcreCozinha: photo("barra-ocre-cozinha", 1600, 988),
   barraOcreQuarto: photo("barra-ocre-quarto", 1067, 1600),
@@ -104,18 +104,18 @@ export const platibandaPhotos: Record<PlatibandaPhotoId, { src: string; width: n
   cabanasPiscina: photo("cabanas-piscina", 1065, 1600),
   cabanasSala: photo("cabanas-sala", 1600, 1200),
   cabanasQuarto: photo("cabanas-quarto", 1096, 1600),
-  olhaoFachada: photo("olhao-fachada", 1067, 1600),
   olhaoSala: photo("olhao-sala", 1067, 1600),
   olhaoQuarto: photo("olhao-quarto", 1165, 1600),
-  santaLuziaExterior: photo("santa-luzia-exterior", 1600, 1200),
+  olhaoCasaDeBanho: photo("olhao-casa-de-banho", 1600, 1066),
   santaLuziaCozinha: photo("santa-luzia-cozinha", 1067, 1600),
   santaLuziaQuarto: photo("santa-luzia-quarto", 1067, 1600),
+  santaLuziaQuintal: photo("santa-luzia-quintal", 1600, 1082),
   fusetaExterior: photo("fuseta-exterior", 1067, 1600),
   fusetaTerraco: photo("fuseta-terraco", 1067, 1600),
   fusetaVaranda: photo("fuseta-varanda", 1600, 1067),
-  buganviliasExterior: photo("buganvilias-exterior", 1200, 1600),
   buganviliasSala: photo("buganvilias-sala", 1200, 1600),
   buganviliasPiscina: photo("buganvilias-piscina", 1067, 1897),
+  buganviliasAlpendre: photo("buganvilias-alpendre", 1081, 1600),
   taviraPraca: photo("tavira-praca", 1280, 1600),
   taviraPorta: photo("tavira-porta", 1200, 1600),
   reflexo: photo("reflexo", 1072, 1600),

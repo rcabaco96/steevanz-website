@@ -1,6 +1,8 @@
 // The property listings of Platibanda's website. Every listing is FICTIONAL (an example of what a real agency would
 // publish): the houses, their areas, features and prices are made up, and the photos only illustrate them (Pexels
-// stock, not the buildings described). The page marks each one «Imóvel fictício (exemplo)».
+// stock: interiors and generic outdoor spaces, never a recognisable building). The page marks each one «Imóvel fictício
+// (exemplo)». The energy class is an official certificate value, like the AMI licence: never invented, the page shows
+// a placeholder.
 // Property prices (sale, monthly rent, nightly rate) are plain prices; the agency's own service fees live in copy.ts,
 // always «+ IVA». Kept free of imports (type imports are erased) so the unit tests can load it directly.
 
@@ -53,7 +55,6 @@ export interface Listing {
   lead: string;
   description: string[];
   features: string[];
-  energy: string;
   /** Euros: the sale price, the monthly rent or the nightly rate from. */
   price: number;
   /** Holiday rentals: guests and minimum stay. */
@@ -83,11 +84,9 @@ export const listings: Listing[] = [
       "No primeiro piso ficam três quartos, um deles com varanda de ferro forjado sobre a rua. Uma escada exterior sobe à açoteia, de onde se veem os telhados de Tavira.",
     ],
     features: ["Pátio interior", "Açoteia", "Tetos de madeira", "Varanda de ferro forjado", "A pé do rio e do mercado"],
-    energy: "C",
     price: 485000,
     barra: "ocre",
     photos: [
-      { id: "barraOcreFachada", alt: "Fachada branca com portadas ocre e uma varanda de ferro forjado." },
       { id: "barraOcreSala", alt: "Sala ampla com tetos de madeira, sofás claros e uma lareira ao fundo." },
       { id: "barraOcreCozinha", alt: "Cozinha com armários brancos e azulejos decorados atrás do fogão." },
       { id: "barraOcreQuarto", alt: "Quarto claro com uma cama de lençóis brancos e uma cabeceira de madeira antiga." },
@@ -111,7 +110,6 @@ export const listings: Listing[] = [
       "Os dois quartos têm roupeiros embutidos e um deles casa de banho privativa. Entrega com cozinha equipada.",
     ],
     features: ["Varanda virada a sul", "Elevador", "Lugar de garagem", "Cozinha equipada", "Suite"],
-    energy: "B",
     price: 365000,
     barra: "anil",
     photos: [
@@ -139,7 +137,6 @@ export const listings: Listing[] = [
       "O terreno estende-se em socalcos, com alfarrobeiras, oliveiras e uma piscina rodeada de buganvílias. Acesso por estrada alcatroada até à porta.",
     ],
     features: ["Terreno de 4200 m²", "Piscina", "Lareira", "Forno de lenha", "Acesso alcatroado"],
-    energy: "D",
     price: 298000,
     barra: "telha",
     photos: [
@@ -168,7 +165,6 @@ export const listings: Listing[] = [
       "Inclui garagem para dois carros, rega automática e painéis solares para a água quente. A praia e a ria ficam a um passeio de distância.",
     ],
     features: ["Piscina", "Quatro suites", "Garagem para dois carros", "Painéis solares", "Jardim com rega automática"],
-    energy: "A",
     price: 890000,
     barra: "ocre",
     photos: [
@@ -195,13 +191,12 @@ export const listings: Listing[] = [
       "Contrato de longa duração, com uma renda de caução. Água, luz e internet por conta do inquilino.",
     ],
     features: ["Mobilado", "Açoteia partilhada", "Cozinha equipada", "Longa duração"],
-    energy: "C",
     price: 950,
     barra: "anil",
     photos: [
-      { id: "olhaoFachada", alt: "Fachada revestida a azulejo azul e branco com janelas altas e uma varanda." },
       { id: "olhaoSala", alt: "Sala branca com uma lareira, cadeirões e portadas azuis." },
       { id: "olhaoQuarto", alt: "Quarto com um dossel branco e uma parede de azulejos." },
+      { id: "olhaoCasaDeBanho", alt: "Casa de banho com paredes de azulejo azul e branco e um duche." },
     ],
   },
   {
@@ -223,11 +218,10 @@ export const listings: Listing[] = [
       "O quintal tem um telheiro para refeições ao ar livre e lugar para dois carros. Arrendamento de longa duração, sem mobília ou mobilado, a combinar.",
     ],
     features: ["Quintal com telheiro", "Lareira", "Estacionamento para dois carros", "Longa duração"],
-    energy: "C",
     price: 1600,
     barra: "telha",
     photos: [
-      { id: "santaLuziaExterior", alt: "Moradia branca com telhado de telha vermelha e um portão de madeira." },
+      { id: "santaLuziaQuintal", alt: "Mesa redonda e duas cadeiras de madeira num quintal com fetos e trepadeiras." },
       { id: "santaLuziaCozinha", alt: "Cozinha com uma mesa redonda escura, cadeiras e um armário antigo de madeira." },
       { id: "santaLuziaQuarto", alt: "Quarto de tons quentes com uma cama baixa e um candeeiro de verga." },
     ],
@@ -250,7 +244,6 @@ export const listings: Listing[] = [
       "Gerida por nós: check-in à chegada, limpeza e roupa de cama entre estadias, e um guia digital dentro da casa com o WiFi, as regras e as nossas sugestões.",
     ],
     features: ["Até 4 hóspedes", "Piscina de mergulho", "Ar condicionado", "Guia digital na casa", "Barco para as ilhas a pé"],
-    energy: "C",
     price: 140,
     guests: 4,
     minNights: 3,
@@ -280,14 +273,13 @@ export const listings: Listing[] = [
       "Gerida por nós de ponta a ponta: limpeza, roupa, manutenção da piscina e um guia digital na casa, em quatro línguas, com tudo o que os hóspedes precisam de saber.",
     ],
     features: ["Até 6 hóspedes", "Piscina privada", "Três suites", "Alpendre", "Guia digital na casa"],
-    energy: "B",
     price: 290,
     guests: 6,
     minNights: 5,
     barra: "sal",
     photos: [
-      { id: "buganviliasExterior", alt: "Casa branca com varanda de ferro, uma pérgula vermelha e buganvílias em flor." },
       { id: "buganviliasPiscina", alt: "Alpendre de madeira e pedra com espreguiçadeiras à beira de uma piscina." },
+      { id: "buganviliasAlpendre", alt: "Mesa ao sol num pátio, com almofadas e um vaso de barro." },
       { id: "buganviliasSala", alt: "Sala com janelas altas rendilhadas, sofás vermelhos e vista para a serra." },
     ],
   },

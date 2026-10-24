@@ -236,6 +236,9 @@ export function Listings({ copy, mode }: { copy: PlatibandaCopy; mode: Platiband
                         </li>
                       </ul>
                       <p className="mt-3 text-[1.15rem] font-semibold text-ria">{listingPrice(l)}</p>
+                      <p className="mt-1 text-xs text-pedra">
+                        {copy.listing.energy}: {copy.listing.energyPlaceholder}
+                      </p>
                     </Link>
                   </m.li>
                 );
