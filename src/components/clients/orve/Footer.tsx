@@ -1,17 +1,19 @@
 import type { OrveCopy } from "@/content/orve/copy";
-import { orve, orveWhatsappHref } from "@/content/orve/facts";
+import { orve, orvePhoneDisplay, orveWhatsappHref } from "@/content/orve/facts";
 import { HoursList } from "./Booking";
+import { LanguageRow, type OrveLanguage } from "./LanguageSwitch";
 import { Logo } from "./Logo";
 
-export function Footer({ copy }: { copy: OrveCopy }) {
+export function Footer({ copy, languages }: { copy: OrveCopy; languages: OrveLanguage[] }) {
   const year = 2026;
   const link = "text-sm text-nacar/85 underline decoration-nacar/30 underline-offset-4 hover:decoration-nacar";
   return (
     <footer className="or-on-dark relative overflow-hidden bg-cacau text-nacar">
       <div className="mx-auto grid max-w-[84rem] gap-12 px-5 pt-20 pb-10 sm:px-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr] lg:gap-10">
         <div>
-          <Logo id="or-mark-footer" label={copy.logoLabel} accent="var(--color-argila)" className="w-40 items-start text-nacar sm:w-48" />
+          <Logo id="or-mark-footer" label={copy.logoLabel} line={copy.logoLine} accent="var(--color-argila)" className="w-40 items-start text-nacar sm:w-48" />
           <p className="mt-6 max-w-xs text-sm leading-relaxed text-nacar/70">{copy.footer.tagline}</p>
+          <LanguageRow languages={languages} current={copy.locale} label={copy.lang.label} currentLabel={copy.lang.current} className="mt-7 max-w-xs sm:-ml-3" />
         </div>
 
         <div>
@@ -38,13 +40,13 @@ export function Footer({ copy }: { copy: OrveCopy }) {
           <h2 className="or-label mb-4 text-argila">{copy.footer.contacts}</h2>
           <p>
             <a href={orve.phoneHref} className="font-display text-2xl whitespace-nowrap hover:text-argila">
-              {orve.phoneDisplay}
+              {orvePhoneDisplay(copy.locale)}
             </a>
             <span className="block text-xs text-nacar/60">{copy.visit.phoneNote}</span>
           </p>
           <p className="mt-3">
             <a href={orveWhatsappHref()} target="_blank" rel="noopener noreferrer" className={link}>
-              WhatsApp · {orve.whatsappDisplay}
+              WhatsApp · {orvePhoneDisplay(copy.locale)}
               <span className="sr-only"> {copy.newTab}</span>
             </a>
           </p>

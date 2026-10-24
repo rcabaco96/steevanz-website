@@ -3,14 +3,16 @@
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { OrveCopy } from "@/content/orve/copy";
-import { orve } from "@/content/orve/facts";
+import { orve, orvePhoneDisplay } from "@/content/orve/facts";
 import { CloseIcon, MenuIcon, PhoneIcon } from "./icons";
+import { LanguageMenu, LanguageRow, type OrveLanguage } from "./LanguageSwitch";
 import { Wordmark } from "./Logo";
 import { orveSections } from "./sections";
 
 // Transparent over the film, then mother-of-pearl with a blur once the page scrolls. It always stays on screen
 // (owner, 2026-10-23: never hide it on scroll). Small screens: a full-screen menu in cocoa, the links in Bodoni.
-export function Header({ copy, homeHref }: { copy: OrveCopy; homeHref: string }) {
+// Languages: a small menu beside «Marcar» from 640 px; on phones, a row of the six codes inside the full-screen menu.
+export function Header({ copy, homeHref, languages }: { copy: OrveCopy; homeHref: string; languages: OrveLanguage[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion();
@@ -76,6 +78,9 @@ export function Header({ copy, homeHref }: { copy: OrveCopy; homeHref: string })
         </nav>
 
         <div className="relative z-10 flex items-center gap-2 sm:gap-3">
+          <div className="hidden sm:block">
+            <LanguageMenu languages={languages} current={copy.locale} label={copy.lang.label} currentLabel={copy.lang.current} onDark={!solid} />
+          </div>
           <a
             href={`#${orveSections.book}`}
             onClick={() => setOpen(false)}
@@ -131,8 +136,9 @@ export function Header({ copy, homeHref }: { copy: OrveCopy; homeHref: string })
               ))}
             </nav>
             <div className="relative px-6 pb-10">
+              <LanguageRow languages={languages} current={copy.locale} label={copy.lang.label} currentLabel={copy.lang.current} className="mb-5" />
               <a href={orve.phoneHref} className="flex h-14 items-center justify-center gap-2 rounded-full bg-nacar font-medium text-cacau">
-                <PhoneIcon /> {orve.phoneDisplay}
+                <PhoneIcon /> {orvePhoneDisplay(copy.locale)}
               </a>
               <p className="mt-4 text-center text-xs text-nacar/60">{copy.demo}</p>
             </div>

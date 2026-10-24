@@ -5,11 +5,11 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { OrveCopy } from "@/content/orve/copy";
 import { orve, orveDuration, orvePrice, orveWhatsappHref } from "@/content/orve/facts";
 import { ChatIcon, PhoneIcon } from "./icons";
+import type { OrveLocale } from "@/content/orve/routes";
 import { pickRitualEvent } from "./sections";
 
-const weekdays = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
-const weekdaysLong = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
-const months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+/** The date formats of each language («ter», «terça-feira, 28 de outubro»; «Tue», «Tuesday 28 October»…). */
+const dateLocale: Record<OrveLocale, string> = { pt: "pt-PT", en: "en-GB", es: "es-ES", fr: "fr-FR", de: "de-DE", it: "it-IT" };
 
 /** Today's date (local), read in the browser only: the server never guesses the visitor's day. */
 const noop = () => () => {};
@@ -27,15 +27,17 @@ const toHhmm = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart
 interface Day {
   key: string;
   short: string;
+  day: number;
   long: string;
   weekday: number;
 }
 
 // The booking request, in four small steps: the ritual, the day (the next open days), the hour (every half hour,
 // so the ritual ends by closing time) and a name. It writes the WhatsApp message for the visitor; nothing is stored
-// and no availability is promised (the atelier confirms). Demo: the number belongs to no one, and the page says so.
+// and no availability is promised (the atelier confirms). Demo: the message goes to Steevanz's WhatsApp and says it is
+// a test of the demo site (owner, 2026-10-24); the page says so under the buttons.
 export function BookingForm({ copy }: { copy: OrveCopy }) {
-  const { booking, rituals } = copy;
+  const { booking, rituals, locale } = copy;
   const [familyId, setFamilyId] = useState(rituals.list[0].id);
   const [treatmentIdx, setTreatmentIdx] = useState<number | null>(null);
   const [dayKey, setDayKey] = useState<string | null>(null);
@@ -63,19 +65,22 @@ export function BookingForm({ copy }: { copy: OrveCopy }) {
     if (!today) return [];
     const [y, mo, d] = today.split("-").map(Number);
     const out: Day[] = [];
+    const short = new Intl.DateTimeFormat(dateLocale[locale], { weekday: "short" });
+    const long = new Intl.DateTimeFormat(dateLocale[locale], { weekday: "long", day: "numeric", month: "long" });
     for (let i = 1; out.length < 8 && i < 30; i++) {
       const date = new Date(y, mo, d + i);
       const wd = date.getDay();
       if (!orve.openingByWeekday[wd]) continue;
       out.push({
         key: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
-        short: `${weekdays[wd]} ${date.getDate()}`,
-        long: `${weekdaysLong[wd]}, ${date.getDate()} de ${months[date.getMonth()]}`,
+        short: short.format(date).replace(/\.$/, ""),
+        day: date.getDate(),
+        long: long.format(date),
         weekday: wd,
       });
     }
     return out;
-  }, [today]);
+  }, [today, locale]);
 
   const day = days.find((d) => d.key === dayKey) ?? null;
   const times = useMemo(() => {
@@ -89,7 +94,7 @@ export function BookingForm({ copy }: { copy: OrveCopy }) {
   const validTime = time && times.includes(time) ? time : null;
 
   const ready = Boolean(treatment && day && validTime);
-  const ritualLabel = treatment ? `${treatment.name} (${orveDuration(treatment.minutes)})` : "";
+  const ritualLabel = treatment ? `${treatment.name} (${orveDuration(treatment.minutes, locale)})` : "";
   const who = name.trim() ? booking.messageName.replace("{nome}", name.trim()) : "";
   const message =
     ready && day && validTime
@@ -130,11 +135,13 @@ export function BookingForm({ copy }: { copy: OrveCopy }) {
               <input type="radio" name="ritual" checked={treatmentIdx === i} onChange={() => setTreatmentIdx(i)} className="peer sr-only" />
               <span className="flex min-h-14 cursor-pointer items-center justify-between gap-4 rounded-2xl px-4 py-3 ring-1 ring-tinta/12 transition-colors peer-checked:bg-linho peer-checked:ring-cobre peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cobre hover:ring-cobre/50">
                 <span className="min-w-0">
-                  <span className="block leading-snug">{t.name}</span>
-                  <span className="block text-[0.8rem] text-pedra">{orveDuration(t.minutes)}</span>
+                  <span className="block leading-snug hyphens-auto">{t.name}</span>
+                  <span className="block text-[0.8rem] text-pedra">{orveDuration(t.minutes, locale)}</span>
                 </span>
-                <span className="shrink-0 text-right font-display text-lg leading-none whitespace-nowrap">
-                  {orvePrice(t.price)} <span className="font-sans text-[0.65rem] tracking-[0.1em] text-pedra uppercase">{rituals.plusVat}</span>
+                {/* The VAT words under the price: «zzgl. MwSt.» beside it pushed long German names off a phone. */}
+                <span className="shrink-0 text-right whitespace-nowrap">
+                  <span className="block font-display text-lg leading-none">{orvePrice(t.price, locale)}</span>
+                  <span className="mt-1 block text-[0.65rem] tracking-[0.1em] text-pedra uppercase">{rituals.plusVat}</span>
                 </span>
               </span>
             </label>
@@ -150,8 +157,8 @@ export function BookingForm({ copy }: { copy: OrveCopy }) {
               <label key={d.key} className="relative">
                 <input type="radio" name="dia" checked={dayKey === d.key} onChange={() => setDayKey(d.key)} className="peer sr-only" />
                 <span className={`${chip} flex-col px-1 leading-tight`} title={d.long}>
-                  <span className="text-[0.72rem] tracking-[0.12em] uppercase opacity-70">{d.short.split(" ")[0]}</span>
-                  <span className="font-display text-xl">{d.short.split(" ")[1]}</span>
+                  <span className="text-[0.72rem] tracking-[0.12em] uppercase opacity-70">{d.short}</span>
+                  <span className="font-display text-xl">{d.day}</span>
                 </span>
               </label>
             ))}
@@ -209,10 +216,10 @@ export function BookingForm({ copy }: { copy: OrveCopy }) {
         <p className="or-label text-pedra">{booking.summary}</p>
         {ready && treatment && day && validTime ? (
           <p className="mt-3 font-display text-[1.35rem] leading-snug">
-            {treatment.name} · {orveDuration(treatment.minutes)} · {orvePrice(treatment.price)}{" "}
+            {treatment.name} · {orveDuration(treatment.minutes, locale)} · {orvePrice(treatment.price, locale)}{" "}
             <span className="font-sans text-xs tracking-[0.1em] text-pedra uppercase">{rituals.plusVat}</span>
             <span className="mt-1 block text-[1.05rem] text-cobre italic">
-              {day.long}, às {validTime}
+              {booking.summaryWhen.replace("{dia}", day.long).replace("{hora}", validTime)}
             </span>
           </p>
         ) : (

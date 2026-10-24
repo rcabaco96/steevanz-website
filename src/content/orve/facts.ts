@@ -1,9 +1,13 @@
 // Orvé — a FICTIONAL beauty and aesthetics atelier, invented by Steevanz (owner, 2026-10-23) as a showcase site for
 // selling websites to beauty businesses. Nothing here describes a real business: the name, the logo, the team, the
-// address, the hours, the treatments and their prices are made up for the demo. The contacts are deliberately
-// unusable placeholders (no real person answers them). No ratings, no reviews, no customer numbers, no legal ids.
+// address, the hours, the treatments and their prices are made up for the demo. The phone and WhatsApp are
+// Steevanz's own (owner, 2026-10-24: a prospect trying the demo reaches Steevanz, and the booking message says it is
+// a test of the demo site); same numbers as src/lib/site.ts (a unit test keeps them equal). No ratings, no reviews,
+// no customer numbers, no legal ids.
 // Media: free stock video from Mixkit (Mixkit Stock Video Free License), see public/media/clients/orve/LICENCAS.txt.
 // Kept free of imports so the unit tests can load it directly.
+
+import type { OrveLocale } from "./routes";
 
 const media = "/media/clients/orve";
 
@@ -15,23 +19,21 @@ export const orve = {
   neighbourhood: "Príncipe Real",
   postalCode: "1250-000",
   locality: "Lisboa",
-  /** Placeholder contacts: a number range not given to anyone, so no stranger gets the demo's calls. */
-  phoneDisplay: "+351 900 000 000",
-  phoneHref: "tel:+351900000000",
-  whatsappDisplay: "+351 900 000 000",
-  whatsappNumber: "351900000000",
-  email: "ola@orve.example",
+  /** Steevanz's phone and WhatsApp (the demo is live for prospects). National format in Portuguese, +351 elsewhere. */
+  phoneDisplay: "961 292 679",
+  phoneDisplayIntl: "+351 961 292 679",
+  phoneHref: "tel:+351961292679",
+  whatsappNumber: "351961292679",
   /** Directions: the neighbourhood (the street is fictional). */
   directions: "https://www.google.com/maps/search/?api=1&query=Pr%C3%ADncipe+Real%2C+Lisboa",
   /** Where the «leave a review» button would point for a real business (its Google review link). */
   reviewUrl: "https://www.google.com/maps/search/?api=1&query=Pr%C3%ADncipe+Real%2C+Lisboa",
   complaints: "https://www.livroreclamacoes.pt/Inicio/",
-  /** Opening hours (fictional). Closed on Sunday and Monday. */
+  /** Opening hours (fictional); each language's copy names the days (visit.hoursDays). Closed Sunday and Monday. */
   hours: [
-    { days: "Terça a sexta", opens: "10:00", closes: "20:00" },
-    { days: "Sábado", opens: "09:30", closes: "18:00" },
+    { opens: "10:00", closes: "20:00" },
+    { opens: "09:30", closes: "18:00" },
   ],
-  closed: "Domingo e segunda",
   /** Weekday numbers (0 = Sunday) and their hours, for the booking demo. */
   openingByWeekday: {
     2: ["10:00", "20:00"],
@@ -104,15 +106,22 @@ export function orveWhatsappHref(text?: string): string {
   return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
-/** «55 €» — prices are always without VAT (owner's absolute rule); the «+ IVA» is shown next to them. */
-export function orvePrice(euros: number): string {
-  return `${euros.toLocaleString("pt-PT", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} €`;
+/** The phone as shown on the page: national format in Portuguese, with +351 in the other languages. */
+export function orvePhoneDisplay(locale: OrveLocale): string {
+  return locale === "pt" ? orve.phoneDisplay : orve.phoneDisplayIntl;
 }
 
-/** «45 min», «1 h 30» */
-export function orveDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes} min`;
+/** «48 €» («€48» in English) — prices are always without VAT (owner's absolute rule); «+ IVA» is shown beside them. */
+export function orvePrice(euros: number, locale: OrveLocale = "pt"): string {
+  const amount = euros.toLocaleString("pt-PT", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  return locale === "en" ? `€${amount}` : `${amount} €`;
+}
+
+/** «45 min», «1 h 30»; English and German keep minutes («75 min», «75 Min.»), as their price lists usually do. */
+export function orveDuration(minutes: number, locale: OrveLocale = "pt"): string {
+  if (locale === "de") return `${minutes} Min.`;
+  if (minutes < 60 || locale === "en") return `${minutes} min`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return m ? `${h} h ${String(m).padStart(2, "0")}` : `${h} h`;
+  return m ? `${h} h ${String(m).padStart(2, "0")}` : `${h} h`;
 }

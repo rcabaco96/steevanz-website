@@ -1,5 +1,5 @@
 import type { OrveCopy } from "@/content/orve/copy";
-import { orve, orveWhatsappHref } from "@/content/orve/facts";
+import { orve, orvePhoneDisplay, orveWhatsappHref } from "@/content/orve/facts";
 import { BookingForm } from "./BookingForm";
 import { ChatIcon, ClockIcon, PhoneIcon, PinIcon } from "./icons";
 import { Reveal } from "./Reveal";
@@ -8,16 +8,16 @@ import { orveSections } from "./sections";
 export function HoursList({ copy, dark = false }: { copy: OrveCopy; dark?: boolean }) {
   return (
     <dl className="grid gap-1.5">
-      {orve.hours.map((row) => (
-        <div key={row.days} className={`flex items-baseline justify-between gap-6 border-b pb-1.5 ${dark ? "border-nacar/15" : "border-tinta/10"}`}>
-          <dt>{row.days}</dt>
-          <dd className="font-display text-lg tabular-nums">
+      {orve.hours.map((row, i) => (
+        <div key={row.opens + row.closes} className={`flex items-baseline justify-between gap-6 border-b pb-1.5 ${dark ? "border-nacar/15" : "border-tinta/10"}`}>
+          <dt>{copy.visit.hoursDays[i]}</dt>
+          <dd className="font-display text-lg whitespace-nowrap tabular-nums">
             {row.opens}–{row.closes}
           </dd>
         </div>
       ))}
       <div className={`flex items-baseline justify-between gap-6 pb-1.5 ${dark ? "text-nacar/60" : "text-pedra"}`}>
-        <dt>{orve.closed}</dt>
+        <dt>{copy.visit.closedDays}</dt>
         <dd>{copy.visit.closedLabel}</dd>
       </div>
     </dl>
@@ -90,13 +90,13 @@ export function Booking({ copy }: { copy: OrveCopy }) {
                 </h3>
                 <HoursList copy={copy} />
               </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
                 <div>
                   <h3 className={label}>
                     <PhoneIcon width={16} height={16} /> {visit.phoneLabel}
                   </h3>
                   <a href={orve.phoneHref} className="font-display text-[1.45rem] leading-tight whitespace-nowrap hover:text-cobre">
-                    {orve.phoneDisplay}
+                    {orvePhoneDisplay(copy.locale)}
                   </a>
                   <p className="mt-1 text-xs text-pedra">{visit.phoneNote}</p>
                 </div>
@@ -105,7 +105,7 @@ export function Booking({ copy }: { copy: OrveCopy }) {
                     <ChatIcon width={16} height={16} /> {visit.whatsappLabel}
                   </h3>
                   <a href={orveWhatsappHref()} target="_blank" rel="noopener noreferrer" className="font-display text-[1.45rem] leading-tight whitespace-nowrap hover:text-cobre">
-                    {orve.whatsappDisplay}
+                    {orvePhoneDisplay(copy.locale)}
                     <span className="sr-only"> {copy.newTab}</span>
                   </a>
                 </div>

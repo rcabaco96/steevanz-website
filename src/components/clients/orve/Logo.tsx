@@ -50,13 +50,13 @@ export function Wordmark({ id, className = "", accent = "var(--color-cobre)", dr
 }
 
 /** The wordmark with the line under it, as a single labelled image. */
-export function Logo({ id, label, className = "", line = true, accent }: { id: string; label: string; className?: string; line?: boolean; accent?: string }) {
+export function Logo({ id, label, className = "", line, accent }: { id: string; label: string; className?: string; line?: string; accent?: string }) {
   return (
     <span role="img" aria-label={label} className={`flex flex-col items-center ${className}`}>
       <Wordmark id={id} className="w-full" accent={accent} />
       {line ? (
         <span aria-hidden="true" className="or-label mt-[7%] block text-[0.52em] whitespace-nowrap opacity-80">
-          Atelier de pele
+          {line}
         </span>
       ) : null}
     </span>

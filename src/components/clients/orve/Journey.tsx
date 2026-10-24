@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import type { OrveCopy } from "@/content/orve/copy";
-import { orve, orvePhotos } from "@/content/orve/facts";
+import { orve, orveDuration, orvePhotos, orvePrice } from "@/content/orve/facts";
 import { orveSections } from "./sections";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -33,6 +33,9 @@ export function Journey({ copy }: { copy: OrveCopy }) {
   const motionOk = useSyncExternalStore(subscribeMotion, () => !window.matchMedia(reducedQuery).matches, () => false);
   const cumulative = journey.steps.reduce<number[]>((acc, s) => [...acc, (acc.at(-1) ?? 0) + s.minutes], []);
   const total = cumulative.at(-1) ?? 0;
+  // «Hidratação «Orvalho» · 60 min · 48 €»: the house ritual is the first treatment of the price list.
+  const house = copy.rituals.list[0].treatments[0];
+  const housePrice = `${house.name} · ${orveDuration(house.minutes, copy.locale)} · ${orvePrice(house.price, copy.locale)}`;
 
   useEffect(() => {
     if (!motionOk) return;
@@ -214,7 +217,7 @@ export function Journey({ copy }: { copy: OrveCopy }) {
                 <span className="font-sans text-xs tracking-[0.2em] text-argila">0{i + 1}</span>
                 {step.title}
               </h3>
-              <p className="mt-1 text-sm text-argila">{step.minutes} min</p>
+              <p className="mt-1 text-sm text-argila">{orveDuration(step.minutes, copy.locale)}</p>
               <p className="mt-3 text-[0.95rem] leading-relaxed text-nacar/75">{step.text}</p>
             </li>
           ))}
@@ -238,7 +241,7 @@ export function Journey({ copy }: { copy: OrveCopy }) {
                 <span className="font-sans text-xs tracking-[0.2em] text-argila">0{i + 1}</span>
                 {step.title}
               </h3>
-              <p className="mt-1 text-sm text-argila">{step.minutes} min</p>
+              <p className="mt-1 text-sm text-argila">{orveDuration(step.minutes, copy.locale)}</p>
               <div data-sm-frame className="or-bead relative mt-5 aspect-square w-[min(72vw,20rem)] overflow-hidden rounded-full bg-cacau-2">
                 {media(step, i + 4, "(max-width: 1023px) 72vw, 1px")}
               </div>
@@ -247,7 +250,7 @@ export function Journey({ copy }: { copy: OrveCopy }) {
           ))}
         </ol>
         <p className="mt-14 font-display text-xl text-nacar/90 italic">
-          {journey.price} <span className="font-sans text-xs tracking-[0.12em] text-nacar/60 not-italic">{copy.rituals.plusVat}</span>
+          {housePrice} <span className="font-sans text-xs tracking-[0.12em] text-nacar/60 not-italic">{copy.rituals.plusVat}</span>
         </p>
       </div>
     </section>

@@ -12,7 +12,7 @@ gsap.registerPlugin(useGSAP);
 // rise, a copper drop falls from the top of the screen and lands on the «e» as its accent, two ripples spread, and
 // the dark is drawn back into the drop, uncovering the film. Shown once per tab session; never with reduced motion or
 // without JavaScript (the layout's <head> hides it before the first paint, so it never flashes: ./preloader-gate.ts).
-export function Preloader({ label }: { label: string }) {
+export function Preloader({ label, line }: { label: string; line: string }) {
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -77,8 +77,8 @@ export function Preloader({ label }: { label: string }) {
             <circle data-ripple cx={wordmarkDropCenter.x} cy={wordmarkDropCenter.y} r="10" opacity="0" />
           </g>
         </Wordmark>
-        <span data-line className="or-label mt-8 block whitespace-nowrap text-argila opacity-0">
-          Atelier de pele e beleza
+        <span data-line className="or-label mt-8 block text-center text-argila opacity-0">
+          {line}
         </span>
       </div>
     </div>

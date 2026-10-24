@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { orveCopy } from "@/content/orve/copy";
 import { orve } from "@/content/orve/facts";
-import { orveCanonical, orveOrigin } from "@/content/orve/routes";
+import { orveAlternates, orveCanonical, orveLocales, orveOrigin, type OrveRoute } from "@/content/orve/routes";
 
 /**
  * Where the link preview image is served from. On a Vercel preview the site is not on www.steevanz.com yet, so the
@@ -14,16 +14,21 @@ function mediaOrigin(): string {
 
 // The business's own metadata: its name, its icons, its own link preview. Nothing of Steevanz.
 // Robots: the preview path gets «noindex» from the proxy (X-Robots-Tag), and the page says so too: Orvé is fictional.
-export function orveMetadata(): Metadata {
-  const { title, description } = orveCopy.meta;
+// One set per language: its own title, description, canonical and og:locale, the hreflang alternates of all six; the
+// link preview image is the same for every language.
+export function orveMetadata({ locale }: OrveRoute): Metadata {
+  const copy = orveCopy[locale];
+  const { title, description } = copy.meta;
   const origin = mediaOrigin();
+  const canonical = orveCanonical(locale);
+  const siteOrigin = new URL(orveOrigin).origin;
   return {
     // The origin only: a base with a path (/orve) would put the preview image under /orve/media/… (a 404).
     metadataBase: new URL(origin),
     title: { absolute: title },
     description,
     applicationName: orve.name,
-    alternates: { canonical: orveCanonical() },
+    alternates: { canonical, languages: orveAlternates() },
     robots: { index: false, follow: false },
     icons: {
       icon: [
@@ -38,9 +43,10 @@ export function orveMetadata(): Metadata {
       siteName: orve.name,
       title,
       description,
-      url: origin === new URL(orveOrigin).origin ? orveCanonical() : `${origin}${new URL(orveOrigin).pathname}`,
-      locale: orveCopy.ogLocale,
-      images: [{ url: orve.media.og, width: 1200, height: 630, alt: orveCopy.ogAlt }],
+      url: origin === siteOrigin ? canonical : `${origin}${new URL(canonical).pathname}`,
+      locale: copy.ogLocale,
+      alternateLocale: orveLocales.filter((l) => l !== locale).map((l) => orveCopy[l].ogLocale),
+      images: [{ url: orve.media.og, width: 1200, height: 630, alt: copy.ogAlt }],
     },
     twitter: { card: "summary_large_image", title, description, images: [orve.media.og] },
     formatDetection: { telephone: false, email: false, address: false },

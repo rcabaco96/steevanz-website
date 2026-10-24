@@ -148,14 +148,14 @@ export function Rituals({ copy }: { copy: OrveCopy }) {
                       {ritual.treatments.map((t) => (
                         <li key={t.name} className="flex items-baseline justify-between gap-4 py-3.5">
                           <span className="min-w-0">
-                            <span className="block text-[1.02rem] leading-snug">{t.name}</span>
+                            <span className="block text-[1.02rem] leading-snug hyphens-auto">{t.name}</span>
                             <span className="mt-0.5 block text-[0.82rem] text-pedra">
-                              {orveDuration(t.minutes)}
+                              {orveDuration(t.minutes, copy.locale)}
                               {t.note ? <span className="font-display italic"> · {t.note}</span> : null}
                             </span>
                           </span>
                           <span className="shrink-0 text-right">
-                            <span className="block font-display text-[1.45rem] leading-none tabular-nums">{orvePrice(t.price)}</span>
+                            <span className="block font-display text-[1.45rem] leading-none tabular-nums">{orvePrice(t.price, copy.locale)}</span>
                             <span className="mt-1 block text-[0.68rem] tracking-[0.12em] text-pedra uppercase">{rituals.plusVat}</span>
                           </span>
                         </li>
