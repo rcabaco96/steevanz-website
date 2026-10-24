@@ -1,0 +1,75 @@
+Meada - origem das imagens e vídeos deste site
+===============================================
+A Meada é um negócio FICTÍCIO, criado pela Steevanz (2026-10-24) como site de demonstração para vender sites, lojas
+online e o cartão de cliente digital a lojas. Nome, logótipo, equipa, oficinas, morada, contactos, produtos e preços
+são inventados. Nenhuma imagem foi gerada por IA nem paga; nenhum serviço pago foi usado.
+
+Vídeos: Mixkit (https://mixkit.co), «Mixkit Stock Video Free License» (https://mixkit.co/license/#videoFree): uso
+gratuito em projetos comerciais e pessoais, sem atribuição obrigatória; não é permitido revender ou redistribuir os
+ficheiros soltos. A licença de cada clip foi confirmada na sua página (campo «license»: #videoFree) a 2026-10-24.
+Os clips foram cortados/redimensionados (ffmpeg, H.264, sem som); os posters são o primeiro fotograma (WebP).
+
+  hero.mp4, hero-retrato.mp4,
+  hero-poster.webp, hero-retrato-poster.webp
+                           - «Woman weaving a cloth on a large wooden loom» (4479)
+                             https://mixkit.co/free-stock-video/woman-weaving-a-cloth-on-a-large-wooden-loom-4479/
+  barro.mp4, barro-poster.webp
+                           - «Molding clay pottery wheel close up» (32085)
+                             https://mixkit.co/free-stock-video/molding-clay-pottery-wheel-close-up-32085/
+  bordado.mp4, bordado-poster.webp
+                           - «Hands knitting close up» (7125; mostra um bordado em ponto de cruz)
+                             https://mixkit.co/free-stock-video/hands-knitting-close-up-7125/
+
+Fotografias: Pixabay (https://pixabay.com), «Pixabay Content License» (https://pixabay.com/service/license-summary/):
+uso gratuito, também comercial, sem atribuição obrigatória; não é permitido vender as imagens tal como estão nem
+sugerir que as pessoas ou marcas nelas apoiam o negócio. Redimensionadas e convertidas para WebP (saturação -6 %).
+Todas são anteriores a 2023 (fotografias reais, não imagens geradas por IA).
+
+  p-jarro.webp           - Pixabay #7456652 (tiemaoanh)
+                           https://pixabay.com/photos/flower-vase-ceramic-terracotta-7456652/
+  p-tacas.webp           - Pixabay #4178215 (ajs1980518)
+                           https://pixabay.com/photos/ceramic-ceramic-ware-chinaware-cup-4178215/
+  p-canecas.webp         - Pixabay #4797733 (manfredrichter)
+                           https://pixabay.com/photos/ceramic-mug-ceramic-handmade-craft-4797733/
+  p-pratos.webp          - Pixabay #2592592 (StockSnap)
+                           https://pixabay.com/photos/plates-utensils-cabinet-bowls-2592592/
+  p-guardanapos.webp     - Pixabay #2317878 (congerdesign)
+                           https://pixabay.com/photos/napkin-cover-cutlery-meal-2317878/
+  p-pano-bordado.webp    - Pixabay #2093487 (Crepessuzette)
+                           https://pixabay.com/photos/cross-eyed-embroidery-red-2093487/
+  p-manta-la.webp        - Pixabay #1981518 (grupabeograd)
+                           https://pixabay.com/photos/knitting-handmade-traditional-1981518/
+  p-manta-tear.webp      - Pixabay #2381447 (Engin_Akyurt)
+                           https://pixabay.com/photos/fabric-textile-macro-detail-2381447/
+  p-cesto-vime.webp      - Pixabay #61259 (Hans)
+                           https://pixabay.com/photos/wicker-baskets-baskets-weave-wicker-61259/
+  p-cestos-palha.webp    - Pixabay #6941922 (jhenning)
+                           https://pixabay.com/photos/market-baskets-pattern-ethnic-6941922/
+  p-velas.webp           - Pixabay #1037111 (flachlandhiker)
+                           https://pixabay.com/photos/beeswax-beeswax-candles-1037111/
+  p-sabonete.webp        - Pixabay #3123468 (heyerlein)
+                           https://pixabay.com/photos/soap-gift-hygiene-flatlay-handmade-3123468/
+  etiqueta.webp          - Pixabay #3015486 (JessBaileyDesign)
+                           https://pixabay.com/photos/christmas-tag-brown-label-holiday-3015486/
+  embrulho.webp          - Pixabay #2941802 (freestocks-photos)
+                           https://pixabay.com/photos/bag-beige-craft-decorative-eco-2941802/
+  loja-parede.webp       - Pixabay #2562383 (StockSnap)
+                           https://pixabay.com/photos/still-items-things-craft-design-2562383/
+  barro-cru.webp         - Pixabay #74792 (sebadelval)
+                           https://pixabay.com/photos/clay-pottery-ceramic-potter-pot-74792/
+  vime-trama.webp        - Pixabay #3166698 (MabelAmber)
+                           https://pixabay.com/photos/reed-basket-basket-weaving-3166698/
+  agulha.webp            - Pixabay #1615526 (Bru-nO)
+                           https://pixabay.com/photos/yarn-thread-sew-sewing-thread-1615526/
+  chavenas.webp          - Pixabay #21905 (PublicDomainPictures)
+                           https://pixabay.com/photos/beverage-breakfast-ceramic-coffee-21905/
+  lavanda.webp           - Pixabay #2562117 (StockSnap)
+                           https://pixabay.com/photos/lavender-flower-vase-display-2562117/
+
+Feitos pela Steevanz (desenho original, sem fontes nem imagens de terceiros):
+  logo.svg, logo.png         - o logótipo «meada» escrito num só fio, com o pesponto e o ponto de cruz vermelhos
+  icon.svg, icon-192.png, icon-512.png, apple-icon.png, favicon.ico - o «m» com o pesponto e o ponto de cruz
+  og.jpg (1200x630)          - logótipo + hero-poster.webp recortado numa etiqueta (pré-visualização de links)
+
+As pessoas nas imagens são modelos dos bancos de imagens; os nomes da equipa e das oficinas no site são inventados e
+não as identificam.

@@ -1,0 +1,192 @@
+/* Meada's own stylesheet (a fictional shop of home and crafts, Steevanz demo): none of the Steevanz site's styles load
+   on these pages, and Tailwind only scans the shop's own files. Identity (2026-10-24): the red thread of Guimarães
+   embroidery on cotton and raw linen, kraft tags, cool graphite. Young Serif + Schibsted Grotesk + DM Mono. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/meada";
+@source "./";
+
+@theme {
+  --color-algodao: #f4f1ea;
+  --color-cru: #e7e0d2;
+  --color-cru-2: #d9d0bd;
+  --color-kraft: #c8a47a;
+  --color-kraft-2: #8f6c47;
+  --color-fio: #b3261e;
+  --color-fio-2: #8c1b15;
+  --color-grafite: #1c1d20;
+  --color-grafite-2: #2a2b2f;
+  --color-tinta: #1f2023;
+  --color-cinza: #66625b;
+
+  --font-display: var(--md-font-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--md-font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--md-font-mono), ui-monospace, "Courier New", monospace;
+
+  --ease-fio: cubic-bezier(0.65, 0, 0.2, 1);
+  --ease-out-fio: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-algodao);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-fio);
+    color: var(--color-algodao);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-fio);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .md-on-dark :focus-visible {
+    outline-color: var(--color-kraft);
+  }
+  button,
+  summary {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Stamped labels, like the kraft tags on the pieces. */
+  .md-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* A running stitch (pesponto) in red thread, used as a rule. */
+  .md-stitch {
+    height: 3px;
+    background-image: linear-gradient(90deg, var(--color-fio) 0 62%, transparent 62% 100%);
+    background-size: 15px 3px;
+    background-repeat: repeat-x;
+    border-radius: 2px;
+  }
+  .md-stitch-light {
+    background-image: linear-gradient(90deg, var(--color-kraft) 0 62%, transparent 62% 100%);
+  }
+
+  /* The weave of raw linen, as a faint background texture (two crossing hairline grids). */
+  .md-linen {
+    background-color: var(--color-cru);
+    background-image:
+      repeating-linear-gradient(0deg, rgb(31 32 35 / 0.035) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, rgb(31 32 35 / 0.03) 0 1px, transparent 1px 5px);
+  }
+
+  /* A hang tag cut from kraft paper: chamfered top corners, a hole with a reinforced ring. */
+  .md-tag {
+    clip-path: polygon(22% 0, 78% 0, 100% 14%, 100% 100%, 0 100%, 0 14%);
+  }
+  .md-kraft {
+    background-color: var(--color-kraft);
+    background-image:
+      radial-gradient(120% 80% at 30% 10%, rgb(255 255 255 / 0.16), transparent 60%),
+      repeating-linear-gradient(105deg, rgb(80 55 30 / 0.05) 0 2px, transparent 2px 6px);
+  }
+}
+
+/* The opening (Preloader): gone at once when already seen this session or with reduced motion; while it plays, the
+   hero's entrance waits behind it and the page doesn't scroll. */
+.md-seen .md-pre {
+  display: none;
+}
+.md-loading body {
+  overflow: hidden;
+}
+.md-loading .md-rise {
+  animation-play-state: paused;
+}
+
+/* Entrance of the hero: separate translate property, so the element's own transform stays. */
+@keyframes md-rise {
+  from { opacity: 0; translate: 0 1.1rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+.md-rise {
+  animation: md-rise 1.1s var(--ease-out-fio) both;
+}
+
+/* The scroll cue: a stitch that keeps running down. */
+@keyframes md-cue {
+  from { background-position: 0 0; }
+  to { background-position: 0 30px; }
+}
+.md-cue {
+  background-image: linear-gradient(180deg, currentColor 0 60%, transparent 60% 100%);
+  background-size: 2px 15px;
+  animation: md-cue 1.2s linear infinite;
+}
+
+/* The tag on its string swings a little on its own (the scroll adds to it). */
+@keyframes md-sway {
+  0%, 100% { rotate: -1.6deg; }
+  50% { rotate: 1.6deg; }
+}
+.md-sway {
+  animation: md-sway 5.5s ease-in-out infinite;
+  transform-origin: 50% 0;
+}
+
+/* FAQ answers open by animating their height to «auto». */
+.md-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.5s var(--ease-out-fio),
+    content-visibility 0.5s allow-discrete;
+}
+.md-faq[open]::details-content {
+  block-size: auto;
+}
+:root {
+  interpolate-size: allow-keywords;
+}
+.md-faq summary::-webkit-details-marker {
+  display: none;
+}
+.md-faq summary {
+  list-style: none;
+}
+.md-faq[open] .md-faq-icon {
+  rotate: 45deg;
+}
+
+/* The basket drawer. */
+.md-drawer-scroll {
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-rise,
+  .md-cue,
+  .md-sway {
+    animation: none !important;
+  }
+  .md-faq::details-content {
+    transition: none;
+  }
+}
