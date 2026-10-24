@@ -66,6 +66,21 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
   },
+  {
+    // Platibanda (owner, 2026-10-24): a FICTIONAL real-estate agency in Tavira, Steevanz's showcase site for
+    // real-estate and holiday-rental businesses. Only the preview path; it will never have a domain of its own.
+    id: "platibanda",
+    hosts: [],
+    base: "/platibanda",
+    rootFiles: {
+      "/robots.txt": "/platibanda/robots.txt",
+      "/sitemap.xml": "/platibanda/sitemap.xml",
+      "/manifest.webmanifest": "/platibanda/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/platibanda/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/platibanda/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/platibanda/"],
+  },
 ];
 
 export type ClientSiteDecision =
