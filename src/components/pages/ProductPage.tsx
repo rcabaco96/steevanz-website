@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { photos } from "@/content/media";
@@ -351,22 +352,36 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
 /** Live demos of the product, lower down the page and secondary to «Agendar demonstração» (content/product-examples.ts). */
 function ProductExamplesSection({ examples, locale }: { examples: ProductExamples; locale: Locale }) {
   const copy = localizePartial(examples.copy, locale);
+  // One example: a wide card, the picture beside the name from a tablet up. Several: a row of cards.
+  const single = examples.items.length === 1;
   return (
     <Section labelledBy="examples-title">
       <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-      <ul className="mt-10 grid gap-4 sm:grid-cols-3">
+      <ul className={single ? "mt-10 max-w-4xl" : "mt-10 grid gap-5 sm:grid-cols-3"}>
         {examples.items.map((item, index) => (
           <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
             <a
               href={item.external ? `${item.href}/${baseLocaleOf(locale)}` : item.href}
               {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
-              className="card flex min-h-28 flex-col justify-between gap-4 p-6 transition-colors hover:border-accent/50"
+              className={`card group/example flex h-full flex-col overflow-hidden transition-colors hover:border-accent/50 ${single ? "sm:grid sm:grid-cols-[1.35fr_1fr] sm:items-center" : ""}`}
             >
-              <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
-                {copy.open}
-                <ArrowRight size={16} />
-                {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
+              {/* The picture of what the card opens (its link preview, 1200×630): the box keeps its shape while it loads. */}
+              <span className="relative block aspect-[1200/630] overflow-hidden bg-surface-2">
+                <Image
+                  src={item.image.src}
+                  alt={localize(item.image.alt, locale)}
+                  fill
+                  sizes={single ? "(min-width: 896px) 512px, (min-width: 640px) 57vw, 100vw" : "(min-width: 1216px) 371px, (min-width: 640px) 31vw, 100vw"}
+                  className="object-cover transition-transform duration-500 group-hover/example:scale-[1.03]"
+                />
+              </span>
+              <span className={`flex flex-1 flex-col justify-between gap-4 ${single ? "p-6 sm:p-8" : "p-5 sm:p-6"}`}>
+                <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
+                  {copy.open}
+                  <ArrowRight size={16} className="transition-transform duration-300 group-hover/example:translate-x-1" />
+                  {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
+                </span>
               </span>
             </a>
           </li>

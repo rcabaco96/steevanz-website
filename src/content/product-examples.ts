@@ -6,15 +6,42 @@ import type { Localized } from "@/lib/i18n";
 import type { ProductId } from "./types";
 
 export interface ProductExamples {
-  /** `href` is a path on this site, or an external address opened in a new tab. */
-  items: { href: string; label: Localized<string>; external?: boolean }[];
+  /**
+   * `href` is a path on this site, or an external address opened in a new tab. `image` is a 1200×630 picture of
+   * what the card opens, really working (owner, 2026-10-24: «Até deveriam ser as imagens dos metadados»): the
+   * link preview (og:image) of that page when it has its own, otherwise a capture of the live demo.
+   */
+  items: { href: string; label: Localized<string>; external?: boolean; image: ExampleImage }[];
   copy: Localized<{ eyebrow: string; title: string; lead: string; open: string; note: string }>;
+}
+
+export interface ExampleImage {
+  /** A file in /public, 1200×630. */
+  src: string;
+  alt: Localized<string>;
 }
 
 export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   // The Steevanz demo menu the Menu digital ad shows (lib/video-menus/rules.ts: a demo menu).
   "digital-menu": {
-    items: [{ href: "/menu/trattoria-da-nonna", label: { pt: "Trattoria da Nonna", en: "Trattoria da Nonna" } }],
+    items: [
+      {
+        href: "/menu/trattoria-da-nonna",
+        label: { pt: "Trattoria da Nonna", en: "Trattoria da Nonna" },
+        // Also the menu's own link preview (app/(publico)/menu/[slug]/page.tsx, demoPreviews).
+        image: {
+          src: "/og/menu-trattoria-da-nonna.jpg",
+          alt: {
+            pt: "Dois telemóveis com o Menu digital da Trattoria da Nonna aberto: a grelha de antipasti e uma burrata em vídeo no ecrã inteiro.",
+            en: "Two phones with the Trattoria da Nonna digital menu open: the antipasti grid and a burrata on video, full screen.",
+            es: "Dos móviles con el Menú digital de la Trattoria da Nonna abierto: la cuadrícula de antipasti y una burrata en vídeo a pantalla completa.",
+            fr: "Deux téléphones avec le Menu digital de la Trattoria da Nonna ouvert : la grille des antipasti et une burrata en vidéo en plein écran.",
+            de: "Zwei Handys mit der geöffneten Digitalen Speisekarte der Trattoria da Nonna: das Antipasti-Raster und eine Burrata im Vollbild-Video.",
+            it: "Due smartphone con il Menù digitale della Trattoria da Nonna aperto: la griglia degli antipasti e una burrata in video a schermo intero.",
+          },
+        },
+      },
+    ],
     copy: {
       pt: {
         eyebrow: "Exemplo",
@@ -62,7 +89,24 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   },
   // The Steevanz example card (owner, 2026-10-20): a real card, the founder's own contact page.
   "business-card": {
-    items: [{ href: "/c/rogerio-cabaco", label: { pt: "Rogério Cabaço, Steevanz", en: "Rogério Cabaço, Steevanz" } }],
+    items: [
+      {
+        href: "/c/rogerio-cabaco",
+        label: { pt: "Rogério Cabaço, Steevanz", en: "Rogério Cabaço, Steevanz" },
+        // Also the card page's own link preview (app/(cartao-visita)/c/[slug]/page.tsx, cardPreviews).
+        image: {
+          src: "/og/cartao-rogerio-cabaco.jpg",
+          alt: {
+            pt: "O cartão de visita Steevanz de Rogério Cabaço, frente e verso, e um telemóvel com a página que abre, com o botão «Guardar contacto».",
+            en: "Rogério Cabaço's Steevanz business card, front and back, and a phone with the page it opens, with the «Save contact» button.",
+            es: "La tarjeta de visita Steevanz de Rogério Cabaço, por delante y por detrás, y un móvil con la página que abre, con el botón «Guardar contacto».",
+            fr: "La carte de visite Steevanz de Rogério Cabaço, recto et verso, et un téléphone avec la page qu'elle ouvre et le bouton « Enregistrer le contact ».",
+            de: "Die Steevanz-Visitenkarte von Rogério Cabaço, Vorder- und Rückseite, und ein Handy mit der Seite, die sie öffnet, mit der Schaltfläche „Kontakt speichern“.",
+            it: "Il biglietto da visita Steevanz di Rogério Cabaço, fronte e retro, e uno smartphone con la pagina che apre, con il pulsante «Salvi il contatto».",
+          },
+        },
+      },
+    ],
     copy: {
       pt: {
         eyebrow: "Exemplo",
@@ -111,10 +155,56 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   // The owner's alojamento-template demos (2026-10-12): fictional brand, no reviews (an empty state). Until
   // 2026-10-20 they were on the holiday rentals sector page.
   website: {
+    // Captures of each live demo (computer and phone); the demos' own og:image is one stock photo for all three.
     items: [
-      { href: "https://alojamento-template.vercel.app/vista-bb5622", label: { pt: "Modelo 1", en: "Model 1", es: "Modelo 1", fr: "Modèle 1", de: "Modell 1", it: "Modello 1" }, external: true },
-      { href: "https://alojamento-template.vercel.app/vista-df3246", label: { pt: "Modelo 2", en: "Model 2", es: "Modelo 2", fr: "Modèle 2", de: "Modell 2", it: "Modello 2" }, external: true },
-      { href: "https://alojamento-template.vercel.app/vista-b3438b", label: { pt: "Modelo 3", en: "Model 3", es: "Modelo 3", fr: "Modèle 3", de: "Modell 3", it: "Modello 3" }, external: true },
+      {
+        href: "https://alojamento-template.vercel.app/vista-bb5622",
+        label: { pt: "Modelo 1", en: "Model 1", es: "Modelo 1", fr: "Modèle 1", de: "Modell 1", it: "Modello 1" },
+        external: true,
+        image: {
+          src: "/media/examples/alojamento-modelo-1.jpg",
+          alt: {
+            pt: "O modelo 1 aberto no computador e no telemóvel: claro, com o botão de pesquisa verde-petróleo.",
+            en: "Model 1 open on a computer and a phone: light, with a teal search button.",
+            es: "El modelo 1 abierto en el ordenador y en el móvil: claro, con el botón de búsqueda verde petróleo.",
+            fr: "Le modèle 1 ouvert sur un ordinateur et un téléphone : clair, avec le bouton de recherche vert pétrole.",
+            de: "Modell 1 geöffnet am Computer und auf dem Handy: hell, mit petrolgrüner Suchschaltfläche.",
+            it: "Il modello 1 aperto sul computer e sullo smartphone: chiaro, con il pulsante di ricerca verde petrolio.",
+          },
+        },
+      },
+      {
+        href: "https://alojamento-template.vercel.app/vista-df3246",
+        label: { pt: "Modelo 2", en: "Model 2", es: "Modelo 2", fr: "Modèle 2", de: "Modell 2", it: "Modello 2" },
+        external: true,
+        image: {
+          src: "/media/examples/alojamento-modelo-2.jpg",
+          alt: {
+            pt: "O modelo 2 aberto no computador e no telemóvel: escuro, com a foto da casa em fundo e letras finas.",
+            en: "Model 2 open on a computer and a phone: dark, with the house photo behind thin lettering.",
+            es: "El modelo 2 abierto en el ordenador y en el móvil: oscuro, con la foto de la casa de fondo y letras finas.",
+            fr: "Le modèle 2 ouvert sur un ordinateur et un téléphone : sombre, avec la photo de la maison en fond et des lettres fines.",
+            de: "Modell 2 geöffnet am Computer und auf dem Handy: dunkel, mit dem Hausfoto im Hintergrund und feiner Schrift.",
+            it: "Il modello 2 aperto sul computer e sullo smartphone: scuro, con la foto della casa sullo sfondo e lettere sottili.",
+          },
+        },
+      },
+      {
+        href: "https://alojamento-template.vercel.app/vista-b3438b",
+        label: { pt: "Modelo 3", en: "Model 3", es: "Modelo 3", fr: "Modèle 3", de: "Modell 3", it: "Modello 3" },
+        external: true,
+        image: {
+          src: "/media/examples/alojamento-modelo-3.jpg",
+          alt: {
+            pt: "O modelo 3 aberto no computador e no telemóvel: verde-sálvia, com a foto num arco e o botão terracota.",
+            en: "Model 3 open on a computer and a phone: sage green, with the photo in an arch and a terracotta button.",
+            es: "El modelo 3 abierto en el ordenador y en el móvil: verde salvia, con la foto en un arco y el botón terracota.",
+            fr: "Le modèle 3 ouvert sur un ordinateur et un téléphone : vert sauge, avec la photo dans une arche et le bouton terre cuite.",
+            de: "Modell 3 geöffnet am Computer und auf dem Handy: salbeigrün, mit dem Foto in einem Bogen und terrakottafarbener Schaltfläche.",
+            it: "Il modello 3 aperto sul computer e sullo smartphone: verde salvia, con la foto in un arco e il pulsante terracotta.",
+          },
+        },
+      },
     ],
     copy: {
       pt: {
