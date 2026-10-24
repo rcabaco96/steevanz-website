@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { photos } from "@/content/media";
 import { getProductCopy } from "@/content/product-copy";
 import { pageLabels, type PageLabels } from "@/content/page-labels";
-import { productExamples, type ProductExamples } from "@/content/product-examples";
+import { exampleDemoTag, productExamples, type ProductExamples } from "@/content/product-examples";
 import { adTabsLabel, adVideoLabels, productAds } from "@/content/product-ads";
 import { getProduct, type Product } from "@/content/products";
 import { getSector } from "@/content/sectors";
@@ -27,7 +27,7 @@ import { Faq } from "@/components/ui/Faq";
 import { Price, formatEuro } from "@/components/ui/Price";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { ProductVisual } from "@/components/visuals/ProductVisual";
-import { baseLocaleOf, localize, localizePartial, type Locale } from "@/lib/i18n";
+import { localize, localizePartial, type Locale } from "@/lib/i18n";
 import { faqJsonLd, productJsonLd } from "@/lib/jsonld";
 import { bookingHref, href } from "@/lib/routes";
 import { pageMetadata } from "@/lib/seo";
@@ -349,43 +349,78 @@ export function ProductPage({ locale, productId }: { locale: Locale; productId: 
   );
 }
 
-/** Live demos of the product, lower down the page and secondary to «Agendar demonstração» (content/product-examples.ts). */
+/** The cards' grid by how many there are: a row of 3 or 4 on a computer, 2 per row on a tablet. */
+function examplesGrid(count: number): string {
+  if (count === 2) return "sm:grid-cols-2";
+  if (count === 3) return "sm:grid-cols-3";
+  if (count === 4) return "sm:grid-cols-2 lg:grid-cols-4";
+  return "sm:grid-cols-2 lg:grid-cols-3";
+}
+
+/**
+ * Live examples of the product, lower down the page and secondary to «Agendar demonstração» (content/product-examples.ts).
+ * One example: a wide card, the picture beside the name from a tablet up. Two: side by side. Three or more: on a phone a
+ * row to swipe (the next card peeks in; no autoplay, so no pause button), a grid from a tablet up.
+ */
 function ProductExamplesSection({ examples, locale }: { examples: ProductExamples; locale: Locale }) {
   const copy = localizePartial(examples.copy, locale);
-  // One example: a wide card, the picture beside the name from a tablet up. Several: a row of cards.
-  const single = examples.items.length === 1;
+  const count = examples.items.length;
+  const single = count === 1;
+  const swipe = count >= 3;
+  const listClass = single
+    ? "mt-10 max-w-4xl"
+    : swipe
+      ? `-mx-5 mt-10 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-3 sm:mx-0 sm:grid sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 ${examplesGrid(count)}`
+      : `mt-10 grid gap-5 ${examplesGrid(count)}`;
+  const sizes = single
+    ? "(min-width: 896px) 512px, (min-width: 640px) 57vw, 100vw"
+    : count === 2
+      ? "(min-width: 1216px) 566px, (min-width: 640px) 46vw, 100vw"
+      : count === 3
+        ? "(min-width: 1216px) 371px, (min-width: 640px) 31vw, 82vw"
+        : count === 4
+          ? "(min-width: 1216px) 274px, (min-width: 1024px) 23vw, (min-width: 640px) 46vw, 82vw"
+          : "(min-width: 1216px) 371px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, 82vw";
+  const demoTag = localize(exampleDemoTag, locale);
   return (
     <Section labelledBy="examples-title">
       <SectionHeader id="examples-title" eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-      <ul className={single ? "mt-10 max-w-4xl" : "mt-10 grid gap-5 sm:grid-cols-3"}>
-        {examples.items.map((item, index) => (
-          <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${index * 70}ms` }}>
-            <a
-              href={item.external ? `${item.href}/${baseLocaleOf(locale)}` : item.href}
-              {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
-              className={`card group/example flex h-full flex-col overflow-hidden transition-colors hover:border-accent/50 ${single ? "sm:grid sm:grid-cols-[1.35fr_1fr] sm:items-center" : ""}`}
-            >
-              {/* The picture of what the card opens (its link preview, 1200×630): the box keeps its shape while it loads. */}
-              <span className="relative block aspect-[1200/630] overflow-hidden bg-surface-2">
-                <Image
-                  src={item.image.src}
-                  alt={localize(item.image.alt, locale)}
-                  fill
-                  sizes={single ? "(min-width: 896px) 512px, (min-width: 640px) 57vw, 100vw" : "(min-width: 1216px) 371px, (min-width: 640px) 31vw, 100vw"}
-                  className="object-cover transition-transform duration-500 group-hover/example:scale-[1.03]"
-                />
-              </span>
-              <span className={`flex flex-1 flex-col justify-between gap-4 ${single ? "p-6 sm:p-8" : "p-5 sm:p-6"}`}>
-                <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
-                  {copy.open}
-                  <ArrowRight size={16} className="transition-transform duration-300 group-hover/example:translate-x-1" />
-                  {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
+      <ul data-reveal className={listClass}>
+        {examples.items.map((item) => {
+          const target = locale === "pt" ? item.href : (item.hrefEn ?? item.href);
+          return (
+            <li key={item.href} className={swipe ? "w-[82%] shrink-0 snap-start sm:w-auto" : undefined}>
+              <a
+                href={target}
+                {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
+                className={`card group/example flex h-full flex-col overflow-hidden transition-colors hover:border-accent/50 ${single ? "sm:grid sm:grid-cols-[1.35fr_1fr] sm:items-center" : ""}`}
+              >
+                {/* The picture of what the card opens (its link preview, 1200×630; without Portuguese words in the other
+                    languages): the box keeps its shape while it loads. */}
+                <span className="relative block aspect-[1200/630] overflow-hidden bg-surface-2">
+                  <Image
+                    src={locale === "pt" ? item.image.src : (item.image.intl ?? item.image.src)}
+                    alt={localize(item.image.alt, locale)}
+                    fill
+                    sizes={sizes}
+                    className="object-cover transition-transform duration-500 group-hover/example:scale-[1.03]"
+                  />
                 </span>
-              </span>
-            </a>
-          </li>
-        ))}
+                <span className={`flex flex-1 flex-col justify-between gap-4 ${single ? "p-6 sm:p-8" : "p-5 sm:p-6"}`}>
+                  <span className="flex flex-col items-start gap-2">
+                    {item.demo ? <span className="rounded-full bg-gold-soft px-2.5 py-0.5 text-xs font-semibold text-text">{demoTag}</span> : null}
+                    <span className="display text-2xl text-text">{localize(item.label, locale)}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
+                    {copy.open}
+                    <ArrowRight size={16} className="transition-transform duration-300 group-hover/example:translate-x-1" />
+                    {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
       <p className="mt-6 text-sm text-subtle">{copy.note}</p>
     </Section>

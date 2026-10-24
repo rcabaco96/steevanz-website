@@ -5,13 +5,17 @@ import { JoinCardForm, RecoverForm } from "@/components/public/loyalty/CardForms
 import { StampCard } from "@/components/public/loyalty/StampCard";
 import { cardRewards, nextReward, rewardsSentence, stampRuleText } from "@/lib/modules/loyalty/rules";
 import { ensureProgram } from "@/lib/modules/loyalty/store";
+import { demoSpacePreview } from "@/lib/link-previews";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const establishment = await publicEstablishment((await params).slug, "loyalty");
-  return { title: establishment ? `Cartão de cliente · ${establishment.name}` : "Cartão de cliente" };
+  const slug = (await params).slug;
+  const establishment = await publicEstablishment(slug, "loyalty");
+  if (!establishment) return { title: "Cartão de cliente" };
+  const title = `Cartão de cliente · ${establishment.name}`;
+  return { title, ...demoSpacePreview("cartao", slug, title) };
 }
 
 export default async function LoyaltyJoinPage({ params }: Props) {

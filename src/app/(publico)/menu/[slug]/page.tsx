@@ -5,6 +5,7 @@ import { VideoMenu } from "@/components/menu/VideoMenu";
 import { menuColorsFromLogo } from "@/lib/video-menus/logo-colors-server";
 import { bunnyHost, hasPublicDemoOrdering, isDemoMenu, menuReferrer, slugProblem } from "@/lib/video-menus/rules";
 import { getPublicMenu, MenusNotReadyError } from "@/lib/video-menus/store";
+import { previewImageUrl, siteOrigin } from "@/lib/link-previews";
 
 // A client's digital menu in videos (managed in /admin/menus), opened from a QR code or a link. Only
 // active menus with at least one dish; anything else is a 404. Each menu is rendered on its first
@@ -30,28 +31,35 @@ async function loadMenu(slug: string) {
 // Link previews (WhatsApp, Facebook…) read the Open Graph tags. This layout has no metadataBase,
 // so the URLs are absolute. Demo menus are shared as Steevanz's free demo, with its own picture;
 // a client's menu gets its own name and no Steevanz picture.
-const siteOrigin = "https://www.steevanz.com";
-// The pictures come from this deployment: a branch preview's own address, so a new picture is seen before it
-// reaches www.steevanz.com.
-const imageOrigin = process.env.VERCEL_ENV === "preview" && process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : siteOrigin;
 
 /** Demo menus with a picture of their own (phones with that menu open); the others share the Steevanz demo picture. */
 const demoPreviews: Record<string, { image: string; alt: string }> = {
   // Also the picture of its card on the Menu digital product page (content/product-examples.ts).
   "trattoria-da-nonna": { image: "/og/menu-trattoria-da-nonna.jpg", alt: "Menu digital da Trattoria da Nonna (demonstração)" },
+  "sakura-sushi": { image: "/og/menu-sakura-sushi.jpg", alt: "Menu digital do Sakura Sushi (demonstração)" },
+  "marisqueira-do-cais": { image: "/og/menu-marisqueira-do-cais.jpg", alt: "Menu digital da Marisqueira do Cais (demonstração)" },
 };
 
-/** Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, Fabio's Roadstop, Lobo do Mar). */
+/**
+ * Menus with a preview of their own, in the restaurant's identity (owner, 2026-10-22: O Ermita, Fabio's Roadstop, Lobo do
+ * Mar; 2026-10-24: Dolci e Salati): phones with the menu open, never the site's picture. Also the pictures of their cards
+ * on the Menu digital product page (content/product-examples.ts).
+ */
 const ownPreviews: Record<string, { title: string; description: string; image: string }> = {
+  "dolci-salati": {
+    title: "Dolci e Salati · Menu digital",
+    description: "Gelados artesanais, brunch e bebidas: veja cada prato em vídeo antes de escolher.",
+    image: "/media/clients/dolci-salati/og-menu.jpg",
+  },
   "o-ermita": {
     title: "O Ermita · Menu digital",
     description: "O menu digital do Ermita: cada prato em vídeo, para ver antes de escolher, e o pedido feito à mesa.",
-    image: "/media/clients/o-ermita/og-menu.jpg",
+    image: "/media/clients/o-ermita/og-menu-digital.jpg",
   },
   "fabios-roadstop": {
     title: "Fabio's Roadstop · Menu digital",
     description: "Burgers, pequenos-almoços e cocktails: veja cada prato em vídeo antes de escolher.",
-    image: "/media/clients/fabios-roadstop/og-menu.jpg",
+    image: "/media/clients/fabios-roadstop/og-menu-digital.jpg",
   },
   "lobo-do-mar": {
     title: "Lobo do Mar · Menu digital",
@@ -67,7 +75,7 @@ export async function generateMetadata({ params }: PageProps<"/menu/[slug]">): P
   const url = `${siteOrigin}/menu/${slug}`;
   const own = ownPreviews[slug];
   if (own) {
-    const image = { url: `${imageOrigin}${own.image}`, width: 1200, height: 630, alt: own.title };
+    const image = { url: previewImageUrl(own.image), width: 1200, height: 630, alt: own.title };
     return {
       title: own.title,
       description: own.description,
@@ -79,7 +87,7 @@ export async function generateMetadata({ params }: PageProps<"/menu/[slug]">): P
   if (isDemoMenu(slug)) {
     const description = "Cada prato em vídeo e pedidos feitos na mesa.";
     const demo = demoPreviews[slug];
-    const image = { url: `${imageOrigin}${demo?.image ?? "/og/og-menu-steevanz.jpg"}`, width: 1200, height: 630, alt: demo?.alt ?? "Menu digital em vídeo da Steevanz" };
+    const image = { url: previewImageUrl(demo?.image ?? "/og/og-menu-steevanz.jpg"), width: 1200, height: 630, alt: demo?.alt ?? "Menu digital em vídeo da Steevanz" };
     return {
       title: "Demonstração grátis · Menu digital Steevanz",
       description,

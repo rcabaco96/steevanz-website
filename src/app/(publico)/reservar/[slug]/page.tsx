@@ -5,6 +5,7 @@ import { BrandFrame, PublicCard } from "@/components/public/BrandFrame";
 import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
 import { bookingChangeState, ensureBookingPage, formatBookingWhen, getBookingByToken, serviceStaff, toleranceText } from "@/lib/modules/bookings/store";
+import { demoSpacePreview } from "@/lib/link-previews";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -14,8 +15,11 @@ function first(value: string | string[] | undefined): string {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const establishment = await publicEstablishment((await params).slug, "bookings");
-  return { title: establishment ? `${kindWords[establishment.kind].bookingTitle} · ${establishment.name}` : "Reservar" };
+  const slug = (await params).slug;
+  const establishment = await publicEstablishment(slug, "bookings");
+  if (!establishment) return { title: "Reservar" };
+  const title = `${kindWords[establishment.kind].bookingTitle} · ${establishment.name}`;
+  return { title, ...demoSpacePreview("reservar", slug, title) };
 }
 
 const price = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });

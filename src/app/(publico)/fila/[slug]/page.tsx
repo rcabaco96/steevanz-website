@@ -8,13 +8,17 @@ import { kindWords } from "@/lib/establishments/kinds";
 import { loadBundle } from "@/lib/establishments/store";
 import { formatWait } from "@/lib/modules/waitlist/eta";
 import { currentSettings, loadQueue, queueWait, servingNumber } from "@/lib/modules/waitlist/store";
+import { demoSpacePreview } from "@/lib/link-previews";
 import { publicEstablishment } from "@/lib/modules/public";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const establishment = await publicEstablishment((await params).slug, "waitlist");
-  return { title: establishment ? `Lista de espera · ${establishment.name}` : "Lista de espera" };
+  const slug = (await params).slug;
+  const establishment = await publicEstablishment(slug, "waitlist");
+  if (!establishment) return { title: "Lista de espera" };
+  const title = `Lista de espera · ${establishment.name}`;
+  return { title, ...demoSpacePreview("fila", slug, title) };
 }
 
 function ClockIcon() {

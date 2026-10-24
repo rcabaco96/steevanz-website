@@ -64,7 +64,7 @@ export const ermita = {
     terraco: `${media}/terraco.webp`,
     /** Link previews (1200×630): the site (the convent from the air and the painted vault) and the video menu. */
     og: `${media}/og-site.jpg`,
-    ogMenu: `${media}/og-menu.jpg`,
+    ogMenu: `${media}/og-menu-digital.jpg`,
     icon192: `${media}/icone-logo-192.png`,
     icon512: `${media}/icone-logo-512.png`,
     appleIcon: `${media}/icone-logo-apple.png`,
