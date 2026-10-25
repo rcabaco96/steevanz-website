@@ -231,7 +231,7 @@ export function BotSettingsForm({
           Ligação
           <select name="channel_provider" defaultValue={bot.channel_provider} className={input}>
             <option value="open-wa">WhatsApp Web (open-wa): só testes</option>
-            <option value="cloud-api">API oficial da Meta (ainda não ativa)</option>
+            <option value="cloud-api">API oficial da Meta (webhook do site)</option>
           </select>
         </label>
         <label className={adminLabelClasses}>

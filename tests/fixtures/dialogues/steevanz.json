@@ -61,6 +61,35 @@
       ]
     },
     {
+      "name": "the free demo menu (WhatsApp funnel), then its price",
+      "turns": [
+        {
+          "customer": "Têm algum exemplo do Menu digital?",
+          "free": {
+            "includes": [
+              "steevanz\\.com/menu/trattoria-da-nonna"
+            ],
+            "excludes": [
+              "Não tenho"
+            ]
+          },
+          "ai": {
+            "excerpts": [
+              "menu/trattoria-da-nonna"
+            ]
+          }
+        },
+        {
+          "customer": "Posso ver um menu de exemplo?",
+          "free": {
+            "includes": [
+              "steevanz\\.com/menu/trattoria-da-nonna"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "what the Menu digital is, then its price",
       "turns": [
         {

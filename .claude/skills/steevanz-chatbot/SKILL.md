@@ -136,3 +136,13 @@ Live check with Groq's free tier: at most a few dozen calls, ~25 s apart (our 9 
 
 eslint on changed files, `npx tsc --noEmit -p .`, `npm test`; migrations only with the owner's direct
 authorisation (begin/commit + rollback file); commit without `public/home/brand/`.
+
+## WhatsApp pela API oficial (2026-10-25)
+
+- Webhook `src/app/api/chatbot/whatsapp/route.ts` + `src/lib/chatbot/cloud-api.ts`; guia do dono em
+  `docs/chatbot/WHATSAPP-CLOUD-API.md`. Só responde a um bot com canal `cloud-api`, com as respostas ligadas, no
+  `WHATSAPP_PHONE_NUMBER_ID` configurado; assinatura sempre verificada.
+- Cada resposta enviada custa dinheiro à Meta (por mensagem, desde 2026-10-01): nunca enviar mensagens reais em
+  testes nem scripts; testes só com fetch falso (`tests/chatbot-cloud-api.test.mjs`).
+- Passagem para pessoa → email para `ADMIN_EMAILS`; o dono a escrever na app (coexistência, `smb_message_echoes`)
+  assume a conversa.

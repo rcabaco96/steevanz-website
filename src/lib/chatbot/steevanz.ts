@@ -18,6 +18,9 @@ export const steevanzSiteUrl = "https://www.steevanz.com";
 
 const url = (route: Route) => `${steevanzSiteUrl}${href("pt", route)}`;
 
+/** The demo menu sent to every lead (one of the Menu digital examples in src/content/product-examples.ts). */
+export const demoMenuUrl = `${steevanzSiteUrl}/menu/trattoria-da-nonna`;
+
 /** «961 292 679» (the owner's way of writing the number on the site). */
 export const steevanzPhone = site.phoneDisplay.replace(/^\+351\s*/, "");
 
@@ -159,6 +162,8 @@ function facts() {
     whatsapp: `https://wa.me/${site.whatsappNumber}`,
     demo: `${contact.demoBody} Marque em ${url({ key: "book" })}`,
     info: `${contact.infoBody} Peça em ${url({ key: "requestInfo" })}`,
+    // The free demo the owner sends every contact (the WhatsApp funnel of the Menu digital): a demo menu, said to be one.
+    menuExample: `Sim. Veja um Menu digital de demonstração no telemóvel, como um cliente à mesa: ${demoMenuUrl}. Para ver o seu restaurante assim, marque uma demonstração gratuita em ${url({ key: "book" })}`,
     products: productFacts,
     sectors: sectorFacts,
     allProducts: url({ key: "products" }),
@@ -192,6 +197,7 @@ export function steevanzEntries(): SteevanzEntry[] {
     { kind: "info", question: "Qual é o email?", answer: `O nosso email é ${site.email}.`, keywords: "email, e-mail, mail, correio eletrónico" },
     { kind: "info", question: "Têm Instagram?", answer: `Sim: ${site.instagramHandle} (${site.instagramUrl}).`, keywords: "instagram" },
     { kind: "faq", question: "Como marcar uma demonstração?", answer: f.demo, keywords: "demonstração, demo, marcar, marco, agendar, reunião, apresentação, ver a funcionar, gratuita" },
+    { kind: "faq", question: "Posso ver um exemplo do Menu digital?", answer: f.menuExample, keywords: "exemplo, exemplos, ver um menu, menu de exemplo, menu de demonstração, demo do menu, experimentar o menu, trattoria" },
     { kind: "faq", question: "Podem enviar informação por escrito?", answer: f.info, keywords: "por escrito, proposta, orçamento, detalhes" },
     { kind: "policy", question: "Os preços incluem IVA?", answer: vatAnswer, keywords: "iva, imposto, impostos" },
     {
@@ -239,7 +245,7 @@ export function steevanzDocument(): string {
     `Página de contacto: ${f.contactPage}`,
     "",
   );
-  out.push("Demonstração gratuita", `Como marcar uma demonstração? ${f.demo}`, `Informação e preços por escrito: ${lower(f.info)}`, "");
+  out.push("Demonstração gratuita", `Como marcar uma demonstração? ${f.demo}`, `Exemplo do Menu digital: ${f.menuExample}`, `Informação e preços por escrito: ${lower(f.info)}`, "");
   out.push("Preços", `Os preços incluem IVA? ${vatAnswer}`);
   for (const fact of f.products) out.push(`${fact.name} — ${fact.price}.`);
   out.push(`Todos os produtos e preços: ${f.allProducts}`, "");
