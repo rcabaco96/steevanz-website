@@ -339,8 +339,12 @@ function ProductExamplesSection({ examples, locale }: { examples: ProductExample
         <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {examples.items.map((item, index) => (
             <li key={item.href} data-reveal style={{ ["--reveal-delay" as string]: `${(index % 3) * 70}ms` }}>
-              {/* Shown like the link preview a phone draws when the menu's link is shared. */}
-              <a href={item.href} className="group block overflow-hidden rounded-[1.25rem] border border-line bg-surface-2 transition-colors hover:border-accent/50">
+              {/* Shown like the link preview a phone draws when the link is shared. */}
+              <a
+                href={item.external ? `${item.href}/${baseLocaleOf(locale)}` : item.href}
+                {...(item.external ? { target: "_blank", rel: "noopener" } : {})}
+                className="group block overflow-hidden rounded-[1.25rem] border border-line bg-surface-2 transition-colors hover:border-accent/50"
+              >
                 <Image
                   src={item.preview ?? "/og/og-menu-steevanz.jpg"}
                   alt=""
@@ -356,7 +360,8 @@ function ProductExamplesSection({ examples, locale }: { examples: ProductExample
                   </span>
                   <span className="inline-flex items-center gap-2 text-sm text-muted">
                     <GlobeIcon />
-                    steevanz.com
+                    {item.external ? new URL(item.href).hostname : "steevanz.com"}
+                    {item.external ? <span className="sr-only">{localize(ui, locale).common.opensNewTab}</span> : null}
                   </span>
                 </span>
               </a>

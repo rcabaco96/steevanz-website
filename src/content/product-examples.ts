@@ -83,7 +83,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   },
   // The Steevanz example card (owner, 2026-10-20): a real card, the founder's own contact page.
   "business-card": {
-    items: [{ href: "/c/rogerio-cabaco", label: { pt: "Rogério Cabaço, Steevanz", en: "Rogério Cabaço, Steevanz" } }],
+    items: [{ href: "/c/rogerio-cabaco", label: { pt: "Rogério Cabaço, Steevanz", en: "Rogério Cabaço, Steevanz" }, preview: "/media/examples/cartao-visita-rogerio.jpg" }],
     copy: {
       pt: {
         eyebrow: "Exemplo",
@@ -91,6 +91,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "A página que abre com um toque no cartão de visita do fundador da Steevanz. Abra-a no telemóvel e experimente «Guardar contacto».",
         open: "Ver o exemplo",
         note: "Cartão real: os dados são os do fundador da Steevanz.",
+        kind: "Cartão de visita digital",
       },
       en: {
         eyebrow: "Example",
@@ -98,6 +99,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "The page that opens with one tap on the Steevanz founder's business card. Open it on your phone and try «Save contact».",
         open: "See the example",
         note: "A real card: the details are those of the Steevanz founder.",
+        kind: "Digital business card",
       },
       es: {
         eyebrow: "Ejemplo",
@@ -105,6 +107,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "La página que se abre con un toque en la tarjeta de visita del fundador de Steevanz. Ábrala en el móvil y pruebe «Guardar contacto».",
         open: "Ver el ejemplo",
         note: "Tarjeta real: los datos son los del fundador de Steevanz.",
+        kind: "Tarjeta de visita digital",
       },
       fr: {
         eyebrow: "Exemple",
@@ -112,6 +115,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "La page qui s'ouvre d'un simple toucher sur la carte de visite du fondateur de Steevanz. Ouvrez-la sur votre téléphone et essayez « Enregistrer le contact ».",
         open: "Voir l'exemple",
         note: "Une vraie carte : les coordonnées sont celles du fondateur de Steevanz.",
+        kind: "Carte de visite digitale",
       },
       de: {
         eyebrow: "Beispiel",
@@ -119,6 +123,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Die Seite, die sich mit einmal Antippen der Visitenkarte des Steevanz-Gründers öffnet. Öffnen Sie sie auf dem Handy und probieren Sie „Kontakt speichern“.",
         open: "Beispiel ansehen",
         note: "Eine echte Karte: Es sind die Daten des Steevanz-Gründers.",
+        kind: "Digitale Visitenkarte",
       },
       it: {
         eyebrow: "Esempio",
@@ -126,6 +131,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "La pagina che si apre con un tocco sul biglietto da visita del fondatore di Steevanz. La apra sullo smartphone e provi «Salvi il contatto».",
         open: "Veda l'esempio",
         note: "Un biglietto vero: i dati sono quelli del fondatore di Steevanz.",
+        kind: "Biglietto da visita digitale",
       },
     },
   },
@@ -133,9 +139,9 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
   // 2026-10-20 they were on the holiday rentals sector page.
   website: {
     items: [
-      { href: "https://alojamento-template.vercel.app/vista-bb5622", label: { pt: "Modelo 1", en: "Model 1", es: "Modelo 1", fr: "Modèle 1", de: "Modell 1", it: "Modello 1" }, external: true },
-      { href: "https://alojamento-template.vercel.app/vista-df3246", label: { pt: "Modelo 2", en: "Model 2", es: "Modelo 2", fr: "Modèle 2", de: "Modell 2", it: "Modello 2" }, external: true },
-      { href: "https://alojamento-template.vercel.app/vista-b3438b", label: { pt: "Modelo 3", en: "Model 3", es: "Modelo 3", fr: "Modèle 3", de: "Modell 3", it: "Modello 3" }, external: true },
+      { href: "https://alojamento-template.vercel.app/vista-bb5622", label: { pt: "Modelo 1", en: "Model 1", es: "Modelo 1", fr: "Modèle 1", de: "Modell 1", it: "Modello 1" }, external: true, preview: "/media/examples/website-modelo-1.jpg" },
+      { href: "https://alojamento-template.vercel.app/vista-df3246", label: { pt: "Modelo 2", en: "Model 2", es: "Modelo 2", fr: "Modèle 2", de: "Modell 2", it: "Modello 2" }, external: true, preview: "/media/examples/website-modelo-2.jpg" },
+      { href: "https://alojamento-template.vercel.app/vista-b3438b", label: { pt: "Modelo 3", en: "Model 3", es: "Modelo 3", fr: "Modèle 3", de: "Modell 3", it: "Modello 3" }, external: true, preview: "/media/examples/website-modelo-3.jpg" },
     ],
     copy: {
       pt: {
@@ -144,6 +150,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Três modelos de website para alojamento local, com pesquisa por datas e reserva direta. Abra-os no telemóvel ou no computador: adaptamos o escolhido ao seu negócio, fotos e cores.",
         open: "Ver um exemplo",
         note: "Websites de demonstração: a marca «Maré Alta», as casas e os contactos são fictícios.",
+        kind: "Website",
       },
       en: {
         eyebrow: "Examples",
@@ -151,6 +158,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Three website designs for holiday rentals, with date search and direct booking. Open them on your phone or computer: we adapt the one you pick to your business, photos and colours.",
         open: "See an example",
         note: "Demo websites: the «Maré Alta» brand, the homes and the contact details are fictional.",
+        kind: "Website",
       },
       es: {
         eyebrow: "Ejemplos",
@@ -158,6 +166,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Tres modelos de web para alojamientos turísticos, con búsqueda por fechas y reserva directa. Ábralos en el móvil o en el ordenador: adaptamos el que elija a su negocio, sus fotos y sus colores.",
         open: "Ver un ejemplo",
         note: "Webs de demostración: la marca «Maré Alta», las casas y los contactos son ficticios.",
+        kind: "Web",
       },
       fr: {
         eyebrow: "Exemples",
@@ -165,6 +174,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Trois modèles de site pour locations de vacances, avec recherche par dates et réservation directe. Ouvrez-les sur votre téléphone ou votre ordinateur : nous adaptons celui que vous choisissez à votre activité, à vos photos et à vos couleurs.",
         open: "Voir un exemple",
         note: "Sites de démonstration : la marque « Maré Alta », les logements et les coordonnées sont fictifs.",
+        kind: "Site web",
       },
       de: {
         eyebrow: "Beispiele",
@@ -172,6 +182,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Drei Website-Modelle für Ferienunterkünfte, mit Datumssuche und Direktbuchung. Öffnen Sie sie auf dem Handy oder am Computer: Wir passen das Modell Ihrer Wahl an Ihr Unternehmen, Ihre Fotos und Ihre Farben an.",
         open: "Beispiel ansehen",
         note: "Demo-Websites: die Marke „Maré Alta“, die Unterkünfte und die Kontaktdaten sind erfunden.",
+        kind: "Website",
       },
       it: {
         eyebrow: "Esempi",
@@ -179,6 +190,7 @@ export const productExamples: Partial<Record<ProductId, ProductExamples>> = {
         lead: "Tre modelli di sito per case vacanza, con ricerca per date e prenotazione diretta. Li apra sullo smartphone o sul computer: adattiamo quello che sceglie alla Sua attività, alle Sue foto e ai Suoi colori.",
         open: "Veda un esempio",
         note: "Siti dimostrativi: il marchio «Maré Alta», le case e i contatti sono di fantasia.",
+        kind: "Sito web",
       },
     },
   },
