@@ -1,0 +1,22 @@
+O Quintal (loja de frutas, legumes e cabazes, Lisboa e arredores) - origem dos ficheiros deste site
+Preparado a 2026-10-25.
+
+Conteúdo (produtos, preços, unidades, descrições, contactos, zonas de entrega, condições):
+  todo do site da própria loja, https://www.o-quintal.com (Jumpseller), lido a 2026-10-25.
+  Ver src/content/o-quintal/products.ts e src/content/o-quintal/facts.ts.
+
+Imagens criadas pela Steevanz para este site (sem fotografias de terceiros):
+  og.jpg                       - imagem de pré-visualização (1200x630): nome, frase da loja e zonas de entrega,
+                                 com as cores e letras do site (Young Serif, Instrument Sans, Caveat).
+  icone.ico, icone-192.png,
+  icone-512.png, icone-apple.png - ícone: folha amarela sobre verde, com as ripas de um caixote.
+  A folha e o nome «O Quintal» substituem provisoriamente o logótipo real da loja
+  (https://images.jumpseller.com/store/oquintal/store/logo/Frutas___Legumes_(1).png), que não foi possível
+  descarregar a partir do ambiente de construção. A confirmar com o cliente / trocar pelo logótipo real.
+
+Fotografias dos produtos (produtos/<id>.webp):
+  ainda não incluídas. São as fotos publicadas pela própria loja no seu site (cdnx.jumpseller.com/oquintal/...),
+  descarregadas com: node scripts/o-quintal/fetch-images.mjs  (a confirmar com o cliente que podem ser usadas).
+  Até lá, cada produto mostra uma etiqueta neutra com a inicial do nome.
+
+Tipos de letra (src/components/clients/o-quintal/fonts/): SIL Open Font License 1.1, pacotes @fontsource no npm.

@@ -184,7 +184,7 @@ describe("Fabio's Roadstop: content rules", () => {
 
   it("loads GSAP and Lenis only from the client sites' own components", () => {
     const offenders = filesUnder("src")
-      .filter((path) => !["fabios-roadstop", "o-ermita", "lobo-do-mar"].some((site) => path.includes(join("clients", site))))
+      .filter((path) => !["fabios-roadstop", "o-ermita", "lobo-do-mar", "o-quintal"].some((site) => path.includes(join("clients", site))))
       .filter((path) => /from "(gsap|lenis|@gsap\/react)|import\("lenis"\)/.test(readFileSync(path, "utf8")));
     assert.deepEqual(offenders, []);
   });

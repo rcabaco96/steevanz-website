@@ -66,6 +66,22 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/lobo-do-mar/"],
   },
+  {
+    // O Quintal (owner, 2026-10-25): online shop, no domain yet, only the preview path. When one is chosen, list it
+    // here, set `oQuintalOrigin` in src/content/o-quintal/routes.ts and add its host to the proxy matcher. Its
+    // checkout and Stripe webhook live under /api/o-quintal/ (pass-through on the domain).
+    id: "o-quintal",
+    hosts: [],
+    base: "/o-quintal",
+    rootFiles: {
+      "/robots.txt": "/o-quintal/robots.txt",
+      "/sitemap.xml": "/o-quintal/sitemap.xml",
+      "/manifest.webmanifest": "/o-quintal/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/o-quintal/icone.ico",
+      "/apple-touch-icon.png": "/media/clients/o-quintal/icone-apple.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/o-quintal/", "/api/o-quintal/"],
+  },
 ];
 
 export type ClientSiteDecision =

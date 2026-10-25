@@ -1,0 +1,144 @@
+/* O Quintal's own stylesheet: none of the Steevanz site's styles load on these pages, and Tailwind only scans the
+   client's own files. Identity (2026-10-25): the greengrocer's stall — kraft paper, crate wood, fig-leaf green,
+   tomato, lemon, and prices chalked on slate tags. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/o-quintal";
+@source "./";
+/* The shared scroll/motion helpers of the client sites (SmoothScroll, MotionRoot, React Bits pieces). */
+@source "../../../../components/clients/o-ermita/SmoothScroll.tsx";
+@source "../../../../components/clients/o-ermita/MotionRoot.tsx";
+@source "../../../../components/clients/o-ermita/react-bits";
+
+@theme {
+  --color-kraft: #f4ecdc;
+  --color-kraft-2: #e9dcc2;
+  --color-caixote: #b4844f;
+  --color-caixote-deep: #7d5631;
+  --color-folha: #2d4a2b;
+  --color-folha-deep: #1c3220;
+  --color-tomate: #c8442c;
+  --color-tomate-deep: #9e3220;
+  --color-limao: #f1c74a;
+  --color-ardosia: #262a2b;
+  --color-giz: #f7f3ea;
+  --color-terra: #5a4a3a;
+
+  --font-display: var(--oq-font-display), "Young Serif", Georgia, serif;
+  --font-sans: var(--oq-font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-giz: var(--oq-font-giz), "Caveat", "Segoe Print", cursive;
+
+  --ease-banca: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-kraft);
+    color: var(--color-ardosia);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    font-variant-numeric: lining-nums;
+  }
+  ::selection {
+    background: var(--color-limao);
+    color: var(--color-ardosia);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-tomate);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* The small capitals stamped on a crate's side. */
+  .oq-stamp {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Crate wood: horizontal slats with dark gaps, drawn with gradients (no image). */
+  .oq-slats {
+    background-color: var(--color-caixote);
+    background-image:
+      repeating-linear-gradient(180deg, transparent 0 calc(var(--slat, 56px) - 7px), rgb(60 38 18 / 0.85) calc(var(--slat, 56px) - 7px) var(--slat, 56px)),
+      repeating-linear-gradient(90deg, rgb(255 255 255 / 0.05) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg, #c29360, #a87a46);
+  }
+
+  /* A chalk price tag on slate, with its string hole. */
+  .oq-tag {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3em;
+    background: var(--color-ardosia);
+    color: var(--color-giz);
+    font-family: var(--font-giz);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    max-width: 100%;
+    padding: 0.38em 0.7em 0.42em 1.35em;
+    border-radius: 0.35em 0.6em 0.6em 0.35em;
+    clip-path: polygon(0.8em 0, 100% 0, 100% 100%, 0.8em 100%, 0 50%);
+    box-shadow: inset 0 0 0 2px rgb(247 243 234 / 0.06);
+  }
+  .oq-tag::before {
+    content: "";
+    position: absolute;
+    left: 0.62em;
+    top: 50%;
+    width: 0.32em;
+    height: 0.32em;
+    margin-top: -0.16em;
+    border-radius: 999px;
+    background: var(--color-kraft);
+  }
+  .oq-tag-unit {
+    font-size: 0.62em;
+    opacity: 0.75;
+  }
+
+  /* Paper grain over the whole page (very light). */
+  .oq-grain {
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Elements that animate in start hidden from the first paint (class set in the layout's head script), so the
+   opening runs once. Without JavaScript or with reduced motion the class is never set. */
+html.oq-anim [data-intro] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
