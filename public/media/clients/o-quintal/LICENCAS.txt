@@ -14,9 +14,12 @@ Imagens criadas pela Steevanz para este site (sem fotografias de terceiros):
   (https://images.jumpseller.com/store/oquintal/store/logo/Frutas___Legumes_(1).png), que não foi possível
   descarregar a partir do ambiente de construção. A confirmar com o cliente / trocar pelo logótipo real.
 
-Fotografias dos produtos (produtos/<id>.webp):
-  ainda não incluídas. São as fotos publicadas pela própria loja no seu site (cdnx.jumpseller.com/oquintal/...),
-  descarregadas com: node scripts/o-quintal/fetch-images.mjs  (a confirmar com o cliente que podem ser usadas).
-  Até lá, cada produto mostra uma etiqueta neutra com a inicial do nome.
+Fotografias dos produtos, logótipo e imagens da página inicial (desde 2026-10-25):
+  as da própria loja, servidas a partir da sua loja Jumpseller (cdnx.jumpseller.com/oquintal/image/…,
+  images.jumpseller.com/store/oquintal/…, assets.jumpseller.com/store/oquintal/…) através do otimizador de
+  imagens da Vercel (next.config.ts → images.remotePatterns). A confirmar com o cliente que podem ser usadas.
+  Se a loja Jumpseller for desligada, as fotos deixam de aparecer: antes disso, correr
+  node scripts/o-quintal/fetch-images.mjs  (cópias locais em produtos/<id>.webp) e fazer commit.
+  Produto sem foto no site (Couves de Bruxelas): não aparece na loja até ter foto.
 
 Tipos de letra (src/components/clients/o-quintal/fonts/): SIL Open Font License 1.1, pacotes @fontsource no npm.

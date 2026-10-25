@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1600],
     imageSizes: [64, 96, 128, 256, 384],
+    // O Quintal's product photos, logo and banners, served from its own Jumpseller store (owner, 2026-10-25).
+    // Only that store's folders; the version query (?1683…) varies per photo, so `search` is left open.
+    remotePatterns: [
+      { protocol: "https", hostname: "cdnx.jumpseller.com", port: "", pathname: "/oquintal/image/**" },
+      { protocol: "https", hostname: "images.jumpseller.com", port: "", pathname: "/store/oquintal/**" },
+      { protocol: "https", hostname: "assets.jumpseller.com", port: "", pathname: "/store/oquintal/**" },
+    ],
   },
   experimental: {
     globalNotFound: true,

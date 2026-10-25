@@ -2,18 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { oQuintalMetadata } from "@/components/clients/o-quintal/metadata";
 import { QuintalSite } from "@/components/clients/o-quintal/QuintalSite";
-import { findOQuintalProduct, oQuintalProducts } from "@/content/o-quintal/products";
+import { findOQuintalProduct, oQuintalListed } from "@/content/o-quintal/products";
 import { oQuintalStaticParams, resolveOQuintalPath } from "@/content/o-quintal/routes";
 
-// Every page is built ahead, in both variants (preview links and the client's domain links).
+// Every page is built ahead, in both variants (preview links and the client's domain links). Products kept in the
+// catalogue but not listed (no photo yet) have no page.
 export function generateStaticParams() {
-  return oQuintalStaticParams(oQuintalProducts.map((item) => item.id));
+  return oQuintalStaticParams(oQuintalListed.map((item) => item.id));
 }
 export const dynamicParams = false;
 
 type Params = Promise<{ path?: string[] }>;
 
-const exists = (id: string) => Boolean(findOQuintalProduct(id));
+const exists = (id: string) => Boolean(findOQuintalProduct(id)?.listed);
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const route = resolveOQuintalPath((await params).path, exists);

@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { useRef } from "react";
+import { oQuintalAbout } from "@/content/o-quintal/about";
 import { oQuintalProductsIn } from "@/content/o-quintal/products";
 import { oQuintalHref, type OQuintalMode } from "@/content/o-quintal/routes";
 import { SplitText } from "../o-ermita/react-bits/SplitText";
@@ -13,10 +14,9 @@ import { PriceTag, ProductVisual } from "./ProductVisual";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// Scene 3 — «Os cabazes passam no tapete». Large screens: the section holds (pin) and the three baskets of the
-// week slide sideways like crates on the stall's counter, each tilting a little as it passes, a crate-wood rail
-// filling underneath. Phones: one after another, each crate dropping onto the counter (clip from the top) as it
-// enters. Reduced motion: all in place.
+// Scene 3 — «Os cabazes passam no balcão». Large screens: the section holds (pin) and the three baskets slide
+// sideways like crates along the counter, each tilting a little as it passes, a crate-wood rail filling underneath.
+// Phones: one after another, each crate dropping onto the counter (clip from the top). Reduced motion: in place.
 export function Crates({ mode }: { mode: OQuintalMode }) {
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ export function Crates({ mode }: { mode: OQuintalMode }) {
           gsap.fromTo(
             crate,
             { clipPath: "inset(0% 0% 100% 0% round 18px)", y: -30 },
-            { clipPath: "inset(0% 0% 0% 0% round 18px)", y: 0, ease: "power2.out", scrollTrigger: { trigger: crate, start: "top 92%", end: "top 45%", scrub: 0.6 } },
+            { clipPath: "inset(0% 0% 0% 0% round 18px)", y: 0, ease: "power2.out", scrollTrigger: { trigger: crate, start: "top 92%", end: "top 50%", scrub: 0.6 } },
           );
         });
       });
@@ -56,14 +56,16 @@ export function Crates({ mode }: { mode: OQuintalMode }) {
 
   return (
     <section ref={root} id="cabazes" aria-labelledby="oq-crates-title" className="relative overflow-hidden bg-kraft-2 lg:h-svh">
-      <div ref={track} className="flex flex-col gap-10 px-4 py-24 sm:px-8 lg:h-full lg:w-max lg:flex-row lg:items-center lg:gap-12 lg:py-0 lg:pr-[10vw] lg:pl-[max(2rem,calc((100vw-84rem)/2+2rem))] lg:will-change-transform">
+      <div ref={track} className="flex flex-col gap-8 px-4 py-24 sm:px-8 lg:h-full lg:w-max lg:flex-row lg:items-center lg:gap-12 lg:py-0 lg:pr-[10vw] lg:pl-[max(2rem,calc((100vw-84rem)/2+2rem))] lg:will-change-transform">
         <div className="lg:w-[30rem] lg:shrink-0">
-          <p className="oq-stamp text-tomate-deep">Os cabazes da semana</p>
-          <h2 id="oq-crates-title" className="mt-4 font-display text-[clamp(2.4rem,8vw,4.6rem)] leading-[1.02] text-ardosia">
-            <SplitText text="Tudo junto," splitType="chars" className="block" />
+          <p className="oq-stamp text-tomate-deep">Os cabazes</p>
+          <h2 id="oq-crates-title" className="mt-4 font-display text-[clamp(2.3rem,8vw,4.4rem)] leading-[1.02] text-ardosia">
+            <SplitText text="A semana inteira," splitType="words" delay={70} className="block" />
             <span className="block text-folha">numa caixa só.</span>
           </h2>
-          <p className="mt-5 max-w-md text-lg text-terra">A composição muda conforme a época. Escolha o cabaz e nós tratamos do resto.</p>
+          <p className="mt-5 max-w-md text-lg leading-relaxed text-terra">
+            Nós escolhemos a fruta e os legumes, o senhor escolhe o tamanho. Para quem não tem tempo de ir ao mercado e não quer abdicar de comer bem.
+          </p>
           <Link href={oQuintalHref(mode, { kind: "shop", category: "cabazes" })} className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-full bg-ardosia px-6 font-semibold text-giz">
             Ver todos os cabazes <ArrowIcon className="h-4 w-4" />
           </Link>
@@ -73,12 +75,15 @@ export function Crates({ mode }: { mode: OQuintalMode }) {
             key={basket.id}
             data-crate
             href={oQuintalHref(mode, { kind: "product", id: basket.id })}
-            className="group block overflow-hidden rounded-[18px] bg-giz shadow-[0_30px_60px_-35px_rgb(38_42_43/0.6)] lg:w-[min(30rem,38vw)] lg:shrink-0"
+            className="group block overflow-hidden rounded-[18px] bg-giz shadow-[0_30px_60px_-35px_rgb(38_42_43/0.6)] lg:w-[min(28rem,34vw)] lg:shrink-0"
           >
-            <ProductVisual product={basket} sizes="(min-width: 1024px) 38vw, 100vw" className="aspect-[4/3]" />
-            <div className="oq-slats flex items-end justify-between gap-4 px-5 py-5 [--slat:200px]">
-              <h3 className="font-display text-[1.45rem] leading-tight text-giz drop-shadow-[0_1px_0_rgb(60_38_18/0.8)]">{basket.name}</h3>
-              <PriceTag product={basket} />
+            <ProductVisual product={basket} sizes="(min-width: 1024px) 34vw, 100vw" className="aspect-[4/3]" imageClassName="transition-transform duration-700 group-hover:scale-[1.04]" />
+            <div className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="font-display text-[1.4rem] leading-tight text-ardosia">{basket.name}</h3>
+                <PriceTag product={basket} size="sm" />
+              </div>
+              <p className="mt-2 line-clamp-3 text-terra">{oQuintalAbout[basket.id]}</p>
             </div>
           </Link>
         ))}

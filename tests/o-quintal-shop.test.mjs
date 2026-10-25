@@ -10,8 +10,10 @@ import {
   oQuintalCategories,
   oQuintalFromPrice,
   oQuintalProducts,
+  oQuintalProductsIn,
   oQuintalUnitPrice,
 } from "../src/content/o-quintal/products.ts";
+import { oQuintalAbout } from "../src/content/o-quintal/about.ts";
 import { oQuintal } from "../src/content/o-quintal/facts.ts";
 import {
   oQuintalCategoryIds,
@@ -73,6 +75,39 @@ describe("O Quintal: catalogue integrity (src/content/o-quintal/products.ts)", (
       }
       if (item.option) assert.equal(new Set(item.option.choices.map((c) => c.id)).size, item.option.choices.length, item.id);
     }
+  });
+
+  it("lists only products with a real photo from the business's store, each with a description", () => {
+    for (const item of oQuintalProducts) {
+      assert.equal(item.listed, Boolean(item.sourceImage), item.id);
+      if (item.listed) assert.ok((oQuintalAbout[item.id] ?? "").length > 60, `${item.id} needs a description`);
+    }
+    assert.equal(findOQuintalProduct("couves-de-bruxelas-500g").listed, false);
+    assert.equal(oQuintalUnitPrice(findOQuintalProduct("couves-de-bruxelas-500g"), null), null, "unlisted products can't be bought");
+    assert.equal(resolveOQuintalPath(["produto", "couves-de-bruxelas-500g"], (id) => Boolean(findOQuintalProduct(id)?.listed)), null);
+  });
+
+  it("never invents facts about the business in the descriptions", () => {
+    for (const [id, text] of Object.entries(oQuintalAbout)) {
+      assert.ok(findOQuintalProduct(id), `unknown id ${id}`);
+      assert.doesNotMatch(text, /biológic|orgânic|da época|da nossa horta|produzid[oa]s? por nós|colhid[oa]s? (hoje|esta)|quinta própria|sem químicos/i, id);
+    }
+  });
+
+  it("shows priced products first and «Preço sob consulta» at the end of each section", () => {
+    for (const category of oQuintalCategoryIds) {
+      const items = oQuintalProductsIn(category);
+      const firstUnpriced = items.findIndex((item) => oQuintalFromPrice(item) === null);
+      if (firstUnpriced === -1) continue;
+      assert.ok(firstUnpriced > 0, `${category} starts with an unpriced product`);
+      assert.ok(items.slice(firstUnpriced).every((item) => oQuintalFromPrice(item) === null), category);
+    }
+  });
+
+  it("allows the store's image CDN in next.config.ts, nothing broader", () => {
+    const config = readFileSync("next.config.ts", "utf8");
+    assert.match(config, /hostname: "cdnx\.jumpseller\.com", port: "", pathname: "\/oquintal\/image\/\*\*"/);
+    assert.doesNotMatch(config, /hostname: "\*\*?"/);
   });
 
   it("keeps the prices read from o-quintal.com (spot checks)", () => {

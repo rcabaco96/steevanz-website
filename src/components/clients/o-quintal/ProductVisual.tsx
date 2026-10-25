@@ -1,50 +1,62 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { oQuintalLocalImages } from "@/content/o-quintal/images";
-import { formatEuros, oQuintalFromPrice, type OQuintalCategoryId, type OQuintalProduct } from "@/content/o-quintal/products";
+import { formatEuros, oQuintalFromPrice, type OQuintalProduct } from "@/content/o-quintal/products";
 
-// The product's photo (downloaded from o-quintal.com by scripts/o-quintal/fetch-images.mjs) or, while it isn't
-// there, a neutral crate label: the product's name stamped on kraft in its category's colour. No invented photo.
-const tone: Record<OQuintalCategoryId, { bg: string; ink: string; ring: string }> = {
-  cabazes: { bg: "bg-caixote", ink: "text-giz", ring: "border-giz/40" },
-  fruta: { bg: "bg-tomate", ink: "text-giz", ring: "border-giz/40" },
-  legumes: { bg: "bg-folha", ink: "text-giz", ring: "border-giz/35" },
-  regionais: { bg: "bg-limao", ink: "text-ardosia", ring: "border-ardosia/30" },
-  mercearia: { bg: "bg-kraft-2", ink: "text-terra", ring: "border-terra/30" },
-};
-
-export function ProductVisual({ product, sizes, priority = false, className = "" }: { product: OQuintalProduct; sizes: string; priority?: boolean; className?: string }) {
-  const photo = oQuintalLocalImages[product.id];
-  if (photo) {
-    return (
-      <div className={`relative overflow-hidden bg-kraft-2 ${className}`}>
-        <Image src={photo.src} alt={product.name} fill sizes={sizes} priority={priority} className="object-cover" />
-      </div>
-    );
-  }
-  const t = tone[product.category];
-  const initial = product.name.replace(/^[\d\s]+(kg\s)?/i, "").charAt(0).toUpperCase();
+// The product's real photo: a local copy when scripts/o-quintal/fetch-images.mjs has made one, otherwise the
+// business's own photo on its Jumpseller CDN (fetched and cached by Vercel's image optimizer, next.config.ts
+// remotePatterns). Every listed product has one. While it loads, or if the CDN fails, a soft kraft tile with the
+// name keeps the layout intact (never a fake picture).
+export function ProductVisual({
+  product,
+  sizes,
+  preload = false,
+  className = "",
+  imageClassName = "",
+}: {
+  product: OQuintalProduct;
+  sizes: string;
+  preload?: boolean;
+  className?: string;
+  imageClassName?: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  const local = oQuintalLocalImages[product.id];
+  const src = local?.src ?? product.sourceImage;
   return (
-    <div role="img" aria-label={product.name} className={`relative grid place-items-center overflow-hidden ${t.bg} ${t.ink} ${className}`}>
-      <span aria-hidden="true" className="oq-slats absolute inset-x-0 bottom-0 h-[18%] opacity-60 [--slat:14px]" />
-      <span aria-hidden="true" className={`grid aspect-square w-[46%] max-w-40 place-items-center rounded-full border-2 border-dashed ${t.ring}`}>
-        <span className="font-display text-[clamp(2.4rem,9vw,4.6rem)] leading-none">{initial}</span>
+    <div className={`relative overflow-hidden bg-kraft-2 ${className}`}>
+      <span aria-hidden="true" className="absolute inset-0 grid place-items-center p-4 text-center font-display text-[0.95rem] leading-tight text-terra/45">
+        {product.name}
       </span>
-      <span aria-hidden="true" className="oq-stamp absolute top-3 left-3 opacity-70">O Quintal</span>
+      {src && !failed ? (
+        <Image
+          src={src}
+          alt={product.name}
+          fill
+          sizes={sizes}
+          preload={preload}
+          loading={preload ? undefined : "lazy"}
+          onError={() => setFailed(true)}
+          className={`object-cover ${imageClassName}`}
+        />
+      ) : null}
     </div>
   );
 }
 
-/** The chalk price tag, or «Preço sob consulta» when the catalogue has no price. */
+/** Price with its unit, in the shop's chalk-on-slate tag. Unpriced products get a quiet line, not a shout. */
 export function PriceTag({ product, size = "md" }: { product: OQuintalProduct; size?: "sm" | "md" | "lg" }) {
   const from = oQuintalFromPrice(product);
-  const text = size === "lg" ? "text-[2.1rem]" : size === "sm" ? "text-[1.2rem] sm:text-[1.35rem]" : "text-[1.6rem]";
-  if (!product.inStock) return <span className="oq-stamp text-tomate-deep">Esgotado</span>;
-  if (!from) return <span className="oq-stamp text-terra">Preço sob consulta</span>;
+  const text = size === "lg" ? "text-[2.1rem]" : size === "sm" ? "text-[1.25rem]" : "text-[1.6rem]";
+  if (!product.inStock) return <span className="text-sm text-tomate-deep">Esgotado</span>;
+  if (!from) return <span className="text-sm text-terra italic">Preço sob consulta</span>;
   return (
     <span className={`oq-tag ${text}`}>
       {from.varies ? <span className="oq-tag-unit">desde</span> : null}
       {formatEuros(from.cents)}
-      {product.unit && !from.varies ? <span className={`oq-tag-unit ${size === "sm" ? "hidden min-[400px]:inline" : ""}`}>/ {product.unit}</span> : null}
+      {product.unit && !from.varies ? <span className="oq-tag-unit">/ {product.unit}</span> : null}
     </span>
   );
 }

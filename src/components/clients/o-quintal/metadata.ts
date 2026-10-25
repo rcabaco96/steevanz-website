@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { oQuintalAbout } from "@/content/o-quintal/about";
 import { oQuintal } from "@/content/o-quintal/facts";
 import { findOQuintalProduct, formatEuros, oQuintalCategories, oQuintalFromPrice } from "@/content/o-quintal/products";
 import { oQuintalCanonical, oQuintalOrigin, type OQuintalRoute } from "@/content/o-quintal/routes";
@@ -30,7 +31,7 @@ function titleAndDescription(route: OQuintalRoute): { title: string; description
       const price = from ? ` ${from.varies ? "Desde " : ""}${formatEuros(from.cents)}${product?.unit && !from.varies ? ` / ${product.unit}` : ""}.` : "";
       return {
         title: `${product?.name ?? "Produto"} · ${oQuintal.name}`,
-        description: `${product?.description[0] ?? product?.name ?? ""}${price} ${oQuintal.name}, ${oQuintal.area}.`.trim(),
+        description: `${(product && oQuintalAbout[product.id]) ?? product?.name ?? ""}${price} ${oQuintal.name}, ${oQuintal.area}.`.trim(),
         index: true,
       };
     }

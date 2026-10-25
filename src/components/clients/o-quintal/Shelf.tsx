@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { useRef } from "react";
-import { oQuintalCategories, oQuintalProducts } from "@/content/o-quintal/products";
+import { oQuintalCategories, oQuintalFromPrice, oQuintalListed } from "@/content/o-quintal/products";
 import { oQuintalHref, type OQuintalMode } from "@/content/o-quintal/routes";
 import { SplitText } from "../o-ermita/react-bits/SplitText";
 import { ArrowIcon } from "./icons";
@@ -18,16 +18,18 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 // light trigger per row (no pin), so it stays quick on phones.
 export function Shelf({ mode }: { mode: OQuintalMode }) {
   const root = useRef<HTMLElement>(null);
-  const featured = oQuintalProducts.filter((item) => item.featured && item.category !== "cabazes");
+  const featured = oQuintalListed.filter((item) => item.featured && item.category !== "cabazes" && oQuintalFromPrice(item) !== null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        ScrollTrigger.batch(gsap.utils.toArray<HTMLElement>("[data-card]", root.current), {
-          start: "top 92%",
+        const cards = gsap.utils.toArray<HTMLElement>("[data-card]", root.current);
+        gsap.set(cards, { y: -36, opacity: 0 });
+        ScrollTrigger.batch(cards, {
+          start: "top 95%",
           once: true,
-          onEnter: (batch) => gsap.fromTo(batch, { y: -36, opacity: 0, rotate: -2 }, { y: 0, opacity: 1, rotate: 0, ease: "bounce.out", duration: 0.9, stagger: 0.08 }),
+          onEnter: (batch) => gsap.to(batch, { y: 0, opacity: 1, ease: "bounce.out", duration: 0.9, stagger: 0.08 }),
         });
       });
       return () => mm.revert();

@@ -20,6 +20,18 @@ export const oQuintal = {
   summary: "Cabazes de frescos com frutas e legumes com produtos de qualidade a um preço acessível.",
   /** The meta description goes on («trabalhamos apenas com produtores altamente qualificados…»). */
   producers: "Trabalhamos apenas com produtores altamente qualificados.",
+  /** /cestas-de-fruta-para-empresas, verbatim. */
+  origin: "Os nossos produtos são, na sua maioria, de origem nacional e de pequenos produtores.",
+  selection: "As nossas frutas são selecionadas criteriosamente.",
+  /** The business's logo on its Jumpseller shop (alt «O Quintal»). */
+  logo: "https://images.jumpseller.com/store/oquintal/store/logo/Frutas___Legumes_(1).png?1683658257",
+  /** The home page's four picture blocks, with the text shown on each (o-quintal.com). */
+  banners: {
+    cabazes: "https://assets.jumpseller.com/store/oquintal/themes/322200/options/28504187/Design%20sem%20nome%20%286%29.jpg?1683657955",
+    alheira: "https://assets.jumpseller.com/store/oquintal/themes/322200/options/28504195/Design%20sem%20nome%20%287%29.jpg?1683657955",
+    sopas: "https://assets.jumpseller.com/store/oquintal/themes/322200/settings/51a12e499a4ecef04594/Sopas.jpg?1738866858",
+    ovos: "https://assets.jumpseller.com/store/oquintal/themes/322200/settings/2e17895c3644301e1831/1530.png?1772106435",
+  },
   area: "Lisboa e arredores",
   phoneDisplay: "912 083 448",
   phoneHref: "tel:+351912083448",

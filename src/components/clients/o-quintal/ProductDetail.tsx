@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { oQuintalAbout } from "@/content/o-quintal/about";
 import { oQuintal } from "@/content/o-quintal/facts";
 import { findOQuintalProduct, formatEuros, oQuintalCategories, oQuintalProductsIn, oQuintalUnitPrice } from "@/content/o-quintal/products";
 import { oQuintalHref, type OQuintalMode } from "@/content/o-quintal/routes";
@@ -22,6 +23,7 @@ export function ProductDetail({ mode, id }: { mode: OQuintalMode; id: string }) 
   if (!product) return null;
 
   const unitCents = oQuintalUnitPrice(product, choice);
+  const about = oQuintalAbout[product.id];
   const category = oQuintalCategories.find((entry) => entry.id === product.category);
   const related = oQuintalProductsIn(product.category)
     .filter((item) => item.id !== product.id)
@@ -51,16 +53,17 @@ export function ProductDetail({ mode, id }: { mode: OQuintalMode; id: string }) 
         <div className="mt-4 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
           <div className="lg:order-2">
             <h1 className="font-display text-[clamp(2.1rem,7.5vw,3.8rem)] leading-[1.04] text-ardosia">{product.name}</h1>
+            {about ? <p className="mt-4 text-lg leading-relaxed text-ardosia/85">{about}</p> : null}
             {product.description.length ? (
-              <div className="mt-4 space-y-2 text-lg leading-relaxed text-terra">
+              <ul className="mt-4 space-y-1.5 border-l-4 border-limao pl-4 text-terra">
                 {product.description.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                  <li key={paragraph}>{paragraph}</li>
                 ))}
-              </div>
+              </ul>
             ) : null}
           </div>
 
-          <ProductVisual product={product} priority sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-square rounded-[1.4rem] lg:order-1 lg:row-span-2" />
+          <ProductVisual product={product} preload sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-square rounded-[1.4rem] lg:order-1 lg:row-span-2" />
 
           <div className="lg:order-3">
             <div className="flex flex-wrap items-center gap-3">
@@ -70,13 +73,13 @@ export function ProductDetail({ mode, id }: { mode: OQuintalMode; id: string }) 
                   {product.unit ? <span className="oq-tag-unit">/ {product.unit}</span> : null}
                 </span>
               ) : (
-                <span className="oq-stamp rounded-full bg-kraft-2 px-4 py-3 text-terra">{product.inStock ? "Preço sob consulta" : "Esgotado"}</span>
+                <span className="rounded-full bg-kraft-2 px-4 py-2.5 text-terra italic">{product.inStock ? "Preço sob consulta" : "Esgotado"}</span>
               )}
             </div>
 
             {product.option ? (
               <fieldset className="mt-7">
-                <legend className="oq-stamp text-ardosia">{product.option.label}</legend>
+                <legend className="font-semibold text-ardosia">{product.option.label}</legend>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {product.option.choices.map((entry) => {
                     const price = oQuintalUnitPrice(product, entry.id);

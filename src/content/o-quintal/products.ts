@@ -25,11 +25,31 @@ export interface OQuintalCategory {
 }
 
 export const oQuintalCategories: readonly OQuintalCategory[] = [
-  { id: "cabazes", name: "Cabazes", intro: "Os cabazes da semana, prontos a levar para casa." },
-  { id: "fruta", name: "Fruta", intro: "Fruta escolhida peça a peça." },
-  { id: "legumes", name: "Legumes", intro: "Legumes, ervas e leguminosas secas." },
-  { id: "regionais", name: "Produtos regionais", intro: "Mel, marmeladas e alheiras de Mirandela." },
-  { id: "mercearia", name: "Ovos e mercearia", intro: "Caixas de ovos e outros produtos." },
+  {
+    id: "cabazes",
+    name: "Cabazes",
+    intro: "Fruta e legumes escolhidos por nós para a semana inteira. Escolha o tamanho do cabaz, nós tratamos do resto.",
+  },
+  {
+    id: "fruta",
+    name: "Fruta",
+    intro: "Para trincar, espremer ao pequeno-almoço ou levar na lancheira. As caixas de 3 kg chegam para a família toda.",
+  },
+  {
+    id: "legumes",
+    name: "Legumes",
+    intro: "Tudo para a sopa, o refogado e a salada, as ervas para temperar e o feijão seco para os dias de feijoada.",
+  },
+  {
+    id: "regionais",
+    name: "Produtos regionais",
+    intro: "Mel, marmelada de receita tradicional e alheiras de Mirandela: o que não pode faltar numa mesa portuguesa.",
+  },
+  {
+    id: "mercearia",
+    name: "Ovos e mercearia",
+    intro: "Ovos às cinco dúzias, para quem cozinha muito, e outros básicos da despensa.",
+  },
 ];
 
 export interface OQuintalChoice {
@@ -68,20 +88,26 @@ export interface OQuintalProduct {
   /** The product's photo on o-quintal.com (scripts/o-quintal/fetch-images.mjs downloads it). */
   sourceImage: string | null;
   featured?: boolean;
+  /** false = kept in this file but not shown in the shop (no photo yet, page unreadable…). */
+  listed: boolean;
 }
 
 const site = "https://www.o-quintal.com";
-const cdn = "https://cdnx.jumpseller.com/oquintal/image";
+/** The photos are served from the business's own Jumpseller CDN (allowed in next.config.ts → images.remotePatterns). */
+export const oQuintalImageCdn = "https://cdnx.jumpseller.com/oquintal/image";
 
-type Row = Omit<OQuintalProduct, "sourceUrl" | "inStock" | "description" | "sourceImage"> & {
+type Row = Omit<OQuintalProduct, "sourceUrl" | "inStock" | "description" | "sourceImage" | "listed"> & {
   description?: readonly string[];
   inStock?: boolean;
+  listed?: boolean;
   image?: string;
 };
 
 function product(row: Row): OQuintalProduct {
   const { image, description = [], inStock = true, ...rest } = row;
-  return { ...rest, description, inStock, sourceUrl: `${site}/${row.id}`, sourceImage: image ? `${cdn}/${image}` : null };
+  // A product without a photo is never shown (owner, 2026-10-25: «sem fotos» is not acceptable).
+  const listed = row.listed ?? Boolean(image);
+  return { ...rest, description, inStock, listed, sourceUrl: `${site}/${row.id}`, sourceImage: image ? `${oQuintalImageCdn}/${image}` : null };
 }
 
 export const oQuintalProducts: readonly OQuintalProduct[] = [
@@ -90,10 +116,8 @@ export const oQuintalProducts: readonly OQuintalProduct[] = [
     id: "cabaz-de-frescos-legumes-e-frutas",
     name: "Cabaz de Frescos (frutas e legumes)",
     category: "cabazes",
-    description: [
-      "Frescos e cuidadosamente selecionados para si.",
-      "A composição de cada cabaz muda de semana para semana, conforme a época.",
-    ],
+    // The product page lists a different composition each week (22–25/09, 29/09–02/10) with the prices below.
+    description: ["Frescos e cuidadosamente selecionados para si."],
     priceCents: 2000,
     unit: "cabaz",
     option: {
@@ -308,11 +332,11 @@ export const oQuintalProducts: readonly OQuintalProduct[] = [
   product({ id: "tomate-salada", name: "Tomate salada", category: "legumes", priceCents: 150, unit: "500 g", image: "35015120/38.jpg?1704129535" }),
   product({ id: "grao-de-bico-seco-500g", name: "Grão-de-bico seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g", image: "35015286/55.jpg?1683650772" }),
   product({ id: "feijao-encarnado-seco-500g", name: "Feijão encarnado seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g", image: "35015292/57.jpg?1683650786" }),
-  product({ id: "feijao-branco-seco-500g", name: "Feijão branco seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g" }),
-  product({ id: "feijao-preto-seco-500g", name: "Feijão preto seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g" }),
+  product({ id: "feijao-branco-seco-500g", name: "Feijão branco seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g", image: "35015297/59.jpg?1683650796" }),
+  product({ id: "feijao-preto-seco-500g", name: "Feijão preto seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g", image: "35015302/58.jpg?1683650805" }),
   product({ id: "feijao-manteiga-seco-500g", name: "Feijão-manteiga seco (500 g)", category: "legumes", priceCents: 230, unit: "500 g", image: "35015311/61.jpg?1683650832" }),
-  product({ id: "feijao-catarino-seco-500g", name: "Feijão catarino seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g" }),
-  product({ id: "feijao-frade-seco-500g", name: "Feijão-frade seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g" }),
+  product({ id: "feijao-catarino-seco-500g", name: "Feijão catarino seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g", image: "35015313/56.jpg?1683650841" }),
+  product({ id: "feijao-frade-seco-500g", name: "Feijão-frade seco (500 g)", category: "legumes", priceCents: 175, unit: "500 g", image: "35015315/60.jpg?1683650851" }),
   product({ id: "rabanetes-500g", name: "Rabanetes (500 g)", category: "legumes", priceCents: 250, unit: "500 g", image: "35015324/22.jpg?1683650865" }),
   product({ id: "grelos-de-couve", name: "Grelos de couve", category: "legumes", priceCents: 300, unit: null, image: "8942320/grelo_couve.jpg?1614807408" }),
   product({ id: "tomate-cherry", name: "Tomate cherry", category: "legumes", priceCents: 549, unit: null, image: "35015923/Design_sem_nome__3_.jpg?1683651665" }),
@@ -320,6 +344,7 @@ export const oQuintalProducts: readonly OQuintalProduct[] = [
   product({ id: "espargos-molho", name: "Espargos", category: "legumes", priceCents: 390, unit: "molho", image: "35015603/32.jpg?1683651229" }),
   product({ id: "couve-chinesa", name: "Couve chinesa", category: "legumes", description: ["Unidade com +/- 500 a 800 g."], priceCents: 299, unit: "unidade", image: "35015680/18.jpg?1683651274" }),
   product({ id: "aipo", name: "Aipo", category: "legumes", description: ["Preço por unidade, +/- 500 g."], priceCents: 200, unit: "unidade", image: "35015684/15.jpg?1683651285" }),
+  // Its page on o-quintal.com could not be read on 2026-10-25 (no photo found): not shown until it has one.
   product({ id: "couves-de-bruxelas-500g", name: "Couves de Bruxelas (500 g)", category: "legumes", priceCents: 250, unit: "500 g" }),
 
   // Produtos regionais (https://www.o-quintal.com/queijos-alentejanos).
@@ -405,13 +430,18 @@ export function findOQuintalProduct(id: string): OQuintalProduct | undefined {
   return byId.get(id);
 }
 
+/** The products shown in the shop (with a photo). */
+export const oQuintalListed: readonly OQuintalProduct[] = oQuintalProducts.filter((item) => item.listed);
+
+/** A section's products as the shop shows them: with a price first, «Preço sob consulta» at the end. */
 export function oQuintalProductsIn(category: OQuintalCategoryId): OQuintalProduct[] {
-  return oQuintalProducts.filter((item) => item.category === category);
+  const items = oQuintalListed.filter((item) => item.category === category);
+  return [...items.filter((item) => oQuintalFromPrice(item) !== null), ...items.filter((item) => oQuintalFromPrice(item) === null)];
 }
 
 /** The unit price of a product (and its choice), in cents, or null when it can't be bought. */
 export function oQuintalUnitPrice(item: OQuintalProduct, choiceId?: string | null): number | null {
-  if (!item.inStock) return null;
+  if (!item.inStock || !item.listed) return null;
   if (item.option) {
     const choice = item.option.choices.find((entry) => entry.id === choiceId);
     if (!choice) return null;
@@ -424,7 +454,7 @@ export function oQuintalUnitPrice(item: OQuintalProduct, choiceId?: string | nul
 
 /** The lowest price a product can be bought for (for the cards: «desde 20,00 €»), or null. */
 export function oQuintalFromPrice(item: OQuintalProduct): { cents: number; varies: boolean } | null {
-  if (!item.inStock) return null;
+  if (!item.inStock || !item.listed) return null;
   if (!item.option) return item.priceCents === null ? null : { cents: item.priceCents, varies: false };
   const prices = item.option.choices
     .map((choice) => (choice.priceCents === undefined ? item.priceCents : choice.priceCents))

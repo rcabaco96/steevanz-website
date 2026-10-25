@@ -1,5 +1,5 @@
-// O Quintal's wordmark, set in the site's type with a small leaf. The business's own logo (a PNG on its Jumpseller
-// shop) could not be downloaded on 2026-10-25; swap this for the real logo once it is in public/media/clients/o-quintal.
+// O Quintal's name set in the site's type, with a small leaf (used next to the business's real logo, which comes
+// from its Jumpseller store; the leaf shows only if that logo fails to load).
 export function Leaf({ className = "" }: { className?: string }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 32 32" className={className}>
