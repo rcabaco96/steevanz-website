@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 import type { MockupCopy } from "@/content/mockups";
 import { Check, ClockIcon, MapPinIcon, WhatsAppIcon } from "@/components/icons";
@@ -140,58 +141,28 @@ export function LandingPageMockup({ t }: { t: MockupCopy }) {
   );
 }
 
-export function WebsiteMockup({ t }: { t: MockupCopy }) {
-  const services = [
-    { name: t.siteService1, price: t.sitePrice1 },
-    { name: t.siteService2, price: t.sitePrice2 },
-    { name: t.siteService3, price: t.sitePrice3 },
-  ];
-  const tiles = ["from-[#3b1631] to-[#7a2d60]", "from-[#c9a27a] to-[#7a5a3c]", "from-[#574659] to-[#1d1220]"];
+// The Website product's picture (owner, 2026-10-25: «esta foto … não vende websites», show the templates):
+// real screenshots of the three holiday-rental demo templates (fictional brand «Maré Alta», also the examples
+// lower on the page), fanned out with the first one in front.
+const websiteTemplates = ["/media/examples/website-modelo-2.jpg", "/media/examples/website-modelo-1.jpg", "/media/examples/website-modelo-3.jpg"];
+
+function TemplateShot({ src, address, className = "", priority = false }: { src: string; address: string; className?: string; priority?: boolean }) {
   return (
-    <div aria-hidden="true" className="relative mx-auto w-full max-w-md pt-12 pb-6">
-      <div className="absolute inset-[8%] rounded-full bg-[radial-gradient(closest-side,rgb(var(--glow)/0.28),transparent)]" />
-      {/* The other pages of the site, stacked behind the one on screen. */}
-      <div className="absolute top-0 right-[2%] left-[10%] h-24 rounded-2xl border border-line bg-surface-2/80 shadow-sm">
-        <span className="absolute top-1 left-4 rounded-full bg-surface px-2.5 py-0.5 text-[0.6rem] font-semibold text-muted">{t.sitePageB}</span>
-      </div>
-      <div className="absolute top-6 right-[6%] left-[5%] h-24 rounded-2xl border border-line bg-surface-2 shadow-sm">
-        <span className="absolute top-2 right-4 rounded-full bg-surface px-2.5 py-0.5 text-[0.6rem] font-semibold text-muted">{t.sitePageA}</span>
-      </div>
-      <BrowserFrame address={`${t.webAddress}/${t.sitePath}`} className="relative mr-[3%]">
-        <div className="flex items-center justify-between gap-3 border-b border-[#e7ddd0] bg-white px-4 py-2.5">
-          <span className="flex items-center gap-1.5 text-[0.7rem] font-bold">
-            <span className="h-3.5 w-3.5 rounded-full bg-[#7a2d60]" />
-            {t.siteBrand}
-          </span>
-          <span className="flex min-w-0 gap-2.5 overflow-hidden text-[0.6rem]">
-            <span className={muted}>{t.siteNav1}</span>
-            <span className="font-bold text-[#7a2d60] underline decoration-2 underline-offset-4">{t.siteNav2}</span>
-            <span className={`hidden min-[400px]:inline ${muted}`}>{t.siteNav3}</span>
-            <span className={`hidden sm:inline ${muted}`}>{t.siteNav4}</span>
-          </span>
-        </div>
-        <div className="px-4 pt-4 pb-4">
-          <p className="font-display text-lg leading-tight">{t.siteTitle}</p>
-          <ul className="mt-3 flex flex-col divide-y divide-[#e7ddd0] rounded-xl border border-[#e7ddd0] bg-white">
-            {services.map((service) => (
-              <li key={service.name} className="flex items-center justify-between gap-2 px-3 py-2">
-                <span className="text-[0.7rem] font-semibold">{service.name}</span>
-                <span className="flex items-center gap-2">
-                  <span className="tabular text-[0.7rem] font-bold">{service.price}</span>
-                  <span className="rounded-full bg-[#7a2d60] px-2.5 py-1 text-[0.6rem] font-semibold text-white">{t.siteBook}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-4 text-[0.65rem] font-bold">{t.siteGallery}</p>
-          <div className="mt-1.5 grid grid-cols-3 gap-2">
-            {tiles.map((tone) => (
-              <span key={tone} className={`aspect-[4/3] rounded-lg bg-gradient-to-br ${tone}`} />
-            ))}
-          </div>
-        </div>
-      </BrowserFrame>
-      <Chip className="right-0 bottom-0">{t.siteChip}</Chip>
+    <BrowserFrame address={address} className={className}>
+      <Image src={src} alt="" width={1200} height={630} sizes="(min-width: 1024px) 360px, 80vw" priority={priority} className="block aspect-[1200/630] w-full object-cover" />
+    </BrowserFrame>
+  );
+}
+
+export function WebsiteMockup({ t }: { t: MockupCopy }) {
+  const [left, front, right] = websiteTemplates;
+  return (
+    <div aria-hidden="true" className="relative mx-auto aspect-[16/13] w-full max-w-lg">
+      <div className="absolute inset-[6%] rounded-full bg-[radial-gradient(closest-side,rgb(var(--glow)/0.28),transparent)]" />
+      <TemplateShot src={left} address={t.webAddress} className="absolute top-[40%] left-0 w-[50%] -rotate-[5deg]" />
+      <TemplateShot src={right} address={t.webAddress} className="absolute top-[40%] right-0 w-[50%] rotate-[5deg]" />
+      <TemplateShot src={front} address={`${t.webAddress}/${t.sitePath}`} priority className="absolute top-[2%] left-1/2 z-10 w-[78%] -translate-x-1/2" />
+      <Chip className="right-[4%] bottom-[2%]">{t.siteChip}</Chip>
     </div>
   );
 }
