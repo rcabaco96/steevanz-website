@@ -145,6 +145,19 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/prumo/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/prumo/"],
+    // Roaz (owner, 2026-10-24): a FICTIONAL boat-trip operator in Ferragudo, Steevanz's showcase site for boat-trip
+    // and activity businesses. Only the preview path; it will never have a domain of its own.
+    id: "roaz",
+    hosts: [],
+    base: "/roaz",
+    rootFiles: {
+      "/robots.txt": "/roaz/robots.txt",
+      "/sitemap.xml": "/roaz/sitemap.xml",
+      "/manifest.webmanifest": "/roaz/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/roaz/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/roaz/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/roaz/"],
   },
 ];
 

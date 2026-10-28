@@ -53,5 +53,7 @@ export const config = {
     "/platibanda/:path*",
     "/prumo",
     "/prumo/:path*",
+    "/roaz",
+    "/roaz/:path*",
   ],
 };
