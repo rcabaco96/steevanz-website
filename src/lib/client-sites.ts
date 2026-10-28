@@ -171,6 +171,19 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/sete-chaves/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/sete-chaves/"],
+    // Adega Ferragial (owner, 2026-10-24): a FICTIONAL family winery in the Alentejo, Steevanz's showcase site for
+    // wineries. Only the preview path; it will never have a domain of its own.
+    id: "ferragial",
+    hosts: [],
+    base: "/ferragial",
+    rootFiles: {
+      "/robots.txt": "/ferragial/robots.txt",
+      "/sitemap.xml": "/ferragial/sitemap.xml",
+      "/manifest.webmanifest": "/ferragial/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/ferragial/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/ferragial/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/ferragial/"],
   },
 ];
 

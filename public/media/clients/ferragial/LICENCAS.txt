@@ -1,0 +1,70 @@
+Adega Ferragial - origem das imagens e vídeos deste site
+=========================================================
+A Adega Ferragial é um negócio FICTÍCIO, criado pela Steevanz (2026-10-24) como site de demonstração para vender
+sites a adegas e produtores de vinho com enoturismo. Nome, logótipo, família, morada, contactos, vinhos, provas,
+datas e preços são inventados. Nenhuma imagem foi gerada por IA nem paga; nenhuma tem a etiqueta «AI generated».
+
+Licenças
+--------
+- Pixabay Content License (https://pixabay.com/service/license-summary/): uso gratuito, também comercial, sem
+  atribuição obrigatória; não é permitido vender ou redistribuir os ficheiros tal como estão.
+- Pexels License (https://www.pexels.com/license/): uso gratuito, também comercial, sem atribuição obrigatória; não é
+  permitido vender os ficheiros sem alterações nem sugerir que as pessoas filmadas apoiam o negócio.
+
+Todos os ficheiros foram cortados, redimensionados e comprimidos (ffmpeg / sharp: vídeo H.264 sem som, com a última
+fração de segundo em fundido para o ciclo não saltar; fotografias em WebP com a saturação ligeiramente reduzida).
+Os ficheiros *-poster.webp são fotogramas do vídeo com o mesmo nome.
+
+Vídeos (Pexels)
+---------------
+  hero.mp4, hero-retrato.mp4, hero-poster.webp, hero-retrato-poster.webp
+      - «Sunset over Lush Vineyard Landscape», Tom Schönmann (17094442)
+        https://www.pexels.com/video/sunset-over-lush-vineyard-landscape-17094442/
+  ocaso.mp4, ocaso-poster.webp
+      - «Time-Lapse of a Sunset», Roy S. (9339589)
+        https://www.pexels.com/video/time-lapse-of-a-sunset-9339589/
+  piquenique.mp4, piquenique-poster.webp
+      - «Couple Drinking from Wine Glasses», Ron Lach (10215316)
+        https://www.pexels.com/video/couple-drinking-from-wine-glasses-10215316/
+  vindima.mp4, vindima-poster.webp
+      - «Close-up of a Person Picking Grapes», E. Yorda (9947680)
+        https://www.pexels.com/video/close-up-of-a-person-picking-grapes-9947680/
+
+Vídeo (Pixabay)
+---------------
+  copo.mp4, copo-poster.webp
+      - vinho tinto a ser servido num copo, fundo preto, leovenezian (56914)
+        https://pixabay.com/videos/id-56914/
+
+Fotografias (Pixabay)
+---------------------
+  vinha-ocaso.webp   - joaoluismf (4591757) https://pixabay.com/photos/reguengos-alentejo-portugal-wines-4591757/
+  planicie.webp      - Da_Cunha (4355135) https://pixabay.com/photos/alentejo-portugal-landscape-4355135/
+  montado.webp       - franky1st (4387493) https://pixabay.com/photos/alentejo-landscape-cork-oak-nature-4387493/
+  aldeia.webp        - philiprmiles (3530731) https://pixabay.com/photos/portugal-alentejo-landscape-nature-3530731/
+  oliveira.webp      - Paco (472382) https://pixabay.com/photos/campground-alentejo-portugal-olive-472382/
+  sobreiro.webp      - annalisabussini (450645) https://pixabay.com/photos/tree-cork-landscape-country-450645/
+  cortica.webp       - Simon (2277628) https://pixabay.com/photos/cork-oak-deciduous-tree-2277628/
+  talha.webp         - fietzfotos (3107267) https://pixabay.com/photos/old-container-barrel-antique-3107267/
+  talhas.webp        - Makalu (3700525) https://pixabay.com/photos/amphora-historical-archaeology-3700525/
+  talha-porta.webp   - dimitrisvetsikas1969 (3212978) https://pixabay.com/photos/architecture-old-house-door-gate-3212978/
+  cave.webp          - FranceIntense (1122165) https://pixabay.com/photos/burgundy-was-barrels-cave-1122165/
+  barricas.webp      - WFranz (4863327) https://pixabay.com/photos/barrel-wooden-barrel-barrels-most-4863327/
+  mesa.webp          - JillWellington (1952051) https://pixabay.com/photos/wine-glass-drink-tasting-hand-1952051/
+  copo-mesa.webp     - JillWellington (553467) https://pixabay.com/photos/wineglass-wine-glass-wine-tasting-553467/
+  uvas-tintas.webp   - JillWellington (553464) https://pixabay.com/photos/grapes-vines-grapevine-vineyard-553464/
+  copos.webp         - lorilorilo (6559177) https://pixabay.com/photos/wine-tasting-wine-glasses-winery-6559177/
+  branco-tinto.webp  - Didgeman (848268) https://pixabay.com/photos/white-wine-red-wine-wine-glasses-848268/
+  rolhas.webp        - Damian_Konietzny (4990713) https://pixabay.com/photos/cork-wine-brown-wine-bottle-4990713/
+  uvas-mao.webp      - Anewbist (2953414) https://pixabay.com/photos/grapes-hand-grape-fruit-2953414/
+  uvas-brancas.webp  - Couleur (3638444) https://pixabay.com/photos/grapes-fruits-food-fresh-healthy-3638444/
+  manta.webp         - Pexels (1853380) https://pixabay.com/photos/picnic-wine-cheers-toas-celebrate-1853380/
+  petiscos.webp      - fkw24 (7523461) https://pixabay.com/photos/wine-tasting-italy-bread-time-snack-7523461/
+
+Desenhados pela Steevanz para esta demonstração (sem imagens de terceiros)
+--------------------------------------------------------------------------
+  logo.svg, icon.svg, favicon.ico, icon-192.png, icon-512.png, apple-icon.png
+      - o logótipo inventado da Adega Ferragial (a talha com a linha do horizonte e o sol).
+  og.jpg
+      - imagem de pré-visualização das ligações: o logótipo sobre um fotograma de hero.mp4 (ver acima).
+  As garrafas e os rótulos dos vinhos no site são desenhados em código (SVG), não são fotografias.

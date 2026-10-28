@@ -57,5 +57,7 @@ export const config = {
     "/roaz/:path*",
     "/sete-chaves",
     "/sete-chaves/:path*",
+    "/ferragial",
+    "/ferragial/:path*",
   ],
 };
