@@ -49,5 +49,7 @@ export const config = {
     "/meada/:path*",
     "/risca",
     "/risca/:path*",
+    "/platibanda",
+    "/platibanda/:path*",
   ],
 };

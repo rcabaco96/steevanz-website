@@ -1,0 +1,211 @@
+/* Platibanda's own stylesheet (a fictional real-estate agency in Tavira, Steevanz demo): none of the Steevanz site's
+   styles load on these pages, and Tailwind only scans the agency's own files. Identity (2026-10-24): the Algarve
+   house front — whitewash, the ochre, terracotta and indigo bands painted around doors and windows, the roof tile,
+   the pink of the salt pans and the deep teal of the ria at dusk. Young Serif + Schibsted Grotesk. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/platibanda";
+@source "./";
+
+@theme {
+  --color-cal: #faf6ef;
+  --color-areia: #f1e8da;
+  --color-areia-2: #e6d9c4;
+  --color-ocre: #cf8f22;
+  --color-ocre-deep: #8a5a0c;
+  --color-telha: #b4532e;
+  --color-telha-deep: #8f3d1f;
+  --color-anil: #3b4f8f;
+  --color-sal: #ecd3c6;
+  --color-ria: #13302e;
+  --color-ria-2: #1c4441;
+  --color-tinta: #1d2524;
+  --color-pedra: #5a6361;
+
+  --font-display: var(--pb-font-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--pb-font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-cal: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-cal);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    font-variant-numeric: lining-nums;
+  }
+  ::selection {
+    background: var(--color-ocre);
+    color: var(--color-ria);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-telha);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .pb-on-dark :focus-visible {
+    outline-color: var(--color-ocre);
+  }
+  button,
+  summary,
+  select {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Small spaced capitals for labels. */
+  .pb-label {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* The painted band around a door or window («barra»): a thick frame in the band's colour. */
+  .pb-barra {
+    box-shadow: inset 0 0 0 var(--barra-w, 10px) var(--barra, var(--color-ocre));
+  }
+
+  /* A select dressed as a field, with its own arrow. */
+  .pb-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2313302e' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.4rem;
+  }
+
+  /* Words of the manifesto, lit one by one by the scroll (without JavaScript they are simply lit). */
+  .pb-word {
+    transition: color 0.3s linear;
+  }
+  .pb-word.is-key {
+    color: var(--color-ocre);
+  }
+  .is-armed .pb-word {
+    color: rgb(250 246 239 / 0.2);
+  }
+  .is-armed .pb-word.is-lit {
+    color: var(--color-cal);
+  }
+  .is-armed .pb-word.is-key.is-lit {
+    color: var(--color-ocre);
+  }
+}
+
+/* The opening (Preloader): gone at once when already seen this session or with reduced motion; while it plays,
+   the hero's entrance waits behind it and the page doesn't scroll. */
+.pb-seen .pb-pre {
+  display: none;
+}
+.pb-loading body {
+  overflow: hidden;
+}
+.pb-loading .pb-rise {
+  animation-play-state: paused;
+}
+
+/* The property gallery starts inside a house front (its outline in --pb-facade) and GSAP opens it. */
+.pb-motion .pb-gallery-frame {
+  clip-path: var(--pb-facade);
+}
+
+/* Entrance of the hero: separate translate property, so the element's own transform stays. */
+@keyframes pb-rise {
+  from { opacity: 0; translate: 0 1.2rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+.pb-rise {
+  animation: pb-rise 1.2s var(--ease-cal) both;
+}
+
+/* The scroll cue: a little key that keeps dropping down a line. */
+@keyframes pb-cue {
+  0% { transform: translate3d(0, -0.4rem, 0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate3d(0, 2.4rem, 0); opacity: 0; }
+}
+.pb-cue {
+  animation: pb-cue 2.2s var(--ease-cal) infinite;
+}
+
+/* The house cards of the street sway a little while idle (transform only). */
+@keyframes pb-bob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
+}
+
+/* FAQ answers open by animating their height to «auto». */
+.pb-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.5s var(--ease-cal),
+    content-visibility 0.5s allow-discrete;
+}
+.pb-faq[open]::details-content {
+  block-size: auto;
+}
+:root {
+  interpolate-size: allow-keywords;
+}
+.pb-faq summary::-webkit-details-marker {
+  display: none;
+}
+.pb-faq summary {
+  list-style: none;
+}
+.pb-faq[open] .pb-faq-icon {
+  rotate: 45deg;
+}
+
+/* The gallery of a property: a strip that snaps photo by photo, its scrollbar hidden. */
+.pb-snap {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.pb-snap::-webkit-scrollbar {
+  display: none;
+}
+.pb-snap > * {
+  scroll-snap-align: center;
+}
+
+/* Lime-wash texture: a fine static grain over the light sections (no blending, no animation, cheap on phones). */
+.pb-grain {
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-rise,
+  .pb-cue {
+    animation: none !important;
+  }
+  .pb-faq::details-content {
+    transition: none;
+  }
+  .pb-word {
+    transition: none;
+  }
+}

@@ -1,0 +1,64 @@
+Platibanda - origem das imagens e vídeos deste site
+====================================================
+Platibanda é um negócio FICTÍCIO, criado pela Steevanz (2026-10-24) como site de demonstração para vender sites a
+imobiliárias, agências de alojamento local e gestores de imóveis. Nome, logótipo, equipa, morada, contactos, imóveis,
+preços e serviços são inventados. As fotografias ILUSTRAM os imóveis fictícios: não são fotografias das casas descritas
+Os imóveis só usam interiores e espaços exteriores genéricos, que não identificam nenhuma morada real. Edifícios
+reconhecíveis da cidade (paços do concelho de Tavira, a fachada amarela com platibanda, uma porta de azulejo, a casa
+refletida na água) aparecem só como cenário, nunca como imóvel à venda ou para arrendar.
+
+Fotografias e vídeos: Pexels (https://www.pexels.com), «Pexels License» (https://www.pexels.com/license/): uso gratuito,
+também comercial, sem atribuição obrigatória; editar é permitido; não é permitido vender cópias sem alterações nem
+sugerir que as pessoas ou marcas retratadas apoiam o negócio. Nenhuma imagem foi gerada por IA nem paga.
+Licença confirmada na página de cada ficheiro a 2026-10-24.
+
+Tratamento: vídeos cortados/redimensionados com ffmpeg (H.264, sem som); fotografias redimensionadas (lado maior
+1600 px) e convertidas para WebP com sharp (saturação -5 %).
+
+VÍDEOS
+  hero.mp4, hero-retrato.mp4, hero-poster.webp, hero-retrato-poster.webp
+      «Drone Shot of the Town by the River» (Tavira), João Pinheiro
+      https://www.pexels.com/video/drone-shot-of-the-town-by-the-river-4385251/
+  tavira-alto.mp4, tavira-alto-poster.webp
+      «Footage of the Town by the River» (Tavira), João Pinheiro
+      https://www.pexels.com/video/footage-of-the-town-by-the-river-4385250/
+  piscina.mp4, piscina-poster.webp, buganvilias-piscina.webp (fotograma)
+      «Luxury Villa Poolside in Mediterranean Setting», Vincent Rivaud
+      https://www.pexels.com/video/luxury-villa-poolside-in-mediterranean-setting-38299646/
+
+FOTOGRAFIAS
+  fachada-platibanda.webp   Emilio Sánchez Hernández   https://www.pexels.com/photo/posuda-convento-hotel-in-tavira-portugal-14417668/
+  barra-ocre-sala.webp      Derwin Edwards             https://www.pexels.com/photo/elegant-living-room-at-home-10855261/
+  barra-ocre-cozinha.webp   UMUT (umudicreative)       https://www.pexels.com/photo/interior-of-kitchen-17436321/
+  barra-ocre-quarto.webp    hello aesthe               https://www.pexels.com/photo/interior-of-an-elegant-bedroom-15682060/
+  ria-varanda.webp          Tapas S                    https://www.pexels.com/photo/scenic-ocean-view-from-modern-balcony-34271104/
+  ria-sala.webp             Fabio Teles                https://www.pexels.com/photo/elegant-living-room-with-arched-windows-and-forest-view-33219310/
+  ria-quarto.webp           Güneş                      https://www.pexels.com/photo/a-bed-in-a-room-18078646/
+  monte-exterior.webp       Nuri Askerhan              https://www.pexels.com/photo/tranquil-mediterranean-outdoor-pool-setting-37911536/
+  monte-lareira.webp        Raymond Petrik             https://www.pexels.com/photo/cozy-rustic-fireplace-in-mediterranean-style-room-29494165/
+  monte-cozinha.webp        Tuğba Kobal Yılmaz         https://www.pexels.com/photo/retro-peaceful-kitchen-15124870/
+  monte-quarto.webp         mohan Bai                  https://www.pexels.com/photo/white-bed-linen-near-brown-wooden-framed-glass-window-8440280/
+  cabanas-piscina.webp      Vera Emilie                https://www.pexels.com/photo/view-of-a-house-with-a-swimming-pool-18374066/
+  cabanas-sala.webp         Century21 lebanon          https://www.pexels.com/photo/spacious-modern-living-room-with-scenic-view-37110043/
+  cabanas-quarto.webp       Ricardo Oliveira           https://www.pexels.com/photo/cozy-bedroom-with-ocean-view-balcony-at-sunset-30221505/
+  olhao-sala.webp           hello aesthe               https://www.pexels.com/photo/decor-of-living-room-15682059/
+  olhao-casa-de-banho.webp  Diogo Miranda              https://www.pexels.com/photo/a-bathroom-with-blue-and-white-tiles-and-a-door-27573422/
+  santa-luzia-quintal.webp  meomupmofilm               https://www.pexels.com/photo/cozy-outdoor-seating-in-lush-garden-setting-34210268/
+  buganvilias-alpendre.webp Leo Johnson                https://www.pexels.com/photo/cozy-outdoor-patio-with-sunlit-table-setting-31466720/
+  olhao-quarto.webp         Olga Balk                  https://www.pexels.com/photo/cozy-coastal-hotel-room-with-elegant-canopy-34543363/
+  santa-luzia-cozinha.webp  Rachel Claire              https://www.pexels.com/photo/black-round-wooden-table-with-chairs-on-rug-beside-a-wooden-cupboard-6125636/
+  santa-luzia-quarto.webp   Andrea Garibay             https://www.pexels.com/photo/serene-mediterranean-style-bedroom-in-guadalajara-hotel-32624967/
+  fuseta-exterior.webp      Lisa Fotios                https://www.pexels.com/photo/house-near-trees-1666504/
+  fuseta-terraco.webp       Vlada Karpovich            https://www.pexels.com/photo/bed-with-white-curtain-beside-a-pool-7903173/
+  fuseta-varanda.webp       Jimmy Liao                 https://www.pexels.com/photo/ocean-view-from-balcony-13205670/
+  buganvilias-sala.webp     Anthony Rahayel            https://www.pexels.com/photo/elegant-living-room-with-scenic-mountain-view-38954948/
+  tavira-praca.webp         Neil Webb                  https://www.pexels.com/photo/building-of-the-municipal-council-of-tavira-portugal-12669652/
+  tavira-porta.webp         Shay Gordon                https://www.pexels.com/photo/vintage-green-door-with-rustic-tiles-in-tavira-30649371/
+  reflexo.webp              Semih Başaran              https://www.pexels.com/photo/facade-of-a-building-reflecting-in-water-15107772/
+
+FEITOS PELA STEEVANZ (sem fontes externas)
+  logo.svg, icon.svg, icon-192.png, icon-512.png, apple-icon.png, favicon.ico
+      Logótipo original da Platibanda (fachada com platibanda, pináculos e porta com barra), desenhado em SVG.
+  og.jpg
+      Imagem de pré-visualização de links (1200×630): o logótipo, o texto e um fotograma de hero.mp4 (ver acima)
+      dentro do desenho da fachada.
