@@ -47,5 +47,7 @@ export const config = {
     "/ponteiro/:path*",
     "/meada",
     "/meada/:path*",
+    "/risca",
+    "/risca/:path*",
   ],
 };

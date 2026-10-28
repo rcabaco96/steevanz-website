@@ -1,0 +1,74 @@
+Risca - origem das imagens e vídeos deste site
+===============================================
+A Risca é um negócio FICTÍCIO, criado pela Steevanz (2026-10-24) como site de demonstração para vender sites a
+cabeleireiros e barbearias. Nome, logótipo, equipa, morada, contactos, serviços e preços são inventados.
+
+Vídeos e fotografias: Mixkit (https://mixkit.co), «Mixkit Stock Video Free License»
+(https://mixkit.co/license/#videoFree): uso gratuito em projetos comerciais e pessoais, sem atribuição obrigatória;
+não é permitido revender ou redistribuir os ficheiros soltos. A licença de cada clip foi confirmada na sua página
+(campo «license»: https://mixkit.co/license/#videoFree) a 2026-10-24. Nenhuma imagem foi gerada por IA nem paga.
+
+Os clips foram cortados/redimensionados (ffmpeg, H.264, sem som) e as fotografias são fotogramas desses clips
+(saturação -6 %), convertidas para WebP:
+
+  hero.mp4, hero-retrato.mp4,
+  hero-poster.webp, hero-retrato-poster.webp
+                               - «Slow motion hairdresser blow-drying young woman's long blonde hair» (49556)
+                                 https://mixkit.co/free-stock-video/slow-motion-hairdresser-blow-drying-young-womans-long-blonde-hair-49556/
+  movimento.mp4, movimento-poster.webp, vento.webp
+                               - «Fashion model on a pink background» (41663)
+                                 https://mixkit.co/free-stock-video/fashion-model-on-a-pink-background-41663/
+  corte.webp                   - «Hands cutting long hair» (23187)
+                                 https://mixkit.co/free-stock-video/hands-cutting-long-hair-23187/
+  cor.webp                     - «Hairstylist working with dye» (17030)
+                                 https://mixkit.co/free-stock-video/hairstylist-working-with-dye-17030/
+  cor-pincel.webp              - «Hairstylist applying hair dye» (16979)
+                                 https://mixkit.co/free-stock-video/hairstylist-applying-hair-dye-16979/
+  lavagem.webp                 - «Washing a client's hair in aesthetics» (33099)
+                                 https://mixkit.co/free-stock-video/washing-a-clients-hair-in-aesthetics-33099/
+  noiva.webp                   - «Bride getting her makeup and hair done» (40592)
+                                 https://mixkit.co/free-stock-video/bride-getting-her-makeup-and-hair-done-40592/
+  noiva-flores.webp            - «Bride prepares for her wedding» (40559)
+                                 https://mixkit.co/free-stock-video/bride-prepares-for-her-wedding-40559/
+  homem.webp                   - «Hair stylist cuts a man's hair» (49340)
+                                 https://mixkit.co/free-stock-video/hair-stylist-cuts-a-mans-hair-49340/
+  tesoura.webp                 - «Barber cutting hair with scissors and comb» (43232)
+                                 https://mixkit.co/free-stock-video/barber-cutting-hair-with-scissors-and-comb-43232/
+  ferramentas.webp             - «Hairdressing equipment» (43231)
+                                 https://mixkit.co/free-stock-video/hairdressing-equipment-43231/
+  comprido.webp                - «Woman flicking her long hair in a tan t-shirt» (47965)
+                                 https://mixkit.co/free-stock-video/woman-flicking-her-long-hair-in-a-tan-t-shirt-47965/
+  caracois.webp                - «Portrait of a young woman with abundant curly hair modeling» (51997)
+                                 https://mixkit.co/free-stock-video/portrait-of-a-young-woman-with-abundant-curly-hair-modeling-51997/
+  caracois-2.webp              - «A young natural woman with curly hair shakes her head» (52003)
+                                 https://mixkit.co/free-stock-video/a-young-natural-woman-with-curly-hair-shakes-her-head-52003/
+  apanhado.webp                - «Hair stylist working in a hairstyle» (16167)
+                                 https://mixkit.co/free-stock-video/hair-stylist-working-in-a-hairstyle-16167/
+  ondas.webp                   - «Ironing a woman's hair in the salon» (16044)
+                                 https://mixkit.co/free-stock-video/ironing-a-womans-hair-in-the-salon-16044/
+  brushing.webp                - «Hairstylist drying woman's long hair» (16147)
+                                 https://mixkit.co/free-stock-video/hairstylist-drying-womans-long-hair-16147/
+  estudio.webp                 - «Combing a female fashion model» (42019)
+                                 https://mixkit.co/free-stock-video/combing-a-female-fashion-model-42019/
+  pente.webp                   - «Stylist combing her client's hair» (33257)
+                                 https://mixkit.co/free-stock-video/stylist-combing-her-clients-hair-33257/
+  olhar.webp                   - «Man gets haircut from stylist» (47643)
+                                 https://mixkit.co/free-stock-video/man-gets-haircut-from-stylist-47643/
+
+  barbearia.mp4, barbearia-poster.webp
+                               - «A man getting a beard trim» (43225)
+                                 https://mixkit.co/free-stock-video/a-man-getting-a-beard-trim-43225/
+  navalha.webp                 - «Close-up of a barber shaving a client's beard» (47603)
+                                 https://mixkit.co/free-stock-video/close-up-of-a-barber-shaving-a-clients-beard-47603/
+  maquina.webp                 - «Man smiling as a barber trims his hair» (47577)
+                                 https://mixkit.co/free-stock-video/man-smiling-as-a-barber-trims-his-hair-47577/
+  nuca.webp                    - «Barber outlining a man's hair with a machine» (40127)
+                                 https://mixkit.co/free-stock-video/barber-outlining-a-mans-hair-with-a-machine-40127/
+
+Feitos pela Steevanz (desenho original, sem fontes de terceiros):
+  logo.svg, logo.png           - o logótipo «RISCA» desenhado à mão (maiúsculas condensadas cortadas por uma linha)
+  icon.svg, icon-192.png, icon-512.png, apple-icon.png, favicon.ico - o «R» cortado pela linha
+  og.jpg (1200x630)            - logótipo + vento.webp cortado na diagonal (pré-visualização de links)
+
+As pessoas nas imagens são modelos dos vídeos da Mixkit; os nomes da equipa no site são inventados e não as
+identificam (o site diz que as fotografias mostram o tipo de trabalho, não as pessoas).

@@ -106,6 +106,19 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/meada/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/meada/"],
+    // Risca (owner, 2026-10-24): a FICTIONAL hair salon in Porto, Steevanz's showcase site for hair salons. Only the
+    // preview path; it will never have a domain of its own.
+    id: "risca",
+    hosts: [],
+    base: "/risca",
+    rootFiles: {
+      "/robots.txt": "/risca/robots.txt",
+      "/sitemap.xml": "/risca/sitemap.xml",
+      "/manifest.webmanifest": "/risca/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/risca/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/risca/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/risca/"],
   },
 ];
 

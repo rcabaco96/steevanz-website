@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-38 -10 120 120"><rect x="-38" y="-10" width="120" height="120" fill="#121110"/><defs>
+<clipPath id="rb"><rect x="-2" y="0" width="48" height="100"/></clipPath>
+<clipPath id="rl"><polygon points="-44,68.24 88,34.76 88,160 -44,160"/></clipPath>
+<clipPath id="rh"><polygon points="-44,-60 88,-60 88,33.16 -44,63.63999999999999"/></clipPath>
+</defs>
+<g clip-path="url(#rb)"><g clip-path="url(#rl)"><g fill="none" stroke="#f2efe9" stroke-width="15" stroke-miterlimit="10"><path d="M7.5 106V7.5H25a17.5 17.5 0 0 1 0 35H7.5M24 42.5L38.5 106"/></g></g></g>
+<g transform="translate(3 -0.75)"><g clip-path="url(#rb)"><g clip-path="url(#rh)"><g fill="none" stroke="#f2efe9" stroke-width="15" stroke-miterlimit="10"><path d="M7.5 106V7.5H25a17.5 17.5 0 0 1 0 35H7.5M24 42.5L38.5 106"/></g></g></g></g>
+<line x1="-38" y1="65.24" x2="82" y2="34.76" stroke="#ff4127" stroke-width="2.6"/></svg>
