@@ -1,0 +1,47 @@
+Sete Chaves — Casa de campo em Aljezur (negócio FICTÍCIO, site de demonstração da Steevanz, 2026-10-24)
+Média: só stock de licença livre para uso comercial, sem atribuição obrigatória; nada gerado por IA.
+- Pixabay Content License: https://pixabay.com/service/license-summary/
+- Mixkit Stock Video Free License: https://mixkit.co/license/#videoFree
+Ficheiros otimizados com ffmpeg (H.264, sem som) e sharp (WebP). As fotografias de quartos são ilustrativas
+(não mostram uma casa real chamada Sete Chaves).
+
+VÍDEO
+hero.mp4, hero-retrato.mp4, hero-poster.webp, hero-retrato-poster.webp
+  Cortinas ao vento com a sombra de uma cadeira — Pixabay, vídeo 128321 — https://pixabay.com/videos/id-128321/ — Pixabay Content License
+  (recorte 16:9 e 9:16, 2–11 s, com transição em laço)
+mar.mp4, mar-poster.webp
+  Surfistas na Costa Vicentina (Bordeira/Arrifana), vista aérea — Pixabay, vídeo 13772 — https://pixabay.com/videos/id-13772/ — Pixabay Content License
+
+FOTOGRAMAS DE VÍDEOS MIXKIT (Mixkit Stock Video Free License)
+suite-figueira.webp — Boutique hotel room and terrace — https://mixkit.co/free-stock-video/boutique-hotel-room-and-terrace-4047/
+piscina.webp — Swimming pool on a sunny day — https://mixkit.co/free-stock-video/swimming-pool-on-a-sunny-day-4434/
+jardim.webp — Backyard of a large villa with a garden — https://mixkit.co/free-stock-video/backyard-of-a-large-villa-with-a-garden-and-a-47286/
+pequeno-almoco.webp — Breakfast at a table with bread, coffee and fruit — https://mixkit.co/free-stock-video/breakfast-at-a-table-with-bread-coffee-and-fruit-4866/
+
+FOTOGRAFIAS PIXABAY (Pixabay Content License)
+quarto-esteva.webp — https://pixabay.com/photos/interior-design-simple-7215148/
+quarto-rosmaninho.webp — https://pixabay.com/photos/indoor-home-interior-room-table-4148893/
+quarto-medronho.webp — https://pixabay.com/photos/bedroom-interior-design-house-room-5772286/
+quarto-alfarroba.webp — https://pixabay.com/photos/bedroom-cupboard-bed-room-sofa-1872196/
+casa-do-forno.webp — https://pixabay.com/photos/chair-cottage-country-style-1840526/
+palheiro.webp — https://pixabay.com/photos/bedroom-interior-design-furniture-6778193/
+banheira.webp — https://pixabay.com/photos/bathroom-bath-interior-bathtub-2987001/
+pequeno-almoco-jardim.webp — https://pixabay.com/photos/table-breakfast-garden-in-the-free-1631564/
+quadro-chaves.webp — https://pixabay.com/photos/hotel-key-key-counter-reception-65044/
+molho-chaves.webp — https://pixabay.com/photos/key-keychain-close-up-123554/
+esteva.webp — https://pixabay.com/photos/white-cistus-flower-cistus-white-2371846/
+medronho.webp — https://pixabay.com/photos/arbutus-unedo-strawberry-tree-883824/
+janela.webp — https://pixabay.com/photos/morning-bedroom-bed-door-girl-1850893/
+linho.webp — https://pixabay.com/photos/read-sunday-bedroom-book-sleep-3667768/
+arrifana.webp — https://pixabay.com/photos/algarve-portugal-arrifana-surfing-1816522/
+ribeira.webp — https://pixabay.com/photos/ocean-rocks-river-water-sand-4506649/
+surf.webp — https://pixabay.com/photos/surf-algarve-arrifana-sport-sea-506352/
+falesias.webp — https://pixabay.com/photos/seagull-slope-cliff-aljezur-2069558/
+cabo.webp — https://pixabay.com/photos/cabo-de-s%C3%A3o-vicente-algarve-portugal-4291292/
+sagres.webp — https://pixabay.com/photos/costa-litoral-cable-rock-ocean-4442645/
+passadico.webp — https://pixabay.com/photos/stairs-catwalk-wood-sunset-sky-4626980/
+estrelas.webp — https://pixabay.com/photos/milky-way-astro-starry-sky-stars-2181250/
+
+TRABALHO PRÓPRIO (Steevanz, para este site de demonstração)
+logo.svg, logo.png, icon.svg, favicon.ico, icon-192.png, icon-512.png, apple-icon.png — desenho do porta-chaves com o 7
+og.jpg — imagem de pré-visualização (logótipo + fotograma de hero.mp4)

@@ -1,0 +1,241 @@
+/* Sete Chaves' own stylesheet (a fictional guest house in Aljezur, Steevanz demo): none of the Steevanz site's styles
+   load on these pages, and Tailwind only scans the house's own files. Identity (2026-10-24): the Costa Vicentina's
+   lime-washed walls and esteva petals, the grey schist of its cliffs, the brass of old room keys, the Atlantic mist and
+   the dark blotch at the heart of the esteva flower. Gloock + Figtree. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/sete-chaves";
+@source "./";
+
+@theme {
+  --color-cal: #f5f1e8;
+  --color-linho: #ebe4d6;
+  --color-areia: #dccfb6;
+  --color-xisto: #262c33;
+  --color-xisto-2: #343c45;
+  --color-xisto-3: #46505a;
+  --color-tinta: #1d2227;
+  --color-pedra: #5c636a;
+  --color-latao: #ad8139;
+  --color-latao-deep: #7a5a24;
+  --color-latao-claro: #dcbf86;
+  --color-mancha: #5a2232;
+  --color-bruma: #c9d5d9;
+
+  --font-display: var(--sc-font-display), "Gloock", Georgia, serif;
+  --font-sans: var(--sc-font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-chave: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-cal);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-latao);
+    color: var(--color-tinta);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-latao-deep);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .sc-on-dark :focus-visible {
+    outline-color: var(--color-latao-claro);
+  }
+  button,
+  summary {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Small spaced capitals for labels, like the letters stamped on a key tag. */
+  .sc-label {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  /* The brass of the key tags: a soft metallic gradient (background only, painted once). */
+  .sc-brass {
+    background:
+      radial-gradient(
+        120% 80% at 30% 15%,
+        rgb(255 240 200 / 0.55),
+        transparent 55%
+      ),
+      linear-gradient(160deg, #c99a4c 0%, #ad8139 45%, #8a6428 100%);
+  }
+
+  /* The key tag as a frame: round top, small round corners at the bottom (the motif of the whole site). */
+  .sc-fob {
+    border-radius: 999px 999px 1.4rem 1.4rem;
+  }
+}
+
+/* The opening (Preloader): gone at once when already seen this session or with reduced motion; while it plays the
+   hero's entrance waits behind it and the page doesn't scroll. */
+.sc-seen .sc-pre {
+  display: none;
+}
+.sc-loading body {
+  overflow: hidden;
+}
+.sc-loading .sc-rise {
+  animation-play-state: paused;
+}
+
+/* Entrance of the hero copy (separate translate property, so the element's own transform stays). */
+@keyframes sc-rise {
+  from {
+    opacity: 0;
+    translate: 0 1.4rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.sc-rise {
+  animation: sc-rise 1.2s var(--ease-chave) both;
+}
+
+/* A key that keeps swinging a little on its hook (decoration, rotate only). */
+@keyframes sc-sway {
+  0%,
+  100% {
+    rotate: -3deg;
+  }
+  50% {
+    rotate: 3deg;
+  }
+}
+.sc-sway {
+  animation: sc-sway 4.8s ease-in-out infinite;
+  transform-origin: 50% 0;
+}
+
+/* The tap waves over the guide's plate. */
+@keyframes sc-wave {
+  from {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+.sc-wave {
+  animation: sc-wave 2.4s var(--ease-chave) infinite;
+}
+
+/* The scroll cue: a little key going down a thread. */
+@keyframes sc-cue {
+  0% {
+    transform: translate3d(0, -0.5rem, 0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 2.4rem, 0);
+    opacity: 0;
+  }
+}
+.sc-cue {
+  animation: sc-cue 2.2s var(--ease-chave) infinite;
+}
+
+/* The key board (Rooms.tsx): a plain list of rooms by default (phones, reduced motion, no JavaScript); on a large
+   screen GSAP pins the board and stacks the rooms one over the other (.sc-board-on). */
+.sc-board-on .sc-board-stage {
+  position: relative;
+  height: 100svh;
+}
+.sc-board-on .sc-board-rooms {
+  position: relative;
+  height: 100%;
+}
+.sc-board-on .sc-room {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+
+/* The day (Day.tsx): a list of moments by default; pinned, they stack and cross-fade (.sc-day-on). */
+.sc-day-on .sc-day-stage {
+  height: 100svh;
+}
+.sc-day-on .sc-moment {
+  position: absolute;
+  inset: 0;
+}
+
+/* FAQ answers open by animating their height to «auto». */
+.sc-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.5s var(--ease-chave),
+    content-visibility 0.5s allow-discrete;
+}
+.sc-faq[open]::details-content {
+  block-size: auto;
+}
+:root {
+  interpolate-size: allow-keywords;
+}
+.sc-faq summary::-webkit-details-marker {
+  display: none;
+}
+.sc-faq summary {
+  list-style: none;
+}
+.sc-faq[open] .sc-faq-icon {
+  rotate: 45deg;
+}
+
+/* Lime-wash texture: a fine static grain (no blending, no animation, cheap on phones). */
+.sc-grain {
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-rise,
+  .sc-sway,
+  .sc-wave,
+  .sc-cue {
+    animation: none !important;
+  }
+  .sc-wave {
+    display: none;
+  }
+  .sc-faq::details-content {
+    transition: none;
+  }
+}

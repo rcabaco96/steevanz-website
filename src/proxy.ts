@@ -55,5 +55,7 @@ export const config = {
     "/prumo/:path*",
     "/roaz",
     "/roaz/:path*",
+    "/sete-chaves",
+    "/sete-chaves/:path*",
   ],
 };
