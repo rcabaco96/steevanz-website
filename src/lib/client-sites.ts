@@ -80,6 +80,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/orve/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/orve/"],
+  },
+  {
     // Ponteiro (owner, 2026-10-24): a FICTIONAL café, kitchen and bar in Porto, Steevanz's showcase site for
     // restaurants, cafés, pastelarias and bars. Only the preview path; it will never have a domain of its own.
     id: "ponteiro",
@@ -93,6 +95,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/ponteiro/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/ponteiro/"],
+  },
+  {
     // Meada (owner, 2026-10-24): a FICTIONAL concept store of home and Portuguese crafts, Steevanz's showcase site for
     // shops. Only the preview path; it will never have a domain of its own.
     id: "meada",
@@ -106,6 +110,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/meada/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/meada/"],
+  },
+  {
     // Risca (owner, 2026-10-24): a FICTIONAL hair salon in Porto, Steevanz's showcase site for hair salons. Only the
     // preview path; it will never have a domain of its own.
     id: "risca",
@@ -119,6 +125,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/risca/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/risca/"],
+  },
+  {
     // Platibanda (owner, 2026-10-24): a FICTIONAL real-estate agency in Tavira, Steevanz's showcase site for
     // real-estate and holiday-rental businesses. Only the preview path; it will never have a domain of its own.
     id: "platibanda",
@@ -132,6 +140,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/platibanda/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/platibanda/"],
+  },
+  {
     // Prumo (owner, 2026-10-24): a FICTIONAL clinic of physiotherapy, osteopathy and wellness, Steevanz's showcase site
     // for health and wellness businesses. Only the preview path; it will never have a domain of its own.
     id: "prumo",
@@ -145,6 +155,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/prumo/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/prumo/"],
+  },
+  {
     // Roaz (owner, 2026-10-24): a FICTIONAL boat-trip operator in Ferragudo, Steevanz's showcase site for boat-trip
     // and activity businesses. Only the preview path; it will never have a domain of its own.
     id: "roaz",
@@ -158,6 +170,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/roaz/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/roaz/"],
+  },
+  {
     // Sete Chaves (owner, 2026-10-24): a FICTIONAL guest house in Aljezur, Steevanz's showcase site for lodging
     // businesses. Only the preview path; it will never have a domain of its own.
     id: "sete-chaves",
@@ -171,6 +185,8 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/sete-chaves/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/sete-chaves/"],
+  },
+  {
     // Adega Ferragial (owner, 2026-10-24): a FICTIONAL family winery in the Alentejo, Steevanz's showcase site for
     // wineries. Only the preview path; it will never have a domain of its own.
     id: "ferragial",
