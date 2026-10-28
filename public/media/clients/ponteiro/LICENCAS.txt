@@ -1,0 +1,81 @@
+Ponteiro - origem das imagens e vídeos deste site
+=================================================
+O Ponteiro é um negócio FICTÍCIO, criado pela Steevanz (2026-10-24) como site de demonstração para vender sites a
+restaurantes, cafés, pastelarias e bares. Nome, logótipo, equipa, morada, contactos, pratos e preços são inventados.
+
+Vídeos e fotografias: Pixabay (https://pixabay.com), «Pixabay Content License»
+(https://pixabay.com/service/license-summary/): uso gratuito em projetos comerciais e pessoais, sem atribuição
+obrigatória; não é permitido vender ou redistribuir os ficheiros sem alterações. Encontrados pela API gratuita do
+Pixabay a 2026-10-24; nenhum dos ficheiros escolhidos está marcado como gerado por IA. Nenhuma imagem foi gerada por
+IA nem paga. (O Mixkit estava a bloquear pedidos automáticos com uma verificação humana nesse dia.)
+
+Os vídeos foram cortados/redimensionados (ffmpeg, H.264, sem som) e as fotografias redimensionadas e convertidas para
+WebP (sharp), sem outras alterações:
+
+  hero.mp4, hero-retrato.mp4, hero-poster.webp, hero-retrato-poster.webp
+      Pixabay vídeo 31383 de «Ernest_Roy» - https://pixabay.com/videos/id-31383/
+      (espresso, coffee, cafe, caffeine, shot, portafilter)
+  forno.mp4, forno-poster.webp
+      Pixabay vídeo 17177 de «Citor3» - https://pixabay.com/videos/id-17177/
+      (pizza oven, pizza, restaurant, job, food)
+  noite.mp4, noite-poster.webp
+      Pixabay vídeo 47249 de «Phill_Dillow» - https://pixabay.com/videos/id-47249/
+      (cocktail, drink, alcohol, glass, party, beverage)
+  balcao.mp4, balcao-poster.webp
+      Pixabay vídeo 2328 de «Life-Of-Vids» - https://pixabay.com/videos/id-2328/
+      (bar counter, restaurant, bar, people, table, public)
+  nata-tabuleiro.webp
+      Pixabay fotografia 1266429 de «cegoh» - https://pixabay.com/photos/portuguese-egg-tart-%E8%9B%8B%E6%8C%9E-macau-1266429/
+      (portuguese egg tart, 蛋挞, macau, custard, bakery, pastry)
+  nata-montra.webp
+      Pixabay fotografia 3867787 de «matunjic» - https://pixabay.com/photos/nata-pastel-lisbon-portugal-3867787/
+      (nata, pastel, lisbon, portugal, portuguese, dough)
+  nata-pires.webp
+      Pixabay fotografia 758547 de «CarolinaP» - https://pixabay.com/photos/portuguese-custard-tart-758547/
+      (portuguese custard tart, pastel de nata, lisbon, sweet, custard, dessert)
+  nata-macro.webp
+      Pixabay fotografia 2669935 de «zcf0508» - https://pixabay.com/photos/egg-tart-gourmet-macro-2669935/
+      (egg tart, gourmet, macro, egg tart, egg tart, egg tart)
+  croissants.webp
+      Pixabay fotografia 1284438 de «Pexels» - https://pixabay.com/photos/bread-croissant-morning-puff-paste-1284438/
+      (bread, croissant, morning, puff paste, puff pastry, flaky pastry)
+  croissant-prato.webp
+      Pixabay fotografia 7831358 de «Hilary_Nguyen» - https://pixabay.com/photos/croissant-sweet-baked-goods-7831358/
+      (croissant, sweet, baked goods, breakfast, healthy, food)
+  chocolate-quente.webp
+      Pixabay fotografia 1870009 de «Pexels» - https://pixabay.com/photos/breakfast-chocolate-coffee-cream-1870009/
+      (breakfast, chocolate, coffee, cream, cup, delicious)
+  bras.webp
+      Pixabay fotografia 4161518 de «riquebeze» - https://pixabay.com/photos/egg-sausage-portugal-cooking-4161518/
+      (egg, sausage, portugal, cooking, flavor, food)
+  polvo.webp
+      Pixabay fotografia 2736523 de «RitaE» - https://pixabay.com/photos/fish-squid-octopus-fish-market-2736523/
+      (fish, squid, octopus, fish market, kitchen, cook)
+  bolo-chocolate-natas.webp
+      Pixabay fotografia 1227842 de «Couleur» - https://pixabay.com/photos/cake-cakes-cream-cake-cream-yummy-1227842/
+      (cake, cakes, cream cake, cream, yummy, sweet dish)
+  bolo-chocolate.webp
+      Pixabay fotografia 1850011 de «Pexels» - https://pixabay.com/photos/cake-chocolate-chocolate-cake-1850011/
+      (cake, chocolate, chocolate cake, sliced cake, cake slice, dessert)
+  bolo-laranja.webp
+      Pixabay fotografia 398966 de «JESHOOTS-com» - https://pixabay.com/photos/orange-cake-dessert-pastry-food-398966/
+      (orange cake, dessert, pastry, food, baked, cake)
+  cocktail.webp
+      Pixabay fotografia 7951411 de «PhungNguyenPhotography» - https://pixabay.com/photos/drink-cocktail-beverage-alcohol-7951411/
+      (drink, cocktail, beverage, alcohol, bar, drink)
+  gin.webp
+      Pixabay fotografia 4307170 de «Ernest_Roy» - https://pixabay.com/photos/cocktail-gin-tonic-lime-bar-4307170/
+      (cocktail, gin, tonic, lime, bar, liquor)
+  neon.webp
+      Pixabay fotografia 17574 de «PublicDomainPictures» - https://pixabay.com/photos/alcohol-bar-caf%C3%A9-color-dark-17574/
+      (alcohol, bar, café, color, dark, dinner)
+
+Gravação do Menu digital (feita pela Steevanz):
+  menu-telemovel.mp4, menu-telemovel-poster.webp
+      Gravação (Playwright, 2026-10-24) do Menu digital de demonstração da Steevanz «Marisqueira do Cais», outro negócio
+      fictício: https://www.steevanz.com/menu/marisqueira-do-cais (vídeos da biblioteca de demonstração da Steevanz).
+
+Identidade (desenhada pela Steevanz para este site, sem imagens de terceiros):
+  icon.svg, icon-192.png, icon-512.png, apple-icon.png, favicon.ico - o «p» com o relógio de um ponteiro
+  logo.png - o «p» e o nome em Instrument Serif (Google Fonts, SIL Open Font License)
+  og.jpg - imagem de pré-visualização: o logótipo, o fotograma de hero-poster.webp e nata-pires.webp (acima)

@@ -43,5 +43,7 @@ export const config = {
     "/lobo-do-mar/:path*",
     "/orve",
     "/orve/:path*",
+    "/ponteiro",
+    "/ponteiro/:path*",
   ],
 };
