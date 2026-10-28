@@ -93,6 +93,19 @@ export const clientSites: readonly ClientSite[] = [
       "/apple-touch-icon.png": "/media/clients/ponteiro/apple-icon.png",
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/ponteiro/"],
+    // Meada (owner, 2026-10-24): a FICTIONAL concept store of home and Portuguese crafts, Steevanz's showcase site for
+    // shops. Only the preview path; it will never have a domain of its own.
+    id: "meada",
+    hosts: [],
+    base: "/meada",
+    rootFiles: {
+      "/robots.txt": "/meada/robots.txt",
+      "/sitemap.xml": "/meada/sitemap.xml",
+      "/manifest.webmanifest": "/meada/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/meada/favicon.ico",
+      "/apple-touch-icon.png": "/media/clients/meada/apple-icon.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/meada/"],
   },
 ];
 

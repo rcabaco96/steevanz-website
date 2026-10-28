@@ -45,5 +45,7 @@ export const config = {
     "/orve/:path*",
     "/ponteiro",
     "/ponteiro/:path*",
+    "/meada",
+    "/meada/:path*",
   ],
 };
