@@ -1,0 +1,54 @@
+Prumo - origem das imagens e vídeos deste site
+==============================================
+A Prumo é um negócio FICTÍCIO, criado pela Steevanz (2026-10-24) como site de demonstração para vender sites a
+clínicas, fisioterapia, osteopatia e centros de bem-estar. Nome, logótipo, equipa, morada, contactos, tratamentos e
+preços são inventados. As pessoas que aparecem nos vídeos e fotografias não são a equipa da Prumo.
+
+Vídeos e fotografias: Mixkit (https://mixkit.co), «Mixkit Stock Video Free License»
+(https://mixkit.co/license/#videoFree): uso gratuito em projetos comerciais e pessoais, sem atribuição obrigatória;
+não é permitido revender ou redistribuir os ficheiros soltos. A licença de cada clip foi confirmada na sua página
+(campo «license»: https://mixkit.co/license/#videoFree) a 2026-10-24. Nenhuma imagem foi gerada por IA nem paga.
+
+Os clips foram cortados/redimensionados (ffmpeg, H.264, sem som, saturação -10 %) e as fotografias são fotogramas
+desses clips, convertidas para WebP:
+
+  hero.mp4, hero-retrato.mp4,
+  hero-poster.webp, hero-retrato-poster.webp
+                               - «Physio assesses a female client» (49541)
+                                 https://mixkit.co/free-stock-video/physio-assesses-a-female-client-49541/
+  estudio-filme.mp4, estudio-filme-poster.webp, reformer.webp
+                               - «Exercise coach giving intructions to young women» (48548)
+                                 https://mixkit.co/free-stock-video/exercise-coach-giving-intructions-to-young-women-48548/
+  fisioterapia.webp            - «Close up of a chiropractor helping a client with her leg» (49542)
+                                 https://mixkit.co/free-stock-video/close-up-of-a-chiropractor-helping-a-client-with-her-49542/
+  osteopatia.webp              - «Neck massage by physiotherapist» (49539)
+                                 https://mixkit.co/free-stock-video/neck-massage-by-physiotherapist-49539/
+  avaliacao.webp               - «Chiropractor assesses posture» (46426)
+                                 https://mixkit.co/free-stock-video/chiropractor-assesses-posture-46426/
+  pilates.webp                 - «Exercise coach giving instructions to young woman» (48547)
+                                 https://mixkit.co/free-stock-video/exercise-coach-giving-instructions-to-young-woman-48547/
+  massagem.webp                - «Masseur giving a massage to the calves of a woman» (36710)
+                                 https://mixkit.co/free-stock-video/masseur-giving-a-massage-to-the-calves-of-a-woman-36710/
+  massagem-costas.webp         - «Therapist massaging a client» (20904)
+                                 https://mixkit.co/free-stock-video/therapist-massaging-a-client-20904/
+  nutricao.webp                - «Preparing a slice of bread with avocado and vegetables» (43922)
+                                 https://mixkit.co/free-stock-video/preparing-a-slice-of-bread-with-avocado-and-vegetables-43922/
+  legumes.webp                 - «Top view of a woman slicing vegetables» (40524)
+                                 https://mixkit.co/free-stock-video/top-view-of-a-woman-slicing-vegetables-40524/
+  estudio.webp                 - «A young woman in a yoga studio warming up» (13847)
+                                 https://mixkit.co/free-stock-video/a-young-woman-in-a-yoga-studio-warming-up-13847/
+  ombro.webp                   - «Woman receiving physiotherapy on her shoulders» (13039)
+                                 https://mixkit.co/free-stock-video/woman-receiving-physiotherapy-on-her-shoulders-13039/
+  tratamento.webp              - «Chiropractor works on a woman client» (49540)
+                                 https://mixkit.co/free-stock-video/chiropractor-works-on-a-woman-client-49540/
+  pescoco.webp                 - «Chiropractor working on a woman's neck» (18254)
+                                 https://mixkit.co/free-stock-video/chiropractor-working-on-a-womans-neck-18254/
+  cervical.webp                - «Massaging neck of client on massage bed» (49543)
+                                 https://mixkit.co/free-stock-video/massaging-neck-of-client-on-massage-bed-49543/
+
+Imagem de pré-visualização de links:
+  og.jpg                       - composição da Steevanz: o logótipo da Prumo sobre um fotograma de hero.mp4 (49541,
+                                 acima) e a grelha postural desenhada.
+
+Logótipo e ícones (desenhados pela Steevanz para este negócio fictício, sem tipos de letra de terceiros):
+  logo.svg, logo.png, icon.svg, icon-192.png, icon-512.png, apple-icon.png, favicon.ico

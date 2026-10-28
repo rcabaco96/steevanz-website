@@ -51,5 +51,7 @@ export const config = {
     "/risca/:path*",
     "/platibanda",
     "/platibanda/:path*",
+    "/prumo",
+    "/prumo/:path*",
   ],
 };

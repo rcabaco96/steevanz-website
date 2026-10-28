@@ -1,0 +1,193 @@
+/* Prumo's own stylesheet (a fictional clinic of physiotherapy, osteopathy and wellness, Steevanz demo): none of the
+   Steevanz site's styles load on these pages, and Tailwind only scans the clinic's own files. Identity (2026-10-24):
+   the plumb line in front of a posture grid — lime-wash white and Ançã limestone (Coimbra's stone), slate for the
+   dark, a misty blue, and brass for the plumb bob. Newsreader + Figtree. */
+@import "tailwindcss" source(none);
+@source "../../../../components/clients/prumo";
+@source "./";
+
+@theme {
+  --color-cal: #f4f2ed;
+  --color-anca: #e8e2d7;
+  --color-anca-2: #d9d1c2;
+  --color-ardosia: #1d2730;
+  --color-ardosia-2: #28343f;
+  --color-ardosia-3: #364552;
+  --color-nevoa: #b9c7d1;
+  --color-nevoa-2: #dfe6eb;
+  --color-latao: #b7832f;
+  --color-latao-claro: #d6a653;
+  --color-latao-fundo: #8a5d17;
+  --color-tinta: #1a2229;
+  --color-pedra: #55626c;
+
+  --font-display: var(--pr-font-display), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--pr-font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-prumo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    background: var(--color-cal);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    font-variant-numeric: lining-nums;
+  }
+  h1,
+  h2,
+  h3 {
+    font-optical-sizing: auto;
+  }
+  ::selection {
+    background: var(--color-ardosia);
+    color: var(--color-cal);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-latao-fundo);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .pr-on-dark :focus-visible {
+    outline-color: var(--color-latao-claro);
+  }
+  button,
+  summary,
+  label {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Small spaced capitals for labels. */
+  .pr-label {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* The posture grid: fine squares with a stronger line every fifth, like the board a body is measured against. */
+  .pr-grid {
+    --pr-grid-line: rgb(29 39 48 / 0.08);
+    --pr-grid-bold: rgb(29 39 48 / 0.15);
+    background-image:
+      linear-gradient(to right, var(--pr-grid-bold) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--pr-grid-bold) 1px, transparent 1px),
+      linear-gradient(to right, var(--pr-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--pr-grid-line) 1px, transparent 1px);
+    background-size:
+      120px 120px,
+      120px 120px,
+      24px 24px,
+      24px 24px;
+    background-position: center top;
+  }
+  .pr-grid-dark {
+    --pr-grid-line: rgb(244 242 237 / 0.06);
+    --pr-grid-bold: rgb(244 242 237 / 0.12);
+  }
+}
+
+/* The opening (Preloader): gone at once when already seen this session or with reduced motion; while it may play,
+   the hero's entrance waits behind it and the page doesn't scroll. */
+.pr-seen .pr-pre {
+  display: none;
+}
+.pr-loading body {
+  overflow: hidden;
+}
+.pr-loading .pr-rise {
+  animation-play-state: paused;
+}
+
+/* Entrance of the hero: separate translate property, so the element's own transform stays. */
+@keyframes pr-rise {
+  from {
+    opacity: 0;
+    translate: 0 1.1rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.pr-rise {
+  animation: pr-rise 1.2s var(--ease-prumo) both;
+}
+
+/* A plumb bob that sways a little on its thread and comes back to rest (decoration, rotate only). */
+@keyframes pr-sway {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  20% {
+    rotate: 5deg;
+  }
+  45% {
+    rotate: -3.5deg;
+  }
+  65% {
+    rotate: 2deg;
+  }
+  82% {
+    rotate: -0.8deg;
+  }
+}
+.pr-sway {
+  transform-origin: 50% 0;
+  animation: pr-sway 5.5s var(--ease-prumo) infinite;
+}
+
+/* FAQ answers open by animating their height to «auto». */
+.pr-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.5s var(--ease-prumo),
+    content-visibility 0.5s allow-discrete;
+}
+.pr-faq[open]::details-content {
+  block-size: auto;
+}
+:root {
+  interpolate-size: allow-keywords;
+}
+.pr-faq summary::-webkit-details-marker {
+  display: none;
+}
+.pr-faq summary {
+  list-style: none;
+}
+.pr-faq[open] .pr-faq-icon {
+  rotate: 45deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-rise,
+  .pr-sway {
+    animation: none !important;
+  }
+  .pr-faq::details-content {
+    transition: none;
+  }
+}
