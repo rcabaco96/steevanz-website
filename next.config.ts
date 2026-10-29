@@ -65,6 +65,13 @@ const nextConfig: NextConfig = {
       { source: "/novo", destination: "/", permanent: true },
     ];
   },
+  // Balneário da Luz (3D shirt rail, Astro build in public/balneario-da-luz): its pages are folders with an index.html.
+  async rewrites() {
+    return [
+      { source: "/balneario-da-luz", destination: "/balneario-da-luz/index.html" },
+      { source: "/balneario-da-luz/numero/:n", destination: "/balneario-da-luz/numero/:n/index.html" },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
@@ -76,6 +83,11 @@ const nextConfig: NextConfig = {
       // Proposals are private by link: never indexed, also for crawlers that ignore the meta tag.
       {
         source: "/proposta/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
+      // Balneário da Luz is shared by link only: out of search engines.
+      {
+        source: "/balneario-da-luz/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
       {
