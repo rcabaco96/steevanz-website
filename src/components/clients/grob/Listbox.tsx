@@ -66,15 +66,23 @@ export function Listbox({
   const selectedIndex = options.findIndex((o) => o.value === value);
   const current = selectedIndex >= 0 ? options[selectedIndex] : null;
 
+  const [maxH, setMaxH] = useState(320);
+
   const show = () => {
     const el = trigger.current;
     if (el) {
+      // O espaço conta-se dentro da caixa que corta a lista (a área que faz scroll na gaveta, por baixo do cabeçalho),
+      // não da gaveta inteira: antes a lista abria por cima e ficava cortada pelo cabeçalho (dono, 2026-11-02).
+      let clip: HTMLElement | null = el.parentElement;
+      while (clip && !/(auto|scroll|hidden)/.test(getComputedStyle(clip).overflowY)) clip = clip.parentElement;
+      const box = clip ? clip.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
+      const top = Math.max(box.top, 0), bottom = Math.min(box.bottom, window.innerHeight);
       const r = el.getBoundingClientRect();
-      const need = Math.min(options.length * 44 + 16, 320);
-      const container = el.closest("[role=dialog]")?.getBoundingClientRect();
-      const bottom = container ? container.bottom : window.innerHeight;
-      const top = container ? container.top : 0;
-      setAbove(bottom - r.bottom < need && r.top - top > bottom - r.bottom);
+      const need = Math.min(options.length * 44 + 12, 320);
+      const below = bottom - r.bottom - 12, up = r.top - top - 12;
+      const goUp = below < need && up > below;
+      setAbove(goUp);
+      setMaxH(Math.max(140, Math.min(320, goUp ? up : below)));
     }
     setActive(selectedIndex >= 0 ? selectedIndex : 0);
     setOpen(true);
@@ -181,7 +189,8 @@ export function Listbox({
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: above ? 4 : -4 }}
             transition={{ duration: 0.16, ease: [0.2, 0.7, 0.2, 1] }}
-            className={`gb-scroll-hidden absolute inset-x-0 z-20 max-h-80 overflow-y-auto rounded-[0.9rem] p-1.5 ${above ? "bottom-[calc(100%+6px)]" : "top-[calc(100%+6px)]"} ${s.pop}`}
+            style={{ maxHeight: maxH }}
+            className={`gb-scroll-hidden absolute inset-x-0 z-20 overflow-y-auto rounded-[0.9rem] p-1.5 ${above ? "bottom-[calc(100%+6px)]" : "top-[calc(100%+6px)]"} ${s.pop}`}
           >
             {options.map((option, i) => {
               const selected = option.value === value;

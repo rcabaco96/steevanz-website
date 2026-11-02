@@ -322,6 +322,10 @@
   .gb-motion [data-sede-intro] {
     position: relative;
   }
+  /* «Desça para entrar pelo V» só faz sentido com a cena presa (rato). */
+  .gb-motion [data-sede-hint] {
+    display: none;
+  }
   .gb-motion [data-sede-frame] {
     position: relative;
     inset: auto;

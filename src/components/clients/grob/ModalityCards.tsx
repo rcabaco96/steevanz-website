@@ -1,8 +1,7 @@
 "use client";
 
-import { animate, m, useMotionValue } from "motion/react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, type PointerEvent } from "react";
 import { grobModalities, grobPhotos, grobSede, toConfirm, type GrobModality, type GrobModalityGroup } from "@/content/grob/facts";
 import { openContact } from "./contact-bus";
 import { grobSections } from "./sections";
@@ -138,37 +137,18 @@ function ModalityCard({ modality, index }: { modality: GrobModality; index: numb
   );
 }
 
-// No telemóvel, os cartões numa faixa que se arrasta (motion drag, com inércia), dentro de uma caixa recortada.
+// No telemóvel, os cartões numa faixa com scroll horizontal nativo (inércia do próprio telemóvel, encaixa em cada
+// cartão). Antes era um arrasto do motion, mas o site carrega o conjunto leve (domAnimation, sem drag) e a faixa não
+// mexia (dono, 2026-11-02: «modalidades não fazem scroll horizontal»).
 function MobileRow({ children }: { children: React.ReactNode }) {
-  const box = useRef<HTMLDivElement>(null);
-  const track = useRef<HTMLUListElement>(null);
-  const x = useMotionValue(0);
-  const [limit, setLimit] = useState(0);
-  const measure = useCallback(() => {
-    if (!box.current || !track.current) return;
-    const next = Math.max(0, track.current.scrollWidth - box.current.clientWidth);
-    setLimit(next);
-    if (x.get() < -next) animate(x, -next, { duration: 0.2 });
-  }, [x]);
-  useEffect(() => {
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (box.current) ro.observe(box.current);
-    return () => ro.disconnect();
-  }, [measure]);
   return (
-    <div ref={box} role="region" aria-label="Modalidades: arraste para o lado" className="overflow-hidden px-[var(--gb-gutter)] lg:hidden">
-      <m.ul
-        ref={track}
-        drag="x"
-        dragConstraints={{ left: -limit, right: 0 }}
-        dragElastic={0.08}
-        dragTransition={{ power: 0.35, timeConstant: 260 }}
-        style={{ x }}
-        className="flex w-max touch-pan-y gap-3"
-      >
-        {children}
-      </m.ul>
+    <div
+      role="region"
+      aria-label="Modalidades: deslize para o lado"
+      tabIndex={0}
+      className="gb-scroll-hidden snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-px-[var(--gb-gutter)] outline-none lg:hidden"
+    >
+      <ul className="flex w-max gap-3 px-[var(--gb-gutter)] [&>li]:snap-start">{children}</ul>
     </div>
   );
 }

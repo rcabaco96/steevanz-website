@@ -46,7 +46,19 @@ export function Sede() {
   return (
     <section ref={root} id={grobSections.sede} aria-labelledby="gb-sede-title" className="relative bg-betao text-tinta">
       <div data-sede-stage className="relative overflow-hidden motion-on:h-svh motion-on:min-h-[560px]">
-        <div data-sede-frame className="relative mt-24 aspect-[4/3] overflow-hidden bg-pavilhao motion-on:absolute motion-on:inset-0 motion-on:mt-0 motion-on:aspect-auto">
+        {/* O título vem primeiro: no toque (e sem movimento) a fachada com «Renovada em 2026» fica por baixo dele (dono,
+            2026-11-02); com rato fica por cima da cena presa (absoluto, z-10), a ordem não muda nada. */}
+        <div data-sede-intro className="relative z-10 gb-container pt-24 sm:pt-28 motion-on:absolute motion-on:inset-x-0 motion-on:top-0">
+          <p className="gb-eyebrow flex items-center gap-3 text-relva-escuro">
+            <span aria-hidden="true" className="h-px w-8 bg-relva-escuro" />A sede
+          </p>
+          <h2 id="gb-sede-title" className="gb-display mt-3 text-[clamp(2.6rem,8vw,5rem)]">
+            A casa <span className="text-relva">do clube</span>
+          </h2>
+          <p data-sede-hint className="mt-3 hidden max-w-[22rem] text-[0.95rem] text-cinza motion-on:block">Desça para entrar pelo V.</p>
+        </div>
+
+        <div data-sede-frame className="relative mt-8 aspect-[4/3] overflow-hidden bg-pavilhao motion-on:absolute motion-on:inset-0 motion-on:mt-0 motion-on:aspect-auto">
           <Image
             data-sede-photo
             src={facade.src}
@@ -79,15 +91,6 @@ export function Sede() {
           </svg>
         </div>
 
-        <div data-sede-intro className="relative z-10 gb-container pt-24 sm:pt-28 motion-on:absolute motion-on:inset-x-0 motion-on:top-0">
-          <p className="gb-eyebrow flex items-center gap-3 text-relva-escuro">
-            <span aria-hidden="true" className="h-px w-8 bg-relva-escuro" />A sede
-          </p>
-          <h2 id="gb-sede-title" className="gb-display mt-3 text-[clamp(2.6rem,8vw,5rem)]">
-            A casa <span className="text-relva">do clube</span>
-          </h2>
-          <p className="mt-3 hidden max-w-[22rem] text-[0.95rem] text-cinza motion-on:block">Desça para entrar pelo V.</p>
-        </div>
       </div>
 
       <div className="pt-20 sm:pt-24">

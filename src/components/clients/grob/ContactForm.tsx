@@ -108,7 +108,7 @@ export function ContactForm({
     <form onSubmit={onSubmit} className={s.root}>
       <fieldset>
         <legend className={labelText}>Motivo</legend>
-        <div className="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <div className="mt-1.5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           {reasons.map((r) => (
             <label
               key={r.id}
