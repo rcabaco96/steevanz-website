@@ -1,0 +1,72 @@
+GROB — Grupo Recreativo Olival Basto (Odivelas) - origem das imagens deste site
+Recolhidas a 2026-11-02 para um SITE-DEMO a apresentar ao clube. Utilização A CONFIRMAR COM O CLUBE: são os media
+públicos do próprio clube, mas o GROB ainda não é cliente nem autorizou o uso.
+
+Do site atual do clube (https://www.grolivalbasto.com, servidas por static.wixstatic.com, ficheiros originais),
+convertidas para WebP pela Steevanz:
+  Galeria (/galeria):
+    futsal-ataque.webp      d9e9b5_0f773da3028a4c0c83b99f7b6d1cce17
+    futsal-remate.webp      d9e9b5_2a19ab1fa9104446859187e4760fca39
+    futsal-vermelhos.webp   d9e9b5_35c0b4d9217a42e7b3b6e8cda75a35d4
+    bancada.webp            d9e9b5_396b526a66684d8cbbfc75fd4570ffb5
+    futsal-numero-5.webp    d9e9b5_698ce3a45fe542cda4a8c190354fa131
+    praia-equipa.webp       d9e9b5_957f1c62c545443db75319f9caaa93d4
+    praia-jogador.webp      d9e9b5_c385da0794bb45348b0b21182166108d
+    grito.webp              d9e9b5_c5ce064a88cf4775b3498476da5df361
+    futsal-azuis.webp       d9e9b5_cfaf5d6bf9ce4c258bd021d43153cb17
+    futsal-dez.webp         d9e9b5_f83e641a473d49579e5707c5a93d41f8
+  O Clube (/clube):
+    familia-grob.webp       d9e9b5_3e11da8775c04726b44243ab9d0cb05d
+  Inscrições (/inscricoes):
+    aula-solo.webp          d9e9b5_1eba07b9946447fab7e32132ed67aa2d  (a modalidade da aula: a confirmar com o clube)
+    equipa.webp             d9e9b5_79fdbeb8da314824b36f1d4f38e5f05d
+    tenis-de-mesa.webp      d9e9b5_c6dd5a9589e74570a8b2701982224f48
+    zumba.webp              d9e9b5_d0529c855cfa459f94bf14832751e67c
+  Sede (/sede):
+    sede-fachada.webp       d9e9b5_2497bcc580eb41ab9f28f65a29f079e4
+    sede-terraco.webp       d9e9b5_4a2d1dcdb8dc4c039d359a37321e9283
+    sede-salao.webp         d9e9b5_2008275666df4cc383b95588755546f5
+    sede-salao-2.webp       d9e9b5_08668891424040b2b78d8359932f0751
+    sede-corredor.webp      d9e9b5_44c6b9a3e2504b4fa07fcaf35a4db3fe
+    sede-escada.webp        d9e9b5_8e6056e0ef2141e5abcc1267e0bf97fb
+    sede-copa.webp          d9e9b5_5a58df3b49bf440ebe53c536f13f9584
+    sede-placa.webp         d9e9b5_f5bde2cbf43744a98304867f15ec3e89  (a placa da inauguração: datas e nomes do site)
+
+Logótipo: o PDF vetorial que o clube publica na página Símbolo (/simbolo):
+  https://www.grolivalbasto.com/_files/ugd/d9e9b5_1ad16b5b44454ef38ac8a9a46da8a54e.pdf
+  Derivados feitos pela Steevanz a partir dele:
+    emblema.webp, emblema-pequeno.webp, emblema.png   - o emblema em fundo transparente
+    emblema-textura.webp, emblema-textura-base.webp    - texturas das faces do emblema 3D (a segunda sem os
+                                                         elementos interiores)
+    src/components/clients/grob/emblem/emblem-shapes.json - os contornos vetorizados das camadas do escudo
+    emblema-3d.webp                                    - um fotograma do emblema 3D (primeira pintura do topo)
+    icone.ico, icone-192.png, icone-512.png, icone-apple.png - ícones do site, do emblema em fundo branco
+    og-site.jpg (1200x630)                             - pré-visualização: emblema 3D + futsal-ataque.webp
+
+Não foram usados: o Instagram (@grob.olivalbasto), o Facebook (GROBOLIVALBASTO), o TikTok e o YouTube do clube
+(sem acesso público sem sessão iniciada / canal sem vídeos públicos). A confirmar com o clube: um reel ou vídeo
+próprio para o topo do site (o padrão Steevanz pede vídeo real no hero quando existe).
+
+Instagram e originais do Wix (acrescentado a 2026-11-02):
+  Foram adicionadas a ig/ 40 fotos do Instagram do clube (@grob.olivalbasto e @grob.sede; algumas de posts em
+  colaboração com a AF Lisboa e outras contas, e algumas com fotógrafo creditado na legenda), na maior resolução que
+  o Instagram serve, e versões -hq das fotos do Wix acima refeitas a partir do ficheiro original. A fonte de cada
+  ficheiro está em ig/FONTES.txt. Utilização A CONFIRMAR COM O CLUBE (incluindo autorização para fotos de menores
+  e crédito aos fotógrafos).
+
+Pasta ig/ (2026-11-02): fotografias do Instagram do clube (@grob.olivalbasto, @grob.sede e posts em colaboração,
+p. ex. da AF Lisboa e de @francisco_baptistaodc) e as originais do Wix recodificadas em alta qualidade (-hq). A
+fonte de cada ficheiro (post, data, conta, fotógrafo creditado) está em ig/FONTES.txt. Usadas nos cartões das
+modalidades, na faixa «Venha jogar connosco», na família GROB, na galeria da sede e nas conquistas.
+A CONFIRMAR COM O CLUBE: autorização de uso, os créditos dos fotógrafos indicados nas legendas, e a autorização dos
+pais para as fotografias de menores.
+
+Derivados feitos pela Steevanz (2026-11-02):
+  grao-escuro.png, grao-claro.png - texturas de grão nas cores do clube (geradas, sem fotografia)
+
+Emblema 3D (atualizado a 2026-11-02 pela Steevanz): derivados do logótipo vetorial do clube e de um relevo calculado
+a partir do modelo grob.glb (gerado com IA e fornecido pelo dono da Steevanz):
+  emblema-relevo-normal.webp, emblema-relevo.bin - o relevo do emblema
+  emblema-textura-campo.webp                     - a textura do campo do escudo
+  emblema-3d.webp                                - fotograma do emblema 3D (regenerado, 710x906)
+  og-site.jpg                                    - pré-visualização do site (regenerada com o emblema novo)

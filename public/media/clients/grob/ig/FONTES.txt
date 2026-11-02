@@ -1,0 +1,121 @@
+GROB - pasta ig/ : fonte de cada ficheiro (recolhidos a 2026-11-02 pela Steevanz)
+Uso A CONFIRMAR COM O CLUBE (ver ../LICENCAS.txt). Há fotos de menores: confirmar com o clube que tem autorização dos pais.
+Algumas fotos são de fotógrafos creditados nas legendas ou de posts em colaboração com outras contas (indicado em cada linha).
+WebP q85, lado maior no máximo 2000 px, nunca ampliadas. Originais em bruto: .grob-ig-src\ na raiz do repositório (não publicado).
+Formato: ficheiro | px | o que mostra
+    post (data, conta, slide, tamanho original) | resumo da legenda
+
+== MODALIDADES ==
+futsal-traquinas-festejo.webp | 2000x1500 | Traquinas (sub-9) a festejar em grupo com os treinadores, campo exterior
+    https://www.instagram.com/p/DeJz7aqDA6X/ (2026-10-06, @grob.olivalbasto, slide 1/9, original 3072x2304) | Traquinas em ação com o CAD Futsal 84
+futsal-sub15-remate.webp | 2000x1500 | Sub-15: remate de pé esquerdo, em jogo no pavilhão do Sporting
+    https://www.instagram.com/p/DeHHZcRjLL1/ (2026-10-05, @grob.olivalbasto, slide 5/19, original 2700x2025) | Nacional 1.ª Div Sub-15, Sporting 5-3 GROB, 1.º jogo de sempre no Nacional
+futsal-sub15-grito-de-equipa.webp | 2000x1500 | Sub-15: equipa de braços no ar junto ao banco
+    https://www.instagram.com/p/DeHHZcRjLL1/ (2026-10-05, @grob.olivalbasto, slide 13/19, original 2700x2025) | idem (Nacional Sub-15, pavilhão do Sporting)
+futsal-seniores-conducao.webp | 2000x1500 | Seniores: jogador n.º 17 em condução, bancada cheia atrás
+    https://www.instagram.com/p/DeGyCEEDIkL/ (2026-10-05, @grob.olivalbasto, slide 2/16, original 2700x2025) | Distrital Seniores 1.ª Div AFL, GROB 5-4 Infantado, Ramada; foto @anafilipaph
+futsal-seniores-roda.webp | 2000x1500 | Seniores: roda/abraço de equipa no centro do campo
+    https://www.instagram.com/p/DeGyCEEDIkL/ (2026-10-05, @grob.olivalbasto, slide 15/16, original 2700x2025) | idem; foto @anafilipaph
+futsal-sub11-benjamins-lance.webp | 1280x853 | Sub-11 (Benjamins): miúdo a correr de braço esticado
+    https://www.instagram.com/p/DfIvgDcDB5-/ (2026-10-30, @grob.olivalbasto, slide 14/20, original 1280x853) | Benjamins iniciam o Campeonato Distrital Sub-11
+futsal-sub15-remate-2.webp | 1440x1059 | Sub-15: remate em casa, equipamento alternativo escuro
+    https://www.instagram.com/p/DVFLk9tjH6w/ (2026-02-23, @grob.olivalbasto, slide 16/20, original 1440x1059) | Distrital Sub-15 vs J. Amoreira, Pav. Esc. Sec. Pedro Alexandrino; apuramento para a Taça Nacional
+futsal-sub17-remate.webp | 1440x1797 | Sub-17: remate em jogo fora (vertical)
+    https://www.instagram.com/p/DTX_gsWjEc8/ (2026-01-11, @grob.olivalbasto, slide 18/20, original 1440x1797) | Nacional Sub-17 vs AMSAC, Loures
+futsal-sub10-lance.webp | 1440x1800 | Sub-10: drible frente a adversário de branco (vertical)
+    https://www.instagram.com/p/DTkU9jXDN-B/ (2026-01-16, @grob.olivalbasto, slide 9/20, original 1440x1800) | Distrital Sub-10 vs Sporting, Odivelas; foto @ruipereiraphotography
+futsal-sub19-lance.webp | 1440x1800 | Sub-19: disputa de bola, bancada atrás (vertical)
+    https://www.instagram.com/p/DPxFP4WDHRB/ (2025-10-13, @grob.olivalbasto, slide 4/19, original 1440x1800) | Sub-19 estreia em casa vs CF Oeiras (vitória)
+futsal-sub19-festejo-golo.webp | 1440x1800 | Sub-19: abraço de golo em grupo (vertical)
+    https://www.instagram.com/p/DPxFP4WDHRB/ (2025-10-13, @grob.olivalbasto, slide 17/19, original 1440x1800) | idem
+futsal-petizes-odifut.webp | 1197x895 | Petizes (os mais novos) em grupo no torneio ODIFUT, faixa Odivelas
+    https://www.instagram.com/p/DRcS_BaDIus/ (2025-11-24, @grob.olivalbasto, slide 1/6, original 1197x895) | Petizes voltaram a brilhar no ODIFUT
+tenis-de-mesa-seniores-sede.webp | 1024x1280 | Ténis de mesa: sénior a servir, fundo branco (vertical)
+    https://www.instagram.com/p/DdV5kn9DFg8/ (2026-09-16, @grob.olivalbasto, slide 17/20, original 1024x1280) | Taça de Lisboa ATML, GROB 3-2 CTM Lisboa, na sede do GROB
+tenis-de-mesa-seniores-mafra.webp | 2000x1328 | Ténis de mesa: sénior em jogo em Mafra (foto de telemóvel, um pouco suave)
+    https://www.instagram.com/p/DfHrpXLjFkx/ (2026-10-30, @grob.olivalbasto, slide 5/20, original 2046x1359) | Seniores CD 3.ª Div ATML em Mafra
+tenis-de-mesa-convivio-jovens.webp | 2000x1500 | Ténis de mesa: jovens sub-11/13/15 e treinadores na sede
+    https://www.instagram.com/p/DeXUvpYjL8g/ (2026-10-11, @grob.olivalbasto, slide 17/20, original 2048x1536) | Convívio de ténis de mesa Sub-15/13/11, GROB anfitrião na sede
+tenis-de-mesa-jovens-jogo.webp | 2000x1500 | Ténis de mesa: jovens a jogar na sede, marcador Butterfly
+    https://www.instagram.com/p/DeXUvpYjL8g/ (2026-10-11, @grob.olivalbasto, slide 12/20, original 2040x1530) | idem
+tenis-de-mesa-veteranos-salou.webp | 2000x1500 | Ténis de mesa: dois veteranos do GROB com adversários, Salou
+    https://www.instagram.com/p/DfFwKyujHaW/ (2026-10-29, @grob.olivalbasto, slide 2/4, original 2000x1500) | Torneio Internacional de Veteranos, Salou (Espanha)
+
+== COMUNIDADE ==
+dia-da-mae-2026.webp | 1440x1080 | Treino do Dia da Mãe: mães e filhos de braços no ar no pavilhão
+    https://www.instagram.com/p/DX-MJlGDJ4z/ (2026-05-05, @grob.olivalbasto, slide 1/2, original 1440x1080) | Dia da Mãe 2026
+dia-do-pai-2026.webp | 1440x1081 | Treino do Dia do Pai: pais e filhos em grupo no pavilhão
+    https://www.instagram.com/p/DWWb1r7jMSY/ (2026-03-26, @grob.olivalbasto, slide 2/3, original 1440x1081) | Dia do Pai 2026
+convivio-natal-2025.webp | 1440x1080 | Natal 2025: foto de grupo dos escalões de formação
+    https://www.instagram.com/p/DSn-W1QDDRf/ (2025-12-23, @grob.olivalbasto, slide 1/2, original 1440x1080) | Post de Boas Festas, 23-12-2025
+adeptos-festejo-taca-nacional.webp | 2000x1334 | Adeptos/pais a festejar na bancada com um atleta
+    https://www.instagram.com/p/DaLCCZGAaPR/ (2026-06-29, @associacaofutebollisboa, slide 7/7, original 2048x1366) | Post da AF Lisboa (colab.) a felicitar o GROB pela Taça Nacional Sub-19
+viagem-acores-sub19.webp | 1200x985 | Sub-19 em grupo nos Açores, paisagem verde atrás
+    https://www.instagram.com/p/DXo0KWVjJh-/ (2026-04-27, @grob.olivalbasto, slide 2/4, original 1200x985) | Taça Nacional Sub-19 em Angra do Heroísmo vs SC Barbarense
+praia-sines-2025.webp | 1440x1080 | Sub-15/Sub-17 em fila na praia de Sines (viagem, não é futebol de praia)
+    https://www.instagram.com/p/DLPtPVgMF7n/ (2025-06-23, @grob.olivalbasto, slide 4/4, original 1440x1080) | Final Four da Taça Nacional Sub-15/Sub-17 em Sines, 2025
+gala-desporto-odivelas-2026.webp | 2000x1500 | Delegação do GROB no palco da Gala do Desporto de Odivelas
+    https://www.instagram.com/p/Dd08eyfMpLp/ (2026-09-28, @grob.olivalbasto, slide 1/1, original 2040x1530) | Gala do Desporto Odivelas 2026: GROB distinguido (futsal e ténis de mesa)
+sede-torneio-king.webp | 1984x1125 | Sede: sócios a jogar às cartas no Torneio Social de King
+    https://www.instagram.com/p/DfFX8-CjRvA/ (2026-10-29, @grob.sede, slide 10/17, original 1984x1125) | Conta @grob.sede: Torneio Social de King, sala cheia
+sede-torneio-king-vencedores.webp | 1126x638 | Sede: três vencedores do Torneio de King com as taças (só 1126 px)
+    https://www.instagram.com/p/DfFX8-CjRvA/ (2026-10-29, @grob.sede, slide 17/17, original 1126x638) | idem
+
+== SEDE ==
+sede-salao-torneio.webp | 1984x1125 | Sede: vista geral do salão renovado cheio de mesas de jogo
+    https://www.instagram.com/p/DfFX8-CjRvA/ (2026-10-29, @grob.sede, slide 6/17, original 1984x1125) | idem
+sede-inauguracao-2026.webp | 1440x1440 | Sede: público sentado na inauguração da sede renovada
+    https://www.instagram.com/p/DWQ3wBfjOKe/ (2026-03-24, @francisco_baptistaodc, slide 4/5, original 1440x1440) | Post colab. de @francisco_baptistaodc sobre a inauguração da nova sede (550 m2), março 2026
+sede-salao-tenis-de-mesa.webp | 1500x2000 | Sede: salão com mesa de ténis de mesa num evento de empresa (vertical)
+    https://www.instagram.com/p/Dej0aO-jfSw/ (2026-10-16, @grob.sede, slide 5/6, original 3072x4096) | Conta @grob.sede: team building da Decathlon Loures na sede
+
+== EQUIPAS E TROFEUS ==
+taca-nacional-sub15-2026.webp | 2000x1343 | Sub-15 na Covilhã com a faixa da Taça Nacional Sub-15
+    https://www.instagram.com/p/DaajZLVDE7-/ (2026-07-05, @grob.olivalbasto, slide 1/6, original 2794x1876) | Taça Nacional Sub-15: vice-campeões pela 1.ª vez na história do clube
+taca-nacional-sub19-2026.webp | 2000x1334 | Sub-19 com a faixa da Taça Nacional Sub-19, Covilhã
+    https://www.instagram.com/p/DaLCCZGAaPR/ (2026-06-29, @associacaofutebollisboa, slide 2/7, original 2048x1366) | Post da AF Lisboa (colab.): conquista da Taça Nacional Sub-19 e subida ao Nacional
+sub19-dobradinha-festejo.webp | 2000x1600 | Sub-19 a erguer a taça, festejo de grupo
+    https://www.instagram.com/p/DYx9mTKjP88/ (2026-05-26, @grob.olivalbasto, slide 6/14, original 3276x2621) | Homenagem AFL / União de Freguesias à dobradinha dos Sub-19; foto @ruipereiraphotography
+trofeu-campeao-sub19.webp | 2000x1600 | Taça e medalhas de campeão Sub-19 em primeiro plano
+    https://www.instagram.com/p/DYx9mTKjP88/ (2026-05-26, @grob.olivalbasto, slide 1/14, original 3276x2621) | idem
+treinador-dobradinha-sub19.webp | 2000x1600 | Treinador com as duas taças da dobradinha Sub-19
+    https://www.instagram.com/p/DYx9mTKjP88/ (2026-05-26, @grob.olivalbasto, slide 11/14, original 3276x2621) | idem
+equipa-sub19b-campeoes.webp | 2000x1250 | Sub-19B campeões: foto de grupo com famílias e staff
+    https://www.instagram.com/p/DYsuHeOsIIL/ (2026-05-24, @grob.olivalbasto, slide 1/1, original 4096x2560) | Sub-19B campeões da 3.ª Divisão Distrital AFL (dobradinha)
+sub19a-campeoes-festejo.webp | 1440x1152 | Sub-19A campeões: festejo com a taça e medalhas
+    https://www.instagram.com/p/DVqa4YPjMLj/ (2026-03-09, @grob.olivalbasto, slide 8/19, original 1440x1152) | Sub-19A campeões da 1.ª Divisão Distrital AFL
+sub19a-campeoes-com-adeptos.webp | 1440x1150 | Sub-19A campeões com adeptos e pais na bancada
+    https://www.instagram.com/p/DVqa4YPjMLj/ (2026-03-09, @grob.olivalbasto, slide 12/19, original 1440x1150) | idem
+equipa-seniores-2026.webp | 2000x1500 | Seniores: foto de equipa à frente da baliza
+    https://www.instagram.com/p/DeGyCEEDIkL/ (2026-10-05, @grob.olivalbasto, slide 16/16, original 2700x2025) | Distrital Seniores 1.ª Div AFL vs Infantado; foto @anafilipaph
+equipa-sub17-nacional.webp | 1280x1024 | Sub-17: foto de equipa
+    https://www.instagram.com/p/DYEjeh4DD9z/ (2026-05-08, @grob.olivalbasto, slide 2/13, original 1280x1024) | Sub-17 entre as 8 melhores do país na estreia no Nacional
+equipa-tenis-de-mesa-seniores.webp | 1500x1125 | Equipa sénior de ténis de mesa com a adversária, na sede
+    https://www.instagram.com/p/DeLCj5ZjFYf/ (2026-10-07, @grob.olivalbasto, slide 1/12, original 1500x1125) | Taça de Lisboa ATML, GROB 3-1 C Nova Morada
+
+== ORIGINAIS DO WIX RECODIFICADOS EM ALTA QUALIDADE (-hq) ==
+Do site do clube (www.grolivalbasto.com): o ficheiro original em static.wixstatic.com, recodificado a partir do original.
+bancada-hq.webp | 2000x1500 | versão melhor de ../bancada.webp | original Wix 4032x3024 | https://static.wixstatic.com/media/d9e9b5_396b526a66684d8cbbfc75fd4570ffb5~mv2.jpg
+equipa-hq.webp | 2000x1250 | versão melhor de ../equipa.webp | original Wix 7338x4586 | https://static.wixstatic.com/media/d9e9b5_79fdbeb8da314824b36f1d4f38e5f05d~mv2.jpg
+familia-grob-hq.webp | 2000x1423 | versão melhor de ../familia-grob.webp | original Wix 2769x1970 | https://static.wixstatic.com/media/d9e9b5_3e11da8775c04726b44243ab9d0cb05d~mv2.jpg
+futsal-ataque-hq.webp | 2000x983 | versão melhor de ../futsal-ataque.webp | original Wix 3000x1475 | https://static.wixstatic.com/media/d9e9b5_0f773da3028a4c0c83b99f7b6d1cce17~mv2.jpg
+futsal-azuis-hq.webp | 2000x1104 | versão melhor de ../futsal-azuis.webp | original Wix 2989x1650 | https://static.wixstatic.com/media/d9e9b5_cfaf5d6bf9ce4c258bd021d43153cb17~mv2.jpg
+futsal-dez-hq.webp | 2000x1331 | versão melhor de ../futsal-dez.webp | original Wix 4160x2768 | https://static.wixstatic.com/media/d9e9b5_f83e641a473d49579e5707c5a93d41f8~mv2.jpg
+futsal-numero-5-hq.webp | 2000x1331 | versão melhor de ../futsal-numero-5.webp | original Wix 3000x1996 | https://static.wixstatic.com/media/d9e9b5_698ce3a45fe542cda4a8c190354fa131~mv2.jpg
+futsal-remate-hq.webp | 2000x1331 | versão melhor de ../futsal-remate.webp | original Wix 4160x2768 | https://static.wixstatic.com/media/d9e9b5_2a19ab1fa9104446859187e4760fca39~mv2.jpg
+futsal-vermelhos-hq.webp | 2000x1331 | versão melhor de ../futsal-vermelhos.webp | original Wix 3000x1996 | https://static.wixstatic.com/media/d9e9b5_35c0b4d9217a42e7b3b6e8cda75a35d4~mv2.jpg
+praia-equipa-hq.webp | 2000x1075 | versão melhor de ../praia-equipa.webp | original Wix 3000x1612 | https://static.wixstatic.com/media/d9e9b5_957f1c62c545443db75319f9caaa93d4~mv2.jpg
+praia-jogador-hq.webp | 1328x2000 | versão melhor de ../praia-jogador.webp | original Wix 1593x2400 | https://static.wixstatic.com/media/d9e9b5_c385da0794bb45348b0b21182166108d~mv2.jpg
+sede-copa-hq.webp | 2000x1333 | versão melhor de ../sede-copa.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_5a58df3b49bf440ebe53c536f13f9584~mv2.jpg
+sede-corredor-hq.webp | 2000x1333 | versão melhor de ../sede-corredor.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_44c6b9a3e2504b4fa07fcaf35a4db3fe~mv2.jpg
+sede-escada-hq.webp | 2000x1333 | versão melhor de ../sede-escada.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_8e6056e0ef2141e5abcc1267e0bf97fb~mv2.jpg
+sede-fachada-hq.webp | 2000x1333 | versão melhor de ../sede-fachada.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_2497bcc580eb41ab9f28f65a29f079e4~mv2.jpg
+sede-placa-hq.webp | 2000x1333 | versão melhor de ../sede-placa.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_f5bde2cbf43744a98304867f15ec3e89~mv2.jpg
+sede-salao-2-hq.webp | 2000x1333 | versão melhor de ../sede-salao-2.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_08668891424040b2b78d8359932f0751~mv2.jpg
+sede-salao-hq.webp | 2000x1333 | versão melhor de ../sede-salao.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_2008275666df4cc383b95588755546f5~mv2.jpg
+sede-terraco-hq.webp | 2000x1333 | versão melhor de ../sede-terraco.webp | original Wix 6192x4128 | https://static.wixstatic.com/media/d9e9b5_4a2d1dcdb8dc4c039d359a37321e9283~mv2.jpg
+tenis-de-mesa-hq.webp | 2000x1500 | versão melhor de ../tenis-de-mesa.webp | original Wix 2000x1500 | https://static.wixstatic.com/media/d9e9b5_c6dd5a9589e74570a8b2701982224f48~mv2.jpg
+zumba-hq.webp | 1920x1440 | versão melhor de ../zumba.webp | original Wix 1920x1440 | https://static.wixstatic.com/media/d9e9b5_d0529c855cfa459f94bf14832751e67c~mv2.jpg
+Sem versão -hq (o original do Wix tem o mesmo tamanho que o ficheiro atual): grito.webp (1500x1271) e aula-solo.webp (1024x766).
+
+_sheet.jpg = folha de contacto de todas as fotos desta pasta (só para revisão, não usar no site).

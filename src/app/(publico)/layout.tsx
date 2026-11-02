@@ -3,11 +3,12 @@ import type { ReactNode } from "react";
 import "../globals.css";
 import { fontVariables } from "@/app/fonts";
 import { ThemeScript } from "@/components/site/ThemeScript";
-import { rootViewport } from "@/lib/root-metadata";
+import { rootViewport, steevanzIcons } from "@/lib/root-metadata";
 
 // Pages the customers of our clients open from a QR code, a plate or a link:
 // /fila (waitlist), /cartao (loyalty card) and /reservar (bookings). No account, no app.
 export const metadata: Metadata = {
+  icons: steevanzIcons,
   title: { default: "Steevanz", template: "%s" },
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   referrer: "same-origin",

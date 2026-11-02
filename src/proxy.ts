@@ -59,5 +59,7 @@ export const config = {
     "/sete-chaves/:path*",
     "/ferragial",
     "/ferragial/:path*",
+    "/grob",
+    "/grob/:path*",
   ],
 };

@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1600],
     imageSizes: [64, 96, 128, 256, 384],
+    // 85 para as fotografias que enchem cartões e ecrãs dos sites de clientes (GROB, 2026-11-02); o resto fica a 75.
+    qualities: [75, 85],
   },
   experimental: {
     globalNotFound: true,

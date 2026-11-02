@@ -7,7 +7,7 @@ import { ThemeScript } from "@/components/site/ThemeScript";
 import { businessCards } from "@/content/business-cards";
 import { loadPublicCard } from "@/lib/business-cards/store";
 import { htmlLang } from "@/lib/i18n";
-import { rootViewport } from "@/lib/root-metadata";
+import { rootViewport, steevanzIcons } from "@/lib/root-metadata";
 
 // The root layout of a «Cartão de visita digital» page (/c/<slug>): its own html, in the card owner's language.
 // Public, never indexed. The cards come from the database (edited in /admin/cartoes), or from
@@ -20,6 +20,7 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
+  icons: steevanzIcons,
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   referrer: "same-origin",
 };

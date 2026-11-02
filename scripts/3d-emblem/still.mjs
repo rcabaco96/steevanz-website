@@ -1,0 +1,12 @@
+import { chromium } from './lib/pw.mjs';
+const out = process.argv[2];
+const browser = await chromium.launch({ channel: 'msedge', headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 2 });
+const page = await ctx.newPage();
+await page.goto('http://localhost:4380/grob', { waitUntil: 'load' });
+await page.waitForSelector('section canvas', { timeout: 60000 });
+await page.waitForTimeout(7000);
+await page.addStyleTag({ content: 'html,body{background:transparent!important} body *{visibility:hidden!important} canvas{visibility:visible!important}' });
+await page.waitForTimeout(500);
+await page.screenshot({ path: out, omitBackground: true });
+await browser.close();

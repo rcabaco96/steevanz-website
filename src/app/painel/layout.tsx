@@ -8,9 +8,10 @@ import { Logo } from "@/components/site/Logo";
 import { NavigationProgress } from "@/components/site/NavigationProgress";
 import { ThemeScript } from "@/components/site/ThemeScript";
 import { ThemeToggle } from "@/components/site/ThemeToggle";
-import { rootViewport } from "@/lib/root-metadata";
+import { rootViewport, steevanzIcons } from "@/lib/root-metadata";
 
 export const metadata: Metadata = {
+  icons: steevanzIcons,
   title: { default: "Análise de reviews · Steevanz", template: "%s · Análise de reviews Steevanz" },
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   referrer: "same-origin",

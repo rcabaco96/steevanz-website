@@ -1,0 +1,12 @@
+import { chromium } from './lib/pw.mjs';
+const browser = await chromium.launch({ channel: 'msedge', headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+const msgs = {}; page.on('console', (m) => { const k = m.type() + ': ' + m.text().slice(0, 90); msgs[k] = (msgs[k] || 0) + 1; });
+page.on('pageerror', (e) => { msgs['pageerror: ' + e.message.slice(0, 90)] = 1; });
+const fails = []; page.on('requestfailed', (r) => fails.push(r.url()));
+page.on('response', (r) => { if (r.url().includes('emblema') && r.status() >= 400) fails.push(r.status() + ' ' + r.url()); });
+await page.goto('http://localhost:4380/grob', { waitUntil: 'load' });
+await page.waitForFunction(() => window.__grobEmblem, null, { timeout: 90000 });
+await page.waitForTimeout(3000);
+console.log(JSON.stringify(msgs, null, 1)); console.log('failed', fails);
+await browser.close();

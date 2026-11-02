@@ -36,6 +36,19 @@ const defaults: Localized<{ title: string; description: string }> = {
   },
 };
 
+/**
+ * Os ícones da Steevanz. O favicon vive em public/favicon.ico (e não em app/favicon.ico, que o Next juntava a TODAS
+ * as páginas, incluindo os sites dos clientes): só as páginas da Steevanz o anunciam. Usado por todos os layouts
+ * raiz da Steevanz.
+ */
+export const steevanzIcons: Metadata["icons"] = {
+  icon: [
+    { url: "/favicon.ico", sizes: "64x64", type: "image/x-icon" },
+    { url: "/icon.png", sizes: "192x192", type: "image/png" },
+  ],
+  apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+};
+
 export function rootMetadata(locale: Locale): Metadata {
   const text = localize(defaults, locale);
   return {
@@ -46,6 +59,10 @@ export function rootMetadata(locale: Locale): Metadata {
     authors: [{ name: "Steevanz" }],
     creator: "Steevanz",
     formatDetection: { telephone: false },
+    // O favicon da Steevanz vive em public/favicon.ico (e não em app/favicon.ico, que o Next juntava a TODAS as
+    // páginas, incluindo os sites dos clientes): só as páginas da Steevanz o anunciam. icon.png e apple-icon.png
+    // continuam como ficheiros em app/.
+    icons: steevanzIcons,
   };
 }
 

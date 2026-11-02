@@ -92,3 +92,22 @@ site que façamos!»
 - No pause buttons on carousels/marquees, no WhatsApp green, «Site por Steevanz» credit in the footer.
 - Look at the result yourself (Playwright frames down the whole page, phone + desktop) before telling the owner it's
   done, and verify it live after publishing.
+
+## Regras permanentes (dono, 2026-11-02, a partir do GROB)
+
+- **Galerias e faixas nunca prendem o scroll da página.** Sem pin, a roda vertical desce sempre a página e, no toque, o deslize vertical também (touch-action: pan-y). Só o deslize horizontal (trackpad, Shift + roda, dedo) mexe a faixa. Faixas de ponta a ponta do ecrã, sem fim, sem barra de progresso nem botão de pausa.
+- **Mapas:** nunca embutidos. «Ver no mapa» e «Como chegar» são ligações universais do Google Maps (`/maps/search/?api=1&query=` e `/maps/dir/?api=1&destination=`), abertas noutro separador, sem JavaScript pelo meio.
+- **Cursor de mão** em tudo o que se carrega. Galerias com zoom-in; faixas arrastáveis com grab/grabbing.
+- **Botões nunca se mexem debaixo do rato.** Sem efeitos magnéticos, sem seguir o ponteiro. Num cartão com inclinação, só a camada da fotografia inclina. O hover só muda cor, fundo ou sombra, uma seta ≤ 4 px dentro do botão e um aperto de 0,98.
+- **Ecrãs por cima** (gaveta, galeria, menu) **fecham sempre:** ×, Esc, toque no fundo, deslizar para baixo, botão Voltar do browser. Ficam num portal acima da barra do menu (escala de z-index única), escondem a barra, prendem o foco e devolvem-no ao fechar. Soltam o scroll sem saltos (scrollbar-gutter: stable).
+- **Sem abertura (preloader).** O site começa sempre no topo (scrollRestoration manual) e mostra o conteúdo logo.
+- **Nenhum texto cortado nem partido a meio,** de 320 a 2560 px. Títulos sobre imagens medem-se pelo contentor (cqi). Confirmar com uma verificação automática.
+- **Texto + imagem: imagem sempre à direita,** sem alternar. No telemóvel: título, imagem, resto.
+- **Nada de miniaturas sobrepostas** nem fotografias minúsculas decorativas. Fotografias importantes têm o mesmo peso.
+- **Listas de escolha próprias** (combobox/listbox acessível, com o estilo do site), nunca o `<select>` do sistema. A data com ícone próprio.
+- **Transições suaves e iguais em todo o site:** cor 160 ms, sombra e aperto 240 ms, curva única. Nunca `transition: all`. Anel de foco visível e suave. Com movimento reduzido, só cor.
+- **Emblema/logótipo 3D fiel à marca:** extrudido do vetor oficial, faces com as cores verdadeiras. Uma só entrada: a imagem parada da primeira pintura e o 3D têm a mesma pose e o mesmo tamanho.
+- **Formulário só no fim da página.** Todos os botões («Inscrever», «Ser sócio», «Contactar»…) abrem uma gaveta lateral com o formulário já pré-preenchido. Ofertas e modalidades em cartões, todas à vista.
+- **Logótipo do cliente é sagrado:** nunca reflexos, tons ou reinterpretações que mudem cores ou formas (o cliente cancela a compra). Brilho metálico só em arestas e costas.
+- **Nenhuma secção básica:** cada secção tem uma ideia de design (profundidade, sobreposição editorial de foto e texto, textura, movimento) — nunca bloco de template (foto em cima, caixa de cor, título, chips).
+- **Antes de mostrar ao dono:** fotos nítidas (`sizes` pela largura real com object-cover, qualidade 85), alvos de toque ≥ 44 px, consola limpa, sem layout shift ao abrir/fechar, favicon só do cliente, `next build` limpo (com o dev parado).

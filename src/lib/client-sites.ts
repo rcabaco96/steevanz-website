@@ -201,6 +201,22 @@ export const clientSites: readonly ClientSite[] = [
     },
     passThrough: ["/_next/", "/_vercel/", "/media/clients/ferragial/"],
   },
+  {
+    // GROB — Grupo Recreativo Olival Basto (2026-11-02): site-demo para apresentar ao clube, só no caminho de
+    // pré-visualização. Quando tiver domínio, pô-lo aqui, em `grobOrigin` (src/content/grob/routes.ts) e no matcher
+    // do proxy (src/proxy.ts).
+    id: "grob",
+    hosts: [],
+    base: "/grob",
+    rootFiles: {
+      "/robots.txt": "/grob/robots.txt",
+      "/sitemap.xml": "/grob/sitemap.xml",
+      "/manifest.webmanifest": "/grob/manifest.webmanifest",
+      "/favicon.ico": "/media/clients/grob/icone.ico",
+      "/apple-touch-icon.png": "/media/clients/grob/icone-apple.png",
+    },
+    passThrough: ["/_next/", "/_vercel/", "/media/clients/grob/"],
+  },
 ];
 
 export type ClientSiteDecision =

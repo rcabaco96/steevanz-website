@@ -4,9 +4,10 @@ import "../globals.css";
 import { fontVariables } from "@/app/fonts";
 import { NavigationProgress } from "@/components/site/NavigationProgress";
 import { ThemeScript } from "@/components/site/ThemeScript";
-import { rootViewport } from "@/lib/root-metadata";
+import { rootViewport, steevanzIcons } from "@/lib/root-metadata";
 
 export const metadata: Metadata = {
+  icons: steevanzIcons,
   title: { default: "A minha conta · Steevanz", template: "%s · Steevanz" },
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   referrer: "same-origin",

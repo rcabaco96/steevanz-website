@@ -1,0 +1,10 @@
+import { chromium } from '../lib/pw.mjs';
+import path from 'path'; import { fileURLToPath, pathToFileURL } from 'url';
+const dir = path.dirname(fileURLToPath(import.meta.url));
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+await page.goto(pathToFileURL(path.join(dir, 'og.html')).href);
+await page.evaluate(() => document.fonts.ready);
+await page.waitForTimeout(500);
+await page.screenshot({ path: process.argv[2] });
+await browser.close();
