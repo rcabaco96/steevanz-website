@@ -15,10 +15,13 @@ import { grobSections } from "./sections";
 const EmblemCanvas = dynamic(() => import("./emblem/EmblemCanvas"), { ssr: false });
 
 /** Se o 3D falhar (pedaço que não carrega, WebGL perdido), fica a imagem parada: a página nunca cai por causa dele. */
-class Fallback3d extends Component<{ children: ReactNode }, { failed: boolean }> {
+class Fallback3d extends Component<{ children: ReactNode; onFail: () => void }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+  componentDidCatch() {
+    this.props.onFail();
   }
   render() {
     return this.state.failed ? null : this.props.children;
@@ -46,6 +49,10 @@ function hasWebgl() {
 function canRun3d() {
   return !window.matchMedia(reducedQuery).matches && hasWebgl();
 }
+/** Com movimento (gb-motion, posto no <head>) mas sem WebGL: fica a imagem parada. */
+function needsStill() {
+  return document.documentElement.classList.contains("gb-motion") && !canRun3d();
+}
 
 /** Onde o emblema começa (a mesma pose da imagem parada, emblema-3d.webp): o 3D nasce já aqui, sem entrada. */
 function startPose(wide: boolean) {
@@ -64,35 +71,25 @@ const parts = [
 // A abertura e a primeira cena. O emblema do clube em 3D (emblem/EmblemCanvas.tsx) pousa à direita do título
 // (ao alto no telemóvel). Ao descer, a cena fica presa (GSAP pin + scrub): o emblema vem para o centro e roda de
 // frente, desmonta-se em camadas enquanto as partes do escudo se nomeiam uma a uma, volta a montar-se, dá uma
-// volta de moeda e fica pequeno, a dar a vez ao placar. Primeira pintura: a imagem do emblema (o mesmo PDF
-// vetorial do clube); o 3D entra por cima quando está pronto. Movimento reduzido ou sem WebGL: a imagem parada e
-// as partes numa lista, sem pin.
+// volta de moeda e fica pequeno, a dar a vez ao placar. O 3D entra uma vez, num fade, quando está pronto (sem
+// imagem parada por baixo). Movimento reduzido ou sem WebGL: a imagem parada e as partes numa lista, sem pin.
 export function EmblemHero({ age }: { age: number }) {
   const root = useRef<HTMLElement>(null);
   const stateRef = useRef<EmblemState>(createEmblemState());
   const motionOk = useSyncExternalStore(subscribeMotion, canRun3d, () => false);
   const [ready, setReady] = useState(false);
-  const [mount3d, setMount3d] = useState(false);
   const [onScreen, setOnScreen] = useState(true);
+  // A imagem parada só aparece se o 3D não puder correr numa página que contava com ele (sem WebGL) ou se falhar.
+  const noWebgl = useSyncExternalStore(subscribeMotion, needsStill, () => false);
+  const [failed, setFailed] = useState(false);
+  const still = noWebgl || failed;
   const onReady = useCallback(() => setReady(true), []);
-  // O 3D entra depois da primeira pintura, quando o browser tem folga (a imagem parada já lá está).
+  const showStill = useCallback(() => setFailed(true), []);
+  // O emblema aparece uma vez só (dono, 2026-11-02: «continua a renderizar 2 vezes, não pode ser»): com movimento, a
+  // imagem parada nunca se pinta (fica escondida pelo gb-motion desde o <head>) e o 3D monta logo e entra num único
+  // fade quando está pronto. A imagem fica para movimento reduzido e para quem não tem WebGL.
   useEffect(() => {
-    if (!motionOk) return;
-    let idle = 0;
-    let timer = 0;
-    // A pose inicial antes de o 3D existir: o primeiro fotograma dele coincide com a imagem parada.
-    Object.assign(stateRef.current, startPose(window.matchMedia("(min-width: 1024px)").matches));
-    const start = () => {
-      const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
-      if (w.requestIdleCallback) idle = w.requestIdleCallback(() => setMount3d(true), { timeout: 1800 });
-      else timer = window.setTimeout(() => setMount3d(true), 400);
-    };
-    start();
-    return () => {
-      const w = window as Window & { cancelIdleCallback?: (id: number) => void };
-      if (idle) w.cancelIdleCallback?.(idle);
-      window.clearTimeout(timer);
-    };
+    if (motionOk) Object.assign(stateRef.current, startPose(window.matchMedia("(min-width: 1024px)").matches));
   }, [motionOk]);
 
   // Fora do ecrã o 3D não desenha nada (nem quando o rato mexe).
@@ -195,10 +192,10 @@ export function EmblemHero({ age }: { age: number }) {
         </p>
       </div>
 
-      {/* O emblema: a imagem parada (primeira pintura, movimento reduzido, sem WebGL) e o 3D por cima. */}
+      {/* O emblema: o 3D (uma única entrada); a imagem parada só sem movimento ou sem WebGL. */}
       <div className="pointer-events-none relative mx-auto flex justify-center pt-24 motion-on:absolute motion-on:inset-0 motion-on:block motion-on:pt-0">
         <div
-          className={`motion-on:absolute motion-on:top-[29%] motion-on:left-1/2 motion-on:h-[30svh] motion-on:-translate-x-1/2 motion-on:-translate-y-1/2 lg:motion-on:top-1/2 lg:motion-on:left-[71.5%] lg:motion-on:h-[66svh] transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
+          className={`motion-on:absolute motion-on:top-[29%] motion-on:left-1/2 motion-on:h-[30svh] motion-on:-translate-x-1/2 motion-on:-translate-y-1/2 lg:motion-on:top-1/2 lg:motion-on:left-[71.5%] lg:motion-on:h-[66svh] ${still ? "" : "motion-on:invisible"}`}
         >
           <Image
             src={grob.media.emblemStill}
@@ -210,9 +207,9 @@ export function EmblemHero({ age }: { age: number }) {
             className="gb-float h-[46svh] w-auto max-w-[80vw] object-contain drop-shadow-[0_30px_50px_rgb(0_0_0/0.45)] motion-on:h-full"
           />
         </div>
-        {motionOk && mount3d ? (
+        {motionOk ? (
           <div className={`absolute inset-0 transition-opacity duration-1000 ${ready ? "opacity-100" : "opacity-0"}`}>
-            <Fallback3d>
+            <Fallback3d onFail={showStill}>
               <EmblemCanvas stateRef={stateRef} onReady={onReady} active={onScreen} />
             </Fallback3d>
           </div>
