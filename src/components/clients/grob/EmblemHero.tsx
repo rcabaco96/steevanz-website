@@ -2,17 +2,26 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { preload } from "react-dom";
 import { Component, useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { grob, grobPhotos } from "@/content/grob/facts";
 import { CourtLines } from "./CourtLines";
-import { createEmblemState, type EmblemState } from "./emblem/state";
+import { createEmblemState, emblemColorUrls, emblemNormalUrl, emblemReliefUrl, type EmblemState } from "./emblem/state";
 import { useScrollScene } from "./scroll-scene";
 import { openContact } from "./contact-bus";
 import { grobSections } from "./sections";
 
-// O 3D só existe no browser, num pedaço à parte (three.js não pesa na primeira pintura), e só é pedido depois da
-// primeira pintura, quando o browser está livre (requestIdleCallback).
-const EmblemCanvas = dynamic(() => import("./emblem/EmblemCanvas"), { ssr: false });
+// O 3D só existe no browser, num pedaço à parte (three.js não pesa na primeira pintura). Pede-se logo que este
+// módulo corre (e não só quando o componente monta), e os ficheiros do emblema vêm pré-carregados do <head>: tudo em
+// paralelo, para o emblema e o título entrarem cedo (dono, 2026-11-02: «porque demora tanto a aparecer?»).
+const loadCanvas = () => import("./emblem/EmblemCanvas");
+if (typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) void loadCanvas();
+const EmblemCanvas = dynamic(loadCanvas, { ssr: false });
+const withMotion = "(prefers-reduced-motion: no-preference)";
+function preloadEmblem() {
+  for (const href of [...emblemColorUrls, emblemNormalUrl]) preload(href, { as: "image", crossOrigin: "anonymous", media: withMotion });
+  preload(emblemReliefUrl, { as: "fetch", crossOrigin: "anonymous", media: withMotion });
+}
 
 /** Se o 3D falhar (pedaço que não carrega, WebGL perdido), fica a imagem parada: a página nunca cai por causa dele. */
 class Fallback3d extends Component<{ children: ReactNode; onFail: () => void }, { failed: boolean }> {
@@ -74,6 +83,7 @@ const parts = [
 // volta de moeda e fica pequeno, a dar a vez ao placar. O 3D entra uma vez, num fade, quando está pronto (sem
 // imagem parada por baixo). Movimento reduzido ou sem WebGL: a imagem parada e as partes numa lista, sem pin.
 export function EmblemHero({ age }: { age: number }) {
+  preloadEmblem();
   const root = useRef<HTMLElement>(null);
   const stateRef = useRef<EmblemState>(createEmblemState());
   const motionOk = useSyncExternalStore(subscribeMotion, canRun3d, () => false);

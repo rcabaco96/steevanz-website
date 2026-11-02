@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
 import shapesData from "./emblem-shapes.json";
-import type { EmblemState } from "./state";
+import { emblemColorUrls, emblemNormalUrl, emblemReliefUrl, type EmblemState } from "./state";
 
 // O emblema do GROB em 3D, construído a partir do contorno vetorizado do logótipo oficial (o PDF vetorial que o
 // clube publica na página Símbolo). Cada camada do escudo é uma forma extrudida com bisel: a placa de prata por
@@ -125,12 +125,11 @@ function buildEnvironment(gl: THREE.WebGLRenderer) {
   return target;
 }
 
-const media = "/media/clients/grob";
 /** Cor: o logótipo inteiro; o anel sem o interior; o campo branco só com os caules dos ramos (o resto está nas camadas). */
-const colorUrls = [`${media}/emblema-textura.webp`, `${media}/emblema-textura-base.webp`, `${media}/emblema-textura-campo.webp`];
+const colorUrls = emblemColorUrls;
 /** Relevo cozido do modelo de IA: só as normais (dados, não cor), para um sombreado subtil que não muda as cores. */
-const normalUrl = `${media}/emblema-relevo-normal.webp`;
-const reliefUrl = `${media}/emblema-relevo.bin`;
+const normalUrl = emblemNormalUrl;
+const reliefUrl = emblemReliefUrl;
 
 interface EmblemAssets {
   full: THREE.Texture;
