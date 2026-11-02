@@ -8,7 +8,7 @@ import { grob, grobPhotos } from "@/content/grob/facts";
 import { CourtLines } from "./CourtLines";
 import { createEmblemState, emblemColorUrls, emblemNormalUrl, emblemReliefUrl, type EmblemState } from "./emblem/state";
 import { useScrollScene } from "./scroll-scene";
-import { openContact } from "./contact-bus";
+import { lockScroll, openContact } from "./contact-bus";
 import { grobSections } from "./sections";
 
 // O 3D só existe no browser, num pedaço à parte (three.js não pesa na primeira pintura). Pede-se logo que este
@@ -102,13 +102,21 @@ export function EmblemHero({ age }: { age: number }) {
     if (motionOk) Object.assign(stateRef.current, startPose(window.matchMedia("(min-width: 1024px)").matches));
   }, [motionOk]);
   // O título entra ao mesmo tempo que o emblema (dono, 2026-11-02: «para não parecer que demorou mais a carregar»): com
-  // movimento, a entrada do texto (gb-rise) fica em pausa até o 3D estar pronto; nunca espera mais de 2,5 s.
+  // movimento, a entrada do texto (gb-rise) fica em pausa até o 3D estar pronto. Enquanto isso, um ecrã de entrada com o
+  // escudo e uma linha de progresso (dono, no mesmo dia: «uma página de loading… senão parece que o site está lento»);
+  // sai quando o 3D está pronto e nunca fica mais de 4 s.
   const [late, setLate] = useState(false);
   useEffect(() => {
-    const timer = window.setTimeout(() => setLate(true), 2500);
+    const timer = window.setTimeout(() => setLate(true), 4000);
     return () => window.clearTimeout(timer);
   }, []);
   const copyIn = ready || still || late;
+  // Com o ecrã de entrada à frente, a página não faz scroll por trás (o site começa sempre no topo).
+  useEffect(() => {
+    if (copyIn || !document.documentElement.classList.contains("gb-motion")) return;
+    lockScroll(true);
+    return () => lockScroll(false);
+  }, [copyIn]);
 
   // Fora do ecrã o 3D não desenha nada (nem quando o rato mexe).
   useEffect(() => {
@@ -188,6 +196,15 @@ export function EmblemHero({ age }: { age: number }) {
   const photo = grobPhotos.futsalAtaque;
 
   return (
+    <>
+      {/* Ecrã de entrada (só com movimento): o escudo e uma linha que enche enquanto o emblema 3D carrega. Fora da
+          secção (que isola as camadas), para ficar por cima da barra do menu. */}
+      <div data-gb-loader data-done={copyIn ? "" : undefined} aria-hidden="true" className="gb-loader">
+        <Image src={grob.media.emblemSmall} alt="" width={96} height={122} priority sizes="96px" className="h-24 w-auto" />
+        <span className="gb-loader-bar">
+          <span />
+        </span>
+      </div>
     <section
       ref={root}
       id={grobSections.emblem}
@@ -320,5 +337,6 @@ export function EmblemHero({ age }: { age: number }) {
         <p className="mt-3 text-sm text-giz/75">Fundado a {grob.foundedLabel}</p>
       </div>
     </section>
+    </>
   );
 }
