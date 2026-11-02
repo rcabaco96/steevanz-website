@@ -91,6 +91,14 @@ export function EmblemHero({ age }: { age: number }) {
   useEffect(() => {
     if (motionOk) Object.assign(stateRef.current, startPose(window.matchMedia("(min-width: 1024px)").matches));
   }, [motionOk]);
+  // O título entra ao mesmo tempo que o emblema (dono, 2026-11-02: «para não parecer que demorou mais a carregar»): com
+  // movimento, a entrada do texto (gb-rise) fica em pausa até o 3D estar pronto; nunca espera mais de 2,5 s.
+  const [late, setLate] = useState(false);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLate(true), 2500);
+    return () => window.clearTimeout(timer);
+  }, []);
+  const copyIn = ready || still || late;
 
   // Fora do ecrã o 3D não desenha nada (nem quando o rato mexe).
   useEffect(() => {
@@ -219,6 +227,7 @@ export function EmblemHero({ age }: { age: number }) {
       {/* O título. */}
       <div
         data-hero-copy
+        data-in={copyIn ? "" : undefined}
         className="relative z-10 gb-container flex flex-col pt-8 pb-14 motion-on:absolute motion-on:inset-x-0 motion-on:bottom-0 motion-on:pb-9 lg:motion-on:top-1/2 lg:motion-on:bottom-auto lg:motion-on:-translate-y-1/2 lg:motion-on:pb-0 [@media(max-height:700px)]:motion-on:pb-5"
       >
         <div className="max-w-[36rem] lg:max-w-[40rem]">

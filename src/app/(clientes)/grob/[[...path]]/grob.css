@@ -244,6 +244,10 @@
 .gb-rise {
   animation: gb-rise 1.1s var(--ease-apito) both;
 }
+/* O título do topo espera pelo emblema 3D e entram juntos (EmblemHero: data-in quando o 3D está pronto). */
+.gb-motion [data-hero-copy]:not([data-in]) .gb-rise {
+  animation-play-state: paused;
+}
 
 /* O emblema parado (imagem) a pairar devagar, só enquanto o 3D não chega. */
 @keyframes gb-float {
