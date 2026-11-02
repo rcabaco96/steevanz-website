@@ -201,6 +201,7 @@ export function EmblemHero({ age }: { age: number }) {
           secção (que isola as camadas), para ficar por cima da barra do menu. */}
       <div data-gb-loader data-done={copyIn ? "" : undefined} aria-hidden="true" className="gb-loader">
         <Image src={grob.media.emblemSmall} alt="" width={96} height={122} priority sizes="96px" className="h-24 w-auto" />
+        <span className="gb-loader-name">{grob.name}</span>
         <span className="gb-loader-bar">
           <span />
         </span>

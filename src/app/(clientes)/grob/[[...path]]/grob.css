@@ -245,8 +245,15 @@
 .gb-rise {
   animation: gb-rise 1.1s var(--ease-apito) both;
 }
-/* Ecrã de entrada (EmblemHero): só com movimento; verde-noite com o escudo e uma linha que enche devagar até 90 %
-   enquanto o emblema 3D carrega, completa-se e o ecrã some quando está pronto (data-done). */
+/* Ecrã de entrada (EmblemHero): só com movimento; verde-noite com o escudo, o nome e uma linha que enche devagar até
+   90 % enquanto o emblema 3D carrega. Quando está pronto (data-done), a linha completa-se, o escudo e o nome somem e
+   abre-se um círculo do centro, depressa, a mostrar o site (dono, 2026-11-02: «um círculo a crescer rapidamente e a
+   mostrar o site»): uma máscara com um buraco redondo cujo raio (--gb-hole) cresce. */
+@property --gb-hole {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
 .gb-loader {
   display: none;
 }
@@ -260,9 +267,12 @@
   justify-content: center;
   gap: 1.75rem;
   background: var(--color-pavilhao);
+  --gb-hole: 0px;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent var(--gb-hole), #000 calc(var(--gb-hole) + 1px));
+  mask-image: radial-gradient(circle at 50% 50%, transparent var(--gb-hole), #000 calc(var(--gb-hole) + 1px));
   transition:
-    opacity 0.5s var(--ease-apito) 0.15s,
-    visibility 0s linear 0.65s;
+    --gb-hole 0.75s cubic-bezier(0.7, 0, 0.2, 1) 0.2s,
+    visibility 0s linear 0.95s;
   /* rede de segurança: se o JavaScript nunca arrancar, o ecrã sai sozinho aos 6 s */
   animation: gb-loader-safety 0.5s linear 6s forwards;
 }
@@ -273,9 +283,31 @@
   }
 }
 .gb-motion .gb-loader[data-done] {
-  opacity: 0;
+  --gb-hole: 150vmax;
   visibility: hidden;
   pointer-events: none;
+}
+.gb-loader > * {
+  transition:
+    opacity 0.25s ease-out,
+    transform 0.35s var(--ease-apito);
+}
+.gb-loader[data-done] > * {
+  opacity: 0;
+  transform: scale(0.94);
+}
+/* o nome do clube por baixo do escudo (dono, 2026-11-02), nas letras dos títulos do site */
+.gb-loader-name {
+  max-width: calc(100vw - 2.5rem);
+  margin-top: -0.5rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.15rem, 4.6vw, 1.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--color-giz);
 }
 .gb-loader-bar {
   position: relative;
