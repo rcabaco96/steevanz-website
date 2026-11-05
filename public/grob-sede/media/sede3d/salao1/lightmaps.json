@@ -1,0 +1,14 @@
+{
+ "lm-sala": {
+  "escala": 34.06592,
+  "res": 2048
+ },
+ "lm-chao": {
+  "escala": 7.26565,
+  "res": 1024
+ },
+ "lm-objetos": {
+  "escala": 11.16474,
+  "res": 1024
+ }
+}

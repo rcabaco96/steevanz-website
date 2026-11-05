@@ -70,7 +70,7 @@ const nextConfig: NextConfig = {
   // Balneário da Luz (3D shirt rail, Astro build in public/balneario-da-luz): its pages are folders with an index.html.
   // Olga Jordão's demo site (2026-11-04), a static Astro build in public/olga-jordao (source in
   // Downloads\olga-jordao-site, built with base "/olga-jordao"), the same way. And the GROB sede's site (2026-11-05),
-  // public/grob-sede (source in Downloads\grob-sede-site, built with base "/grob-sede"), with its 3D visit page.
+  // public/grob-sede (source in Downloads\grob-sede-site, built with base "/grob-sede"), with its 3D visit page and the walkable 3D rooms (sede-3d).
   async rewrites() {
     return [
       { source: "/balneario-da-luz", destination: "/balneario-da-luz/index.html" },
@@ -78,6 +78,7 @@ const nextConfig: NextConfig = {
       { source: "/olga-jordao", destination: "/olga-jordao/index.html" },
       { source: "/grob-sede", destination: "/grob-sede/index.html" },
       { source: "/grob-sede/visita-3d", destination: "/grob-sede/visita-3d/index.html" },
+      { source: "/grob-sede/sede-3d", destination: "/grob-sede/sede-3d/index.html" },
     ];
   },
   async headers() {
