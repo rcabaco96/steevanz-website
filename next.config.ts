@@ -69,12 +69,14 @@ const nextConfig: NextConfig = {
   },
   // Balneário da Luz (3D shirt rail, Astro build in public/balneario-da-luz): its pages are folders with an index.html.
   // Olga Jordão's demo site (2026-11-04), a static Astro build in public/olga-jordao (source in
-  // Downloads\olga-jordao-site, built with base "/olga-jordao"), the same way.
+  // Downloads\olga-jordao-site, built with base "/olga-jordao"), the same way. And the GROB sede's site (2026-11-05),
+  // public/grob-sede (source in Downloads\grob-sede-site, built with base "/grob-sede").
   async rewrites() {
     return [
       { source: "/balneario-da-luz", destination: "/balneario-da-luz/index.html" },
       { source: "/balneario-da-luz/numero/:n", destination: "/balneario-da-luz/numero/:n/index.html" },
       { source: "/olga-jordao", destination: "/olga-jordao/index.html" },
+      { source: "/grob-sede", destination: "/grob-sede/index.html" },
     ];
   },
   async headers() {
@@ -90,13 +92,21 @@ const nextConfig: NextConfig = {
         source: "/proposta/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
-      // Client demo sites shared by link only (Balneário da Luz, Olga Jordão): out of search engines.
+      // Client demo sites shared by link only (Balneário da Luz, Olga Jordão, Sede do GROB): out of search engines.
       {
         source: "/olga-jordao/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
       {
         source: "/olga-jordao",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
+      {
+        source: "/grob-sede/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
+      {
+        source: "/grob-sede",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
       {
