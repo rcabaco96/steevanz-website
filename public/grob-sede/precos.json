@@ -1,0 +1,13 @@
+{
+  "_nota": "VALORES DE DEMONSTRAÇÃO, a confirmar com o clube (Steevanz, 2026-11-06). Preço por vaga (piso x período); o dia completo e a sede toda saem da soma. Valores SEM IVA: mostrar sempre «+ IVA», nunca calcular nem mostrar IVA. ÚNICA tabela: a página (src/content/precos.ts) e o servidor da pré-reserva (steevanz-website, /api/grob-sede/pre-reserva, lê public/grob-sede/precos.json que o build publica) usam este ficheiro.",
+  "demonstracao": true,
+  "moeda": "EUR",
+  "vagas": {
+    "piso0-manha": 150,
+    "piso0-tarde": 150,
+    "piso1-manha": 180,
+    "piso1-tarde": 180
+  },
+  "sinal_percentagem": 30,
+  "dias_max": 31
+}
